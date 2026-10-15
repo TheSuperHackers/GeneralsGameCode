@@ -87,6 +87,13 @@ versions. GitHub Actions consumes these ports through a vcpkg binary cache backe
 Packages, keyed by vcpkg's own ABI hashes, so the first CI build warms the feed and subsequent builds pull prebuilt
 binaries instead of re-compiling everything. Pull requests from forks restore from the feed but cannot write to it.
 
+The presets do not require vcpkg. Without it, CMake downloads the dependencies with FetchContent. To use vcpkg, which
+FFmpeg support requires, pass its toolchain file when configuring:
+
+```bash
+cmake --preset win32 -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
+```
+
 ### Profiling
 
 Tracy profiling is supported in the CMake preset `win32-profile`.

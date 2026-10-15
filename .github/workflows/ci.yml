@@ -79,19 +79,22 @@ jobs:
           - preset: "win32"
             tools: true
             extras: true
+            vcpkg: true
+          - preset: "win32-profile"
+            tools: true
+            extras: true
+            vcpkg: true
+          - preset: "win32-debug"
+            tools: true
+            extras: true
+            vcpkg: true
+          - preset: "win32"
+            tools: true
+            extras: true
           - preset: "win32-profile"
             tools: true
             extras: true
           - preset: "win32-debug"
-            tools: true
-            extras: true
-          - preset: "win32-vcpkg"
-            tools: true
-            extras: true
-          - preset: "win32-vcpkg-profile"
-            tools: true
-            extras: true
-          - preset: "win32-vcpkg-debug"
             tools: true
             extras: true
       fail-fast: false
@@ -101,8 +104,9 @@ jobs:
       preset: ${{ matrix.preset }}
       tools: ${{ matrix.tools }}
       extras: ${{ matrix.extras }}
+      vcpkg: ${{ matrix.vcpkg || false }}
       tests: ${{ startsWith(matrix.preset, 'win32') }}
-      benchmarks: ${{ matrix.preset == 'win32' }}
+      benchmarks: ${{ matrix.preset == 'win32' && !matrix.vcpkg }}
     secrets: inherit
 
   # Note build-generalsmd is split into two jobs for vc6 and win32 because replaycheck-generalsmd
@@ -150,20 +154,23 @@ jobs:
           - preset: "win32"
             tools: true
             extras: true
+            vcpkg: true
+            ffmpeg: true
+          - preset: "win32-profile"
+            tools: true
+            extras: true
+            vcpkg: true
+          - preset: "win32-debug"
+            tools: true
+            extras: true
+            vcpkg: true
+          - preset: "win32"
+            tools: true
+            extras: true
           - preset: "win32-profile"
             tools: true
             extras: true
           - preset: "win32-debug"
-            tools: true
-            extras: true
-          - preset: "win32-vcpkg"
-            tools: true
-            extras: true
-            ffmpeg: true
-          - preset: "win32-vcpkg-profile"
-            tools: true
-            extras: true
-          - preset: "win32-vcpkg-debug"
             tools: true
             extras: true
       fail-fast: false
@@ -173,9 +180,10 @@ jobs:
       preset: ${{ matrix.preset }}
       tools: ${{ matrix.tools }}
       extras: ${{ matrix.extras }}
+      vcpkg: ${{ matrix.vcpkg || false }}
       ffmpeg: ${{ matrix.ffmpeg || false}}
       tests: true
-      benchmarks: ${{ matrix.preset == 'win32' }}
+      benchmarks: ${{ matrix.preset == 'win32' && !matrix.vcpkg }}
     secrets: inherit
 
   replaycheck-generalsmd:
