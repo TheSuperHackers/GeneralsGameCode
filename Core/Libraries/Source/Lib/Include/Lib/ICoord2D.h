@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "trig.h"
+
 // NOTE: Keep the types simple; avoid constructors and destructors so they can be used within unions
 
 struct ICoord2D
