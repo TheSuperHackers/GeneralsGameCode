@@ -98,6 +98,7 @@ public: // construction
 	WorldHeightMapEdit(ChunkInputStream *pStrm);											///< read from file.
 	virtual ~WorldHeightMapEdit() override;													    ///< destroy.
 
+	Bool canSaveCliffState() const;
 	void saveToFile(DataChunkOutput &chunkWriter);
 	WorldHeightMapEdit *duplicate();
 
