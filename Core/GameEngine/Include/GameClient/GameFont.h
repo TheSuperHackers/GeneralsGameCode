@@ -90,6 +90,14 @@ protected:
 
 };
 
+// TheSuperHackers @performance CryoTheRenegade 14/10/2026
+// FontLibrary that creates no device fonts. Used for Headless Mode.
+class FontLibraryDummy : public FontLibrary
+{
+protected:
+	virtual Bool loadFontData( GameFont *font ) override { font->height = font->pointSize; return TRUE; }
+};
+
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////
 inline Int FontLibrary::getCount() { return m_count; }
 inline GameFont *FontLibrary::firstFont() { return m_fontList; }
