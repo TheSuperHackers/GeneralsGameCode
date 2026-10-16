@@ -101,6 +101,9 @@ protected:
 
 	Bool m_quitting; ///< true when we need to quit the game
 	Bool m_isActive; ///< app has OS focus.
+
+public:
+	Real getLogicTimeAccumulator() const { return m_logicTimeAccumulator; }
 };
 
 inline void GameEngine::setQuitting( Bool quitting ) { m_quitting = quitting; }
