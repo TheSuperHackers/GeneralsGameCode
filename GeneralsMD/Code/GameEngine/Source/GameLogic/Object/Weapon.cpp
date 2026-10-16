@@ -2071,7 +2071,11 @@ void Weapon::onWeaponBonusChange(const Object *source)
 
 	if( needUpdate )
 	{
+		// TheSuperHackers @bugfix Mauller 16/10/2026 Don't reset the reload, only adjust the ready frame.
+		// Resetting the last reload to the current frame extends the reload when the bonus is applied.
+#if RETAIL_COMPATIBLE_CRC
 		m_whenLastReloadStarted = TheGameLogic->getFrame();
+#endif
 		m_whenWeCanFireAgain = m_whenLastReloadStarted + newDelay;
 
 		if (source->isReloadTimeShared())
@@ -2081,8 +2085,17 @@ void Weapon::onWeaponBonusChange(const Object *source)
 				Weapon *weapon = source->getWeaponInWeaponSlot((WeaponSlotType)wt);
 				if (weapon)
 				{
+#if RETAIL_COMPATIBLE_CRC
 					weapon->setPossibleNextShotFrame(m_whenWeCanFireAgain);
 					weapon->setStatus(RELOADING_CLIP);
+#else
+					// TheSuperHackers @info Keep all reload info synchronised between linked timer weapons.
+					// This way the secondary weapon is in the same state when it is switched to.
+					// And do not alter the weapons status from the current status, this can cause rapid firing when toggling bonuses.
+					weapon->setLastReloadStartedFrame(m_whenLastReloadStarted);
+					weapon->setPossibleNextShotFrame(m_whenWeCanFireAgain);
+					weapon->setStatus(m_status);
+#endif
 				}
 			}
 		}
