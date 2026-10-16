@@ -993,8 +993,7 @@ WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector3& color,float alpha
 
 	// Multiply r, g, b and a components (0.0,...,1.0) by 255 and convert to integer. Or the integer values togerher
 	// such that 32 bit integer has AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB.
-	__asm
-	{
+	__asm {
 		sub	esp,20					// space for a, r, g and b float plus fpu rounding mode
 
 		// Store the fpu rounding mode
@@ -1009,7 +1008,7 @@ WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector3& color,float alpha
 		jz			skip					// .. if not, skip
 		mov		[esp],eax			// .. change control word
 		fldcw		[esp]
-skip:
+	skip:
 
 		// Convert the color
 
@@ -1048,7 +1047,7 @@ skip:
 		je		not_changed			// nope... skip now...
 		fwait
 		fldcw	[esp+16];
-not_changed:
+	not_changed:
 		add	esp,20
 
 		mov	col,eax
@@ -1069,48 +1068,47 @@ WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
 {
 #if defined(_MSC_VER) && _MSC_VER < 1300
 	if (CPUDetectClass::Has_CMOV_Instruction()) {
-	__asm
-	{
-		mov	esi,dword ptr color
+		__asm {
+			mov	esi,dword ptr color
 
-		mov edx,0x3f800000
+			mov edx,0x3f800000
 
-		mov edi,dword ptr[esi]
-		mov ebx,edi
-		sar edi,31
-		not edi			// mask is now zero if negative value
-		and edi,ebx
-		cmp edi,edx		// if no less than 1.0 set to 1.0
-		cmovnb edi,edx
-		mov dword ptr[esi],edi
+			mov edi,dword ptr[esi]
+			mov ebx,edi
+			sar edi,31
+			not edi			// mask is now zero if negative value
+			and edi,ebx
+			cmp edi,edx		// if no less than 1.0 set to 1.0
+			cmovnb edi,edx
+			mov dword ptr[esi],edi
 
-		mov edi,dword ptr[esi+4]
-		mov ebx,edi
-		sar edi,31
-		not edi			// mask is now zero if negative value
-		and edi,ebx
-		cmp edi,edx		// if no less than 1.0 set to 1.0
-		cmovnb edi,edx
-		mov dword ptr[esi+4],edi
+			mov edi,dword ptr[esi+4]
+			mov ebx,edi
+			sar edi,31
+			not edi			// mask is now zero if negative value
+			and edi,ebx
+			cmp edi,edx		// if no less than 1.0 set to 1.0
+			cmovnb edi,edx
+			mov dword ptr[esi+4],edi
 
-		mov edi,dword ptr[esi+8]
-		mov ebx,edi
-		sar edi,31
-		not edi			// mask is now zero if negative value
-		and edi,ebx
-		cmp edi,edx		// if no less than 1.0 set to 1.0
-		cmovnb edi,edx
-		mov dword ptr[esi+8],edi
+			mov edi,dword ptr[esi+8]
+			mov ebx,edi
+			sar edi,31
+			not edi			// mask is now zero if negative value
+			and edi,ebx
+			cmp edi,edx		// if no less than 1.0 set to 1.0
+			cmovnb edi,edx
+			mov dword ptr[esi+8],edi
 
-		mov edi,dword ptr[esi+12]
-		mov ebx,edi
-		sar edi,31
-		not edi			// mask is now zero if negative value
-		and edi,ebx
-		cmp edi,edx		// if no less than 1.0 set to 1.0
-		cmovnb edi,edx
-		mov dword ptr[esi+12],edi
-	}
+			mov edi,dword ptr[esi+12]
+			mov ebx,edi
+			sar edi,31
+			not edi			// mask is now zero if negative value
+			and edi,ebx
+			cmp edi,edx		// if no less than 1.0 set to 1.0
+			cmovnb edi,edx
+			mov dword ptr[esi+12],edi
+		}
 	return;
 	}
 #endif // defined(_MSC_VER) && _MSC_VER < 1300

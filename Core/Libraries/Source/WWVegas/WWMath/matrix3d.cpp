@@ -806,15 +806,15 @@ void Matrix3D::Multiply(const Matrix3D & A,const Matrix3D & B,Matrix3D * set_res
 		cmp	eax,edx
 		jne	not_equal
 		mov	eax,ebx
-not_equal:
+	not_equal:
 		fld	dword ptr [ecx+16]	//	B[1][0]
 		fld	dword ptr [ecx]		//	B[0][0]
 
-//		tmp1 = B[0][0];
-//		tmp2 = B[1][0];
-//		tmp3 = B[2][0];
+		//		tmp1 = B[0][0];
+		//		tmp2 = B[1][0];
+		//		tmp3 = B[2][0];
 
-//		(*set_res)[0][0] = (*Aptr)[0][0]*tmp1 + (*Aptr)[0][1]*tmp2 + (*Aptr)[0][2]*tmp3;
+		//		(*set_res)[0][0] = (*Aptr)[0][0]*tmp1 + (*Aptr)[0][1]*tmp2 + (*Aptr)[0][2]*tmp3;
 		fld			dword ptr [edx+8]		// A[0][2]
 		fmul			st(0),st(3)	// A[0][2] * B[2][0]
 		fld			dword ptr [edx+4]		// A[0][1]
@@ -825,7 +825,7 @@ not_equal:
 		faddp			st(1),st(0)
 		fstp			dword ptr [eax]			// res[0][0]
 
-//		(*set_res)[1][0] = A[1][0]*tmp1 + A[1][1]*tmp2 + A[1][2]*tmp3;
+		//		(*set_res)[1][0] = A[1][0]*tmp1 + A[1][1]*tmp2 + A[1][2]*tmp3;
 		fld			dword ptr [edx+24]		// A[1][2]
 		fmul			st(0),st(3)	// A[1][2] * B[2][0]
 		fld			dword ptr [edx+20]		//	A[1][1]
@@ -836,7 +836,7 @@ not_equal:
 		faddp			st(1),st(0)
 		fstp			dword ptr [eax+16]		//	res[1][0]
 
-//		(*set_res)[2][0] = A[2][0]*tmp1 + A[2][1]*tmp2 + A[2][2]*tmp3;
+		//		(*set_res)[2][0] = A[2][0]*tmp1 + A[2][1]*tmp2 + A[2][2]*tmp3;
 
 		fld			dword ptr [edx+40]		//	A[2][2]
 		fmul			st(0),st(3)	// A[2][2] * B[2][0]
@@ -848,9 +848,9 @@ not_equal:
 		faddp			st(1),st(0)
 		fstp			dword ptr [eax+32]		//	res[2][0]
 
-//		tmp1 = B[0][1];
-//		tmp2 = B[1][1];
-//		tmp3 = B[2][1];
+		//		tmp1 = B[0][1];
+		//		tmp2 = B[1][1];
+		//		tmp3 = B[2][1];
 		fstp			st(0)
 		fstp			st(0)
 		fstp			st(0)
@@ -858,7 +858,7 @@ not_equal:
 		fld			dword ptr [ecx+20]			//	B[1][1]
 		fld			dword ptr [ecx+4]			//	B[0][1]
 
-//		(*set_res)[0][1] = (*Aptr)[0][0]*tmp1 + (*Aptr)[0][1]*tmp2 + (*Aptr)[0][2]*tmp3;
+		//		(*set_res)[0][1] = (*Aptr)[0][0]*tmp1 + (*Aptr)[0][1]*tmp2 + (*Aptr)[0][2]*tmp3;
 		fld			dword ptr [edx+8]			//	A[0][2]
 		fmul			st(0),st(3)		// A[0][2] * B[2][1]
 		fld			dword ptr [edx+4]			//	A[0][1]
@@ -869,7 +869,7 @@ not_equal:
 		faddp			st(1),st(0)
 		fstp			dword ptr [eax+4]			//	res[0][1]
 
-//		(*set_res)[1][1] = A[1][0]*tmp1 + A[1][1]*tmp2 + A[1][2]*tmp3;
+		//		(*set_res)[1][1] = A[1][0]*tmp1 + A[1][1]*tmp2 + A[1][2]*tmp3;
 		fld			dword ptr [edx+24]			//	A[1][2]
 		fmul			st(0),st(3)		// A[1][2] * B[2][1]
 		fld			dword ptr [edx+20]			//	A[1][1]
@@ -880,7 +880,7 @@ not_equal:
 		faddp			st(1),st(0)
 		fstp			dword ptr [eax+20]			//	res[1][1]
 
-//		(*set_res)[2][1] = A[2][0]*tmp1 + A[2][1]*tmp2 + A[2][2]*tmp3;
+		//		(*set_res)[2][1] = A[2][0]*tmp1 + A[2][1]*tmp2 + A[2][2]*tmp3;
 
 		fld			dword ptr [edx+40]			//	A[2][2]
 		fmul			st(0),st(3)		// A[2][2] * B[2][1]
@@ -892,9 +892,9 @@ not_equal:
 		faddp			st(1),st(0)
 		fstp			dword ptr [eax+36]			//	res[2][1]
 
-//		tmp1 = B[0][2];
-//		tmp2 = B[1][2];
-//		tmp3 = B[2][2];
+		//		tmp1 = B[0][2];
+		//		tmp2 = B[1][2];
+		//		tmp3 = B[2][2];
 		fstp			st(0)
 		fstp			st(0)
 		fstp			st(0)
@@ -902,7 +902,7 @@ not_equal:
 		fld			dword ptr [ecx+24]			//	B[1][2]
 		fld			dword ptr [ecx+8]			//	B[0][2]
 
-//		(*set_res)[0][2] = (*Aptr)[0][0]*tmp1 + (*Aptr)[0][1]*tmp2 + (*Aptr)[0][2]*tmp3;
+		//		(*set_res)[0][2] = (*Aptr)[0][0]*tmp1 + (*Aptr)[0][1]*tmp2 + (*Aptr)[0][2]*tmp3;
 		fld			dword ptr [edx+8]			//	A[0][2]
 		fmul			st(0),st(3)		// A[0][2] * B[2][2]
 		fld			dword ptr [edx+4]			//	A[0][1]
@@ -913,7 +913,7 @@ not_equal:
 		faddp			st(1),st(0)
 		fstp			dword ptr [eax+8]			//	res[0][2]
 
-//		(*set_res)[1][2] = A[1][0]*tmp1 + A[1][1]*tmp2 + A[1][2]*tmp3;
+		//		(*set_res)[1][2] = A[1][0]*tmp1 + A[1][1]*tmp2 + A[1][2]*tmp3;
 		fld			dword ptr [edx+24]			//	A[1][2]
 		fmul			st(0),st(3)		// A[1][2] * B[2][2]
 		fld			dword ptr [edx+20]			//	A[1][1]
@@ -924,7 +924,7 @@ not_equal:
 		faddp			st(1),st(0)
 		fstp			dword ptr [eax+24]			//	res[1][2]
 
-//		(*set_res)[2][2] = A[2][0]*tmp1 + A[2][1]*tmp2 + A[2][2]*tmp3;
+		//		(*set_res)[2][2] = A[2][0]*tmp1 + A[2][1]*tmp2 + A[2][2]*tmp3;
 
 		fld			dword ptr [edx+40]			//	A[2][2]
 		fmul			st(0),st(3)		// A[2][2] * B[2][2]
@@ -936,10 +936,10 @@ not_equal:
 		faddp			st(1),st(0)
 		fstp			dword ptr [eax+40]			//	res[2][2]
 
-// -------------------------------
-//		tmp1 = B[0][3];
-//		tmp2 = B[1][3];
-//		tmp3 = B[2][3];
+		// -------------------------------
+		//		tmp1 = B[0][3];
+		//		tmp2 = B[1][3];
+		//		tmp3 = B[2][3];
 		fstp			st(0)
 		fstp			st(0)
 		fstp			st(0)
@@ -947,7 +947,7 @@ not_equal:
 		fld			dword ptr [ecx+28]			//	B[1][3]
 		fld			dword ptr [ecx+12]			//	B[0][3]
 
-//		(*set_res)[0][3] = A[0][0]*tmp1 + A[0][1]*tmp2 + A[0][2]*tmp3 + A[0][3];
+		//		(*set_res)[0][3] = A[0][0]*tmp1 + A[0][1]*tmp2 + A[0][2]*tmp3 + A[0][3];
 		fld			dword ptr [edx+8]			//	A[0][2]
 		fmul			st(0),st(3)		// A[0][2] * B[2][3]
 		fld			dword ptr [edx+4]			//	A[0][1]
@@ -959,7 +959,7 @@ not_equal:
 		fadd			dword ptr [edx+12]			// + A[0][3]
 		fstp			dword ptr [eax+12]			//	res[0][3]
 
-//		(*set_res)[1][3] = A[1][0]*tmp1 + A[1][1]*tmp2 + A[1][2]*tmp3 + A[1][3];
+		//		(*set_res)[1][3] = A[1][0]*tmp1 + A[1][1]*tmp2 + A[1][2]*tmp3 + A[1][3];
 		fld			dword ptr [edx+24]			//	A[1][2]
 		fmul			st(0),st(3)		// A[1][2] * B[2][3]
 		fld			dword ptr [edx+20]			//	A[1][1]
@@ -971,7 +971,7 @@ not_equal:
 		fadd			dword ptr [edx+28]			//	+ A[1][3]
 		fstp			dword ptr [eax+28]			//	res[1][3]
 
-//		(*set_res)[2][3] = A[2][0]*tmp1 + A[2][1]*tmp2 + A[2][2]*tmp3 + A[2][3];
+		//		(*set_res)[2][3] = A[2][0]*tmp1 + A[2][1]*tmp2 + A[2][2]*tmp3 + A[2][3];
 
 		fld			dword ptr [edx+40]			//	A[2][2]
 		fmul			st(0),st(3)		// A[2][2] * B[2][3]
@@ -993,7 +993,7 @@ not_equal:
 		mov	esi,eax		// set source to tmp
 		mov	edi,set_res	// set destination to set_res
 		rep	movsd			// copy
-not_equal2:
+	not_equal2:
 
 	}
 /*

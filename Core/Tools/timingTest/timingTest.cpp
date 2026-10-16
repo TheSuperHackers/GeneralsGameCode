@@ -35,8 +35,7 @@ void GetPrecisionTimer(INT64* t)
 {
 #if defined(_MSC_VER) && _MSC_VER < 1300
 	// CPUID is needed to force serialization of any previous instructions.
-	__asm
-	{
+	__asm {
 		RDTSC
 		MOV ECX,[t]
 		MOV [ECX], EAX

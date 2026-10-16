@@ -365,14 +365,13 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
     // walk stack back using current call chain
 	  unsigned long reg_eip, reg_ebp, reg_esp;
 #if defined(_MSC_VER)
-	  __asm
-    {
-    here:
-		  lea	eax,here
-		  mov	reg_eip,eax
-		  mov	reg_ebp,ebp
-		  mov	reg_esp,esp
-	  };
+		__asm {
+		here:
+			lea	eax,here
+			mov	reg_eip,eax
+			mov	reg_ebp,ebp
+			mov	reg_esp,esp
+		}
 #elif (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(_M_IX86))
 	  __asm__ __volatile__ (
 		  "call 1f\n\t"

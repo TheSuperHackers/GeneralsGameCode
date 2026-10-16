@@ -818,26 +818,25 @@ void CPUDetectClass::Init_CPUID_Instruction()
 #if defined(_MSC_VER) && _MSC_VER < 1300
 	unsigned long cpuid_available=0;
 #ifdef WIN32
-   __asm
-   {
-      mov cpuid_available, 0	// clear flag
-      push ebx
-      pushfd
-      pop eax
-      mov ebx, eax
-      xor eax, 0x00200000
-      push eax
-      popfd
-      pushfd
-      pop eax
-      xor eax, ebx
-      je done
-      mov cpuid_available, 1
-   done:
-      push ebx
-      popfd
-      pop ebx
-   }
+	__asm {
+		mov cpuid_available, 0	// clear flag
+		push ebx
+		pushfd
+		pop eax
+		mov ebx, eax
+		xor eax, 0x00200000
+		push eax
+		popfd
+		pushfd
+		pop eax
+		xor eax, ebx
+		je done
+		mov cpuid_available, 1
+	done:
+		push ebx
+		popfd
+		pop ebx
+	}
 #elif defined(_UNIX)
      __asm__(" mov $0, __cpuid_available");  // clear flag
      __asm__(" push %ebx");

@@ -47,31 +47,29 @@ static void __declspec(naked) _pleave()
   ProfileFuncLevelTracer *p;
   unsigned curESP,leaveAddr;
 
-  _asm
-  {
-    push ebp        // this will be overwritten down there...
-    push ebp        // setup standard stack frame
-    push eax
-    mov  ebp,esp
-    mov  eax,esp
-    sub  esp,3*4    // 3 local DWord vars
-    pushad
-    mov  [curESP],eax
-  }
+	__asm {
+		push ebp        // this will be overwritten down there...
+		push ebp        // setup standard stack frame
+		push eax
+		mov  ebp,esp
+		mov  eax,esp
+		sub  esp,3*4    // 3 local DWord vars
+		pushad
+		mov  [curESP],eax
+	}
 
   curESP+=8;
   p=(ProfileFuncLevelTracer *)TlsGetValue(TLSIndex);
   leaveAddr=p->Leave(curESP);
   *(unsigned *)(curESP)=leaveAddr;
 
-  _asm
-  {
-    popad
-    add  esp,3*4    // must match sub esp above
-    pop  eax
-    pop  ebp
-    ret
-  }
+	__asm {
+		popad
+		add  esp,3*4    // must match sub esp above
+		pop  eax
+		pop  ebp
+		ret
+	}
 }
 
 extern "C" void __declspec(naked) __cdecl _penter()
@@ -79,29 +77,28 @@ extern "C" void __declspec(naked) __cdecl _penter()
   unsigned callerFunc,ESPonReturn,callerRet;
   ProfileFuncLevelTracer *p;
 
-  _asm
-  {
-    push ebp
-    push eax
-    mov  ebp,esp
-    mov  eax,esp
-    sub  esp,4*4      // 4 local DWord vars
-    pushad
+	__asm {
+		push ebp
+		push eax
+		mov  ebp,esp
+		mov  eax,esp
+		sub  esp,4*4      // 4 local DWord vars
+		pushad
 
-    // calc return address
-    add  eax,4+4      // account for push ebp and push eax
-    mov  ebx,[eax]    // grab return address
-    mov  [callerFunc],ebx
+		// calc return address
+		add  eax,4+4      // account for push ebp and push eax
+		mov  ebx,[eax]    // grab return address
+		mov  [callerFunc],ebx
 
-    // get some more stuff
-    add  eax,4
-    mov  [ESPonReturn],eax
-    mov  ebx,[eax]
-    mov  [callerRet],ebx
+		// get some more stuff
+		add  eax,4
+		mov  [ESPonReturn],eax
+		mov  ebx,[eax]
+		mov  [callerRet],ebx
 
-    // jam in our exit code
-    mov  dword ptr [eax],offset _pleave
-  }
+		// jam in our exit code
+		mov  dword ptr [eax],offset _pleave
+	}
 
   // do we need a new stack tracer?
   if (TLSIndex==-1)
@@ -118,14 +115,13 @@ extern "C" void __declspec(naked) __cdecl _penter()
   p->Enter(callerFunc-5,ESPonReturn,callerRet);
 
   // cleanup
-  _asm
-  {
-    popad
-    add  esp,4*4      // must match sub esp above
-    pop  eax
-    pop  ebp
-    ret
-  }
+	__asm {
+		popad
+		add  esp,4*4      // must match sub esp above
+		pop  eax
+		pop  ebp
+		ret
+	}
 }
 
 ProfileFuncLevelTracer *ProfileFuncLevelTracer::head=nullptr;

@@ -308,11 +308,10 @@ bool Debug::SkipNext()
   // a valid frame pointer here!
   unsigned help;
 #if defined(_MSC_VER)
-  _asm
-  {
-    mov eax,[ebp+4]   // return address
-    mov help,eax
-  };
+	__asm {
+		mov eax,[ebp+4]   // return address
+		mov help,eax
+	}
 #elif (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(_M_IX86))
   // GCC/Clang inline assembly for x86-32
   __asm__ __volatile__(
