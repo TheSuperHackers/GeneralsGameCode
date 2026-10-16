@@ -124,6 +124,18 @@ static UnsignedByte toPathKeyChar(Char ch)
 	return (UnsignedByte)ch;
 }
 
+// Returns the end of the separator pair that starts a UNC or device path, such as \\server\share.
+// Windows keeps this pair apart from the single separator of a rooted path. Other platforms read
+// two leading separators as one.
+static const Char* getPathKeyPairEnd(const Char* path)
+{
+#ifdef _WIN32
+	if (isPathSeparator(path[0]) && isPathSeparator(path[1]))
+		return path + 2;
+#endif
+	return path;
+}
+
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
 // Returns the key under which a file is held in the file exist cache.
 // A path that is too long for a path key is held under its own spelling.
@@ -458,6 +470,7 @@ Bool FileSystem::makePathKey(Char* key, size_t keySize, const Char* path)
 
 	Char* const keyBegin = key;
 	const Char* const keyEnd = key + keySize - 1;
+	const Char* const pairEnd = getPathKeyPairEnd(path);
 
 	for (;;)
 	{
@@ -477,7 +490,7 @@ Bool FileSystem::makePathKey(Char* key, size_t keySize, const Char* path)
 
 		if (ch == '\\')
 		{
-			while (isPathSeparator(*path))
+			while (path > pairEnd && isPathSeparator(*path))
 				++path;
 		}
 	}
@@ -491,6 +504,9 @@ Bool FileSystem::makePathKey(Char* key, size_t keySize, const Char* path)
 //============================================================================
 Int FileSystem::comparePath(const Char* a, const Char* b)
 {
+	const Char* const pairEndA = getPathKeyPairEnd(a);
+	const Char* const pairEndB = getPathKeyPairEnd(b);
+
 	for (;;)
 	{
 		const UnsignedByte ca = toPathKeyChar(*a);
@@ -504,9 +520,9 @@ Int FileSystem::comparePath(const Char* a, const Char* b)
 
 		if (ca == '\\')
 		{
-			while (isPathSeparator(*a))
+			while (a > pairEndA && isPathSeparator(*a))
 				++a;
-			while (isPathSeparator(*b))
+			while (b > pairEndB && isPathSeparator(*b))
 				++b;
 		}
 	}

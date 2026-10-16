@@ -183,7 +183,8 @@ public:
 	/// Existing separators are not converted.
 	static void appendPathSeparator(AsciiString& path);
 
-	/// Writes the key form of a path: lowercase ascii with every run of separators as one backslash.
+	/// Writes the key form of a path: lowercase ascii with every run of separators as one backslash,
+	/// except that on Windows the separator pair at the start of a UNC or device path stays a pair.
 	/// Two paths refer to the same game file exactly when their keys are equal.
 	/// Returns FALSE and writes an empty key if the key does not fit.
 	static Bool makePathKey(Char* key, size_t keySize, const Char* path);

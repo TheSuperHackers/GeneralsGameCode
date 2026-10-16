@@ -77,6 +77,21 @@ TEST(FileSystemPathKey, IsLowercaseWithSingleBackslashes)
 	EXPECT_EQ(toPathKey(""), "");
 }
 
+#ifdef _WIN32
+// Windows reads two separators at the start of a path as a UNC or device path, which is not the rooted
+// path with one separator. Later runs of separators count as one, as they do for Windows.
+TEST(FileSystemPathKey, KeepsSeparatorPairAtStart)
+{
+	EXPECT_EQ(toPathKey("\\\\Server\\Share\\Maps"), "\\\\server\\share\\maps");
+	EXPECT_EQ(toPathKey("//Server//Share/Maps"), "\\\\server\\share\\maps");
+	EXPECT_EQ(toPathKey("/\\Server"), "\\\\server");
+	EXPECT_EQ(toPathKey("\\\\\\\\Server"), "\\\\\\server");
+	EXPECT_EQ(toPathKey("\\\\?\\C:\\Data"), "\\\\?\\c:\\data");
+	EXPECT_EQ(toPathKey("\\\\.\\Pipe\\Name"), "\\\\.\\pipe\\name");
+	EXPECT_NE(toPathKey("\\\\Server\\Share"), toPathKey("\\Server\\Share"));
+}
+#endif
+
 TEST(FileSystemPathKey, ReportsKeyThatDoesNotFit)
 {
 	Char key[9];
@@ -94,6 +109,7 @@ TEST(FileSystemPathKey, ComparePathOrdersLikePathKeys)
 	{
 		"", "a", "A", "b", "aB", "Ab", "a.b", "a b", "a_b", "a[b", "a0",
 		"a\\", "a/", "a\\\\", "a//", "\\a", "/a", "//a",
+		"\\\\", "\\\\\\a", "\\\\\\\\a", "\\\\a\\b", "\\\\?\\c:\\a", "\\\\.\\a",
 		"a\\b", "a/b", "a//b", "a\\/b", "A\\B\\", "a/b/",
 		"a\\b\\c", "a/b\\c", "a\\b.c", "a\\b c", "a\\b_c",
 		"Data\\INI", "Data\\INI\\", "Data\\INI.big", "Data\\INIZH.big", "Data\\INI_",
@@ -122,6 +138,19 @@ TEST(FilenameList, HoldsFileOnceInAnySpelling)
 	const std::vector<std::string> expected = { "Data\\INI\\Armor.ini", "Data\\INI\\Weapon.ini" };
 	EXPECT_EQ(toVector(filenames), expected);
 }
+
+#ifdef _WIN32
+TEST(FilenameList, HoldsUncPathApartFromRootedPath)
+{
+	FilenameList filenames;
+	filenames.insert("\\\\Server\\Share\\Maps\\A.map");
+	filenames.insert("//server/share/maps/a.map");
+	filenames.insert("\\Server\\Share\\Maps\\A.map");
+
+	const std::vector<std::string> expected = { "\\\\Server\\Share\\Maps\\A.map", "\\Server\\Share\\Maps\\A.map" };
+	EXPECT_EQ(toVector(filenames), expected);
+}
+#endif
 
 // The game loads the INI files of a directory in the order of the file list, which was ordered by
 // names without regard to letter case before it was ordered by path keys.
