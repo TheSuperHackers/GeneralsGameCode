@@ -125,6 +125,7 @@ protected:
 
   void private___TellPortableStructureToAttackWithMe( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource );
 
+	ObjectID getAirfieldForHealing() const { return m_airfieldForHealing; }
 
 private:
 
