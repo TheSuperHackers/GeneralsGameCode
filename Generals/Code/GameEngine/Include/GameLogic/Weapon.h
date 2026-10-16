@@ -608,6 +608,8 @@ public:
 		return estimateWeaponDamage(source, nullptr, pos);
 	}
 
+	void onWeaponBonusChange(const Object *source);///< Our Object's weapon bonus changed, so we need to update to reflect that instead of waiting
+
 	/** return true if the target is within attack range, false otherwise.
 	*/
 	Bool isWithinAttackRange(const Object *source, const Object *target) const;
@@ -645,11 +647,13 @@ public:
 	/// Some AI needs to know when the soonest I can possibly next shoot.  Bonuses have been figured into this number already.
 	UnsignedInt getPossibleNextShotFrame() const { return m_whenWeCanFireAgain; }
 	UnsignedInt getPreAttackFinishedFrame() const { return m_whenPreAttackFinished; }
+	UnsignedInt getLastReloadStartedFrame() const { return m_whenLastReloadStarted; }
 	Real getPercentReadyToFire() const;
 
 	// do not ever use this unless you are weaponset.cpp
 	void setPossibleNextShotFrame( UnsignedInt frameNum ) { m_whenWeCanFireAgain = frameNum; }
 	void setPreAttackFinishedFrame( UnsignedInt frameNum ) { m_whenPreAttackFinished = frameNum; }
+	void setLastReloadStartedFrame( UnsignedInt frameNum ) { m_whenLastReloadStarted = frameNum; }
 
 	// we must pass the source object for these (and for ANY FUTURE ADDITIONS)
 	// so that we can take the source's weapon bonuses, if any, into account.

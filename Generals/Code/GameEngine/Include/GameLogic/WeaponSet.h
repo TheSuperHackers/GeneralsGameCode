@@ -211,6 +211,7 @@ public:
 	WeaponSlotType getCurWeaponSlot() const { return m_curWeapon; }
 	Weapon* findWaypointFollowingCapableWeapon();
 	const Weapon* findAmmoPipShowingWeapon() const;
+	void weaponSetOnWeaponBonusChange(const Object *source);
 	UnsignedInt getMostPercentReadyToFireAnyWeapon() const;
 
 	Bool setWeaponLock( WeaponSlotType weaponSlot, WeaponLockType lockType );
