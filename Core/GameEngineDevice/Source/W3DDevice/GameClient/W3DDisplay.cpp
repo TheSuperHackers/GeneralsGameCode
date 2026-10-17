@@ -91,6 +91,8 @@ static void drawFramerateBar();
 #include "WW3D2/part_emt.h"
 #include "WW3D2/part_ldr.h"
 #include "WW3D2/dx8caps.h"
+#include "WW3D2/dx8indexbuffer.h"
+#include "WW3D2/dx8vertexbuffer.h"
 #include "WW3D2/ww3dformat.h"
 #include "WW3D2/agg_def.h"
 #include "WW3D2/render2dsentence.h"
@@ -643,7 +645,10 @@ void W3DDisplay::setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool 
 {
 	if (m_isBatching)
 	{
-		if (!m_batchNeedsInit && m_batchTexture == tex && m_batchMode == mode && m_batchGrayscale == grayscale)
+		// TheSuperHackers @bugfix arcticdolphin 12/10/2026 Flush at half capacity so one draw call cannot overflow the renderer.
+		const Bool hasRoom = !m_2DRender || m_2DRender->Can_Add(DynamicVBAccessClass::MAX_VERTEX_COUNT / 2, DynamicIBAccessClass::MAX_INDEX_COUNT / 2);
+
+		if (!m_batchNeedsInit && hasRoom && m_batchTexture == tex && m_batchMode == mode && m_batchGrayscale == grayscale)
 		{
 			return;
 		}
