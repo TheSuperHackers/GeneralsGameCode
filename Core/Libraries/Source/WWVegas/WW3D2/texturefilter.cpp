@@ -212,18 +212,28 @@ void TextureFilterClass::_Init_Filters(TextureFilterMode texture_filter, Anisotr
 
 	case TEXTURE_FILTER_ANISOTROPIC:
 
-		FilterSupported = (dx8caps.TextureFilterCaps & D3DPTFILTERCAPS_MAGFANISOTROPIC) &&
-			(dx8caps.TextureFilterCaps & D3DPTFILTERCAPS_MINFANISOTROPIC);
+		FilterSupported = (dx8caps.TextureFilterCaps & D3DPTFILTERCAPS_MINFANISOTROPIC);
 
 		if (FilterSupported) {
 			_MinTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_ANISOTROPIC;
-			_MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_ANISOTROPIC;
 
 			// Set the Anisotropic filtering level for all stages
 			_Set_Max_Anisotropy(anisotropy_level);
 		}
+		else if (dx8caps.TextureFilterCaps & D3DPTFILTERCAPS_MINFLINEAR) {
+			_MinTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
+		}
 		else {
 			_MinTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;
+		}
+
+		if (FilterSupported && (dx8caps.TextureFilterCaps & D3DPTFILTERCAPS_MAGFANISOTROPIC)) {
+			_MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_ANISOTROPIC;
+		}
+		else if (dx8caps.TextureFilterCaps & D3DPTFILTERCAPS_MAGFLINEAR) {
+			_MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
+		}
+		else {
 			_MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;
 		}
 
