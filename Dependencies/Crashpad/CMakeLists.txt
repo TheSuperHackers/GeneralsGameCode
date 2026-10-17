@@ -1,15 +1,15 @@
 # Acquire separately with this directory's manifest. Disabled builds never run
 # vcpkg or look for Crashpad. A copied, pinned installed prefix works without a
 # vcpkg toolchain in the game build.
-set(RTS_CRASHPAD_PACKAGE_ROOT "" CACHE PATH "Pinned x86-windows-static-md Crashpad installed prefix")
+set(RTS_CRASHPAD_PACKAGE_ROOT "" CACHE PATH "Pinned x86-windows-static Crashpad installed prefix")
 set(RTS_CRASHPAD_REVISION "7e0af1d4d45b526f01677e74a56f4a951b70517d")
 set(RTS_CRASHPAD_MINI_CHROMIUM_REVISION "dce72d97d1c2e9beb5e206c6a05a702269794ca3")
 set(package "${RTS_CRASHPAD_PACKAGE_ROOT}")
 if(NOT EXISTS "${package}/share/crashpad/vcpkg.spdx.json")
-    message(FATAL_ERROR "Set RTS_CRASHPAD_PACKAGE_ROOT to the x86-windows-static-md prefix built with Dependencies/Crashpad/vcpkg.json. See docs/crashpad.md.")
+    message(FATAL_ERROR "Set RTS_CRASHPAD_PACKAGE_ROOT to the x86-windows-static prefix built with Dependencies/Crashpad/vcpkg.json. See docs/crashpad.md.")
 endif()
 file(READ "${package}/share/crashpad/vcpkg.spdx.json" provenance)
-foreach(required "crashpad:x86-windows-static-md@2024-04-11#7"
+foreach(required "crashpad:x86-windows-static@2024-04-11#7"
         "${RTS_CRASHPAD_REVISION}" "${RTS_CRASHPAD_MINI_CHROMIUM_REVISION}")
     string(FIND "${provenance}" "${required}" position)
     if(position EQUAL -1)
@@ -29,21 +29,12 @@ if(NOT EXISTS "${handler}")
 endif()
 set(RTS_CRASHPAD_HANDLER "${handler}" PARENT_SCOPE)
 
-# Deploy the redistributable x86 VC runtime from the selected Visual Studio.
-# The Windows 10+ Universal CRT is supplied by the OS. Debug builds still need
-# a developer installation of the non-redistributable debug CRT.
-set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
-include(InstallRequiredSystemLibraries)
-if(NOT CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS)
-    message(FATAL_ERROR "The Visual Studio x86 redistributable runtime was not found")
-endif()
-set(RTS_CRASHPAD_RUNTIME_FILES "${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}" PARENT_SCOPE)
-
+# Static CRT, matching the package, so no VC runtime DLLs ship beside the game.
 add_library(rts_crashpad SHARED CrashpadBridge.cpp CrashpadBridge.h CrashpadBridge.def)
 target_compile_features(rts_crashpad PRIVATE cxx_std_20)
 target_link_libraries(rts_crashpad PRIVATE crashpad::crashpad)
 set_target_properties(rts_crashpad PROPERTIES
-    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
     DISABLE_PRECOMPILE_HEADERS ON)
 target_compile_options(rts_crashpad PRIVATE /Zi)
 target_link_options(rts_crashpad PRIVATE /DEBUG)

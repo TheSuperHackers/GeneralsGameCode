@@ -7,8 +7,8 @@ builds do not acquire or link Crashpad. Unsupported configurations, including
 VC6, non-Windows, x64, sanitizer/fuzzing builds and `RTS_CRASHDUMP_ENABLE=OFF`,
 reject an explicit request to enable it.
 
-The optional backend expects Windows 10 or newer for the Universal CRT. It does
-not change the OS requirements of default builds. A failure to load or start
+The optional backend expects Windows 10 or newer. It does not change the OS
+requirements of default builds. A failure to load or start
 Crashpad falls back to MiniDumper; the game can start if neither is available.
 
 ## Building
@@ -21,11 +21,11 @@ pointing to vcpkg:
 "$VCPKG_ROOT/vcpkg.exe" install \
   --x-manifest-root=Dependencies/Crashpad \
   --x-install-root=build/crashpad-package \
-  --triplet=x86-windows-static-md --host-triplet=x86-windows-static-md
+  --triplet=x86-windows-static --host-triplet=x86-windows-static
 
 cmake -S . -B build/crashpad -G "Visual Studio 18 2026" -A Win32 -T ClangCL \
   -DRTS_BUILD_OPTION_CRASHPAD=ON \
-  -DRTS_CRASHPAD_PACKAGE_ROOT="$PWD/build/crashpad-package/x86-windows-static-md" \
+  -DRTS_CRASHPAD_PACKAGE_ROOT="$PWD/build/crashpad-package/x86-windows-static" \
   -DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded
 cmake --build build/crashpad --config Release --target g_generals z_generals --parallel 4
 ```
@@ -34,7 +34,7 @@ Omit `-T ClangCL` to build the games and adapter with MSVC. The dependency uses
 vcpkg's MSVC/GN build. Both triplets must be native x86 for the pinned port's
 Python helper. Configure checks the package's SPDX record against the pinned
 port version, architecture and source revisions. Use the handler from that same
-package. Debug builds need the Visual Studio debug CRT.
+package. The adapter and handler link the C++ runtime statically.
 
 ## Capture and fallback
 
@@ -72,7 +72,7 @@ directory to share it. Keep the original database files in place. Dumps contain
 process memory; sharing is a separate user action.
 
 Enabled game outputs and CMake installs include the matching handler, adapter
-DLL/PDB, redistributable VC runtime DLLs and dependency notices. Set
+DLL/PDB and dependency notices. Set
 `RTS_INSTALL_PREFIX_GENERALS` and `RTS_INSTALL_PREFIX_ZEROHOUR` to explicit staging
 paths when testing installation. Runtime paths do not depend on the build tree.
 

@@ -838,10 +838,8 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// Force to be loaded from a file, not a resource so same exe can be used in germany and retail.
  		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, "Install_Final.bmp",	IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
 
-#ifdef RTS_ENABLE_CRASHDUMP
 		// Begin reporting with TheGlobalData available; the INIs provide the user-data path later.
 		CrashReporting::initialize(TheGlobalData->getPath_UserData(), VERSION_MAJOR, VERSION_MINOR, VERSION_BUILDNUM);
-#endif
 		// register windows class and create application window
 		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
 		{
@@ -913,9 +911,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	}
 
-#ifdef RTS_ENABLE_CRASHDUMP
 	CrashReporting::shutdown();
-#endif
 	TheAsciiStringCriticalSection = nullptr;
 	TheUnicodeStringCriticalSection = nullptr;
 	TheDmaCriticalSection = nullptr;

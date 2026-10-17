@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// TheSuperHackers @feature Codex 01/10/2026 Select optional local Crashpad reporting with legacy MiniDumper fallback.
+// TheSuperHackers @feature CryoTheRenegade 01/10/2026 Select optional local Crashpad reporting with legacy MiniDumper fallback.
 #include "PreRTS.h" // This must go first in EVERY cpp file in the GameEngine
 #include "Common/CrashReporting.h"
 #include "Common/MiniDumper.h"

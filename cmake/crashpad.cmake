@@ -28,8 +28,7 @@ function(rts_enable_crashpad game engine)
         COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${game}>"
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "$<TARGET_FILE:rts_crashpad>" "$<TARGET_PDB_FILE:rts_crashpad>"
-            "${RTS_CRASHPAD_HANDLER}"
-            ${RTS_CRASHPAD_RUNTIME_FILES} "$<TARGET_FILE_DIR:${game}>"
+            "${RTS_CRASHPAD_HANDLER}" "$<TARGET_FILE_DIR:${game}>"
         COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${RTS_CRASHPAD_NOTICES}" "$<TARGET_FILE_DIR:${game}>/crashpad-notices"
         DEPENDS rts_crashpad
@@ -43,7 +42,5 @@ function(rts_install_crashpad destination)
             "${RTS_CRASHPAD_HANDLER}"
             DESTINATION "${destination}")
         install(DIRECTORY "${RTS_CRASHPAD_NOTICES}/" DESTINATION "${destination}/crashpad-notices")
-        install(FILES ${RTS_CRASHPAD_RUNTIME_FILES} DESTINATION "${destination}"
-            CONFIGURATIONS Release RelWithDebInfo MinSizeRel)
     endif()
 endfunction()

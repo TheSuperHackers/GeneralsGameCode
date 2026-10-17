@@ -730,20 +730,20 @@ double SimpleProfiler::getAverageTime()
 
 void ReleaseCrash(const char *reason)
 {
-	CrashReporting::captureFatal();
-
-	// We are shutting down, and TheGlobalData has been freed. jba. [4/15/2003]
-	if (TheGlobalData == nullptr)
-	{
-		return;
-	}
-
 	/// do additional reporting on the crash, if possible
 
 	if (!DX8Wrapper_IsWindowed) {
 		if (ApplicationHWnd) {
 			ShowWindow(ApplicationHWnd, SW_HIDE);
 		}
+	}
+
+	CrashReporting::captureFatal();
+
+	// We are shutting down, and TheGlobalData has been freed. jba. [4/15/2003]
+	if (TheGlobalData == nullptr)
+	{
+		return;
 	}
 
 	char prevbuf[ _MAX_PATH ];
@@ -818,7 +818,7 @@ void ReleaseCrash(const char *reason)
 
 void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 {
-	// TheSuperHackers @bugfix Codex 01/10/2026 Match ReleaseCrash during shutdown instead of dereferencing freed global data.
+	// TheSuperHackers @bugfix CryoTheRenegade 01/10/2026 Match ReleaseCrash during shutdown instead of dereferencing freed global data.
 	if (TheGlobalData == nullptr)
 	{
 		CrashReporting::captureFatal();

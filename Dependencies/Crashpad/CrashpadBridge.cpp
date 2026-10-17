@@ -19,6 +19,7 @@
 // Deliberately compiled outside the game PCH, forced includes and allocator.
 #include <windows.h>
 #include <csignal>
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
