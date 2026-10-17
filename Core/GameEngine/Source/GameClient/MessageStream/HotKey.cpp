@@ -52,7 +52,6 @@
 //-----------------------------------------------------------------------------
 #include "GameClient/HotKey.h"
 #include "GameClient/KeyDefs.h"
-#include "GameClient/MetaEvent.h"
 #include "GameClient/GameWindow.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/Keyboard.h"
@@ -69,38 +68,21 @@
 //-----------------------------------------------------------------------------
 GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage *msg)
 {
-	GameMessageDisposition disp = KEEP_MESSAGE;
 	GameMessage::Type t = msg->getType();
+	GameMessageDisposition disp = t == GameMessage::MSG_GUI_HOTKEY ? DESTROY_MESSAGE : KEEP_MESSAGE;
 
-	if ( t == GameMessage::MSG_RAW_KEY_UP)
+	// TheSuperHackers @fix Run hotkeys on press instead of release, consistent with typical meta event mappings.
+	// Releasing a modifier first can no longer trigger a plain hotkey.
+	if ( t == GameMessage::MSG_RAW_KEY_DOWN || t == GameMessage::MSG_GUI_HOTKEY)
 	{
-
-		//char key = msg->getArgument(0)->integer;
-		Int keyState = msg->getArgument(1)->integer;
-
-		// for our purposes here, we don't care to distinguish between right and left keys,
-		// so just fudge a little to simplify things.
-		Int newModState = 0;
-
-		if( keyState & KEY_STATE_CONTROL )
-		{
-			newModState |= CTRL;
-		}
-
-		if( keyState & KEY_STATE_SHIFT )
-		{
-			newModState |= SHIFT;
-		}
-
-		if( keyState & KEY_STATE_ALT )
-		{
-			newModState |= ALT;
-		}
-		if(newModState != 0)
+		const KeyDefType key = (KeyDefType)msg->getArgument(0)->integer;
+		const KeyState keyState = (KeyState)msg->getArgument(1)->integer;
+		if( keyState & (KEY_STATE_MODIFIERS | KEY_STATE_AUTOREPEAT) )
 			return disp;
-		WideChar key = TheKeyboard->getPrintableKey((KeyDefType)msg->getArgument(0)->integer, 0);
+
+		WideChar printableKey = TheKeyboard->getPrintableKey(key, 0);
 		UnicodeString uKey;
-		uKey.concat(key);
+		uKey.concat(printableKey);
 		AsciiString aKey;
 		aKey.translate(uKey);
 		if(TheHotKeyManager && TheHotKeyManager->executeHotKey(aKey))

@@ -133,8 +133,8 @@ public:
 		MSG_RAW_MOUSE_WHEEL,												///< (Real spin, + is away, - is toward user)
 		MSG_RAW_MOUSE_END,
 
-		MSG_RAW_KEY_DOWN,														///< (KeyDefType) the given key was pressed (uses Microsoft VK_ codes)
-		MSG_RAW_KEY_UP,															///< (KeyDefType) the given key was released
+		MSG_RAW_KEY_DOWN,														///< (KeyDefType, KeyState) the given key was pressed
+		MSG_RAW_KEY_UP,															///< (KeyDefType, KeyState) the given key was released
 
 		// Refined Mouse messages
 		// NOTE: All processing should attempt to use these refined mouse messages, rather than the
@@ -479,6 +479,7 @@ public:
 		MSG_DO_INVALID_HINT,												///< Display invalid cursor because no real command can be done in this context.
 		MSG_DO_ATTACK_OBJECT_AFTER_MOVING_HINT,
 		MSG_HACK_HINT,
+		MSG_GUI_HOTKEY, ///< (KeyDefType, KeyState) a press consumed by a meta action, still available to GUI hotkeys
 
 //*********************************************************************************************************
 //*********************************************************************************************************
