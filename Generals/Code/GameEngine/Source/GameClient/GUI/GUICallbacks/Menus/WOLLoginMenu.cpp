@@ -122,10 +122,11 @@ static AsciiString obfuscate( AsciiString in )
 	{
 		if (!*c2)
 			c2 = xorWord;
+		// TheSuperHackers @bugfix Fix buffer overrun crash on login screen when user had a saved password.
 		if (*c != *c2)
-			*c = *c++ ^ *c2++;
-		else
-			c++, c2++;
+			*c ^= *c2;
+		++c;
+		++c2;
 	}
 	AsciiString out = buf;
 	delete[] buf;

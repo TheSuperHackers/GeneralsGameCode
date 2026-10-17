@@ -21,7 +21,7 @@
 #include "Registry.h"
 
 void FormatURLFromRegistry( std::string& gamePatchURL, std::string& mapPatchURL,
-													 std::string& configURL, std::string& motdURL )
+													 std::string& configURL, std::string& motdURL, const char *serverHost )
 {
 #if RTS_GENERALS
 	std::string sku = "generals";
@@ -31,7 +31,9 @@ void FormatURLFromRegistry( std::string& gamePatchURL, std::string& mapPatchURL,
 	std::string language = "english";
 	unsigned int version = 0; // invalid version - can't get on with a corrupt reg.
 	unsigned int mapVersion = 0; // invalid version - can't get on with a corrupt reg.
-	std::string baseURL = "http://servserv.generals.ea.com/servserv/";
+	std::string baseURL = "http://";
+	baseURL.append(serverHost);
+	baseURL.append("/servserv/");
 	baseURL.append(sku);
 	baseURL.append("/");
 
