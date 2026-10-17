@@ -45,6 +45,7 @@
 #include "GameLogic/Module/NeutronMissileSlowDeathUpdate.h"
 #include "GameLogic/Module/ToppleUpdate.h"
 #include "GameLogic/TerrainLogic.h"
+#include "WWMath/wwmath.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -298,7 +299,7 @@ static void debugDrawBlastCircle( const Coord3D *center, Real radius, Real tileW
 
 	// space the icons roughly one tile apart along the circumference, within sane bounds
 	tileWidth = max( tileWidth, 1.0f );
-	Int segments = (Int)ceilf( (2.0f * PI * radius) / tileWidth * 0.5f );
+	Int segments = (Int)WWMath::Ceilf( (2.0f * PI * radius) / tileWidth * 0.5f );
 	segments = clamp(1, segments, 256);
 
 	for( Int i = 0; i < segments; ++i )
@@ -306,8 +307,8 @@ static void debugDrawBlastCircle( const Coord3D *center, Real radius, Real tileW
 		Real angle = (2.0f * PI * i) / segments;
 		Coord3D pos;
 
-		pos.x = center->x + radius * cosf( angle );
-		pos.y = center->y + radius * sinf( angle );
+		pos.x = center->x + radius * WWMath::Cosf( angle );
+		pos.y = center->y + radius * WWMath::Sinf( angle );
 		pos.z = TheTerrainLogic->getGroundHeight( pos.x, pos.y );
 
 		addIcon( &pos, tileWidth, frameDuration, color );

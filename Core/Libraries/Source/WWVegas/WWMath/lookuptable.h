@@ -86,7 +86,7 @@ inline float LookupTableClass::Get_Value(float input)
 	}
 
 	float normalized_input = (float)(OutputSamples.Length()-1) * (input - MinInputValue) * OOMaxMinusMin;
-	float input0 = WWMath::Floor(normalized_input);
+	float input0 = WWMath::Floorf(normalized_input);
 
 	int index0 = WWMath::Float_To_Long(input0);
 	int index1 = index0+1;

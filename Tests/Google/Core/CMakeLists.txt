@@ -5,6 +5,11 @@ set(COREI_GOOGLETEST_SRC
     GameEngine/Common/INITest.cpp
     GameEngineDevice/StdDevice/Common/StdLocalFileSystemTest.cpp
     Libraries/Compression/CompressionManagerTest.cpp
+    Libraries/WWVegas/WWMath/WWMathCalls.h
+    Libraries/WWVegas/WWMath/WWMathDumps.h
+    Libraries/WWVegas/WWMath/WWMathKeys.h
+    Libraries/WWVegas/WWMath/WWMathTest.cpp
+    Libraries/WWVegas/WWMath/WWMathTestCase.h
 )
 
 add_library(corei_googletest INTERFACE)

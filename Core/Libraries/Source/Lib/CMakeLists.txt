@@ -1,5 +1,6 @@
 set(CORE_LIBRARIES_SRC
     Debug.cpp
+    Include/Lib/BaseDefines.h
     Include/Lib/BaseFunctions.h
     Include/Lib/BaseType.h
     Include/Lib/Coord2D.h
@@ -41,6 +42,7 @@ target_link_libraries(core_libraries PUBLIC
 target_link_libraries(core_libraries PRIVATE
     core_config
     deps_utility
+    gamemath
 )
 
 # Makes the game base macros and types available in every C++ translation unit

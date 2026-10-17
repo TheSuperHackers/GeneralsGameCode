@@ -28,115 +28,73 @@
 // Converted to Generals by Matthew D. Campbell, February 2002
 
 #include <math.h>
-#include <limits.h>
 
+#include "Lib/BaseDefines.h"
 #include "Lib/trig.h"
 
-#define TWOPI			6.28318530718f
-#define DEG2RAD 	0.0174532925199f
-#define TRIG_RES 4096
-
-// the following are for fixed point ints with 12 fractional bits
-#define INT_ONE								4096
-#define INT_TWOPI							25736
-#define INT_THREEPIOVERTWO 		19302
-#define INT_PI								12868
-#define INT_HALFPI 						6434
+#if USE_DETERMINISTIC_MATH
+#include "gmath.h"
+#endif
 
 Real Sin(Real x)
 {
+#if USE_DETERMINISTIC_MATH
+	return gm_sinf(x);
+#else
 	return sinf(x);
+#endif
 }
 
 Real Cos(Real x)
 {
+#if USE_DETERMINISTIC_MATH
+	return gm_cosf(x);
+#else
 	return cosf(x);
+#endif
 }
 
 Real Tan(Real x)
 {
+#if USE_DETERMINISTIC_MATH
+	return gm_tanf(x);
+#else
 	return tanf(x);
+#endif
 }
 
 Real ACos(Real x)
 {
+#if USE_DETERMINISTIC_MATH
+	return gm_acosf(x);
+#else
 	return acosf(x);
+#endif
 }
 
 Real ASin(Real x)
 {
+#if USE_DETERMINISTIC_MATH
+	return gm_asinf(x);
+#else
 	return asinf(x);
+#endif
 }
 
-#ifdef REGENERATE_TRIG_TABLES
-void initTrig()
+Real Sqrt(Real x)
 {
-	static Byte inited = FALSE;
-	Real angle, r;
-	int i;
-
-	if (inited)
-		return;
-
-	inited = TRUE;
-
-	static int columns = 8;
-	int column = 0;
-	FILE *fp = fopen("trig.txt", "w");
-	fprintf(fp, "static Int sinLookup[TRIG_RES] = {\n");
-	for( i=0; i<TRIG_RES; i++ ) {
-		angle = TWOPI * i / (Real)TRIG_RES;
-		sinLookup[i] = (Int)(sin(angle) * INT_ONE);
-
-		if (i == 0)
-		{
-			fprintf(fp, "\t0x%8.8X", sinLookup[i]);
-		}
-		else if (column == 0)
-		{
-		fprintf(fp, ",\n\t0x%8.8X", sinLookup[i]);
-		}
-		else
-		{
-		fprintf(fp, ", 0x%8.8X", sinLookup[i]);
-		}
-		column = (column + 1) % columns;
-	}
-	fprintf(fp, "\n};\n\n");
-
-	column = 0;
-	fprintf(fp, "static Int arcCosLookup[2 * INT_ONE] = {\n");
-	for( i=0; i<2*INT_ONE; i++ ) {
-		r = (Real)i / (Real)INT_ONE - 1.0f;
-
-		arcCosLookup[i] = (Int)(acos( (double)r ) * INT_TWOPI / TWOPI );
-
-		if (i == 0)
-		{
-			fprintf(fp, "\t0x%8.8X", arcCosLookup[i]);
-		}
-		else if (column == 0)
-		{
-		fprintf(fp, ",\n\t0x%8.8X", arcCosLookup[i]);
-		}
-		else
-		{
-		fprintf(fp, ", 0x%8.8X", arcCosLookup[i]);
-		}
-		column = (column + 1) % columns;
-	}
-	fprintf(fp, "\n};\n\n");
-
-	fclose(fp);
+#if USE_DETERMINISTIC_MATH
+	return gm_sqrtf(x);
+#else
+	return (Real)sqrt((double)x);
+#endif
 }
 
-class TrigInit
+double Sqrt(double x)
 {
-public:
-	TrigInit() { initTrig(); }
-};
-TrigInit trigInitializer;
-
-#endif // REGENERATE_TRIG_TABLES
-
-
+#if USE_DETERMINISTIC_MATH
+	return gm_sqrt(x);
+#else
+	return sqrt(x);
+#endif
+}

@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "BaseDefines.h"
 #include "trig.h"
 
 // NOTE: Keep the types simple; avoid constructors and destructors so they can be used within unions
@@ -37,7 +38,7 @@ struct Coord2D
 		return x == value && y == value;
 	}
 
-	Real length() const { return (Real)sqrt( x*x + y*y ); }
+	Real length() const { return Sqrt( x*x + y*y ); }
 	Real lengthSqr() const { return x*x + y*y; }
 
 	void normalize()
@@ -134,13 +135,13 @@ inline Coord2D operator-( const Coord2D &a, const Coord2D &b )
 
 inline Real Coord2D::toAngle() const
 {
-#if RTS_GENERALS /*&& RETAIL_COMPATIBLE_CRC*/
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
 	Coord2D vector;
 
 	vector.x = x;
 	vector.y = y;
 
-	Real dist = (Real)sqrt(vector.x * vector.x + vector.y * vector.y);
+	Real dist = Sqrt(vector.x * vector.x + vector.y * vector.y);
 
 	// normalize
 	if (dist == 0.0f)
