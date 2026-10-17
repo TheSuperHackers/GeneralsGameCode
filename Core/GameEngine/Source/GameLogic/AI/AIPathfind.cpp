@@ -6390,9 +6390,12 @@ if (g_UT_startTiming) return false;
 		}
 	}
 	LatchRestore<Int> recursiveDepth(m_moveAlliesDepth, m_moveAlliesDepth+1);
-	if (m_moveAlliesDepth > 2) {
+	if (m_moveAlliesDepth > MOVE_ALLIES_MAX_DEPTH) {
 		return false;
 	}
+#if !RETAIL_COMPATIBLE_PATHFINDING
+	m_moveAlliesObjects[m_moveAlliesDepth - 1] = obj->getID();
+#endif
 
 	Bool centerInCell;
 	Int radius;
@@ -6460,6 +6463,20 @@ if (g_UT_startTiming) return false;
 				//Black Lotus exploit fix -- moving while hacking.
 				if( otherObj->testStatus( OBJECT_STATUS_IS_USING_ABILITY ) || otherObj->getAI()->isBusy() ) {
 					continue; // Packing or unpacking objects for example
+				}
+#endif
+
+#if !RETAIL_COMPATIBLE_PATHFINDING
+				// TheSuperHackers @bugfix bobtista 13/10/2026 Do not order a unit whose moveAllies call is still walking its path. The order destroys that path.
+				Bool isOuterCaller = false;
+				for (Int k = 0; k < m_moveAlliesDepth - 1; ++k) {
+					if (m_moveAlliesObjects[k] == unitId) {
+						isOuterCaller = true;
+						break;
+					}
+				}
+				if (isOuterCaller) {
+					continue;
 				}
 #endif
 
