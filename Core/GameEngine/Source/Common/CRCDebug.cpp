@@ -181,11 +181,6 @@ void outputCRCDumpLines()
 	*/
 }
 
-static AsciiString getFname(AsciiString path)
-{
-	return path.reverseFind('\\') + 1;
-}
-
 static void addCRCDebugLineInternal(bool count, const char *fmt, va_list args)
 {
 	if (TheGameLogic == nullptr || !(IS_FRAME_OK_TO_LOG))
@@ -278,9 +273,9 @@ void dumpVector3(const Vector3 *v, AsciiString name, AsciiString fname, Int line
 {
 	if (!(IS_FRAME_OK_TO_LOG)) return;
 	fname.toLower();
-	fname = getFname(fname);
+	const char* fileName = getFileName(fname.str());
 	addCRCDebugLine("dumpVector3() %s:%d %s %8.8X %8.8X %8.8X",
-		fname.str(), line, name.str(),
+		fileName, line, name.str(),
 		AS_INT(v->X), AS_INT(v->Y), AS_INT(v->Z));
 }
 
@@ -288,9 +283,9 @@ void dumpCoord3D(const Coord3D *c, AsciiString name, AsciiString fname, Int line
 {
 	if (!(IS_FRAME_OK_TO_LOG)) return;
 	fname.toLower();
-	fname = getFname(fname);
+	const char* fileName = getFileName(fname.str());
 	addCRCDebugLine("dumpCoord3D() %s:%d %s %8.8X %8.8X %8.8X",
-		fname.str(), line, name.str(),
+		fileName, line, name.str(),
 		AS_INT(c->x), AS_INT(c->y), AS_INT(c->z));
 }
 
@@ -298,10 +293,10 @@ void dumpMatrix3D(const Matrix3D *m, AsciiString name, AsciiString fname, Int li
 {
 	if (!(IS_FRAME_OK_TO_LOG)) return;
 	fname.toLower();
-	fname = getFname(fname);
+	const char* fileName = getFileName(fname.str());
 	const Real *matrix = (const Real *)m;
 	addCRCDebugLine("dumpMatrix3D() %s:%d %s",
-		fname.str(), line, name.str());
+		fileName, line, name.str());
 	for (Int i=0; i<3; ++i)
 		addCRCDebugLine("      0x%08X 0x%08X 0x%08X 0x%08X",
 			AS_INT(matrix[(i<<2)+0]), AS_INT(matrix[(i<<2)+1]), AS_INT(matrix[(i<<2)+2]), AS_INT(matrix[(i<<2)+3]));
@@ -311,9 +306,9 @@ void dumpReal(Real r, AsciiString name, AsciiString fname, Int line)
 {
 	if (!(IS_FRAME_OK_TO_LOG)) return;
 	fname.toLower();
-	fname = getFname(fname);
+	const char* fileName = getFileName(fname.str());
 	addCRCDebugLine("dumpReal() %s:%d %s %8.8X (%f)",
-		fname.str(), line, name.str(), AS_INT(r), r);
+		fileName, line, name.str(), AS_INT(r), r);
 }
 
 #endif // DEBUG_CRC

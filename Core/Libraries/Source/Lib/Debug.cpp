@@ -54,6 +54,7 @@
 // USER INCLUDES
 #define DEBUG_THREADSAFE
 #include "Lib/Debug.h"
+#include "Lib/PathUtil.h"
 
 
 // ----------------------------------------------------------------------------
@@ -400,7 +401,7 @@ void DebugOpenLogFile(const char *prefix, const char *suffix)
 {
 	char dirbuf[ _MAX_PATH ];
 	::GetModuleFileName( nullptr, dirbuf, sizeof( dirbuf ) );
-	if (char *pEnd = strrchr(dirbuf, '\\'))
+	if (char *pEnd = getLastPathSeparator(dirbuf))
 	{
 		*(pEnd + 1) = 0;
 	}

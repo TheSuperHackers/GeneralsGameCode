@@ -126,7 +126,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 
 			// set the current directory in the top label
 			GetCurrentDirectory( _MAX_PATH, buffer );
-			if( buffer[ strlen( buffer ) - 1 ] != '\\' )
+			if( !isPathSeparator( buffer[ strlen( buffer ) - 1 ] ) )
 				strlcat(buffer, "\\", ARRAY_SIZE(buffer));
 			SetDlgItemText( hWndDialog, STATIC_CURRENT_DIR, buffer );
 
@@ -261,7 +261,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 
 							// construct new direcotry name and update status text
 							GetCurrentDirectory( _MAX_PATH, buffer );
-							if( buffer[ strlen( buffer ) - 1 ] != '\\' )
+							if( !isPathSeparator( buffer[ strlen( buffer ) - 1 ] ) )
 								strlcat(buffer, "\\", ARRAY_SIZE(buffer));
 							SetDlgItemText( hWndDialog, STATIC_CURRENT_DIR, buffer );
 							EnableWindow( GetDlgItem( hWndDialog, BUTTON_ADD ), FALSE );
@@ -352,7 +352,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 
 						// construct new direcotry name and update status text
 						GetCurrentDirectory( _MAX_PATH, buffer );
-						if( buffer[ strlen( buffer ) - 1 ] != '\\' )
+						if( !isPathSeparator( buffer[ strlen( buffer ) - 1 ] ) )
 							strlcat(buffer, "\\", ARRAY_SIZE(buffer));
 						SetDlgItemText( hWndDialog, STATIC_CURRENT_DIR, buffer );
 						EnableWindow( GetDlgItem( hWndDialog, BUTTON_ADD ), FALSE );

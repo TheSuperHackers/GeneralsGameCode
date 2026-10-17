@@ -90,7 +90,7 @@ Bool WorkingDirectory::setExecutableWorkingDirectory()
 		return FALSE;
 	}
 
-	Char *pEnd = strrchr(buffer, '\\');
+	Char *pEnd = getLastPathSeparator(buffer);
 	if (pEnd == nullptr)
 	{
 		DEBUG_LOG(("Executable path has no directory: '%s'", buffer));

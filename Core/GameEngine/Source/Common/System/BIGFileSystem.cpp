@@ -151,14 +151,11 @@ ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
 			fp->read(buffer + pathIndex, 1);
 		} while (buffer[pathIndex] != 0);
 
-		Int filenameIndex = pathIndex;
-		while ((filenameIndex >= 0) && (buffer[filenameIndex] != '\\') && (buffer[filenameIndex] != '/')) {
-			--filenameIndex;
-		}
+		char *leafName = getFileName(buffer);
 
-		fileInfo.m_filename = (char *)(buffer + filenameIndex + 1);
+		fileInfo.m_filename = leafName;
 		fileInfo.m_filename.toLower();
-		buffer[filenameIndex + 1] = 0;
+		*leafName = 0;
 
 		AsciiString path;
 		path = buffer;

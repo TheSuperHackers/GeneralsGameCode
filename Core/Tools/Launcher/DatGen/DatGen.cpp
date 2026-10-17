@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include "BFISH.h"
 #include <Debug/DebugPrint.h>
+#include "Lib/PathUtil.h"
 
 void __cdecl doIt();
 
@@ -172,7 +173,7 @@ static void doIt()
 
 	DebugPrint("Install dir = '%s'\n", installPath);
 
-	char *lastBackslash = strrchr((char *)installPath, '\\');
+	char *lastBackslash = getLastPathSeparator((char *)installPath);
 	if (lastBackslash)
 		*lastBackslash = 0; // strip of \\game.exe from install path
 
