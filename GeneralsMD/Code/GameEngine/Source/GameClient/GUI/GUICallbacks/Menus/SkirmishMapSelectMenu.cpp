@@ -557,6 +557,7 @@ WindowMsgHandledType SkirmishMapSelectMenuSystem( GameWindow *window, UnsignedIn
 					else
 						asciiMap.translate( map );
 					TheSkirmishGameInfo->setMap( asciiMap );
+					warnIfMapLacksSkirmishSides( asciiMap );
 
 					const MapMetaData *md = TheMapCache->findMap(asciiMap);
 					if (!md)
