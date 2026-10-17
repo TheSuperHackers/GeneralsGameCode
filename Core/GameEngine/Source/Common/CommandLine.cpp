@@ -1462,20 +1462,6 @@ void CommandLine::parseCommandLineForStartup()
 
 	if (!rts::WorkingDirectory::hasSetWorkingDirectory())
 		rts::WorkingDirectory::setExecutableWorkingDirectory();
-
-#if RTS_ZEROHOUR
-	// Validate after the working directory is final so relative paths resolve correctly.
-	AsciiString &genDataDir = TheWritableGlobalData->m_generalsDataDir;
-	if (!genDataDir.isEmpty())
-	{
-		const DWORD attributes = GetFileAttributes(genDataDir.str());
-		if (attributes == 0xFFFFFFFF || !(attributes & FILE_ATTRIBUTE_DIRECTORY))
-		{
-			DEBUG_LOG(("Generals data dir '%s' is not a directory. Falling back to the registry.", genDataDir.str()));
-			genDataDir.clear();
-		}
-	}
-#endif
 }
 
 void CommandLine::parseCommandLineForEngineInit()

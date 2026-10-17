@@ -66,6 +66,17 @@ void BIGFileSystem::init() {
     // TheSuperHackers @feature CryoTheRenegade 15/10/2026 Prefer -genDataDir over the registry.
     if (TheGlobalData != nullptr)
       installPath = TheGlobalData->m_generalsDataDir;
+    if (!installPath.isEmpty())
+    {
+      // Validate here, not during startup parsing, which runs before the debug log file is open.
+      const DWORD attributes = GetFileAttributes(installPath.str());
+      if (attributes == 0xFFFFFFFF || !(attributes & FILE_ATTRIBUTE_DIRECTORY))
+      {
+        DEBUG_LOG(("Generals data dir '%s' is not a directory. Falling back to the registry.", installPath.str()));
+        installPath.clear();
+      }
+    }
+
     if (installPath.isEmpty())
       GetStringFromGeneralsRegistry("", "InstallPath", installPath );
     if (!installPath.isEmpty())
