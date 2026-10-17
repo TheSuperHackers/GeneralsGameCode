@@ -373,7 +373,12 @@ void W3DPropBuffer::drawProps(RenderInfoClass &rinfo)
 		if (m_props[i].ss <= OBJECTSHROUD_INVALID) {
 			continue;
 		}
-		if (TheTerrainRenderObject->getShroud() && m_props[i].ss != CELLSHROUD_CLEAR) {
+		const W3DShroud *shroud = TheTerrainRenderObject->getShroud();
+		Bool partlyShrouded = FALSE;
+		if (shroud && m_props[i].ss == CELLSHROUD_CLEAR) {
+			partlyShrouded = !shroud->isClearAt(m_props[i].bounds.Center.X, m_props[i].bounds.Center.Y, m_props[i].bounds.Radius);
+		}
+		if (shroud && (m_props[i].ss != CELLSHROUD_CLEAR || partlyShrouded)) {
 			rinfo.Push_Material_Pass(m_propShroudMaterialPass);
 			m_props[i].m_robj->Render(rinfo);
 			rinfo.Pop_Material_Pass();

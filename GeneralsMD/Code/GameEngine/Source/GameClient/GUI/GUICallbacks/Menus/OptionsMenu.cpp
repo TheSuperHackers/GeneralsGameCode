@@ -816,6 +816,19 @@ static void saveOptions()
 	}
 
 	//-------------------------------------------------------------------------------------------------
+	// Set Shroud Interpolation
+	{
+		Bool interpolate = pref->getShroudInterpolation();
+		AsciiString prefString = "no";
+		if (interpolate)
+		{
+			prefString = "yes";
+		}
+		(*pref)["ShroudInterpolation"] = prefString;
+		TheWritableGlobalData->m_shroudInterpolation = interpolate;
+	}
+
+	//-------------------------------------------------------------------------------------------------
 	// Set Game Window Transition Speed Multiplier
 	{
 		Real speed = pref->getGameWindowTransitionSpeedMultiplier();

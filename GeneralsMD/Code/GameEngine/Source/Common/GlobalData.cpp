@@ -964,6 +964,8 @@ GlobalData::GlobalData()
 	m_showMoneyPerMinute = FALSE;
 	m_allowMoneyPerMinuteForPlayer = FALSE;
 
+	m_shroudInterpolation = FALSE;
+
 	m_gameWindowTransitionSpeedMultiplier = 1.0f;
 
 	m_debugShowGraphicalFramerate = FALSE;
@@ -1225,6 +1227,7 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	TheWritableGlobalData->m_gameTimeFontSize = optionPref.getGameTimeFontSize();
 	TheWritableGlobalData->m_playerInfoListFontSize = optionPref.getPlayerInfoListFontSize();
 	TheWritableGlobalData->m_showMoneyPerMinute = optionPref.getShowMoneyPerMinute();
+	TheWritableGlobalData->m_shroudInterpolation = optionPref.getShroudInterpolation();
 	TheWritableGlobalData->m_gameWindowTransitionSpeedMultiplier = optionPref.getGameWindowTransitionSpeedMultiplier();
 
 	TheWritableGlobalData->m_antiAliasLevel = optionPref.getAntiAliasing();
