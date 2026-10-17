@@ -156,7 +156,6 @@ AudibleSoundClass::AudibleSoundClass ()
 		m_PrevTransform (1),
 		m_Transform (1),
 		m_ListenerTransform (1),
-		m_Definition (nullptr),
 		m_LogicalSound (nullptr),
 		m_StartOffset (0),
 		m_PitchFactor (1.0F)
@@ -189,7 +188,6 @@ AudibleSoundClass::AudibleSoundClass (const AudibleSoundClass &src)
 		m_pConvertedFormat (nullptr),
 		m_PrevTransform (1),
 		m_Transform (1),
-		m_Definition (nullptr),
 		m_LogicalSound (nullptr),
 		m_StartOffset (0),
 		m_PitchFactor (1.0F)
@@ -358,27 +356,12 @@ AudibleSoundClass::Play (bool alloc_handle)
 		On_Event (AudioCallbackClass::EVENT_SOUND_STARTED);
 
 		//
-		//	Create the associate logical sound (if necessary)
-		//
-		if (m_LogicalSound == nullptr && m_Definition != nullptr) {
-			m_LogicalSound = m_Definition->Create_Logical ();
-		}
-
-		//
 		//	Add this logical sound to the scene
 		//
 		if (m_LogicalSound != nullptr) {
 			m_LogicalSound->Set_User_Data (m_UserObj, m_UserData);
 			m_LogicalSound->Set_Transform (m_Transform);
 			m_LogicalSound->Add_To_Scene ();
-		}
-
-		//
-		//	Should we send off the text notification?
-		//
-		if (m_IsCulled == false && m_Definition != nullptr) {
-			const StringClass &text = m_Definition->Get_Display_Text ();
-			WWAudioClass::Get_Instance ()->Fire_Text_Callback (this, text);
 		}
 	}
 
@@ -1567,7 +1550,6 @@ AudibleSoundDefinitionClass::Create_Sound (int classid_hint) const
 		new_sound->Set_Volume (m_Volume);
 		new_sound->Set_Loop_Count (m_LoopCount);
 		new_sound->Set_DropOff_Radius (m_DropOffRadius);
-		new_sound->Set_Definition ((AudibleSoundDefinitionClass *)this);
 		new_sound->Set_Start_Offset (m_StartOffset);
 		new_sound->Set_Pitch_Factor (m_PitchFactor);
 
@@ -1577,41 +1559,6 @@ AudibleSoundDefinitionClass::Create_Sound (int classid_hint) const
 	}
 
 	return new_sound;
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////
-//
-//	Create_Logical
-//
-//////////////////////////////////////////////////////////////////////////////////
-LogicalSoundClass *
-AudibleSoundDefinitionClass::Create_Logical ()
-{
-	LogicalSoundClass *logical_sound = nullptr;
-
-	if (m_CreateLogical) {
-
-		//
-		//	Create and configure the logical sound
-		//
-		logical_sound = W3DNEW LogicalSoundClass;
-		logical_sound->Set_Type_Mask (m_LogicalTypeMask);
-		logical_sound->Set_Notify_Delay (m_LogicalNotifyDelay);
-		logical_sound->Set_Single_Shot (m_LoopCount != 0);
-
-		//
-		//	Use the audible sound's drop-off radius if the logical
-		// isn't set...
-		//
-		if (m_LogicalDropOffRadius < 0) {
-			logical_sound->Set_DropOff_Radius (m_DropOffRadius);
-		} else {
-			logical_sound->Set_DropOff_Radius (m_LogicalDropOffRadius);
-		}
-	}
-
-	return logical_sound;
 }
 
 

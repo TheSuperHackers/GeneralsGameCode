@@ -271,12 +271,6 @@ class AudibleSoundClass : public SoundSceneObjClass
 		virtual bool			Is_Dirty () const				{ return m_bDirty; }
 
 		//////////////////////////////////////////////////////////////////////
-		//	Definition managmenent
-		//////////////////////////////////////////////////////////////////////
-		virtual void									Set_Definition (AudibleSoundDefinitionClass *def) { m_Definition = def; }
-		virtual AudibleSoundDefinitionClass *	Get_Definition () { return m_Definition; }
-
-		//////////////////////////////////////////////////////////////////////
 		//	Conversion methods
 		//////////////////////////////////////////////////////////////////////
 		virtual void					Re_Sync (AudibleSoundClass &src);
@@ -361,9 +355,6 @@ class AudibleSoundClass : public SoundSceneObjClass
 		// Conversion data
 		AudibleSoundClass *	m_pConvertedFormat;
 
-		// Definition pointer
-		AudibleSoundDefinitionClass *	m_Definition;
-
 		//	Logical sound information
 		LogicalSoundClass *				m_LogicalSound;
 };
@@ -418,9 +409,6 @@ public:
 	virtual void								Set_DropOff_Radius (float radius){ m_DropOffRadius = radius; }
 	virtual void								Set_Start_Offset (float offset)	{ m_StartOffset = offset; }
 	virtual void								Set_Pitch_Factor (float factor)	{ m_PitchFactor = factor; }
-
-	// Logical sound creation
-	virtual LogicalSoundClass *			Create_Logical ();
 
 protected:
 
