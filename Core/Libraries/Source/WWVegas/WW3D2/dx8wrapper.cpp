@@ -203,7 +203,7 @@ void Log_DX8_ErrorCode(unsigned res)
 		sizeof(tmp));
 
 	if (new_res==D3D_OK) {
-		WWDEBUG_SAY((tmp));
+		WWDEBUG_SAY(("%s", tmp));
 	}
 
 	WWASSERT(0);

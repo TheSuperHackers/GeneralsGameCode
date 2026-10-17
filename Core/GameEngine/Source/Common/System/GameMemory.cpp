@@ -309,7 +309,7 @@ static void doStackDumpOutput(const char* m)
 	const char *PREPEND = "STACKTRACE";
 	if (*m == 0)
 	{
-		DEBUG_LOG((m));
+		DEBUG_LOG(("%s", m));
 	}
 	else
 	{
