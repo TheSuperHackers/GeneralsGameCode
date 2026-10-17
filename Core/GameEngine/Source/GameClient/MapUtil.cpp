@@ -561,7 +561,7 @@ Bool MapCache::loadMapsFromDisk( const AsciiString &mapDir, Bool isOfficial, Boo
 			continue;
 		}
 
-		mapListChanged |= addMap(mapDir, *filepathIt, filepathLower, fileInfo, isOfficial);
+		mapListChanged |= addMap(mapDir, *filepathIt, FileSystem::normalizePathSeparators(filepathLower), fileInfo, isOfficial);
 	}
 
 	if (clearUnseenMaps(mapDir))
@@ -1012,17 +1012,8 @@ Bool isValidMap( AsciiString mapName, Bool isMultiplayer )
 		return FALSE;
 	TheMapCache->updateCache();
 
-	mapName.toLower();
-	MapCache::iterator it = TheMapCache->find(mapName);
-	if (it != TheMapCache->end())
-	{
-		if (isMultiplayer == it->second.m_isMultiplayer)
-		{
-			return TRUE;
-		}
-	}
-
-	return FALSE;
+	const MapMetaData *mapData = TheMapCache->findMap(mapName);
+	return mapData != nullptr && isMultiplayer == mapData->m_isMultiplayer;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1070,17 +1061,18 @@ Bool isOfficialMap( AsciiString mapName )
 	if(!TheMapCache || mapName.isEmpty())
 		return FALSE;
 	TheMapCache->updateCache();
-	mapName.toLower();
-	MapCache::iterator it = TheMapCache->find(mapName);
-	if (it != TheMapCache->end())
-		return it->second.m_isOfficial;
-	return FALSE;
+	const MapMetaData *mapData = TheMapCache->findMap(mapName);
+	return mapData != nullptr && mapData->m_isOfficial;
 }
 
 
 const MapMetaData *MapCache::findMap(AsciiString mapName)
 {
 	mapName.toLower();
+
+	// TheSuperHackers @bugfix bobtista 14/09/2026 Use the same separators for cache keys and lookups.
+	mapName = FileSystem::normalizePathSeparators(mapName);
+
 	MapCache::iterator it = find(mapName);
 	if (it == end())
 		return nullptr;

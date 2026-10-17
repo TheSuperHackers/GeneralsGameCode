@@ -31,12 +31,14 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
+#include "Common/FileSystem.h"
 #include "GameClient/MapUtil.h"
 #include "GameClient/GameText.h"
 #include "GameNetwork/NetworkDefs.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/WellKnownKeys.h"
 #include "Common/QuotedPrintable.h"
+#include "Lib/PathUtil.h"
 
 
 class MapMetaDataReader
@@ -148,7 +150,7 @@ void INI::parseMapCacheDefinition( INI* ini )
 	{
 		// maps without localized name tags
 		AsciiString tempdisplayname;
-		tempdisplayname = name.reverseFind('\\') + 1;
+		tempdisplayname = getFileName(name.str());
 		md.m_displayName.translate(tempdisplayname);
 		if (md.m_numPlayers >= 2)
 		{
@@ -193,7 +195,7 @@ void INI::parseMapCacheDefinition( INI* ini )
 
 	if(TheMapCache && !md.m_displayName.isEmpty())
 	{
-		AsciiString lowerName = name;
+		AsciiString lowerName = FileSystem::normalizePathSeparators(name);
 		lowerName.toLower();
 		md.m_fileName = lowerName;
 //		DEBUG_LOG(("INI::parseMapCacheDefinition - adding %s to map cache", lowerName.str()));
