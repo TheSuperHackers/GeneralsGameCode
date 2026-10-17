@@ -54,6 +54,7 @@ static void parseNumberApproachPositions(INI *ini, void *instance, void *store, 
 	if( count < DYNAMIC_APPROACH_VECTOR_FLAG || count > DEFAULT_APPROACH_VECTOR_SIZE )
 	{
 		DEBUG_LOG(( "DockUpdate - Clamping invalid NumberApproachPositions %d to a usable fixed count", count ));
+		// VC6 internal-errors on std::clamp. Below the dynamic sentinel becomes 1; above the bone buffer becomes its size.
 		if( count < 1 )
 			count = 1;
 		else
