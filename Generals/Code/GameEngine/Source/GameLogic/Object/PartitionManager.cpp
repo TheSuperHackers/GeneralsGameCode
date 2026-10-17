@@ -1166,7 +1166,7 @@ void CellAndObjectIntersection::addCoverage(PartitionCell *cell, PartitionData *
 	}
 
 	if (m_cell == nullptr)
-		cell->friend_addToCellList(this);
+		cell->friend_addToCellList(this, module->friend_getSlot());
 
 	m_cell = cell;
 	m_module = module;
@@ -1426,12 +1426,13 @@ void PartitionCell::removeCashValue( Int playerIndex, UnsignedInt cashValue )
 }
 
 //-----------------------------------------------------------------------------
-void PartitionCell::friend_addToCellList(CellAndObjectIntersection *coi)
+void PartitionCell::friend_addToCellList(CellAndObjectIntersection *coi, Int moduleSlot)
 {
 	if (coi)
 	{
 		coi->friend_addToCellList(&m_firstCoiInCell);
 		++m_coiCount;
+		ThePartitionManager->friend_addCellEntry(m_cellX, m_cellY, moduleSlot, coi);
 	}
 }
 
@@ -1442,6 +1443,7 @@ void PartitionCell::friend_removeFromCellList(CellAndObjectIntersection *coi)
 	{
 		coi->friend_removeFromCellList(&m_firstCoiInCell);
 		--m_coiCount;
+		ThePartitionManager->friend_removeCellEntry(m_cellX, m_cellY, coi);
 	}
 }
 
@@ -1521,6 +1523,7 @@ PartitionData::PartitionData()
 	m_coiArray = nullptr;
 	m_coiInUseCount = 0;
 	m_doneFlag = 0;
+	m_slot = -1;
 	m_dirtyStatus = NOT_DIRTY;
 	m_lastCell = nullptr;
 	for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
@@ -1538,12 +1541,25 @@ PartitionData::~PartitionData()
 	removeAllTouchedCells();
 	freeCoiArray();
 	DEBUG_ASSERTCRASH(ThePartitionManager, ("ThePartitionManager is null"));
+	if (ThePartitionManager && m_slot >= 0)
+	{
+		ThePartitionManager->friend_releaseModuleSlot(m_slot);
+		m_slot = -1;
+	}
 	if (ThePartitionManager && ThePartitionManager->isInListDirtyModules(this))
 	{
 		//DEBUG_LOG(("remove pd %08lx from dirty list (%08lx %08lx)",this,m_prevDirty,m_nextDirty));
 		ThePartitionManager->removeFromDirtyModules(this);
 		//DEBUG_ASSERTCRASH(!ThePartitionManager->isInListDirtyModules(this), ("hmm"));
 	}
+}
+
+//-----------------------------------------------------------------------------
+Int PartitionData::friend_getSlot()
+{
+	if (m_slot < 0)
+		m_slot = ThePartitionManager->friend_allocModuleSlot(this);
+	return m_slot;
 }
 
 //-----------------------------------------------------------------------------
@@ -2657,6 +2673,11 @@ void PartitionManager::init()
 		m_cellCountY = REAL_TO_INT_CEIL(m_worldExtents.height() * m_cellSizeInv);
 		m_totalCellCount = m_cellCountX * m_cellCountY;
 		m_cells = MSGNEW("PartitionManager_Cells") PartitionCell[m_totalCellCount];
+		CellEntryList emptyEntryList;
+		emptyEntryList.entries = nullptr;
+		emptyEntryList.count = 0;
+		emptyEntryList.capacity = 0;
+		m_cellEntries.assign(m_totalCellCount, emptyEntryList);
 		for (Int x = 0; x < m_cellCountX; x++)
 		{
 			for (Int y = 0; y < m_cellCountY; y++)
@@ -2720,6 +2741,76 @@ void PartitionManager::reset()
 }
 
 //-----------------------------------------------------------------------------
+void PartitionManager::friend_addCellEntry(Int x, Int y, Int moduleSlot, CellAndObjectIntersection* coi)
+{
+	CellEntryList& list = m_cellEntries[y * m_cellCountX + x];
+	if (list.count == list.capacity)
+	{
+		const Int newCapacity = list.capacity == 0 ? 4 : list.capacity * 2;
+		CellEntry* newEntries = MSGNEW("PartitionManager_CellEntries") CellEntry[newCapacity];
+		for (Int i = 0; i < list.count; ++i)
+		{
+			newEntries[i] = list.entries[i];
+		}
+		delete [] list.entries;
+		list.entries = newEntries;
+		list.capacity = (UnsignedShort)newCapacity;
+	}
+	// the COI list is head-inserted, so the newest entry goes last.
+	list.entries[list.count].moduleSlot = moduleSlot;
+	list.entries[list.count].coi = coi;
+	++list.count;
+}
+
+//-----------------------------------------------------------------------------
+void PartitionManager::friend_removeCellEntry(Int x, Int y, CellAndObjectIntersection* coi)
+{
+	CellEntryList& list = m_cellEntries[y * m_cellCountX + x];
+	Int index;
+	for (index = 0; index < list.count; ++index)
+	{
+		if (list.entries[index].coi == coi)
+			break;
+	}
+	DEBUG_ASSERTCRASH(index < list.count, ("cell entry not found"));
+	if (index >= list.count)
+		return;
+
+	// keep the order of the remaining entries.
+	for (; index + 1 < list.count; ++index)
+	{
+		list.entries[index] = list.entries[index + 1];
+	}
+	--list.count;
+}
+
+//-----------------------------------------------------------------------------
+Int PartitionManager::friend_allocModuleSlot(PartitionData* module)
+{
+	Int slot;
+	if (!m_freeSlots.empty())
+	{
+		slot = m_freeSlots.back();
+		m_freeSlots.pop_back();
+		m_slotModule[slot] = module;
+	}
+	else
+	{
+		slot = (Int)m_slotModule.size();
+		m_slotModule.push_back(module);
+		m_slotDoneFlag.push_back(0);
+	}
+	return slot;
+}
+
+//-----------------------------------------------------------------------------
+void PartitionManager::friend_releaseModuleSlot(Int slot)
+{
+	m_slotModule[slot] = nullptr;
+	m_freeSlots.push_back(slot);
+}
+
+//-----------------------------------------------------------------------------
 void PartitionManager::shutdown()
 {
 	m_updatedSinceLastReset = false;
@@ -2745,6 +2836,11 @@ void PartitionManager::shutdown()
 
 	delete [] m_cells;
 	m_cells = nullptr;
+	for (std::vector<CellEntryList>::iterator entryList = m_cellEntries.begin(); entryList != m_cellEntries.end(); ++entryList)
+	{
+		delete [] entryList->entries;
+	}
+	m_cellEntries.clear();
 
 	m_cellSize = m_cellSizeInv = 0.0f;
 	m_cellCountX = 0;
@@ -3212,7 +3308,7 @@ void PartitionManager::calcRadiusVec()
 	m_maxGcoRadius = REAL_TO_INT_CEIL(maxPossibleDist / cellSize);
 
 	m_radiusVec.clear();
-	m_radiusVec.resize(m_maxGcoRadius+1, OffsetVec());
+	m_radiusVec.resize(m_maxGcoRadius+1, SpanVec());
 
 	ICoord2D cur;
 	for (cur.y = -cy+1; cur.y < cy; ++cur.y)
@@ -3222,11 +3318,26 @@ void PartitionManager::calcRadiusVec()
 			/*
 				m_radiusVec[curRadius] contains a list of the cells (foo) that could
 				contain objects that are <= (curRadius * cellSize) distance away from cell (0,0).
+				Consecutive cells of a row are merged into one span, in scan order.
 			*/
 			Int curRadius = calcMinRadius(cur);
 			DEBUG_ASSERTCRASH(curRadius <= m_maxGcoRadius, ("expected max of %d but got %d",m_maxGcoRadius,curRadius));
 			if (curRadius <= m_maxGcoRadius)
-				m_radiusVec[curRadius].push_back(cur);
+			{
+				SpanVec& spans = m_radiusVec[curRadius];
+				if (!spans.empty() && spans.back().y == cur.y && spans.back().x1 == cur.x - 1)
+				{
+					spans.back().x1 = cur.x;
+				}
+				else
+				{
+					CellSpan span;
+					span.y = cur.y;
+					span.x0 = cur.x;
+					span.x1 = cur.x;
+					spans.push_back(span);
+				}
+			}
 		}
 	}
 
@@ -3234,8 +3345,8 @@ void PartitionManager::calcRadiusVec()
 	Int total = 0;
 	for (Int i = 0; i <= m_maxGcoRadius; ++i)
 	{
-		total += m_radiusVec[i].size();
-		//DEBUG_LOG(("radius %d has %d entries",i,m_radiusVec[i].size()));
+		for (SpanVec::const_iterator it = m_radiusVec[i].begin(); it != m_radiusVec[i].end(); ++it)
+			total += it->x1 - it->x0 + 1;
 	}
 	DEBUG_ASSERTCRASH(total == (cx*2-1)*(cy*2-1),("expected %d, got %d",(cx*2-1)*(cy*2-1),total));
 #endif
@@ -3330,67 +3441,114 @@ Object *PartitionManager::getClosestObjects(
 	static Int theIterFlag = 1;	// nonzero, thanks
 	++theIterFlag;
 
+	// same math as distCalcProc_CenterAndCenter_2D/3D, without the indirect call.
+	const Bool isCenter2D = (dc == FROM_CENTER_2D);
+	const Bool isCenter3D = (dc == FROM_CENTER_3D);
+
+	Int* const slotDoneFlag = m_slotDoneFlag.empty() ? nullptr : &m_slotDoneFlag[0];
+	PartitionData* const* const slotModule = m_slotModule.empty() ? nullptr : &m_slotModule[0];
+
 	/*
 		m_radiusVec[curRadius] contains a list of the cells (foo) that could
 		contain objects that are <= (curRadius * cellSize) distance away from cell (0,0).
 	*/
+	// TheSuperHackers @performance arcticdolphin 13/10/2026 Walk row spans clamped to the map and per-cell entry arrays, in the same order as before.
   for (Int curRadius = 0; curRadius <= maxRadiusLimit; ++curRadius)
   {
-    const OffsetVec& offsets = m_radiusVec[curRadius];
-		if (offsets.empty())
+    const SpanVec& spans = m_radiusVec[curRadius];
+		if (spans.empty())
 			continue;
-    for (OffsetVec::const_iterator it = offsets.begin(); it != offsets.end(); ++it)
+    for (SpanVec::const_iterator it = spans.begin(); it != spans.end(); ++it)
 		{
-			PartitionCell* thisCell = getCellAt(cellCenterX + it->x, cellCenterY + it->y);
-			if (thisCell == nullptr)
+			// clamp the row to the map.
+			const Int cellY = cellCenterY + it->y;
+			if (cellY < 0 || cellY >= m_cellCountY)
 				continue;
-
-			for (CellAndObjectIntersection *thisCoi = thisCell->getFirstCoiInCell(); thisCoi; thisCoi = thisCoi->getNextCoi())
+			Int cellX0 = cellCenterX + it->x0;
+			Int cellX1 = cellCenterX + it->x1;
+			if (cellX0 < 0)
+				cellX0 = 0;
+			if (cellX1 > m_cellCountX - 1)
+				cellX1 = m_cellCountX - 1;
+			if (cellX0 > cellX1)
+				continue;
+			const CellEntryList* entryList = &m_cellEntries[cellY * m_cellCountX + cellX0];
+			for (Int cellX = cellX0; cellX <= cellX1; ++cellX, ++entryList)
 			{
-				PartitionData *thisMod = thisCoi->getModule();
-				Object *thisObj = thisMod->getObject();
-
-				// never compare against ourself.
-				if (thisObj == obj || thisObj == nullptr)
+				if (entryList->count == 0)
 					continue;
-
-				// since an object can exist in multiple COIs, we use this to avoid processing
-				// the same one more than once.
-				if (thisMod->friend_getDoneFlag() == theIterFlag)
-					continue;
-				thisMod->friend_setDoneFlag(theIterFlag);
-
-				Real thisDistSqr;
-				Coord3D distVec;
-				if (!(*distProc)(objPos, objToUse, thisObj->getPosition(), thisObj, thisDistSqr, distVec, closestDistSqr))
-					continue;
-
-				if (!filtersAllow(filters, thisObj))
-					continue;
-
-				// ok, this is within the range, and the filters allow it.
-				// add it to the iter, if we have one....
-				if (iterArg)
+				// newest first, same order as the COI list.
+				const CellEntry* const firstEntry = entryList->entries;
+				for (const CellEntry* entry = firstEntry + entryList->count - 1; entry >= firstEntry; --entry)
 				{
-					iterArg->insert(thisObj, thisDistSqr);
-				}
-				else
-				{
-					// hey, this is the new closest object! cool.
-					// (note that we can't break out now 'cuz we have to finish examining the
-					// rest of curRadius)
-					closestObj = thisObj;
-					closestDistSqr = thisDistSqr;
-					closestVec = distVec;
+					// since an object can exist in multiple COIs, we use this to avoid processing
+					// the same one more than once.
+					Int& doneFlag = slotDoneFlag[entry->moduleSlot];
+					if (doneFlag == theIterFlag)
+						continue;
 
-					if (!foundAny)
+					Object *thisObj = slotModule[entry->moduleSlot]->getObject();
+
+					// never compare against ourself.
+					if (thisObj == obj || thisObj == nullptr)
+						continue;
+
+					doneFlag = theIterFlag;
+
+					Real thisDistSqr;
+					Coord3D distVec;
+					if (isCenter2D)
 					{
-						// if not adding to iterArg, we want to stop once we have the closest object.
-						maxRadiusLimit = curRadius;
+						const Coord3D* thisPos = thisObj->getPosition();
+						distVec.x = thisPos->x - objPos->x;
+						distVec.y = thisPos->y - objPos->y;
+						distVec.z = 0.0f;
+						thisDistSqr = sqr(distVec.x) + sqr(distVec.y);
+						if (!(thisDistSqr < closestDistSqr))
+							continue;
 					}
-					foundAny = true;
-				}
+					else if (isCenter3D)
+					{
+						const Coord3D* thisPos = thisObj->getPosition();
+						distVec.x = thisPos->x - objPos->x;
+						distVec.y = thisPos->y - objPos->y;
+						distVec.z = thisPos->z - objPos->z;
+						thisDistSqr = sqr(distVec.x) + sqr(distVec.y) + sqr(distVec.z);
+						if (!(thisDistSqr < closestDistSqr))
+							continue;
+					}
+					else if (!(*distProc)(objPos, objToUse, thisObj->getPosition(), thisObj, thisDistSqr, distVec, closestDistSqr))
+					{
+						continue;
+					}
 
+					if (!filtersAllow(filters, thisObj))
+						continue;
+
+					// ok, this is within the range, and the filters allow it.
+					// add it to the iter, if we have one....
+					if (iterArg)
+					{
+						iterArg->insert(thisObj, thisDistSqr);
+					}
+					else
+					{
+						// hey, this is the new closest object! cool.
+						// (note that we can't break out now 'cuz we have to finish examining the
+						// rest of curRadius)
+						closestObj = thisObj;
+						closestDistSqr = thisDistSqr;
+						closestVec = distVec;
+
+						if (!foundAny)
+						{
+							// if not adding to iterArg, we want to stop once we have the closest object.
+							maxRadiusLimit = curRadius;
+						}
+						foundAny = true;
+					}
+
+				}
 			}
 		}
   }
