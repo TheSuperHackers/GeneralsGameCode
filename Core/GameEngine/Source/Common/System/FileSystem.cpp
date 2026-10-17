@@ -112,6 +112,39 @@ FileSystem	*TheFileSystem = nullptr;
 //         Private Functions
 //----------------------------------------------------------------------------
 
+// The character as it is written in a path key.
+static UnsignedByte toPathKeyChar(Char ch)
+{
+	if (isPathSeparator(ch))
+		return '\\';
+
+	if (ch >= 'A' && ch <= 'Z')
+		return (UnsignedByte)(ch + ('a' - 'A'));
+
+	return (UnsignedByte)ch;
+}
+
+// Returns the end of the separator pair that starts a UNC or device path, such as \\server\share.
+// Windows keeps this pair apart from the single separator of a rooted path. Other platforms read
+// two leading separators as one.
+static const Char* getPathKeyPairEnd(const Char* path)
+{
+#ifdef _WIN32
+	if (isPathSeparator(path[0]) && isPathSeparator(path[1]))
+		return path + 2;
+#endif
+	return path;
+}
+
+#if ENABLE_FILESYSTEM_EXISTENCE_CACHE
+// Returns the key under which a file is held in the file exist cache.
+// A path that is too long for a path key is held under its own spelling.
+static const Char* getFileExistKey(Char* keyBuffer, size_t keyBufferSize, const Char* filename)
+{
+	return FileSystem::makePathKey(keyBuffer, keyBufferSize, filename) ? keyBuffer : filename;
+}
+#endif
+
 
 //----------------------------------------------------------------------------
 //         Public Functions
@@ -177,6 +210,11 @@ File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize
 	USE_PERF_TIMER(FileSystem)
 	File *file = nullptr;
 
+#if ENABLE_FILESYSTEM_EXISTENCE_CACHE
+	Char keyBuffer[_MAX_PATH];
+	const Char* key = getFileExistKey(keyBuffer, ARRAY_SIZE(keyBuffer), filename);
+#endif
+
 	if ( TheLocalFileSystem != nullptr )
 	{
 		if (instance != 0)
@@ -194,7 +232,7 @@ File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize
 			if (file != nullptr && (file->getAccess() & File::CREATE))
 			{
 				FastCriticalSectionClass::LockClass lock(m_fileExistMutex);
-				FileExistMap::iterator it = m_fileExist.find(FileExistMap::key_type::temporary(filename));
+				FileExistMap::iterator it = m_fileExist.find(FileExistMap::key_type::temporary(key));
 				if (it != m_fileExist.end())
 				{
 					++it->second.instanceExists;
@@ -203,7 +241,7 @@ File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize
 				}
 				else
 				{
-					m_fileExist[filename];
+					m_fileExist[key];
 				}
 			}
 #endif
@@ -228,9 +266,12 @@ Bool FileSystem::doesFileExist(const Char *filename, FileInstance instance) cons
 	USE_PERF_TIMER(FileSystem)
 
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
+	Char keyBuffer[_MAX_PATH];
+	const Char* key = getFileExistKey(keyBuffer, ARRAY_SIZE(keyBuffer), filename);
+
 	{
 		FastCriticalSectionClass::LockClass lock(m_fileExistMutex);
-		FileExistMap::const_iterator it = m_fileExist.find(FileExistMap::key_type::temporary(filename));
+		FileExistMap::const_iterator it = m_fileExist.find(FileExistMap::key_type::temporary(key));
 		if (it != m_fileExist.end())
 		{
 			// Must test instanceDoesNotExist first!
@@ -249,7 +290,7 @@ Bool FileSystem::doesFileExist(const Char *filename, FileInstance instance) cons
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
 			{
 				FastCriticalSectionClass::LockClass lock(m_fileExistMutex);
-				m_fileExist[filename];
+				m_fileExist[key];
 			}
 #endif
 			return TRUE;
@@ -263,7 +304,7 @@ Bool FileSystem::doesFileExist(const Char *filename, FileInstance instance) cons
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
 		{
 			FastCriticalSectionClass::LockClass lock(m_fileExistMutex);
-			FileExistMap::mapped_type& value = m_fileExist[filename];
+			FileExistMap::mapped_type& value = m_fileExist[key];
 			value.instanceExists = max(value.instanceExists, instance);
 		}
 #endif
@@ -273,7 +314,7 @@ Bool FileSystem::doesFileExist(const Char *filename, FileInstance instance) cons
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
 	{
 		FastCriticalSectionClass::LockClass lock(m_fileExistMutex);
-		FileExistMap::mapped_type& value = m_fileExist[filename];
+		FileExistMap::mapped_type& value = m_fileExist[key];
 		value.instanceDoesNotExist = min(value.instanceDoesNotExist, instance);
 	}
 #endif
@@ -417,5 +458,72 @@ void FileSystem::appendPathSeparator(AsciiString& path)
 	if (path.isNotEmpty() && !isPathSeparator(path.back()))
 	{
 		path.concat(getNativePathSeparator());
+	}
+}
+
+//============================================================================
+// FileSystem::makePathKey
+//============================================================================
+Bool FileSystem::makePathKey(Char* key, size_t keySize, const Char* path)
+{
+	DEBUG_ASSERTCRASH(keySize > 0, ("FileSystem::makePathKey - key buffer is empty"));
+
+	Char* const keyBegin = key;
+	const Char* const keyEnd = key + keySize - 1;
+	const Char* const pairEnd = getPathKeyPairEnd(path);
+
+	for (;;)
+	{
+		const UnsignedByte ch = toPathKeyChar(*path);
+
+		if (ch == '\0')
+			break;
+
+		if (key == keyEnd)
+		{
+			*keyBegin = '\0';
+			return FALSE;
+		}
+
+		*key++ = ch;
+		++path;
+
+		if (ch == '\\')
+		{
+			while (path > pairEnd && isPathSeparator(*path))
+				++path;
+		}
+	}
+
+	*key = '\0';
+	return TRUE;
+}
+
+//============================================================================
+// FileSystem::comparePath
+//============================================================================
+Int FileSystem::comparePath(const Char* a, const Char* b)
+{
+	const Char* const pairEndA = getPathKeyPairEnd(a);
+	const Char* const pairEndB = getPathKeyPairEnd(b);
+
+	for (;;)
+	{
+		const UnsignedByte ca = toPathKeyChar(*a);
+		const UnsignedByte cb = toPathKeyChar(*b);
+
+		if (ca != cb || ca == '\0')
+			return (Int)ca - (Int)cb;
+
+		++a;
+		++b;
+
+		if (ca == '\\')
+		{
+			while (a > pairEndA && isPathSeparator(*a))
+				++a;
+			while (b > pairEndB && isPathSeparator(*b))
+				++b;
+		}
 	}
 }
