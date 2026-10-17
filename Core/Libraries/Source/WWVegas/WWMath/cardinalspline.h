@@ -55,11 +55,6 @@ public:
 
 	virtual void		Update_Tangents() override;
 
-	// save-load support
-	virtual const PersistFactoryClass &	Get_Factory() const override;
-	virtual bool								Save(ChunkSaveClass &csave) override;
-	virtual bool								Load(ChunkLoadClass &cload) override;
-
 protected:
 
 	DynamicVectorClass<float>	Tightness;
@@ -82,11 +77,6 @@ public:
 	virtual float		Get_Tightness(int i);
 
 	virtual void		Update_Tangents() override;
-
-	// save-load support
-	virtual const PersistFactoryClass &	Get_Factory() const override;
-	virtual bool								Save(ChunkSaveClass &csave) override;
-	virtual bool								Load(ChunkLoadClass &cload) override;
 
 protected:
 

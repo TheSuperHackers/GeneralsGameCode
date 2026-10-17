@@ -44,7 +44,6 @@
 #include "WWMath/sphere.h"
 #include "coltype.h"
 #include "WWMath/aabox.h"
-#include "WWSaveLoad/persist.h"
 #include "WWLib/multilist.h"
 #include "robjlist.h"
 #include <float.h>
@@ -148,7 +147,7 @@ private:
 };
 
 // RenderObjClass definition
-class RenderObjClass : public RefCountClass , public PersistClass, public MultiListObjectClass
+class RenderObjClass : public RefCountClass , public MultiListObjectClass
 {
 public:
 
@@ -481,13 +480,6 @@ public:
 	void								Set_Is_Self_Shadowed()														{ Bits|=IS_SELF_SHADOWED; }
 	void								Unset_Is_Self_Shadowed()													{ Bits&=~IS_SELF_SHADOWED; }
 	int								Is_Self_Shadowed() const													{ return (Bits&IS_SELF_SHADOWED); }
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Persistent object save-load interface
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	virtual const PersistFactoryClass &	Get_Factory () const override;
-	virtual bool					Save (ChunkSaveClass &csave) override;
-	virtual bool					Load (ChunkLoadClass &cload) override;
 
 	// Application-specific render hook:
 	RenderHookClass *				Get_Render_Hook() { return RenderHook; }

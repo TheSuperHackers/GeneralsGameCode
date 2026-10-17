@@ -37,33 +37,6 @@
 
 #include "cardinalspline.h"
 #include "WWDebug/wwdebug.h"
-#include "WWSaveLoad/persistfactory.h"
-#include "wwmathids.h"
-#include "WWDebug/wwhack.h"
-
-/*
-** Force-Link this module because the linker can't detect that we actually need it...
-*/
-DECLARE_FORCE_LINK(cardinalspline);
-
-
-/*
-** Save-Load stuff
-*/
-SimplePersistFactoryClass<CardinalSpline3DClass,WWMATH_CHUNKID_CARDINALSPLINE3D>	_CardinalSpline3DFactory;
-SimplePersistFactoryClass<CardinalSpline1DClass,WWMATH_CHUNKID_CARDINALSPLINE1D>	_CardinalSpline1DFactory;
-
-enum
-{
-	// ID's used by CardinalSpline3D
-	CARDINAL3D_CHUNK_HERMITE3D					= 0x02070957,
-	CARDINAL3D_CHUNK_TIGHTNESSKEYS,
-
-	// ID's used by CardinalSpline1D
-	CARDINAL1D_CHUNK_HERMITE1D					= 0x02070959,
-	CARDINAL1D_CHUNK_TIGHTNESSKEYS
-};
-
 
 /*
 ** CardinalSpline3DClass Implementation
@@ -160,61 +133,6 @@ void CardinalSpline3DClass::Update_Tangents()
 	TangentsDirty = false;
 }
 
-const PersistFactoryClass & CardinalSpline3DClass::Get_Factory() const
-{
-	return _CardinalSpline3DFactory;
-}
-
-bool CardinalSpline3DClass::Save(ChunkSaveClass &csave)
-{
-	csave.Begin_Chunk(CARDINAL3D_CHUNK_HERMITE3D);
-	HermiteSpline3DClass::Save(csave);
-	csave.End_Chunk();
-
-	csave.Begin_Chunk(CARDINAL3D_CHUNK_TIGHTNESSKEYS);
-	for (int i=0; i<Tightness.Count(); i++) {
-		float tightness = Tightness[i];
-		csave.Write(&(tightness),sizeof(tightness));
-	}
-	csave.End_Chunk();
-	return true;
-}
-
-bool CardinalSpline3DClass::Load(ChunkLoadClass &cload)
-{
-	int i;
-	float tightness;
-
-	// reset the array of tightness keys
-	Tightness.Delete_All();
-
-	// read in the chunks
-	while (cload.Open_Chunk()) {
-
-		switch(cload.Cur_Chunk_ID())
-		{
-			case CARDINAL3D_CHUNK_HERMITE3D:
-				HermiteSpline3DClass::Load(cload);
-				break;
-
-			case CARDINAL3D_CHUNK_TIGHTNESSKEYS:
-				for (i=0; i<Keys.Count(); i++) {
-					cload.Read(&(tightness),sizeof(tightness));
-					Tightness.Add(tightness);
-				}
-				break;
-
-			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
-				break;
-		}
-		cload.Close_Chunk();
-	}
-
-	return true;
-}
-
-
 /*
 ** CardinalSpline1DClass Implementation
 */
@@ -297,60 +215,6 @@ void CardinalSpline1DClass::Update_Tangents()
 		Tangents[i].OutTangent *= out_factor;
 	}
 	TangentsDirty = false;
-}
-
-const PersistFactoryClass & CardinalSpline1DClass::Get_Factory() const
-{
-	return _CardinalSpline1DFactory;
-}
-
-bool CardinalSpline1DClass::Save(ChunkSaveClass &csave)
-{
-	csave.Begin_Chunk(CARDINAL1D_CHUNK_HERMITE1D);
-	HermiteSpline1DClass::Save(csave);
-	csave.End_Chunk();
-
-	csave.Begin_Chunk(CARDINAL1D_CHUNK_TIGHTNESSKEYS);
-	for (int i=0; i<Tightness.Count(); i++) {
-		float tightness = Tightness[i];
-		csave.Write(&(tightness),sizeof(tightness));
-	}
-	csave.End_Chunk();
-	return true;
-}
-
-bool CardinalSpline1DClass::Load(ChunkLoadClass &cload)
-{
-	int i;
-	float tightness;
-
-	// reset the array of tangents
-	Tightness.Delete_All();
-
-	// read in the chunks
-	while (cload.Open_Chunk()) {
-
-		switch(cload.Cur_Chunk_ID())
-		{
-			case CARDINAL1D_CHUNK_HERMITE1D:
-				HermiteSpline1DClass::Load(cload);
-				break;
-
-			case CARDINAL1D_CHUNK_TIGHTNESSKEYS:
-				for (i=0; i<Keys.Count(); i++) {
-					cload.Read(&(tightness),sizeof(tightness));
-					Tightness.Add(tightness);
-				}
-				break;
-
-			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
-				break;
-		}
-		cload.Close_Chunk();
-	}
-
-	return true;
 }
 
 

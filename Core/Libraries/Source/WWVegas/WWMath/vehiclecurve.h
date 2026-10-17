@@ -99,20 +99,12 @@ public:
 	float			Get_Current_Sharpness (Vector3 *position) const	{ *position = m_SharpnessPos; return m_Sharpness; }
 	float			Get_Last_Eval_Time () const						{ return m_LastTime; }
 
-	//
-	// Save-load support
-	//
-	virtual const PersistFactoryClass &	Get_Factory() const override;
-	virtual bool								Save(ChunkSaveClass &csave) override;
-	virtual bool								Load(ChunkLoadClass &cload) override;
-
 protected:
 
 	///////////////////////////////////////////////////////////////////////////
 	//	Protected methods
 	///////////////////////////////////////////////////////////////////////////
 	void			Update_Arc_List ();
-	void			Load_Variables (ChunkLoadClass &cload);
 
 
 	///////////////////////////////////////////////////////////////////////////

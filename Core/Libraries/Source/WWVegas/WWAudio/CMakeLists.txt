@@ -1,10 +1,7 @@
 set(WWAUDIO_SRC
-    AABTreeSoundCullClass.h
     AudibleSound.cpp
     AudibleSound.h
     AudioEvents.h
-    AudioSaveLoad.cpp
-    AudioSaveLoad.h
     FilteredSound.cpp
     FilteredSound.h
     Listener.cpp
@@ -24,7 +21,6 @@ set(WWAUDIO_SRC
     sound3dhandle.h
     SoundBuffer.cpp
     SoundBuffer.h
-    SoundChunkIDs.h
     SoundCullObj.h
     soundhandle.cpp
     soundhandle.h

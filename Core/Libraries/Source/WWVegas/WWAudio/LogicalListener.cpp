@@ -35,8 +35,6 @@
 #include "LogicalListener.h"
 #include "WWAudio.h"
 #include "SoundScene.h"
-#include "SoundChunkIDs.h"
-#include "WWSaveLoad/persistfactory.h"
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -45,31 +43,6 @@
 uint32		LogicalListenerClass::m_OldestTimestamp	= 0;
 uint32		LogicalListenerClass::m_NewestTimestamp	= 1;
 float			LogicalListenerClass::m_GlobalScale			= 1.0F;
-
-
-//////////////////////////////////////////////////////////////////////////////////
-//	Static factories
-//////////////////////////////////////////////////////////////////////////////////
-SimplePersistFactoryClass<LogicalListenerClass, CHUNKID_LOGICALLISTENER> _LogicalListenerPersistFactory;
-
-
-//////////////////////////////////////////////////////////////////////////////////
-//	Save/Load constants
-//////////////////////////////////////////////////////////////////////////////////
-enum
-{
-	CHUNKID_VARIABLES			= 0x03270542,
-	CHUNKID_BASE_CLASS
-};
-
-enum
-{
-	XXXVARID_DROP_OFF_RADIUS		= 0x01,
-	VARID_TYPE_MASK,
-	VARID_XXX1,
-	VARID_POSITION,
-	VARID_SCALE
-};
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -133,81 +106,5 @@ LogicalListenerClass::Remove_From_Scene ()
 		m_Scene = nullptr;
 		m_PhysWrapper = nullptr;
 	}
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////
-//
-//	Get_Factory
-//
-/////////////////////////////////////////////////////////////////////////////////
-const PersistFactoryClass &
-LogicalListenerClass::Get_Factory () const
-{
-	return _LogicalListenerPersistFactory;
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////
-//
-//	Save
-//
-//////////////////////////////////////////////////////////////////////////////////
-bool
-LogicalListenerClass::Save (ChunkSaveClass &csave)
-{
-	csave.Begin_Chunk (CHUNKID_BASE_CLASS);
-		SoundSceneObjClass::Save (csave);
-	csave.End_Chunk ();
-
-	csave.Begin_Chunk (CHUNKID_VARIABLES);
-
-		WRITE_MICRO_CHUNK (csave, VARID_SCALE, m_Scale);
-		WRITE_MICRO_CHUNK (csave, VARID_TYPE_MASK, m_TypeMask);
-		WRITE_MICRO_CHUNK (csave, VARID_POSITION, m_Position);
-
-	csave.End_Chunk ();
-	return true;
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////
-//
-//	Load
-//
-//////////////////////////////////////////////////////////////////////////////////
-bool
-LogicalListenerClass::Load (ChunkLoadClass &cload)
-{
-	while (cload.Open_Chunk ()) {
-		switch (cload.Cur_Chunk_ID ()) {
-
-			case CHUNKID_BASE_CLASS:
-				PersistClass::Load (cload);
-				break;
-
-			case CHUNKID_VARIABLES:
-			{
-				//
-				//	Read all the variables from their micro-chunks
-				//
-				while (cload.Open_Micro_Chunk ()) {
-					switch (cload.Cur_Micro_Chunk_ID ()) {
-
-						READ_MICRO_CHUNK (cload, VARID_SCALE, m_Scale);
-						READ_MICRO_CHUNK (cload, VARID_TYPE_MASK, m_TypeMask);
-						READ_MICRO_CHUNK (cload, VARID_POSITION, m_Position);
-					}
-
-					cload.Close_Micro_Chunk ();
-				}
-			}
-			break;
-		}
-
-		cload.Close_Chunk ();
-	}
-
-	return true;
 }
 

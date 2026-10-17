@@ -229,7 +229,6 @@ set(WW3D2_SRC
 #    ww3d.h
     #ww3dformat.cpp
     #ww3dformat.h
-    #ww3dids.h
     #ww3dtrig.h
 )
 

@@ -36,7 +36,6 @@
 
 
 #include "wwmath.h"
-#include "WWDebug/wwhack.h"
 #include "lookuptable.h"
 #include <stdlib.h>
 #include "WWDebug/wwdebug.h"
@@ -88,18 +87,5 @@ void		WWMath::Shutdown()
 float		WWMath::Random_Float()
 {
 	return ((float)(rand() & 0xFFF)) / (float)(0xFFF);
-}
-
-
-/*
-** Force link some modules from this library.
-*/
-void Do_Force_Links()
-{
-	FORCE_LINK(curve);
-	FORCE_LINK(hermitespline);
-	FORCE_LINK(catmullromspline);
-	FORCE_LINK(cardinalspline);
-	FORCE_LINK(tcbspline);
 }
 

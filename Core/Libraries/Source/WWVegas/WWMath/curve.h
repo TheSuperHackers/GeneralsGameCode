@@ -39,19 +39,15 @@
 #include "WWLib/always.h"
 #include "WWLib/Vector.h"
 #include "vector3.h"
-#include "WWSaveLoad/persist.h"
-
-class ChunkLoadClass;
-class ChunkSaveClass;
 
 
-class Curve3DClass : public PersistClass
+class Curve3DClass
 {
 public:
 
 	Curve3DClass();
 	Curve3DClass(const Curve3DClass & that);
-	virtual ~Curve3DClass() override;
+	virtual ~Curve3DClass();
 	Curve3DClass & operator = (const Curve3DClass & that);
 
 	virtual void		Evaluate(float time,Vector3 * set_val) = 0;
@@ -65,10 +61,6 @@ public:
 	virtual void		Clear_Keys();
 	float					Get_Start_Time();
 	float					Get_End_Time();
-
-	// persistent object support
-	virtual bool		Save (ChunkSaveClass &csave) override;
-	virtual bool		Load (ChunkLoadClass &cload) override;
 
 protected:
 
@@ -92,24 +84,19 @@ class LinearCurve3DClass : public Curve3DClass
 {
 public:
 	virtual void		Evaluate(float time,Vector3 * set_val) override;
-
-	// persistent object support
-	virtual const PersistFactoryClass &	Get_Factory() const override;
-	virtual bool								Save(ChunkSaveClass &csave) override;
-	virtual bool								Load(ChunkLoadClass &cload) override;
 };
 
 
 /*
 ** 1-Dimensional curve classes.
 */
-class Curve1DClass : public PersistClass
+class Curve1DClass
 {
 public:
 
 	Curve1DClass();
 	Curve1DClass(const Curve1DClass & that);
-	virtual ~Curve1DClass() override;
+	virtual ~Curve1DClass();
 	Curve1DClass & operator = (const Curve1DClass & that);
 
 	virtual void		Evaluate(float time,float * set_val) = 0;
@@ -123,10 +110,6 @@ public:
 	virtual void		Clear_Keys();
 	float					Get_Start_Time();
 	float					Get_End_Time();
-
-	// persistent object support
-	virtual bool		Save (ChunkSaveClass &csave) override;
-	virtual bool		Load (ChunkLoadClass &cload) override;
 
 protected:
 
@@ -151,9 +134,4 @@ class LinearCurve1DClass : public Curve1DClass
 {
 public:
 	virtual void		Evaluate(float time,float * set_val) override;
-
-	// persistent object support
-	virtual const PersistFactoryClass &	Get_Factory() const override;
-	virtual bool								Save(ChunkSaveClass &csave) override;
-	virtual bool								Load(ChunkLoadClass &cload) override;
 };

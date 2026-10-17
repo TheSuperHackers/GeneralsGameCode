@@ -40,36 +40,7 @@
 #include "WWAudio.h"
 #include "SoundScene.h"
 #include "Utils.h"
-#include "SoundChunkIDs.h"
-#include "WWSaveLoad/persistfactory.h"
-#include "WWLib/chunkio.h"
 #include "sound3dhandle.h"
-
-
-//////////////////////////////////////////////////////////////////////////////////
-//
-//	Static factories
-//
-//////////////////////////////////////////////////////////////////////////////////
-SimplePersistFactoryClass<Sound3DClass, CHUNKID_SOUND3D> _Sound3DPersistFactory;
-
-
-enum
-{
-	CHUNKID_VARIABLES			= 0x11090955,
-	CHUNKID_BASE_CLASS
-};
-
-enum
-{
-	VARID_AUTO_CALC_VEL		= 0x01,
-	VARID_CURR_VEL,
-	VARID_XXX1,
-	VARID_XXX2,
-	VARID_MAX_VOL_RADIUS,
-	VARID_IS_STATIC,
-};
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -595,86 +566,6 @@ Sound3DClass::On_Loop_End ()
 	// Allow the base class to process this message
 	AudibleSoundClass::On_Loop_End ();
 }
-
-/////////////////////////////////////////////////////////////////////////////////
-//
-//	Get_Factory
-//
-/////////////////////////////////////////////////////////////////////////////////
-const PersistFactoryClass &
-Sound3DClass::Get_Factory () const
-{
-	return _Sound3DPersistFactory;
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////
-//
-//	Save
-//
-//////////////////////////////////////////////////////////////////////////////////
-bool
-Sound3DClass::Save (ChunkSaveClass &csave)
-{
-	csave.Begin_Chunk (CHUNKID_BASE_CLASS);
-		AudibleSoundClass::Save (csave);
-	csave.End_Chunk ();
-
-	csave.Begin_Chunk (CHUNKID_VARIABLES);
-
-		WRITE_MICRO_CHUNK (csave, VARID_AUTO_CALC_VEL, m_bAutoCalcVel);
-		WRITE_MICRO_CHUNK (csave, VARID_CURR_VEL, m_CurrentVelocity);
-
-		WRITE_MICRO_CHUNK (csave, VARID_MAX_VOL_RADIUS, m_MaxVolRadius);
-		WRITE_MICRO_CHUNK (csave, VARID_IS_STATIC, m_IsStatic);
-
-	csave.End_Chunk ();
-
-	return true;
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////
-//
-//	Load
-//
-//////////////////////////////////////////////////////////////////////////////////
-bool
-Sound3DClass::Load (ChunkLoadClass &cload)
-{
-	while (cload.Open_Chunk ()) {
-		switch (cload.Cur_Chunk_ID ()) {
-
-			case CHUNKID_BASE_CLASS:
-				AudibleSoundClass::Load (cload);
-				break;
-
-			case CHUNKID_VARIABLES:
-			{
-				//
-				//	Read all the variables from their micro-chunks
-				//
-				while (cload.Open_Micro_Chunk ()) {
-					switch (cload.Cur_Micro_Chunk_ID ()) {
-
-						READ_MICRO_CHUNK (cload, VARID_AUTO_CALC_VEL, m_bAutoCalcVel);
-						READ_MICRO_CHUNK (cload, VARID_CURR_VEL, m_CurrentVelocity);
-						READ_MICRO_CHUNK (cload, VARID_MAX_VOL_RADIUS, m_MaxVolRadius);
-						READ_MICRO_CHUNK (cload, VARID_IS_STATIC, m_IsStatic);
-					}
-
-					cload.Close_Micro_Chunk ();
-				}
-			}
-			break;
-		}
-
-		cload.Close_Chunk ();
-	}
-
-	return true;
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //

@@ -104,14 +104,6 @@ class LogicalListenerClass : public SoundSceneObjClass
 		virtual float			Get_DropOff_Radius () const override { return 1.0F; }
 
 		//////////////////////////////////////////////////////////////////////
-		//	From PersistClass
-		//////////////////////////////////////////////////////////////////////
-		virtual bool									Save (ChunkSaveClass &csave) override;
-		virtual bool									Load (ChunkLoadClass &cload) override;
-		virtual const PersistFactoryClass &	Get_Factory () const override;
-
-
-		//////////////////////////////////////////////////////////////////////
 		//	Timestamp
 		//////////////////////////////////////////////////////////////////////
 		uint32					Get_Timestamp () const		{ return m_Timestamp; }

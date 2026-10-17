@@ -39,8 +39,6 @@
 #include "SoundCullObj.h"
 #include "LogicalSound.h"
 #include "LogicalListener.h"
-#include "WWLib/chunkio.h"
-#include "WWSaveLoad/persistfactory.h"
 #include "WWDebug/wwprofile.h"
 #include "Threads.h"
 #include "WWDebug/wwmemlog.h"
@@ -53,23 +51,6 @@ DEFINE_AUTO_POOL(SoundSceneClass::AudibleInfoClass, 64);
 //	Generic constants
 //////////////////////////////////////////////////////////////////////////////////
 const int MAX_LOGICAL_LISTENER_UPDATES_PER_FRAME		= 4;
-
-
-//////////////////////////////////////////////////////////////////////////////////
-//	Save/Load constants
-//////////////////////////////////////////////////////////////////////////////////
-enum
-{
-	CHUNKID_VARIABLES			= 0x00000100,
-	CHUNKID_STATIC_SOUNDS,
-	CHUNKID_DYNAMIC_SOUNDS
-};
-
-enum
-{
-	VARID_MIN_DIM				= 0x01,
-	VARID_MAX_DIM,
-};
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1035,160 +1016,6 @@ SoundSceneClass::Is_Logical_Sound_In_Scene
 	}
 
 	return retval;
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//	Save_Static
-//
-////////////////////////////////////////////////////////////////////////////////////////////////
-bool
-SoundSceneClass::Save_Static (ChunkSaveClass &csave)
-{
-	csave.Begin_Chunk (CHUNKID_VARIABLES);
-		WRITE_MICRO_CHUNK (csave, VARID_MIN_DIM, m_MinExtents);
-		WRITE_MICRO_CHUNK (csave, VARID_MAX_DIM, m_MaxExtents);
-	csave.End_Chunk ();
-
-	//
-	//	Save the list of static sounds that are currently in the scene
-	//
-	csave.Begin_Chunk (CHUNKID_STATIC_SOUNDS);
-		Save_Static_Sounds (csave);
-	csave.End_Chunk ();
-
-	return true;
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//	Save_Static_Sounds
-//
-////////////////////////////////////////////////////////////////////////////////////////////////
-void
-SoundSceneClass::Save_Static_Sounds (ChunkSaveClass &csave)
-{
-	Re_Partition (m_MinExtents, m_MaxExtents);
-
-	//
-	//	Loop over all the static sounds that are in the scene
-	// and save each to its own chunk.
-	//
-	MultiListIterator<SoundCullObjClass> static_iterator (&m_StaticSounds);
-	for (static_iterator.First (); !static_iterator.Is_Done (); static_iterator.Next ()) {
-		SoundCullObjClass *cull_obj = static_iterator.Peek_Obj ();
-
-		//
-		//	Get the sound from its cull object
-		//
-		AudibleSoundClass *sound_obj	= (AudibleSoundClass *)cull_obj->Peek_Sound_Obj ();
-		if (sound_obj != nullptr) {
-
-			//
-			//	Have the sound's factory save it
-			//
-			csave.Begin_Chunk (sound_obj->Get_Factory ().Chunk_ID ());
-			sound_obj->Get_Factory ().Save (csave, sound_obj);
-			csave.End_Chunk ();
-		}
-	}
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//	Load_Static_Sounds
-//
-////////////////////////////////////////////////////////////////////////////////////////////////
-void
-SoundSceneClass::Load_Static_Sounds (ChunkLoadClass &cload)
-{
-	while (cload.Open_Chunk ()) {
-
-		//
-		//	Load this sound from the chunk (if possible)
-		//
-		PersistFactoryClass *factory = SaveLoadSystemClass::Find_Persist_Factory (cload.Cur_Chunk_ID ());
-		if (factory != nullptr) {
-			AudibleSoundClass *sound_obj = (AudibleSoundClass *)factory->Load (cload);
-			if (sound_obj != nullptr) {
-				sound_obj->Add_To_Scene (true);
-				REF_PTR_RELEASE (sound_obj);
-			}
-		}
-
-		cload.Close_Chunk ();
-	}
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//	Load_Static
-//
-////////////////////////////////////////////////////////////////////////////////////////////////
-bool
-SoundSceneClass::Load_Static (ChunkLoadClass &cload)
-{
-	m_IsBatchMode = true;
-
-	while (cload.Open_Chunk ()) {
-		switch (cload.Cur_Chunk_ID ()) {
-
-			case CHUNKID_STATIC_SOUNDS:
-				Load_Static_Sounds (cload);
-				break;
-
-			case CHUNKID_VARIABLES:
-			{
-				//
-				//	Read all the variables from their micro-chunks
-				//
-				while (cload.Open_Micro_Chunk ()) {
-					switch (cload.Cur_Micro_Chunk_ID ()) {
-						READ_MICRO_CHUNK (cload, VARID_MIN_DIM, m_MinExtents);
-						READ_MICRO_CHUNK (cload, VARID_MAX_DIM, m_MaxExtents);
-					}
-
-					cload.Close_Micro_Chunk ();
-				}
-			}
-			break;
-		}
-
-		cload.Close_Chunk ();
-	}
-
-	Re_Partition (m_MinExtents, m_MaxExtents);
-	On_Frame_Update (0);
-	m_IsBatchMode = false;
-	return true;
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//	Save_Dynamic
-//
-////////////////////////////////////////////////////////////////////////////////////////////////
-bool
-SoundSceneClass::Save_Dynamic (ChunkSaveClass &csave)
-{
-	return true;
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//	Load_Dynamic
-//
-////////////////////////////////////////////////////////////////////////////////////////////////
-bool
-SoundSceneClass::Load_Dynamic (ChunkLoadClass &cload)
-{
-	return true;
 }
 
 

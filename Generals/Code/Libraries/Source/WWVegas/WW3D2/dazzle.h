@@ -298,10 +298,6 @@ public:
 	// internally by the Render() function.
 	void Set_Layer(DazzleLayerClass *layer);
 
-	// Persistent object save-load interface
-	// Dazzles save their "dazzle-type" and transform
-	virtual const PersistFactoryClass &	Get_Factory () const override;
-
 	// Set the static "current layer" variable. This variable is used in the
 	// Render() call so that the dazzle knows which list to add itself to if
 	// it is visible. This function must be called before rendering the

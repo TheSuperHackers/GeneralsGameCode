@@ -36,32 +36,6 @@
 
 
 #include "hermitespline.h"
-#include "wwmathids.h"
-#include "WWSaveLoad/persistfactory.h"
-#include "WWDebug/wwhack.h"
-
-
-/*
-** Force-Link this module because the linker can't detect that we actually need it...
-*/
-DECLARE_FORCE_LINK(hermitespline);
-
-/*
-** Save-Load stuff
-*/
-SimplePersistFactoryClass<HermiteSpline3DClass,WWMATH_CHUNKID_HERMITESPLINE3D>	_HermiteSpline3DFactory;
-SimplePersistFactoryClass<HermiteSpline1DClass,WWMATH_CHUNKID_HERMITESPLINE1D>	_HermiteSpline1DFactory;
-
-enum
-{
-	// ID's used by HermiteSpline3D
-	HERMITE3D_CHUNK_CURVE3D					= 0x00020727,
-	HERMITE3D_CHUNK_TANGENTS,
-
-	// ID's used by HermiteSpline1D
-	HERMITE1D_CHUNK_CURVE1D					= 0x00020729,
-	HERMITE1D_CHUNK_TANGENTS,
-};
 
 
 /*
@@ -212,65 +186,6 @@ void HermiteSpline3DClass::Get_Tangents(int i,Vector3 * set_in,Vector3 * set_out
 	*set_out = Tangents[i].OutTangent;
 }
 
-const PersistFactoryClass & HermiteSpline3DClass::Get_Factory() const
-{
-	return _HermiteSpline3DFactory;
-}
-
-bool HermiteSpline3DClass::Save(ChunkSaveClass &csave)
-{
-	csave.Begin_Chunk(HERMITE3D_CHUNK_CURVE3D);
-	Curve3DClass::Save(csave);
-	csave.End_Chunk();
-
-	csave.Begin_Chunk(HERMITE3D_CHUNK_TANGENTS);
-	for (int i=0; i<Tangents.Count(); i++) {
-		csave.Write(&(Tangents[i].InTangent),sizeof(Tangents[i].InTangent));
-		csave.Write(&(Tangents[i].OutTangent),sizeof(Tangents[i].OutTangent));
-	}
-	csave.End_Chunk();
-	return true;
-}
-
-bool HermiteSpline3DClass::Load(ChunkLoadClass &cload)
-{
-	int i;
-	TangentsClass newtangent;
-
-	// reset the array of tangents
-	Tangents.Delete_All();
-
-	// read in the chunks
-	while (cload.Open_Chunk()) {
-
-		switch(cload.Cur_Chunk_ID())
-		{
-			case HERMITE3D_CHUNK_CURVE3D:
-				Curve3DClass::Load(cload);
-				break;
-
-			case HERMITE3D_CHUNK_TANGENTS:
-				for (i=0; i<Keys.Count(); i++) {
-					cload.Read(&(newtangent.InTangent),sizeof(newtangent.InTangent));
-					cload.Read(&(newtangent.OutTangent),sizeof(newtangent.OutTangent));
-					Tangents.Add(newtangent);
-				}
-				break;
-
-			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
-				break;
-		}
-		cload.Close_Chunk();
-	}
-
-	WWASSERT(Keys.Count() == Tangents.Count());
-	return true;
-}
-
-
-
-
 /*
 ** 1-Dimensional Hermite Spline
 */
@@ -372,66 +287,5 @@ void HermiteSpline1DClass::Get_Tangents(int i,float * set_in,float * set_out)
 	assert(i<Keys.Count());
 	*set_in = Tangents[i].InTangent;
 	*set_out = Tangents[i].OutTangent;
-}
-
-const PersistFactoryClass & HermiteSpline1DClass::Get_Factory() const
-{
-	return _HermiteSpline1DFactory;
-}
-
-bool HermiteSpline1DClass::Save(ChunkSaveClass &csave)
-{
-	if (TangentsDirty) {
-		Update_Tangents();
-	}
-
-	csave.Begin_Chunk(HERMITE1D_CHUNK_CURVE1D);
-	Curve1DClass::Save(csave);
-	csave.End_Chunk();
-
-	csave.Begin_Chunk(HERMITE1D_CHUNK_TANGENTS);
-	for (int i=0; i<Tangents.Count(); i++) {
-		csave.Write(&(Tangents[i].InTangent),sizeof(Tangents[i].InTangent));
-		csave.Write(&(Tangents[i].OutTangent),sizeof(Tangents[i].OutTangent));
-	}
-	csave.End_Chunk();
-	return true;
-}
-
-bool HermiteSpline1DClass::Load(ChunkLoadClass &cload)
-{
-	int i;
-	TangentsClass newtangent;
-
-	// reset the tangents array
-	Tangents.Delete_All();
-
-	// read in the chunks
-	while (cload.Open_Chunk()) {
-
-		switch(cload.Cur_Chunk_ID())
-		{
-			case HERMITE1D_CHUNK_CURVE1D:
-				Curve1DClass::Load(cload);
-				break;
-
-			case HERMITE1D_CHUNK_TANGENTS:
-				for (i=0; i<Keys.Count(); i++) {
-					cload.Read(&(newtangent.InTangent),sizeof(newtangent.InTangent));
-					cload.Read(&(newtangent.OutTangent),sizeof(newtangent.OutTangent));
-					Tangents.Add(newtangent);
-				}
-				TangentsDirty = false;
-				break;
-
-			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
-				break;
-		}
-		cload.Close_Chunk();
-	}
-
-	WWASSERT(Keys.Count() == Tangents.Count());
-	return true;
 }
 

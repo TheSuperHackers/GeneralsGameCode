@@ -38,27 +38,12 @@
 
 #include "lookuptable.h"
 #include "curve.h"
-#include "WWLib/WWFILE.h"
-#include "WWLib/ffactory.h"
-#include "WWLib/chunkio.h"
-#include "WWSaveLoad/persistfactory.h"
-#include "vector2.h"
 
 
 /*
 ** Static members
 */
 RefMultiListClass<LookupTableClass>	LookupTableMgrClass::Tables;
-
-/*
-** Save-Load stuff.  Lookup tables are basically saved 1D curve classes.  They are turned
-** into tables at load time.  For future expansion, the curve is wrapped in a chunk.
-*/
-enum
-{
-	LOOKUPTABLE_CHUNK_CURVE		= 03071200,
-	LOOKUPTABLE_CHUNK_EXTENTS,
-};
 
 
 /***********************************************************************************************
@@ -140,9 +125,9 @@ bool LookupTableMgrClass::Remove_Table(LookupTableClass * table)
 	return Tables.Remove(table);
 }
 
-LookupTableClass * LookupTableMgrClass::Get_Table(const char * name,bool try_to_load)
+LookupTableClass * LookupTableMgrClass::Get_Table(const char * name)
 {
-	// check if we already have this table loaded...
+	// find the table with this name...
 	RefMultiListIterator<LookupTableClass> it(&Tables);
 	for (it.First(); !it.Is_Done(); it.Next()) {
 		if (stricmp(it.Peek_Obj()->Get_Name(),name) == 0) {
@@ -150,100 +135,7 @@ LookupTableClass * LookupTableMgrClass::Get_Table(const char * name,bool try_to_
 		}
 	}
 
-	// otherwise we can try to load it.
-	LookupTableClass * new_table = nullptr;
-	if (try_to_load) {
-
-		FileClass * file = _TheFileFactory->Get_File(name);
-		if (file && file->Open()) {
-
-			ChunkLoadClass cload(file);
-
-			Curve1DClass * curve = nullptr;
-			Load_Table_Desc(cload,&curve);
-			if (curve != nullptr) {
-				new_table = NEW_REF(LookupTableClass,());
-				new_table->Init(name,curve);
-				Add_Table(new_table);
-				delete curve;
-			}
-		}
-		_TheFileFactory->Return_File(file);
-	}
-
-	return new_table;  // constructor ref is returned to user.
-}
-
-void LookupTableMgrClass::Save_Table_Desc
-(
-	ChunkSaveClass &	csave,
-	Curve1DClass *		curve,
-	const Vector2 &	min_corner,
-	const Vector2 &	max_corner
-)
-{
-	// save the curve
-	csave.Begin_Chunk(LOOKUPTABLE_CHUNK_CURVE);
-	csave.Begin_Chunk(curve->Get_Factory().Chunk_ID());
-	curve->Get_Factory().Save(csave,curve);
-	csave.End_Chunk();
-	csave.End_Chunk();
-
-	// save the extents
-	csave.Begin_Chunk(LOOKUPTABLE_CHUNK_EXTENTS);
-	csave.Write(&(min_corner.X),sizeof(float));
-	csave.Write(&(min_corner.Y),sizeof(float));
-	csave.Write(&(max_corner.X),sizeof(float));
-	csave.Write(&(max_corner.Y),sizeof(float));
-	csave.End_Chunk();
-}
-
-void LookupTableMgrClass::Load_Table_Desc
-(
-	ChunkLoadClass &	cload,
-	Curve1DClass **	curve_ptr,
-	Vector2 *			set_min_corner,
-	Vector2 *			set_max_corner
-)
-{
-	*curve_ptr = nullptr;
-	PersistFactoryClass * factory;
-
-	float xmin,xmax;
-	float ymin,ymax;
-	xmin = xmax = ymin = ymax = 0.0f;
-
-	while (cload.Open_Chunk()) {
-		switch(cload.Cur_Chunk_ID()) {
-			case LOOKUPTABLE_CHUNK_CURVE:
-				cload.Open_Chunk();
-				factory = SaveLoadSystemClass::Find_Persist_Factory(cload.Cur_Chunk_ID());
-				WWASSERT(factory != nullptr);
-				if (factory != nullptr) {
-					*curve_ptr = (Curve1DClass *)factory->Load(cload);
-				}
-				cload.Close_Chunk();
-				break;
-			case LOOKUPTABLE_CHUNK_EXTENTS:
-				cload.Read(&xmin,sizeof(xmin));
-				cload.Read(&ymin,sizeof(ymin));
-				cload.Read(&xmax,sizeof(xmax));
-				cload.Read(&ymax,sizeof(ymax));
-				break;
-
-			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
-				break;
-		}
-		cload.Close_Chunk();
-	}
-
-	if (set_min_corner != nullptr) {
-		set_min_corner->Set(xmin,ymin);
-	}
-	if (set_max_corner != nullptr) {
-		set_max_corner->Set(xmax,ymax);
-	}
+	return nullptr;
 }
 
 

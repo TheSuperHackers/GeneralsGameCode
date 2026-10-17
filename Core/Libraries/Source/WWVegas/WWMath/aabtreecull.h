@@ -45,8 +45,6 @@
 #include <float.h>
 
 class AABTreeNodeClass;
-class ChunkLoadClass;
-class ChunkSaveClass;
 class SphereClass;
 
 /**
@@ -99,18 +97,6 @@ public:
 	virtual void		Collect_Objects(const OBBoxClass & box) override;
 	virtual void		Collect_Objects(const FrustumClass & frustum) override;
 	virtual void		Collect_Objects(const SphereClass & sphere);
-
-	/*
-	** Load and Save a description of this AAB-Tree and its contents
-	*/
-	virtual void		Load(ChunkLoadClass & cload);
-	virtual void		Save(ChunkSaveClass & csave);
-
-	/*
-	** Save an objects linkage, load the linkage and re-link the object
-	*/
-	void					Load_Object_Linkage(ChunkLoadClass & cload,CullableClass * obj);
-	void					Save_Object_Linkage(ChunkSaveClass & csave,CullableClass * obj);
 
 	/*
 	** Bounding box of the entire tree
@@ -170,12 +156,6 @@ protected:
 	void					Collect_Objects_Recursive(AABTreeNodeClass * node,const SphereClass & sphere);
 
 	void					Update_Bounding_Boxes_Recursive(AABTreeNodeClass * node);
-
-	void					Load_Nodes(AABTreeNodeClass * node,ChunkLoadClass & cload);
-	void					Save_Nodes(AABTreeNodeClass * node,ChunkSaveClass & csave);
-
-	virtual void		Load_Node_Contents(AABTreeNodeClass * /*node*/,ChunkLoadClass & /*cload*/) { }
-	virtual void		Save_Node_Contents(AABTreeNodeClass * /*node*/,ChunkSaveClass & /*csave*/) { }
 
 	AABTreeNodeClass *	RootNode;			// root of the AAB-Tree
 	int						ObjectCount;		// number of objects in the system

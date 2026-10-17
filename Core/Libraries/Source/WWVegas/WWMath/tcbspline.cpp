@@ -37,27 +37,6 @@
 
 #include "tcbspline.h"
 #include "WWDebug/wwdebug.h"
-#include "WWSaveLoad/persistfactory.h"
-#include "wwmathids.h"
-#include "WWDebug/wwhack.h"
-
-
-/*
-** Force-Link this module because the linker can't detect that we actually need it...
-*/
-DECLARE_FORCE_LINK(tcbspline);
-
-/*
-** Save-Load stuff
-*/
-SimplePersistFactoryClass<TCBSpline3DClass,WWMATH_CHUNKID_TCBSPLINE3D>	_TCBSpline3DFactory;
-
-enum
-{
-	// ID's used by TCBSpline3D
-	TCB3D_CHUNK_HERMITE3D					= 0x02071009,
-	TCB3D_CHUNK_PARAMS,
-};
 
 
 /*
@@ -188,61 +167,4 @@ void TCBSpline3DClass::Update_Tangents()
 
 	}
 	TangentsDirty = false;
-}
-
-const PersistFactoryClass & TCBSpline3DClass::Get_Factory() const
-{
-	return _TCBSpline3DFactory;
-}
-
-bool TCBSpline3DClass::Save(ChunkSaveClass &csave)
-{
-	csave.Begin_Chunk(TCB3D_CHUNK_HERMITE3D);
-	HermiteSpline3DClass::Save(csave);
-	csave.End_Chunk();
-
-	csave.Begin_Chunk(TCB3D_CHUNK_PARAMS);
-	for (int i=0; i<Params.Count(); i++) {
-		csave.Write(&(Params[i].Tension),sizeof(Params[i].Tension));
-		csave.Write(&(Params[i].Continuity),sizeof(Params[i].Continuity));
-		csave.Write(&(Params[i].Bias),sizeof(Params[i].Bias));
-	}
-	csave.End_Chunk();
-	return true;
-}
-
-bool TCBSpline3DClass::Load(ChunkLoadClass &cload)
-{
-	int i;
-	TCBClass param;
-
-	// reset the keys
-	Params.Delete_All();
-
-	// read in the chunks
-	while (cload.Open_Chunk()) {
-
-		switch(cload.Cur_Chunk_ID())
-		{
-			case TCB3D_CHUNK_HERMITE3D:
-				HermiteSpline3DClass::Load(cload);
-				break;
-
-			case TCB3D_CHUNK_PARAMS:
-				for (i=0; i<Keys.Count(); i++) {
-					cload.Read(&(param.Tension),sizeof(param.Tension));
-					cload.Read(&(param.Continuity),sizeof(param.Continuity));
-					cload.Read(&(param.Bias),sizeof(param.Bias));
-					Params.Add(param);
-				}
-				break;
-
-			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
-				break;
-		}
-		cload.Close_Chunk();
-	}
-
-	return true;
 }

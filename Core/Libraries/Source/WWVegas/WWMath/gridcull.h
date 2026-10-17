@@ -60,9 +60,6 @@
 #include "lineseg.h"
 #include "obbox.h"
 
-class ChunkLoadClass;
-class ChunkSaveClass;
-
 /*
 ** GridCullSystemClass
 ** This is a culling system designed for dynamic objects (objects which are moving or
@@ -94,9 +91,6 @@ public:
 
 	virtual void		Re_Partition(const Vector3 & min,const Vector3 & max,float objdim);
 	virtual void		Update_Culling(CullableClass * obj) override;
-
-	virtual void		Load(ChunkLoadClass & cload);
-	virtual void		Save(ChunkSaveClass & csave);
 
 	virtual int			Get_Object_Count () const { return ObjCount; }
 

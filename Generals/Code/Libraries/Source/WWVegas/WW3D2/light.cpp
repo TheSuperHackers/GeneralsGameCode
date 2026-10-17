@@ -48,9 +48,6 @@
  *   LightClass::Notify_Removed -- lights remove themselves from the VP list when removed      *
  *   LightClass::Load_W3D -- Initialize this light from a W3D file                             *
  *   LightClass::Save_W3D -- Save this light's settings into a W3D file                        *
- *   LightClass::Get_Factory -- get the PersistFactory for LightClass                          *
- *   LightClass::Save -- persistent object support                                             *
- *   LightClass::Load -- persistent object support                                             *
  *   LightImpClass::LightImpClass -- constructor                                               *
  *   LightImpClass::Process_Push -- exposes the "push" process for an srLight                  *
  *   LightImpClass::Process_Pop -- exposes the "pop" process for an srLight                    *
@@ -58,33 +55,13 @@
 
 #include "light.h"
 #include "ww3d.h"
-#include "ww3dids.h"
 #include "w3d_file.h"
 #include "w3d_util.h"
 #include "w3derr.h"
 #include "WWLib/chunkio.h"
 #include "rinfo.h"
 #include "scene.h"
-#include "WWSaveLoad/persistfactory.h"
 #include "statistics.h"
-
-
-
-/*
-** PersistFactory for LightClasses - lights have custom save-load support
-*/
-SimplePersistFactoryClass<LightClass,WW3D_PERSIST_CHUNKID_LIGHT>	_LightFactory;
-
-/*
-** Chunk ID's used by LightClass's save-load support (different from the W3D file format...)
-*/
-enum
-{
-	LIGHT_CHUNK_W3DFILE						= 0x02157100,			// (w3d format light)
-	LIGHT_CHUNK_VARIABLES,												// other state not stored in the w3d format
-
-	LIGHT_VARIABLE_TRANSFORM				= 0x00,					// transform for the light
-};
 
 
 
@@ -486,96 +463,5 @@ WW3DErrorType LightClass::Save_W3D(ChunkSaveClass & csave)
 	csave.End_Chunk();
 
 	return WW3D_ERROR_OK;
-}
-
-
-/***********************************************************************************************
- * LightClass::Get_Factory -- get the PersistFactory for LightClass                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/23/99    GTH : Created.                                                                 *
- *=============================================================================================*/
-const PersistFactoryClass & LightClass::Get_Factory () const
-{
-	return _LightFactory;
-}
-
-
-/***********************************************************************************************
- * LightClass::Save -- persistent object support                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/23/99    GTH : Created.                                                                 *
- *=============================================================================================*/
-bool LightClass::Save (ChunkSaveClass &csave)
-{
-	csave.Begin_Chunk(LIGHT_CHUNK_W3DFILE);
-	Save_W3D(csave);
-	csave.End_Chunk();
-
-	const Matrix3D& tm = Get_Transform();
-	csave.Begin_Chunk(LIGHT_CHUNK_VARIABLES);
-	WRITE_MICRO_CHUNK(csave,LIGHT_VARIABLE_TRANSFORM,tm);
-	csave.End_Chunk();
-
-	return true;
-}
-
-
-/***********************************************************************************************
- * LightClass::Load -- persistent object support                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/23/99    GTH : Created.                                                                 *
- *=============================================================================================*/
-bool LightClass::Load (ChunkLoadClass &cload)
-{
-	Matrix3D tm(1);
-	while (cload.Open_Chunk()) {
-		switch (cload.Cur_Chunk_ID()) {
-
-			case LIGHT_CHUNK_W3DFILE:
-				// The W3D code is non-symmetrical, the Save function writes a W3D_LIGHT chunk
-				// but the load function expects the external user to have opened it.  So open it here...
-				cload.Open_Chunk();
-				Load_W3D(cload);
-				cload.Close_Chunk();
-				break;
-
-			case LIGHT_CHUNK_VARIABLES:
-				while (cload.Open_Micro_Chunk()) {
-					switch(cload.Cur_Micro_Chunk_ID()) {
-						READ_MICRO_CHUNK(cload,LIGHT_VARIABLE_TRANSFORM,tm);
-					}
-					cload.Close_Micro_Chunk();
-				}
-				break;
-
-			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
-				break;
-		}
-		cload.Close_Chunk();
-	}
-	Set_Transform(tm);
-	return true;
 }
 

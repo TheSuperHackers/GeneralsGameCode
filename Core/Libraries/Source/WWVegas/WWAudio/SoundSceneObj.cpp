@@ -36,28 +36,7 @@
 #include "SoundSceneObj.h"
 #include "WW3D2/camera.h"
 #include "WW3D2/rendobj.h"
-#include "WWSaveLoad/persistfactory.h"
-#include "SoundChunkIDs.h"
 #include "Utils.h"
-
-
-//////////////////////////////////////////////////////////////////////////////////
-//	Save/Load constants
-//////////////////////////////////////////////////////////////////////////////////
-enum
-{
-	CHUNKID_VARIABLES			= 0x03270459,
-	CHUNKID_BASE_CLASS
-};
-
-enum
-{
-	VARID_ATTACHED_OBJ		= 0x01,
-	VARID_ATTACHED_BONE,
-	VARID_USER_DATA,
-	VARID_USER_OBJ,
-	VARID_ID
-};
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -111,8 +90,7 @@ SoundSceneObjClass::SoundSceneObjClass ()
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 SoundSceneObjClass::SoundSceneObjClass (const SoundSceneObjClass &src)
-	:	PersistClass(static_cast<const PersistClass &>(src)),
-		m_Scene (src.m_Scene),
+	:	m_Scene (src.m_Scene),
 		m_PhysWrapper (nullptr),
 		m_pCallback (src.m_pCallback),
 		m_AttachedObject (nullptr),
@@ -156,7 +134,6 @@ SoundSceneObjClass::operator= (const SoundSceneObjClass &src)
 
 	Attach_To_Object (src.m_AttachedObject, src.m_AttachedBone);
 
-	PersistClass::operator= ((const PersistClass &)src);
 	return (*this);
 }
 
@@ -246,95 +223,6 @@ SoundSceneObjClass::Apply_Auto_Position ()
 		// Update the sound's transform
 		Set_Transform (transform);
 	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////
-//
-//	Save
-//
-//////////////////////////////////////////////////////////////////////////////////
-bool
-SoundSceneObjClass::Save (ChunkSaveClass &csave)
-{
-	csave.Begin_Chunk (CHUNKID_BASE_CLASS);
-		PersistClass::Save (csave);
-	csave.End_Chunk ();
-
-	csave.Begin_Chunk (CHUNKID_VARIABLES);
-		WRITE_MICRO_CHUNK (csave, VARID_ATTACHED_OBJ, m_AttachedObject);
-		WRITE_MICRO_CHUNK (csave, VARID_ATTACHED_BONE, m_AttachedBone);
-		WRITE_MICRO_CHUNK (csave, VARID_USER_DATA, m_UserData);
-		WRITE_MICRO_CHUNK (csave, VARID_USER_OBJ, m_UserObj);
-		WRITE_MICRO_CHUNK (csave, VARID_ID, m_ID);
-	csave.End_Chunk ();
-	return true;
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////
-//
-//	Load
-//
-//////////////////////////////////////////////////////////////////////////////////
-bool
-SoundSceneObjClass::Load (ChunkLoadClass &cload)
-{
-	uint32 id = SOUND_OBJ_DEFAULT_ID;
-
-	while (cload.Open_Chunk ()) {
-		switch (cload.Cur_Chunk_ID ()) {
-
-			case CHUNKID_BASE_CLASS:
-				PersistClass::Load (cload);
-				break;
-
-			case CHUNKID_VARIABLES:
-			{
-				//
-				//	Read all the variables from their micro-chunks
-				//
-				while (cload.Open_Micro_Chunk ()) {
-					switch (cload.Cur_Micro_Chunk_ID ()) {
-
-						READ_MICRO_CHUNK (cload, VARID_ATTACHED_OBJ, m_AttachedObject);
-						READ_MICRO_CHUNK (cload, VARID_ATTACHED_BONE, m_AttachedBone);
-						READ_MICRO_CHUNK (cload, VARID_USER_DATA, m_UserData);
-						READ_MICRO_CHUNK (cload, VARID_USER_OBJ, m_UserObj);
-						READ_MICRO_CHUNK (cload, VARID_ID, id);
-					}
-
-					cload.Close_Micro_Chunk ();
-				}
-			}
-			break;
-		}
-
-		cload.Close_Chunk ();
-	}
-
-	//
-	//	Set the ID (this will cause the sound object to
-	// be re-inserted in the master sorted list)
-	//
-	if (id != SOUND_OBJ_DEFAULT_ID) {
-		Set_ID (id);
-	}
-
-	//
-	//	Max sure the next available ID is the largest ID in existence
-	//
-	m_NextAvailableID = max (m_NextAvailableID, m_ID + 1);
-
-	//
-	//	We need to 'swizzle' the attached object pointer.  We saved the pointer's
-	// value, and need to map it (hopefully) to the new value.
-	//
-	if (m_AttachedObject != nullptr) {
-		SaveLoadSystemClass::Request_Ref_Counted_Pointer_Remap ((RefCountClass **)&m_AttachedObject);
-	}
-
-	return true;
 }
 
 

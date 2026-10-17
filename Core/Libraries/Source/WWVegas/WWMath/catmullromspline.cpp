@@ -33,41 +33,11 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  *   CatmullRomSpline3DClass::Update_Tangents -- computes the tangents at each key             *
- *   CatmullRomSpline3DClass::Get_Factory -- returns the factory for CatmullRomSpline3D        *
- *   CatmullRomSpline3DClass::Save -- save this curve                                          *
- *   CatmullRomSpline3DClass::Load -- load this curve                                          *
  *   CatmullRomSpline1DClass::Update_Tangents -- Computes the tangents at each key             *
- *   CatmullRomSpline1DClass::Get_Factory -- returns the factory for CatmullRomSpline1D        *
- *   CatmullRomSpline1DClass::Save -- Save this curve                                          *
- *   CatmullRomSpline1DClass::Load -- Load this curve                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
 #include "catmullromspline.h"
-#include "WWSaveLoad/persistfactory.h"
-#include "wwmathids.h"
-#include "WWDebug/wwhack.h"
-
-/*
-** Force-Link this module because the linker can't detect that we actually need it...
-*/
-DECLARE_FORCE_LINK(catmullromspline);
-
-/*
-** Save-Load stuff
-*/
-SimplePersistFactoryClass<CatmullRomSpline3DClass,WWMATH_CHUNKID_CATMULLROMSPLINE3D>	_CatmullRomSpline3DFactory;
-SimplePersistFactoryClass<CatmullRomSpline1DClass,WWMATH_CHUNKID_CATMULLROMSPLINE1D>	_CatmullRomSpline1DFactory;
-
-enum
-{
-	// ID's used by CatmullRomSpline3D
-	CATMULLROM3D_CHUNK_HERMITE3D					= 0x00020727,
-
-	// ID's used by CatmullRomSpline1D
-	CATMULLROM1D_CHUNK_HERMITE1D					= 0x00020729,
-};
-
 
 /*
 ** Catmull-Rom 3D spline implementation
@@ -143,78 +113,6 @@ void CatmullRomSpline3DClass::Update_Tangents()
 }
 
 
-/***********************************************************************************************
- * CatmullRomSpline3DClass::Get_Factory -- returns the factory for CatmullRomSpline3D          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/7/2000   gth : Created.                                                                 *
- *=============================================================================================*/
-const PersistFactoryClass & CatmullRomSpline3DClass::Get_Factory() const
-{
-	return _CatmullRomSpline3DFactory;
-}
-
-
-/***********************************************************************************************
- * CatmullRomSpline3DClass::Save -- save this curve                                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/7/2000   gth : Created.                                                                 *
- *=============================================================================================*/
-bool CatmullRomSpline3DClass::Save(ChunkSaveClass &csave)
-{
-	csave.Begin_Chunk(CATMULLROM3D_CHUNK_HERMITE3D);
-	HermiteSpline3DClass::Save(csave);
-	csave.End_Chunk();
-	return true;
-}
-
-
-/***********************************************************************************************
- * CatmullRomSpline3DClass::Load -- load this curve                                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/7/2000   gth : Created.                                                                 *
- *=============================================================================================*/
-bool CatmullRomSpline3DClass::Load(ChunkLoadClass &cload)
-{
-	while (cload.Open_Chunk()) {
-
-		switch(cload.Cur_Chunk_ID())
-		{
-			case CATMULLROM3D_CHUNK_HERMITE3D:
-				HermiteSpline3DClass::Load(cload);
-				break;
-
-			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
-				break;
-		}
-		cload.Close_Chunk();
-	}
-
-	return true;
-}
-
-
 /*
 ** The 1D Catmull-Rom implementation.
 */
@@ -279,76 +177,4 @@ void CatmullRomSpline1DClass::Update_Tangents()
 		Tangents[i].OutTangent *= out_factor;
 	}
 	TangentsDirty = false;
-}
-
-
-/***********************************************************************************************
- * CatmullRomSpline1DClass::Get_Factory -- returns the factory for CatmullRomSpline1D          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/7/2000   gth : Created.                                                                 *
- *=============================================================================================*/
-const PersistFactoryClass & CatmullRomSpline1DClass::Get_Factory() const
-{
-	return _CatmullRomSpline1DFactory;
-}
-
-
-/***********************************************************************************************
- * CatmullRomSpline1DClass::Save -- Save this curve                                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/7/2000   gth : Created.                                                                 *
- *=============================================================================================*/
-bool CatmullRomSpline1DClass::Save(ChunkSaveClass &csave)
-{
-	csave.Begin_Chunk(CATMULLROM1D_CHUNK_HERMITE1D);
-	HermiteSpline1DClass::Save(csave);
-	csave.End_Chunk();
-	return true;
-}
-
-
-/***********************************************************************************************
- * CatmullRomSpline1DClass::Load -- Load this curve                                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/7/2000   gth : Created.                                                                 *
- *=============================================================================================*/
-bool CatmullRomSpline1DClass::Load(ChunkLoadClass &cload)
-{
-	while (cload.Open_Chunk()) {
-
-		switch(cload.Cur_Chunk_ID())
-		{
-			case CATMULLROM1D_CHUNK_HERMITE1D:
-				HermiteSpline1DClass::Load(cload);
-				break;
-
-			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
-				break;
-		}
-		cload.Close_Chunk();
-	}
-
-	return true;
 }

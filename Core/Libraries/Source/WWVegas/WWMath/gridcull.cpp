@@ -41,8 +41,6 @@
  *   GridCullSystemClass::Re_Partition -- re-compute grid parameters for the given volume      *
  *   GridCullSystemClass::Collect_And_Unlink_All -- collects all objects and removes them from *
  *   GridCullSystemClass::Update_Culling -- updates an objects position in the grid            *
- *   GridCullSystemClass::Load -- load function                                                *
- *   GridCullSystemClass::Save -- Save function                                                *
  *   GridCullSystemClass::Reset_Statistics -- reset debugging stats                            *
  *   GridCullSystemClass::Get_Statistics -- returns reference to the statistics structure      *
  *   GridCullSystemClass::Add_Object_Internal -- links an object into the system               *
@@ -55,8 +53,6 @@
 
 
 #include "gridcull.h"
-#include "WWLib/chunkio.h"
-#include "WWLib/iostruct.h"
 #include "colmath.h"
 #include "colmathinlines.h"
 
@@ -66,36 +62,6 @@
 ** Declare the pool for GridLinks
 */
 DEFINE_AUTO_POOL(GridLinkClass,256);
-
-
-/*
-** Current version of the file format
-*/
-const uint32 GRID_CURRENT_VERSION = 0x00010000;
-
-
-/*
-** Chunk Id's used by the aabtree code to save itself into a file
-*/
-enum
-{
-	GRID_CHUNK_VERSION					= 0x00000001,	// version wrapper, contains 32bit version #
-	GRID_CHUNK_PARAMETERS				= 0x00000100,	// parameters for the grid cull system
-};
-
-
-/*
-** IOGridParametersStruct
-** Data structure for the contents of a node in the AAB-Tree
-*/
-struct IOGridParametersStruct
-{
-	IOVector3Struct	MinCellSize;
-	IOVector3Struct	Origin;
-	IOVector3Struct	CellDim;
-	uint32				CellCount[3];
-	float32				MaxObjExtent;
-};
 
 
 /*************************************************************************
@@ -568,129 +534,6 @@ void GridCullSystemClass::Update_Culling(CullableClass * obj)
 		unlink_object(obj);
 		link_object(obj,address);
 	}
-}
-
-
-/***********************************************************************************************
- * GridCullSystemClass::Load -- load function                                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/27/2000  gth : Created.                                                                 *
- *=============================================================================================*/
-void GridCullSystemClass::Load(ChunkLoadClass & cload)
-{
-	/*
-	** read the version chunk
-	*/
-	uint32 version;
-	cload.Open_Chunk();
-	WWASSERT(cload.Cur_Chunk_ID() == GRID_CHUNK_VERSION);
-	cload.Read(&version,sizeof(version));
-	cload.Close_Chunk();
-
-	/*
-	** read the parameters chunk
-	*/
-	IOGridParametersStruct params;
-	memset(&params,0,sizeof(params));
-	cload.Open_Chunk();
-	WWASSERT(cload.Cur_Chunk_ID() == GRID_CHUNK_PARAMETERS);
-	cload.Read(&params,sizeof(params));
-	cload.Close_Chunk();
-
-	/*
-	** unlink all objects
-	*/
-	Collect_And_Unlink_All();
-
-	/*
-	** partition the grid according to the loaded parameters
-	*/
-	CellCount[0]		= params.CellCount[0];
-	CellCount[1]		= params.CellCount[1];
-	CellCount[2]		= params.CellCount[2];
-	CellDim.X			= params.CellDim.X;
-	CellDim.Y			= params.CellDim.Y;
-	CellDim.Z			= params.CellDim.Z;
-	MaxObjExtent		= params.MaxObjExtent;
-	MinCellSize.X		= params.MinCellSize.X;
-	MinCellSize.Y		= params.MinCellSize.Y;
-	MinCellSize.Z		= params.MinCellSize.Z;
-	Origin.X				= params.Origin.X;
-	Origin.Y				= params.Origin.Y;
-	Origin.Z				= params.Origin.Z;
-
-	OOCellDim.X = 1.0f / CellDim.X;
-	OOCellDim.Y = 1.0f / CellDim.Y;
-	OOCellDim.Z = 1.0f / CellDim.Z;
-
-	delete [] Cells;
-	Cells = W3DNEWARRAY CullableClass * [total_cell_count()];
-	memset(&(Cells[0]),0,total_cell_count() * sizeof(CullableClass *));
-
-	/*
-	** re-link the objects in
-	*/
-	CullableClass * obj;
-	for (	obj = Get_First_Collected_Object_Internal();
-			obj != nullptr;
-			obj = Get_Next_Collected_Object_Internal(obj))
-	{
-		link_object(obj);
-	}
-}
-
-
-/***********************************************************************************************
- * GridCullSystemClass::Save -- Save function                                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/27/2000  gth : Created.                                                                 *
- *=============================================================================================*/
-void GridCullSystemClass::Save(ChunkSaveClass & csave)
-{
-	/*
-	** write the version chunk
-	*/
-	uint32 version = GRID_CURRENT_VERSION;
-	csave.Begin_Chunk(GRID_CHUNK_VERSION);
-	csave.Write(&version,sizeof(version));
-	csave.End_Chunk();
-
-	/*
-	** write the grid parameters
-	*/
-	IOGridParametersStruct params;
-	memset(&params,0,sizeof(params));
-	params.CellCount[0] = CellCount[0];
-	params.CellCount[1] = CellCount[1];
-	params.CellCount[2] = CellCount[2];
-	params.CellDim.X = CellDim.X;
-	params.CellDim.Y = CellDim.Y;
-	params.CellDim.Z = CellDim.Z;
-	params.MaxObjExtent = MaxObjExtent;
-	params.MinCellSize.X = MinCellSize.X;
-	params.MinCellSize.Y = MinCellSize.Y;
-	params.MinCellSize.Z = MinCellSize.Z;
-	params.Origin.X = Origin.X;
-	params.Origin.Y = Origin.Y;
-	params.Origin.Z = Origin.Z;
-
-	csave.Begin_Chunk(GRID_CHUNK_PARAMETERS);
-	csave.Write(&params,sizeof(params));
-	csave.End_Chunk();
 }
 
 

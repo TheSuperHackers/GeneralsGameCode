@@ -77,7 +77,6 @@ set(WWMATH_SRC
     vp.h
     wwmath.cpp
     wwmath.h
-    wwmathids.h
 )
 
 add_library(core_wwmath STATIC)

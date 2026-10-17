@@ -276,13 +276,6 @@ class AudibleSoundClass : public SoundSceneObjClass
 		virtual void					Convert_To_Filtered ();
 		virtual AudibleSoundClass *As_Converted_Format ();
 
-		//////////////////////////////////////////////////////////////////////
-		//	From PersistClass
-		//////////////////////////////////////////////////////////////////////
-		virtual const PersistFactoryClass &	Get_Factory () const override;
-		virtual bool									Save (ChunkSaveClass &csave) override;
-		virtual bool									Load (ChunkLoadClass &cload) override;
-
 	protected:
 
 		//////////////////////////////////////////////////////////////////////

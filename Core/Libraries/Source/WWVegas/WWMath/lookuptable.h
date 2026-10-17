@@ -45,10 +45,7 @@
 #include "wwmath.h"
 
 
-class Vector2;
 class Curve1DClass;
-class ChunkSaveClass;
-class ChunkLoadClass;
 
 
 /**
@@ -68,7 +65,7 @@ public:
 	const char *					Get_Name()							{ return Name; }
 protected:
 
-	StringClass						Name;				// name of this table, if it came from a file, this is also the filename
+	StringClass						Name;				// name of this table
 	float								MinInputValue;
 	float								MaxInputValue;
 	float								OOMaxMinusMin;
@@ -111,13 +108,7 @@ inline float LookupTableClass::Get_Value_Quick(float input)
 
 /**
 ** LookupTableMgrClass
-** This class tracks all of the LookupTableClass's that have been loaded or installed.
-** LookupTables can be created using the "SimpleGraph" tool.  It basically allows you
-** to edit a curve which will be used to generate the table.  These curves are stored
-** in .TBL files.
-**
-** NOTE: Use the SimpleGraph program to create lookup tables!  Then just ask for them
-** by filename and it will load the table for you (unless it is already loaded).
+** This class tracks all of the LookupTableClass's that have been installed.
 **
 ** NOTE: I add a table called "DefaultTable" so that you can revert to that if
 ** your table isn't found.
@@ -134,17 +125,7 @@ public:
 
 	static bool					Add_Table(LookupTableClass * table);
 	static bool					Remove_Table(LookupTableClass * table);
-	static LookupTableClass *	Get_Table(const char * name,bool try_to_load = true);
-
-	static void					Save_Table_Desc(		ChunkSaveClass &	csave,
-																Curve1DClass *		curve,
-																const Vector2 &	min,
-																const Vector2 &	max			);
-
-	static void					Load_Table_Desc(		ChunkLoadClass &	cload,
-																Curve1DClass **	curve_ptr,
-																Vector2 *			set_min = nullptr,
-																Vector2 *			set_max = nullptr	);
+	static LookupTableClass *	Get_Table(const char * name);
 
 	static void					Reset();
 
