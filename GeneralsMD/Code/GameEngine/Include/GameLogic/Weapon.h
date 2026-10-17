@@ -632,6 +632,11 @@ public:
 	Bool isWithinAttackRange(const Object *source, const Object *target) const;
 	Bool isWithinAttackRange(const Object *source, const Coord3D* pos) const;
 
+	/** return true if the target is within attack range or the weapon has leech range, false otherwise.
+	*/
+	Bool isWithinEffectiveAttackRange(const Object* source, const Object* target) const;
+	Bool isWithinEffectiveAttackRange(const Object* source, const Coord3D* pos) const;
+
 	Bool isTooClose(const Object *source, const Object *target) const;
 	Bool isTooClose(const Object *source, const Coord3D *pos) const;
 
