@@ -38,7 +38,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include "formconv.h"
 
-D3DFORMAT WW3DFormatToD3DFormatConversionArray[WW3D_FORMAT_COUNT] = {
+D3DFORMAT WW3DFormatToD3DFormatConversionArray[] = {
 	D3DFMT_UNKNOWN,
 	D3DFMT_R8G8B8,
 	D3DFMT_A8R8G8B8,
@@ -65,9 +65,10 @@ D3DFORMAT WW3DFormatToD3DFormatConversionArray[WW3D_FORMAT_COUNT] = {
 	D3DFMT_DXT4,
 	D3DFMT_DXT5
 };
+static_assert(ARRAY_SIZE(WW3DFormatToD3DFormatConversionArray) == WW3D_FORMAT_COUNT, "Incorrect array size");
 
 // adding depth stencil format conversion
-D3DFORMAT WW3DZFormatToD3DFormatConversionArray[WW3D_ZFORMAT_COUNT] =
+D3DFORMAT WW3DZFormatToD3DFormatConversionArray[] =
 {
 	D3DFMT_UNKNOWN,
 	D3DFMT_D16_LOCKABLE, // 16-bit z-buffer bit depth. This is an application-lockable surface format.
@@ -78,6 +79,7 @@ D3DFORMAT WW3DZFormatToD3DFormatConversionArray[WW3D_ZFORMAT_COUNT] =
 	D3DFMT_D24X8, // 32-bit z-buffer bit depth using 24 bits for the depth channel.
 	D3DFMT_D24X4S4, // 32-bit z-buffer bit depth using 24 bits for the depth channel and 4 bits for the stencil channel.
 };
+static_assert(ARRAY_SIZE(WW3DZFormatToD3DFormatConversionArray) == WW3D_ZFORMAT_COUNT, "Incorrect array size");
 
 
 /*

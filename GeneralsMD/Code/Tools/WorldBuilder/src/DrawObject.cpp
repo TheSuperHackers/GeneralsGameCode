@@ -1781,7 +1781,8 @@ void DrawObject::updateVBWithWeaponRange(MapObject *pMapObj, CameraClass* camera
 		return;
 	}
 
-  const unsigned long colors[WEAPONSLOT_COUNT] = {0xFF00FF00, 0xFFE0F00A, 0xFFFF0000}; // Green, Yellow, Red
+  const unsigned long colors[] = {0xFF00FF00, 0xFFE0F00A, 0xFFFF0000}; // Green, Yellow, Red
+  static_assert(ARRAY_SIZE(colors) == WEAPONSLOT_COUNT, "Incorrect array size");
 
 
 	Coord3D pos = *pMapObj->getLocation();

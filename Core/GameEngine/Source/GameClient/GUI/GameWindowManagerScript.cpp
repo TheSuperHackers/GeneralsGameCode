@@ -166,6 +166,7 @@ const char *const WindowStatusNames[] = {
 	/*"SHORTCUT_BUTTON",*/
 	nullptr
 };
+static_assert(equalsEnumBitFlagsCount(ARRAY_SIZE(WindowStatusNames) - 1, WIN_STATUS_END), "Incorrect array size");
 
 const char *const WindowStyleNames[] = {
 	"PUSHBUTTON",
@@ -186,6 +187,7 @@ const char *const WindowStyleNames[] = {
 	"COMBOBOX",
 	nullptr
 };
+static_assert(equalsEnumBitFlagsCount(ARRAY_SIZE(WindowStyleNames) - 1, GWS_END), "Incorrect array size");
 
 // Implement a stack to keep track of parent/child nested window descriptions.
 static GameWindow *windowStack[ WIN_STACK_DEPTH ];

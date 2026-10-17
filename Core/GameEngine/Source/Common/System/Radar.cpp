@@ -882,6 +882,7 @@ static RadarColorLookup radarColorLookupTable[] =
 	{ RADAR_EVENT_FAKE,									{   0,	 0,   0,	 0 },	 {    0,	 0,   0,   0 } },
 	{ RADAR_EVENT_INVALID,							{   0,   0,   0,   0 },  {    0,   0,   0,   0 } }
 };
+static_assert(ARRAY_SIZE(radarColorLookupTable) == RADAR_EVENT_NUM_EVENTS, "Incorrect array size");
 
 //-------------------------------------------------------------------------------------------------
 /** Create a new radar event */
