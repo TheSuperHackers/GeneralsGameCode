@@ -63,9 +63,22 @@ void BIGFileSystem::init() {
 #if RTS_ZEROHOUR
     // load original Generals assets
     AsciiString installPath;
-    GetStringFromGeneralsRegistry("", "InstallPath", installPath );
-    //@todo this will need to be ramped up to a crash for release
-    DEBUG_ASSERTCRASH(!installPath.isEmpty(), ("Be 1337! Go install Generals!"));
+    // TheSuperHackers @feature CryoTheRenegade 15/10/2026 Prefer -genDataDir over the registry.
+    if (TheGlobalData != nullptr)
+      installPath = TheGlobalData->m_generalsDataDir;
+    if (!installPath.isEmpty())
+    {
+      // Validate here, not during startup parsing, which runs before the debug log file is open.
+      const DWORD attributes = GetFileAttributes(installPath.str());
+      if (attributes == 0xFFFFFFFF || !(attributes & FILE_ATTRIBUTE_DIRECTORY))
+      {
+        DEBUG_LOG(("Generals data dir '%s' is not a directory. Falling back to the registry.", installPath.str()));
+        installPath.clear();
+      }
+    }
+
+    if (installPath.isEmpty())
+      GetStringFromGeneralsRegistry("", "InstallPath", installPath );
     if (!installPath.isEmpty())
       loadArchiveFilesFromDirectory(installPath, "*.big");
 #endif

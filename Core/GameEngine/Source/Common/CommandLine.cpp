@@ -475,6 +475,22 @@ Int parseSetCwd(char *args[], int num)
 	return 1;
 }
 
+#if RTS_ZEROHOUR
+Int parseGenDataDir(char *args[], int num)
+{
+	// -genDataDir <path> overrides the Generals InstallPath registry value.
+	if (num > 1)
+	{
+		AsciiString dir = args[1];
+		if (!dir.isEmpty() && !dir.endsWith("\\") && !dir.endsWith("/"))
+			dir.concat('\\');
+		TheWritableGlobalData->m_generalsDataDir = dir;
+		return 2;
+	}
+	return 1;
+}
+#endif
+
 Int parseXRes(char *args[], int num)
 {
 	if (num > 1)
@@ -1187,6 +1203,13 @@ static CommandLineParam paramsForStartup[] =
 	// The last successful selection wins; otherwise use the executable directory.
 	{ "-setCwd", parseSetCwd },
 	{ "-useCwd", parseUseCwd },
+
+#if RTS_ZEROHOUR
+	// TheSuperHackers @feature CryoTheRenegade 15/10/2026
+	// Load the original Generals data from this folder instead of the folder in the registry.
+	// Relative paths are resolved from the working directory.
+	{ "-genDataDir", parseGenDataDir },
+#endif
 };
 
 // These Params are parsed during Engine Init before INI data is loaded
