@@ -60,6 +60,66 @@ void Renderer::Shutdown()
     Initialized = false;
 }
 
+int Renderer::Get_Render_Device_Count()
+{
+    return DX8Wrapper::Get_Render_Device_Count();
+}
+
+int Renderer::Get_Render_Device()
+{
+    return DX8Wrapper::Get_Render_Device();
+}
+
+const char * Renderer::Get_Render_Device_Name(int device_index)
+{
+    return DX8Wrapper::Get_Render_Device_Name(device_index);
+}
+
+void Renderer::Get_Device_Resolution(int & width, int & height, int & bits, bool & windowed)
+{
+    DX8Wrapper::Get_Device_Resolution(width, height, bits, windowed);
+}
+
+void Renderer::Get_Render_Target_Resolution(int & width, int & height, int & bits, bool & windowed)
+{
+    DX8Wrapper::Get_Render_Target_Resolution(width, height, bits, windowed);
+}
+
+int Renderer::Get_Device_Resolution_Width()
+{
+    return DX8Wrapper::Get_Device_Resolution_Width();
+}
+
+int Renderer::Get_Device_Resolution_Height()
+{
+    return DX8Wrapper::Get_Device_Resolution_Height();
+}
+
+bool Renderer::Is_Windowed()
+{
+    return DX8Wrapper::Is_Windowed();
+}
+
+int Renderer::Get_Texture_Bitdepth()
+{
+    return DX8Wrapper::Get_Texture_Bitdepth();
+}
+
+int Renderer::Get_Swap_Interval()
+{
+    return DX8Wrapper::Get_Swap_Interval();
+}
+
+bool Renderer::Has_Stencil()
+{
+    return DX8Wrapper::Has_Stencil();
+}
+
+WW3DFormat Renderer::Get_Back_Buffer_Format()
+{
+    return DX8Wrapper::getBackBufferFormat();
+}
+
 void Renderer::Set_Gamma(float gamma, float bright, float contrast, bool calibrate, bool uselimit)
 {
     DX8Wrapper::Set_Gamma(gamma, bright, contrast, calibrate, uselimit);
