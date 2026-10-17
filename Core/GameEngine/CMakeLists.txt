@@ -770,7 +770,7 @@ set(GAMEENGINE_SRC
     Source/GameClient/GUI/GUICallbacks/IMECandidate.cpp
     Source/GameClient/GUI/GUICallbacks/InGameChat.cpp
     Source/GameClient/GUI/GUICallbacks/InGamePopupMessage.cpp
-#    Source/GameClient/GUI/GUICallbacks/Menus/ChallengeMenu.cpp
+    Source/GameClient/GUI/GUICallbacks/Menus/ChallengeMenu.cpp
 #    Source/GameClient/GUI/GUICallbacks/Menus/CreditsMenu.cpp
 #    Source/GameClient/GUI/GUICallbacks/Menus/DifficultySelect.cpp
 #    Source/GameClient/GUI/GUICallbacks/Menus/DisconnectWindow.cpp

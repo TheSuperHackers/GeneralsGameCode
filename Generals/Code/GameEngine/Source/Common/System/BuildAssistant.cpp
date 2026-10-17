@@ -337,10 +337,10 @@ Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTe
 
 	}
 
- 	// Need to validate that we can make this in case someone fakes their CommandSet
-	// A Null constructorObject is used by the script engine to cheat, so let it slide
- 	if( constructorObject && !isPossibleToMakeUnit(constructorObject, what) )
- 		return nullptr;
+	// Need to validate that we can make this in case someone fakes their CommandSet
+	// A nullptr constructor Object means a script built building so let it slide.
+	if( (constructorObject != nullptr) && !isPossibleToMakeUnit(constructorObject, what) )
+		return nullptr;
 
 	// clear out any objects from the building area that are "auto-clearable" when building
 	clearRemovableForConstruction( what, pos, angle );
@@ -653,7 +653,7 @@ void BuildAssistant::iterateFootprint( const ThingTemplate *build,
 	* TheSuperHackers @tweak Stubbjax 05/09/2025 Return LBC_SHROUD for shrouded objects near the
 	* edge of the shroud so that players cannot use this info to determine whether they exist. */
 //-------------------------------------------------------------------------------------------------
-Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
+LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 																											 const ThingTemplate *build,
 																											 Real angle,
 																											 const Object *builderObject,
@@ -669,6 +669,30 @@ Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 	MemoryPoolObjectHolder hold(iter);
 	for( them = iter->first(); them; them = iter->next() )
 	{
+		Bool feedbackWithFailure = TRUE;
+		Relationship rel = builderObject ? builderObject->getRelationship( them ) : NEUTRAL;
+
+		//Kris: If the object is stealthed and we can't see it, pretend we can build there.
+		if( BitIsSet( options, IGNORE_STEALTHED ) )
+		{
+			if( rel != ALLIES )
+			{
+				if( them->testStatus( OBJECT_STATUS_STEALTHED ) && !them->testStatus( OBJECT_STATUS_DETECTED ) && !them->testStatus( OBJECT_STATUS_DISGUISED ) )
+				{
+					if( BitIsSet( options, FAIL_STEALTHED_WITHOUT_FEEDBACK ) )
+					{
+						feedbackWithFailure = FALSE; //We want to fail now but without feedback
+					}
+					else
+					{
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
+						continue;
+#endif
+					}
+				}
+			}
+		}
+
 		// ignore any kind of class of objects that we will "remove" for building
 		if( isRemovableForConstruction( them ) == TRUE )
 			continue;
@@ -682,36 +706,72 @@ Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 		if (them->isKindOf(KINDOF_INERT))
 			continue;
 
-		if (them->isKindOf(KINDOF_IMMOBILE)) {
-			if (onlyCheckEnemies && builderObject && builderObject->getRelationship(them) != ENEMIES) {
+		if (them->isKindOf(KINDOF_IMMOBILE))
+		{
+			if (onlyCheckEnemies && builderObject && rel != ENEMIES)
 				continue;
-			}
 		}
 
 #if !RETAIL_COMPATIBLE_CRC
 		if (builderObject && them->getShroudedStatus(builderObject->getControllingPlayer()->getPlayerIndex()) >= OBJECTSHROUD_FOGGED)
-			return false;
+			return LBC_SHROUD;
+#endif
+
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
+		//Kris: Patch 1.01 - November 5, 2003
+		//Prevent busy units (black lotus hacking from being moved by trying to place a building -- exploit).
+		if (rel == ALLIES)
+		{
+			if (them->testStatus(OBJECT_STATUS_IS_USING_ABILITY) || (them->getAI() && them->getAI()->isBusy()))
+			{
+				return LBC_OBJECTS_IN_THE_WAY;
+			}
+		}
 #endif
 
 		// an immobile object may obstruct our building depending on flags.
-		if( them->isKindOf( KINDOF_IMMOBILE ) )	{
-			TheTerrainVisual->addFactionBib(them, true);
-			return false;
+		if( them->isKindOf( KINDOF_IMMOBILE ) )
+		{
+			if( feedbackWithFailure )
+			{
+				TheTerrainVisual->addFactionBib( them, TRUE );
+				return LBC_OBJECTS_IN_THE_WAY;
+			}
+			return LBC_GENERIC_FAILURE;
 		}
+
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
+		if( them->isDisabled() )
+		{
+			//Kris: If object is disabled, it can't move out of the way, thus you can't build there.
+			if( feedbackWithFailure )
+			{
+				TheTerrainVisual->addFactionBib( them, TRUE );
+				return LBC_OBJECTS_IN_THE_WAY;
+			}
+			return LBC_GENERIC_FAILURE;
+		}
+#endif
 
 		//
 		// if this is an enemy object of the builder object (and therefore the thing
 		// that will be constructed) we can't build here
 		//
-		if( builderObject && builderObject->getRelationship( them ) == ENEMIES ) {
-			TheTerrainVisual->addFactionBib(them, true);
-			return false;
+		if( builderObject && rel == ENEMIES )
+		{
+			if( feedbackWithFailure )
+			{
+				TheTerrainVisual->addFactionBib( them, TRUE );
+				return LBC_OBJECTS_IN_THE_WAY;
+			}
+			return LBC_GENERIC_FAILURE;
 		}
 
 	}
 
-	if (onlyCheckEnemies) {
-		return true;
+	if (onlyCheckEnemies)
+	{
+		return LBC_OK;
 	}
 	// Check for overlapping exit areas.
 
@@ -763,6 +823,21 @@ Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 	for( them = iter2->first(); them; them = iter2->next() )
 	{
 
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
+		Relationship rel = builderObject ? builderObject->getRelationship( them ) : NEUTRAL;
+		//Kris: If the building is stealthed and we can't see it, pretend we can build there.
+		if( BitIsSet( options, IGNORE_STEALTHED ) )
+		{
+			if( rel != ALLIES )
+			{
+				if( them->testStatus( OBJECT_STATUS_STEALTHED ) && !them->testStatus( OBJECT_STATUS_DETECTED ) && !them->testStatus( OBJECT_STATUS_DISGUISED ) )
+				{
+					continue;
+				}
+			}
+		}
+#endif
+
 		// ignore any kind of class of objects that we will "remove" for building
 		if( isRemovableForConstruction( them ) == TRUE )
 			continue;
@@ -796,7 +871,7 @@ Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 		if (ThePartitionManager->geomCollidesWithGeom(them->getPosition(), hisBounds, them->getOrientation(),
 			worldPos, myBounds, angle)) {
 			TheTerrainVisual->addFactionBib(them, true);
-			return false;
+			return LBC_OBJECTS_IN_THE_WAY;
 		}
 		if (!checkMyExit && !checkHisExit && !hisExtraWidth && !myExtraWidth)
 		{
@@ -809,32 +884,38 @@ Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 			/* Check for overlap of my exit rectangle to his geom info. */
 			if (checkMyExit && ThePartitionManager->geomCollidesWithGeom(them->getPosition(), hisBounds, them->getOrientation(),
 				&myExitPos, myGeom, angle)) {
-				if (!shrouded)
-					TheTerrainVisual->addFactionBib(them, true);
-				return false;
+				if (shrouded)
+					return LBC_SHROUD;
+
+				TheTerrainVisual->addFactionBib(them, true);
+				return LBC_OBJECTS_IN_THE_WAY;
 			}
 			// Check for overlap of his exit rectangle with my geom info
 			if (checkHisExit && ThePartitionManager->geomCollidesWithGeom(&hisExitPos, hisGeom, them->getOrientation(),
 					worldPos, myBounds, angle)) {
-				if (!shrouded)
-					TheTerrainVisual->addFactionBib(them, true);
-				return false;
+				if (shrouded)
+					return LBC_SHROUD;
+
+				TheTerrainVisual->addFactionBib(them, true);
+				return LBC_OBJECTS_IN_THE_WAY;
 			}
 			// Check both exit rectangles together.
 			if (checkMyExit&&checkHisExit&&ThePartitionManager->geomCollidesWithGeom(&hisExitPos, hisGeom, them->getOrientation(),
 					&myExitPos, myGeom, angle)) {
-				if (!shrouded)
-					TheTerrainVisual->addFactionBib(them, true);
-				return false;
+				if (shrouded)
+					return LBC_SHROUD;
+
+				TheTerrainVisual->addFactionBib(them, true);
+				return LBC_OBJECTS_IN_THE_WAY;
 			}
 		}
 
 	}
-	return true;
+	return LBC_OK;
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Query if we can build at this location.  Note that 'build' may be nullptr and is NOT required
+/** Query if we can build at this location.  Note that 'build' may be null and is NOT required
 	* to be valid to know if a location is legal to build at.  'builderObject' is used
 	* for queries that require a pathfind check and should be null if not required */
 //-------------------------------------------------------------------------------------------------
@@ -878,10 +959,19 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 	//
 	if( BitIsSet( options, NO_OBJECT_OVERLAP ) )
 	{
-		if (!isLocationClearOfObjects(worldPos, build, angle, builderObject, NO_OBJECT_OVERLAP, player))
+		// TheSuperHackers @todo Investigate Zero Hour logic. Generals function calls seem more logical.
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+		if (isLocationClearOfObjects(worldPos, build, angle, builderObject, NO_OBJECT_OVERLAP, player) != LBC_OK)
 		{
 			return LBC_OBJECTS_IN_THE_WAY;
 		}
+#else
+		LegalBuildCode code = isLocationClearOfObjects(worldPos, build, angle, builderObject, options, player);
+		if( code != LBC_OK )
+		{
+			return code;
+		}
+#endif
 
 	}
 	//
@@ -890,10 +980,19 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 	//
 	if( BitIsSet( options, NO_ENEMY_OBJECT_OVERLAP ) )
 	{
-		if (!isLocationClearOfObjects(worldPos, build, angle, builderObject, NO_ENEMY_OBJECT_OVERLAP, player))
+		// TheSuperHackers @todo Investigate Zero Hour logic. Generals function calls seem more logical.
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+		if (isLocationClearOfObjects(worldPos, build, angle, builderObject, NO_ENEMY_OBJECT_OVERLAP, player) != LBC_OK)
 		{
 			return LBC_OBJECTS_IN_THE_WAY;
 		}
+#else
+		LegalBuildCode code = isLocationClearOfObjects(worldPos, build, angle, builderObject, options, player);
+		if( code != LBC_OK )
+		{
+			return code;
+		}
+#endif
 
 	}
 
@@ -925,8 +1024,12 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 		}
 	}
 
-	// if clear path is requested check to see if the builder object can get there
+	// if clear path is requested check to see if the builder object can get there (unless it's a structure)
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
 	if( BitIsSet( options, CLEAR_PATH ) && builderObject )
+#else
+	if( BitIsSet( options, CLEAR_PATH ) && builderObject && !builderObject->isKindOf( KINDOF_IMMOBILE ) )
+#endif
 	{
 		const AIUpdateInterface *ai = builderObject->getAIUpdateInterface();
 
@@ -940,24 +1043,8 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 		if( ai == nullptr )
 			return LBC_NO_CLEAR_PATH;
 
-		//
-		// check for an available path using one of two methods (the quick less accurate one,
-		// or the slow more accurate one)
-		//
-		if( BitIsSet( options, USE_QUICK_PATHFIND ) )
-		{
-
-			if( ai->isQuickPathAvailable( worldPos ) == FALSE )
+		if( ai->isQuickPathAvailable( worldPos ) == FALSE )
 				return LBC_NO_CLEAR_PATH;
-
-		}
-		else
-		{
-
-			if( ai->isPathAvailable( worldPos ) == FALSE )
-				return LBC_NO_CLEAR_PATH;
-
-		}
 
 	}
 
@@ -1242,6 +1329,7 @@ Bool BuildAssistant::isPossibleToMakeUnit( Object *builder, const ThingTemplate 
 
 }
 
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
 // ------------------------------------------------------------------------------------------------
 struct ProductionCountData
 {
@@ -1267,6 +1355,7 @@ static void countInProduction( Object *obj, void *userData )
 	}
 
 }
+#endif
 
 //-------------------------------------------------------------------------------------------------
 /** This method will check to make sure it is possible to build the requested unit. and
@@ -1282,10 +1371,28 @@ CanMakeType BuildAssistant::canMakeUnit( Object *builder, const ThingTemplate *w
 	if (builder->testScriptStatusBit(OBJECT_STATUS_SCRIPT_DISABLED) || builder->testScriptStatusBit(OBJECT_STATUS_SCRIPT_UNPOWERED))
 		return CANMAKE_FACTORY_IS_DISABLED;
 
+	ProductionUpdateInterface* pu = builder->getProductionUpdateInterface();
+	Player *player = builder->getControllingPlayer();
+
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
+	//If our builder is actually constructing an object via a special power, then allow it if the templates match.
+	//It's possible they won't match because a GLA command center could be in "place sneak attack" mode, and queue
+	//up a worker in the meantime.
+	if( pu && pu->getSpecialPowerConstructionCommandButton() && pu->getSpecialPowerConstructionCommandButton()->getThingTemplate() == whatToBuild )
+	{
+		return CANMAKE_OK;
+	}
+
+  // make sure we're not maxed out for this type of unit.
+  // Warning: isPossibleToMakeUnit() now implicitly calls
+  // canBuildMoreOfType(), so do this check first
+  if ( player && !player->canBuildMoreOfType( whatToBuild ) )
+    return CANMAKE_MAXED_OUT_FOR_PLAYER;
+#endif
+
 	if (!isPossibleToMakeUnit(builder, whatToBuild))
 		return CANMAKE_NO_PREREQ;
 
-	ProductionUpdateInterface* pu = builder->getProductionUpdateInterface();
 	if (pu != nullptr)
 	{
 		CanMakeType cmt = pu->canQueueCreateUnit(whatToBuild);
@@ -1294,11 +1401,11 @@ CanMakeType BuildAssistant::canMakeUnit( Object *builder, const ThingTemplate *w
 	}
 
 	// make sure we have enough money to build this
-	Player *player = builder->getControllingPlayer();
 	Money *money = player->getMoney();
 	if( whatToBuild->calcCostToBuild( player ) > money->countMoney() )
 		return CANMAKE_NO_MONEY;
 
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
 	// make sure we're not maxed out for this type of unit.
 	if (whatToBuild->getMaxSimultaneousOfType() != 0)
 	{
@@ -1318,6 +1425,7 @@ CanMakeType BuildAssistant::canMakeUnit( Object *builder, const ThingTemplate *w
 			return CANMAKE_MAXED_OUT_FOR_PLAYER;
 
 	}
+#endif
 
 	// get the command set for the producer object
 	return CANMAKE_OK;
@@ -1380,6 +1488,7 @@ void BuildAssistant::clearRemovableForConstruction( const ThingTemplate *whatToB
 			TheGameLogic->destroyObject( them );
 
 	}
+	TheTerrainVisual->removeTreesAndPropsForConstruction(pos, whatToBuild->getTemplateGeometryInfo(), angle);
 
 }
 
@@ -1541,7 +1650,7 @@ void BuildAssistant::sellObject( Object *obj )
 	//
 	Drawable *draw = obj->getDrawable();
 	if( draw )
-		draw->setAnimationLoopDuration( (unsigned)(TOTAL_FRAMES_TO_SELL_OBJECT / 2.0f) );
+		draw->setAnimationLoopDuration( TOTAL_FRAMES_TO_SELL_OBJECT / 2 );
 
 	// We also need to refund all production for the object at start-of-sell time
 	ProductionUpdateInterface *production = obj->getProductionUpdateInterface();
