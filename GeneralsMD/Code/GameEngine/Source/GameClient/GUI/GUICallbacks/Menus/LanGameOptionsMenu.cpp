@@ -203,14 +203,19 @@ static void playerTooltip(GameWindow *window,
 	if (idx == -1)
 		return;
 
-	LANGameSlot *slot = TheLAN->GetMyGame()->getLANSlot(i);
+	// TheSuperHackers @bugfix Okladnoj 17/10/2026 Check that the game still exists as it is deleted while the setup screen fades out after the host left.
+	LANGameInfo *myGame = TheLAN->GetMyGame();
+	if (!myGame)
+		return;
+
+	LANGameSlot *slot = myGame->getLANSlot(i);
 	if (!slot)
 		return;
 
 	LANPlayer *player = slot->getUser();
 	if (!player)
 	{
-		DEBUG_ASSERTCRASH(TheLAN->GetMyGame()->getIP(i) == 0, ("No player info in listbox!"));
+		DEBUG_ASSERTCRASH(myGame->getIP(i) == 0, ("No player info in listbox!"));
 		TheMouse->setCursorTooltip( UnicodeString::TheEmptyString );
 		return;
 	}
