@@ -46,8 +46,13 @@ GameMessageDisposition GameClientMessageDispatcher::translateGameMessage(const G
 	if (msg->getType() == GameMessage::MSG_NEW_GAME || msg->getType() == GameMessage::MSG_CLEAR_GAME_DATA)
 		return KEEP_MESSAGE;
 
+	// TheSuperHackers @fix arcticdolphin 13/10/2026 One tick per command list is enough, more pile up while the logic is paused.
 	if (msg->getType() == GameMessage::MSG_FRAME_TICK)
+	{
+		if (TheCommandList->containsMessageOfType(GameMessage::MSG_FRAME_TICK))
+			return DESTROY_MESSAGE;
 		return KEEP_MESSAGE;
+	}
 
 	//DEBUG_LOG(("GameClientMessageDispatcher::translateGameMessage() - eating a %s on frame %d",
 		//((GameMessage *)msg)->getCommandAsString(), TheGameClient->getFrame()));
