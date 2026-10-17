@@ -8,7 +8,6 @@
 #define IDC_RESTORE                     3
 #define IDC_RESET                       3
 #define IDOK2                           3
-#define IDC_SOUND_DEFINITION_LIBRARY_BROWSE_BUTTON 3
 #define IDC_ADVANCED                    4
 #define IDC_APPLY                       4
 #define IDC_SOUND_INI_BROWSE_BUTTON     4
@@ -183,7 +182,6 @@
 #define IDC_HFOV_EDIT                   1020
 #define IDC_PATH1                       1020
 #define IDC_SIZE_X_EDIT                 1020
-#define IDC_SOUND_DEFINITION_LIBRARY_EDIT 1020
 #define IDC_EDIT2                       1021
 #define IDC_PROGRAMMER_SETTINGS_EDIT    1021
 #define IDC_GREEN_EDIT                  1021

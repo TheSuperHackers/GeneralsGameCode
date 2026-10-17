@@ -25,11 +25,6 @@
 #include "AnimatedSoundOptionsDialog.h"
 #include "WWLib/ffactory.h"
 #include "WW3D2/animatedsoundmgr.h"
-#include "WWSaveLoad/wwsaveload.h"
-#include "WWSaveLoad/definitionmgr.h"
-#include "WWLib/WWFILE.h"
-#include "WWLib/chunkio.h"
-#include "WWDebug/wwdebug.h"
 #include "RestrictedFileDialog.h"
 #include "Utils.h"
 
@@ -64,35 +59,10 @@ void AnimatedSoundOptionsDialogClass::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(AnimatedSoundOptionsDialogClass, CDialog)
 	//{{AFX_MSG_MAP(AnimatedSoundOptionsDialogClass)
-	ON_BN_CLICKED(IDC_SOUND_DEFINITION_LIBRARY_BROWSE_BUTTON, OnSoundDefinitionLibraryBrowseButton)
 	ON_BN_CLICKED(IDC_SOUND_INI_BROWSE_BUTTON, OnSoundIniBrowseButton)
 	ON_BN_CLICKED(IDC_SOUND_PATH_BROWSE_BUTTON, OnSoundPathBrowseButton)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//	OnSoundDefinitionLibraryBrowseButton
-//
-/////////////////////////////////////////////////////////////////////////////
-void
-AnimatedSoundOptionsDialogClass::OnSoundDefinitionLibraryBrowseButton ()
-{
-	CFileDialog dialog (	TRUE,
-								".ddb",
-								"20480.ddb",
-								OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_EXPLORER,
-								"Definition Database Files(*.ddb)|*.ddb||",
-								this);
-
-	//
-	//	Prompt the user
-	//
-	if (dialog.DoModal () == IDOK) {
-		SetDlgItemText (IDC_SOUND_DEFINITION_LIBRARY_EDIT, dialog.GetPathName ());
-	}
-}
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -132,17 +102,14 @@ AnimatedSoundOptionsDialogClass::OnOK ()
 	//
 	//	Get the user's response
 	//
-	CString sound_def_lib_path;
 	CString sound_ini_path;
 	CString sound_data_path;
-	GetDlgItemText (IDC_SOUND_DEFINITION_LIBRARY_EDIT, sound_def_lib_path);
 	GetDlgItemText (IDC_SOUND_INI_EDIT, sound_ini_path);
 	GetDlgItemText (IDC_SOUND_FILE_PATH_EDIT, sound_data_path);
 
 	//
 	//	Store this information in the registry
 	//
-	theApp.WriteProfileString ("Config", "SoundDefLibPath", sound_def_lib_path);
 	theApp.WriteProfileString ("Config", "AnimSoundINIPath", sound_ini_path);
 	theApp.WriteProfileString ("Config", "AnimSoundDataPath", sound_data_path);
 
@@ -160,14 +127,12 @@ AnimatedSoundOptionsDialogClass::OnInitDialog ()
 {
 	CDialog::OnInitDialog ();
 
-	StringClass sound_def_lib_path	= static_cast<const TCHAR*>(theApp.GetProfileString ("Config", "SoundDefLibPath"));
 	StringClass sound_ini_path			= static_cast<const TCHAR*>(theApp.GetProfileString ("Config", "AnimSoundINIPath"));
 	StringClass sound_data_path		= static_cast<const TCHAR*>(theApp.GetProfileString ("Config", "AnimSoundDataPath"));
 
 	//
 	//	Fill in the default values
 	//
-	SetDlgItemText (IDC_SOUND_DEFINITION_LIBRARY_EDIT, sound_def_lib_path);
 	SetDlgItemText (IDC_SOUND_INI_EDIT, sound_ini_path);
 	SetDlgItemText (IDC_SOUND_FILE_PATH_EDIT, sound_data_path);
 
@@ -184,30 +149,10 @@ void
 AnimatedSoundOptionsDialogClass::Load_Animated_Sound_Settings ()
 {
 	//
-	//	Start fresh
-	//
-	DefinitionMgrClass::Free_Definitions ();
-
-	//
 	//	Get the data from the registry
 	//
-	StringClass sound_def_lib_path	= static_cast<const TCHAR*>(theApp.GetProfileString ("Config", "SoundDefLibPath"));
 	StringClass sound_ini_path			= static_cast<const TCHAR*>(theApp.GetProfileString ("Config", "AnimSoundINIPath"));
 	StringClass sound_data_path		= static_cast<const TCHAR*>(theApp.GetProfileString ("Config", "AnimSoundDataPath"));
-
-	//
-	//	Try to load the definitions into the definition mgr
-	//
-	FileClass *file = _TheFileFactory->Get_File (sound_def_lib_path);
-	if (file != nullptr) {
-		file->Open (FileClass::READ);
-		ChunkLoadClass cload (file);
-		SaveLoadSystemClass::Load (cload);
-		file->Close ();
-		_TheFileFactory->Return_File (file);
-	} else {
-		WWDEBUG_SAY (("Failed to load file %s", sound_def_lib_path.str ()));
-	}
 
 	//
 	//	Load the sound settings from the ini file

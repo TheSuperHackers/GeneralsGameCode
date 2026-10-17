@@ -49,7 +49,6 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(AnimatedSoundOptionsDialogClass)
-	afx_msg void OnSoundDefinitionLibraryBrowseButton();
 	afx_msg void OnSoundIniBrowseButton();
 	virtual void OnOK() override;
 	virtual BOOL OnInitDialog() override;
