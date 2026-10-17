@@ -422,6 +422,8 @@ private:
 		if (m_bits.compare_exchange_strong(expectedBits, to_bits(desired)))
 			return true;
 
+		// Not std::bit_cast, because it returns the value through the x87 floating point unit with VC6, which makes a
+		// signaling NaN quiet (0x7F800001 becomes 0x7FC00001).
 		::memcpy(&expected, &expectedBits, sizeof(expected));
 		return false;
 	}
