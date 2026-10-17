@@ -20,6 +20,7 @@ set(UTILITY_SRC
     Utility/sstream_adapter.h
     Utility/stdio_adapter.h
     Utility/STLUtils.h
+    Utility/string_adapter.h
     Utility/string_compat.h
     Utility/stringex.h
     Utility/stringex_memcchr.inl

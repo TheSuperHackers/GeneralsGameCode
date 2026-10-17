@@ -94,11 +94,11 @@
 
 #ifdef RTS_DEBUG
 void Msg( int line, const char *file, const char *fmt, ... );
-void Msg( int line, const char *filename, const wchar_t *fmt, unsigned int codepage=1252, ... );
+void Msg( int line, const char *filename, const unichar *fmt, unsigned int codepage=1252, ... );
 void Delete_Msg_File();
 #else
 inline void Msg( int line, const char *file, const char *fmt, ... ) {}
-inline void Msg( int line, const char *filename, const wchar_t *fmt, unsigned int codepage=1252, ... ) {}
+inline void Msg( int line, const char *filename, const unichar *fmt, unsigned int codepage=1252, ... ) {}
 inline void Delete_Msg_File() {}
 #endif
 

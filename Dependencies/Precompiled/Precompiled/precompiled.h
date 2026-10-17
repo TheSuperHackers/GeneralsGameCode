@@ -31,6 +31,7 @@
 
 #endif // __cplusplus
 
+#include "unichar.h"
 #include "stdint_adapter.h"
 
 

@@ -75,7 +75,7 @@ enum ParticleSystemID CPP_11(: Int);
 #include <queue>
 #include <set>
 #include <stack>
-#include <string>
+#include <Utility/string_adapter.h>
 #include <vector>
 
 // List of AsciiStrings to allow list of ThingTemplate names from INI and such

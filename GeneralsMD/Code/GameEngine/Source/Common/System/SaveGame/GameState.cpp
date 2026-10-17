@@ -227,7 +227,7 @@ UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal)
 			return displayDateBuffer;
 		}
 	}
-	wchar_t dateBuffer[ DATE_BUFFER_SIZE ];
+	WideChar dateBuffer[ DATE_BUFFER_SIZE ];
 	GetDateFormatW( LOCALE_USER_DEFAULT,
 								 DATE_SHORTDATE,
 								 &timeVal,
@@ -261,7 +261,7 @@ UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal)
 	}
 	// setup time buffer for local region time format
 	#define TIME_BUFFER_SIZE 256
-	wchar_t timeBuffer[ TIME_BUFFER_SIZE ];
+	WideChar timeBuffer[ TIME_BUFFER_SIZE ];
 	GetTimeFormatW( LOCALE_USER_DEFAULT,
 								 TIME_NOSECONDS,
 								 &timeVal,
