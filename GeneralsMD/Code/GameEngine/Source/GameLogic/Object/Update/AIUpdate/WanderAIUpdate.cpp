@@ -56,8 +56,13 @@ UpdateSleepTime WanderAIUpdate::update()
 	if (isIdle())
 	{
 		Coord3D dest = *(getObject()->getPosition());
+#if RETAIL_COMPATIBLE_CRC
 		dest.x += GameLogicRandomValue( 5, 50 );
 		dest.y += GameLogicRandomValue( 5, 50 );
+#else
+		dest.x += GameLogicRandomValue(-50, 50);
+		dest.y += GameLogicRandomValue(-50, 50);
+#endif
  		aiMoveToPosition( &dest, CMD_FROM_AI );
 	}
 
