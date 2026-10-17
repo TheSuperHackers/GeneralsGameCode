@@ -43,14 +43,18 @@ GameMessageDisposition GameClientMessageDispatcher::translateGameMessage(const G
 {
 	if (msg->getType() >= GameMessage::MSG_BEGIN_NETWORK_MESSAGES && msg->getType() <= GameMessage::MSG_END_NETWORK_MESSAGES)
 		return KEEP_MESSAGE;
-	if (msg->getType() == GameMessage::MSG_NEW_GAME || msg->getType() == GameMessage::MSG_CLEAR_GAME_DATA)
-		return KEEP_MESSAGE;
 
-	if (msg->getType() == GameMessage::MSG_FRAME_TICK)
+	switch (msg->getType())
+	{
+	case GameMessage::MSG_FRAME_TICK:
+	case GameMessage::MSG_CLEAR_GAME_DATA:
+	case GameMessage::MSG_NEW_GAME:
+	case GameMessage::MSG_LOGIC_CRC_PLAYBACK:
 		return KEEP_MESSAGE;
+	}
 
 	//DEBUG_LOG(("GameClientMessageDispatcher::translateGameMessage() - eating a %s on frame %d",
-		//((GameMessage *)msg)->getCommandAsString(), TheGameClient->getFrame()));
+		//msg->getCommandAsString(), TheGameClient->getFrame()));
 
 	return DESTROY_MESSAGE;
 }
