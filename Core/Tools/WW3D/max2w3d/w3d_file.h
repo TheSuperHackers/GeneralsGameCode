@@ -2054,8 +2054,8 @@ struct W3dNullObjectStruct
 
 //
 //	Note:  This structure is follwed directly by a chunk (W3D_CHUNK_SOUNDROBJ_DEFINITION)
-// that contains an embedded AudibleSoundDefinitionClass's storage.  See audibledound.h
-// for details.
+// that contains the settings of the sound.  See SoundRenderObjDefClass::Write_Definition
+// in soundrobj.cpp for details.
 //
 struct W3dSoundRObjHeaderStruct
 {

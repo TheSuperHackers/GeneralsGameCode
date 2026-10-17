@@ -48,7 +48,6 @@
 #include "SoundSceneObj.h"
 #include "WWLib/Vector.h"
 #include "WWLib/wwstring.h"
-#include "WWSaveLoad/definition.h"
 
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +56,6 @@
 class SoundBufferClass;
 class RenderObjClass;
 class LogicalSoundClass;
-class AudibleSoundDefinitionClass;
 class Sound3DClass;
 class SoundPseudo3DClass;
 class FilteredSoundClass;
@@ -357,88 +355,4 @@ class AudibleSoundClass : public SoundSceneObjClass
 
 		//	Logical sound information
 		LogicalSoundClass *				m_LogicalSound;
-};
-
-
-//////////////////////////////////////////////////////////////////////////////////
-//
-//	AudibleSoundDefinitionClass
-//
-//////////////////////////////////////////////////////////////////////////////////
-class AudibleSoundDefinitionClass : public DefinitionClass
-{
-
-public:
-
-	/////////////////////////////////////////////////////////////////////
-	//	Editable interface requirements
-	/////////////////////////////////////////////////////////////////////
-	DECLARE_EDITABLE(AudibleSoundDefinitionClass, DefinitionClass);
-
-	//////////////////////////////////////////////////////////////
-	//	Public constructors/destructors
-	//////////////////////////////////////////////////////////////
-	AudibleSoundDefinitionClass ();
-	virtual ~AudibleSoundDefinitionClass () override { }
-
-	// From DefinitionClass
-	virtual uint32								Get_Class_ID () const override;
-
-	// From PersistClass
-	virtual const PersistFactoryClass &	Get_Factory () const override;
-	virtual bool								Save (ChunkSaveClass &csave) override;
-	virtual bool								Load (ChunkLoadClass &cload) override;
-	virtual PersistClass *					Create () const override;
-	virtual AudibleSoundClass *			Create_Sound (int classid_hint) const;
-
-	// Initialization
-	virtual void								Initialize_From_Sound (AudibleSoundClass *sound);
-
-	// Accessors
-	virtual const StringClass &			Get_Filename () const			{ return m_Filename; }
-	virtual const StringClass &			Get_Display_Text () const		{ return m_DisplayText; }
-	virtual float								Get_Max_Vol_Radius () const	{ return m_MaxVolRadius; }
-	virtual float								Get_DropOff_Radius () const	{ return m_DropOffRadius; }
-	virtual const Vector3 &					Get_Sphere_Color () const		{ return m_AttenuationSphereColor; }
-	virtual float								Get_Volume () const				{ return m_Volume; }
-	virtual float								Get_Start_Offset () const		{ return m_StartOffset; }
-	virtual float								Get_Pitch_Factor () const		{ return m_PitchFactor; }
-
-	virtual void								Set_Volume (float volume)			{ m_Volume = volume; }
-	virtual void								Set_Max_Vol_Radius (float radius){ m_MaxVolRadius = radius; }
-	virtual void								Set_DropOff_Radius (float radius){ m_DropOffRadius = radius; }
-	virtual void								Set_Start_Offset (float offset)	{ m_StartOffset = offset; }
-	virtual void								Set_Pitch_Factor (float factor)	{ m_PitchFactor = factor; }
-
-protected:
-
-	/////////////////////////////////////////////////////////////////////
-	//	Private methods
-	/////////////////////////////////////////////////////////////////////
-	bool										Save_Variables (ChunkSaveClass &csave);
-	bool										Load_Variables (ChunkLoadClass &cload);
-
-	//////////////////////////////////////////////////////////////
-	//	Private member data
-	//////////////////////////////////////////////////////////////
-	float					m_Priority;
-	float					m_Volume;
-	float					m_Pan;
-	int					m_LoopCount;
-	float					m_DropOffRadius;
-	float					m_MaxVolRadius;
-	bool					m_Is3D;
-	StringClass			m_Filename;
-	int					m_Type;
-	StringClass			m_DisplayText;
-	float					m_StartOffset;
-	float					m_PitchFactor;
-
-	int					m_LogicalTypeMask;
-	float					m_LogicalNotifyDelay;
-	float					m_LogicalDropOffRadius;
-	bool					m_CreateLogical;
-
-	// Misc UI info
-	Vector3				m_AttenuationSphereColor;
 };
