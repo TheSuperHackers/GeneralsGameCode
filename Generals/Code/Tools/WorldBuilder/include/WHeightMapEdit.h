@@ -94,6 +94,7 @@ protected:
 
 public: // construction
 	WorldHeightMapEdit(Int xExtent, Int yExtent, UnsignedByte initialHeight, Int border); ///< create.
+	static Bool isValidMapSize(Int xExtent, Int yExtent, Int border); ///< Within MAX_MAP_DIMENSION and MAX_MAP_AREA
 	WorldHeightMapEdit(WorldHeightMapEdit *pThis);								///< duplicate.
 	WorldHeightMapEdit(ChunkInputStream *pStrm);											///< read from file.
 	virtual ~WorldHeightMapEdit() override;													    ///< destroy.

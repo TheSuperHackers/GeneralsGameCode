@@ -81,6 +81,13 @@ void WorldHeightMapEdit::init()
 
 }
 
+Bool WorldHeightMapEdit::isValidMapSize(Int xExtent, Int yExtent, Int border)
+{
+	if (xExtent > MAX_MAP_DIMENSION || yExtent > MAX_MAP_DIMENSION || border < 0 || border > MAX_MAP_DIMENSION)
+		return false;
+	return WorldHeightMap::isValidMapSize(xExtent + 2*border, yExtent + 2*border, border);
+}
+
 //
 /// WorldHeightMapEdit - create a new height map .
 //
@@ -94,7 +101,7 @@ WorldHeightMapEdit::WorldHeightMapEdit(Int width, Int height, UnsignedByte initi
 		m_sourceTiles[i]=nullptr;
 		m_edgeTiles[i]=nullptr;
 	}
-	if (width<0 || height < 0) {
+	if (!isValidMapSize(width, height, border)) {
 		AfxMessageBox(IDS_BAD_VALUE);
 		return;
 	}
@@ -1786,6 +1793,10 @@ Bool WorldHeightMapEdit::resize(Int newXSize, Int newYSize, Int newHeight, Int n
 							Bool anchorLeft, Bool anchorRight, Coord3D *pObjOffset)
 {
 	if (newBorder<0) newBorder = 0;
+	if (!isValidMapSize(newXSize, newYSize, newBorder)) {
+		AfxMessageBox(IDS_BAD_VALUE);
+		return(false);
+	}
 	newXSize += 2*newBorder;
 	newYSize += 2*newBorder;
 	Int newDataSize = newXSize*newYSize;
@@ -1824,7 +1835,8 @@ Bool WorldHeightMapEdit::resize(Int newXSize, Int newYSize, Int newHeight, Int n
 	Short *tileNdxes = new Short[newDataSize];
 	Short *blendTileNdxes = new Short[newDataSize];
 	Short *extraBlendTileNdxes = new Short[newDataSize];
-	UnsignedByte *data = new UnsignedByte[newDataSize];
+	// Same paranoia row as the constructor
+	UnsignedByte *data = new UnsignedByte[newDataSize + newXSize+1];
 	Short  *cliffInfoNdxes = new Short[newDataSize];
 
 	Int i, j;
@@ -1867,11 +1879,11 @@ Bool WorldHeightMapEdit::resize(Int newXSize, Int newYSize, Int newHeight, Int n
 		}
 	}
 
-	delete(m_tileNdxes);
-	delete(m_cliffInfoNdxes);
-	delete(m_blendTileNdxes);
-	delete(m_extraBlendTileNdxes);
-	delete(m_data);
+	delete[] m_tileNdxes;
+	delete[] m_cliffInfoNdxes;
+	delete[] m_blendTileNdxes;
+	delete[] m_extraBlendTileNdxes;
+	delete[] m_data;
 	m_tileNdxes = tileNdxes;
 	m_blendTileNdxes = blendTileNdxes;
 	m_extraBlendTileNdxes = extraBlendTileNdxes;
@@ -1881,13 +1893,15 @@ Bool WorldHeightMapEdit::resize(Int newXSize, Int newYSize, Int newHeight, Int n
 	m_height = newYSize;
 	m_borderSize = newBorder;
 	m_dataSize = newDataSize;
-	delete(m_cellCliffState);
-	delete(m_cellFlipState);
+	delete[] m_cellCliffState;
+	delete[] m_cellFlipState;
 	Int numBytesX = (m_width+7)/8;	//how many bytes to fit all bitflags
  	m_flipStateWidth=numBytesX;
 
 	m_cellFlipState	= MSGNEW("WorldHeightMapEdit::resize") UnsignedByte[numBytesX*m_height];
 	m_cellCliffState	= MSGNEW("WorldHeightMapEdit::resize") UnsignedByte[numBytesX*m_height];
+	memset(m_cellFlipState,0,numBytesX*m_height);
+	memset(m_cellCliffState,0,numBytesX*m_height);
 
 	// Verify index remapping
 	for(i=0; i<m_dataSize; i++) {

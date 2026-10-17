@@ -1248,6 +1248,11 @@ BOOL CWorldBuilderDoc::OnNewDocument()
 	hi.xExtent = AfxGetApp()->GetProfileInt("GameOptions", "Default Map X-size", 100);
 	hi.yExtent = AfxGetApp()->GetProfileInt("GameOptions", "Default Map Y-size", 100);
 	hi.borderWidth = AfxGetApp()->GetProfileInt("GameOptions", "Default Map Border", 30);
+	if (!WorldHeightMapEdit::isValidMapSize(hi.xExtent, hi.yExtent, hi.borderWidth)) {
+		hi.xExtent = 100;
+		hi.yExtent = 100;
+		hi.borderWidth = 30;
+	}
 	hi.forResize = false;
 	if (!firstTime) {
 		CString label;

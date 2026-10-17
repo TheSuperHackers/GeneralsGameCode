@@ -22,6 +22,10 @@
 #include "StdAfx.h"
 #include "WorldBuilder.h"
 #include "NewHeightMap.h"
+#include "WHeightMapEdit.h"
+#include "Common/MapReaderWriterInfo.h"
+
+static const Int LARGE_MAP_SIDE = 1024; ///< Memory warning above this squared
 
 /////////////////////////////////////////////////////////////////////////////
 // CNewHeightMap dialog
@@ -209,6 +213,23 @@ void CNewHeightMap::OnOK()
 		edit->GetWindowText(val);
 		mHeightInfo.borderWidth = atoi(val);
 	}
+
+	if (!WorldHeightMapEdit::isValidMapSize(mHeightInfo.xExtent, mHeightInfo.yExtent, mHeightInfo.borderWidth)) {
+		CString msg;
+		msg.Format("Map sides including the border must be 1 to %d, with an area of at most %d cells.", MAX_MAP_DIMENSION, MAX_MAP_AREA);
+		AfxMessageBox(msg);
+		return;
+	}
+
+	const Int width = mHeightInfo.xExtent + 2*mHeightInfo.borderWidth;
+	const Int height = mHeightInfo.yExtent + 2*mHeightInfo.borderWidth;
+	if (width * height > LARGE_MAP_SIDE * LARGE_MAP_SIDE) {
+		CString msg;
+		msg.Format("Maps larger than %dx%d including the border can run out of memory in WorldBuilder. Continue?", LARGE_MAP_SIDE, LARGE_MAP_SIDE);
+		if (AfxMessageBox(msg, MB_YESNO) != IDYES)
+			return;
+	}
+
 	CDialog::OnOK();
 }
 
