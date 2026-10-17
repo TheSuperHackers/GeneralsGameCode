@@ -1,6 +1,6 @@
 # ICU integration
 
-`core_icu` provides UTF conversions and the ICU headers available to the selected toolchain.
+`deps_icu` provides UTF conversions and the ICU headers available to the selected toolchain.
 Include `ICU/utf8.h` for conversions and `ICU/IcuSupport.h` for linked ICU APIs.
 
 | Build configuration | ICU access | Fallback |
