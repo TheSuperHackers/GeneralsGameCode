@@ -282,7 +282,6 @@ Bool ParseGameOptionsString(LANGameInfo *game, AsciiString options)
 		{
 //			Int hasMap = game->getSlot(newLocalSlotNum)->hasMap();
 			newMapCRC = game->getMapCRC();
-			//DEBUG_LOG(("wasInGame:%d isInGame:%d hadMap:%d hasMap:%d oldMap:%s newMap:%s", wasInGame, isInGame, hadMap, hasMap, oldMap.str(), game->getMap().str()));
 			if ( (oldMapCRC ^ newMapCRC)/*(hasMap ^ hadMap)*/ || (!wasInGame && isInGame) )
 			{
 				// it changed.  send it

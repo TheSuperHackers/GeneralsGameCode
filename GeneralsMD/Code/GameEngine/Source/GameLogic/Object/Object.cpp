@@ -5221,10 +5221,10 @@ void Object::unlook()
 
 //			DEBUG_LOG(( "A %s queues an unlook at %f, %f for %x at range %f",
 //									getTemplate()->getName().str(),
-//									m_partitionLastLook.m_where.x,
-//									m_partitionLastLook.m_where.y,
-//									m_partitionLastLook.m_forWhom,
-//									m_partitionLastLook.m_howFar
+//									m_partitionLastLook->m_where.x,
+//									m_partitionLastLook->m_where.y,
+//									m_partitionLastLook->m_forWhom,
+//									m_partitionLastLook->m_howFar
 //									));
 
 	m_partitionLastLook->reset();

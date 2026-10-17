@@ -295,11 +295,7 @@ Team *PlayerList::validateTeam( AsciiString owner )
 {
 	// owner could be a player or team. first, check team names.
 	Team *t = TheTeamFactory->findTeam(owner);
-	if (t)
-	{
-		//DEBUG_LOG(("assigned obj %08lx to team %s",obj,owner.str()));
-	}
-	else
+	if (!t)
 	{
 		DEBUG_CRASH(("no team or player named %s could be found!", owner.str()));
 		t = getNeutralPlayer()->getDefaultTeam();

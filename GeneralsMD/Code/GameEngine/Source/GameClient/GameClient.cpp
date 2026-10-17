@@ -131,18 +131,6 @@ GameClient::~GameClient()
 	// clear any drawable TOC we might have
 	m_drawableTOC.clear();
 
-	//DEBUG_LOG(("Preloaded texture files ------------------------------------------"));
-	//for (Int oog=0; oog<preloadTextureNamesGlobalHack2.size(); ++oog)
-	//{
-	//	DEBUG_LOG(("%s", preloadTextureNamesGlobalHack2[oog]));
-	//}
-	//DEBUG_LOG(("------------------------------------------------------------------"));
-	//for (oog=0; oog<preloadTextureNamesGlobalHack.size(); ++oog)
-	//{
-	//	DEBUG_LOG(("%s", preloadTextureNamesGlobalHack[oog]));
-	//}
-	//DEBUG_LOG(("End Texture files ------------------------------------------------"));
-
 	delete TheCampaignManager;
 	TheCampaignManager = nullptr;
 

@@ -5089,7 +5089,6 @@ StateReturnType AIAttackAimAtTargetState::update()
 			aimDelta = REL_THRESH;
 		}
 
-		//DEBUG_LOG(("AIM: desired %f, actual %f, delta %f, aimDelta %f, goalpos %f %f",rad2deg(obj->getOrientation() + relAngle),rad2deg(obj->getOrientation()),rad2deg(relAngle),rad2deg(aimDelta),victim->getPosition()->x,victim->getPosition()->y));
 		if (m_canTurnInPlace)
 		{
 			if (fabs(relAngle) > aimDelta)

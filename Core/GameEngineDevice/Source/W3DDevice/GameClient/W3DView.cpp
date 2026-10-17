@@ -371,8 +371,6 @@ void W3DView::buildCameraPosition( Vector3& sourcePos, Vector3& targetPos )
 void W3DView::buildCameraTransform( Matrix3D *transform, const Vector3 &sourcePos, const Vector3 &targetPos )
 {
 	//m_3DCamera->Set_View_Plane(DEG_TO_RADF(50.0f));
-	//DEBUG_LOG(("zoom %f, SourceZ %f, posZ %f, groundLevel %f CamOffZ %f",
-	//			zoom, sourcePos.Z, pos.z, groundLevel, getCameraOffsetZ()));
 
 	// build new camera transform
 	transform->Make_Identity();

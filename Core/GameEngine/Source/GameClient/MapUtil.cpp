@@ -622,9 +622,6 @@ Bool MapCache::addMap(
 		DEBUG_LOG(("size: %d / %d", fileInfo.sizeLow, md.m_filesize));
 		DEBUG_LOG(("time1: %d / %d", fileInfo.timestampHigh, md.m_timestamp.m_highTimeStamp));
 		DEBUG_LOG(("time2: %d / %d", fileInfo.timestampLow, md.m_timestamp.m_lowTimeStamp));
-//		DEBUG_LOG(("size: %d / %d", filesize, md.m_filesize));
-//		DEBUG_LOG(("time1: %d / %d", timestamp.m_highTimeStamp, md.m_timestamp.m_highTimeStamp));
-//		DEBUG_LOG(("time2: %d / %d", timestamp.m_lowTimeStamp, md.m_timestamp.m_lowTimeStamp));
 	}
 
 	DEBUG_LOG(("MapCache::addMap(): caching '%s' because '%s' was not found", fname.str(), lowerFname.str()));

@@ -1113,7 +1113,7 @@ GameMessage::Type CommandTranslator::issueAttackCommand( Drawable *target,
 	if( m_teamExists )
 	{
 
-		//DEBUG_LOG(("issuing team-attack cmd against %s",enemy->getTemplate()->getName().str()));
+		//DEBUG_LOG(("issuing team-attack cmd against %s",targetObj->getTemplate()->getName().str()));
 
 		// insert team attack command message into stream
 		switch( command )
