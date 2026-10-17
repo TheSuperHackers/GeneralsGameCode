@@ -248,6 +248,7 @@ GameEngine::GameEngine()
 {
 	// initialize to non garbage values
 	m_logicTimeAccumulator = 0.0f;
+	m_exitCode = 0;
 	m_quitting = FALSE;
 	m_isActive = FALSE;
 
