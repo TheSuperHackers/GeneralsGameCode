@@ -475,21 +475,16 @@ Int parseSetCwd(char *args[], int num)
 	return 1;
 }
 
-#if RTS_ZEROHOUR
-Int parseGenDataDir(char *args[], int num)
+Int parseDataDir(char *args[], int num)
 {
-	// -genDataDir <path> overrides the Generals InstallPath registry value.
+	// -dataDir "<dir1>;<dir2>" adds folders with lower priority .big files.
 	if (num > 1)
 	{
-		AsciiString dir = args[1];
-		if (!dir.isEmpty() && !dir.endsWith("\\") && !dir.endsWith("/"))
-			dir.concat('\\');
-		TheWritableGlobalData->m_generalsDataDir = dir;
+		TheWritableGlobalData->m_dataDirs = args[1];
 		return 2;
 	}
 	return 1;
 }
-#endif
 
 Int parseXRes(char *args[], int num)
 {
@@ -1204,12 +1199,10 @@ static CommandLineParam paramsForStartup[] =
 	{ "-setCwd", parseSetCwd },
 	{ "-useCwd", parseUseCwd },
 
-#if RTS_ZEROHOUR
-	// TheSuperHackers @feature CryoTheRenegade 15/10/2026
-	// Load the original Generals data from this folder instead of the folder in the registry.
-	// Relative paths are resolved from the working directory.
-	{ "-genDataDir", parseGenDataDir },
-#endif
+	// TheSuperHackers @feature CryoTheRenegade 17/10/2026
+	// Load .big files from these ';'-separated folders after the game folder. Earlier folders take priority.
+	// In Zero Hour they replace the Generals InstallPath registry value. Relative paths are resolved from the working directory.
+	{ "-dataDir", parseDataDir },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded

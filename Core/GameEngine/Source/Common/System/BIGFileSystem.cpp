@@ -60,27 +60,40 @@ void BIGFileSystem::init() {
 
 	loadArchiveFilesFromDirectory("", "*.big");
 
-#if RTS_ZEROHOUR
-    // load original Generals assets
-    AsciiString installPath;
-    // TheSuperHackers @feature CryoTheRenegade 15/10/2026 Prefer -genDataDir over the registry.
-    if (TheGlobalData != nullptr)
-      installPath = TheGlobalData->m_generalsDataDir;
-    if (!installPath.isEmpty())
-    {
-      // Validate here, not during startup parsing, which runs before the debug log file is open.
-      const DWORD attributes = GetFileAttributes(installPath.str());
-      if (attributes == 0xFFFFFFFF || !(attributes & FILE_ATTRIBUTE_DIRECTORY))
-      {
-        DEBUG_LOG(("Generals data dir '%s' is not a directory. Falling back to the registry.", installPath.str()));
-        installPath.clear();
-      }
-    }
+	// TheSuperHackers @feature CryoTheRenegade 17/10/2026 Load the -dataDir folders in the listed order.
+	// Files already in the tree are kept, so earlier folders take priority.
+	Bool loadedDataDir = FALSE;
+	if (TheGlobalData != nullptr)
+	{
+		AsciiString dataDirs = TheGlobalData->m_dataDirs;
+		AsciiString dataDir;
+		while (dataDirs.nextToken(&dataDir, ";"))
+		{
+			if (!dataDir.endsWith("\\") && !dataDir.endsWith("/"))
+				dataDir.concat('\\');
 
-    if (installPath.isEmpty())
+			// Validate here, not during startup parsing, which runs before the debug log file is open.
+			const DWORD attributes = GetFileAttributes(dataDir.str());
+			if (attributes == 0xFFFFFFFF || !(attributes & FILE_ATTRIBUTE_DIRECTORY))
+			{
+				DEBUG_LOG(("Data dir '%s' is not a directory. Skipping it.", dataDir.str()));
+				continue;
+			}
+
+			loadArchiveFilesFromDirectory(dataDir, "*.big");
+			loadedDataDir = TRUE;
+		}
+	}
+
+#if RTS_ZEROHOUR
+    // load original Generals assets, unless the -dataDir folders provide them
+    if (!loadedDataDir)
+    {
+      AsciiString installPath;
       GetStringFromGeneralsRegistry("", "InstallPath", installPath );
-    if (!installPath.isEmpty())
-      loadArchiveFilesFromDirectory(installPath, "*.big");
+      if (!installPath.isEmpty())
+        loadArchiveFilesFromDirectory(installPath, "*.big");
+    }
 #endif
 }
 
