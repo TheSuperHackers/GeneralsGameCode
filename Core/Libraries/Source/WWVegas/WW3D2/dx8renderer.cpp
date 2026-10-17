@@ -42,6 +42,7 @@
 
 #include "dx8renderer.h"
 #include "dx8wrapper.h"
+#include "Renderer.h"
 #include "dx8polygonrenderer.h"
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
@@ -1694,7 +1695,7 @@ void DX8TextureCategoryClass::Render()
 		for (unsigned i=0;i<MeshMatDescClass::MAX_TEX_STAGES;++i)
 		{
 			SNAPSHOT_SAY(("Set_Texture(%d,%s)",i,Peek_Texture(i) ? Peek_Texture(i)->Get_Texture_Name().str() : "null"));
-			DX8Wrapper::Set_Texture(i,Peek_Texture(i));
+			Renderer::Set_Texture(i,Peek_Texture(i));
 		}
 
 	#ifdef WWDEBUG
@@ -1703,7 +1704,7 @@ void DX8TextureCategoryClass::Render()
 
 	SNAPSHOT_SAY(("Set_Material(%s)",Peek_Material() ? Peek_Material()->Get_Name() : "null"));
 	VertexMaterialClass *vmaterial=(VertexMaterialClass *)Peek_Material();	//ugly cast from const but we'll restore it after changes so okay. -MW
-	DX8Wrapper::Set_Material(vmaterial);
+	Renderer::Set_Material(vmaterial);
 
 	SNAPSHOT_SAY(("Set_Shader(%x)",Get_Shader().Get_Bits()));
 	ShaderClass theShader = Get_Shader();
@@ -1716,16 +1717,16 @@ void DX8TextureCategoryClass::Render()
 	//this will cause sorting errors on this mesh.
 	//theAlphaShader.Set_Depth_Mask(ShaderClass::DEPTH_WRITE_DISABLE);
 
-	DX8Wrapper::Set_Shader(theShader);
+	Renderer::Set_Shader(theShader);
 
 	if (m_gForceMultiply && theShader.Get_Dst_Blend_Func() == ShaderClass::DSTBLEND_ZERO) {
 		theShader.Set_Dst_Blend_Func(ShaderClass::DSTBLEND_SRC_COLOR);
 		theShader.Set_Src_Blend_Func(ShaderClass::SRCBLEND_ZERO);
-		DX8Wrapper::Set_Shader(theShader);
+		Renderer::Set_Shader(theShader);
 		//VertexMaterialClass *material = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 		//DX8Wrapper::Set_Material(material);
 		//REF_PTR_RELEASE(material);
-		DX8Wrapper::Apply_Render_State_Changes();
+		Renderer::Apply_Render_State_Changes();
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND,D3DBLEND_DESTCOLOR);
 	}
 
@@ -1812,7 +1813,7 @@ void DX8TextureCategoryClass::Render()
 		LightEnvironmentClass * lenv = mesh->Get_Lighting_Environment();
 		if (lenv != nullptr) {
 			SNAPSHOT_SAY(("LightEnvironment, lights: %d",lenv->Get_Light_Count()));
-			DX8Wrapper::Set_Light_Environment(lenv);
+			Renderer::Set_Light_Environment(lenv);
 		}
 		else {
 			SNAPSHOT_SAY(("No light environment"));
@@ -1860,11 +1861,11 @@ void DX8TextureCategoryClass::Render()
 
 		if (identity) {
 			SNAPSHOT_SAY(("Set_World_Identity"));
-			DX8Wrapper::Set_World_Identity();
+			Renderer::Set_World_Identity();
 		}
 		else {
 			SNAPSHOT_SAY(("Set_World_Transform"));
-			DX8Wrapper::Set_Transform(D3DTS_WORLD,*world_transform);
+			Renderer::Set_Transform(RB_TRANSFORM_WORLD,*world_transform);
 		}
 
 
@@ -1913,8 +1914,8 @@ void DX8TextureCategoryClass::Render()
 						theAlphaShader = theShader;	//keep using additive blending.
 					}
 					vmaterial->Set_Opacity(mesh->Get_Alpha_Override());
-					DX8Wrapper::Set_Shader(theAlphaShader);
-					DX8Wrapper::Apply_Render_State_Changes();
+					Renderer::Set_Shader(theAlphaShader);
+					Renderer::Apply_Render_State_Changes();
 					DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHAREF,(int)((float)0x60*mesh->Get_Alpha_Override()));
 
 					renderer->Render(mesh->Get_Base_Vertex_Offset());
@@ -1922,7 +1923,7 @@ void DX8TextureCategoryClass::Render()
 					DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHAREF,0x60);
 					vmaterial->Set_Opacity(oldOpacity);	//restore previous value
 					vmaterial->Set_Diffuse(oldDiffuse.X,oldDiffuse.Y,oldDiffuse.Z);
-					DX8Wrapper::Set_Shader(theShader);	//restore previous value
+					Renderer::Set_Shader(theShader);	//restore previous value
 				}
 				else
 					renderer->Render(mesh->Get_Base_Vertex_Offset());
@@ -1931,8 +1932,8 @@ void DX8TextureCategoryClass::Render()
 				{	oldMapper->Set_LastUsedSyncTime(oldUVOffsetSyncTime);
 					oldMapper->Set_Current_UV_Offset(oldUVOffset);
 				}
-				DX8Wrapper::Set_Material(nullptr);	//force a reset of vertex material since we secretly changed opacity
-				DX8Wrapper::Set_Material(vmaterial);	//restore previous material.
+				Renderer::Set_Material(nullptr);	//force a reset of vertex material since we secretly changed opacity
+				Renderer::Set_Material(vmaterial);	//restore previous material.
 			}
 			else
 				renderer->Render(mesh->Get_Base_Vertex_Offset());
