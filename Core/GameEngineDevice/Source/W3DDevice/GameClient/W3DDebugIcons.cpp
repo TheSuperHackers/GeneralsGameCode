@@ -52,6 +52,7 @@
 #include "GameLogic/GameLogic.h"
 #include "Common/MapObject.h"
 #include "WW3D2/dx8wrapper.h"
+#include "WW3D2/Renderer.h"
 
 #if defined(RTS_DEBUG)
 
@@ -215,13 +216,13 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 	//
 	Bool anyVanished = false;
 	if (m_numDebugIcons==0) return;
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Apply_Render_State_Changes();
 
-	DX8Wrapper::Set_Material(m_vertexMaterialClass);
+	Renderer::Set_Material(m_vertexMaterialClass);
 	DX8Wrapper::Set_Texture(0, nullptr);
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Apply_Render_State_Changes();
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,Transform);
 
 	Int numRect = m_numDebugIcons;
 	static Real offset = 30;
@@ -302,7 +303,7 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 		}
 		}
 		if (numVertex == 0) break;
-		DX8Wrapper::Set_Shader(ShaderClass(SC_ALPHA));
+		Renderer::Set_Shader(ShaderClass(SC_ALPHA));
 		DX8Wrapper::Set_Index_Buffer(ib_access,0);
 		DX8Wrapper::Set_Vertex_Buffer(vb_access);
 		DX8Wrapper::Draw_Triangles(	0,curIndex/3, 0,	numVertex);	//draw a quad, 2 triangles, 4 verts
