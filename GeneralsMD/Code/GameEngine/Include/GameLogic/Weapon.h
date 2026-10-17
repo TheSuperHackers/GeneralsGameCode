@@ -320,6 +320,7 @@ public:
 	void appendBonuses(WeaponBonusConditionFlags flags, WeaponBonus& bonus) const;
 
 	void parseWeaponBonusSet(INI* ini);
+	void parseWeaponBonusSet(INI* ini, const char* condition);
 	static void parseWeaponBonusSet(INI* ini, void *instance, void* /*store*/, const void* /*userData*/);
 	static void parseWeaponBonusSetPtr(INI* ini, void *instance, void* /*store*/, const void* /*userData*/);
 };
