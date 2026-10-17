@@ -62,7 +62,7 @@ Int GameMain()
 	delete TheGameEngine;
 	TheGameEngine = nullptr;
 
-#if defined(RTS_ICU_DYNAMIC) || defined(RTS_HAS_ICU_WINSDK)
+#if defined(RTS_ICU_DYNAMIC)
 	// Release cached ICU after the engine has stopped its conversion workers.
 	IcuLoader::unload();
 #endif

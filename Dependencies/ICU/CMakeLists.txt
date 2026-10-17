@@ -2,7 +2,6 @@
 target_sources(deps_icu PRIVATE
     ICU/IcuLoader.cpp
     ICU/IcuLoader.h
-    ICU/IcuSupport.h
     ICU/utf8.cpp
     ICU/utf8.h
 )

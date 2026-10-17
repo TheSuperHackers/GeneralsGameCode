@@ -17,7 +17,6 @@
 */
 
 #include "ICU/utf8.h"
-#include "ICU/IcuSupport.h"
 #include "ICU/IcuLoader.h"
 
 #include <assert.h>
@@ -25,11 +24,12 @@
 #include <limits.h>
 #include <string.h>
 
-#ifdef _WIN32
+#if defined(RTS_ICU_DYNAMIC)
 #include <windows.h>
 #endif
 
-#if defined(RTS_HAS_ICU) && !defined(RTS_HAS_ICU_WINSDK)
+#if defined(RTS_HAS_ICU)
+#include <unicode/ustring.h>
 #include <vector>
 #endif
 
@@ -41,7 +41,7 @@ bool FitsInt(size_t length)
     return length <= static_cast<size_t>(INT_MAX);
 }
 
-#ifdef _WIN32
+#if defined(RTS_ICU_DYNAMIC)
 
 size_t WindowsWideToUtf8(char* dest, size_t destLen, const wchar_t* src, size_t srcLen)
 {
@@ -111,7 +111,7 @@ size_t WindowsUtf8ToWideLen(const char* src, size_t srcLen)
 
 #endif
 
-#if defined(RTS_HAS_ICU) && !defined(RTS_HAS_ICU_WINSDK)
+#if defined(RTS_HAS_ICU)
 
 bool IcuPreflightSucceeded(UErrorCode error)
 {
@@ -374,7 +374,7 @@ size_t IcuUtf8ToWide(wchar_t* dest, size_t destLen, const char* src, size_t srcL
 
 #endif
 
-#elif defined(RTS_ICU_DYNAMIC) || defined(RTS_HAS_ICU_WINSDK)
+#elif defined(RTS_ICU_DYNAMIC)
 
 typedef IcuLoader::Char IcuChar;
 typedef IcuLoader::ErrorCode IcuErrorCode;

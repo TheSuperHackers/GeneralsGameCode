@@ -18,7 +18,7 @@
 
 #include "ICU/IcuLoader.h"
 
-#if defined(RTS_ICU_DYNAMIC) || defined(RTS_HAS_ICU_WINSDK)
+#if defined(RTS_ICU_DYNAMIC)
 
 #include <Utility/lazy_static.h>
 #include <stdlib.h>

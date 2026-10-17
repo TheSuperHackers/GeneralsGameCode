@@ -18,7 +18,7 @@
 
 #pragma once
 
-#if defined(RTS_ICU_DYNAMIC) || defined(RTS_HAS_ICU_WINSDK)
+#if defined(RTS_ICU_DYNAMIC)
 
 #include <windows.h>
 
