@@ -1291,7 +1291,7 @@ CGraphicView::Load_Default_Dat ()
 	::GetModuleFileName (nullptr, filename, sizeof (filename));
 
 	// Strip the filename from the path
-	LPTSTR ppath = ::strrchr (filename, '\\');
+	LPTSTR ppath = getLastPathSeparator (filename);
 	if (ppath != nullptr) {
 		ppath[0] = 0;
 	}

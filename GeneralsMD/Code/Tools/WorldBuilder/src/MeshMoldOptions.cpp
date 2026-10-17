@@ -103,7 +103,7 @@ BOOL MeshMoldOptions::OnInitDialog()
 				}
 				char *nameStart = fileBuf;
 				for (i=0; i<strlen(fileBuf)-1; i++) {
-					if (fileBuf[i] == '\\') {
+					if (isPathSeparator(fileBuf[i])) {
 						nameStart = fileBuf+i+1;
 					}
 				}
