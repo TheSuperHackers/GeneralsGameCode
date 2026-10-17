@@ -1461,19 +1461,20 @@ void EditWindow::draw()
 	WW3D::Sync(WW3D::Get_Fractional_Sync_Milliseconds() >= WWSyncMilliseconds);
 
 	// start render block
-	WW3D::Begin_Render( true, true, Vector3( m_backgroundColor.red,
-																					 m_backgroundColor.green,
-																					 m_backgroundColor.blue ) );
+	if( WW3D::Begin_Render( true, true, Vector3( m_backgroundColor.red,
+																							 m_backgroundColor.green,
+																							 m_backgroundColor.blue ) ) == WW3D_ERROR_OK )
+	{
+		// draw the windows
+		TheWindowManager->winRepaint();
 
-	// draw the windows
-	TheWindowManager->winRepaint();
+		// draw selected drag box and any window selection boxes
+		if( TheEditor->getMode() != MODE_TEST_RUN )
+			drawUIFeedback();
 
-	// draw selected drag box and any window selection boxes
-	if( TheEditor->getMode() != MODE_TEST_RUN )
-		drawUIFeedback();
-
-	// render is all done!
-	WW3D::End_Render();
+		// render is all done!
+		WW3D::End_Render();
+	}
 
 	TheFramePacer->update();
 }

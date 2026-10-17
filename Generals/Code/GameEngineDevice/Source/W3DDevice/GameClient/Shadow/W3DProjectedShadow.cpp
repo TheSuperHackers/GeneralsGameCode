@@ -2172,7 +2172,10 @@ void W3DProjectedShadow::updateTexture(Vector3 &lightPos)
 
 		context->light_environment->Reset(m_robj->Get_Position(), Vector3(0,0,0));
 
-		m_shadowProjector->Compute_Texture(m_robj,context);
+		if (!m_shadowProjector->Compute_Texture(m_robj,context))
+		{
+			return;
+		}
 
 		//Need to copy generated texture into permanent texture.
 		SurfaceClass *oldSurface=m_shadowTexture[0]->getTexture()->Get_Surface_Level();

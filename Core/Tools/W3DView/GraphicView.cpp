@@ -497,39 +497,42 @@ CGraphicView::RepaintView
 		//
 		//	Render the background BMP
 		//
-		WW3D::Begin_Render (TRUE, TRUE, doc->GetBackgroundColor ());
-		WW3D::Render (doc->Get2DScene (), doc->Get2DCamera (), FALSE, FALSE);
+		DWORD milliseconds = 0;
+		if (WW3D::Begin_Render (TRUE, TRUE, doc->GetBackgroundColor ()) == WW3D_ERROR_OK)
+		{
+			WW3D::Render (doc->Get2DScene (), doc->Get2DCamera (), FALSE, FALSE);
 
-		//
-		// Render the background scene
-		//
-		if (doc->GetBackgroundObjectName ().GetLength () > 0) {
-			WW3D::Render (doc->GetBackObjectScene (), doc->GetBackObjectCamera (), FALSE, FALSE);
+			//
+			// Render the background scene
+			//
+			if (doc->GetBackgroundObjectName ().GetLength () > 0) {
+				WW3D::Render (doc->GetBackObjectScene (), doc->GetBackObjectCamera (), FALSE, FALSE);
+			}
+
+			//
+			// Render the main scene
+			//
+			DWORD pt_high = 0L;
+
+			// Wait for all previous rendering to complete before starting benchmark.
+			DWORD profile_time = ::Get_CPU_Clock (pt_high);
+
+			WW3D::Render (doc->GetScene (), m_pCamera.Peek(), FALSE, FALSE);
+
+			// Wait for all rendering to complete before stopping benchmark.
+			milliseconds = (::Get_CPU_Clock (pt_high) - profile_time) / 1000;
+
+			//
+			// Render the cursor
+			//
+			WW3D::Render (doc->GetCursorScene (), doc->Get2DCamera (), FALSE, FALSE);
+
+			// Render the dazzles
+			doc->Render_Dazzles(m_pCamera.Peek());
+
+			// Finish out the rendering process
+			WW3D::End_Render ();
 		}
-
-		//
-		// Render the main scene
-		//
-		DWORD pt_high = 0L;
-
-		// Wait for all previous rendering to complete before starting benchmark.
-		DWORD profile_time = ::Get_CPU_Clock (pt_high);
-
-		WW3D::Render (doc->GetScene (), m_pCamera.Peek(), FALSE, FALSE);
-
-		// Wait for all rendering to complete before stopping benchmark.
-		DWORD milliseconds = (::Get_CPU_Clock (pt_high) - profile_time) / 1000;
-
-		//
-		// Render the cursor
-		//
-		WW3D::Render (doc->GetCursorScene (), doc->Get2DCamera (), FALSE, FALSE);
-
-		// Render the dazzles
-		doc->Render_Dazzles(m_pCamera.Peek());
-
-		// Finish out the rendering process
-		WW3D::End_Render ();
 
 		//
 		//	Let the audio class think

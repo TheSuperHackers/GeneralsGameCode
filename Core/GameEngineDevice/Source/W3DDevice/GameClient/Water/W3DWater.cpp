@@ -1482,37 +1482,38 @@ void WaterRenderObjClass::renderMirror(CameraClass *cam)
 	DX8Wrapper::Set_Render_Target_With_Z((TextureClass*)m_pReflectionTexture);
 
 	// Clear the backbuffer
-	WW3D::Begin_Render(false,true,Vector3(0.0f,0.0f,0.0f));	//clearing only z-buffer since background always filled with clouds
+	if (WW3D::Begin_Render(false,true,Vector3(0.0f,0.0f,0.0f)) == WW3D_ERROR_OK)	//clearing only z-buffer since background always filled with clouds
+	{
+		cam->Set_Transform( reflectedTransform );
 
-	cam->Set_Transform( reflectedTransform );
+		//Force reflected image to be drawn into full texture size - not a viewport inside texture.
+		Vector2 vMin,vMax,vOldMax,vOldMin;
+		cam->Get_Viewport(vOldMin,vOldMax);
+		vMax.X=vMax.Y=1.0f;
+		vMin.X=vMin.Y=0.0f;
+		cam->Set_Viewport(vMin,vMax);
 
-	//Force reflected image to be drawn into full texture size - not a viewport inside texture.
-	Vector2 vMin,vMax,vOldMax,vOldMin;
- 	cam->Get_Viewport(vOldMin,vOldMax);
- 	vMax.X=vMax.Y=1.0f;
-	vMin.X=vMin.Y=0.0f;
- 	cam->Set_Viewport(vMin,vMax);
+		cam->Apply();	//force an update of all the camera dependent parameters like frustum clip planes
 
-	cam->Apply();	//force an update of all the camera dependent parameters like frustum clip planes
+		//flip the winding order of polygons to draw the reflected back sides.
+		ShaderClass::Invert_Backface_Culling(true);
 
-	//flip the winding order of polygons to draw the reflected back sides.
-	ShaderClass::Invert_Backface_Culling(true);
+		// Render the scene
+		renderSky();
+		if (m_tod == TIME_OF_DAY_NIGHT)
+			renderSkyBody(&reflectedTransform);
 
-	// Render the scene
-	renderSky();
-	if (m_tod == TIME_OF_DAY_NIGHT)
-		renderSkyBody(&reflectedTransform);
+		WW3D::Render(m_parentScene,cam);
 
-	WW3D::Render(m_parentScene,cam);
+		cam->Set_Transform(OldCameraMatrix);	//restore original non-reflected matrix
+		cam->Set_Viewport(vOldMin,vOldMax);
 
-	cam->Set_Transform(OldCameraMatrix);	//restore original non-reflected matrix
- 	cam->Set_Viewport(vOldMin,vOldMax);
+		cam->Apply();	//force an update of all the camera dependent parameters like frustum clip planes
 
-	cam->Apply();	//force an update of all the camera dependent parameters like frustum clip planes
+		ShaderClass::Invert_Backface_Culling(false);
 
-	ShaderClass::Invert_Backface_Culling(false);
-
-	WW3D::End_Render(false);
+		WW3D::End_Render(false);
+	}
 
 	// Change the rendertarget back to the main backbuffer
 	DX8Wrapper::Set_Render_Target((IDirect3DSurface8 *)nullptr);

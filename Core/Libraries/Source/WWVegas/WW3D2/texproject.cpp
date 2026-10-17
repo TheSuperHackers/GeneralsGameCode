@@ -1155,14 +1155,17 @@ bool TexProjectClass::Compute_Texture
 
 		bool snapshot=WW3D::Is_Snapshot_Activated();
 		SNAPSHOT_SAY(("TexProjectCLass::Begin_Render()"));
-		WW3D::Begin_Render(true,zclear,color);	// false to zclear as we don't have z-buffer
-		WW3D::Render(*model,*context);
-		SNAPSHOT_SAY(("TexProjectCLass::End_Render()"));
-		WW3D::End_Render(false);
+		WW3DErrorType renderResult=WW3D::Begin_Render(true,zclear,color);
+		if (renderResult == WW3D_ERROR_OK)
+		{
+			WW3D::Render(*model,*context);
+			SNAPSHOT_SAY(("TexProjectCLass::End_Render()"));
+			WW3D::End_Render(false);
+		}
 		WW3D::Activate_Snapshot(snapshot);	// End_Render() ends the shapsnot, so restore the state
 
 		DX8Wrapper::Set_Render_Target((IDirect3DSurface8 *)nullptr);
-
+		return renderResult == WW3D_ERROR_OK;
 	}
 
 #if 0
