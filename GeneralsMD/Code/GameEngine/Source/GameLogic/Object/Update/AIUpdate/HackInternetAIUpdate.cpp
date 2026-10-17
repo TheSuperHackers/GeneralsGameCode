@@ -129,6 +129,14 @@ void HackInternetAIUpdate::aiDoCommand(const AICommandParms* parms)
 	const StateID currentState = getStateMachine()->getCurrentStateID();
 
 #if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix arcticdolphin 15/10/2026 prevent player Stop from interrupting contained hackers.
+	if (parms->m_cmd == AICMD_IDLE && parms->m_cmdSource == CMD_FROM_PLAYER &&
+		(currentState == UNPACKING || currentState == HACK_INTERNET) &&
+		getObject()->getContainedBy() != nullptr)
+	{
+		return;
+	}
+
 	// TheSuperHackers @bugfix andrew-2e128 / Mauller 14/07/2025 prevent hacking hackers packing and unpacking when commanded to hack the internet
 	if (parms->m_cmd == AICMD_HACK_INTERNET && ( currentState == HACK_INTERNET || currentState == UNPACKING ) )
 	{
