@@ -69,13 +69,6 @@ Max4Hybrid
 /Code/Libraries/Lib/WWMathDebugW3D.lib
 /Code/Libraries/Lib/WWMathInternal.lib
 /Code/Libraries/Lib/WWMathProfile.lib
-/Code/Libraries/Lib/WWSaveLoad.lib
-/Code/Libraries/Lib/WWSaveLoadDebug.lib
-/Code/Libraries/Lib/WWSaveLoadDebugE.lib
-/Code/Libraries/Lib/WWSaveLoadDebugW3D.lib
-/Code/Libraries/Lib/WWSaveLoadInternal.lib
-/Code/Libraries/Lib/WWSaveLoadProfile.lib
-/Code/Libraries/Lib/WWSaveLoadProfileE.lib
 /Code/Libraries/Lib/WWShade.lib
 /Code/Libraries/Lib/WWShadeDebug.lib
 /Code/Libraries/Lib/WWShadeDebugW3D.lib

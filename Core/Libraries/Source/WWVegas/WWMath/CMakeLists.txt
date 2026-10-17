@@ -87,7 +87,6 @@ target_sources(core_wwmath PRIVATE ${WWMATH_SRC})
 target_link_libraries(core_wwmath PRIVATE
     core_wwcommon
     corei_always
-    core_wwsaveload
 )
 
 target_link_libraries(core_wwmath PUBLIC
