@@ -604,6 +604,24 @@ PushButtonData * getNewPushButtonData()
 	return p;
 }
 
+static PushButtonData *getOrCreatePushButtonData( GameWindow *g )
+{
+	PushButtonData *pData = (PushButtonData *)g->winGetUserData();
+	if( pData == nullptr )
+	{
+		pData = getNewPushButtonData();
+		g->winSetUserData( pData );
+		// The headless dummy window does not keep user data
+		if( g->winGetUserData() != pData )
+		{
+			g->winSetUserData( nullptr );
+			delete pData;
+			return nullptr;
+		}
+	}
+	return pData;
+}
+
 // GadgetButtonSetBorder ======================================================
 /** Set to draw the special borders in the game */
 //=============================================================================
@@ -612,14 +630,12 @@ void GadgetButtonSetBorder( GameWindow *g, Color color, Bool drawBorder = TRUE )
 	if( g == nullptr )
 		return;
 
-	PushButtonData *pData = (PushButtonData *)g->winGetUserData();
-	if(!pData)
-	{
-		pData = getNewPushButtonData();
-	}
+	PushButtonData *pData = getOrCreatePushButtonData( g );
+	if( pData == nullptr )
+		return;
+
 	pData->drawBorder = drawBorder;
 	pData->colorBorder = color;
-	g->winSetUserData(pData);
 }
 
 // GadgetButtonDrawClock ======================================================
@@ -631,15 +647,13 @@ void GadgetButtonDrawClock( GameWindow *g, Int percent, Color color )
 	if( g == nullptr )
 		return;
 
-	PushButtonData *pData = (PushButtonData *)g->winGetUserData();
-	if(!pData)
-	{
-		pData = getNewPushButtonData();
-	}
+	PushButtonData *pData = getOrCreatePushButtonData( g );
+	if( pData == nullptr )
+		return;
+
 	pData->drawClock = NORMAL_CLOCK;
 	pData->percentClock = percent;
 	pData->colorClock = color;
-	g->winSetUserData(pData);
 
 }
 
@@ -652,15 +666,13 @@ void GadgetButtonDrawInverseClock( GameWindow *g, Int percent, Color color )
 	if( g == nullptr )
 		return;
 
-	PushButtonData *pData = (PushButtonData *)g->winGetUserData();
-	if(!pData)
-	{
-		pData = getNewPushButtonData();
-	}
+	PushButtonData *pData = getOrCreatePushButtonData( g );
+	if( pData == nullptr )
+		return;
+
 	pData->drawClock = INVERSE_CLOCK;
 	pData->percentClock = percent;
 	pData->colorClock = color;
-	g->winSetUserData(pData);
 
 }
 
@@ -669,13 +681,11 @@ void GadgetButtonDrawOverlayImage( GameWindow *g, const Image *image )
 	if( g == nullptr )
 		return;
 
-	PushButtonData *pData = (PushButtonData *)g->winGetUserData();
-	if(!pData)
-	{
-		pData = getNewPushButtonData();
-	}
+	PushButtonData *pData = getOrCreatePushButtonData( g );
+	if( pData == nullptr )
+		return;
+
 	pData->overlayImage = image;
-	g->winSetUserData(pData);
 }
 
 
@@ -687,13 +697,11 @@ void GadgetButtonSetData(GameWindow *g, void *data)
 	if( g == nullptr )
 		return;
 
-	PushButtonData *pData = (PushButtonData *)g->winGetUserData();
-	if(!pData)
-	{
-		pData = getNewPushButtonData();
-	}
+	PushButtonData *pData = getOrCreatePushButtonData( g );
+	if( pData == nullptr )
+		return;
+
 	pData->userData = data;
-	g->winSetUserData(pData);
 }
 
 // GadgetButtonGetData ======================================================
