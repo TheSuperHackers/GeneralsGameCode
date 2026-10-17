@@ -355,13 +355,13 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	if (imagehelp != nullptr) {
 		DebugString ("Exception Handler: Found IMAGEHLP.DLL - linking to required functions\n");
 		char const *function_name = nullptr;
-		unsigned long *fptr = (unsigned long*) &_SymCleanup;
+		uintptr_t *fptr = (uintptr_t*) &_SymCleanup;
 		int count = 0;
 
 		do {
 			function_name = ImagehelpFunctionNames[count];
 			if (function_name) {
-				*fptr = (unsigned long) GetProcAddress(imagehelp, function_name);
+				*fptr = (uintptr_t) GetProcAddress(imagehelp, function_name);
 				fptr++;
 				count++;
 			}
@@ -1065,13 +1065,13 @@ void Load_Image_Helper()
 
 		if (ImageHelp != nullptr) {
 			char const *function_name = nullptr;
-			unsigned long *fptr = (unsigned long *) &_SymCleanup;
+			uintptr_t *fptr = (uintptr_t *) &_SymCleanup;
 			int count = 0;
 
 			do {
 				function_name = ImagehelpFunctionNames[count];
 				if (function_name) {
-					*fptr = (unsigned long) GetProcAddress(ImageHelp, function_name);
+					*fptr = (uintptr_t) GetProcAddress(ImageHelp, function_name);
 					fptr++;
 					count++;
 				}

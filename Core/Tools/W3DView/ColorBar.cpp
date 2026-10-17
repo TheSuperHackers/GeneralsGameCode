@@ -229,7 +229,7 @@ fnColorBarProc
 		{
 			// Get the creation information from the window handle
 			ColorBarClass *pwnd = (ColorBarClass *)::GetProp (hwnd, "CLASSPOINTER");
-			BOOL created = (BOOL)::GetProp (hwnd, "CREATED");
+			BOOL created = (BOOL)(uintptr_t)::GetProp (hwnd, "CREATED");
 
 			if (pwnd != nullptr) {
 				pwnd->Detach ();
@@ -1796,7 +1796,7 @@ ColorBarClass::Clear_Points ()
 // Set_User_Data
 //
 bool
-ColorBarClass::Set_User_Data (int index, DWORD data)
+ColorBarClass::Set_User_Data (int index, uintptr_t data)
 {
 	bool retval = false;
 	if ((index >= 0) && (index < m_iColorPoints)) {
@@ -1812,10 +1812,10 @@ ColorBarClass::Set_User_Data (int index, DWORD data)
 //
 // Get_User_Data
 //
-DWORD
+uintptr_t
 ColorBarClass::Get_User_Data (int index)
 {
-	DWORD data = 0;
+	uintptr_t data = 0;
 	if ((index >= 0) && (index < m_iColorPoints)) {
 		data = m_ColorPoints[index].user_data;
 	}

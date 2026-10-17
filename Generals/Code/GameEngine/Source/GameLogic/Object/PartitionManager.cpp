@@ -5615,7 +5615,7 @@ void hLineAddLooker(Int x1, Int x2, Int y, void *playerIndexVoid)
 	if (y < 0 || y >= ThePartitionManager->m_cellCountY || x1 >= ThePartitionManager->m_cellCountX || x2 < 0)
 		return;
 
-	Int playerIndex = (Int)(playerIndexVoid);
+	Int playerIndex = (Int)(intptr_t)(playerIndexVoid);
 
 	PartitionCell* cell = &ThePartitionManager->m_cells[y * ThePartitionManager->m_cellCountX + x1];	// yes, this could be invalid. we'll skip the bad ones.
 	for (Int x = x1; x <= x2; ++x, ++cell)
@@ -5632,7 +5632,7 @@ void hLineRemoveLooker(Int x1, Int x2, Int y, void *playerIndexVoid)
 	if (y < 0 || y >= ThePartitionManager->m_cellCountY || x1 >= ThePartitionManager->m_cellCountX || x2 < 0)
 		return;
 
-	Int playerIndex = (Int)(playerIndexVoid);
+	Int playerIndex = (Int)(intptr_t)(playerIndexVoid);
 
 	PartitionCell* cell = &ThePartitionManager->m_cells[y * ThePartitionManager->m_cellCountX + x1];	// yes, this could be invalid. we'll skip the bad ones.
 	for (Int x = x1; x <= x2; ++x, ++cell)
@@ -5649,7 +5649,7 @@ void hLineAddShrouder(Int x1, Int x2, Int y, void *playerIndexVoid)
 	if (y < 0 || y >= ThePartitionManager->m_cellCountY || x1 >= ThePartitionManager->m_cellCountX || x2 < 0)
 		return;
 
-	Int playerIndex = (Int)(playerIndexVoid);
+	Int playerIndex = (Int)(intptr_t)(playerIndexVoid);
 
 	PartitionCell* cell = &ThePartitionManager->m_cells[y * ThePartitionManager->m_cellCountX + x1];	// yes, this could be invalid. we'll skip the bad ones.
 	for (Int x = x1; x <= x2; ++x, ++cell)
@@ -5666,7 +5666,7 @@ void hLineRemoveShrouder(Int x1, Int x2, Int y, void *playerIndexVoid)
 	if (y < 0 || y >= ThePartitionManager->m_cellCountY || x1 >= ThePartitionManager->m_cellCountX || x2 < 0)
 		return;
 
-	Int playerIndex = (Int)(playerIndexVoid);
+	Int playerIndex = (Int)(intptr_t)(playerIndexVoid);
 
 	PartitionCell* cell = &ThePartitionManager->m_cells[y * ThePartitionManager->m_cellCountX + x1];	// yes, this could be invalid. we'll skip the bad ones.
 	for (Int x = x1; x <= x2; ++x, ++cell)

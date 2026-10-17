@@ -137,8 +137,8 @@ protected:
 		bool				Insert_Point (int index, float position, float red, float green, float blue, DWORD flags = POINT_VISIBLE | POINT_CAN_MOVE);
 		bool				Insert_Point (CPoint point, DWORD flags = POINT_VISIBLE | POINT_CAN_MOVE);
 		bool				Modify_Point (int index, float position, float red, float green, float blue, DWORD flags = POINT_VISIBLE | POINT_CAN_MOVE);
-		bool				Set_User_Data (int index, DWORD data);
-		DWORD				Get_User_Data (int index);
+		bool				Set_User_Data (int index, uintptr_t data);
+		uintptr_t			Get_User_Data (int index);
 		bool				Set_Graph_Percent (int index, float percent);
 		float				Get_Graph_Percent (int index);
 		bool				Delete_Point (int index);
@@ -186,7 +186,7 @@ protected:
 			float	GreenInc;
 			float	BlueInc;
 
-			DWORD user_data;
+			uintptr_t user_data;
 			int	flags;
 
 		} COLOR_POINT;
