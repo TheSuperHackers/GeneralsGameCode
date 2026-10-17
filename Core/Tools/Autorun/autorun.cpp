@@ -2570,7 +2570,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 	static unichar	szString1[ 500 ];
 	static unichar	szString2[ 500 ];
 	static unichar	szWholeString[ 1000 ];
-//	static wchar_t	szWSMsg1[ _MAX_PATH ];
+//	static unichar	szWSMsg1[ _MAX_PATH ];
 
 #ifdef LEAN_AND_MEAN
 
@@ -2580,7 +2580,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 	static unichar	szWSMsg2[ _MAX_PATH ];
 	static unichar	szWholeWSMsg[ 1000 ];
-//	static wchar_t	szInstallWarningMsg[ _MAX_PATH ];
+//	static unichar	szInstallWarningMsg[ _MAX_PATH ];
 
 	static HBITMAP		hBitmap   			= 0;
 	static HBITMAP		oldBitmap 			= 0;
@@ -2711,8 +2711,8 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 //				Locale_GetString( WESTWOOD_COM_MSG, szWSMsg1 );
 //				wsMsg1 = TheGameText->fetch("Autorun:WestwoodComMsg");
 
-//				PlugInProductName( szWSMsg1, (wchar_t *)(fullProductName.str()) );
-//				PlugInProductName( (wchar_t *)(wsMsg1.str()), (wchar_t *)(fullProductName.str()) );
+//				PlugInProductName( szWSMsg1, (unichar *)(fullProductName.str()) );
+//				PlugInProductName( (unichar *)(wsMsg1.str()), (unichar *)(fullProductName.str()) );
 //				wsMsg1 = Fix_Single_Ampersands ( wsMsg1, false );
 //				swprintf( szWholeWSMsg, L"%s", wsMsg1.str() );
 
