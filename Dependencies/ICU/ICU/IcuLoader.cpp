@@ -21,8 +21,8 @@
 #if defined(RTS_ICU_DYNAMIC)
 
 #include <Utility/lazy_static.h>
+#include <Utility/stringex.h>
 #include <stdlib.h>
-#include <string.h>
 #include <wchar.h>
 
 namespace
@@ -79,27 +79,27 @@ HMODULE loadModule()
     // Use absolute paths so -setCwd and PATH cannot supply an unexpected DLL.
     // Wide paths also allow app-local ICU in non-ASCII installation directories.
     wchar_t path[MAX_PATH];
-    const wchar_t name[] = L"icu.dll";
     const DWORD length = GetModuleFileNameW(nullptr, path, MAX_PATH);
     if (length > 0 && length < MAX_PATH)
     {
         wchar_t* separator = wcsrchr(path, L'\\');
-        if (separator != nullptr && separator + 1 - path + sizeof(name) / sizeof(name[0]) <= MAX_PATH)
+        if (separator != nullptr)
         {
-            memcpy(separator + 1, name, sizeof(name));
-            HMODULE module = LoadLibraryW(path);
-            if (module != nullptr)
+            separator[1] = L'\0';
+            if (wcslcat(path, L"icu.dll", MAX_PATH) < MAX_PATH)
             {
-                return module;
+                HMODULE module = LoadLibraryW(path);
+                if (module != nullptr)
+                {
+                    return module;
+                }
             }
         }
     }
 
     const UINT systemLength = GetSystemDirectoryW(path, MAX_PATH);
-    if (systemLength > 0 && systemLength + 1 + sizeof(name) / sizeof(name[0]) <= MAX_PATH)
+    if (systemLength > 0 && systemLength < MAX_PATH && wcslcat(path, L"\\icu.dll", MAX_PATH) < MAX_PATH)
     {
-        path[systemLength] = L'\\';
-        memcpy(path + systemLength + 1, name, sizeof(name));
         return LoadLibraryW(path);
     }
 
