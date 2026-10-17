@@ -155,7 +155,8 @@ bool								DX8Wrapper::IsRenderToTexture							= false;
 
 unsigned							DX8Wrapper::_MainThreadID								= 0;
 bool								DX8Wrapper::CurrentDX8LightEnables[4];
-bool								DX8Wrapper::IsDeviceLost;
+DX8Wrapper::DeviceStateType		DX8Wrapper::DeviceState = DX8Wrapper::DEVICE_STATE_OK;
+bool								DX8Wrapper::ResourcesReleasedForReset = false;
 int								DX8Wrapper::ZBias;
 float								DX8Wrapper::ZNear;
 float								DX8Wrapper::ZFar;
@@ -594,6 +595,9 @@ bool DX8Wrapper::Create_Device()
 
 	dbgHelpGuard.deactivate();
 
+	DeviceState = DEVICE_STATE_OK;
+	ResourcesReleasedForReset = false;
+
 	/*
 	** Initialize all subsystems
 	*/
@@ -606,47 +610,35 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 	WWDEBUG_SAY(("Resetting device."));
 	DX8_THREAD_ASSERT();
 	if ((IsInitted) && (D3DDevice != nullptr)) {
-		// Release all non-MANAGED stuff
-		WW3D::_Invalidate_Textures();
-
-		for (unsigned i=0;i<MAX_VERTEX_STREAMS;++i)
-		{
-			Set_Vertex_Buffer (nullptr,i);
+		// Draws can recreate these between attempts
+		Release_Dynamic_Buffers();
+		if (!ResourcesReleasedForReset) {
+			Release_Reset_Resources();
+			ResourcesReleasedForReset = true;
 		}
-		Set_Index_Buffer (nullptr, 0);
-		if (m_pCleanupHook) {
-			m_pCleanupHook->ReleaseResources();
-		}
-		DynamicVBAccessClass::_Deinit();
-		DynamicIBAccessClass::_Deinit();
-		DX8TextureManagerClass::Release_Textures();
-		SHD_SHUTDOWN_SHADERS;
 
-		// Reset frame count to reflect the flipping chain being reset by Reset()
-		FrameCount = 0;
-
-		memset(Vertex_Shader_Constants,0,sizeof(Vector4)*MAX_VERTEX_SHADER_CONSTANTS);
-		memset(Pixel_Shader_Constants,0,sizeof(Vector4)*MAX_PIXEL_SHADER_CONSTANTS);
-
-		HRESULT hr=_Get_D3D_Device8()->TestCooperativeLevel();
-		if (hr != D3DERR_DEVICELOST )
-		{	DX8CALL_HRES(Reset(&_PresentParameters),hr)
-			if (hr != D3D_OK)
-				return false;	//reset failed.
-		}
-		else
+		HRESULT hr=Test_Cooperative_Level();
+		if (hr == D3DERR_DEVICELOST) {
 			return false;	//device is lost and can't be reset.
-
-		if (reload_assets)
-		{
-			DX8TextureManagerClass::Recreate_Textures();
-			if (m_pCleanupHook) {
-				m_pCleanupHook->ReAcquireResources();
-			}
 		}
+
+		// TheSuperHackers @bugfix arcticdolphin 09/10/2026 Reset() fails while resources are still bound
+		Unbind_Device_Resources();
 		Invalidate_Cached_Render_States();
-		Set_Default_Global_Render_States();
-		SHD_INIT_SHADERS;
+		Set_Render_Target((IDirect3DSurface8*)nullptr);
+
+		// Retried next frame
+		hr = _Get_D3D_Device8()->Reset(&_PresentParameters);
+		Increment_DX8_CallCount();
+		Update_Device_State(hr);
+		if (hr != D3D_OK)
+		{
+			Non_Fatal_Log_DX8_ErrorCode(hr,__FILE__,__LINE__);
+			return false;	//reset failed.
+		}
+
+		Restore_Reset_Resources(reload_assets);
+		ResourcesReleasedForReset = false;
 		WWDEBUG_SAY(("Device reset completed"));
 		return true;
 	}
@@ -654,18 +646,90 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 	return false;
 }
 
+void DX8Wrapper::Release_Reset_Resources()
+{
+	WW3D::_Invalidate_Textures();
+
+	if (m_pCleanupHook) {
+		m_pCleanupHook->ReleaseResources();
+	}
+	DX8TextureManagerClass::Release_Textures();
+	SHD_SHUTDOWN_SHADERS;
+
+	// Reset frame count to reflect the flipping chain being reset by Reset()
+	FrameCount = 0;
+
+	memset(Vertex_Shader_Constants,0,sizeof(Vector4)*MAX_VERTEX_SHADER_CONSTANTS);
+	memset(Pixel_Shader_Constants,0,sizeof(Vector4)*MAX_PIXEL_SHADER_CONSTANTS);
+}
+
+void DX8Wrapper::Release_Dynamic_Buffers()
+{
+	for (unsigned i=0;i<MAX_VERTEX_STREAMS;++i)
+	{
+		Set_Vertex_Buffer (nullptr,i);
+	}
+	Set_Index_Buffer (nullptr, 0);
+	DynamicVBAccessClass::_Deinit();
+	DynamicIBAccessClass::_Deinit();
+}
+
+void DX8Wrapper::Restore_Reset_Resources(bool reload_assets)
+{
+	if (reload_assets)
+	{
+		DX8TextureManagerClass::Recreate_Textures();
+		if (m_pCleanupHook) {
+			m_pCleanupHook->ReAcquireResources();
+		}
+	}
+	Invalidate_Cached_Render_States();
+	Set_Default_Global_Render_States();
+	SHD_INIT_SHADERS;
+}
+
+HRESULT DX8Wrapper::Test_Cooperative_Level()
+{
+	HRESULT hr=_Get_D3D_Device8()->TestCooperativeLevel();
+	Update_Device_State(hr);
+	return hr;
+}
+
+void DX8Wrapper::Update_Device_State(HRESULT hr)
+{
+	if (SUCCEEDED(hr)) {
+		DeviceState = DEVICE_STATE_OK;
+	}
+	else if (hr == D3DERR_DEVICENOTRESET) {
+		DeviceState = DEVICE_STATE_NOT_RESET;
+	}
+	else {
+		DeviceState = DEVICE_STATE_LOST;
+	}
+}
+
+// Set_Vertex_Buffer and Set_Index_Buffer are deferred
+void DX8Wrapper::Unbind_Device_Resources()
+{
+	for (unsigned stage = 0; stage < MAX_TEXTURE_STAGES; ++stage)
+	{
+		DX8CALL(SetTexture(stage, nullptr));
+	}
+	for (unsigned stream = 0; stream < MAX_VERTEX_STREAMS; ++stream)
+	{
+		DX8CALL(SetStreamSource(stream, nullptr, 0));
+	}
+	DX8CALL(SetIndices(nullptr, 0));
+}
+
 void DX8Wrapper::Release_Device()
 {
 	if (D3DDevice) {
 
-		for (int a=0;a<MAX_TEXTURE_STAGES;++a)
-		{
-			//release references to any textures that were used in last rendering call
-			DX8CALL(SetTexture(a,nullptr));
+		// Not safe on a lost device
+		if (Test_Cooperative_Level() != D3DERR_DEVICELOST) {
+			Unbind_Device_Resources();
 		}
-
-		DX8CALL(SetStreamSource(0, nullptr, 0));	//release reference count on last rendered vertex buffer
-		DX8CALL(SetIndices(nullptr,0));	//release reference count on last rendered index buffer
 
 
 		/*
@@ -1683,22 +1747,19 @@ void DX8Wrapper::End_Scene(bool flip_frames)
 
 		DX8_RECORD_DX8_CALLS();
 
+		Update_Device_State(hr);
 		if (SUCCEEDED(hr)) {
 #ifdef EXTENDED_STATS
 			if (stats.m_sleepTime) {
 				::Sleep(stats.m_sleepTime);
 			}
 #endif
-			IsDeviceLost=false;
 			FrameCount++;
-		}
-		else {
-			IsDeviceLost=true;
 		}
 
 		// If the device was lost we need to check for cooperative level and possibly reset the device
 		if (hr==D3DERR_DEVICELOST) {
-			hr=_Get_D3D_Device8()->TestCooperativeLevel();
+			hr=Test_Cooperative_Level();
 			if (hr==D3DERR_DEVICENOTRESET) {
 				WWDEBUG_SAY(("DX8Wrapper::End_Scene is resetting the device."));
 				Reset_Device();
@@ -1735,17 +1796,15 @@ void DX8Wrapper::Flip_To_Primary()
 		int resetAttempts = 0;
 
 		while ((flipCount > 0) && (resetAttempts < 3)) {
-			HRESULT hr = _Get_D3D_Device8()->TestCooperativeLevel();
+			HRESULT hr = Test_Cooperative_Level();
 
 			if (FAILED(hr)) {
 				WWDEBUG_SAY(("TestCooperativeLevel Failed!"));
 
 				if (D3DERR_DEVICELOST == hr) {
-					IsDeviceLost=true;
 					WWDEBUG_SAY(("DEVICELOST: Cannot flip to primary."));
 					return;
 				}
-				IsDeviceLost=false;
 
 				if (D3DERR_DEVICENOTRESET == hr) {
 					WWDEBUG_SAY(("DEVICENOTRESET"));
@@ -1755,14 +1814,11 @@ void DX8Wrapper::Flip_To_Primary()
 			} else {
 				WWDEBUG_SAY(("Flipping: %ld", FrameCount));
 				hr = _Get_D3D_Device8()->Present(nullptr, nullptr, nullptr, nullptr);
+				Update_Device_State(hr);
 
 				if (SUCCEEDED(hr)) {
-					IsDeviceLost=false;
 					FrameCount++;
 					WWDEBUG_SAY(("Flip to primary succeeded %ld", FrameCount));
-				}
-				else {
-					IsDeviceLost=true;
 				}
 			}
 
@@ -2016,6 +2072,11 @@ void DX8Wrapper::Draw(
 	unsigned short min_vertex_index,
 	unsigned short vertex_count)
 {
+	// TheSuperHackers @bugfix arcticdolphin 17/10/2026 Skip draws on a lost device
+	if (DeviceState != DEVICE_STATE_OK) {
+		return;
+	}
+
 	if (DrawPolygonLowBoundLimit && DrawPolygonLowBoundLimit>=polygon_count) return;
 
 	DX8_THREAD_ASSERT();

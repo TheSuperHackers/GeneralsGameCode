@@ -284,7 +284,7 @@ public:
 	static void	Do_Onetime_Device_Dependent_Inits();
 	static void Do_Onetime_Device_Dependent_Shutdowns();
 
-	static bool Is_Device_Lost() { return IsDeviceLost; }
+	static bool Is_Device_Lost() { return DeviceState != DEVICE_STATE_OK; }
 	static bool Is_Initted() { return IsInitted; }
 
 	static bool Has_Stencil ();
@@ -534,6 +534,7 @@ public:
 	/// Returns the display format - added by TR for video playback - not part of W3D
 	static WW3DFormat	getBackBufferFormat();
 	static bool Reset_Device(bool reload_assets=true);
+	static HRESULT Test_Cooperative_Level();	// Also updates DeviceState
 
 	static const DX8Caps*	Get_Current_Caps() { WWASSERT(CurrentCaps); return CurrentCaps; }
 
@@ -575,6 +576,11 @@ protected:
 
 	static bool	Create_Device();
 	static void Release_Device();
+	static void Unbind_Device_Resources();
+	static void Release_Reset_Resources();
+	static void Release_Dynamic_Buffers();
+	static void Restore_Reset_Resources(bool reload_assets);
+	static void Update_Device_State(HRESULT hr);
 
 	static void Reset_Statistics();
 	static void Enumerate_Devices();
@@ -636,7 +642,13 @@ protected:
 	static D3DMATRIX						DX8Transforms[D3DTS_WORLD+1];
 
 	static bool								IsInitted;
-	static bool								IsDeviceLost;
+	enum DeviceStateType {
+		DEVICE_STATE_OK,
+		DEVICE_STATE_LOST,
+		DEVICE_STATE_NOT_RESET
+	};
+	static DeviceStateType				DeviceState;
+	static bool								ResourcesReleasedForReset;
 	static void *							Hwnd;
 	static unsigned						_MainThreadID;
 
