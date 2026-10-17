@@ -330,4 +330,7 @@ void W3DDebrisDraw::loadPostProcess()
 	// extend base class
 	DrawModule::loadPostProcess();
 
+	// TheSuperHackers @bugfix Clamp the loaded state before indexing the animation arrays.
+	m_state = clamp<Int>(INITIAL, m_state, FINAL);
+
 }

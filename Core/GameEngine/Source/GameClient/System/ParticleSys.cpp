@@ -255,7 +255,8 @@ static Real angleBetween(const Coord2D *vecA, const Coord2D *vecB);
 // ------------------------------------------------------------------------------------------------
 void Particle::computeAlphaRate()
 {
-	if (m_alphaKey[ m_alphaTargetKey ].frame == 0)
+	// TheSuperHackers @bugfix The final key advances to the one-past-end sentinel.
+	if (m_alphaTargetKey >= MAX_KEYFRAMES || m_alphaKey[ m_alphaTargetKey ].frame == 0)
 	{
 		m_alphaRate = 0.0f;
 		return;
@@ -271,7 +272,8 @@ void Particle::computeAlphaRate()
 // ------------------------------------------------------------------------------------------------
 void Particle::computeColorRate()
 {
-	if (m_colorKey[ m_colorTargetKey ].frame == 0)
+	// TheSuperHackers @bugfix The final key advances to the one-past-end sentinel.
+	if (m_colorTargetKey >= MAX_KEYFRAMES || m_colorKey[ m_colorTargetKey ].frame == 0)
 	{
 		m_colorRate.red = 0.0f;
 		m_colorRate.green = 0.0f;
@@ -806,6 +808,13 @@ void Particle::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void Particle::loadPostProcess()
 {
+	// TheSuperHackers @bugfix Preserve the completed-key sentinel and reject invalid saved key indices.
+	if( m_alphaTargetKey < 0 || m_alphaTargetKey > MAX_KEYFRAMES ||
+			m_colorTargetKey < 0 || m_colorTargetKey > MAX_KEYFRAMES )
+	{
+		DEBUG_LOG(( "Particle::loadPostProcess - Invalid target key" ));
+		throw SC_INVALID_DATA;
+	}
 
 	// call base class post process
 	ParticleInfo::loadPostProcess();

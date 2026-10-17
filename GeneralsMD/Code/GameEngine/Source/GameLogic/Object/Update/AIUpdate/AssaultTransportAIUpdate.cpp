@@ -29,6 +29,7 @@
 //         injured troops to return to the transport for healing purposes.
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "Common/GameState.h"
 
 #include "Common/Player.h"
 #include "Common/ThingFactory.h"
@@ -511,6 +512,12 @@ void AssaultTransportAIUpdate::xfer( Xfer *xfer )
 	AIUpdateInterface::xfer(xfer);
 
 	xfer->xferInt( &m_currentMembers );
+	// TheSuperHackers @bugfix Reject invalid transport counts before reading member arrays.
+	if( m_currentMembers < 0 || m_currentMembers > MAX_TRANSPORT_SLOTS )
+	{
+		DEBUG_LOG(( "AssaultTransportAIUpdate::xfer - Invalid member count" ));
+		throw SC_INVALID_DATA;
+	}
 
 	for( int i = 0; i < m_currentMembers; i++ )
 	{

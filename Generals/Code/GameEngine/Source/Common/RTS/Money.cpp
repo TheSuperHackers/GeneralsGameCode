@@ -50,6 +50,7 @@
 #include "Common/MiscAudio.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
+#include "Common/GameState.h"
 #include "Common/Xfer.h"
 #include "GameLogic/GameLogic.h"
 
@@ -188,6 +189,12 @@ void Money::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void Money::loadPostProcess()
 {
+	// TheSuperHackers @bugfix Reject saved indices outside the income bucket array.
+	if( m_currentBucket >= ARRAY_SIZE(m_incomeBuckets) )
+	{
+		DEBUG_LOG(( "Money::loadPostProcess - Invalid saved array bounds" ));
+		throw SC_INVALID_DATA;
+	}
 
 }
 
