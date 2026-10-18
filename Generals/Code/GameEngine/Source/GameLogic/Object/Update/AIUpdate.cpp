@@ -4334,7 +4334,8 @@ Object* AIUpdateInterface::getNextMoodTarget( Bool calledByAI, Bool calledDuring
 
 				if( !container->getContain()->isPassengerAllowedToFire() )
 				{
-					//Container doesn't allow for passenger to shoot.
+					// Sorry, stealthed and not allowed to idle fire when stealthed.
+					// Being in a firing container is an exception to this veto.
 					return nullptr;
 				}
 			}

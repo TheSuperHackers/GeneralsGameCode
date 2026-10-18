@@ -4829,10 +4829,14 @@ StateReturnType AIAttackAimAtTargetState::onEnter()
 	//to move to the best fire point, check if it's in firing range, and if not
 	//move it back so another unit with longer range can!
 	Object *containedBy = source->getContainedBy();
-	if( containedBy && weapon )
-	{
-		ContainModuleInterface *contain = containedBy->getContain();
+	ContainModuleInterface *contain = containedBy ? containedBy->getContain() : nullptr;
 
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+	if( containedBy && weapon )
+#else
+	if( containedBy && weapon && contain && contain->isEnclosingContainerFor( source ) )
+#endif
+	{
 #if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
 		// TheSuperHackers @bugfix Caball009 22/09/2026 Return early to prevent a crash.
 		// This is needed when a Tunnel Network with units is transferred to another player and then sold or destroyed.
@@ -4846,6 +4850,7 @@ StateReturnType AIAttackAimAtTargetState::onEnter()
 		}
 #endif
 
+		// non enclosing garrison containers do not use firepoints. Lorenzen, 6/11/03
 		if (victim)
 		{
 			inFiringRange = contain->attemptBestFirePointPosition( source, weapon, victim );
