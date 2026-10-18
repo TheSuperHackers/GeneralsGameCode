@@ -594,19 +594,17 @@ WW3DErrorType HLodDefClass::Save_Proxy_Array(ChunkSaveClass & csave)
 				success &= csave.End_Chunk();
 			}
 
-			if (success) {
-				for (int imodel=0; imodel<ProxyArray->Length(); ++imodel) {
-					ProxyRecordClass & proxy = (*ProxyArray)[imodel];
-					W3dHLodSubObjectStruct subobjdef = { 0 };
-					subobjdef.BoneIndex = proxy.Get_Bone_Index();
-					::lstrcpyn(subobjdef.Name, proxy.Get_Name(), sizeof(subobjdef.Name));
-					subobjdef.Name[sizeof(subobjdef.Name) - 1] = 0;
+			for (int imodel=0; success && imodel<ProxyArray->Length(); ++imodel) {
+				ProxyRecordClass & proxy = (*ProxyArray)[imodel];
+				W3dHLodSubObjectStruct subobjdef = { 0 };
+				subobjdef.BoneIndex = proxy.Get_Bone_Index();
+				::lstrcpyn(subobjdef.Name, proxy.Get_Name(), sizeof(subobjdef.Name));
+				subobjdef.Name[sizeof(subobjdef.Name) - 1] = 0;
 
-					success &= csave.Begin_Chunk(W3D_CHUNK_HLOD_SUB_OBJECT);
-					if (success) {
-						success &= (csave.Write(&subobjdef,sizeof(subobjdef)) == sizeof(subobjdef));
-						success &= csave.End_Chunk();
-					}
+				success &= csave.Begin_Chunk(W3D_CHUNK_HLOD_SUB_OBJECT);
+				if (success) {
+					success &= (csave.Write(&subobjdef,sizeof(subobjdef)) == sizeof(subobjdef));
+					success &= csave.End_Chunk();
 				}
 			}
 			success &= csave.End_Chunk();
