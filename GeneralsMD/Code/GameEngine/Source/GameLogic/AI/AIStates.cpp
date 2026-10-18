@@ -4953,8 +4953,25 @@ StateReturnType AIAttackAimAtTargetState::onEnter()
 	Object *containedBy = source->getContainedBy();
 	ContainModuleInterface *contain = containedBy ? containedBy->getContain() : nullptr;
 
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+	if( containedBy && weapon )
+#else
 	if( containedBy && weapon && contain && contain->isEnclosingContainerFor( source ) )
+#endif
 	{
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix Caball009 22/09/2026 Return early to prevent a crash.
+		// This is needed when a Tunnel Network with units is transferred to another player and then sold or destroyed.
+		// The units are not properly transferred and are left in an invalid state.
+		if (!contain)
+		{
+			// remove all such units from the tunnel tracker and destroy them
+			TheGameLogic->friend_destroyInTunnelContain(source);
+
+			return STATE_FAILURE;
+		}
+#endif
+
 		// non enclosing garrison containers do not use firepoints. Lorenzen, 6/11/03
 		if (victim)
 		{
