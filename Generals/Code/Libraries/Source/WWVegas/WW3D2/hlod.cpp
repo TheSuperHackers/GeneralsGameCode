@@ -411,7 +411,6 @@ void HLodDefClass::Initialize(HLodClass &src_lod)
 		}
 	}
 
-	// TheSuperHackers @bugfix Also copy the aggregates and proxies, so that saving this definition keeps them.
 	Aggregates.CopyFrom(src_lod);
 	REF_PTR_SET (ProxyArray, src_lod.ProxyArray);
 }
@@ -438,7 +437,6 @@ WW3DErrorType HLodDefClass::Save(ChunkSaveClass & csave)
 	if (csave.Begin_Chunk (W3D_CHUNK_HLOD) == TRUE) {
 
 		// Attempt to save the different sections of the aggregate definition
-		// TheSuperHackers @fix Also save the aggregate and proxy arrays, which Load_W3D reads.
 		if ((Save_Header (csave) == WW3D_ERROR_OK) &&
 			 (Save_Lod_Array (csave) == WW3D_ERROR_OK) &&
 			 (Save_Aggregate_Array (csave) == WW3D_ERROR_OK) &&
