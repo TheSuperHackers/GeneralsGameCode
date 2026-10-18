@@ -412,7 +412,6 @@ void HLodDefClass::Initialize(HLodClass &src_lod)
 	}
 
 	// TheSuperHackers @bugfix Also copy the aggregates and proxies, so that saving this definition keeps them.
-	// The screen size of the aggregates is 0, as max2w3d writes it.
 	Aggregates.ModelCount = src_lod.Get_Additional_Model_Count ();
 	if (Aggregates.ModelCount > 0) {
 		Aggregates.MaxScreenSize = 0.0f;
@@ -449,7 +448,7 @@ WW3DErrorType HLodDefClass::Save(ChunkSaveClass & csave)
 	if (csave.Begin_Chunk (W3D_CHUNK_HLOD) == TRUE) {
 
 		// Attempt to save the different sections of the aggregate definition
-		// TheSuperHackers @bugfix Also save the aggregate and proxy arrays, which Load_W3D reads, in the order max2w3d writes them.
+		// TheSuperHackers @fix Also save the aggregate and proxy arrays, which Load_W3D reads.
 		if ((Save_Header (csave) == WW3D_ERROR_OK) &&
 			 (Save_Lod_Array (csave) == WW3D_ERROR_OK) &&
 			 (Save_Aggregate_Array (csave) == WW3D_ERROR_OK) &&
@@ -577,7 +576,7 @@ WW3DErrorType HLodDefClass::Save_Aggregate_Array(ChunkSaveClass & csave)
 /***********************************************************************************************
  * HLodDefClass::Save_Proxy_Array -- Save the array of proxies                                 *
  *                                                                                             *
- * The screen size in the array header is 0, as max2w3d writes it.                             *
+ * The screen size in the array header is 0.                                                   *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -586,6 +585,7 @@ WW3DErrorType HLodDefClass::Save_Aggregate_Array(ChunkSaveClass & csave)
  * WARNINGS:                                                                                   *
  *                                                                                             *
  * HISTORY:                                                                                    *
+ *   10/18/2026 TheSuperHackers : Created.                                                     *
  *=============================================================================================*/
 WW3DErrorType HLodDefClass::Save_Proxy_Array(ChunkSaveClass & csave)
 {
@@ -901,14 +901,14 @@ bool HLodDefClass::SubObjectArrayClass::Load_W3D(ChunkLoadClass & cload)
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   1/26/00    gth : Created.                                                                 *
+ *   10/18/2026 TheSuperHackers : Write only the array contents, as Load_W3D reads them.       *
+ *              The caller wraps them in W3D_CHUNK_HLOD_LOD_ARRAY or                           *
+ *              W3D_CHUNK_HLOD_AGGREGATE_ARRAY                                                 *
  *=============================================================================================*/
 bool HLodDefClass::SubObjectArrayClass::Save_W3D(ChunkSaveClass &csave)
 {
 	// Assume error
 	bool ret_val = false;
-
-	// TheSuperHackers @bugfix Write only the array contents, as Load_W3D reads them. The caller wraps them in
-	// W3D_CHUNK_HLOD_LOD_ARRAY or W3D_CHUNK_HLOD_AGGREGATE_ARRAY.
 
 	// Begin a chunk that identifies the LOD header
 	if (csave.Begin_Chunk (W3D_CHUNK_HLOD_SUB_OBJECT_ARRAY_HEADER) == TRUE) {
