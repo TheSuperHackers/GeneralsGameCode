@@ -379,14 +379,12 @@ extern WindowMsgHandledType PassMessagesToParentSystem( GameWindow *window,
 																															 WindowMsgData mData2 );
 
 // TheSuperHackers @feature helmutbuhler 24/04/2025
-// GameWindowManager that does nothing. Used for Headless Mode.
+// Non-rendering GameWindowManager used for Headless Mode.
 class GameWindowManagerDummy : public GameWindowManager
 {
 public:
-	virtual GameWindow *winGetWindowFromId(GameWindow *window, Int id) override;
-	virtual GameWindow *winCreateFromScript(AsciiString filenameString, WindowLayoutInfo *info) override;
-
 	virtual GameWindow *allocateNewWindow() override { return newInstance(GameWindowDummy); }
+	virtual void winRepaint() override {}
 
 	virtual GameWinDrawFunc getPushButtonImageDrawFunc() override { return nullptr; }
 	virtual GameWinDrawFunc getPushButtonDrawFunc() override { return nullptr; }

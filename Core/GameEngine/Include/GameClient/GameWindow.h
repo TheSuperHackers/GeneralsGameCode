@@ -433,13 +433,12 @@ protected:
 };
 
 // TheSuperHackers @feature helmutbuhler 24/04/2025
-// GameWindow that does nothing. Used for Headless Mode.
+// Non-rendering GameWindow used for Headless Mode.
 class GameWindowDummy : public GameWindow
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameWindowDummy, "GameWindowDummy")
 public:
 	virtual void winDrawBorder() override {}
-	virtual void* winGetUserData() override { return nullptr; }
 };
 
 // ModalWindow ----------------------------------------------------------------

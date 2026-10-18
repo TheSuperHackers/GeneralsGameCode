@@ -4041,31 +4041,6 @@ void GameWindowManager::clearTabList()
 }
 
 
-GameWindow *GameWindowManagerDummy::winGetWindowFromId(GameWindow *window, Int id)
-{
-	window = GameWindowManager::winGetWindowFromId(window, id);
-	if (window != nullptr)
-		return window;
-
-	// Just return any window, callers expect this to be non-null
-	return m_windowList;
-}
-
-WindowMsgHandledType DummyWindowSystem(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
-{
-	return MSG_IGNORED;
-}
-
-GameWindow *GameWindowManagerDummy::winCreateFromScript(AsciiString filenameString, WindowLayoutInfo *info)
-{
-	WindowLayoutInfo scriptInfo;
-	GameWindow* dummyWindow = winCreate(nullptr, 0, 0, 0, 100, 100, DummyWindowSystem, nullptr);
-	scriptInfo.windows.push_back(dummyWindow);
-	if (info)
-		*info = scriptInfo;
-	return dummyWindow;
-}
-
 GameWindowDummy::~GameWindowDummy()
 {
 }
