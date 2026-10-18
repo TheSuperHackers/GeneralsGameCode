@@ -211,7 +211,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install MinGW-w64 Toolchain
         run: |
@@ -242,7 +242,7 @@ jobs:
 
       - name: Cache CMake Dependencies
         id: cache-cmake-deps
-        uses: actions/cache@v4
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: build/${{ matrix.preset }}/_deps
           key: cmake-deps-mingw-${{ matrix.preset }}-${{ hashFiles('CMakePresets.json','cmake/**/*.cmake','**/CMakeLists.txt') }}
@@ -275,10 +275,10 @@ jobs:
           mkdir -p "$ARTIFACTS_DIR"
 
           # Copy executables, DLLs, and debug symbols
-          find build/${{ matrix.preset }}/Core build/${{ matrix.preset }}/Generals -type f \( -name "*.exe" -o -name "*.dll" -o -name "*.exe.debug" \) -exec cp {} "$ARTIFACTS_DIR/" \; 2>/dev/null || true
+          find build/${{ matrix.preset }}/Core build/${{ matrix.preset }}/Generals -path "$ARTIFACTS_DIR" -prune -o -type f \( -name "*.exe" -o -name "*.dll" -o -name "*.exe.debug" \) -exec cp -t "$ARTIFACTS_DIR" {} +
 
       - name: Upload Generals ${{ matrix.preset }} Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: Generals-${{ matrix.preset }}
           path: build/${{ matrix.preset }}/Generals/artifacts
@@ -299,7 +299,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install MinGW-w64 Toolchain
         run: |
@@ -330,7 +330,7 @@ jobs:
 
       - name: Cache CMake Dependencies
         id: cache-cmake-deps
-        uses: actions/cache@v4
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: build/${{ matrix.preset }}/_deps
           key: cmake-deps-mingw-${{ matrix.preset }}-${{ hashFiles('CMakePresets.json','cmake/**/*.cmake','**/CMakeLists.txt') }}
@@ -363,10 +363,10 @@ jobs:
           mkdir -p "$ARTIFACTS_DIR"
 
           # Copy executables, DLLs, and debug symbols
-          find build/${{ matrix.preset }}/Core build/${{ matrix.preset }}/GeneralsMD -type f \( -name "*.exe" -o -name "*.dll" -o -name "*.exe.debug" \) -exec cp {} "$ARTIFACTS_DIR/" \; 2>/dev/null || true
+          find build/${{ matrix.preset }}/Core build/${{ matrix.preset }}/GeneralsMD -path "$ARTIFACTS_DIR" -prune -o -type f \( -name "*.exe" -o -name "*.dll" -o -name "*.exe.debug" \) -exec cp -t "$ARTIFACTS_DIR" {} +
 
       - name: Upload GeneralsMD ${{ matrix.preset }} Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: GeneralsMD-${{ matrix.preset }}
           path: build/${{ matrix.preset }}/GeneralsMD/artifacts
