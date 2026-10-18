@@ -412,17 +412,7 @@ void HLodDefClass::Initialize(HLodClass &src_lod)
 	}
 
 	// TheSuperHackers @bugfix Also copy the aggregates and proxies, so that saving this definition keeps them.
-	Aggregates.ModelCount = src_lod.Get_Additional_Model_Count ();
-	if (Aggregates.ModelCount > 0) {
-		Aggregates.MaxScreenSize = 0.0f;
-		Aggregates.ModelName = W3DNEWARRAY char *[Aggregates.ModelCount];
-		Aggregates.BoneIndex = W3DNEWARRAY int[Aggregates.ModelCount];
-		for (int model_index = 0; model_index < Aggregates.ModelCount; model_index ++) {
-			Aggregates.ModelName[model_index] = ::strdup (src_lod.Peek_Additional_Model (model_index)->Get_Name ());
-			Aggregates.BoneIndex[model_index] = src_lod.Get_Additional_Model_Bone (model_index);
-		}
-	}
-
+	Aggregates.CopyFrom(src_lod);
 	REF_PTR_SET (ProxyArray, src_lod.ProxyArray);
 }
 
@@ -836,6 +826,33 @@ void HLodDefClass::SubObjectArrayClass::Reset()
 	BoneIndex = nullptr;
 
 	ModelCount = 0;
+}
+
+
+/***********************************************************************************************
+ * HLodDefClass::SubObjectArrayClass::CopyFrom                                                 *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/18/2026 TheSuperHackers : Created.                                                     *
+ *=============================================================================================*/
+void HLodDefClass::SubObjectArrayClass::CopyFrom(const HLodClass & hlod)
+{
+	ModelCount = hlod.Get_Additional_Model_Count ();
+	if (ModelCount > 0) {
+		MaxScreenSize = 0.0f;
+		ModelName = W3DNEWARRAY char *[ModelCount];
+		BoneIndex = W3DNEWARRAY int[ModelCount];
+		for (int model_index = 0; model_index < ModelCount; model_index ++) {
+			ModelName[model_index] = ::strdup (hlod.Peek_Additional_Model (model_index)->Get_Name ());
+			BoneIndex[model_index] = hlod.Get_Additional_Model_Bone (model_index);
+		}
+	}
 }
 
 

@@ -316,6 +316,7 @@ private:
 		SubObjectArrayClass();
 		~SubObjectArrayClass();
 		void		Reset();
+		void		CopyFrom(const HLodClass & hlod);
 		void		operator = (const SubObjectArrayClass & that);
 
 		bool		Load_W3D(ChunkLoadClass & cload);
