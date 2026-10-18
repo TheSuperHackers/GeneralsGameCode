@@ -94,7 +94,7 @@ WorldHeightMapEdit::WorldHeightMapEdit(Int width, Int height, UnsignedByte initi
 		m_sourceTiles[i]=nullptr;
 		m_edgeTiles[i]=nullptr;
 	}
-	if (width<0 || height < 0) {
+	if (!isValidPlayableMapSize(width, height, border)) {
 		AfxMessageBox(IDS_BAD_VALUE);
 		return;
 	}
@@ -1786,6 +1786,10 @@ Bool WorldHeightMapEdit::resize(Int newXSize, Int newYSize, Int newHeight, Int n
 							Bool anchorLeft, Bool anchorRight, Coord3D *pObjOffset)
 {
 	if (newBorder<0) newBorder = 0;
+	if (!isValidPlayableMapSize(newXSize, newYSize, newBorder)) {
+		AfxMessageBox(IDS_BAD_VALUE);
+		return(false);
+	}
 	newXSize += 2*newBorder;
 	newYSize += 2*newBorder;
 	Int newDataSize = newXSize*newYSize;
