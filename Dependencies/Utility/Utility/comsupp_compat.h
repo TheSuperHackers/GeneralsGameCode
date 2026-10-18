@@ -51,6 +51,10 @@
 #include <oleauto.h>
 #include <comdef.h>
 
+// TheSuperHackers @build MinGW-w64 14 and later implement these two functions inline in comutil.h,
+// which comdef.h includes, so defining them again here is a redefinition error.
+#if !defined(__MINGW64_VERSION_MAJOR) || __MINGW64_VERSION_MAJOR < 14
+
 namespace _com_util
 {
 
@@ -135,6 +139,8 @@ inline char* WINAPI ConvertBSTRToString(BSTR pSrc)
 }
 
 }
+
+#endif // __MINGW64_VERSION_MAJOR < 14
 
 // Provide vtMissing global variable
 // Use inline variable (C++17) to avoid multiple definition errors
