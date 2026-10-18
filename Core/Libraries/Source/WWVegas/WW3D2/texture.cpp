@@ -971,7 +971,7 @@ void TextureClass::Apply(unsigned int stage)
 //! Get surface from mip level
 /*!
 */
-SurfaceClass *TextureClass::Get_Surface_Level(unsigned int level)
+SurfaceClass *TextureClass::Get_Surface_Level(unsigned int level) const
 {
 	if (!Peek_D3D_Texture())
 	{
