@@ -51,7 +51,7 @@
 #include <oleauto.h>
 #include <comdef.h>
 
-// TheSuperHackers @build MinGW-w64 14 and later implement these two functions inline in comutil.h,
+// MinGW-w64 14 and later implement these two functions inline in comutil.h,
 // which comdef.h includes, so defining them again here is a redefinition error.
 #if !defined(__MINGW64_VERSION_MAJOR) || __MINGW64_VERSION_MAJOR < 14
 
