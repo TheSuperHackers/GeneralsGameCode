@@ -258,6 +258,8 @@ protected:
 
 	// Current LOD Bias (affects recalculation of the Value array)
 	float								LODBias;
+
+	friend class HLodDefClass;
 };
 
 
@@ -299,6 +301,7 @@ protected:
 	WW3DErrorType				Save_Header (ChunkSaveClass &csave);
 	WW3DErrorType				Save_Lod_Array (ChunkSaveClass &csave);
 	WW3DErrorType				Save_Aggregate_Array(ChunkSaveClass & csave);
+	WW3DErrorType				Save_Proxy_Array(ChunkSaveClass & csave);
 
 private:
 

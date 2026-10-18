@@ -43,6 +43,7 @@
  *   HLodDefClass::Save_Header -- writes the HLodDef header                                    *
  *   HLodDefClass::Save_Lod_Array -- Saves the lod array                                       *
  *   HLodDefClass::Save_Aggregate_Array -- Save the array of aggregate models                  *
+ *   HLodDefClass::Save_Proxy_Array -- Save the array of proxies                               *
  *   HLodDefClass::Load_W3D -- Loads this HLodDef from a W3d File                              *
  *   HLodDefClass::read_header -- loads the HLodDef header from a W3d file                     *
  *   HLodDefClass::read_proxy_array -- load the proxy names                                    *
@@ -344,6 +345,7 @@ void HLodDefClass::Free()
 	Lod = nullptr;
 	LodCount = 0;
 
+	Aggregates.Reset();
 	REF_PTR_RELEASE(ProxyArray);
 }
 
@@ -408,6 +410,21 @@ void HLodDefClass::Initialize(HLodClass &src_lod)
 			Lod[index].BoneIndex = bone_indicies;
 		}
 	}
+
+	// TheSuperHackers @bugfix Also copy the aggregates and proxies, so that saving this definition keeps them.
+	// The screen size of the aggregates is 0, as max2w3d writes it.
+	Aggregates.ModelCount = src_lod.Get_Additional_Model_Count ();
+	if (Aggregates.ModelCount > 0) {
+		Aggregates.MaxScreenSize = 0.0f;
+		Aggregates.ModelName = W3DNEWARRAY char *[Aggregates.ModelCount];
+		Aggregates.BoneIndex = W3DNEWARRAY int[Aggregates.ModelCount];
+		for (int model_index = 0; model_index < Aggregates.ModelCount; model_index ++) {
+			Aggregates.ModelName[model_index] = ::strdup (src_lod.Peek_Additional_Model (model_index)->Get_Name ());
+			Aggregates.BoneIndex[model_index] = src_lod.Get_Additional_Model_Bone (model_index);
+		}
+	}
+
+	REF_PTR_SET (ProxyArray, src_lod.ProxyArray);
 }
 
 
@@ -432,8 +449,11 @@ WW3DErrorType HLodDefClass::Save(ChunkSaveClass & csave)
 	if (csave.Begin_Chunk (W3D_CHUNK_HLOD) == TRUE) {
 
 		// Attempt to save the different sections of the aggregate definition
+		// TheSuperHackers @bugfix Also save the aggregate and proxy arrays, which Load_W3D reads, in the order max2w3d writes them.
 		if ((Save_Header (csave) == WW3D_ERROR_OK) &&
-			 (Save_Lod_Array (csave) == WW3D_ERROR_OK)) {
+			 (Save_Lod_Array (csave) == WW3D_ERROR_OK) &&
+			 (Save_Aggregate_Array (csave) == WW3D_ERROR_OK) &&
+			 (Save_Proxy_Array (csave) == WW3D_ERROR_OK)) {
 
 			// Success!
 			ret_val = WW3D_ERROR_OK;
@@ -516,7 +536,11 @@ WW3DErrorType HLodDefClass::Save_Lod_Array(ChunkSaveClass &csave)
 	for (int lod_index = 0;
 		  (lod_index < LodCount) && success;
 		  lod_index ++) {
-		success = Lod[lod_index].Save_W3D (csave);
+		success = (csave.Begin_Chunk (W3D_CHUNK_HLOD_LOD_ARRAY) == TRUE);
+		if (success) {
+			success = Lod[lod_index].Save_W3D (csave);
+			csave.End_Chunk ();
+		}
 	}
 
 	// Return the WW3DErrorType return code
@@ -544,6 +568,49 @@ WW3DErrorType HLodDefClass::Save_Aggregate_Array(ChunkSaveClass & csave)
 	if (Aggregates.ModelCount > 0) {
 		csave.Begin_Chunk(W3D_CHUNK_HLOD_AGGREGATE_ARRAY);
 		Aggregates.Save_W3D(csave);
+		csave.End_Chunk();
+	}
+	return WW3D_ERROR_OK;
+}
+
+
+/***********************************************************************************************
+ * HLodDefClass::Save_Proxy_Array -- Save the array of proxies                                 *
+ *                                                                                             *
+ * The screen size in the array header is 0, as max2w3d writes it.                             *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *=============================================================================================*/
+WW3DErrorType HLodDefClass::Save_Proxy_Array(ChunkSaveClass & csave)
+{
+	if ((ProxyArray != nullptr) && (ProxyArray->Length() > 0)) {
+		csave.Begin_Chunk(W3D_CHUNK_HLOD_PROXY_ARRAY);
+
+		csave.Begin_Chunk(W3D_CHUNK_HLOD_SUB_OBJECT_ARRAY_HEADER);
+		W3dHLodArrayHeaderStruct header = { 0 };
+		header.ModelCount = ProxyArray->Length();
+		header.MaxScreenSize = 0.0f;
+		csave.Write(&header,sizeof(header));
+		csave.End_Chunk();
+
+		for (int imodel=0; imodel<ProxyArray->Length(); ++imodel) {
+			ProxyRecordClass & proxy = (*ProxyArray)[imodel];
+			W3dHLodSubObjectStruct subobjdef = { 0 };
+			subobjdef.BoneIndex = proxy.Get_Bone_Index();
+			::lstrcpyn(subobjdef.Name, proxy.Get_Name(), sizeof(subobjdef.Name));
+			subobjdef.Name[sizeof(subobjdef.Name) - 1] = 0;
+
+			csave.Begin_Chunk(W3D_CHUNK_HLOD_SUB_OBJECT);
+			csave.Write(&subobjdef,sizeof(subobjdef));
+			csave.End_Chunk();
+		}
+
 		csave.End_Chunk();
 	}
 	return WW3D_ERROR_OK;
@@ -840,52 +907,48 @@ bool HLodDefClass::SubObjectArrayClass::Save_W3D(ChunkSaveClass &csave)
 	// Assume error
 	bool ret_val = false;
 
-	// Begin a chunk that identifies the LOD array
-	if (csave.Begin_Chunk (W3D_CHUNK_HLOD_LOD_ARRAY) == TRUE) {
+	// TheSuperHackers @bugfix Write only the array contents, as Load_W3D reads them. The caller wraps them in
+	// W3D_CHUNK_HLOD_LOD_ARRAY or W3D_CHUNK_HLOD_AGGREGATE_ARRAY.
 
-		// Begin a chunk that identifies the LOD header
-		if (csave.Begin_Chunk (W3D_CHUNK_HLOD_SUB_OBJECT_ARRAY_HEADER) == TRUE) {
+	// Begin a chunk that identifies the LOD header
+	if (csave.Begin_Chunk (W3D_CHUNK_HLOD_SUB_OBJECT_ARRAY_HEADER) == TRUE) {
 
-			W3dHLodArrayHeaderStruct header = { 0 };
-			header.ModelCount = ModelCount;
-			header.MaxScreenSize = MaxScreenSize;
+		W3dHLodArrayHeaderStruct header = { 0 };
+		header.ModelCount = ModelCount;
+		header.MaxScreenSize = MaxScreenSize;
 
-			// Write the LOD header structure out to the chunk
-			ret_val = (csave.Write (&header, sizeof (header)) == sizeof (header));
+		// Write the LOD header structure out to the chunk
+		ret_val = (csave.Write (&header, sizeof (header)) == sizeof (header));
 
-			// End the header chunk
-			csave.End_Chunk ();
-		}
+		// End the header chunk
+		csave.End_Chunk ();
+	}
 
-		if (ret_val) {
+	if (ret_val) {
 
-			// Write all of this LOD's models to the file
-			for (int index = 0;
-				  (index < ModelCount) && ret_val;
-				  index ++) {
+		// Write all of this LOD's models to the file
+		for (int index = 0;
+			  (index < ModelCount) && ret_val;
+			  index ++) {
 
-				// Save this LOD sub-obj to the chunk
-				ret_val &= (csave.Begin_Chunk (W3D_CHUNK_HLOD_SUB_OBJECT) == TRUE);
-				if (ret_val) {
+			// Save this LOD sub-obj to the chunk
+			ret_val &= (csave.Begin_Chunk (W3D_CHUNK_HLOD_SUB_OBJECT) == TRUE);
+			if (ret_val) {
 
-					W3dHLodSubObjectStruct info = { 0 };
-					info.BoneIndex = BoneIndex[index];
+				W3dHLodSubObjectStruct info = { 0 };
+				info.BoneIndex = BoneIndex[index];
 
-					// Copy this model name into the structure
-					::lstrcpyn (info.Name, ModelName[index], sizeof (info.Name));
-					info.Name[sizeof (info.Name) - 1] = 0;
+				// Copy this model name into the structure
+				::lstrcpyn (info.Name, ModelName[index], sizeof (info.Name));
+				info.Name[sizeof (info.Name) - 1] = 0;
 
-					// Write the LOD sub-obj structure out to the chunk
-					ret_val &= (csave.Write (&info, sizeof (info)) == sizeof (info));
+				// Write the LOD sub-obj structure out to the chunk
+				ret_val &= (csave.Write (&info, sizeof (info)) == sizeof (info));
 
-					// End the sub-obj chunk
-					csave.End_Chunk ();
-				}
+				// End the sub-obj chunk
+				csave.End_Chunk ();
 			}
 		}
-
-		// End the HLOD-Array chunk
-		csave.End_Chunk ();
 	}
 
 	// Return the true/false result code
