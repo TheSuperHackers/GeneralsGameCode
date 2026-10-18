@@ -496,6 +496,9 @@ inline Bool isResolutionSupported(const ResolutionDescClass &res)
 /*Return number of screen modes supported by the current device*/
 Int W3DDisplay::getDisplayModeCount()
 {
+	if (TheGlobalData->m_headless)
+		return 0;
+
 	const RenderDeviceDescClass &devDesc=WW3D::Get_Render_Device_Desc(0);
 	const DynamicVectorClass <ResolutionDescClass> &resolutions=devDesc.Enumerate_Resolutions();
 
@@ -527,6 +530,9 @@ Int W3DDisplay::getDisplayModeCount()
 
 void W3DDisplay::getDisplayModeDescription(Int modeIndex, Int *xres, Int *yres, Int *bitDepth)
 {
+	if (TheGlobalData->m_headless)
+		return;
+
 	Int numResolutions=0;
 	const RenderDeviceDescClass &devDesc=WW3D::Get_Render_Device_Desc(0);
 	const DynamicVectorClass <ResolutionDescClass> &resolutions=devDesc.Enumerate_Resolutions();
@@ -561,6 +567,9 @@ void W3DDisplay::setGamma(Real gamma, Real bright, Real contrast, Bool calibrate
 //=============================================================================
 Bool W3DDisplay::setDisplayMode( UnsignedInt xres, UnsignedInt yres, UnsignedInt bitdepth, Bool windowed )
 {
+	if (TheGlobalData->m_headless)
+		return FALSE;
+
 	const UnsignedInt oldWidth = getWidth();
 	const UnsignedInt oldHeight = getHeight();
 	const UnsignedInt oldBitDepth = getBitDepth();
