@@ -52,6 +52,7 @@
  *   HLodDefClass::SubObjectArrayClass::Save_W3D -- saves a w3d file for this HLodDef          *
  *   HLodDefClass::SubObjectArrayClass::Load_W3D -- LodArray load function                     *
  *   HLodDefClass::SubObjectArrayClass::Reset -- release the contents of this array            *
+ *   HLodDefClass::SubObjectArrayClass::Copy_Additional_Models -- copies the additional models *
  *   HLodClass::HLodClass -- Constructor                                                       *
  *   HLodClass::HLodClass -- copy constructor                                                  *
  *   HLodClass::HLodClass -- Constructor                                                       *
@@ -411,7 +412,7 @@ void HLodDefClass::Initialize(HLodClass &src_lod)
 		}
 	}
 
-	Aggregates.CopyFrom(src_lod);
+	Aggregates.Copy_Additional_Models(src_lod);
 	REF_PTR_SET (ProxyArray, src_lod.ProxyArray);
 }
 
@@ -523,10 +524,10 @@ WW3DErrorType HLodDefClass::Save_Lod_Array(ChunkSaveClass &csave)
 	for (int lod_index = 0;
 		  (lod_index < LodCount) && success;
 		  lod_index ++) {
-		success = (csave.Begin_Chunk (W3D_CHUNK_HLOD_LOD_ARRAY) == TRUE);
+		success &= (csave.Begin_Chunk (W3D_CHUNK_HLOD_LOD_ARRAY) == TRUE);
 		if (success) {
-			success = Lod[lod_index].Save_W3D (csave);
-			csave.End_Chunk ();
+			success &= Lod[lod_index].Save_W3D (csave);
+			success &= csave.End_Chunk ();
 		}
 	}
 
@@ -577,31 +578,42 @@ WW3DErrorType HLodDefClass::Save_Aggregate_Array(ChunkSaveClass & csave)
  *=============================================================================================*/
 WW3DErrorType HLodDefClass::Save_Proxy_Array(ChunkSaveClass & csave)
 {
+	bool success = true;
+
 	if ((ProxyArray != nullptr) && (ProxyArray->Length() > 0)) {
-		csave.Begin_Chunk(W3D_CHUNK_HLOD_PROXY_ARRAY);
+		success &= csave.Begin_Chunk(W3D_CHUNK_HLOD_PROXY_ARRAY);
 
-		csave.Begin_Chunk(W3D_CHUNK_HLOD_SUB_OBJECT_ARRAY_HEADER);
-		W3dHLodArrayHeaderStruct header = { 0 };
-		header.ModelCount = ProxyArray->Length();
-		header.MaxScreenSize = 0.0f;
-		csave.Write(&header,sizeof(header));
-		csave.End_Chunk();
+		if (success) {
+			success &= csave.Begin_Chunk(W3D_CHUNK_HLOD_SUB_OBJECT_ARRAY_HEADER);
 
-		for (int imodel=0; imodel<ProxyArray->Length(); ++imodel) {
-			ProxyRecordClass & proxy = (*ProxyArray)[imodel];
-			W3dHLodSubObjectStruct subobjdef = { 0 };
-			subobjdef.BoneIndex = proxy.Get_Bone_Index();
-			::lstrcpyn(subobjdef.Name, proxy.Get_Name(), sizeof(subobjdef.Name));
-			subobjdef.Name[sizeof(subobjdef.Name) - 1] = 0;
+			if (success) {
+				W3dHLodArrayHeaderStruct header = { 0 };
+				header.ModelCount = ProxyArray->Length();
+				header.MaxScreenSize = 0.0f;
+				success &= (csave.Write(&header,sizeof(header)) == sizeof(header));
+				success &= csave.End_Chunk();
+			}
 
-			csave.Begin_Chunk(W3D_CHUNK_HLOD_SUB_OBJECT);
-			csave.Write(&subobjdef,sizeof(subobjdef));
-			csave.End_Chunk();
+			if (success) {
+				for (int imodel=0; imodel<ProxyArray->Length(); ++imodel) {
+					ProxyRecordClass & proxy = (*ProxyArray)[imodel];
+					W3dHLodSubObjectStruct subobjdef = { 0 };
+					subobjdef.BoneIndex = proxy.Get_Bone_Index();
+					::lstrcpyn(subobjdef.Name, proxy.Get_Name(), sizeof(subobjdef.Name));
+					subobjdef.Name[sizeof(subobjdef.Name) - 1] = 0;
+
+					success &= csave.Begin_Chunk(W3D_CHUNK_HLOD_SUB_OBJECT);
+					if (success) {
+						success &= (csave.Write(&subobjdef,sizeof(subobjdef)) == sizeof(subobjdef));
+						success &= csave.End_Chunk();
+					}
+				}
+			}
+			success &= csave.End_Chunk();
 		}
-
-		csave.End_Chunk();
 	}
-	return WW3D_ERROR_OK;
+
+	return success ? WW3D_ERROR_OK : WW3D_ERROR_SAVE_FAILED;
 }
 
 
@@ -828,7 +840,7 @@ void HLodDefClass::SubObjectArrayClass::Reset()
 
 
 /***********************************************************************************************
- * HLodDefClass::SubObjectArrayClass::CopyFrom                                                 *
+ * HLodDefClass::SubObjectArrayClass::Copy_Additional_Models -- copies the additional models   *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -839,8 +851,10 @@ void HLodDefClass::SubObjectArrayClass::Reset()
  * HISTORY:                                                                                    *
  *   10/18/2026 TheSuperHackers : Created.                                                     *
  *=============================================================================================*/
-void HLodDefClass::SubObjectArrayClass::CopyFrom(const HLodClass & hlod)
+void HLodDefClass::SubObjectArrayClass::Copy_Additional_Models(const HLodClass & hlod)
 {
+	Reset();
+
 	ModelCount = hlod.Get_Additional_Model_Count ();
 	if (ModelCount > 0) {
 		MaxScreenSize = 0.0f;
@@ -918,7 +932,7 @@ bool HLodDefClass::SubObjectArrayClass::Load_W3D(ChunkLoadClass & cload)
  *   1/26/00    gth : Created.                                                                 *
  *   10/18/2026 TheSuperHackers : Write only the array contents, as Load_W3D reads them.       *
  *              The caller wraps them in W3D_CHUNK_HLOD_LOD_ARRAY or                           *
- *              W3D_CHUNK_HLOD_AGGREGATE_ARRAY                                                 *
+ *              W3D_CHUNK_HLOD_AGGREGATE_ARRAY.                                                *
  *=============================================================================================*/
 bool HLodDefClass::SubObjectArrayClass::Save_W3D(ChunkSaveClass &csave)
 {
