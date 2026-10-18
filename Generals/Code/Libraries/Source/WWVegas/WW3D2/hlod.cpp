@@ -553,12 +553,15 @@ WW3DErrorType HLodDefClass::Save_Lod_Array(ChunkSaveClass &csave)
  *=============================================================================================*/
 WW3DErrorType HLodDefClass::Save_Aggregate_Array(ChunkSaveClass & csave)
 {
+	bool success = true;
 	if (Aggregates.ModelCount > 0) {
-		csave.Begin_Chunk(W3D_CHUNK_HLOD_AGGREGATE_ARRAY);
-		Aggregates.Save_W3D(csave);
-		csave.End_Chunk();
+		success &= csave.Begin_Chunk(W3D_CHUNK_HLOD_AGGREGATE_ARRAY);
+		if (success) {
+			success &= Aggregates.Save_W3D(csave);
+			success &= csave.End_Chunk();
+		}
 	}
-	return WW3D_ERROR_OK;
+	return success ? WW3D_ERROR_OK : WW3D_ERROR_SAVE_FAILED;
 }
 
 
