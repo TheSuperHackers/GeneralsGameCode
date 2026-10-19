@@ -75,6 +75,12 @@ TextureAtlasClass::TextureLocation TextureAtlasClass::Add_Texture(TextureClass* 
 	TextureLocation location;
 	location.pageIndex = TextureAtlas::NO_PAGE;
 
+	// A texture can be initialized without a D3D texture, e.g. with texturing disabled.
+	if (source->Peek_D3D_Texture() == nullptr)
+	{
+		return location;
+	}
+
 	const int width = source->Get_Width();
 	const int height = source->Get_Height();
 	const int cellWidth = width + 2 * TextureAtlas::PADDING;
