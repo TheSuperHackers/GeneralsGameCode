@@ -139,7 +139,6 @@ void TextureFilterClass::_Init_Filters(TextureFilterMode texture_filter, Anisotr
 
 	// TheSuperHackers @feature Mauller 08/03/2026 Add full support for all texture filtering modes;
 	// None, Point, Bilinear, Trilinear, Anisotropic.
-	BOOL FilterSupported = false;
 	switch (texture_filter) {
 
 	default:
@@ -171,15 +170,17 @@ void TextureFilterClass::_Init_Filters(TextureFilterMode texture_filter, Anisotr
 
 	case TEXTURE_FILTER_BILINEAR:
 
-		FilterSupported = (dx8caps.TextureFilterCaps & D3DPTFILTERCAPS_MINFLINEAR) &&
-			(dx8caps.TextureFilterCaps & D3DPTFILTERCAPS_MAGFLINEAR);
-
-		if (FilterSupported) {
+		if (dx8caps.TextureFilterCaps & D3DPTFILTERCAPS_MINFLINEAR) {
 			_MinTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
-			_MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
 		}
 		else {
 			_MinTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;
+		}
+
+		if (dx8caps.TextureFilterCaps & D3DPTFILTERCAPS_MAGFLINEAR) {
+			_MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
+		}
+		else {
 			_MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;
 		}
 
@@ -188,15 +189,17 @@ void TextureFilterClass::_Init_Filters(TextureFilterMode texture_filter, Anisotr
 
 	case TEXTURE_FILTER_TRILINEAR:
 
-		FilterSupported = (dx8caps.TextureFilterCaps & D3DPTFILTERCAPS_MINFLINEAR) &&
-			(dx8caps.TextureFilterCaps & D3DPTFILTERCAPS_MAGFLINEAR);
-
-		if (FilterSupported) {
+		if (dx8caps.TextureFilterCaps & D3DPTFILTERCAPS_MINFLINEAR) {
 			_MinTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
-			_MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
 		}
 		else {
 			_MinTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;
+		}
+
+		if (dx8caps.TextureFilterCaps & D3DPTFILTERCAPS_MAGFLINEAR) {
+			_MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
+		}
+		else {
 			_MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;
 		}
 
@@ -212,10 +215,7 @@ void TextureFilterClass::_Init_Filters(TextureFilterMode texture_filter, Anisotr
 
 	case TEXTURE_FILTER_ANISOTROPIC:
 
-		FilterSupported = (dx8caps.TextureFilterCaps & D3DPTFILTERCAPS_MINFANISOTROPIC) ||
-			(dx8caps.TextureFilterCaps & D3DPTFILTERCAPS_MAGFANISOTROPIC);
-
-		if (FilterSupported) {
+		if (dx8caps.TextureFilterCaps & (D3DPTFILTERCAPS_MINFANISOTROPIC | D3DPTFILTERCAPS_MAGFANISOTROPIC)) {
 			// Set the Anisotropic filtering level for all stages
 			_Set_Max_Anisotropy(anisotropy_level);
 		}
