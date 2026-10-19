@@ -236,23 +236,23 @@ typedef UnsignedInt DeathTypeFlags;
 const DeathTypeFlags DEATH_TYPE_FLAGS_ALL = 0xffffffff;
 const DeathTypeFlags DEATH_TYPE_FLAGS_NONE = 0x00000000;
 
-// TheSuperHackers @bugfix CryoTheRenegade 18/10/2026 Mask the shift count to avoid undefined behavior for DEATH_NORMAL.
-// Retail x86 masked the count of -1 to 31, so DEATH_NORMAL keeps using bit 31 to preserve INI flags and CRC.
-static_assert(DEATH_NUM_TYPES <= 32, "Death types beyond 31 would collide with the DEATH_NORMAL bit");
+// TheSuperHackers @bugfix CryoTheRenegade 18/10/2026 Shift by dt instead of dt - 1, which was -1 for DEATH_NORMAL and undefined behavior.
+// The flags only exist at runtime and are only accessed through these helpers, so the bit layout does not matter.
+static_assert(DEATH_NUM_TYPES <= 32, "DeathTypeFlags has 32 bits");
 
 inline Bool getDeathTypeFlag(DeathTypeFlags flags, DeathType dt)
 {
-	return (flags & (1UL << ((dt - 1) & 31))) != 0;
+	return (flags & (1UL << dt)) != 0;
 }
 
 inline DeathTypeFlags setDeathTypeFlag(DeathTypeFlags flags, DeathType dt)
 {
-	return (flags | (1UL << ((dt - 1) & 31)));
+	return (flags | (1UL << dt));
 }
 
 inline DeathTypeFlags clearDeathTypeFlag(DeathTypeFlags flags, DeathType dt)
 {
-	return (flags & ~(1UL << ((dt - 1) & 31)));
+	return (flags & ~(1UL << dt));
 }
 
 //-------------------------------------------------------------------------------------------------
