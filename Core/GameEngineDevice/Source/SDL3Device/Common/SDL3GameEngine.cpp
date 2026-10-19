@@ -23,6 +23,7 @@
 #include <cstring>
 #include <SDL3/SDL.h>
 
+#include "Common/BIGFileSystem.h"
 #include "Common/GameEngine.h"
 #include "GameClient/Gadget.h"
 #include "GameClient/GameWindow.h"
@@ -35,7 +36,6 @@
 #include "MilesAudioDevice/MilesAudioManager.h"
 #include "SDL3Device/Common/SDL3GameEngine.h"
 #include "SDL3Device/GameClient/SDL3Input.h"
-#include "StdDevice/Common/StdBIGFileSystem.h"
 #include "StdDevice/Common/StdLocalFileSystem.h"
 #include "W3DDevice/Common/W3DFunctionLexicon.h"
 #include "W3DDevice/Common/W3DModuleFactory.h"
@@ -259,7 +259,7 @@ LocalFileSystem* SDL3GameEngine::createLocalFileSystem()
 
 ArchiveFileSystem* SDL3GameEngine::createArchiveFileSystem()
 {
-	return NEW StdBIGFileSystem;
+	return NEW BIGFileSystem;
 }
 
 GameLogic* SDL3GameEngine::createGameLogic()

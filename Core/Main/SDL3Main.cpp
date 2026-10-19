@@ -16,7 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Lib/BaseType.h"
 #include "SDL3Main.h"
 
 #include <SDL3/SDL.h>

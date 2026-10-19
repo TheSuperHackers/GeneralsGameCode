@@ -16,10 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Lib/BaseType.h"
 #include "AppMain.h"
 
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <crtdbg.h>
 #include "Common/CommandLine.h"
@@ -37,7 +35,7 @@
 #include "Common/Registry.h"
 
 #ifdef RTS_ENABLE_CRASHDUMP
-#include "Common/MiniDumper.h"
+#include "MiniDumper/MiniDumper.h"
 #endif
 
 // Global game data paths & prefixes required by GameText
