@@ -188,7 +188,17 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 							// construct directory to add, make sure we have a '\' on the
 							// end cause we assume that in the image file name code
 							//
-							sprintf( toAdd, "%s%s\\", buffer, text );
+							// TheSuperHackers @bugfix bobtista 18/10/2026 Skip folders whose path does not fit instead of overflowing toAdd.
+							const Int toAddLen = snprintf( toAdd, ARRAY_SIZE( toAdd ), "%s%s\\", buffer, text );
+							if( toAddLen < 0 || toAddLen >= (Int)ARRAY_SIZE( toAdd ) )
+							{
+								char message[ _MAX_PATH + 32 ];
+
+								snprintf( message, ARRAY_SIZE( message ), "Ignoring folder '%s', path is too long.", text );
+								MessageBox( nullptr, message, "Folder Path Too Long",
+														MB_OK | MB_ICONINFORMATION );
+								continue;
+							}
 
 							// do not add directory if it's already in the listbox
 							if( SendDlgItemMessage( TheImagePacker->getWindowHandle(),
