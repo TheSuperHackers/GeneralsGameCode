@@ -176,6 +176,7 @@ private:
 	GamepadState m_state;
 
 	Uint64 m_lastUpdateTime;
+	Uint64 m_lastVirtualClickTime[3];
 	float m_cursorSpeed;
 	float m_edgeAccelTimer;
 	float m_cursorRemainderX;

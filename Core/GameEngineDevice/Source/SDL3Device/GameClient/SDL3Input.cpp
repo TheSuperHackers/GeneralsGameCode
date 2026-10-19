@@ -688,6 +688,7 @@ SDL3InputManager::SDL3InputManager(SDL_Window* window)
 		m_mouseEvents[i].type = SDL_EVENT_FIRST;
 	for (int i = 0; i < MAX_KEY_EVENTS; ++i)
 		m_keyEvents[i].type = SDL_EVENT_FIRST;
+	memset(m_lastVirtualClickTime, 0, sizeof(m_lastVirtualClickTime));
 	TheSDL3InputManager = this;
 
 	openFirstGamepad();
@@ -901,6 +902,7 @@ void SDL3InputManager::releaseGamepadVirtualInputs()
 	if (m_state.buttonState[SDL_GAMEPAD_BUTTON_DPAD_RIGHT]) virtualPulseKey(SDL_SCANCODE_3, false);
 
 	m_state = GamepadState();
+	memset(m_lastVirtualClickTime, 0, sizeof(m_lastVirtualClickTime));
 }
 
 void SDL3InputManager::closeGamepad()
@@ -945,7 +947,6 @@ void SDL3InputManager::virtualPulseKey(SDL_Scancode scancode, bool down)
 
 void SDL3InputManager::virtualPulseMouse(Uint8 button, bool down)
 {
-	static Uint64 lastClickTime[3] = {0, 0, 0};
 	Uint64 now = SDL_GetTicks();
 
 	SDL_Event clickEvent;
@@ -957,11 +958,11 @@ void SDL3InputManager::virtualPulseMouse(Uint8 button, bool down)
 	int buttonIdx = (button == SDL_BUTTON_LEFT) ? 0 : ((button == SDL_BUTTON_RIGHT) ? 1 : 2);
 	if (down)
 	{
-		if (now - lastClickTime[buttonIdx] < 350)
+		if (now - m_lastVirtualClickTime[buttonIdx] < 350)
 			clickEvent.button.clicks = 2;
 		else
 			clickEvent.button.clicks = 1;
-		lastClickTime[buttonIdx] = now;
+		m_lastVirtualClickTime[buttonIdx] = now;
 	}
 	else
 	{
