@@ -24,6 +24,7 @@ set(GAMEENGINE_SRC
     Include/Common/CommandLine.h
     Include/Common/crc.h
     Include/Common/CRCDebug.h
+    Include/Common/CrashReporting.h
 #    Include/Common/CriticalSection.h
 #    Include/Common/CustomMatchPreferences.h
     Include/Common/DamageFX.h
@@ -659,6 +660,7 @@ set(GAMEENGINE_SRC
     Source/Common/System/AsciiString.cpp
     Source/Common/System/BIGFileSystem.cpp
 #    Source/Common/System/BuildAssistant.cpp
+    Source/Common/System/CrashReporting.cpp
 #    Source/Common/System/CriticalSection.cpp
 #    Source/Common/System/DataChunk.cpp
     Source/Common/System/Debug.cpp

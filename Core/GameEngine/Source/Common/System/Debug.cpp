@@ -45,9 +45,7 @@
 #if defined(DEBUG_STACKTRACE) || defined(IG_DEBUG_STACKTRACE)
 	#include "Common/StackDump.h"
 #endif
-#ifdef RTS_ENABLE_CRASHDUMP
-#include "MiniDumper/MiniDumper.h"
-#endif
+#include "Common/CrashReporting.h"
 
 
 // Horrible reference, but we really, really need to know if we are windowed.
@@ -191,21 +189,6 @@ static const char *getCurrentTimeString()
 }
 
 
-static void TriggerMiniDump()
-{
-#ifdef RTS_ENABLE_CRASHDUMP
-	if (TheMiniDumper && TheMiniDumper->IsInitialized())
-	{
-		// Create both minimal and full memory dumps
-		TheMiniDumper->TriggerMiniDump(DumpType_Minimal);
-		TheMiniDumper->TriggerMiniDump(DumpType_Full);
-	}
-
-	MiniDumper::shutdownMiniDumper();
-#endif
-}
-
-
 void ReleaseCrash(const char *reason)
 {
 	const DebugCrashHandler crashHandler = DebugGetCrashHandler();
@@ -222,14 +205,16 @@ void ReleaseCrash(const char *reason)
 		}
 	}
 
-	TriggerMiniDump();
+	CrashReporting::captureFatal();
+
+	// We are shutting down, and TheGlobalData has been freed. jba. [4/15/2003]
+	if (TheGlobalData == nullptr)
+	{
+		return;
+	}
 
 	char prevbuf[ _MAX_PATH ];
 	char curbuf[ _MAX_PATH ];
-
-	if (TheGlobalData==nullptr) {
-		return; // We are shutting down, and TheGlobalData has been freed.  jba. [4/15/2003]
-	}
 
 	strlcpy(prevbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(prevbuf));
 	strlcat(prevbuf, RELEASECRASH_FILE_NAME_PREV, ARRAY_SIZE(prevbuf));
@@ -300,9 +285,10 @@ void ReleaseCrash(const char *reason)
 
 void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 {
-	if (!TheGameText) {
+	// TheSuperHackers @bugfix CryoTheRenegade 01/10/2026 Let ReleaseCrash handle shutdown instead of dereferencing freed global data.
+	if (!TheGameText || TheGlobalData == nullptr) {
 		ReleaseCrash(m.str());
-		// This won't ever return
+		// Returns only during shutdown, after TheGlobalData was freed
 		return;
 	}
 
@@ -312,7 +298,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		crashHandler(m.str());
 	}
 
-	TriggerMiniDump();
+	CrashReporting::captureFatal();
 
 	UnicodeString prompt = TheGameText->fetch(p);
 	UnicodeString mesg = TheGameText->fetch(m);
