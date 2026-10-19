@@ -236,8 +236,6 @@ typedef UnsignedInt DeathTypeFlags;
 const DeathTypeFlags DEATH_TYPE_FLAGS_ALL = 0xffffffff;
 const DeathTypeFlags DEATH_TYPE_FLAGS_NONE = 0x00000000;
 
-// TheSuperHackers @bugfix CryoTheRenegade 18/10/2026 Shift by dt instead of dt - 1, which was -1 for DEATH_NORMAL and undefined behavior.
-// The flags only exist at runtime and are only accessed through these helpers, so the bit layout does not matter.
 static_assert(DEATH_NUM_TYPES <= 32, "DeathTypeFlags has 32 bits");
 
 inline Bool getDeathTypeFlag(DeathTypeFlags flags, DeathType dt)
