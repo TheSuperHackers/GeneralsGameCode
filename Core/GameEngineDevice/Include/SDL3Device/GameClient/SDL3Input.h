@@ -162,6 +162,7 @@ private:
 	// Event buffers
 	static const UnsignedInt MAX_MOUSE_EVENTS = 256;
 	static const UnsignedInt MAX_KEY_EVENTS = 256;
+	static const UnsignedInt RESERVED_RELEASE_EVENTS = 32;
 
 	SDL_Event m_mouseEvents[MAX_MOUSE_EVENTS];
 	UnsignedInt m_mouseNextFree;

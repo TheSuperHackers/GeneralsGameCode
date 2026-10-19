@@ -841,20 +841,22 @@ Bool SDL3InputManager::getNextKeyboardEvent(SDL_Event& outEvent)
 
 void SDL3InputManager::addMouseSDLEvent(const SDL_Event& event)
 {
-	UnsignedInt nextFree = (m_mouseNextFree + 1) % MAX_MOUSE_EVENTS;
-	if (nextFree == m_mouseNextGet)
+	const UnsignedInt used = (m_mouseNextFree + MAX_MOUSE_EVENTS - m_mouseNextGet) % MAX_MOUSE_EVENTS;
+	const UnsignedInt limit = (event.type == SDL_EVENT_MOUSE_BUTTON_UP) ? MAX_MOUSE_EVENTS - 1 : MAX_MOUSE_EVENTS - 1 - RESERVED_RELEASE_EVENTS;
+	if (used >= limit)
 		return;
 	m_mouseEvents[m_mouseNextFree] = event;
-	m_mouseNextFree = nextFree;
+	m_mouseNextFree = (m_mouseNextFree + 1) % MAX_MOUSE_EVENTS;
 }
 
 void SDL3InputManager::addKeyboardSDLEvent(const SDL_Event& event)
 {
-	UnsignedInt nextFree = (m_keyNextFree + 1) % MAX_KEY_EVENTS;
-	if (nextFree == m_keyNextGet)
+	const UnsignedInt used = (m_keyNextFree + MAX_KEY_EVENTS - m_keyNextGet) % MAX_KEY_EVENTS;
+	const UnsignedInt limit = (event.type == SDL_EVENT_KEY_UP) ? MAX_KEY_EVENTS - 1 : MAX_KEY_EVENTS - 1 - RESERVED_RELEASE_EVENTS;
+	if (used >= limit)
 		return;
 	m_keyEvents[m_keyNextFree] = event;
-	m_keyNextFree = nextFree;
+	m_keyNextFree = (m_keyNextFree + 1) % MAX_KEY_EVENTS;
 }
 
 void SDL3InputManager::openFirstGamepad()
