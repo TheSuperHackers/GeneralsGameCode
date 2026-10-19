@@ -66,6 +66,7 @@
 #ifdef RTS_ENABLE_CRASHDUMP
 #include "MiniDumper/MiniDumper.h"
 #endif
+#include "Common/CrashReporting.h"
 
 
 // GLOBALS ////////////////////////////////////////////////////////////////////
@@ -835,13 +836,12 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// Force to be loaded from a file, not a resource so same exe can be used in germany and retail.
  		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, "Install_Final.bmp",	IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
 
-#ifdef RTS_ENABLE_CRASHDUMP
-		// Initialize minidump facilities - requires TheGlobalData so performed after parseCommandLineForStartup
-		MiniDumper::initMiniDumper(TheGlobalData->getPath_UserData().str(), 'G');
-#endif
+		// Begin reporting with TheGlobalData available; the INIs provide the user-data path later.
+		CrashReporting::initialize(TheGlobalData->getPath_UserData(), VERSION_MAJOR, VERSION_MINOR, VERSION_BUILDNUM);
 		// register windows class and create application window
 		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
 		{
+			CrashReporting::shutdown();
 			return exitcode;
 		}
 
@@ -879,6 +879,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			DEBUG_LOG(("Generals is already running...Bail!"));
 			delete TheVersion;
 			TheVersion = nullptr;
+			CrashReporting::shutdown();
 			shutdownMemoryManager();
 			return exitcode;
 		}
@@ -908,9 +909,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	}
 
-#ifdef RTS_ENABLE_CRASHDUMP
-	MiniDumper::shutdownMiniDumper();
-#endif
+	CrashReporting::shutdown();
 	TheAsciiStringCriticalSection = nullptr;
 	TheUnicodeStringCriticalSection = nullptr;
 	TheDmaCriticalSection = nullptr;
