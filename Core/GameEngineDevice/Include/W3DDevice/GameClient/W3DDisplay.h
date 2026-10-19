@@ -50,10 +50,11 @@ class TextureClass;
 
 constexpr const Real TICKS_PER_SECOND = 62500.0f;
 
+// TheSuperHackers @info Stores a frame duration as a 16 bit count of fixed length ticks, clamped to the representable range.
 class QuantizedUnsignedShort
 {
 public:
-	QuantizedUnsignedShort() : m_value(2083) {}
+	QuantizedUnsignedShort() : m_value(0) {}
 	explicit QuantizedUnsignedShort(UnsignedShort val) : m_value(val) {}
 
 	static QuantizedUnsignedShort fromSeconds(Real seconds)
@@ -75,8 +76,6 @@ public:
 
 	Real toFPS() const { return TICKS_PER_SECOND / (Real)m_value; }
 	Real toSeconds() const { return (Real)m_value / TICKS_PER_SECOND; }
-
-	operator UnsignedShort() const { return m_value; }
 
 private:
 	UnsignedShort m_value;
@@ -199,8 +198,8 @@ protected:
 	void renderLetterBox(UnsignedInt time);							///< draw letter box border
 	void updatePerformanceMetrics(); ///< update the average and 1% low fps metrics.
 	void addFpsSample(Real elapsedSeconds); ///< add a new sample to the history buffer.
-	Real calculateAverageFPS(Real windowSeconds); ///< calculate average FPS over a time window.
-	Real calculateLow1PercentFPS(Real windowSeconds); ///< calculate 1% low FPS over a time window.
+	Real calculateAverageFPS(Real timeWindowSeconds); ///< calculate average FPS over a time window.
+	Real calculateLow1PercentFPS(Real timeWindowSeconds); ///< calculate 1% low FPS over a time window.
 	void setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool grayscale);
 	virtual void onBeginBatch() override;
 	virtual void onEndBatch() override;
@@ -215,7 +214,7 @@ protected:
 	Real m_low1PercentFPS;	///<1% low fps.
 	Real m_currentFPS;		///<current fps value.
 
-	enum { FPS_HISTORY_SIZE = 4096 }; // degrades gracefully beyond this size
+	enum { FPS_HISTORY_SIZE = 4096 }; ///< fps time windows cover at most this many frames, so at very high frame rates they span less time
 	QuantizedUnsignedShort m_durationHistory[FPS_HISTORY_SIZE];
 	Int  m_historyOffset;
 	Int  m_historyCount;
