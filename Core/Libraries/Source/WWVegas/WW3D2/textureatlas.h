@@ -79,10 +79,10 @@ private:
 	TextureLocation Add_Texture(TextureClass* source, bool premultiply);
 	bool Allocate_Cell(int width, int height, int& pageIndex, int& x, int& y);
 	bool Create_Page();
-	static bool Copy_To_Cell(TextureClass* source, bool premultiply, TextureClass* page, int left, int top);
+	static bool Copy_To_Cell(TextureClass* source, TextureClass* page, bool premultiply, int left, int top);
 
 	std::vector<Page> Pages;
-	TextureLocationMap TextureLocations[2];    // Indexed by premultiply.
+	TextureLocationMap TextureLocations[2];
 	unsigned PackFrame;
 	int PacksThisFrame;
 };
