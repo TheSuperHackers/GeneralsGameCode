@@ -37,6 +37,7 @@
 #include "WW3D2/texture.h"
 #include "WW3D2/dx8indexbuffer.h"
 #include "WW3D2/dx8wrapper.h"
+#include "WW3D2/Renderer.h"
 #include "WW3D2/rinfo.h"
 #include "WW3D2/camera.h"
 #include "WW3D2/sortingrenderer.h"
@@ -446,8 +447,8 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 	REF_PTR_RELEASE(backBuffer);
 
 	Matrix4x4 identity(true);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,identity);
-	DX8Wrapper::Set_Transform(D3DTS_VIEW,identity);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,identity);
+	Renderer::Set_Transform(RB_TRANSFORM_VIEW,identity);
 
 	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
 	//DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaqueSpriteShader);
