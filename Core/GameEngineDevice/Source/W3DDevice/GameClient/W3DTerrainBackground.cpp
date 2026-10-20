@@ -55,6 +55,7 @@
 #include "W3DDevice/GameClient/TerrainTex.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "WW3D2/dx8wrapper.h"
+#include "WW3D2/Renderer.h"
 #include "WW3D2/dx8renderer.h"
 #include "WW3D2/camera.h"
 
@@ -767,11 +768,11 @@ void W3DTerrainBackground::drawVisiblePolys(RenderInfoClass & rinfo, Bool disabl
 	DX8Wrapper::Set_Vertex_Buffer(m_vertexTerrain);
   if (!disableTextures) {
 		if (m_terrainTexture4X) {
-			DX8Wrapper::Set_Texture(1, m_terrainTexture4X);
+			Renderer::Set_Texture(1, m_terrainTexture4X);
 		}	else if (m_terrainTexture2X) {
-			DX8Wrapper::Set_Texture(1, m_terrainTexture2X);
+			Renderer::Set_Texture(1, m_terrainTexture2X);
 		}	else {
-			DX8Wrapper::Set_Texture(1, m_terrainTexture);
+			Renderer::Set_Texture(1, m_terrainTexture);
 		}
 	}
 	DX8Wrapper::Draw_Triangles(	0, m_curNumTerrainIndices/3, 0,	m_curNumTerrainVertices);
@@ -787,11 +788,11 @@ void W3DTerrainBackground::drawVisiblePolys(RenderInfoClass & rinfo, Bool disabl
 	DX8Wrapper::Set_Vertex_Buffer(m_vertexTerrain);
   if (!disableTextures) {
 		if (m_terrainTexture4X) {
-			DX8Wrapper::Set_Texture(0, m_terrainTexture4X);
+			Renderer::Set_Texture(0, m_terrainTexture4X);
 		}	else if (m_terrainTexture2X) {
-			DX8Wrapper::Set_Texture(0, m_terrainTexture2X);
+			Renderer::Set_Texture(0, m_terrainTexture2X);
 		}	else {
-			DX8Wrapper::Set_Texture(0, m_terrainTexture);
+			Renderer::Set_Texture(0, m_terrainTexture);
 		}
 	}
 	DX8Wrapper::Draw_Triangles(	0, m_curNumTerrainIndices/3, 0,	m_curNumTerrainVertices);
