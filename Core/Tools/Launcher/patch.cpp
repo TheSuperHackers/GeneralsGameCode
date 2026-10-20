@@ -284,7 +284,11 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
     }
     else
     {
-      RegSetValueEx(regKey,"Version",0,REG_DWORD,(uint8 *)&version,sizeof(version));
+      regRetval=RegSetValueEx(regKey,"Version",0,REG_DWORD,(uint8 *)&version,sizeof(version));
+      if (regRetval!=ERROR_SUCCESS)
+      {
+        DBGMSG("Can't write Version to reg key");
+      }
       RegCloseKey(regKey);
     }
 
