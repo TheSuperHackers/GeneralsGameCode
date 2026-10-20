@@ -452,8 +452,9 @@ NetCommandList * NetPacket::getCommandList() {
 			i += NetPacketRepeatCommand::getSize();
 
 			// Repeat the last command, doing some funky cool byte-saving stuff
-			if (lastCommand == nullptr) {
-				DEBUG_CRASH(("Got a repeat command with no command to repeat."));
+			if (lastCommand == nullptr || lastCommand->getCommand()->getNetCommandType() != commandBase.commandType.commandType) {
+				DEBUG_CRASH(("Got a repeat command with no matching command to repeat."));
+				continue;
 			}
 
 			NetCommandMsg *msg = nullptr;
