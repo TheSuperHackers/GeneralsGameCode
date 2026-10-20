@@ -26,21 +26,28 @@
 #include <d3d8.h>
 #include <string.h>
 
+enum
+{
+	PREMULTIPLY_OFF,
+	PREMULTIPLY_ON
+};
+
 void TextureAtlasClass::Reset()
 {
-	TextureLocations[false].clear();
-	TextureLocations[true].clear();
+	TextureLocations[PREMULTIPLY_OFF].clear();
+	TextureLocations[PREMULTIPLY_ON].clear();
 	Pages.clear();
 }
 
-TextureClass* TextureAtlasClass::Find_Or_Insert(TextureClass* source, bool premultiply, Vector4& rect)
+TextureClass* TextureAtlasClass::Find_Or_Insert(TextureClass* source, const bool premultiply, Vector4& rect)
 {
-	if (source == nullptr)
+	// Skip textures without name as it is required for indexing.
+	if (source == nullptr || source->Get_Texture_Name().Is_Empty())
 	{
 		return nullptr;
 	}
 
-	TextureLocationMap& locations = TextureLocations[premultiply];
+	TextureLocationMap& locations = TextureLocations[premultiply ? PREMULTIPLY_ON : PREMULTIPLY_OFF];
 	TextureLocationMap::iterator it = locations.find(source->Get_Texture_Name());
 	if (it == locations.end())
 	{
@@ -70,7 +77,7 @@ TextureClass* TextureAtlasClass::Find_Or_Insert(TextureClass* source, bool premu
 	return Pages[it->second.pageIndex].texture.Peek();
 }
 
-TextureAtlasClass::TextureLocation TextureAtlasClass::Add_Texture(TextureClass* source, bool premultiply)
+TextureAtlasClass::TextureLocation TextureAtlasClass::Add_Texture(TextureClass* source, const bool premultiply)
 {
 	TextureLocation location;
 	location.pageIndex = TextureAtlas::NO_PAGE;
@@ -100,7 +107,7 @@ TextureAtlasClass::TextureLocation TextureAtlasClass::Add_Texture(TextureClass* 
 	int x = 0;
 	int y = 0;
 	if (!Allocate_Cell(cellWidth, cellHeight, pageIndex, x, y) ||
-	    !Copy_To_Cell(source, premultiply, Pages[pageIndex].texture.Peek(), x + TextureAtlas::PADDING, y + TextureAtlas::PADDING))
+	    !Copy_To_Cell(source, Pages[pageIndex].texture.Peek(), premultiply, x + TextureAtlas::PADDING, y + TextureAtlas::PADDING))
 	{
 		return location;
 	}
@@ -114,7 +121,7 @@ TextureAtlasClass::TextureLocation TextureAtlasClass::Add_Texture(TextureClass* 
 	return location;
 }
 
-bool TextureAtlasClass::Allocate_Cell(int width, int height, int& pageIndex, int& x, int& y)
+bool TextureAtlasClass::Allocate_Cell(const int width, const int height, int& pageIndex, int& x, int& y)
 {
 	// Use the first row of exactly this height that still has room.
 	Row* row = nullptr;
@@ -146,7 +153,7 @@ bool TextureAtlasClass::Allocate_Cell(int width, int height, int& pageIndex, int
 
 		// Start a new row below the page's existing rows.
 		Page& page = Pages[p];
-		Row added = { page.usedHeight, height, 0 };
+		const Row added = { page.usedHeight, height, 0 };
 		page.rows.push_back(added);
 		page.usedHeight += height;
 		row = &page.rows.back();
@@ -197,7 +204,7 @@ bool TextureAtlasClass::Create_Page()
 	return true;
 }
 
-bool TextureAtlasClass::Copy_To_Cell(TextureClass* source, bool premultiply, TextureClass* page, int left, int top)
+bool TextureAtlasClass::Copy_To_Cell(TextureClass* source, TextureClass* page, const bool premultiply, const int left, const int top)
 {
 	const int sourceLevels = (int)source->Peek_D3D_Texture()->GetLevelCount();
 
@@ -261,7 +268,7 @@ bool TextureAtlasClass::Has_Pack_Budget()
 	return PacksThisFrame < TextureAtlas::MAX_PACKS_PER_FRAME;
 }
 
-int TextureAtlasClass::Wrap_Or_Clamp(int coordinate, int size, bool wrap)
+int TextureAtlasClass::Wrap_Or_Clamp(const int coordinate, const int size, const bool wrap)
 {
 	if (wrap)
 	{
@@ -270,7 +277,7 @@ int TextureAtlasClass::Wrap_Or_Clamp(int coordinate, int size, bool wrap)
 	return WWMath::Clamp_Int(coordinate, 0, size - 1);
 }
 
-void TextureAtlasClass::Fill_Padding(unsigned char* cell, int pitch, int width, int height, int padding, bool wrapU, bool wrapV)
+void TextureAtlasClass::Fill_Padding(unsigned char* cell, const int pitch, const int width, const int height, const int padding, const bool wrapU, const bool wrapV)
 {
 	for (int y = padding; y < padding + height; ++y)
 	{
