@@ -34,6 +34,7 @@
 #include <WW3D2/rinfo.h>
 #include <WW3D2/camera.h>
 #include "WW3D2/dx8wrapper.h"
+#include "WW3D2/Renderer.h"
 #include "WW3D2/shader.h"
 #include "Common/GlobalData.h"
 #include "Common/MapObject.h"
@@ -329,7 +330,7 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 
 		tm.Set_Translation(vec);
 
-		DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+		Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);
 		DX8Wrapper::Draw_Triangles(	0,NUM_TRI, 0,	(m_numTriangles*3));
 	}
 
@@ -350,7 +351,7 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 	Int clr = 255*intensity;
 	Int diffuse = (0xff<<24)|(clr<<16)|(clr<<8)|clr;	 // b g<<8 r<<16 a<<24.
 	updateScreenVB(diffuse);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);
 	DX8Wrapper::Set_Shader(ShaderClass(SC_ADD));
 	DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferScreen);
 	DX8Wrapper::Apply_Render_State_Changes();
