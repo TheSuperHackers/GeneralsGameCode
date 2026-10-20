@@ -38,7 +38,7 @@
 #include "stdafx.h"
 #include "wdump.h"
 #include "chunk_d.h"
-#include "rawfilem.h"
+#include "WWLib/RAWFILE.h"
 #include "FindDialog.h"
 
 #ifdef RTS_DEBUG
@@ -2477,7 +2477,7 @@ bool ChunkData::Load(const char *filename)
 
 	Release_Data();
 
-	RawFileMClass chunk_file;
+	RawFileClass chunk_file;
 
 	if (!chunk_file.Open(filename)) {
 		return false;

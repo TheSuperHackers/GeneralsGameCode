@@ -2,7 +2,6 @@ set(WDUMP_SRC
     "chunk_d.cpp"
     "FindDialog.cpp"
     "mainfrm.cpp"
-    "rawfilem.cpp"
     "stdafx.cpp"
     "wdeview.cpp"
     "wdlview.cpp"
