@@ -99,7 +99,7 @@ void CWDumpEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 	edit.SetWindowText(text);
 
-	delete text;
+	delete [] text;
 }
 
 
@@ -110,27 +110,39 @@ char * CWDumpEditView::Build_Hex_Text(unsigned char * Source, int Length)
 			sprintf(c, "This chunk is a wrapper chunk for other chunks. It's total length is %d", Length);
 			return c;
 	}
-	int per_line = 16;
-
-	int lines = Length / per_line;
+	const int max_per_line = 16;
+	int per_line = max_per_line;
+	int lines = (Length + per_line - 1) / per_line;
 	int buf_size = Length * 5 + per_line * 5;
 
 	char *buffer = new char[buf_size];
 	char *dest = buffer;
 
 	while(lines--) {
-		if(lines == 0) {
+		if(lines == 0 && Length % per_line != 0) {
 			per_line = Length % per_line;
 		}
+
+		// Print bytes every 3 characters.
 		int counter = 0;
 		do {
 			sprintf(dest, "%02x ", Source[counter]);
 			dest += 3;
 		} while(++counter < per_line);
 
+		if (per_line < max_per_line) {
+			// Print spaces at left-over blank bytes in last row.
+			const int blank_length = max_per_line - per_line;
+			const int skip_char_count = blank_length * 3;
+			memset(dest, ' ', skip_char_count);
+			dest += skip_char_count;
+		}
+
+		// Print 2 spaces.
 		*dest++ = ' ';
 		*dest++ = ' ';
 
+		// Print ascii characters.
 		counter = 0;
 		do {
 			char c = Source[counter];
@@ -140,8 +152,10 @@ char * CWDumpEditView::Build_Hex_Text(unsigned char * Source, int Length)
 				*dest++ = '.';
 		} while(++counter < per_line);
 
+		// Print line break.
 		*dest++ = '\r';
 		*dest++ = '\n';
+
 		Source += per_line;
 	}
 	*dest = 0;
