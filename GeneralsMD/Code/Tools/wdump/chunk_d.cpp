@@ -39,6 +39,7 @@
 #include "wdump.h"
 #include "chunk_d.h"
 #include "WWLib/RAWFILE.h"
+#include "WWLib/Vector.h"
 #include "FindDialog.h"
 
 #ifdef RTS_DEBUG
@@ -46,9 +47,6 @@
 static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
-
-static int Get_Bit(void const * array, int bit);
-static void Set_Bit(void * array, int bit, int value);
 
 
 ChunkTableClass ChunkItem::ChunkTable;
@@ -2558,25 +2556,6 @@ void ChunkData::Release_Data()
 	while(Chunks.IsEmpty() == 0) {
 		ChunkItem *item = Chunks.RemoveHead();
 		delete item;
-	}
-}
-
-
-
-int Get_Bit(void const * array, int bit)
-{
-	unsigned char mask = (unsigned char)(1 << (bit % 8));
-	return((*((unsigned char *)array + (bit/8)) & mask) != 0);
-}
-
-void Set_Bit(void * array, int bit, int value)
-{
-	unsigned char mask = (unsigned char)(1 << (bit % 8));
-
-	if (value != 0) {
-		*((unsigned char *)array + (bit/8)) |= mask;
-	} else {
-		*((unsigned char *)array + (bit/8)) &= (unsigned char)~mask;
 	}
 }
 
