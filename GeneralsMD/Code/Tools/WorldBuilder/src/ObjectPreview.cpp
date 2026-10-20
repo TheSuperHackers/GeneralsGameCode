@@ -47,6 +47,8 @@
 
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "WW3D2/dx8wrapper.h"
+#include "WW3D2/ww3d.h"
+#include "WW3D2/Renderer.h"
 #include "WWLib/TARGA.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -218,7 +220,7 @@ static UnsignedByte * generatePreview( const ThingTemplate *tt )
 			}
 
 			// Set the render target
-			DX8Wrapper::Set_Render_Target_With_Z(objectTexture);
+			Renderer::Set_Render_Target_With_Z(objectTexture);
 
 			// create the camera
 			Bool orthoCamera = false;
@@ -248,7 +250,7 @@ static UnsignedByte * generatePreview( const ThingTemplate *tt )
 			WW3D::End_Render(false);
 
 			// Change the rendertarget back to the main backbuffer
-			DX8Wrapper::Set_Render_Target((IDirect3DSurface8 *)nullptr);
+			Renderer::Set_Default_Render_Target();
 
 			SurfaceClass *surface = objectTexture->Get_Surface_Level();
 			UnsignedByte *data = saveSurface(surface->Peek_D3D_Surface());
