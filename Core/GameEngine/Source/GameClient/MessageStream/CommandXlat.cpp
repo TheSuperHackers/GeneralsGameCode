@@ -265,8 +265,6 @@ bool changeLogicTimeScale(FpsValueChange change)
 }
 
 
-static Bool isSystemMessage( const GameMessage *msg );
-
 enum{ DROPPED_MAX_PARTICLE_COUNT = 1000};
 
 static Bool canSelectionSalvage( const Object *targetObj)
@@ -2538,11 +2536,23 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 {
 	GameMessage::Type t = msg->getType();
 	GameMessageDisposition disp = KEEP_MESSAGE;
+
 	// We want to always be able to get to the options menu even during no input times and a clear game data message should always go through
-	if (t != GameMessage::MSG_META_OPTIONS && t != GameMessage::MSG_CLEAR_GAME_DATA &&
-			!TheInGameUI->getInputEnabled() && !isSystemMessage(msg))
+	switch (t)
 	{
-		return DESTROY_MESSAGE;
+	case GameMessage::MSG_FRAME_TICK:
+	case GameMessage::MSG_CLEAR_GAME_DATA:
+	case GameMessage::MSG_META_OPTIONS:
+	case GameMessage::MSG_META_DEMO_INSTANT_QUIT:
+	case GameMessage::MSG_DESTROY_SELECTED_GROUP:
+	case GameMessage::MSG_SET_REPLAY_CAMERA:
+	case GameMessage::MSG_LOGIC_CRC:
+		break;
+	default:
+		if (!TheInGameUI->getInputEnabled())
+			return DESTROY_MESSAGE;
+
+		break;
 	}
 
 #if defined(RTS_DEBUG)
@@ -5598,23 +5608,4 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 	return disp;
 
-}
-
-static Bool isSystemMessage( const GameMessage *msg )
-{
-	if (!msg) {
-		return false;
-	}
-	GameMessage::Type msgType = msg->getType();
-
-	switch (msgType)
-	{
-		case GameMessage::MSG_DESTROY_SELECTED_GROUP:
-		case GameMessage::MSG_LOGIC_CRC:
-		case GameMessage::MSG_SET_REPLAY_CAMERA:
-		case GameMessage::MSG_FRAME_TICK:
-		case GameMessage::MSG_META_DEMO_INSTANT_QUIT:
-			return TRUE;
-	}
-	return FALSE;
 }
