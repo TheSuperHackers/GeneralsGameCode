@@ -104,6 +104,11 @@ BOOL CWdumpApp::InitInstance()
 {
 	DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
 
+	// TheSuperHackers @fix MFC adds a document opened from a path to the recent items
+	// of the Windows shell, which needs COM and throws an exception without it.
+	if (!AfxOleInit())
+		return FALSE;
+
 	// Standard initialization
 	// If you are not using these features and wish to reduce the size
 	//  of your final executable, you should remove from the following
