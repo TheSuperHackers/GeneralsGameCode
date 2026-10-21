@@ -2543,6 +2543,13 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 
 	if (getFlag(TAKEOFF_IN_PROGRESS) || getFlag(LANDING_IN_PROGRESS))
 	{
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix Caball009 12/08/2026 Ignore repeated commands to repair for helipad units,
+		// otherwise e.g. Comanches won't take off automatically when repairing is done.
+		if (parms->m_cmd == AICMD_GET_REPAIRED && getObject()->isKindOf(KINDOF_PRODUCED_AT_HELIPAD))
+			return;
+#endif
+
 		// have to wait for takeoff or landing to complete, just store the sucker
 		setFlag(HAS_PENDING_COMMAND, true);
 		return;
@@ -2596,7 +2603,13 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 
 			case AICMD_ENTER:
 			case AICMD_GET_REPAIRED:
+				// if we're already located at the airfield in question, just ignore.
+				// TheSuperHackers @bugfix Caball009 12/08/2026 This applies to units produced at the helipad now as well.
+#if RETAIL_COMPATIBLE_CRC
 				if (parms->m_obj && !getObject()->isKindOf(KINDOF_PRODUCED_AT_HELIPAD))
+#else
+				if (parms->m_obj)
+#endif
 				{
 					Object* airfield = nullptr;
 					ParkingPlaceBehaviorInterface* pp = getPP(getObject()->getProducerID(), &airfield);
