@@ -205,8 +205,11 @@ inline long WWMath::Float_To_Long	(float f)
 {
 #if defined(_MSC_VER) && defined(_M_IX86)
 	long retval;
-	__asm fld	dword ptr [f]
-	__asm fistp dword ptr [retval]
+	__asm
+	{
+		fld	dword ptr [f]
+		fistp dword ptr [retval]
+	}
 	return retval;
 #else
 	return (long) f;
@@ -217,8 +220,11 @@ inline long WWMath::Float_To_Long	(double f)
 {
 #if defined(_MSC_VER) && defined(_M_IX86)
 	long retval;
-	__asm fld	qword ptr [f]
-	__asm fistp dword ptr [retval]
+	__asm
+	{
+		fld	qword ptr [f]
+		fistp dword ptr [retval]
+	}
 	return retval;
 #else
 	return (long) f;

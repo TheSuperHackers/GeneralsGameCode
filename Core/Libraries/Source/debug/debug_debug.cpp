@@ -436,7 +436,10 @@ bool Debug::AssertDone()
           break;
         case IDRETRY:
 #if defined(_MSC_VER)
-          _asm int 0x03
+          _asm
+          {
+            int 0x03
+          }
 #elif defined(__GNUC__)
           __builtin_trap();
 #else
@@ -710,7 +713,10 @@ bool Debug::CrashDone(bool die)
             break;
           case IDRETRY:
 #if defined(_MSC_VER)
-            _asm int 0x03
+            _asm
+            {
+              int 0x03
+            }
 #elif defined(__GNUC__)
             __builtin_trap();
 #else
