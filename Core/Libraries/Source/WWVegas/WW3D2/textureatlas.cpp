@@ -62,13 +62,14 @@ TextureClass* TextureAtlasClass::Find_Or_Insert(TextureClass* source, const bool
 			TextureLoader::Request_Foreground_Loading(source);
 		}
 
-		TextureLocation packedTexture = Add_Texture(source, premultiply);
+		// Try to add a texture. If rejected, will be marked invalid, such that it will not get a retry later.
+		TextureLocation packedTexture = Pack_Texture(source, premultiply);
 		it = locations.insert(std::make_pair(source->Get_Texture_Name(), packedTexture)).first;
 		++PacksThisFrame;
 	}
 
 	// Packing failed: unsupported size, no room left, or a page could not be created or written.
-	if (it->second.pageIndex == TextureAtlas::NO_PAGE)
+	if (it->second.pageIndex == TextureAtlas::INVALID_PAGE)
 	{
 		return nullptr;
 	}
@@ -77,15 +78,12 @@ TextureClass* TextureAtlasClass::Find_Or_Insert(TextureClass* source, const bool
 	return Pages[it->second.pageIndex].texture.Peek();
 }
 
-TextureAtlasClass::TextureLocation TextureAtlasClass::Add_Texture(TextureClass* source, const bool premultiply)
+TextureAtlasClass::TextureLocation TextureAtlasClass::Pack_Texture(TextureClass* source, const bool premultiply)
 {
-	TextureLocation location;
-	location.pageIndex = TextureAtlas::NO_PAGE;
-
 	// A texture can be initialized without a D3D texture, e.g. with texturing disabled.
 	if (source->Peek_D3D_Texture() == nullptr)
 	{
-		return location;
+		return TextureLocation::Invalid();
 	}
 
 	const int width = source->Get_Width();
@@ -99,7 +97,7 @@ TextureAtlasClass::TextureLocation TextureAtlasClass::Add_Texture(TextureClass* 
 	const bool fitsOnPage = cellWidth <= TextureAtlas::PAGE_SIZE && cellHeight <= TextureAtlas::PAGE_SIZE;
 	if (!powerOfTwo || !largeEnough || !fitsOnPage)
 	{
-		return location;
+		return TextureLocation::Invalid();
 	}
 
 	// Reserve space in the atlas, then write the new texture to it.
@@ -109,9 +107,10 @@ TextureAtlasClass::TextureLocation TextureAtlasClass::Add_Texture(TextureClass* 
 	if (!Allocate_Cell(cellWidth, cellHeight, pageIndex, x, y) ||
 	    !Copy_To_Cell(source, Pages[pageIndex].texture.Peek(), premultiply, x + TextureAtlas::PADDING, y + TextureAtlas::PADDING))
 	{
-		return location;
+		return TextureLocation::Invalid();
 	}
 
+	TextureLocation location;
 	constexpr const float scale = 1.0f / TextureAtlas::PAGE_SIZE;
 	location.pageIndex = pageIndex;
 	location.uvRect.Set((x + TextureAtlas::PADDING) * scale,
@@ -124,46 +123,48 @@ TextureAtlasClass::TextureLocation TextureAtlasClass::Add_Texture(TextureClass* 
 bool TextureAtlasClass::Allocate_Cell(const int width, const int height, int& pageIndex, int& x, int& y)
 {
 	// Use the first row of exactly this height that still has room.
-	Row* row = nullptr;
-	for (int p = 0; p < Pages.size() && row == nullptr; ++p)
+	for (int p = 0; p < Pages.size(); ++p)
 	{
-		for (int r = 0; r < Pages[p].rows.size() && row == nullptr; ++r)
+		for (int r = 0; r < Pages[p].rows.size(); ++r)
 		{
-			Row& candidate = Pages[p].rows[r];
-			if (candidate.height == height && candidate.usedWidth + width <= TextureAtlas::PAGE_SIZE)
+			Row& row = Pages[p].rows[r];
+			if (row.height == height && row.usedWidth + width <= TextureAtlas::PAGE_SIZE)
 			{
-				row = &candidate;
 				pageIndex = p;
+				x = row.usedWidth;
+				y = row.y;
+				row.usedWidth += width;
+				return true;
 			}
 		}
 	}
 
-	if (row == nullptr)
+	// Otherwise find the first page with enough height left.
+	int newRowPage;
+	for (newRowPage = 0; newRowPage < Pages.size(); ++newRowPage)
 	{
-		// Otherwise find the first page with enough height left, creating a new page if none has.
-		int p = 0;
-		while (p < Pages.size() && Pages[p].usedHeight + height > TextureAtlas::PAGE_SIZE)
+		if (Pages[newRowPage].usedHeight + height <= TextureAtlas::PAGE_SIZE)
 		{
-			++p;
+			break;
 		}
-		if (p == Pages.size() && !Create_Page())
-		{
-			return false;
-		}
-
-		// Start a new row below the page's existing rows.
-		Page& page = Pages[p];
-		const Row added = { page.usedHeight, height, 0 };
-		page.rows.push_back(added);
-		page.usedHeight += height;
-		row = &page.rows.back();
-		pageIndex = p;
 	}
 
-	// Take the next free spot in the row, left to right.
-	x = row->usedWidth;
-	y = row->y;
-	row->usedWidth += width;
+	// The new cell does not fit, so try to create a new page.
+	if (newRowPage == Pages.size() && !Create_Page())
+	{
+		return false;
+	}
+
+	// Start a new row with this cell at its left edge.
+	Page& page = Pages[newRowPage];
+	const Row added = { page.usedHeight, height, width };
+	page.rows.push_back(added);
+	page.usedHeight += height;
+
+	pageIndex = newRowPage;
+	x = 0;
+	y = page.usedHeight;
+
 	return true;
 }
 
