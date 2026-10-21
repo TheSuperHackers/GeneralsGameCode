@@ -163,7 +163,7 @@ bool TextureAtlasClass::Allocate_Cell(const int width, const int height, int& pa
 
 	pageIndex = newRowPage;
 	x = 0;
-	y = page.usedHeight;
+	y = added.y;
 
 	return true;
 }
