@@ -292,6 +292,7 @@ private:
 
 	bool onNewGame(GameMessage *msg);
 	bool onClearGameData(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onLogicCrcForPlayback(GameMessage *msg);
 	bool onBeginPathBuild(GameMessage *msg);
 	bool onEndPathBuild(GameMessage *msg);
 	bool onSetRallyPoint(GameMessage *msg);

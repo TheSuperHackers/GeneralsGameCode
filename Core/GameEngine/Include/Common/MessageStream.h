@@ -150,6 +150,8 @@ public:
 		MSG_CLEAR_GAME_DATA,												///< Clear all game data in memory
 		MSG_NEW_GAME,																///< Start a new game
 
+		MSG_LOGIC_CRC_PLAYBACK,                     ///< TheSuperHackers @tweak CRC from the logic used internally for replay playback.
+
 		// "meta" messages should be thought of as "virtual keystrokes" -- they exist
 		// solely to provide an abstraction layer useful for keyboard/mouse remapping.
 		// they should NEVER be sent over the network.
