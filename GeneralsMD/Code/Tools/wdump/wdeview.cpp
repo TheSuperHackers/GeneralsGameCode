@@ -77,6 +77,12 @@ void CWDumpEditView::Dump(CDumpContext& dc) const
 /////////////////////////////////////////////////////////////////////////////
 // CWDumpEditView message handlers
 
+void CWDumpEditView::OnInitialUpdate()
+{
+	SetFont(CFont::FromHandle((HFONT)::GetStockObject(ANSI_FIXED_FONT)));
+	CEditView::OnInitialUpdate();
+}
+
 void CWDumpEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	// TODO: Add your specialized code here and/or call the base class
