@@ -21,6 +21,7 @@
 #pragma once
 
 #include "BaseType.h"
+#include <Utility/stringex.h>
 #include <string.h>
 
 inline char getNativePathSeparator()
@@ -48,6 +49,11 @@ inline bool isPathSeparator(char ch)
 	return ch == '/' || ch == '\\';
 }
 
+inline bool isPathSeparator(WideChar ch)
+{
+	return ch == L'/' || ch == L'\\';
+}
+
 inline bool isAbsolutePath(const char* path)
 {
 	if (path == nullptr)
@@ -71,14 +77,34 @@ inline bool isAbsolutePath(const char* path)
 	return false;
 }
 
+inline const char* getFirstPathSeparator(const char* path)
+{
+	return strpbrk(path, "/\\");
+}
+
+inline const WideChar* getFirstPathSeparator(const WideChar* path)
+{
+	return wcspbrk(path, L"/\\");
+}
+
 inline const char* getLastPathSeparator(const char* path)
 {
-	return path ? maxPtr(strrchr(path, '/'), strrchr(path, '\\')) : nullptr;
+	return strrpbrk(path, "/\\");
 }
 
 inline const WideChar* getLastPathSeparator(const WideChar* path)
 {
-	return path ? maxPtr(wcsrchr(path, L'/'), wcsrchr(path, L'\\')) : nullptr;
+	return wcsrpbrk(path, L"/\\");
+}
+
+inline char* getLastPathSeparator(char* path)
+{
+	return const_cast<char*>(getLastPathSeparator(static_cast<const char*>(path)));
+}
+
+inline WideChar* getLastPathSeparator(WideChar* path)
+{
+	return const_cast<WideChar*>(getLastPathSeparator(static_cast<const WideChar*>(path)));
 }
 
 // Returns the whole path when it contains no separator
@@ -86,6 +112,27 @@ inline const char* getFileName(const char* path)
 {
 	const char* lastSeparator = getLastPathSeparator(path);
 	return lastSeparator ? lastSeparator + 1 : path;
+}
+
+inline char* getFileName(char* path)
+{
+	return const_cast<char*>(getFileName(static_cast<const char*>(path)));
+}
+
+inline bool appendPathSeparator(char* path, size_t size)
+{
+	const size_t len = strlen(path);
+	if (len == 0 || isPathSeparator(path[len - 1]))
+	{
+		return true;
+	}
+	if (len + 1 >= size)
+	{
+		return false;
+	}
+	path[len] = getNativePathSeparator();
+	path[len + 1] = '\0';
+	return true;
 }
 
 inline const char* getExtension(const char* path)
