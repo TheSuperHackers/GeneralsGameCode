@@ -158,8 +158,7 @@ static UnicodeString createMapName(const AsciiString& filename, const ReplayGame
 	{
 		// TheSuperHackers @bugfix helmutbuhler 08/03/2025 Just use the filename.
 		// Displaying a long map path string would break the map list gui.
-		const char* filename = info.getMap().reverseFind('\\');
-		mapName.translate(filename ? filename + 1 : info.getMap());
+		mapName.translate(getFileName(info.getMap().str()));
 	}
 	else
 	{
@@ -274,7 +273,7 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 	for (it = replayFilenames.begin(); it != replayFilenames.end(); ++it)
 	{
 		// just want the filename
-		asciistr.set((*it).reverseFind('\\') + 1);
+		asciistr.set(getFileName((*it).str()));
 
 		RecorderClass::ReplayHeader header;
 		ReplayGameInfo info;

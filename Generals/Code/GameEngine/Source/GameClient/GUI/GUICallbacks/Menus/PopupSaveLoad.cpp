@@ -458,12 +458,7 @@ static void setEditDescription( GameWindow *editControl )
 												TheCampaignManager->getCurrentMissionNumber() + 1 );
 	else
 	{
-		const char *mapName = TheGlobalData->m_mapName.reverseFind( '\\' );
-
-		if( mapName )
-			defaultDesc.format( L"%S", mapName + 1 );
-		else
-			defaultDesc.format( L"%S", TheGlobalData->m_mapName.str() );
+		defaultDesc.format( L"%S", getFileName( TheGlobalData->m_mapName.str() ) );
 
 	}
 

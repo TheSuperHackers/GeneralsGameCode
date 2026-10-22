@@ -65,24 +65,3 @@ class MMSLockClass
 
 	static CRITICAL_SECTION _MSSLockCriticalSection;
 };
-
-
-////////////////////////////////////////////////////////////////////////////
-//
-//  Get_Filename_From_Path
-//
-__inline LPCTSTR
-Get_Filename_From_Path (LPCTSTR path)
-{
-	// Find the last occurrence of the directory deliminator
-	LPCTSTR filename = ::strrchr (path, '\\');
-	if (filename != nullptr) {
-		// Increment past the directory deliminator
-		filename ++;
-	} else {
-		filename = path;
-	}
-
-	// Return the filename part of the path
-	return filename;
-}
