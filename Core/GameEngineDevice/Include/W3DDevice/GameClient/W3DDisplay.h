@@ -48,9 +48,12 @@ class RTS2DScene;
 class RTS3DInterfaceScene;
 class TextureClass;
 
-constexpr const Real TICKS_PER_SECOND = 62500.0f;
+// TheSuperHackers @info Number of quantized ticks per second. One tick is 1 s / 62500 = 16 microseconds.
+// A 16 bit tick count therefore covers frame durations from 16 us up to 65535 ticks = ~1.049 s.
+constexpr const Real QuantizedTicksPerSecond = 62500.0f;
 
-// TheSuperHackers @info Stores a frame duration as a 16 bit count of fixed length ticks, clamped to the representable range.
+// TheSuperHackers @info Stores a frame duration as a 16 bit count of 16 us ticks.
+// Durations above ~1.049 s are clamped to 65535 ticks, and durations of zero or less to 1 tick.
 class QuantizedUnsignedShort
 {
 public:
@@ -59,7 +62,7 @@ public:
 
 	static QuantizedUnsignedShort fromSeconds(Real seconds)
 	{
-		Int64 ticks = (Int64)(seconds * TICKS_PER_SECOND + 0.5f);
+		Int64 ticks = (Int64)(seconds * QuantizedTicksPerSecond + 0.5f);
 		if (ticks >= 65535)
 		{
 			return QuantizedUnsignedShort(65535);
@@ -74,8 +77,8 @@ public:
 	UnsignedShort getValue() const { return m_value; }
 	void setValue(UnsignedShort val) { m_value = val; }
 
-	Real toFPS() const { return TICKS_PER_SECOND / (Real)m_value; }
-	Real toSeconds() const { return (Real)m_value / TICKS_PER_SECOND; }
+	Real toFPS() const { return QuantizedTicksPerSecond / (Real)m_value; }
+	Real toSeconds() const { return (Real)m_value / QuantizedTicksPerSecond; }
 
 private:
 	UnsignedShort m_value;
