@@ -3,6 +3,10 @@ set(DEPSI_GOOGLETEST_SRC
     Utility/atomic_x86interlocked_test.cpp
     Utility/interlocked_x86asm_common.h
     Utility/interlocked_x86asm_test.cpp
+    Utility/premultiply_alpha_common.h
+    Utility/premultiply_alpha_portable_test.cpp
+    Utility/premultiply_alpha_sse2_test.cpp
+    Utility/premultiply_alpha_x86asm_test.cpp
     Utility/stringex_memcchr_common.h
     Utility/stringex_memcchr_portable_test.cpp
     Utility/stringex_memcchr_sse2_test.cpp

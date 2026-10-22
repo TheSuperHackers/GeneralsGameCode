@@ -44,11 +44,57 @@
 
 //-------------------------------------------------------------------------------------------------
 
+static Bool supportsAtlasing(const ParticleSystem& system)
+{
+	return system.isUsingParticles() && system.getParticleAlignment() != ParticleSystemInfo::PARTICLE_ALIGNMENT_CONFORMING;
+}
+
+static Bool usesSharedBlend(ParticleSystemInfo::ParticleShaderType shaderType, Bool atlased)
+{
+	return atlased && (shaderType == ParticleSystemInfo::ALPHA || shaderType == ParticleSystemInfo::ADDITIVE);
+}
+
+static ShaderClass getParticleShader(ParticleSystemInfo::ParticleShaderType shaderType, Bool sharedBlend)
+{
+	if (sharedBlend)
+	{
+		ShaderClass shader = ShaderClass::_PresetAlphaSpriteShader;
+		shader.Set_Src_Blend_Func(ShaderClass::SRCBLEND_ONE);
+		return shader;
+	}
+
+	switch (shaderType)
+	{
+		case ParticleSystemInfo::ADDITIVE:
+			return ShaderClass::_PresetAdditiveSpriteShader;
+		case ParticleSystemInfo::ALPHA:
+			return ShaderClass::_PresetAlphaSpriteShader;
+		case ParticleSystemInfo::ALPHA_TEST:
+			return ShaderClass::_PresetATestSpriteShader;
+		case ParticleSystemInfo::MULTIPLY:
+			return ShaderClass::_PresetMultiplicativeSpriteShader;
+		default:
+			return ShaderClass();
+	}
+}
+
+// With the shared blend, additive sprites get zero alpha so they add, and alpha sprites a premultiplied color.
+// The color is clamped first, as the fixed-function pipeline clamps it before the blend weighs it by alpha.
+static Vector4 getVertexColor(const RGBColor& color, Real alpha, ParticleSystemInfo::ParticleShaderType shaderType, Bool sharedBlend)
+{
+	if (!sharedBlend)
+		return Vector4(color.red, color.green, color.blue, alpha);
+
+	if (shaderType == ParticleSystemInfo::ADDITIVE)
+		return Vector4(color.red, color.green, color.blue, 0.0f);
+
+	alpha = clamp(0.0f, alpha, 1.0f);
+	return Vector4(clamp(0.0f, color.red, 1.0f) * alpha, clamp(0.0f, color.green, 1.0f) * alpha, clamp(0.0f, color.blue, 1.0f) * alpha, alpha);
+}
 
 W3DParticleSystemManager::W3DParticleSystemManager()
 {
 	m_batchParticleAlignment = ParticleSystemInfo::PARTICLE_ALIGNMENT_BILLBOARD;
-	m_batchShaderType = ParticleSystemInfo::INVALID_SHADER;
 
 	m_pointGroup = nullptr;
 	m_streakLine = nullptr;
@@ -90,6 +136,12 @@ W3DParticleSystemManager::~W3DParticleSystemManager()
 	REF_PTR_RELEASE(m_RGBABuffer);
 	REF_PTR_RELEASE(m_sizeBuffer);
 	REF_PTR_RELEASE(m_angleBuffer);
+}
+
+void W3DParticleSystemManager::reset()
+{
+	ParticleSystemManager::reset();
+	m_atlas.Reset();
 }
 
 /**
@@ -219,8 +271,24 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		RefCountPtr<TextureClass> texture;
 		texture.Assign_No_Add_Ref(W3DDisplay::m_assetManager->Get_Texture(sys->getParticleTypeName().str()));
 
+		// TheSuperHackers @performance stephanmeesters 18/10/2026 Draw sprites from a shared atlas page where possible,
+		// so particles with different textures, and alpha and additive particles, can join the same batch.
+		const ParticleSystemInfo::ParticleShaderType shaderType = sys->getShaderType();
+		Vector4 uvRect(0.0f, 0.0f, 1.0f, 1.0f);
+		Bool atlased = FALSE;
+		if (supportsAtlasing(*sys))
+		{
+			if (TextureClass *page = m_atlas.Find_Or_Insert(texture.Peek(), shaderType == ParticleSystemInfo::ALPHA, uvRect))
+			{
+				texture = page;
+				atlased = TRUE;
+			}
+		}
+		const Bool sharedBlend = usesSharedBlend(shaderType, atlased);
+		const ShaderClass shader = getParticleShader(shaderType, sharedBlend);
+
 		const Bool canBatch = sys->isUsingParticles();
-		const Bool batchDone = finishedBatch(*sys, texture);
+		const Bool batchDone = finishedBatch(*sys, texture, shader);
 		if (!canBatch || batchDone)
 		{
 			flushParticleBatch(rinfo, pointCount);
@@ -229,7 +297,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		// setup a new particle batch texture if prior batch was flushed.
 		if (canBatch && m_batchTexture == nullptr)
 		{
-			initializeBatch(*sys, texture);
+			initializeBatch(*sys, texture, shader);
 		}
 
 		UnsignedInt startCount = pointCount;
@@ -266,11 +334,9 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 			sizeArray[pointCount] = psize;
 
 			color = p->getColor();
-			RGBAArray[pointCount].X = color->red;
-			RGBAArray[pointCount].Y = color->green;
-			RGBAArray[pointCount].Z = color->blue;
-			RGBAArray[pointCount].W = p->getAlpha();
+			RGBAArray[pointCount] = getVertexColor(*color, p->getAlpha(), shaderType, sharedBlend);
 
+			m_uvRects[pointCount] = uvRect;
 			angleArray[pointCount] = (uint8)(p->getAngle() * 255.0f / (2.0f * PI));
 
 			if (++pointCount == MAX_POINTS_PER_GROUP)
@@ -284,7 +350,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 				// This prevents particles being dropped. Bank the stats first as the flush resets count to 0.
 				m_onScreenParticleCount += (pointCount - startCount);
 				flushParticleBatch(rinfo, pointCount);
-				initializeBatch(*sys, texture);
+				initializeBatch(*sys, texture, shader);
 				startCount = 0;
 			}
 		}
@@ -345,7 +411,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		else if (sys->isUsingStreak() && (pointCount == 1))
 		{
 			m_onScreenParticleCount += (pointCount - startCount);
-			initializeBatch(*sys, texture);
+			initializeBatch(*sys, texture, shader);
 			flushParticleBatch(rinfo, pointCount);
 			startCount = 0;
 		}
@@ -427,17 +493,17 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 	}
 }
 
-Bool W3DParticleSystemManager::finishedBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture)
+Bool W3DParticleSystemManager::finishedBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture, const ShaderClass& shader)
 {
 	return texture.Peek() != m_batchTexture.Peek() ||
-		system.getShaderType() != m_batchShaderType ||
+		shader.Get_Bits() != m_batchShader.Get_Bits() ||
 		system.getParticleAlignment() != m_batchParticleAlignment;
 }
 
-void W3DParticleSystemManager::initializeBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture)
+void W3DParticleSystemManager::initializeBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture, const ShaderClass& shader)
 {
 	m_batchTexture = texture;
-	m_batchShaderType = system.getShaderType();
+	m_batchShader = shader;
 	m_batchParticleAlignment = system.getParticleAlignment();
 }
 
@@ -445,27 +511,10 @@ void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, Unsign
 {
 	if (pointCount > 0)
 	{
-		ShaderClass shader;
-		switch (m_batchShaderType)
-		{
-			case ParticleSystemInfo::ADDITIVE:
-				shader = ShaderClass::_PresetAdditiveSpriteShader;
-				break;
-			case ParticleSystemInfo::ALPHA:
-				shader = ShaderClass::_PresetAlphaSpriteShader;
-				break;
-			case ParticleSystemInfo::ALPHA_TEST:
-				shader = ShaderClass::_PresetATestSpriteShader;
-				break;
-			case ParticleSystemInfo::MULTIPLY:
-				shader = ShaderClass::_PresetMultiplicativeSpriteShader;
-				break;
-		}
-
 		if (m_batchParticleAlignment == ParticleSystemInfo::PARTICLE_ALIGNMENT_CONFORMING)
 		{
 			m_terrainParticles->setTexture(m_batchTexture.Peek());
-			m_terrainParticles->setShader( shader );
+			m_terrainParticles->setShader( m_batchShader );
 			m_terrainParticles->setArrays( m_posBuffer, m_RGBABuffer, m_sizeBuffer, m_angleBuffer, pointCount );
 			m_terrainParticles->setBoundingBox( m_currentBoundingBox );
 			m_terrainParticles->render();
@@ -473,12 +522,13 @@ void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, Unsign
 		else // draw regular point group
 		{
 			m_pointGroup->Set_Texture(m_batchTexture.Peek());
-			m_pointGroup->Set_Shader(shader);
+			m_pointGroup->Set_Shader(m_batchShader);
 			m_pointGroup->Set_Flag(PointGroupClass::TRANSFORM, true);
 			m_pointGroup->Set_Point_Mode(PointGroupClass::QUADS);
 			m_pointGroup->Set_Arrays(m_posBuffer, m_RGBABuffer, nullptr, m_sizeBuffer, m_angleBuffer, nullptr, pointCount);
 			m_pointGroup->Set_Billboard(m_batchParticleAlignment == ParticleSystemInfo::PARTICLE_ALIGNMENT_BILLBOARD);
 			m_pointGroup->Set_Point_Frame(0);
+			m_pointGroup->Set_Texture_UV_Rects(m_uvRects);
 			m_pointGroup->Render(rinfo);
 		}
 
@@ -487,5 +537,5 @@ void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, Unsign
 
 	m_batchTexture.Clear();
 	m_batchParticleAlignment = ParticleSystemInfo::PARTICLE_ALIGNMENT_BILLBOARD;
-	m_batchShaderType = ParticleSystemInfo::INVALID_SHADER;
+	m_batchShader = ShaderClass();
 }
