@@ -210,7 +210,7 @@ bool TextureAtlasClass::Copy_To_Cell(TextureClass* source, TextureClass* page, c
 	const int sourceLevels = (int)source->Peek_D3D_Texture()->GetLevelCount();
 
 	// WW3D stores the address mode on the texture and applies it whenever the texture is drawn.
-	// Padding will use that same filtering as in normal rendering.
+	// Padding follows the source texture's wrap/clamp addressing modes.
 	const bool wrapU = source->Get_Filter().Get_U_Addr_Mode() == TextureFilterClass::TEXTURE_ADDRESS_REPEAT;
 	const bool wrapV = source->Get_Filter().Get_V_Addr_Mode() == TextureFilterClass::TEXTURE_ADDRESS_REPEAT;
 
@@ -238,7 +238,7 @@ bool TextureAtlasClass::Copy_To_Cell(TextureClass* source, TextureClass* page, c
 			destinationSurface->Stretch_Copy(x, y, width, height, x * 2, y * 2, width * 2, height * 2, sourceSurface.Peek());
 		}
 
-		// Lock the cell, padding included. Locking the top level also marks the cell for upload at every level.
+		// Lock the cell including padding.
 		int pitch = 0;
 		unsigned char* cell = (unsigned char*)destinationSurface->Lock(&pitch, Vector2i(x - padding, y - padding), Vector2i(x + width + padding, y + height + padding));
 		if (cell == nullptr)
