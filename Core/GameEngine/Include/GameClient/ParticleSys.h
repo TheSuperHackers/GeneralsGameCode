@@ -245,14 +245,16 @@ protected:
 
 
 	Bool							m_isCulled;														///< status of particle relative to screen bounds
+	Bool							m_xferSystemUnderControl;							///< union tag to signal which field is active for systemUnderControl
+
 public:
 	Bool							m_inSystemList;
 	Bool							m_inOverallList;
 
 	union
 	{
+		ParticleSystemID	m_xferSystemUnderControlID;	///< xfer uses IDs to store pointers and looks them up after
 		ParticleSystem *	m_systemUnderControl;			///< the particle system attached to this particle (not the system that created us)
-		ParticleSystemID	m_systemUnderControlID;	///< id of system attached to this particle (not the system that created us);
 	};
 
 };
