@@ -360,8 +360,13 @@ void MeshModelClass::compose_deformed_vertex_buffer(
 
 			if (diffuse) out->diffuse=diffuse[vi+pidx];
 			else out->diffuse=0;
-			if (uv0) reinterpret_cast<Vector2&>(verts[vi+pidx].u1)=uv0[vi+pidx];
-			else reinterpret_cast<Vector2&>(verts[vi+pidx].u2)=Vector2(0.0f,0.0f);
+			if (uv0) {
+				out->u1=uv0[vi+pidx].X;
+				out->v1=uv0[vi+pidx].Y;
+			} else {
+				out->u2=0.0f;
+				out->v2=0.0f;
+			}
 		}
 
 		vi=cnt;

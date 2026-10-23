@@ -2806,6 +2806,14 @@ void W3DVolumetricShadow::constructVolume( Vector3 *lightPosObject,Real shadowEx
 	shadowVolume->SetNumActiveVertex(vertexCount);
 }
 
+// Copies a position into a shadow volume vertex.
+static void setVertexXYZ(VertexFormatXYZ &vertex, const Vector3 &position)
+{
+	vertex.x = position.X;
+	vertex.y = position.Y;
+	vertex.z = position.Z;
+}
+
 // constructVolumeVB ==========================================================
 // Given a fresh new geometry class called "shadowVolume" to hold the actual
 // shadow volume data, this method will create the shadow volume polygons
@@ -3038,8 +3046,8 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 	extrude2 *= shadowExtrudeDistance;
 	extrude2 += ev;
 
-	*vb++ = *(VertexFormatXYZ *)&ev;
-	*vb++ = *(VertexFormatXYZ *)&extrude2;
+	setVertexXYZ(*vb++, ev);
+	setVertexXYZ(*vb++, extrude2);
 
 	vertexCount=2;
 	polygonCount=0;
@@ -3073,7 +3081,7 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 			{
 				//add end of strip.  Finishes the last 2 polygons.
 				const Vector3& ev=geomMesh->GetVertex( currentEdgeEnd );
-				*vb++ = *(VertexFormatXYZ *)&ev;
+				setVertexXYZ(*vb++, ev);
 
 				//
 				// add the polygon consisting of the two edge vertices and the
@@ -3090,7 +3098,7 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 				extrude2 *= shadowExtrudeDistance;
 				extrude2 += ev;
 				// add the one new vertex
-				*vb++ = *(VertexFormatXYZ *)&extrude2;
+				setVertexXYZ(*vb++, extrude2);
 
 				lastEdgeVertex2Index=vertexCount;
 				lastExtrude2Index=vertexCount+1;
@@ -3117,8 +3125,8 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 			stripStartIndex=silhouetteIndices[ i+2 ];
 			stripStartVertex=lastEdgeVertex2Index;
 
-			*vb++ = *(VertexFormatXYZ *)&evb;
-			*vb++ = *(VertexFormatXYZ *)&extrude2;
+			setVertexXYZ(*vb++, evb);
+			setVertexXYZ(*vb++, extrude2);
 			vertexCount += 2;
 
 			polygonCount += 2;
@@ -3129,7 +3137,7 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 			//continue existing strip by adding extra vertex and extrusion
 
 			const Vector3& ev=geomMesh->GetVertex( currentEdgeEnd );
-			*vb++ = *(VertexFormatXYZ *)&ev;
+			setVertexXYZ(*vb++, ev);
 			//
 			// add the polygon consisting of the two edge vertices and the
 			// first extruded point
@@ -3146,7 +3154,7 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 			extrude2 += ev;
 
 			// add the one new vertex
-			*vb++ = *(VertexFormatXYZ *)&extrude2;
+			setVertexXYZ(*vb++, extrude2);
 
 			lastEdgeVertex2Index=vertexCount;
 			lastExtrude2Index=vertexCount+1;
