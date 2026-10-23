@@ -143,6 +143,19 @@ void Energy::objectEnteringInfluence( Object *obj )
 		addConsumption( -energy );
 	else if( energy > 0 )
 		addProduction( energy );
+#if !RETAIL_COMPATIBLE_CRC
+	else if (obj->isKindOf(KINDOF_POWERED))
+	{
+		if (hasSufficientPower())
+		{
+			obj->clearDisabled(DISABLED_UNDERPOWERED);
+		}
+		else if (!obj->isDisabledByType(DISABLED_UNDERPOWERED))
+		{
+			obj->setDisabled(DISABLED_UNDERPOWERED);
+		}
+	}
+#endif
 
 	// sanity
 	DEBUG_ASSERTCRASH( m_energyProduction >= 0 && m_energyConsumption >= 0,
@@ -169,6 +182,12 @@ void Energy::objectLeavingInfluence( Object *obj )
 		addConsumption( energy );
 	else if( energy > 0 )
 		addProduction( -energy );
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @info clearDisabled is only called here for correctness, ensuring the data
+	// is cleared if the object has already been destroyed, since Object's destructor doesn't do this.
+	else if (obj->isKindOf(KINDOF_POWERED))
+		obj->clearDisabled(DISABLED_UNDERPOWERED);
+#endif
 
 	// sanity
 	DEBUG_ASSERTCRASH( m_energyProduction >= 0 && m_energyConsumption >= 0,
