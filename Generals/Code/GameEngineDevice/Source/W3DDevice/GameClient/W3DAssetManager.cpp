@@ -1489,7 +1489,9 @@ void W3DAssetManager::Recolor_Vertices(unsigned int *color, int count, const Vec
 	for (i=0; i<count; i++)
 	{
 		rgba=DX8Wrapper::Convert_Color(color[i]);
-		Recolor(reinterpret_cast<Vector3&>(rgba),hsv_shift);
+		Vector3 rgb(rgba.X,rgba.Y,rgba.Z);
+		Recolor(rgb,hsv_shift);
+		rgba.Set(rgb.X,rgb.Y,rgb.Z,rgba.W);
 		color[i]=DX8Wrapper::Convert_Color_Clamp(rgba);
 	}
 }
