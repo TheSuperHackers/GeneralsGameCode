@@ -1706,6 +1706,9 @@ Bool Condition::ParseConditionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 		}
 	}
 	pCondition->m_numParms =file.readInt();
+	// TheSuperHackers @fix stephanmeesters 23/10/2026 Reject invalid parameter counts.
+	if (pCondition->m_numParms < 0 || pCondition->m_numParms > MAX_PARMS)
+		throw ERROR_CORRUPT_FILE_FORMAT;
 	Int i;
 	for (i=0; i<pCondition->m_numParms; i++)
 	{
@@ -1715,6 +1718,9 @@ Bool Condition::ParseConditionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 	if (file.getChunkVersion() < K_SCRIPT_CONDITION_VERSION_2) {
 		for (int j = 0; ParameterChangesVer2[j] != -1; ++j) {
 			if (pCondition->m_conditionType == ParameterChangesVer2[j]) {
+				// TheSuperHackers @fix stephanmeesters 23/10/2026 Expect exactly two parameters after parsing version 1 data.
+				if (pCondition->m_numParms != 2)
+					throw ERROR_CORRUPT_FILE_FORMAT;
 				pCondition->m_parms[pCondition->m_numParms] = newInstance(Parameter)(Parameter::SURFACES_ALLOWED, 3);
 				pCondition->m_numParms = 3;
 			}
@@ -2248,6 +2254,9 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 		}
     else
     {
+			// TheSuperHackers @fix stephanmeesters 23/10/2026 Reject invalid kindof indices.
+			if (pParm->m_int < 0 || pParm->m_int >= KINDOF_COUNT)
+				throw ERROR_CORRUPT_FILE_FORMAT;
 			// Seems weird, but this is so WB will load them into the proper format.
 			pParm->m_string = kindofNames[pParm->m_int];
 		}
@@ -2475,6 +2484,9 @@ ScriptAction *ScriptAction::ParseAction(DataChunkInput &file, DataChunkInfo *inf
 	at2->m_firstMapUsed = TheGlobalData->m_mapName;
 #endif
 	pScriptAction->m_numParms =file.readInt();
+	// TheSuperHackers @fix stephanmeesters 23/10/2026 Reject invalid parameter counts.
+	if (pScriptAction->m_numParms < 0 || pScriptAction->m_numParms > MAX_PARMS)
+		throw ERROR_CORRUPT_FILE_FORMAT;
 	Int i;
 	for (i=0; i<pScriptAction->m_numParms; i++)
 	{
