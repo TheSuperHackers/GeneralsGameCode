@@ -2565,6 +2565,17 @@ void W3DVolumetricShadow::buildSilhouette(Int meshIndex, Vector3 *lightPosObject
 
 }
 
+// Swaps two silhouette edges, each stored as a start and end index.
+static void swapEdges(Short *a, Short *b)
+{
+	Short start = a[0];
+	Short end = a[1];
+	a[0] = b[0];
+	a[1] = b[1];
+	b[0] = start;
+	b[1] = end;
+}
+
 // constructVolume ============================================================
 // Given a fresh new geometry class called "shadowVolume" to hold the actual
 // shadow volume data, this method will create the shadow volume polygons
@@ -2668,9 +2679,7 @@ void W3DVolumetricShadow::constructVolume( Vector3 *lightPosObject,Real shadowEx
 			if (silhouetteIndices[k]==currentEdgeEnd)
 			{
 				//swap the two edges
-				Int tempIndex=*(Int *)(&silhouetteIndices[i+2]);
-				*(Int *)&silhouetteIndices[i+2]=*(Int *)&silhouetteIndices[k];
-				*(Int *)&silhouetteIndices[k]=tempIndex;
+				swapEdges(&silhouetteIndices[i+2], &silhouetteIndices[k]);
 				break;
 			}
 
@@ -2902,9 +2911,7 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 				if (silhouetteIndices[k]==currentEdgeEnd)
 				{
 					//swap the two edges
-					Int tempIndex=*(Int *)(&silhouetteIndices[i+2]);
-					*(Int *)&silhouetteIndices[i+2]=*(Int *)&silhouetteIndices[k];
-					*(Int *)&silhouetteIndices[k]=tempIndex;
+					swapEdges(&silhouetteIndices[i+2], &silhouetteIndices[k]);
 					break;
 				}
 
