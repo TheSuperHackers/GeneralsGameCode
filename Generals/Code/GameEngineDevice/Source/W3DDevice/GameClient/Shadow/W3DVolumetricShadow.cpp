@@ -1826,6 +1826,13 @@ void W3DVolumetricShadow::updateVolumes(Real zoffset)
 	}
 }
 
+// Returns the X, Y and Z components of a matrix row.
+static Vector3 getRowXYZ(const Matrix4x4 &matrix, Int row)
+{
+	const Vector4 &r = matrix[row];
+	return Vector3(r.X, r.Y, r.Z);
+}
+
 /*floorZ is the assumed ground height below the model.  The code will try to extrude shadows just long enough to hit this point in order
 to reduce fill rate usage.*/
 void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const Matrix3D *meshXform, const AABoxClass &meshBox, float floorZ )
@@ -1859,12 +1866,12 @@ void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const 
 #else
 	//When dealing with infinite light sources, we can assume that the shadow doesn't
 	//change much based on object position.  Only the orientation to light matters.
-	Real cosAngle = fabs (Vector3::Dot_Product((Vector3 &)(prevXForm->operator [](0)),(Vector3 &)(objectToWorld.operator [](0))));
+	Real cosAngle = fabs (Vector3::Dot_Product(getRowXYZ(*prevXForm,0),getRowXYZ(objectToWorld,0)));
 	if (cosAngle >= cosAngleToCare)
-	{	cosAngle = fabs (Vector3::Dot_Product((Vector3 &)(prevXForm->operator [](1)),(Vector3 &)(objectToWorld.operator [](1))));
+	{	cosAngle = fabs (Vector3::Dot_Product(getRowXYZ(*prevXForm,1),getRowXYZ(objectToWorld,1)));
 		if (cosAngle >= cosAngleToCare)
 		{
-			cosAngle = fabs (Vector3::Dot_Product((Vector3 &)(prevXForm->operator [](2)),(Vector3 &)(objectToWorld.operator [](2))));
+			cosAngle = fabs (Vector3::Dot_Product(getRowXYZ(*prevXForm,2),getRowXYZ(objectToWorld,2)));
 			if (cosAngle < cosAngleToCare)
 				isMeshRotating=true;
 		}

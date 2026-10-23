@@ -1459,21 +1459,25 @@ void WaterRenderObjClass::renderMirror(CameraClass *cam)
 	Matrix4x4	FullMatrix(FullMatrix4.Transpose());	//swap rows/columns
 
 	//reflect camera right vector
-	Real axis_distance=Vector3::Dot_Product((Vector3&)FullMatrix[0],WaterNormal);
-	rRight = (Vector3&)FullMatrix[0] - (2.0f*axis_distance*WaterNormal);
+	Vector3 row(FullMatrix[0].X,FullMatrix[0].Y,FullMatrix[0].Z);
+	Real axis_distance=Vector3::Dot_Product(row,WaterNormal);
+	rRight = row - (2.0f*axis_distance*WaterNormal);
 
 	//reflect camera up vector
-	axis_distance=Vector3::Dot_Product((Vector3&)FullMatrix[1],WaterNormal);
-	rUp = (Vector3&)FullMatrix[1] - (2.0f*axis_distance*WaterNormal);
+	row.Set(FullMatrix[1].X,FullMatrix[1].Y,FullMatrix[1].Z);
+	axis_distance=Vector3::Dot_Product(row,WaterNormal);
+	rUp = row - (2.0f*axis_distance*WaterNormal);
 
 	//reflect camera n vector
-	axis_distance=Vector3::Dot_Product((Vector3&)FullMatrix[2],WaterNormal);
-	rN = (Vector3&)FullMatrix[2] - (2.0f*axis_distance*WaterNormal);
+	row.Set(FullMatrix[2].X,FullMatrix[2].Y,FullMatrix[2].Z);
+	axis_distance=Vector3::Dot_Product(row,WaterNormal);
+	rN = row - (2.0f*axis_distance*WaterNormal);
 
 	//reflect camera position
-	axis_distance=Vector3::Dot_Product((Vector3&)FullMatrix[3],WaterNormal);	//distance cam to origin
+	row.Set(FullMatrix[3].X,FullMatrix[3].Y,FullMatrix[3].Z);
+	axis_distance=Vector3::Dot_Product(row,WaterNormal);	//distance cam to origin
 	axis_distance -= WaterPlane.W;	// subtract mirror plane distance to get distance camera to plane
-	rPos = (Vector3&)FullMatrix[3] - (2.0f*axis_distance*WaterNormal);
+	rPos = row - (2.0f*axis_distance*WaterNormal);
 
 	//generate a new camera matrix from reflected vectors
 	Matrix3D reflectedTransform(rRight,rUp,rN,rPos);
@@ -1590,21 +1594,25 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 				Matrix4x4	FullMatrix(FullMatrix4.Transpose());	//swap rows/columns
 
 				//reflect camera right vector
-				Real axis_distance=Vector3::Dot_Product((Vector3&)FullMatrix[0],WaterNormal);
-				rRight = (Vector3&)FullMatrix[0] - (2.0f*axis_distance*WaterNormal);
+				Vector3 row(FullMatrix[0].X,FullMatrix[0].Y,FullMatrix[0].Z);
+				Real axis_distance=Vector3::Dot_Product(row,WaterNormal);
+				rRight = row - (2.0f*axis_distance*WaterNormal);
 
 				//reflect camera up vector
-				axis_distance=Vector3::Dot_Product((Vector3&)FullMatrix[1],WaterNormal);
-				rUp = (Vector3&)FullMatrix[1] - (2.0f*axis_distance*WaterNormal);
+				row.Set(FullMatrix[1].X,FullMatrix[1].Y,FullMatrix[1].Z);
+				axis_distance=Vector3::Dot_Product(row,WaterNormal);
+				rUp = row - (2.0f*axis_distance*WaterNormal);
 
 				//reflect camera n vector
-				axis_distance=Vector3::Dot_Product((Vector3&)FullMatrix[2],WaterNormal);
-				rN = (Vector3&)FullMatrix[2] - (2.0f*axis_distance*WaterNormal);
+				row.Set(FullMatrix[2].X,FullMatrix[2].Y,FullMatrix[2].Z);
+				axis_distance=Vector3::Dot_Product(row,WaterNormal);
+				rN = row - (2.0f*axis_distance*WaterNormal);
 
 				//reflect camera position
-				axis_distance=Vector3::Dot_Product((Vector3&)FullMatrix[3],WaterNormal);	//distance cam to origin
+				row.Set(FullMatrix[3].X,FullMatrix[3].Y,FullMatrix[3].Z);
+				axis_distance=Vector3::Dot_Product(row,WaterNormal);	//distance cam to origin
 				axis_distance -= WaterPlane.W;	// subtract mirror plane distance to get distance camera to plane
-				rPos = (Vector3&)FullMatrix[3] - (2.0f*axis_distance*WaterNormal);
+				rPos = row - (2.0f*axis_distance*WaterNormal);
 
 				//generate a new camera matrix from reflected vectors
 				Matrix3D reflectedTransform(rRight,rUp,rN,rPos);
