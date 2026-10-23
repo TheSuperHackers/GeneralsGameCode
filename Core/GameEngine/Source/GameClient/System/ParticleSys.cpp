@@ -799,6 +799,11 @@ void Particle::xfer( Xfer *xfer )
 	ParticleSystemID systemUnderControlID = m_systemUnderControl ? m_systemUnderControl->getSystemID() : INVALID_PARTICLE_SYSTEM_ID;
 	xfer->xferUser( &systemUnderControlID, sizeof( ParticleSystemID ) );
 
+	if (xfer->getXferMode() == XFER_LOAD)
+	{
+		m_systemUnderControl = nullptr;
+		m_xferSystemUnderControlID = systemUnderControlID;
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -810,20 +815,15 @@ void Particle::loadPostProcess()
 	// call base class post process
 	ParticleInfo::loadPostProcess();
 
-	// tidy up the m_systemUnderControl pointer
-	if( m_systemUnderControlID != INVALID_PARTICLE_SYSTEM_ID )
+	// use the ID to set the m_systemUnderControl pointer
+	if( m_xferSystemUnderControlID != INVALID_PARTICLE_SYSTEM_ID )
 	{
-		ParticleSystem *system;
-
 		// find system
-		system = TheParticleSystemManager->findParticleSystem( m_systemUnderControlID );
-
-		// set us as the control particle for this system
-		system->setControlParticle( this );
-		controlParticleSystem( system );
+		ParticleSystem *system = TheParticleSystemManager->findParticleSystem( m_xferSystemUnderControlID );
+		m_xferSystemUnderControlID = INVALID_PARTICLE_SYSTEM_ID;
 
 		// sanity
-		if( m_systemUnderControlID == INVALID_PARTICLE_SYSTEM_ID )
+		if( system == nullptr )
 		{
 
 			DEBUG_CRASH(( "Particle::loadPostProcess - Unable to find system under control pointer" ));
@@ -831,6 +831,9 @@ void Particle::loadPostProcess()
 
 		}
 
+		// set us as the control particle for this system
+		system->setControlParticle( this );
+		m_systemUnderControl = system;
 	}
 
 }
