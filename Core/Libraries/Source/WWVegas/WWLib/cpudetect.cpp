@@ -186,12 +186,13 @@ void CPUDetectClass::Init_Processor_Manufacturer()
 {
 	VendorID[0] = 0;
 	unsigned max_cpuid;
-	CPUID(
-		max_cpuid,
-		(unsigned&)VendorID[0],
-		(unsigned&)VendorID[8],
-		(unsigned&)VendorID[4],
-		0);
+	unsigned ebx, ecx, edx;
+	if (CPUID(max_cpuid, ebx, ecx, edx, 0)) {
+		// The vendor string is stored in EBX, EDX, ECX order
+		memcpy(&VendorID[0], &ebx, sizeof(ebx));
+		memcpy(&VendorID[4], &edx, sizeof(edx));
+		memcpy(&VendorID[8], &ecx, sizeof(ecx));
+	}
 
 	ProcessorManufacturer = MANUFACTURER_UNKNOWN;
 
@@ -733,6 +734,15 @@ void CPUDetectClass::Init_Processor_Family()
 	}
 }
 
+// Copies the EAX, EBX, ECX and EDX values of a CPUID call into a 16 character buffer.
+static void Copy_CPUID_String(char *dest, unsigned cpuid_type)
+{
+	unsigned regs[4];
+	if (CPUDetectClass::CPUID(regs[0], regs[1], regs[2], regs[3], cpuid_type)) {
+		memcpy(dest, regs, sizeof(regs));
+	}
+}
+
 void CPUDetectClass::Init_Processor_String()
 {
 	if (!Has_CPUID_Instruction()) {
@@ -745,24 +755,9 @@ void CPUDetectClass::Init_Processor_String()
 //	}
 	// If extended cpuid level's highest bit is set, we'll get the cpu string from 2/3/4
 	if (ext_id.Eax&0x80000000) {
-		CPUDetectClass::CPUID(
-			(unsigned&)ProcessorString[0],
-			(unsigned&)ProcessorString[4],
-			(unsigned&)ProcessorString[8],
-			(unsigned&)ProcessorString[12],
-			0x80000002);
-		CPUDetectClass::CPUID(
-			(unsigned&)ProcessorString[16],
-			(unsigned&)ProcessorString[20],
-			(unsigned&)ProcessorString[24],
-			(unsigned&)ProcessorString[28],
-			0x80000003);
-		CPUDetectClass::CPUID(
-			(unsigned&)ProcessorString[32],
-			(unsigned&)ProcessorString[36],
-			(unsigned&)ProcessorString[40],
-			(unsigned&)ProcessorString[44],
-			0x80000004);
+		Copy_CPUID_String(&ProcessorString[0], 0x80000002);
+		Copy_CPUID_String(&ProcessorString[16], 0x80000003);
+		Copy_CPUID_String(&ProcessorString[32], 0x80000004);
 	}
 	// If no extended cpuid available (Intel processors prior to P4), compose the string
 	else {
