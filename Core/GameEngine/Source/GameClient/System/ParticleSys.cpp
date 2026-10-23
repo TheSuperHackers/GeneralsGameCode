@@ -377,6 +377,9 @@ Particle::Particle( ParticleSystem *system, const ParticleInfo *info )
 	m_inSystemList = m_inOverallList = FALSE;
 	m_systemPrev = m_systemNext = m_overallPrev = m_overallNext = nullptr;
 
+	m_systemUnderControl = nullptr;
+	m_xferSystemUnderControlID = INVALID_PARTICLE_SYSTEM_ID;
+
 	// add this particle to the global list, retaining particle creation order
 	TheParticleSystemManager->addParticle(this, system->getPriority() );
 
@@ -796,13 +799,20 @@ void Particle::xfer( Xfer *xfer )
 	xfer->xferDrawableID( &drawableID );	//saving for backwards compatibility when we supported drawables.
 
 	// system under control as an id
-	ParticleSystemID systemUnderControlID = m_systemUnderControl ? m_systemUnderControl->getSystemID() : INVALID_PARTICLE_SYSTEM_ID;
-	xfer->xferUser( &systemUnderControlID, sizeof( ParticleSystemID ) );
-
+	ParticleSystemID systemUnderControlID = INVALID_PARTICLE_SYSTEM_ID;
 	if (xfer->getXferMode() == XFER_LOAD)
 	{
+		xfer->xferUser(&systemUnderControlID, sizeof(systemUnderControlID));
+
 		m_systemUnderControl = nullptr;
 		m_xferSystemUnderControlID = systemUnderControlID;
+	}
+	else
+	{
+		if (m_systemUnderControl && !m_systemUnderControl->isDestroyed() && m_systemUnderControl->isSaveable())
+			systemUnderControlID = m_systemUnderControl->getSystemID();
+
+		xfer->xferUser(&systemUnderControlID, sizeof(systemUnderControlID));
 	}
 }
 
