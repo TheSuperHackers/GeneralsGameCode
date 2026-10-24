@@ -2018,6 +2018,9 @@ void Weapon::reloadWithBonus(const Object *sourceObj, const WeaponBonus& bonus, 
 			Weapon *weapon = sourceObj->getWeaponInWeaponSlot((WeaponSlotType)wt);
 			if (weapon)
 			{
+#if !RETAIL_COMPATIBLE_CRC
+				weapon->setLastReloadStartedFrame(m_whenLastReloadStarted);
+#endif
 				weapon->setPossibleNextShotFrame(m_whenWeCanFireAgain);
 				//CRCDEBUG_LOG(("Just set m_whenWeCanFireAgain to %d in Weapon::reloadWithBonus 2", m_whenWeCanFireAgain));
 				weapon->setStatus(RELOADING_CLIP);
@@ -2071,7 +2074,11 @@ void Weapon::onWeaponBonusChange(const Object *source)
 
 	if( needUpdate )
 	{
+		// TheSuperHackers @bugfix Mauller 16/10/2026 Don't reset the reload, only adjust the ready frame.
+		// Resetting the last reload to the current frame extends the reload when the bonus is applied.
+#if RETAIL_COMPATIBLE_CRC
 		m_whenLastReloadStarted = TheGameLogic->getFrame();
+#endif
 		m_whenWeCanFireAgain = m_whenLastReloadStarted + newDelay;
 
 		if (source->isReloadTimeShared())
@@ -2081,8 +2088,16 @@ void Weapon::onWeaponBonusChange(const Object *source)
 				Weapon *weapon = source->getWeaponInWeaponSlot((WeaponSlotType)wt);
 				if (weapon)
 				{
+#if RETAIL_COMPATIBLE_CRC
 					weapon->setPossibleNextShotFrame(m_whenWeCanFireAgain);
 					weapon->setStatus(RELOADING_CLIP);
+#else
+					// TheSuperHackers @info Keep all reload info synchronized between linked timer weapons.
+					// And do not alter the weapons status from the current status, this can cause rapid firing when toggling bonuses.
+					weapon->setLastReloadStartedFrame(m_whenLastReloadStarted);
+					weapon->setPossibleNextShotFrame(m_whenWeCanFireAgain);
+					weapon->setStatus(m_status);
+#endif
 				}
 			}
 		}
@@ -2777,6 +2792,9 @@ Bool Weapon::privateFireWeapon(
 					Weapon *weapon = sourceObj->getWeaponInWeaponSlot((WeaponSlotType)wt);
 					if (weapon)
 					{
+#if !RETAIL_COMPATIBLE_CRC
+						weapon->setLastReloadStartedFrame(m_whenLastReloadStarted);
+#endif
 						weapon->setPossibleNextShotFrame(m_whenWeCanFireAgain);
 						//CRCDEBUG_LOG(("Just set m_whenWeCanFireAgain to %d in Weapon::privateFireWeapon 3", m_whenWeCanFireAgain));
 						weapon->setStatus(BETWEEN_FIRING_SHOTS);
