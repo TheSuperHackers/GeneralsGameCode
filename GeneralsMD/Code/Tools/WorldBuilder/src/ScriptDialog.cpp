@@ -154,6 +154,7 @@ ScriptDialog::ScriptDialog(CWnd* pParent /*=nullptr*/)
 	: CDialog(ScriptDialog::IDD, pParent)
 {
 	m_draggingTreeView = false;
+	m_numReadPlayerNames = 0;
 	m_autoUpdateWarnings = true;
 	//{{AFX_DATA_INIT(ScriptDialog)
 		// NOTE: the ClassWizard will add member initialization here
@@ -1257,6 +1258,7 @@ void ScriptDialog::scanForWaypointsAndTeams(Script *pScript, Bool doUnits, Bool 
 }
 
 #define K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_1 1
+// Added in Zero Hour
 #define K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_2 2
 
 /** Write out selected scripts, and possibly waypoints, trigger areas & teams. */
@@ -1371,8 +1373,16 @@ void ScriptDialog::OnSave()
 		ScriptList::WriteScriptsDataChunk(chunkWriter, scripts, numScriptLists);
 
 		/***************Players DATA ***************/
-		chunkWriter.openDataChunk("ScriptsPlayers", 	K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_2);
-		chunkWriter.writeInt(doSides);
+#if RTS_GENERALS && RETAIL_COMPATIBLE_DATA
+		const DataChunkVersionType playersVersion = K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_1;
+		doSides = false;
+#else
+		const DataChunkVersionType playersVersion = K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_2;
+#endif
+		chunkWriter.openDataChunk("ScriptsPlayers", playersVersion);
+		if (playersVersion >= K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_2) {
+			chunkWriter.writeInt(doSides);
+		}
 		if (doAllScripts || doSides) {
 			chunkWriter.writeInt(m_sides.getNumSides());
 			for (i=0; i<m_sides.getNumSides(); i++) {
@@ -1535,14 +1545,44 @@ void ScriptDialog::OnLoad()
 		m_firstTrigger = nullptr;
 		m_waypointBase = pDoc->getNextWaypointID();
 		m_maxWaypoint = m_waypointBase;
+		m_numReadPlayerNames = 0;
 		file.registerParser( "PlayerScriptsList", AsciiString::TheEmptyString, ScriptList::ParseScriptsDataChunk );
 		file.registerParser( "ObjectsList", AsciiString::TheEmptyString, ParseObjectsDataChunk );
 		file.registerParser( "PolygonTriggers", AsciiString::TheEmptyString, ParsePolygonTriggersDataChunk );
 		file.registerParser( "WaypointsList", AsciiString::TheEmptyString, ParseWaypointDataChunk );
 		file.registerParser( "ScriptTeams", AsciiString::TheEmptyString, ParseTeamsDataChunk );
 		file.registerParser( "ScriptsPlayers", AsciiString::TheEmptyString, ParsePlayersDataChunk );
-		if (!file.parse(this)) {
-			throw(ERROR_CORRUPT_FILE_FORMAT);
+		SidesList sidesBeforeImport;
+		sidesBeforeImport = m_sides;
+		ScriptList *scripts[MAX_PLAYER_COUNT];
+		Int count = 0;
+		Int waypointLinksBeforeImport = pDoc->getNumWaypointLinks();
+		try {
+			if (!file.parse(this)) {
+				throw(ERROR_CORRUPT_FILE_FORMAT);
+			}
+			count = ScriptList::getReadScripts(scripts);
+			if (count > 1 && m_numReadPlayerNames < count) {
+				throw(ERROR_CORRUPT_FILE_FORMAT);
+			}
+		} catch(...) {
+			if (count == 0) {
+				count = ScriptList::getReadScripts(scripts);
+			}
+			for (Int i = 0; i < count; i++) {
+				deleteInstance(scripts[i]);
+			}
+			while (pDoc->getNumWaypointLinks() > waypointLinksBeforeImport) {
+				Int waypoint1, waypoint2;
+				pDoc->getWaypointLink(pDoc->getNumWaypointLinks() - 1, &waypoint1, &waypoint2);
+				pDoc->removeWaypointLink(waypoint1, waypoint2);
+			}
+			deleteInstance(m_firstReadObject);
+			m_firstReadObject = nullptr;
+			deleteInstance(m_firstTrigger);
+			m_firstTrigger = nullptr;
+			m_sides = sidesBeforeImport;
+			throw;
 		}
 		pDoc->setNextWaypointID(m_maxWaypoint);
 
@@ -1551,6 +1591,10 @@ void ScriptDialog::OnLoad()
 		pDoc->AddAndDoUndoable(pUndo);
 		REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 		m_sides = *TheSidesList;
+
+		for (Int sideIndex = sidesBeforeImport.getNumSides(); sideIndex < m_sides.getNumSides(); sideIndex++) {
+			addPlayer(sideIndex);
+		}
 
 		if (m_firstReadObject) {
 			AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, m_firstReadObject);
@@ -1566,8 +1610,6 @@ void ScriptDialog::OnLoad()
 			PolygonTrigger::addPolygonTrigger(pTrig);
 		}
 
-		ScriptList *scripts[MAX_PLAYER_COUNT];
-		Int count = ScriptList::getReadScripts(scripts);
 		Int i;
 		for (i=0; i<count; i++) {
 			if (scripts[i]->getScript() == nullptr && scripts[i]->getScriptGroup()==nullptr) continue;
@@ -1577,9 +1619,8 @@ void ScriptDialog::OnLoad()
 			} else {
 				Int j;
 				for (j=0; j<m_sides.getNumSides(); j++) {
-					// Using i as an index assumes that i < m_sides.getNumSides.  Is that safe???
- 					AsciiString name = m_sides.getSideInfo(i)->getDict()->getAsciiString(TheKey_playerName);
-					if (name == m_readPlayerNames[j]) {
+					AsciiString name = m_sides.getSideInfo(j)->getDict()->getAsciiString(TheKey_playerName);
+					if (name == m_readPlayerNames[i]) {
 						curSide = j;
 						break;
 					}
@@ -1639,7 +1680,7 @@ void ScriptDialog::OnLoad()
 
 
 	} catch(...) {
-   	  	DEBUG_CRASH(("threw exception in ScriptDialog::OnLoad"));
+		::AfxMessageBox("Unable to import scripts. The file contains invalid data or exceeds the player limit.", MB_OK);
 	}
 }
 
@@ -1817,12 +1858,19 @@ Bool ScriptDialog::ParsePlayersDataChunk(DataChunkInput &file, DataChunkInfo *in
 		readDicts = file.readInt();
 	}
 	Int numNames = file.readInt();
+	if (numNames < 0 || numNames > MAX_PLAYER_COUNT) {
+		return false;
+	}
 	Int i;
 	for (i=0; i<numNames; i++) {
-		if (i>=MAX_PLAYER_COUNT) break;
 		pThis->m_readPlayerNames[i] = file.readAsciiString();
 		if (readDicts) {
 			Dict sideDict = file.readDict();
+			Bool hasPlayerName;
+			AsciiString playerName = sideDict.getAsciiString(TheKey_playerName, &hasPlayerName);
+			if (!hasPlayerName || playerName != pThis->m_readPlayerNames[i]) {
+				return false;
+			}
 			bool nameFound = false;
 			for (Int j=0; j < pThis->m_sides.getNumSides(); j++) {
 				AsciiString name = pThis->m_sides.getSideInfo(j)->getDict()->getAsciiString(TheKey_playerName);
@@ -1834,17 +1882,22 @@ Bool ScriptDialog::ParsePlayersDataChunk(DataChunkInput &file, DataChunkInfo *in
 				}
 			}
 			if (nameFound == false) {
+				if (pThis->m_sides.getNumSides() >= MAX_PLAYER_COUNT) {
+					return false;
+				}
 				// This side doesn't currently exist, so add it.
 				pThis->m_sides.addSide(&sideDict);
+				SidesInfo* sides = pThis->m_sides.findSideInfo(playerName);
+				if (sides == nullptr) {
+					return false;
+				}
 				ScriptList* pList = newInstance(ScriptList);
-				SidesInfo* sides = pThis->m_sides.findSideInfo(pThis->m_readPlayerNames[i]);
 				// A script list must be created.
 				sides->setScriptList(pList);
-				// Update the dialog.
-				pThis->addPlayer(i);
 			}
 		}
 	}
+	pThis->m_numReadPlayerNames = numNames;
 	DEBUG_ASSERTCRASH(file.atEndOfChunk(), ("Unexpected data left over."));
 	return true;
 }
