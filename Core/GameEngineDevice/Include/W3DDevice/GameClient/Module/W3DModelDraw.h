@@ -507,6 +507,11 @@ private:
 	Bool													m_hideHeadlights;
 	Bool													m_pauseAnimation;
 	Int														m_animationMode;
+	Real													m_prevTurretAngle[MAX_TURRETS];
+	Real													m_currTurretAngle[MAX_TURRETS];
+	Real													m_prevTurretPitch[MAX_TURRETS];
+	Real													m_currTurretPitch[MAX_TURRETS];
+	UnsignedInt												m_lastTurretSampledFrame;
 
 	void adjustAnimation(const ModelConditionInfo* prevState, Real prevAnimFraction);
 	Real getCurrentAnimFraction() const;
