@@ -148,3 +148,4 @@ Bool parseMapPreviewChunk(DataChunkInput &file, DataChunkInfo *info, void *userD
 void findDrawPositions( Int startX, Int startY, Int width, Int height, Region3D extent,
 															 ICoord2D *ul, ICoord2D *lr );
 Bool WouldMapTransfer( const AsciiString& mapName );
+Bool CanTransferMap(const AsciiString &mapName);
