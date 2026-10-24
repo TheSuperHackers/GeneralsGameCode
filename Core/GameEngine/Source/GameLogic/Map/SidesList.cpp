@@ -50,7 +50,9 @@
 #include "Common/PlayerTemplate.h"
 #include "Common/WellKnownKeys.h"
 #include "Common/Xfer.h"
+#include "Common/MapReaderWriterInfo.h"
 #include "GameLogic/AI.h"
+#include "GameLogic/PolygonTrigger.h"
 #include "GameLogic/Scripts.h"
 #include "GameLogic/SidesList.h"
 
@@ -478,6 +480,11 @@ static Bool ParseTeamsDataChunk(DataChunkInput &file, DataChunkInfo *info, void 
 
 void SidesList::prepareForMP_or_Skirmish()
 {
+	// TheSuperHackers @bugfix arcticdolphin 12/10/2026 Generals maps lack the general skirmish sides.
+#if !RETAIL_COMPATIBLE_CRC
+	addMissingSkirmishSides();
+#endif
+
 	m_skirmishTeamrec.clear();
 	Int i;
 	for (i = 0; i < getNumTeams(); i++)
@@ -723,6 +730,136 @@ void SidesList::addPlayerByTemplate(AsciiString playerTemplateName)
 	d.setAsciiString(TheKey_teamOwner, playerName);
 	d.setBool(TheKey_teamIsSingleton, true);
 	addTeam(&d);
+}
+
+static Bool isSkirmishFaction(const PlayerTemplate *pt)
+{
+	return pt != nullptr && pt->isPlayableSide() && pt->getSide() != "Boss";
+}
+
+Bool SidesList::isGeneralsSkirmishSideSet(const std::vector<AsciiString>& factions)
+{
+	Bool hasOldFaction = false;
+	Int i;
+	for (i = 0; i < ThePlayerTemplateStore->getPlayerTemplateCount(); i++)
+	{
+		const PlayerTemplate *pt = ThePlayerTemplateStore->getNthPlayerTemplate(i);
+		if (!isSkirmishFaction(pt))
+			continue;
+
+		Bool found = false;
+		std::vector<AsciiString>::const_iterator it;
+		for (it = factions.begin(); it != factions.end(); ++it)
+		{
+			if (*it == pt->getName())
+			{
+				found = true;
+				break;
+			}
+		}
+
+		if (pt->isOldFaction())
+		{
+			if (!found)
+				return false;
+			hasOldFaction = true;
+		}
+		else if (found)
+		{
+			return false;
+		}
+	}
+	return hasOldFaction;
+}
+
+static Bool contains(const std::vector<AsciiString>& names, const AsciiString& name)
+{
+	std::vector<AsciiString>::const_iterator it;
+	for (it = names.begin(); it != names.end(); ++it)
+	{
+		if (*it == name)
+			return true;
+	}
+	return false;
+}
+
+// Names match WorldBuilder so the skirmish scripts bind.
+static AsciiString skirmishSideName(const PlayerTemplate *pt)
+{
+	AsciiString templateName = pt->getName();
+	AsciiString playerName("Skirmish");
+	playerName.concat(templateName.startsWith("Faction") ? templateName.str() + 7 : templateName.str());
+	return playerName;
+}
+
+Bool SidesList::canAddGeneralSides(const std::vector<AsciiString>& factions, const std::vector<AsciiString>& sideNames)
+{
+	if (!isGeneralsSkirmishSideSet(factions))
+		return false;
+
+	// All or nothing, a partly repaired map would still leave generals without an AI.
+	Int missing = 0;
+	Int i;
+	for (i = 0; i < ThePlayerTemplateStore->getPlayerTemplateCount(); i++)
+	{
+		const PlayerTemplate *pt = ThePlayerTemplateStore->getNthPlayerTemplate(i);
+		if (!isSkirmishFaction(pt) || pt->isOldFaction())
+			continue;
+
+		missing++;
+		if (contains(sideNames, skirmishSideName(pt)))
+			return false;
+	}
+	return (Int)sideNames.size() + missing <= MAX_PLAYER_COUNT;
+}
+
+void SidesList::addMissingSkirmishSides()
+{
+	// Only maps saved by the Generals WorldBuilder.
+	if (PolygonTrigger::getParsedVersion() >= K_TRIGGERS_VERSION_4)
+		return;
+
+	std::vector<AsciiString> factions;
+	std::vector<AsciiString> sideNames;
+	Int i;
+	for (i = 0; i < m_numSides; i++)
+	{
+		factions.push_back(m_sides[i].getDict()->getAsciiString(TheKey_playerFaction));
+		sideNames.push_back(m_sides[i].getDict()->getAsciiString(TheKey_playerName));
+	}
+
+	// Maps that script their own skirmish AI keep their side list as is.
+	for (i = 0; i < m_numSides; i++)
+	{
+		if (factions[i] == "FactionCivilian" || m_sides[i].getScriptList() == nullptr)
+			continue;
+		if (m_sides[i].getScriptList()->getScript() != nullptr || m_sides[i].getScriptList()->getScriptGroup() != nullptr)
+			return;
+	}
+
+	if (!canAddGeneralSides(factions, sideNames))
+		return;
+
+	for (i = 0; i < ThePlayerTemplateStore->getPlayerTemplateCount(); i++)
+	{
+		const PlayerTemplate *pt = ThePlayerTemplateStore->getNthPlayerTemplate(i);
+		if (!isSkirmishFaction(pt) || pt->isOldFaction())
+			continue;
+
+		AsciiString playerName = skirmishSideName(pt);
+		UnicodeString playerDisplayName;
+		playerDisplayName.translate(playerName);
+
+		Dict d;
+		d.setAsciiString(TheKey_playerName, playerName);
+		d.setBool(TheKey_playerIsHuman, false);
+		d.setUnicodeString(TheKey_playerDisplayName, playerDisplayName);
+		d.setAsciiString(TheKey_playerFaction, pt->getName());
+		d.setAsciiString(TheKey_playerAllies, AsciiString::TheEmptyString);
+		d.setAsciiString(TheKey_playerEnemies, AsciiString::TheEmptyString);
+		addSide(&d);
+		DEBUG_LOG(("SidesList::addMissingSkirmishSides - added %s", playerName.str()));
+	}
 }
 
 Bool SidesList::validateSides()
