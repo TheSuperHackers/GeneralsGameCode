@@ -35,7 +35,9 @@
 #include "Common/OptionPreferences.h"
 #include "Common/version.h"
 #include "GameNetwork/IPEnumeration.h"
+#include "GameNetwork/networkutil.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"
+#include "GameNetwork/GameSpy/MainMenuUtils.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"
 #include "GameNetwork/GameSpy/PeerThread.h"
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
@@ -1205,6 +1207,18 @@ void PeerThreadClass::Thread_Function()
 
 	peer = peerInitialize( &callbacks );
 	DEBUG_ASSERTCRASH( peer != nullptr, ("null peer!") );
+	if (peer == nullptr)
+	{
+		// The assert above is a no-op in release, where the null goes on to fault in
+		// peerSetRoomWatchKeys(). startThread() reuses this object, so the flags have
+		// to be cleared or they leak into the next attempt.
+		markAsDisconnected();
+		PeerResponse resp;
+		resp.peerResponseType = PeerResponse::PEERRESPONSE_DISCONNECT;
+		resp.discon.reason = DISCONNECT_COULDNOTCONNECT;
+		TheGameSpyPeerMessageQueue->addResponse(resp);
+		return;
+	}
 	m_isConnected = m_isConnecting = false;
 
 	qr2_register_key(EXECRC_KEY, EXECRC_STR);
@@ -1355,6 +1369,15 @@ void PeerThreadClass::Thread_Function()
 			break;
 		}
 		IPlist = IPlist->getNext();
+	}
+
+	// TheSuperHackers @bugfix Connect from any local address to a chat server on loopback. On Windows,
+	// connect() from a socket bound to a non-loopback address to a loopback address fails.
+	const UnsignedInt chatServerIP = ResolveIP(GetGameSpyServer());
+	if ((chatServerIP >> 24) == 127 && (preferredIP >> 24) != 127)
+	{
+		DEBUG_LOG(("GameSpy chat server %s is on loopback, connecting from any local address", GetGameSpyServer()));
+		preferredIP = INADDR_ANY;
 	}
 	chatSetLocalIP(preferredIP);
 
@@ -2295,8 +2318,9 @@ void PeerThreadClass::connectCallback( PEER peer, PEERBool success )
 	resp.peerResponseType = PeerResponse::PEERRESPONSE_LOGIN;
 	resp.player.profileID = m_profileID;
 	resp.nick = m_loginName;
-	GetLocalChatConnectionAddress("peerchat.gamespy.com", 6667, localIP);
-	chatSetLocalIP(localIP);
+	GetLocalChatConnectionAddress(GetGameSpyServer(), GetGameSpyChatPort(), localIP);
+	// TheSuperHackers @fix chatSetLocalIP() takes host byte order.
+	chatSetLocalIP(ntohl(localIP));
 	resp.player.internalIP = ntohl(localIP);
 	resp.player.externalIP = ntohl(peerGetLocalIP(peer));
 	TheGameSpyPeerMessageQueue->addResponse(resp);
