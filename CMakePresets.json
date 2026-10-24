@@ -7,7 +7,7 @@
     },
     "configurePresets": [
         {
-            "name": "vc6",
+            "name": "windows-x86-vc6",
             "displayName": "Windows 32bit VC6 Release",
             "generator": "Ninja",
             "hidden": false,
@@ -26,37 +26,37 @@
             }
         },
         {
-            "name": "vc6-profile",
+            "name": "windows-x86-vc6-profile",
             "displayName": "Windows 32bit VC6 Profile",
             "hidden": false,
-            "inherits": "vc6",
+            "inherits": "windows-x86-vc6",
             "cacheVariables": {
                 "RTS_BUILD_OPTION_PROFILE": "ON"
             }
         },
         {
-            "name": "vc6-debug",
+            "name": "windows-x86-vc6-debug",
             "displayName": "Windows 32bit VC6 Debug",
             "hidden": false,
-            "inherits": "vc6",
+            "inherits": "windows-x86-vc6",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "RTS_BUILD_OPTION_DEBUG": "ON"
             }
         },
         {
-            "name": "vc6-releaselog",
+            "name": "windows-x86-vc6-releaselog",
             "displayName": "Windows 32bit VC6 Release Logging",
-            "inherits": "vc6",
+            "inherits": "windows-x86-vc6",
             "cacheVariables": {
                 "RTS_DEBUG_LOGGING": "ON",
                 "RTS_DEBUG_CRASHING": "ON"
             }
         },
         {
-            "name": "vc6-weekly",
+            "name": "windows-x86-vc6-weekly",
             "displayName": "Windows 32bit VC6 Weekly Release",
-            "inherits": "vc6",
+            "inherits": "windows-x86-vc6",
             "cacheVariables": {
                 "RTS_BUILD_OPTION_VC6_FULL_DEBUG": "ON"
             }
@@ -74,23 +74,10 @@
             }
         },
         {
-            "name": "default-vcpkg",
-            "displayName": "Default Config for vcpkg (don't use directly!)",
-            "generator": "Ninja Multi-Config",
-            "hidden": true,
-            "binaryDir": "${sourceDir}/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "CMAKE_MSVC_DEBUG_INFORMATION_FORMAT": "$<$<CONFIG:Release,Debug,RelWithDebInfo>:Embedded>",
-                "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-            }
-        },
-        {
-            "name": "win32",
+            "name": "windows-x86-msvc19",
             "inherits": "default",
             "hidden": false,
-            "displayName": "Windows 32bit Release",
+            "displayName": "Windows 32bit MSVC19 Release",
             "architecture": {
                 "value": "Win32",
                 "strategy": "external"
@@ -105,64 +92,43 @@
             }
         },
         {
-            "name": "win32-profile",
-            "inherits": "win32",
-            "displayName": "Windows 32bit Profile",
+            "name": "windows-x86-msvc19-profile",
+            "inherits": "windows-x86-msvc19",
+            "displayName": "Windows 32bit MSVC19 Profile",
             "cacheVariables": {
                 "RTS_BUILD_OPTION_PROFILE": "ON",
                 "RTS_BUILD_OPTION_PROFILE_TRACY": "ON"
             }
         },
         {
-            "name": "win32-debug",
-            "inherits": "win32",
-            "displayName": "Windows 32bit Debug",
+            "name": "windows-x86-msvc19-debug",
+            "inherits": "windows-x86-msvc19",
+            "displayName": "Windows 32bit MSVC19 Debug",
             "cacheVariables": {
                 "RTS_BUILD_OPTION_DEBUG": "ON"
             }
         },
         {
-            "name": "win32-vcpkg",
-            "inherits": "default-vcpkg",
-            "hidden": false,
-            "displayName": "Windows 32bit VCPKG Release",
-            "architecture": {
-                "value": "Win32",
-                "strategy": "external"
-            },
+            "name": "windows-x86-msvc19-nonretail",
+            "inherits": "windows-x86-msvc19",
+            "displayName": "Windows 32bit MSVC19 Non-Retail Release",
             "cacheVariables": {
-                "RTS_FLAGS": "/W3"
-            },
-            "vendor": {
-                "jetbrains.com/clion": {
-                    "toolchain": "Visual Studio"
-                }
+                "RTS_BUILD_OPTION_RETAIL_COMPATIBLE_GAME": "OFF",
+                "RTS_BUILD_OPTION_PRESERVE_RETAIL_BEHAVIOR": "OFF",
+                "RTS_FLAGS": "/W3;/DENABLE_GAMETEXT_SUBSTITUTES=0;/DENABLE_CONFIGURABLE_SHROUD=0;/DENABLE_FILESYSTEM_EXISTENCE_CACHE=0;/DPRIORITIZE_TEXTURES_BY_SIZE=0;/DENABLE_GUI_HACKS=0"
             }
         },
         {
-            "name": "win32-vcpkg-profile",
-            "inherits": "win32-vcpkg",
-            "displayName": "Windows 32bit VCPKG Profile",
+            "name": "windows-x86-msvc19-weekly",
+            "inherits": "windows-x86-msvc19",
+            "displayName": "Windows 32bit MSVC19 Weekly Release",
             "cacheVariables": {
-                "RTS_BUILD_OPTION_PROFILE": "ON"
+                "RTS_BUILD_OPTION_RETAIL_COMPATIBLE_GAME": "OFF",
+                "RTS_BUILD_OPTION_PRESERVE_RETAIL_BEHAVIOR": "OFF"
             }
         },
         {
-            "name": "win32-vcpkg-debug",
-            "inherits": "win32-vcpkg",
-            "displayName": "Windows 32bit VCPKG Debug",
-            "cacheVariables": {
-                "RTS_BUILD_OPTION_DEBUG": "ON"
-            }
-        },
-        {
-            "name": "unix",
-            "inherits": "default-vcpkg",
-            "hidden": false,
-            "displayName": "Unix 32bit VCPKG Release"
-        },
-        {
-            "name": "mingw-w64-i686",
+            "name": "windows-x86-mingwgcc",
             "displayName": "MinGW-w64 32-bit (i686) Release",
             "generator": "Unix Makefiles",
             "hidden": false,
@@ -174,20 +140,20 @@
             }
         },
         {
-            "name": "mingw-w64-i686-debug",
+            "name": "windows-x86-mingwgcc-debug",
             "displayName": "MinGW-w64 32-bit (i686) Debug",
             "hidden": false,
-            "inherits": "mingw-w64-i686",
+            "inherits": "windows-x86-mingwgcc",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "RTS_BUILD_OPTION_DEBUG": "ON"
             }
         },
         {
-            "name": "mingw-w64-i686-profile",
+            "name": "windows-x86-mingwgcc-profile",
             "displayName": "MinGW-w64 32-bit (i686) Profile",
             "hidden": false,
-            "inherits": "mingw-w64-i686",
+            "inherits": "windows-x86-mingwgcc",
             "cacheVariables": {
                 "RTS_BUILD_OPTION_PROFILE": "ON"
             }
@@ -195,99 +161,85 @@
     ],
     "buildPresets": [
         {
-            "name": "vc6",
-            "configurePreset": "vc6",
+            "name": "windows-x86-vc6",
+            "configurePreset": "windows-x86-vc6",
             "displayName": "Build Windows 32bit VC6 Release",
             "description": "Build Windows 32bit VC6 Release"
         },
         {
-            "name": "vc6-profile",
-            "configurePreset": "vc6-profile",
+            "name": "windows-x86-vc6-profile",
+            "configurePreset": "windows-x86-vc6-profile",
             "displayName": "Build Windows 32bit VC6 Profile",
             "description": "Build Windows 32bit VC6 Profile"
         },
         {
-            "name": "vc6-debug",
-            "configurePreset": "vc6-debug",
+            "name": "windows-x86-vc6-debug",
+            "configurePreset": "windows-x86-vc6-debug",
             "displayName": "Build Windows 32bit VC6 Debug",
             "description": "Build Windows 32bit VC6 Debug"
         },
         {
-            "name": "vc6-releaselog",
-            "configurePreset": "vc6-releaselog",
+            "name": "windows-x86-vc6-releaselog",
+            "configurePreset": "windows-x86-vc6-releaselog",
             "displayName": "Build Windows 32bit VC6 Release Logging",
             "description": "Build Windows 32bit VC6 Release Logging"
         },
         {
-            "name": "vc6-weekly",
-            "configurePreset": "vc6-weekly",
+            "name": "windows-x86-vc6-weekly",
+            "configurePreset": "windows-x86-vc6-weekly",
             "displayName": "Build Windows 32bit VC6 Weekly Release",
             "description": "Build Windows 32bit VC6 Weekly Release"
         },
         {
-            "name": "win32",
-            "configurePreset": "win32",
-            "displayName": "Build Windows 32bit Release",
-            "description": "Build Windows 32bit Release",
+            "name": "windows-x86-msvc19",
+            "configurePreset": "windows-x86-msvc19",
+            "displayName": "Build Windows 32bit MSVC19 Release",
+            "description": "Build Windows 32bit MSVC19 Release",
             "configuration": "Release"
         },
         {
-            "name": "win32-profile",
-            "configurePreset": "win32-profile",
-            "displayName": "Build Windows 32bit Profile",
-            "description": "Build Windows 32bit Profile",
+            "name": "windows-x86-msvc19-profile",
+            "configurePreset": "windows-x86-msvc19-profile",
+            "displayName": "Build Windows 32bit MSVC19 Profile",
+            "description": "Build Windows 32bit MSVC19 Profile",
             "configuration": "Release"
         },
         {
-            "name": "win32-debug",
-            "configurePreset": "win32-debug",
-            "displayName": "Build Windows 32bit Debug",
-            "description": "Build Windows 32bit Debug",
+            "name": "windows-x86-msvc19-debug",
+            "configurePreset": "windows-x86-msvc19-debug",
+            "displayName": "Build Windows 32bit MSVC19 Debug",
+            "description": "Build Windows 32bit MSVC19 Debug",
             "configuration": "Debug"
         },
         {
-            "name": "win32-vcpkg",
-            "configurePreset": "win32-vcpkg",
-            "displayName": "Build Windows 32bit VCPKG Release",
-            "description": "Build Windows 32bit VCPKG Release",
+            "name": "windows-x86-msvc19-nonretail",
+            "configurePreset": "windows-x86-msvc19-nonretail",
+            "displayName": "Build Windows 32bit MSVC19 Non-Retail Release",
+            "description": "Build Windows 32bit MSVC19 Non-Retail Release",
             "configuration": "Release"
         },
         {
-            "name": "win32-vcpkg-profile",
-            "configurePreset": "win32-vcpkg-profile",
-            "displayName": "Build Windows 32bit VCPKG Profile",
-            "description": "Build Windows 32bit VCPKG Profile",
+            "name": "windows-x86-msvc19-weekly",
+            "configurePreset": "windows-x86-msvc19-weekly",
+            "displayName": "Build Windows 32bit MSVC19 Weekly Release",
+            "description": "Build Windows 32bit MSVC19 Weekly Release",
             "configuration": "Release"
         },
         {
-            "name": "win32-vcpkg-debug",
-            "configurePreset": "win32-vcpkg-debug",
-            "displayName": "Build Windows 32bit VCPKG Debug",
-            "description": "Build Windows 32bit VCPKG Debug",
-            "configuration": "Debug"
-        },
-        {
-            "name": "unix",
-            "configurePreset": "unix",
-            "displayName": "Build Unix 32bit VCPKG Release",
-            "description": "Build Unix 32bit VCPKG Release",
-            "configuration": "Release"
-        },
-        {
-            "name": "mingw-w64-i686",
-            "configurePreset": "mingw-w64-i686",
+            "name": "windows-x86-mingwgcc",
+            "configurePreset": "windows-x86-mingwgcc",
             "displayName": "Build MinGW-w64 32-bit (i686) Release",
             "description": "Build MinGW-w64 32-bit (i686) Release"
         },
         {
-            "name": "mingw-w64-i686-debug",
-            "configurePreset": "mingw-w64-i686-debug",
+            "name": "windows-x86-mingwgcc-debug",
+            "configurePreset": "windows-x86-mingwgcc-debug",
             "displayName": "Build MinGW-w64 32-bit (i686) Debug",
             "description": "Build MinGW-w64 32-bit (i686) Debug"
         },
         {
-            "name": "mingw-w64-i686-profile",
-            "configurePreset": "mingw-w64-i686-profile",
+            "name": "windows-x86-mingwgcc-profile",
+            "configurePreset": "windows-x86-mingwgcc-profile",
             "displayName": "Build MinGW-w64 32-bit (i686) Profile",
             "description": "Build MinGW-w64 32-bit (i686) Profile"
         }
@@ -306,247 +258,205 @@
             }
         },
         {
-            "name": "win32",
+            "name": "windows-x86-msvc19",
             "inherits": "default",
-            "configurePreset": "win32",
-            "displayName": "Test Windows 32bit Release",
-            "description": "Test Windows 32bit Release",
+            "configurePreset": "windows-x86-msvc19",
+            "displayName": "Test Windows 32bit MSVC19 Release",
+            "description": "Test Windows 32bit MSVC19 Release",
             "configuration": "Release"
         },
         {
-            "name": "win32-profile",
+            "name": "windows-x86-msvc19-profile",
             "inherits": "default",
-            "configurePreset": "win32-profile",
-            "displayName": "Test Windows 32bit Profile",
-            "description": "Test Windows 32bit Profile",
+            "configurePreset": "windows-x86-msvc19-profile",
+            "displayName": "Test Windows 32bit MSVC19 Profile",
+            "description": "Test Windows 32bit MSVC19 Profile",
             "configuration": "Release"
         },
         {
-            "name": "win32-debug",
+            "name": "windows-x86-msvc19-debug",
             "inherits": "default",
-            "configurePreset": "win32-debug",
-            "displayName": "Test Windows 32bit Debug",
-            "description": "Test Windows 32bit Debug",
+            "configurePreset": "windows-x86-msvc19-debug",
+            "displayName": "Test Windows 32bit MSVC19 Debug",
+            "description": "Test Windows 32bit MSVC19 Debug",
             "configuration": "Debug"
         },
         {
-            "name": "win32-vcpkg",
+            "name": "windows-x86-msvc19-nonretail",
             "inherits": "default",
-            "configurePreset": "win32-vcpkg",
-            "displayName": "Test Windows 32bit VCPKG Release",
-            "description": "Test Windows 32bit VCPKG Release",
+            "configurePreset": "windows-x86-msvc19-nonretail",
+            "displayName": "Test Windows 32bit MSVC19 Non-Retail Release",
+            "description": "Test Windows 32bit MSVC19 Non-Retail Release",
             "configuration": "Release"
-        },
-        {
-            "name": "win32-vcpkg-profile",
-            "inherits": "default",
-            "configurePreset": "win32-vcpkg-profile",
-            "displayName": "Test Windows 32bit VCPKG Profile",
-            "description": "Test Windows 32bit VCPKG Profile",
-            "configuration": "Release"
-        },
-        {
-            "name": "win32-vcpkg-debug",
-            "inherits": "default",
-            "configurePreset": "win32-vcpkg-debug",
-            "displayName": "Test Windows 32bit VCPKG Debug",
-            "description": "Test Windows 32bit VCPKG Debug",
-            "configuration": "Debug"
         }
     ],
     "workflowPresets": [
         {
-            "name": "vc6",
+            "name": "windows-x86-vc6",
             "steps": [
                 {
                     "type": "configure",
-                    "name": "vc6"
+                    "name": "windows-x86-vc6"
                 },
                 {
                     "type": "build",
-                    "name": "vc6"
+                    "name": "windows-x86-vc6"
                 }
             ]
         },
         {
-            "name": "vc6-debug",
+            "name": "windows-x86-vc6-debug",
             "steps": [
                 {
                     "type": "configure",
-                    "name": "vc6-debug"
+                    "name": "windows-x86-vc6-debug"
                 },
                 {
                     "type": "build",
-                    "name": "vc6-debug"
+                    "name": "windows-x86-vc6-debug"
                 }
             ]
         },
         {
-            "name": "vc6-profile",
+            "name": "windows-x86-vc6-profile",
             "steps": [
                 {
                     "type": "configure",
-                    "name": "vc6-profile"
+                    "name": "windows-x86-vc6-profile"
                 },
                 {
                     "type": "build",
-                    "name": "vc6-profile"
+                    "name": "windows-x86-vc6-profile"
                 }
             ]
         },
         {
-            "name": "vc6-releaselog",
+            "name": "windows-x86-vc6-releaselog",
             "steps": [
                 {
                     "type": "configure",
-                    "name": "vc6-releaselog"
+                    "name": "windows-x86-vc6-releaselog"
                 },
                 {
                     "type": "build",
-                    "name": "vc6-releaselog"
+                    "name": "windows-x86-vc6-releaselog"
                 }
             ]
         },
         {
-            "name": "vc6-weekly",
+            "name": "windows-x86-vc6-weekly",
             "steps": [
                 {
                     "type": "configure",
-                    "name": "vc6-weekly"
+                    "name": "windows-x86-vc6-weekly"
                 },
                 {
                     "type": "build",
-                    "name": "vc6-weekly"
+                    "name": "windows-x86-vc6-weekly"
                 }
             ]
         },
         {
-            "name": "win32",
+            "name": "windows-x86-msvc19",
             "steps": [
                 {
                     "type": "configure",
-                    "name": "win32"
+                    "name": "windows-x86-msvc19"
                 },
                 {
                     "type": "build",
-                    "name": "win32"
+                    "name": "windows-x86-msvc19"
                 }
             ]
         },
         {
-            "name": "win32-profile",
+            "name": "windows-x86-msvc19-profile",
             "steps": [
                 {
                     "type": "configure",
-                    "name": "win32-profile"
+                    "name": "windows-x86-msvc19-profile"
                 },
                 {
                     "type": "build",
-                    "name": "win32-profile"
+                    "name": "windows-x86-msvc19-profile"
                 }
             ]
         },
         {
-            "name": "win32-debug",
+            "name": "windows-x86-msvc19-debug",
             "steps": [
                 {
                     "type": "configure",
-                    "name": "win32-debug"
+                    "name": "windows-x86-msvc19-debug"
                 },
                 {
                     "type": "build",
-                    "name": "win32-debug"
+                    "name": "windows-x86-msvc19-debug"
                 }
             ]
         },
         {
-            "name": "win32-vcpkg",
+            "name": "windows-x86-msvc19-nonretail",
             "steps": [
                 {
                     "type": "configure",
-                    "name": "win32-vcpkg"
+                    "name": "windows-x86-msvc19-nonretail"
                 },
                 {
                     "type": "build",
-                    "name": "win32-vcpkg"
+                    "name": "windows-x86-msvc19-nonretail"
                 }
             ]
         },
         {
-            "name": "win32-vcpkg-profile",
+            "name": "windows-x86-msvc19-weekly",
             "steps": [
                 {
                     "type": "configure",
-                    "name": "win32-vcpkg-profile"
+                    "name": "windows-x86-msvc19-weekly"
                 },
                 {
                     "type": "build",
-                    "name": "win32-vcpkg-profile"
+                    "name": "windows-x86-msvc19-weekly"
                 }
             ]
         },
         {
-            "name": "win32-vcpkg-debug",
+            "name": "windows-x86-mingwgcc",
             "steps": [
                 {
                     "type": "configure",
-                    "name": "win32-vcpkg-debug"
+                    "name": "windows-x86-mingwgcc"
                 },
                 {
                     "type": "build",
-                    "name": "win32-vcpkg-debug"
+                    "name": "windows-x86-mingwgcc"
                 }
             ]
         },
         {
-            "name": "unix",
+            "name": "windows-x86-mingwgcc-debug",
             "steps": [
                 {
                     "type": "configure",
-                    "name": "unix"
+                    "name": "windows-x86-mingwgcc-debug"
                 },
                 {
                     "type": "build",
-                    "name": "unix"
+                    "name": "windows-x86-mingwgcc-debug"
                 }
             ]
         },
         {
-            "name": "mingw-w64-i686",
+            "name": "windows-x86-mingwgcc-profile",
             "steps": [
                 {
                     "type": "configure",
-                    "name": "mingw-w64-i686"
+                    "name": "windows-x86-mingwgcc-profile"
                 },
                 {
                     "type": "build",
-                    "name": "mingw-w64-i686"
-                }
-            ]
-        },
-        {
-            "name": "mingw-w64-i686-debug",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "mingw-w64-i686-debug"
-                },
-                {
-                    "type": "build",
-                    "name": "mingw-w64-i686-debug"
-                }
-            ]
-        },
-        {
-            "name": "mingw-w64-i686-profile",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "mingw-w64-i686-profile"
-                },
-                {
-                    "type": "build",
-                    "name": "mingw-w64-i686-profile"
+                    "name": "windows-x86-mingwgcc-profile"
                 }
             ]
         }

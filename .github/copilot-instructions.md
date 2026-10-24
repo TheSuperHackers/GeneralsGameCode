@@ -21,21 +21,21 @@ This is the **GeneralsGameCode** project - a community-driven effort to fix and 
 ## Build System
 
 ### CMake Presets (Critical)
-- **vc6**: Visual Studio 6 compatible build (retail compatibility required)
-- **win32**: Modern Visual Studio 2022 build
-- **vc6-debug/vc6-profile**: Debug/profiling variants
+- **windows-x86-vc6**: Visual Studio 6 compatible build (retail compatibility required)
+- **windows-x86-msvc19**: Modern Visual Studio 2022 build
+- **windows-x86-vc6-debug/windows-x86-vc6-profile**: Debug/profiling variants
 - Use `cmake --preset <preset-name>` followed by `cmake --build build/<preset>`
 
 ### Build Commands
 ```bash
 # Configure with specific preset
-cmake --preset vc6
+cmake --preset windows-x86-vc6
 
 # Build (from project root)
-cmake --build build/vc6
+cmake --build build/windows-x86-vc6
 
 # Build with tools and extras
-cmake --build build/vc6 --target <game>_tools <game>_extras
+cmake --build build/windows-x86-vc6 --target <game>_tools <game>_extras
 ```
 
 ### Retail Compatibility
@@ -78,7 +78,7 @@ generalszh.exe -jobs 4 -headless -replay subfolder/*.rep
 - CI automatically tests GeneralsMD builds against known replays
 
 ### Build Validation
-- CI tests multiple presets: vc6, vc6-profile, vc6-debug, win32 variants
+- CI tests multiple presets: windows-x86-vc6, windows-x86-msvc19 and their variants
 - Path-based change detection triggers relevant builds
 - Tools and extras are built with `+t+e` flags
 

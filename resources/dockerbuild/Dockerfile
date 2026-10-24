@@ -72,14 +72,14 @@ $VS\\vc98\\lib;\
 $VS\\vc98\\include;\
 $VS\\common\\Tools;\
 $VS\\common\\MSDev98\\bin"
-ENV LIB="$VS\\vc98\\Lib;$VS\\vc98\\MFC\\Lib;Z:\\build\\cnc\\build\\vc6"
+ENV LIB="$VS\\vc98\\Lib;$VS\\vc98\\MFC\\Lib;Z:\\build\\cnc\\build\\windows-x86-vc6"
 ENV INCLUDE="$VS\\vc98\\ATL\\INCLUDE;\
 $VS\\vc98\\INCLUDE;\
 $VS\\vc98\\MFC\\INCLUDE;\
 $VS\\vc98\\Include"
 ENV CC="$VS\\vc98\\bin\\CL.exe"
 ENV CXX="$VS\\vc98\\bin\\CL.exe"
-ENV PRESET=vc6
+ENV PRESET=windows-x86-vc6
 
 #prevent cache warning 
 ENV HOME=/build/tmp/home

@@ -83,51 +83,71 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-  build-generals:
+  build-generals-vc6:
     needs: [detect-scm-changes, get-date]
     if: needs.detect-scm-changes.outputs.changed == 'true'
-    name: Build Generals${{ matrix.preset && '' }}
+    name: Build Generals
     permissions:
       contents: read
-    strategy:
-      matrix:
-        include:
-          - preset: "vc6-weekly"
-            tools: true
-            extras: false
-            release: true
-      fail-fast: false
     uses: ./.github/workflows/reusable-build-toolchain.yml
     with:
       game: "Generals"
-      preset: ${{ matrix.preset }}
-      tools: ${{ matrix.tools }}
-      extras: ${{ matrix.extras }}
+      preset: "windows-x86-vc6-weekly"
+      tools: true
+      extras: false
+    secrets: inherit
 
-  build-generalsmd:
+  build-generals-msvc19:
     needs: [detect-scm-changes, get-date]
     if: needs.detect-scm-changes.outputs.changed == 'true'
-    name: Build GeneralsMD${{ matrix.preset && '' }}
+    name: Build Generals
     permissions:
       contents: read
-    strategy:
-      matrix:
-        include:
-          - preset: "vc6-weekly"
-            tools: true
-            extras: false
-            release: true
-      fail-fast: false
+      packages: write
+    uses: ./.github/workflows/reusable-build-toolchain.yml
+    with:
+      game: "Generals"
+      preset: "windows-x86-msvc19-weekly"
+      tools: true
+      extras: false
+      vcpkg: true
+      ffmpeg: false
+    secrets: inherit
+
+  build-generalsmd-vc6:
+    needs: [detect-scm-changes, get-date]
+    if: needs.detect-scm-changes.outputs.changed == 'true'
+    name: Build GeneralsMD
+    permissions:
+      contents: read
     uses: ./.github/workflows/reusable-build-toolchain.yml
     with:
       game: "GeneralsMD"
-      preset: ${{ matrix.preset }}
-      tools: ${{ matrix.tools }}
-      extras: ${{ matrix.extras }}
+      preset: "windows-x86-vc6-weekly"
+      tools: true
+      extras: false
+    secrets: inherit
+
+  build-generalsmd-msvc19:
+    needs: [detect-scm-changes, get-date]
+    if: needs.detect-scm-changes.outputs.changed == 'true'
+    name: Build GeneralsMD
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/reusable-build-toolchain.yml
+    with:
+      game: "GeneralsMD"
+      preset: "windows-x86-msvc19-weekly"
+      tools: true
+      extras: false
+      vcpkg: true
+      ffmpeg: true
+    secrets: inherit
 
   create-release:
     name: Create Release
-    needs: [build-generals, build-generalsmd, get-date]
+    needs: [build-generals-vc6, build-generals-msvc19, build-generalsmd-vc6, build-generalsmd-msvc19, get-date]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -161,7 +181,7 @@ jobs:
       - name: Download Generals VC6 Artifacts
         uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
-          name: Generals-vc6-weekly+t
+          name: Generals-windows-x86-vc6-weekly+t
           path: generals-vc6-artifacts
 
       - name: Prepare and Zip Generals VC6
@@ -172,12 +192,36 @@ jobs:
       - name: Download GeneralsMD VC6 Artifacts
         uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
-          name: GeneralsMD-vc6-weekly+t
+          name: GeneralsMD-windows-x86-vc6-weekly+t
           path: generalsmd-vc6-artifacts
 
       - name: Prepare and Zip GeneralsMD VC6
         run: |
           zip -jr generalszh-weekly-${{ needs.get-date.outputs.date }}.zip generalsmd-vc6-artifacts/*
+
+      # Generals MSVC (vcpkg)
+      - name: Download Generals MSVC Artifacts
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
+        with:
+          name: Generals-windows-x86-msvc19-weekly+t+v
+          path: generals-msvc-artifacts
+
+      - name: Prepare and Zip Generals MSVC
+        run: |
+          cp .github/workflows/msvc-readme.txt generals-msvc-artifacts/README.txt
+          zip -jr generals-weekly-msvc-${{ needs.get-date.outputs.date }}.zip generals-msvc-artifacts/*
+
+      # GeneralsMD MSVC (vcpkg)
+      - name: Download GeneralsMD MSVC Artifacts
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
+        with:
+          name: GeneralsMD-windows-x86-msvc19-weekly+t+v
+          path: generalsmd-msvc-artifacts
+
+      - name: Prepare and Zip GeneralsMD MSVC
+        run: |
+          cp .github/workflows/msvc-readme.txt generalsmd-msvc-artifacts/README.txt
+          zip -jr generalszh-weekly-msvc-${{ needs.get-date.outputs.date }}.zip generalsmd-msvc-artifacts/*
 
       - name: Generate release notes
         env:
@@ -186,6 +230,22 @@ jobs:
           CHANGELOG_COMMITS: ${{ steps.changelog.outputs.commits }}
         run: |
           {
+            cat <<'NOTES_EOF'
+          ### Which download do I need?
+          | You want to... | Zero Hour | Generals |
+          |---|---|---|
+          | Play with players on retail or VC6, watch retail replays, or test for mismatches | `generalszh-weekly-${{ needs.get-date.outputs.date }}.zip` | `generals-weekly-${{ needs.get-date.outputs.date }}.zip` |
+          | Get the most bug fixes and play with other MSVC players | `generalszh-weekly-msvc-${{ needs.get-date.outputs.date }}.zip` | `generals-weekly-msvc-${{ needs.get-date.outputs.date }}.zip` |
+
+          **MSVC** builds:
+          - Need the data from [GeneralsGamePatch2](https://github.com/TheSuperHackers/GeneralsGamePatch2). Install it before playing, or the game may misbehave.
+          - Cannot play multiplayer against VC6 or retail. All players must use the same weekly version.
+          - Use save games that are not compatible with VC6 or retail, and are only guaranteed to load in the same weekly version they were made with. Back up your saves first.
+
+          ### Builds
+          - **VC6**: retail-compatible defaults.
+          - **MSVC**: vcpkg, retail compatibility off and all gameplay fixes on.
+          NOTES_EOF
             if [ -n "$BUILD_NOTES" ]; then
               printf '### Build notes\n%s\n' "$BUILD_NOTES"
             fi
@@ -205,6 +265,8 @@ jobs:
           files: |
             generals-weekly-${{ needs.get-date.outputs.date }}.zip
             generalszh-weekly-${{ needs.get-date.outputs.date }}.zip
+            generals-weekly-msvc-${{ needs.get-date.outputs.date }}.zip
+            generalszh-weekly-msvc-${{ needs.get-date.outputs.date }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -212,6 +274,9 @@ jobs:
         if: always()
         run: |
           rm -rf generals-vc6-artifacts generalsmd-vc6-artifacts
+          rm -rf generals-msvc-artifacts generalsmd-msvc-artifacts
           rm -f generals-weekly-${{ needs.get-date.outputs.date }}.zip
           rm -f generalszh-weekly-${{ needs.get-date.outputs.date }}.zip
+          rm -f generals-weekly-msvc-${{ needs.get-date.outputs.date }}.zip
+          rm -f generalszh-weekly-msvc-${{ needs.get-date.outputs.date }}.zip
           rm -f release-notes.md

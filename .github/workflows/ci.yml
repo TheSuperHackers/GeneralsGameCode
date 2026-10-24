@@ -67,31 +67,37 @@ jobs:
     strategy:
       matrix:
         include:
-          - preset: "vc6"
+          - preset: "windows-x86-vc6"
             tools: true
             extras: true
-          - preset: "vc6-profile"
+          - preset: "windows-x86-vc6-profile"
             tools: true
             extras: true
-          - preset: "vc6-debug"
+          - preset: "windows-x86-vc6-debug"
             tools: true
             extras: true
-          - preset: "win32"
+          - preset: "windows-x86-msvc19"
             tools: true
             extras: true
-          - preset: "win32-profile"
+            vcpkg: true
+          - preset: "windows-x86-msvc19-profile"
             tools: true
             extras: true
-          - preset: "win32-debug"
+            vcpkg: true
+          - preset: "windows-x86-msvc19-debug"
             tools: true
             extras: true
-          - preset: "win32-vcpkg"
+            vcpkg: true
+          - preset: "windows-x86-msvc19"
             tools: true
             extras: true
-          - preset: "win32-vcpkg-profile"
+          - preset: "windows-x86-msvc19-profile"
             tools: true
             extras: true
-          - preset: "win32-vcpkg-debug"
+          - preset: "windows-x86-msvc19-debug"
+            tools: true
+            extras: true
+          - preset: "windows-x86-msvc19-nonretail"
             tools: true
             extras: true
       fail-fast: false
@@ -101,8 +107,9 @@ jobs:
       preset: ${{ matrix.preset }}
       tools: ${{ matrix.tools }}
       extras: ${{ matrix.extras }}
-      tests: ${{ startsWith(matrix.preset, 'win32') }}
-      benchmarks: ${{ matrix.preset == 'win32' }}
+      vcpkg: ${{ matrix.vcpkg || false }}
+      tests: ${{ startsWith(matrix.preset, 'windows-x86-msvc19') }}
+      benchmarks: ${{ matrix.preset == 'windows-x86-msvc19' && !matrix.vcpkg }}
     secrets: inherit
 
   # Note build-generalsmd is split into two jobs for vc6 and win32 because replaycheck-generalsmd
@@ -116,16 +123,16 @@ jobs:
     strategy:
       matrix:
         include:
-          - preset: "vc6"
+          - preset: "windows-x86-vc6"
             tools: true
             extras: true
-          - preset: "vc6-profile"
+          - preset: "windows-x86-vc6-profile"
             tools: true
             extras: true
-          - preset: "vc6-debug"
+          - preset: "windows-x86-vc6-debug"
             tools: true
             extras: true
-          - preset: "vc6-releaselog"
+          - preset: "windows-x86-vc6-releaselog"
             tools: true
             extras: true
       fail-fast: false
@@ -147,23 +154,29 @@ jobs:
     strategy:
       matrix:
         include:
-          - preset: "win32"
+          - preset: "windows-x86-msvc19"
             tools: true
             extras: true
-          - preset: "win32-profile"
-            tools: true
-            extras: true
-          - preset: "win32-debug"
-            tools: true
-            extras: true
-          - preset: "win32-vcpkg"
-            tools: true
-            extras: true
+            vcpkg: true
             ffmpeg: true
-          - preset: "win32-vcpkg-profile"
+          - preset: "windows-x86-msvc19-profile"
             tools: true
             extras: true
-          - preset: "win32-vcpkg-debug"
+            vcpkg: true
+          - preset: "windows-x86-msvc19-debug"
+            tools: true
+            extras: true
+            vcpkg: true
+          - preset: "windows-x86-msvc19"
+            tools: true
+            extras: true
+          - preset: "windows-x86-msvc19-profile"
+            tools: true
+            extras: true
+          - preset: "windows-x86-msvc19-debug"
+            tools: true
+            extras: true
+          - preset: "windows-x86-msvc19-nonretail"
             tools: true
             extras: true
       fail-fast: false
@@ -173,9 +186,10 @@ jobs:
       preset: ${{ matrix.preset }}
       tools: ${{ matrix.tools }}
       extras: ${{ matrix.extras }}
+      vcpkg: ${{ matrix.vcpkg || false }}
       ffmpeg: ${{ matrix.ffmpeg || false}}
       tests: true
-      benchmarks: ${{ matrix.preset == 'win32' }}
+      benchmarks: ${{ matrix.preset == 'windows-x86-msvc19' && !matrix.vcpkg }}
     secrets: inherit
 
   replaycheck-generalsmd:
@@ -187,8 +201,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - preset: "vc6+t+e"
-          - preset: "vc6-releaselog+t+e" # optimized build with logging and crashing enabled should be compatible, so we test that here.
+          - preset: "windows-x86-vc6+t+e"
+          - preset: "windows-x86-vc6-releaselog+t+e" # optimized build with logging and crashing enabled should be compatible, so we test that here.
       fail-fast: false
     uses: ./.github/workflows/reusable-check-replays.yml
     with:

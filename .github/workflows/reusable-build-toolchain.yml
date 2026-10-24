@@ -26,11 +26,16 @@ on:
         default: false
         type: boolean
         description: "Build extras"
+      vcpkg:
+        required: false
+        default: false
+        type: boolean
+        description: "Get dependencies from vcpkg instead of FetchContent"
       ffmpeg:
         required: false
         default: false
         type: boolean
-        description: "Build with FFmpeg support"
+        description: "Build with FFmpeg support (requires vcpkg)"
       tests:
         required: false
         default: false
@@ -44,7 +49,7 @@ on:
 
 jobs:
   build:
-    name: ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
+    name: ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}${{ inputs.vcpkg && '+v' || '' }}
     runs-on: windows-2022
     timeout-minutes: 30
 
@@ -63,7 +68,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Cache VC6 Installation
-        if: startsWith(inputs.preset, 'vc6')
+        if: startsWith(inputs.preset, 'windows-x86-vc6')
         id: cache-vc6
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
@@ -75,10 +80,10 @@ jobs:
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: build\${{ inputs.preset }}\_deps
-          key: cmake-deps-${{ inputs.preset }}-${{ hashFiles('CMakePresets.json','cmake/**/*.cmake','**/CMakeLists.txt') }}
+          key: cmake-deps-${{ inputs.preset }}${{ inputs.vcpkg && '+v' || '' }}-${{ hashFiles('CMakePresets.json','cmake/**/*.cmake','**/CMakeLists.txt') }}
 
       - name: Download VC6 Portable from itsmattkc repo
-        if: ${{ startsWith(inputs.preset, 'vc6') && steps.cache-vc6.outputs.cache-hit != 'true' }}
+        if: ${{ startsWith(inputs.preset, 'windows-x86-vc6') && steps.cache-vc6.outputs.cache-hit != 'true' }}
         env:
           EXPECTED_HASH: "D0EE1F6DCEF7DB3AD703120D9FB4FAD49EBCA28F44372E40550348B1C00CA583"
           COMMIT: "001c4bafdcf2ef4b474d693acccd35a91e848f40"
@@ -102,7 +107,7 @@ jobs:
           Remove-Item VS6_VisualStudio6.zip -Verbose
 
       - name: Set Up VC6 Environment
-        if: startsWith(inputs.preset, 'vc6')
+        if: startsWith(inputs.preset, 'windows-x86-vc6')
         shell: pwsh
         run: |
           # Define the base directories as local variables first
@@ -121,20 +126,20 @@ jobs:
           "LIB=$MSVCDir\LIB;$MSVCDir\MFC\LIB;$env:LIB" >> $env:GITHUB_ENV
 
       - name: Set Up VC2022 Environment
-        if: startsWith(inputs.preset, 'win32')
+        if: startsWith(inputs.preset, 'windows-x86-msvc19')
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
         with:
           arch: x86
 
       - name: Setup vcpkg
-        if: contains(inputs.preset, 'vcpkg')
+        if: inputs.vcpkg
         uses: lukka/run-vcpkg@b1a0dd252f06b9e25b3c022a9a03bd7a427fb6a2 # v11.6
         with:
           runVcpkgInstall: false
           doNotCache: true
 
       - name: Configure NuGet Source for vcpkg Binary Cache
-        if: contains(inputs.preset, 'vcpkg')
+        if: inputs.vcpkg
         shell: pwsh
         run: |
           $nuget = & "$env:VCPKG_ROOT\vcpkg.exe" fetch nuget | Select-Object -Last 1
@@ -148,7 +153,7 @@ jobs:
             -Source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
           "VCPKG_INSTALL_OPTIONS=--x-abi-tools-use-exact-versions" >> $env:GITHUB_ENV
 
-      - name: Configure ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
+      - name: Configure ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}${{ inputs.vcpkg && '+v' || '' }} Preset
         shell: pwsh
         run: |
           $buildFlags = @(
@@ -165,29 +170,33 @@ jobs:
           $buildFlags += "-DRTS_BUILD_OPTION_TESTS=${{ inputs.tests && 'ON' || 'OFF' }}"
           $buildFlags += "-DRTS_BUILD_OPTION_BENCHMARKS=${{ inputs.benchmarks && 'ON' || 'OFF' }}"
 
+          if ($${{ inputs.vcpkg }}) {
+            $buildFlags += "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
+          }
+
           Write-Host "Build flags: $($buildFlags -join ' | ')"
           cmake --preset ${{ inputs.preset }} $buildFlags
 
-      - name: Build ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
+      - name: Build ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}${{ inputs.vcpkg && '+v' || '' }} Preset
         shell: pwsh
         run: |
           cmake --build --preset ${{ inputs.preset }}
 
       # The benchmarks are only built, because running them takes too long here.
       # Verbose prints the Google Test output, which lists the test cases of each executable.
-      - name: Test ${{ inputs.game }} with CTest Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
+      - name: Test ${{ inputs.game }} with CTest Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}${{ inputs.vcpkg && '+v' || '' }} Preset
         if: ${{ inputs.tests }}
         shell: pwsh
         run: |
           ctest --preset ${{ inputs.preset }} --verbose
 
-      - name: Collect ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
+      - name: Collect ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}${{ inputs.vcpkg && '+v' || '' }} Artifact
         shell: pwsh
         run: |
           $buildDir = "build\${{ inputs.preset }}"
           $artifactsDir = New-Item -ItemType Directory -Force -Path "$buildDir\${{ inputs.game }}\artifacts" -Verbose
 
-          if ("${{ inputs.preset }}" -like "win32*") {
+          if ("${{ inputs.preset }}" -like "windows-x86-msvc19*") {
             $configToUse = if ("${{ inputs.preset }}" -match "debug") { "Debug" } else { "Release" }
             $files = Get-ChildItem -Path "$buildDir\Core\$configToUse","$buildDir\${{ inputs.game }}\$configToUse" -File |
               Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
@@ -198,10 +207,10 @@ jobs:
 
           $files | Move-Item -Destination $artifactsDir -Verbose -Force
 
-      - name: Upload ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
+      - name: Upload ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}${{ inputs.vcpkg && '+v' || '' }} Artifact
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
-          name: ${{ inputs.game }}-${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
+          name: ${{ inputs.game }}-${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}${{ inputs.vcpkg && '+v' || '' }}
           path: build\${{ inputs.preset }}\${{ inputs.game }}\artifacts
           retention-days: 30
           if-no-files-found: error
