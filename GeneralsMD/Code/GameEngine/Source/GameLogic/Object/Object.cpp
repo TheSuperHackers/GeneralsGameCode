@@ -592,6 +592,13 @@ void Object::initObject()
 	{
 		ThePlayerList->getNeutralPlayer()->getAcademyStats()->recordMine();
 	}
+
+	// TheSuperHackers @info Workaround for newly created objects that require energy but are underpowered.
+	// The object is disabled before its drawable is attached, preventing the expected tint effect from being applied.
+	if (isKindOf(KINDOF_POWERED) && isDisabledByType(DISABLED_UNDERPOWERED))
+	{
+		m_drawable->setTintStatus(TINT_STATUS_DISABLED);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
