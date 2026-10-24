@@ -404,6 +404,7 @@ protected:
 	void unPrepFile();
 
 	void readLine();
+	void skipToEndToken();
 
 	char* m_readBuffer;                       ///< internal read buffer
 	unsigned m_readBufferNext;                ///< next char in read buffer
