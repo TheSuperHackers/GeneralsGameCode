@@ -101,6 +101,8 @@ public:
 	virtual	void	Reset();
 	void	Render();
 
+	bool	Can_Add( int vertex_count, int index_count ) const;
+
 	void	Set_Coordinate_Range( const RectClass & range );
 
 	void	Set_Texture(TextureClass* tex);

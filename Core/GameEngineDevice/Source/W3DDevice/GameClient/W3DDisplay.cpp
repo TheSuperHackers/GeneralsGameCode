@@ -653,11 +653,14 @@ void W3DDisplay::onFlush()
 	}
 }
 
-void W3DDisplay::setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool grayscale)
+void W3DDisplay::setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool grayscale, Int vertexCount, Int indexCount)
 {
 	if (m_isBatching)
 	{
-		if (!m_batchNeedsInit && m_batchTexture == tex && m_batchMode == mode && m_batchGrayscale == grayscale)
+		// TheSuperHackers @fix arcticdolphin 12/10/2026 Flush when the upcoming draw would exceed the renderer capacity.
+		const Bool hasRoom = !m_2DRender || m_2DRender->Can_Add(vertexCount, indexCount);
+
+		if (!m_batchNeedsInit && hasRoom && m_batchTexture == tex && m_batchMode == mode && m_batchGrayscale == grayscale)
 		{
 			return;
 		}
@@ -2420,7 +2423,7 @@ void W3DDisplay::drawLine( Int startX, Int startY,
 													 Real lineWidth,
 													 UnsignedInt lineColor )
 {
-	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
+	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE, 4, 6);
 
 	m_2DRender->Add_Line( Vector2( startX, startY ), Vector2( endX, endY ),
 												lineWidth, lineColor );
@@ -2439,7 +2442,7 @@ void W3DDisplay::drawLine( Int startX, Int startY,
 													 Real lineWidth,
 													 UnsignedInt lineColor1,UnsignedInt lineColor2 )
 {
-	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
+	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE, 4, 6);
 
 	m_2DRender->Add_Line( Vector2( startX, startY ), Vector2( endX, endY ),
 												lineWidth, lineColor1, lineColor2 );
@@ -2490,7 +2493,7 @@ void W3DDisplay::drawOpenRect( Int startX, Int startY, Int width, Int height,
 	}
 	else
 	{
-		setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
+		setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE, 16, 24);
 
 		m_2DRender->Add_Outline( RectClass( startX, startY,
 																				startX + width, startY + height ),
@@ -2509,7 +2512,7 @@ void W3DDisplay::drawOpenRect( Int startX, Int startY, Int width, Int height,
 void W3DDisplay::drawFillRect( Int startX, Int startY, Int width, Int height,
 															 UnsignedInt color )
 {
-	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
+	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE, 4, 6);
 
 	m_2DRender->Add_Rect( RectClass( startX, startY,
 																	 startX + width, startY + height ),
@@ -2527,8 +2530,6 @@ void W3DDisplay::drawRectClock(Int startX, Int startY, Int width, Int height, In
 	if(percent < 1 || percent > 100)
 		return;
 
-	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
-
 // The rectangles are numberd as follows
 //(x,y)	|---------|
 //			| 4  | 1  |
@@ -2539,11 +2540,24 @@ void W3DDisplay::drawRectClock(Int startX, Int startY, Int width, Int height, In
 	// we're done, lets just draw one rectangle for it all.
 	if(percent == 100)
 	{
+		setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE, 4, 6);
+
 		m_2DRender->Add_Rect(RectClass( startX, startY,
 																		startX + width, startY + height), 0,0, color);
 	}
 	else if( percent> 75)
 	{
+		Int triangleCount;
+		if (percent > 87)
+		{
+			triangleCount = 2;
+		}
+		else
+		{
+			triangleCount = 1;
+		}
+		setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE, 8 + 3*triangleCount, 12 + 3*triangleCount);
+
 		//rectangle #1 & 2
 		m_2DRender->Add_Rect(RectClass( startX + width/2, startY,
 																		startX + width, startY + height), 0,0, color);
@@ -2580,6 +2594,17 @@ void W3DDisplay::drawRectClock(Int startX, Int startY, Int width, Int height, In
 	}
 	else if( percent > 50)
 	{
+		Int triangleCount;
+		if (percent > 62)
+		{
+			triangleCount = 2;
+		}
+		else
+		{
+			triangleCount = 1;
+		}
+		setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE, 4 + 3*triangleCount, 6 + 3*triangleCount);
+
 		//rectangle #1 & 2
 		m_2DRender->Add_Rect(RectClass( startX + width/2, startY,
 																		startX + width, startY + height), 0,0, color);
@@ -2612,6 +2637,17 @@ void W3DDisplay::drawRectClock(Int startX, Int startY, Int width, Int height, In
 	}
 	else if(percent > 25)
 	{
+		Int triangleCount;
+		if (percent > 37)
+		{
+			triangleCount = 2;
+		}
+		else
+		{
+			triangleCount = 1;
+		}
+		setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE, 4 + 3*triangleCount, 6 + 3*triangleCount);
+
 		// rectangle #1
 		m_2DRender->Add_Rect(RectClass( startX + width/2, startY,
 																		startX + width, startY + height/2), 0,0, color);
@@ -2644,6 +2680,17 @@ void W3DDisplay::drawRectClock(Int startX, Int startY, Int width, Int height, In
 	}
 	else
 	{
+		Int triangleCount;
+		if (percent > 12)
+		{
+			triangleCount = 2;
+		}
+		else
+		{
+			triangleCount = 1;
+		}
+		setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE, 3*triangleCount, 3*triangleCount);
+
 				// draw the part of rectangle 1
 
 		if(percent > 12)
@@ -2691,8 +2738,6 @@ void W3DDisplay::drawRemainingRectClock(Int startX, Int startY, Int width, Int h
 	if( percent < 0 || percent > 99 )
 		return;
 
-	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
-
 // The rectangles are numbered as follows
 //(x,y)	|---------|
 //			| 4  | 1  |
@@ -2710,12 +2755,25 @@ void W3DDisplay::drawRemainingRectClock(Int startX, Int startY, Int width, Int h
 
 	if( percent == 0 )
 	{
+		setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE, 4, 6);
+
 		// We just started, so draw the entire remaining rectangle.
 		// #1, #2, #3, and #4
 		m_2DRender->Add_Rect( RectClass( startX, startY, endX, endY ), 0, 0, color );
 	}
 	else if( percent < 25 )
 	{
+		Int triangleCount;
+		if (percent < 13)
+		{
+			triangleCount = 2;
+		}
+		else
+		{
+			triangleCount = 1;
+		}
+		setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE, 8 + 3*triangleCount, 12 + 3*triangleCount);
+
 		//1-25%
 		//-----
 
@@ -2753,6 +2811,17 @@ void W3DDisplay::drawRemainingRectClock(Int startX, Int startY, Int width, Int h
 	}
 	else if( percent < 50 )
 	{
+		Int triangleCount;
+		if (percent < 38)
+		{
+			triangleCount = 2;
+		}
+		else
+		{
+			triangleCount = 1;
+		}
+		setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE, 4 + 3*triangleCount, 6 + 3*triangleCount);
+
 		//25-49%
 		//------
 
@@ -2787,6 +2856,17 @@ void W3DDisplay::drawRemainingRectClock(Int startX, Int startY, Int width, Int h
 	}
 	else if( percent < 75 )
 	{
+		Int triangleCount;
+		if (percent < 63)
+		{
+			triangleCount = 2;
+		}
+		else
+		{
+			triangleCount = 1;
+		}
+		setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE, 4 + 3*triangleCount, 6 + 3*triangleCount);
+
 		//50-74%
 		//------
 
@@ -2821,6 +2901,17 @@ void W3DDisplay::drawRemainingRectClock(Int startX, Int startY, Int width, Int h
 	}
 	else
 	{
+		Int triangleCount;
+		if (percent < 87)
+		{
+			triangleCount = 2;
+		}
+		else
+		{
+			triangleCount = 1;
+		}
+		setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE, 3*triangleCount, 3*triangleCount);
+
 		//75-99%
 		//------
 
@@ -2896,7 +2987,16 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 		tex = WW3DAssetManager::Get_Instance()->Get_Texture(image->getFilename().str(), MIP_LEVELS_1);
 
 	Bool grayscale = (mode == DRAW_IMAGE_GRAYSCALE);
-	setup2DRenderState(tex, mode, grayscale);
+	Int vertexCount;
+	if (BitIsSet(image->getStatus(), IMAGE_STATUS_ROTATED_90_CLOCKWISE))
+	{
+		vertexCount = 6;
+	}
+	else
+	{
+		vertexCount = 4;
+	}
+	setup2DRenderState(tex, mode, grayscale, vertexCount, 6);
 
 	RectClass screen_rect(startX,startY,endX,endY);
 	RectClass uv_rect(uv->lo.x,uv->lo.y,uv->hi.x,uv->hi.y);
@@ -3120,7 +3220,7 @@ void W3DDisplay::drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY, I
 {
 	W3DVideoBuffer *vbuffer = (W3DVideoBuffer*) buffer;
 
-	setup2DRenderState(vbuffer->texture(), DRAW_IMAGE_ALPHA, FALSE);
+	setup2DRenderState(vbuffer->texture(), DRAW_IMAGE_ALPHA, FALSE, 4, 6);
 
 	m_2DRender->Add_Quad( RectClass( startX, startY, endX, endY ),
 												vbuffer->Rect( 0, 0, 1, 1) );

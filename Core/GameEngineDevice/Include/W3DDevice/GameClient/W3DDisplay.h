@@ -203,7 +203,7 @@ protected:
 	void addFpsSample(Real elapsedSeconds); ///< add a new sample to the history buffer.
 	Real calculateAverageFPS(Real timeWindowSeconds); ///< calculate average FPS over a time window.
 	Real calculateLow1PercentFPS(Real timeWindowSeconds); ///< calculate 1% low FPS over a time window.
-	void setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool grayscale);
+	void setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool grayscale, Int vertexCount, Int indexCount);
 	virtual void onBeginBatch() override;
 	virtual void onEndBatch() override;
 	virtual void onFlush() override;
