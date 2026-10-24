@@ -10,7 +10,7 @@ on:
       game:
         required: true
         type: string
-        description: "Game to check (only GeneralsMD for now)"
+        description: "Game to check (Generals or GeneralsMD)"
       userdata:
         required: true
         type: string
@@ -29,6 +29,8 @@ jobs:
       GAME_PATH: C:\GameData
       GENERALS_PATH: C:\GameData\Generals
       GENERALSMD_PATH: C:\GameData\GeneralsMD
+      GAME_EXE: ${{ inputs.game == 'Generals' && 'generalsv.exe' || 'generalszh.exe' }}
+      USER_DATA_PATH: ${{ inputs.game == 'Generals' && 'Command and Conquer Generals Data' || 'Command and Conquer Generals Zero Hour Data' }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -137,8 +139,8 @@ jobs:
       - name: Set Generals InstallPath in Registry
         shell: pwsh
         run: |
-          # Zero Hour loads some Generals files and needs this registry key to find the
-          # Generals data files.
+          # Generals reads its install path from this registry key. Zero Hour loads some
+          # Generals files and needs it to find the Generals data files too.
 
           $regPath = "HKCU:\SOFTWARE\Electronic Arts\EA Games\Generals"
           $installPath = "$env:GENERALS_PATH\"
@@ -158,13 +160,13 @@ jobs:
           # These files are expected in the user dir, so we move them here.
 
           $source = "${{ inputs.userdata }}\Replays"
-          $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Replays"
+          $destination = "$env:USERPROFILE\Documents\$env:USER_DATA_PATH\Replays"
           Write-Host "Move replays to $destination"
           New-Item -ItemType Directory -Path $destination -Force | Out-Null
           Move-Item -Path "$source\*" -Destination $destination -Force
 
           $source = "${{ inputs.userdata }}\Maps"
-          $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Maps"
+          $destination = "$env:USERPROFILE\Documents\$env:USER_DATA_PATH\Maps"
           Write-Host "Move maps to $destination"
           New-Item -ItemType Directory -Path $destination -Force | Out-Null
           Move-Item -Path "$source\*" -Destination $destination -Force
@@ -172,7 +174,7 @@ jobs:
       - name: Run Replay Compatibility Tests
         shell: pwsh
         run: |
-          $exePath = "build/generalszh.exe"
+          $exePath = "build/$env:GAME_EXE"
           $arguments = "-jobs 4 -headless -replay *.rep"
           $timeoutSeconds = 10*60
           $stdoutPath = "stdout.log"
@@ -236,7 +238,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
-          name: Replay-Debug-Log-${{ inputs.preset }}
+          name: Replay-Debug-Log-${{ inputs.game }}-${{ inputs.preset }}
           path: build/DebugLogFile*.txt
           retention-days: 30
           if-no-files-found: ignore

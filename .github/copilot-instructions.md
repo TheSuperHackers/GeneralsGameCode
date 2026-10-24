@@ -75,7 +75,8 @@ generalszh.exe -jobs 4 -headless -replay subfolder/*.rep
 ```
 - Requires VC6 optimized build with RTS_BUILD_OPTION_DEBUG=OFF
 - Copies replays to `%USERPROFILE%/Documents/Command and Conquer Generals Zero Hour Data/Replays`
-- CI automatically tests GeneralsMD builds against known replays
+- For Generals, run `generalsv.exe` with replays in `%USERPROFILE%/Documents/Command and Conquer Generals Data/Replays`
+- CI automatically tests Generals and GeneralsMD builds against known replays
 
 ### Build Validation
 - CI tests multiple presets: vc6, vc6-profile, vc6-debug, win32 variants
