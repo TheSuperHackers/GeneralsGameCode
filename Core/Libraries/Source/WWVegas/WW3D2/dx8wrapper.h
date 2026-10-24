@@ -576,6 +576,7 @@ protected:
 
 	static bool	Create_Device();
 	static void Release_Device();
+	static void Unbind_Device_Buffers();
 
 	static void Reset_Statistics();
 	static void Enumerate_Devices();
@@ -638,6 +639,7 @@ protected:
 
 	static bool								IsInitted;
 	static bool								IsDeviceLost;
+	static bool								DeviceResetFailed;	///< Until a Reset() succeeds the device only takes TestCooperativeLevel, Reset and Release
 	static void *							Hwnd;
 	static unsigned						_MainThreadID;
 
