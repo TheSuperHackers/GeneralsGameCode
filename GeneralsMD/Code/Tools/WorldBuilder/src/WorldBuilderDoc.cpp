@@ -722,6 +722,11 @@ BOOL CWorldBuilderDoc::DoSave(LPCTSTR lpszPathName, BOOL bReplace)
 	// if 'bReplace' is TRUE will change file name if successful (SaveAs)
 	// if 'bReplace' is FALSE will not change path name (SaveCopyAs)
 {
+	if (m_heightMap && !m_heightMap->canSaveCliffState()) {
+		::AfxMessageBox("Cannot save: the retail Generals map format cannot store cliff flags at the right edge of this map. Adjust the map width before saving.");
+		return FALSE;
+	}
+
 	CString newName = lpszPathName;
 	if (newName.IsEmpty())
 	{
@@ -852,6 +857,10 @@ Bool CWorldBuilderDoc::ParseWaypointData(DataChunkInput &file, DataChunkInfo *in
 
 void CWorldBuilderDoc::autoSave()
 {
+	if (m_heightMap && !m_heightMap->canSaveCliffState()) {
+		return;
+	}
+
 	// srj sez: put autosave into our user data folder, not the ap dir
 	AsciiString autosave1 = TheGlobalData->getPath_UserData();
 	AsciiString autosave2 = TheGlobalData->getPath_UserData();
