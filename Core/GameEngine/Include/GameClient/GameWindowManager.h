@@ -84,6 +84,8 @@ public:
 	virtual void reset() override;		///< reset the system
 	virtual void update() override;  ///< update method, called once per frame
 
+	virtual Bool isDummy() const { return false; }
+
 	virtual GameWindow *allocateNewWindow() = 0;  ///< new game window
 
 	void linkWindow( GameWindow *window );  ///< link into master list
@@ -383,6 +385,8 @@ extern WindowMsgHandledType PassMessagesToParentSystem( GameWindow *window,
 class GameWindowManagerDummy : public GameWindowManager
 {
 public:
+	virtual Bool isDummy() const override { return true; }
+
 	virtual GameWindow *winGetWindowFromId(GameWindow *window, Int id) override;
 	virtual GameWindow *winCreateFromScript(AsciiString filenameString, WindowLayoutInfo *info) override;
 
