@@ -219,7 +219,7 @@ std::vector<AsciiString> ReplaySimulation::resolveFilenameWildcards(const std::v
 				while (len)
 				{
 					char c = dir2.getCharAt(len-1);
-					if (c == '/' || c == '\\')
+					if (isPathSeparator(c))
 					{
 						wildcard.set(wildcard.str()+dir2.getLength());
 						break;

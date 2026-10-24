@@ -55,6 +55,11 @@ template<size_t Size> size_t strlmove_t(char (&dst)[Size], const char *src);
 template<size_t Size> size_t strlmcat_t(char (&dst)[Size], const char *src);
 #endif
 
+template<typename T> T* strrpbrk_t(const T *str, const T *accept);
+
+char* strrpbrk(const char *str, const char *accept);
+wchar_t* wcsrpbrk(const wchar_t *str, const wchar_t *accept);
+
 template<typename T> int strncmp_t(const T *str1, const T *str2, size_t maxcount);
 template<typename T> int strnicmp_t(const T* str1, const T* str2, size_t maxcount);
 
@@ -191,6 +196,28 @@ template<size_t Size> size_t strlcat_t(char (&dst)[Size], const char *src) { ret
 template<size_t Size> size_t strlmove_t(char (&dst)[Size], const char *src) { return strlmove_t(dst, src, Size); }
 template<size_t Size> size_t strlmcat_t(char (&dst)[Size], const char *src) { return strlmcat_t(dst, src, Size); }
 #endif
+
+// Templated reverse strpbrk.
+// Returns a pointer to the last character in str that matches any character in accept, or null if there is none.
+template<typename T> T* strrpbrk_t(const T *str, const T *accept)
+{
+	const T* last = nullptr;
+	for (; *str; ++str)
+	{
+		for (const T* a = accept; *a; ++a)
+		{
+			if (*str == *a)
+			{
+				last = str;
+				break;
+			}
+		}
+	}
+	return const_cast<T*>(last);
+}
+
+inline char* strrpbrk(const char *str, const char *accept) { return strrpbrk_t(str, accept); }
+inline wchar_t* wcsrpbrk(const wchar_t *str, const wchar_t *accept) { return strrpbrk_t(str, accept); }
 
 // Templated strncmp.
 // Compares up to maxcount chars or a null byte is encountered, whichever comes first.

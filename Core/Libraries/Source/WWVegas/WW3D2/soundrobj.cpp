@@ -574,9 +574,8 @@ SoundRenderObjDefClass::Create_Sound () const
 	// the current directory is set correctly.
 	//
 	StringClass real_filename(Settings.Filename,true);
-	const char *dir_delimiter = ::strrchr (Settings.Filename, '\\');
-	if (dir_delimiter != nullptr && Settings.Filename.Get_Length () > 2 && Settings.Filename[1] != ':') {
-		real_filename = (dir_delimiter + 1);
+	if (Settings.Filename.Get_Length () > 2 && Settings.Filename[1] != ':') {
+		real_filename = getFileName (Settings.Filename);
 	}
 
 	//

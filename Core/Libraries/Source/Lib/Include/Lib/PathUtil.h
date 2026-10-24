@@ -21,6 +21,7 @@
 #pragma once
 
 #include "BaseType.h"
+#include <Utility/stringex.h>
 #include <string.h>
 
 inline char getNativePathSeparator()
@@ -48,6 +49,11 @@ inline bool isPathSeparator(char ch)
 	return ch == '/' || ch == '\\';
 }
 
+inline bool isPathSeparator(WideChar ch)
+{
+	return ch == L'/' || ch == L'\\';
+}
+
 inline bool isAbsolutePath(const char* path)
 {
 	if (path == nullptr)
@@ -71,20 +77,46 @@ inline bool isAbsolutePath(const char* path)
 	return false;
 }
 
+inline const char* getFirstPathSeparator(const char* path)
+{
+	return strpbrk(path, "/\\");
+}
+
+inline const WideChar* getFirstPathSeparator(const WideChar* path)
+{
+	return wcspbrk(path, L"/\\");
+}
+
 inline const char* getLastPathSeparator(const char* path)
 {
-	return path ? maxPtr(strrchr(path, '/'), strrchr(path, '\\')) : nullptr;
+	return strrpbrk(path, "/\\");
 }
 
 inline const WideChar* getLastPathSeparator(const WideChar* path)
 {
-	return path ? maxPtr(wcsrchr(path, L'/'), wcsrchr(path, L'\\')) : nullptr;
+	return wcsrpbrk(path, L"/\\");
+}
+
+inline char* getLastPathSeparator(char* path)
+{
+	return strrpbrk(path, "/\\");
+}
+
+inline WideChar* getLastPathSeparator(WideChar* path)
+{
+	return wcsrpbrk(path, L"/\\");
 }
 
 // Returns the whole path when it contains no separator
 inline const char* getFileName(const char* path)
 {
 	const char* lastSeparator = getLastPathSeparator(path);
+	return lastSeparator ? lastSeparator + 1 : path;
+}
+
+inline char* getFileName(char* path)
+{
+	char* lastSeparator = getLastPathSeparator(path);
 	return lastSeparator ? lastSeparator + 1 : path;
 }
 

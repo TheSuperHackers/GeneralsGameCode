@@ -34,8 +34,6 @@ class GameInfo;
 
 // Convenience functions
 AsciiString GetBasePathFromPath( AsciiString path );
-AsciiString GetFileFromPath( AsciiString path );
-AsciiString GetExtensionFromFile( AsciiString fname );
 AsciiString GetBaseFileFromFile( AsciiString fname );
 AsciiString GetPreviewFromMap( AsciiString path );
 AsciiString GetINIFromMap( AsciiString path );
