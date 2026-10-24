@@ -79,6 +79,11 @@ W3DShroud::W3DShroud()
 	m_dstTextureHeight=m_numMaxVisibleCellsY=0;
 	m_boderShroudLevel = (W3DShroudLevel)TheGlobalData->m_shroudAlpha;	//assume border is black
 	m_clearDstTexture = TRUE;	//force clearing of destination texture;
+	m_shroudDirty = TRUE;
+	m_fogSnapRequested = TRUE;
+	m_fogFading = FALSE;
+	m_fogPrevTime = timeGetTime();
+	m_fogRemainder = 0.0f;
 
 	m_cellWidth=DEFAULT_SHROUD_CELL_SIZE;
 	m_cellHeight=DEFAULT_SHROUD_CELL_SIZE;
@@ -141,14 +146,6 @@ void W3DShroud::init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSi
 	srcWidth=m_numCellsX;
 	srcHeight=m_numCellsY;
 
-#ifdef DO_FOG_INTERPOLATION
-	m_finalFogData = new W3DShroudLevel[srcWidth*srcHeight];
-	m_currentFogData = new W3DShroudLevel[srcWidth*srcHeight];
-	//Clear the fog to black
-	memset(m_currentFogData,0,srcWidth*srcHeight);
- 	memset(m_finalFogData,0,srcWidth*srcHeight);
-#endif
-
 	// both shroud formats use 16 bit pixels
 	if (srcWidth != 0 && srcHeight != 0)
 	{
@@ -156,7 +153,19 @@ void W3DShroud::init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSi
 
 		//clear entire texture to black
 		memset(m_shroudData,0,srcWidth*srcHeight*sizeof(UnsignedShort));
+
+		m_finalFogData = new W3DShroudLevel[srcWidth*srcHeight];
+		m_currentFogData = new W3DShroudLevel[srcWidth*srcHeight];
+		//Clear the fog to black
+		memset(m_currentFogData,0,srcWidth*srcHeight);
+		memset(m_finalFogData,0,srcWidth*srcHeight);
 	}
+
+	m_shroudDirty = TRUE;
+	m_fogSnapRequested = TRUE;
+	m_fogFading = FALSE;
+	m_fogPrevTime = timeGetTime();
+	m_fogRemainder = 0.0f;
 
 #if defined(RTS_DEBUG)
 	if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
@@ -192,6 +201,11 @@ void W3DShroud::reset()
 	m_currentFogData=nullptr;
 
 	m_clearDstTexture = TRUE;	//always refill the destination texture after a reset
+	m_shroudDirty = TRUE;
+	m_fogSnapRequested = TRUE;
+	m_fogFading = FALSE;
+	m_fogPrevTime = timeGetTime();
+	m_fogRemainder = 0.0f;
 }
 
 //-----------------------------------------------------------------------------
@@ -233,6 +247,7 @@ Bool W3DShroud::ReAcquireResources()
 		m_pDstTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		m_pDstTexture->Get_Filter().Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_NONE);
 		m_clearDstTexture = TRUE;	//force clearing of destination texture first time it's used.
+		m_shroudDirty = TRUE;
 
 		return TRUE;
 }
@@ -271,6 +286,25 @@ void W3DShroud::setShroudLevel(Int x, Int y, W3DShroudLevel level, Bool textureO
 		if (level < TheGlobalData->m_shroudAlpha)
 			level = TheGlobalData->m_shroudAlpha;
 
+		const Int index = x + y*m_numCellsX;
+
+		// With interpolation only the fade step writes the texture
+		if (!textureOnly)
+		{
+			m_finalFogData[index] = level;
+			if (TheGlobalData->m_shroudInterpolation)
+			{
+				if (m_currentFogData[index] != level)
+				{
+					m_fogFading = TRUE;
+				}
+				return;
+			}
+			m_currentFogData[index] = level;
+		}
+
+		m_shroudDirty = TRUE;
+
 #if defined(RTS_DEBUG)
 		if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 		{
@@ -289,13 +323,10 @@ void W3DShroud::setShroudLevel(Int x, Int y, W3DShroudLevel level, Bool textureO
 		else
 #endif
 		{
-#ifdef DO_FOG_INTERPOLATION
-			if (!textureOnly)
-				m_finalFogData[x+y*m_numCellsX]=level;
-#endif
-			UnsignedInt bluepixel = (UnsignedInt)((Real)level*((Real)(TheGlobalData->m_shroudColor.getAsInt()&0xff)/255.0f));
-			UnsignedInt greenpixel = (UnsignedInt)((Real)level*((Real)((TheGlobalData->m_shroudColor.getAsInt()&0xff00)>>8)/255.0f));
-			UnsignedInt redpixel = (UnsignedInt)((Real)level*((Real)((TheGlobalData->m_shroudColor.getAsInt()&0xff0000)>>16)/255.0f));
+			const UnsignedInt shroudColor = TheGlobalData->m_shroudColor.getAsInt();
+			UnsignedInt bluepixel = (UnsignedInt)((Real)level*((Real)(shroudColor&0xff)/255.0f));
+			UnsignedInt greenpixel = (UnsignedInt)((Real)level*((Real)((shroudColor&0xff00)>>8)/255.0f));
+			UnsignedInt redpixel = (UnsignedInt)((Real)level*((Real)((shroudColor&0xff0000)>>16)/255.0f));
 //			UnsignedInt bluepixel = (UnsignedInt)((Real)level*((Real)(SHROUD_COLOR&0xff)/255.0f));
 //			UnsignedInt greenpixel = (UnsignedInt)((Real)level*((Real)((SHROUD_COLOR&0xff00)>>8)/255.0f));
 //			UnsignedInt redpixel = (UnsignedInt)((Real)level*((Real)((SHROUD_COLOR&0xff0000)>>16)/255.0f));
@@ -307,7 +338,7 @@ void W3DShroud::setShroudLevel(Int x, Int y, W3DShroudLevel level, Bool textureO
 				bluepixel = 255;
 			}
 
-			UnsignedShort *texel = &m_shroudData[x + y*m_numCellsX];
+			UnsignedShort *texel = &m_shroudData[index];
 
 //      For those interested, MLorenzen has this bock commented out until he gets back on Mon, Sept. 30 2002
 			// If this code is still here by mid october, nuke it!
@@ -378,14 +409,9 @@ void W3DShroud::fillShroudData(W3DShroudLevel level)
 			*ptr++=pixel;
 	}
 
-#ifdef DO_FOG_INTERPOLATION
-	//Set the final shroud state.  May differe from current state because of time interpolation.
-	for (y=0; y<m_numCellsY; y++)
-	{
-		for (x=0; x<m_numCellsX; x++)
-			m_finalFogData[x+y*m_numCellsX]=level;
-	}
-#endif
+	memset(m_finalFogData,level,m_numCellsX*m_numCellsY);
+	memset(m_currentFogData,level,m_numCellsX*m_numCellsY);
+	m_shroudDirty = TRUE;
 }
 
 void W3DShroud::fillBorderShroudData(W3DShroudLevel level, SurfaceClass* pDestSurface)
@@ -597,6 +623,20 @@ void W3DShroud::render(CameraClass *cam)
 		m_pDstTexture->Get_Filter().Set_Min_Filter(m_shroudFilter);
 	}
 
+	if (m_fogSnapRequested || (m_fogFading && !TheGlobalData->m_shroudInterpolation))
+	{
+		applyFogSnap();
+	}
+	else if (TheGlobalData->m_shroudInterpolation)
+	{
+		interpolateFogLevels();
+	}
+
+	if (!m_shroudDirty && !m_clearDstTexture)
+	{
+		return;	//texture is up to date
+	}
+
 	//Update video memory texture with sysmem copy
 	SurfaceClass* pDestSurface;
 	{
@@ -611,16 +651,12 @@ void W3DShroud::render(CameraClass *cam)
 	srcRect.right=visEndX;
 	srcRect.bottom=visEndY;
 
-#ifdef DO_FOG_INTERPOLATION
-	//interpolate current shroud state to the final one
-	interpolateFogLevels(&srcRect);
-#endif
-
 	if (m_clearDstTexture)
 	{
 		//we need to clear unused parts of the destination texture to a known
 		//color in order to keep map border in the state we want.
 		m_clearDstTexture=FALSE;
+		m_shroudDirty=TRUE;	//clearing also overwrote the interior
 
 		fillBorderShroudData(m_boderShroudLevel, pDestSurface);
 	}
@@ -641,6 +677,7 @@ void W3DShroud::render(CameraClass *cam)
 				src += m_numCellsX;
 			}
 			pDestSurface->Unlock();
+			m_shroudDirty = FALSE;
 		}
 	}
 
@@ -649,21 +686,81 @@ void W3DShroud::render(CameraClass *cam)
 
 #define FOG_INTERPOLATION_RATE	(255.0f/1000.0f)	//take one second to go from black to fully lit.
 //-----------------------------------------------------------------------------
-void W3DShroud::interpolateFogLevels(RECT *rect)
+void W3DShroud::interpolateFogLevels()
 {
-	static UnsignedInt prevTime = timeGetTime();
+	const UnsignedInt now = timeGetTime();
+	const UnsignedInt timeDiff = now - m_fogPrevTime;
+	m_fogPrevTime = now;
 
-	UnsignedInt timeDiff=timeGetTime()-prevTime;
+	if (!m_fogFading)
+	{
+		m_fogRemainder = 0.0f;
+		return;	//nothing to fade
+	}
 
-	if (!timeDiff)
-		return;	//no time has elapsed
+	Real change = FOG_INTERPOLATION_RATE * (Real)timeDiff + m_fogRemainder;
+	if (change > 255.0f)
+	{
+		change = 255.0f;
+	}
+	const Int levelDelta = (Int)change;
+	m_fogRemainder = change - (Real)levelDelta;
 
-	prevTime +=timeDiff;	//update for next frame
+	if (levelDelta == 0)
+	{
+		return;
+	}
 
-	Int maxFogChange=FOG_INTERPOLATION_RATE * (Real)timeDiff;	//maximum amount of fog change allowed in frame.
-	if (maxFogChange > 255)
-		maxFogChange = 255;
-	W3DShroudLevel levelDelta = maxFogChange;
+	Bool stillFading = FALSE;
+	W3DShroudLevel *startLevel=m_currentFogData;
+	W3DShroudLevel *finalLevel=m_finalFogData;
+
+	for (Int j=0; j<m_numCellsY; j++)
+	{
+		for (Int i=0; i<m_numCellsX; i++,startLevel++,finalLevel++)
+		{
+			if (*startLevel == *finalLevel)
+			{
+				continue;
+			}
+
+			const Int remaining = (Int)*finalLevel - (Int)*startLevel;
+			if (remaining > levelDelta)
+			{
+				*startLevel = (W3DShroudLevel)(*startLevel + levelDelta);
+			}
+			else if (remaining < -levelDelta)
+			{
+				*startLevel = (W3DShroudLevel)(*startLevel - levelDelta);
+			}
+			else
+			{
+				*startLevel = *finalLevel;	//change too large so clamp to final value.
+			}
+
+			if (*startLevel != *finalLevel)
+			{
+				stillFading = TRUE;
+			}
+			setShroudLevel(i,j,*startLevel,TRUE);
+		}
+	}
+
+	m_fogFading = stillFading;
+}
+
+//-----------------------------------------------------------------------------
+void W3DShroud::applyFogSnap()
+{
+	m_fogSnapRequested = FALSE;
+	m_fogPrevTime = timeGetTime();
+	m_fogRemainder = 0.0f;
+
+	if (!m_fogFading)
+	{
+		return;
+	}
+	m_fogFading = FALSE;
 
 	W3DShroudLevel *startLevel=m_currentFogData;
 	W3DShroudLevel *finalLevel=m_finalFogData;
@@ -671,30 +768,51 @@ void W3DShroud::interpolateFogLevels(RECT *rect)
 	for (Int j=0; j<m_numCellsY; j++)
 	{
 		for (Int i=0; i<m_numCellsX; i++,startLevel++,finalLevel++)
+		{
 			if (*startLevel != *finalLevel)
 			{
-				//fog needs fading.
-				if (*startLevel == *finalLevel)
-					continue;
-				else
-				if (*finalLevel < *startLevel)
-				{
-					if ((*startLevel - *finalLevel) < levelDelta)
-						*startLevel = *finalLevel;	//change too large so clamp to final value.
-					else
-						*startLevel -= levelDelta;
-				}
-				else
-				if (*finalLevel > *startLevel)
-				{
-					if ((*finalLevel - *startLevel) < levelDelta)
-						*startLevel = *finalLevel;	//change too large so clamp to final value.
-					else
-						*startLevel += levelDelta;
-				}
+				*startLevel = *finalLevel;
 				setShroudLevel(i,j,*startLevel,TRUE);
 			}
+		}
 	}
+}
+
+//-----------------------------------------------------------------------------
+Bool W3DShroud::isClearAt(Real worldX, Real worldY, Real radius) const
+{
+	if (!m_currentFogData)
+	{
+		return TRUE;
+	}
+
+	const W3DShroudLevel clearLevel = (W3DShroudLevel)TheGlobalData->m_clearAlpha;
+
+	Int minX = REAL_TO_INT_FLOOR((worldX - radius) / m_cellWidth);
+	Int minY = REAL_TO_INT_FLOOR((worldY - radius) / m_cellHeight);
+	Int maxX = REAL_TO_INT_FLOOR((worldX + radius) / m_cellWidth);
+	Int maxY = REAL_TO_INT_FLOOR((worldY + radius) / m_cellHeight);
+	if (minX < 0)
+		minX = 0;
+	if (minY < 0)
+		minY = 0;
+	if (maxX >= m_numCellsX)
+		maxX = m_numCellsX - 1;
+	if (maxY >= m_numCellsY)
+		maxY = m_numCellsY - 1;
+
+	for (Int y = minY; y <= maxY; ++y)
+	{
+		const Int row = y*m_numCellsX;
+		for (Int x = minX; x <= maxX; ++x)
+		{
+			if (m_currentFogData[row + x] < clearLevel)
+			{
+				return FALSE;
+			}
+		}
+	}
+	return TRUE;
 }
 
 //-----------------------------------------------------------------------------
