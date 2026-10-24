@@ -48,6 +48,8 @@
 #define CV_PATCH_SCALE_OFFSET 10
 
 class PolygonTrigger;
+class RiverGeometryCache;
+struct RiverRenderScratch;
 class WaterTracksRenderSystem;
 class Xfer;
 /// Custom render object that draws mirrors, water, and skies.
@@ -94,7 +96,7 @@ public:
   	virtual void	Set_Sort_Level(int level) override { m_sortLevel = level;}
 
 	///allocate W3D resources needed to render water
-	void renderWater();				///<draw the water surface (flat)
+	void renderWater(CameraClass *camera = nullptr);				///<draw the water surface (flat)
 	Int init(Real waterLevel, Real dx, Real dy, SceneClass *parentScene, WaterType type);
 	void reset();  ///< reset any resources we need to
 	void load();	///< load/setup any map dependent features
@@ -202,6 +204,8 @@ protected:
 	Int  m_gridCellsX;					///<number of cells along width
 	Int  m_gridCellsY;					///<number of cells along height
 
+	RiverGeometryCache *m_riverGeometryCache;
+	RiverRenderScratch *m_riverRenderScratch;
 	Real m_riverVOrigin;
 	TextureClass *m_riverTexture;
 	TextureClass *m_whiteTexture;		///< a texture containing only white used for null pixel shader stages.
@@ -235,7 +239,7 @@ protected:
 	};
 
 	Setting m_settings[ TIME_OF_DAY_COUNT ];	///< settings for each time of day
-	void drawRiverWater(PolygonTrigger *pTrig);
+	void drawRiverWater(PolygonTrigger *pTrig, CameraClass *camera);
 	void drawTrapezoidWater(Vector3 points[4]);
 	void loadSetting ( Setting *skySetting, TimeOfDay timeOfDay );	///<init sky/water settings from GDF
 	void renderSky();	///<draw the sky layer (clouds, stars, etc.)

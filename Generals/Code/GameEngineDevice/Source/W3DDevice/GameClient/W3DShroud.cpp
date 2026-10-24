@@ -258,6 +258,29 @@ W3DShroudLevel W3DShroud::getShroudLevel(Int x, Int y)
 	return 0;
 }
 
+Real W3DShroud::sampleShroudLevel(Real worldX, Real worldY)
+{
+	if (!m_shroudData || m_cellWidth <= 0 || m_cellHeight <= 0)
+		return 0;
+
+	// Match shroud texel centers.
+	const Real gridX = worldX / m_cellWidth - 0.5f;
+	const Real gridY = worldY / m_cellHeight - 0.5f;
+	if (!(gridX >= -1 && gridX < m_numCellsX && gridY >= -1 && gridY < m_numCellsY))
+		return 0;
+	const Int cellX = (Int)floor(gridX);
+	const Int cellY = (Int)floor(gridY);
+	const Real fractionX = gridX - cellX;
+	const Real fractionY = gridY - cellY;
+	const Real lowerLeft = getShroudLevel(cellX, cellY);
+	const Real lowerRight = getShroudLevel(cellX + 1, cellY);
+	const Real upperLeft = getShroudLevel(cellX, cellY + 1);
+	const Real upperRight = getShroudLevel(cellX + 1, cellY + 1);
+	const Real lower = lowerLeft + (lowerRight - lowerLeft) * fractionX;
+	const Real upper = upperLeft + (upperRight - upperLeft) * fractionX;
+	return lower + (upper - lower) * fractionY;
+}
+
 //-----------------------------------------------------------------------------
 void W3DShroud::setShroudLevel(Int x, Int y, W3DShroudLevel level, Bool textureOnly)
 {
