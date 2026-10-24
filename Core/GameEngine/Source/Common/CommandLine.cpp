@@ -475,6 +475,17 @@ Int parseSetCwd(char *args[], int num)
 	return 1;
 }
 
+Int parseDataDir(char *args[], int num)
+{
+	// -dataDir "<dir1>;<dir2>" adds folders with lower priority .big files.
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_dataDirs = args[1];
+		return 2;
+	}
+	return 1;
+}
+
 Int parseXRes(char *args[], int num)
 {
 	if (num > 1)
@@ -1187,6 +1198,11 @@ static CommandLineParam paramsForStartup[] =
 	// The last successful selection wins; otherwise use the executable directory.
 	{ "-setCwd", parseSetCwd },
 	{ "-useCwd", parseUseCwd },
+
+	// TheSuperHackers @feature CryoTheRenegade 17/10/2026
+	// Load .big files from these ';'-separated folders after the game folder. Earlier folders take priority.
+	// In Zero Hour they replace the Generals InstallPath registry value. Relative paths are resolved from the working directory.
+	{ "-dataDir", parseDataDir },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded

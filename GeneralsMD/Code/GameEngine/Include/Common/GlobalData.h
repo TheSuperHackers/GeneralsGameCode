@@ -571,6 +571,7 @@ public:
 	Bool				m_breakTheMovie;								///< The user has hit escape!
 	AsciiString m_modDir;
 	AsciiString m_modBIG;
+	AsciiString m_dataDirs;								///< ';'-separated folders with lower priority .big files, from -dataDir.
 
 	//-allAdvice feature
 	//Bool m_allAdvice;

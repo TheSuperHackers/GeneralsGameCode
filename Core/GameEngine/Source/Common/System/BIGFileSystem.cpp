@@ -60,14 +60,40 @@ void BIGFileSystem::init() {
 
 	loadArchiveFilesFromDirectory("", "*.big");
 
+	// TheSuperHackers @feature CryoTheRenegade 17/10/2026 Load the -dataDir folders in the listed order.
+	// Files already in the tree are kept, so earlier folders take priority.
+	Bool loadedDataDir = FALSE;
+	if (TheGlobalData != nullptr)
+	{
+		AsciiString dataDirs = TheGlobalData->m_dataDirs;
+		AsciiString dataDir;
+		while (dataDirs.nextToken(&dataDir, ";"))
+		{
+			if (!dataDir.endsWith("\\") && !dataDir.endsWith("/"))
+				dataDir.concat('\\');
+
+			// Validate here, not during startup parsing, which runs before the debug log file is open.
+			const DWORD attributes = GetFileAttributes(dataDir.str());
+			if (attributes == 0xFFFFFFFF || !(attributes & FILE_ATTRIBUTE_DIRECTORY))
+			{
+				DEBUG_LOG(("Data dir '%s' is not a directory. Skipping it.", dataDir.str()));
+				continue;
+			}
+
+			loadArchiveFilesFromDirectory(dataDir, "*.big");
+			loadedDataDir = TRUE;
+		}
+	}
+
 #if RTS_ZEROHOUR
-    // load original Generals assets
-    AsciiString installPath;
-    GetStringFromGeneralsRegistry("", "InstallPath", installPath );
-    //@todo this will need to be ramped up to a crash for release
-    DEBUG_ASSERTCRASH(!installPath.isEmpty(), ("Be 1337! Go install Generals!"));
-    if (!installPath.isEmpty())
-      loadArchiveFilesFromDirectory(installPath, "*.big");
+    // load original Generals assets, unless the -dataDir folders provide them
+    if (!loadedDataDir)
+    {
+      AsciiString installPath;
+      GetStringFromGeneralsRegistry("", "InstallPath", installPath );
+      if (!installPath.isEmpty())
+        loadArchiveFilesFromDirectory(installPath, "*.big");
+    }
 #endif
 }
 
