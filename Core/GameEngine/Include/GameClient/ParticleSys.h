@@ -249,11 +249,8 @@ public:
 	Bool							m_inSystemList;
 	Bool							m_inOverallList;
 
-	union
-	{
-		ParticleSystem *	m_systemUnderControl;			///< the particle system attached to this particle (not the system that created us)
-		ParticleSystemID	m_systemUnderControlID;	///< id of system attached to this particle (not the system that created us);
-	};
+	ParticleSystem *	m_systemUnderControl;			///< the particle system attached to this particle (not the system that created us)
+	ParticleSystemID	m_xferSystemUnderControlID;	///< xfer uses IDs to store pointers and looks them up after
 
 };
 
