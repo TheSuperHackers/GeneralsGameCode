@@ -314,8 +314,8 @@ public:
 	void setTintStatus( TintStatus statusBits ) { BitSet( m_tintStatus, statusBits ); };
 	void clearTintStatus( TintStatus statusBits ) { BitClear( m_tintStatus, statusBits ); };
 	Bool testTintStatus( TintStatus statusBits ) const { return BitIsSet( m_tintStatus, statusBits ); };
-	TintEnvelope *getColorTintEnvelope() { return m_colorTintEnvelope; }
-	void setColorTintEnvelope( TintEnvelope &source ) { if (m_colorTintEnvelope) *m_colorTintEnvelope = source; }
+	const TintEnvelope *getColorTintEnvelope() { return m_colorTintEnvelope; }
+	void setColorTintEnvelope( const TintEnvelope* source ) { if (m_colorTintEnvelope && source) *m_colorTintEnvelope = *source; }
 
   void imitateStealthLook( Drawable& otherDraw );
 

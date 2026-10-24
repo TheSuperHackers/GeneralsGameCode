@@ -592,6 +592,13 @@ void Object::initObject()
 	{
 		ThePlayerList->getNeutralPlayer()->getAcademyStats()->recordMine();
 	}
+
+	// TheSuperHackers @info Workaround for newly created objects that require energy but are underpowered.
+	// The object is disabled before its drawable is attached, preventing the expected tint effect from being applied.
+	if (isKindOf(KINDOF_POWERED) && isDisabledByType(DISABLED_UNDERPOWERED))
+	{
+		m_drawable->setTintStatus(TINT_STATUS_DISABLED);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3296,6 +3303,12 @@ Bool Object::isAbleToAttack() const
 
   if ( isDisabledByType( DISABLED_SUBDUED ) )
     return FALSE; // A Microwave Tank is cooking me
+
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @tweak A (mod) unit that requires to be powered cannot attack without power.
+	if (isDisabledByType(DISABLED_UNDERPOWERED))
+		return FALSE;
+#endif
 
 	//We can't fire if we, as a portable structure, are aptly disabled
 	if ( isKindOf( KINDOF_PORTABLE_STRUCTURE ) || isKindOf( KINDOF_SPAWNS_ARE_THE_WEAPONS ))
