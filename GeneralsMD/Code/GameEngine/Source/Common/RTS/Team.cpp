@@ -1323,6 +1323,12 @@ Team::Team(TeamPrototype *proto, TeamID id ) :
 	m_playerRelations = newInstance(PlayerRelationMap);
 	m_teamRelations = newInstance(TeamRelationMap);
 
+#if !RETAIL_COMPATIBLE_SCRIPTING
+	for (int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
+		m_genericScriptsToRun[i] = nullptr;
+	}
+#endif
+
 	if (proto)
 	{
 		proto->prependTo_TeamInstanceList(this);
@@ -1332,15 +1338,26 @@ Team::Team(TeamPrototype *proto, TeamID id ) :
 			m_checkEnemySighted = true;	 // Only keep track of enemy sighted if there is a script that cares.
 		}
 
+#if !RETAIL_COMPATIBLE_SCRIPTING
+		for (int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
+			Script* script = proto->getGenericScript(i);
+			if (script) {
+				m_genericScriptsToRun[i] = proto->getGenericScript(i)->duplicate();
+			}
+		}
+#endif
+
 		AsciiString teamName = proto->getName();
 		teamName.concat(" - creating team instance.");
 		TheScriptEngine->AppendDebugMessage(teamName, false);
 	}
 
+#if RETAIL_COMPATIBLE_SCRIPTING
 	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i)
 	{
 		m_shouldAttemptGenericScript[i] = true;
 	}
+#endif
 
 
 }
@@ -1379,6 +1396,15 @@ Team::~Team()
 
 	// make sure the xfer list is clear
 	m_xferMemberIDList.clear();
+
+#if !RETAIL_COMPATIBLE_SCRIPTING
+	// Clear any scripts that we have ownership of
+	for (i = 0; i < MAX_GENERIC_SCRIPTS; ++i)
+	{
+		deleteInstance(m_genericScriptsToRun[i]);
+		m_genericScriptsToRun[i] = nullptr;
+	}
+#endif
 
 }
 
@@ -2530,29 +2556,77 @@ Bool Team::hasAnyBuildFacility() const
 void Team::updateGenericScripts()
 {
 	//USE_PERF_TIMER(updateGenericScripts)
+#if RETAIL_COMPATIBLE_SCRIPTING
 	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
-		if (m_shouldAttemptGenericScript[i]) {
-			// Does the condition succeed? If so, run it. If it is a run once script, also mark that we
-			// shouldn't run it again.
-			Script *script = m_proto->getGenericScript(i);
-			if (script) {
-				if (TheScriptEngine->evaluateConditions(script, this)) {
-					// It was successful.
-					if (script->isOneShot()) {
-						m_shouldAttemptGenericScript[i] = false;
-					}
-					TheScriptEngine->friend_executeAction(script->getAction(), this);
-					AsciiString msg = "Generic script '";
-					msg.concat(script->getName());
-					msg.concat("' run on team ");
-					msg.concat(getName());
-					TheScriptEngine->AppendDebugMessage(msg, false);
-				}
-			} else {
+		if (!m_shouldAttemptGenericScript[i]) {
+			continue;
+		}
+
+		Script *script = m_proto->getGenericScript(i);
+		if (!script) {
+			m_shouldAttemptGenericScript[i] = false;
+			continue;
+		}
+
+		if (TheScriptEngine->evaluateConditions(script, this)) {
+			// It was successful.
+			if (script->isOneShot()) {
 				m_shouldAttemptGenericScript[i] = false;
 			}
+			TheScriptEngine->friend_executeAction(script->getAction(), this);
+			AsciiString msg = "Generic script '";
+			msg.concat(script->getName());
+			msg.concat("' run on team ");
+			msg.concat(getName());
+			TheScriptEngine->AppendDebugMessage(msg, false);
 		}
 	}
+#else
+	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
+		Script* script = m_genericScriptsToRun[i];
+		if (!script) {
+			continue;
+		}
+
+		if (!script->isActive()) {
+			continue;
+		}
+
+		// TheSuperHackers @feature Mauller/TanSo 30/03/2026 Evaluate all script properties on generic scripts
+		Player* currentPlayer = getControllingPlayer();
+		GameDifficulty difficulty = TheScriptEngine->getGlobalDifficulty();
+		if (currentPlayer) {
+			difficulty = currentPlayer->getPlayerDifficulty();
+		}
+		switch (difficulty) {
+		case DIFFICULTY_EASY: if (!script->isEasy()) continue;  break;
+		case DIFFICULTY_NORMAL: if (!script->isNormal()) continue;  break;
+		case DIFFICULTY_HARD: if (!script->isHard()) continue;  break;
+		}
+
+		if (TheGameLogic->getFrame() < script->getFrameToEvaluate()) {
+			continue;
+		}
+
+		Int delaySeconds = script->getDelayEvalSeconds();
+		if (delaySeconds > 0) {
+			script->setFrameToEvaluate(TheGameLogic->getFrame() + delaySeconds * LOGICFRAMES_PER_SECOND);
+		}
+
+		if (TheScriptEngine->evaluateConditions(script, this)) {
+			// It was successful.
+			if (script->isOneShot()) {
+				script->setActive(false);
+			}
+			TheScriptEngine->friend_executeAction(script->getAction(), this);
+			AsciiString msg = "Generic script '";
+			msg.concat(script->getName());
+			msg.concat("' run on team ");
+			msg.concat(getName());
+			TheScriptEngine->AppendDebugMessage(msg, false);
+		}
+	}
+#endif
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2677,8 +2751,17 @@ void Team::xfer( Xfer *xfer )
 		throw SC_INVALID_DATA;
 	}
 
+#if RETAIL_COMPATIBLE_SCRIPTING
 	for (Int i = 0; i < shouldAttemptGenericScriptCount; ++i)
 		xfer->xferBool(&m_shouldAttemptGenericScript[i]);
+#else
+	// TheSuperHackers @info Generic scripts can now be toggled so we need to directly check each scripts active state
+	for (Int i = 0; i < shouldAttemptGenericScriptCount; ++i) {
+		Script* script = m_genericScriptsToRun[i];
+		Bool scriptActive = script ? script->isActive() : false;
+		xfer->xferBool(&scriptActive);
+	}
+#endif
 
 	// recruitability set
 	xfer->xferBool( &m_isRecruitablitySet );
