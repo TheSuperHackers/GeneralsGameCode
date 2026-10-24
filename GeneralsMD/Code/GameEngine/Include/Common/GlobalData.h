@@ -430,6 +430,9 @@ public:
 	Bool m_showMoneyPerMinute;
 	Bool m_allowMoneyPerMinuteForPlayer;
 
+	// TheSuperHackers @feature CryoTheRenegade 17/10/2026 run GUI hotkeys on key down instead of key up, false keeps the original key up behavior
+	Bool m_triggerHotKeyOnDown;
+
 	// TheSuperHackers @feature bobtista 28/06/2026 user-configurable speed multiplier for game window transitions
 	Real m_gameWindowTransitionSpeedMultiplier;
 
