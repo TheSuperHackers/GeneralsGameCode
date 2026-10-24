@@ -80,7 +80,7 @@ void BIGFileSystem::update() {
 void BIGFileSystem::postProcessLoad() {
 }
 
-ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
+ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename, Bool overwrite) {
 	File *fp = TheLocalFileSystem->openFile(filename, File::READ | File::BINARY);
 	AsciiString archiveFileName;
 	archiveFileName = filename;
@@ -162,13 +162,10 @@ ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
 
 		AsciiString path;
 		path = buffer;
+		path.concat(fileInfo.m_filename);
+//		DEBUG_LOG(("BIGFileSystem::openArchiveFile - adding file %s to archive file %s, file number %d", path.str(), fileInfo.m_archiveFilename.str(), i));
 
-		AsciiString debugpath;
-		debugpath = path;
-		debugpath.concat(fileInfo.m_filename);
-//		DEBUG_LOG(("BIGFileSystem::openArchiveFile - adding file %s to archive file %s, file number %d", debugpath.str(), fileInfo.m_archiveFilename.str(), i));
-
-		archiveFile->addFile(path, &fileInfo);
+		addFile(archiveFile, path, fileInfo, overwrite);
 	}
 
 	archiveFile->attachFile(fp);
@@ -195,6 +192,7 @@ void BIGFileSystem::closeArchiveFile(const Char *filename) {
 
 	// may need to do some other processing here first.
 
+	removeFiles(it->second);
 	delete (it->second);
 	m_archiveFileMap.erase(it);
 }
@@ -223,11 +221,9 @@ Bool BIGFileSystem::loadArchiveFilesFromDirectory(AsciiString dir, AsciiString f
 		}
 #endif
 
-		ArchiveFile *archiveFile = openArchiveFile((*it).str());
+		ArchiveFile *archiveFile = openArchiveFile((*it).str(), overwrite);
 
 		if (archiveFile != nullptr) {
-			DEBUG_LOG(("BIGFileSystem::loadArchiveFilesFromDirectory - loading %s into the directory tree.", (*it).str()));
-			loadIntoDirectoryTree(archiveFile, overwrite);
 			m_archiveFileMap[(*it)] = archiveFile;
 			DEBUG_LOG(("BIGFileSystem::loadArchiveFilesFromDirectory - %s inserted into the archive file map.", (*it).str()));
 			actuallyAdded = TRUE;
@@ -243,11 +239,9 @@ void BIGFileSystem::loadMods()
 {
 	if (TheGlobalData->m_modBIG.isNotEmpty())
 	{
-		ArchiveFile *archiveFile = openArchiveFile(TheGlobalData->m_modBIG.str());
+		ArchiveFile *archiveFile = openArchiveFile(TheGlobalData->m_modBIG.str(), TRUE);
 
 		if (archiveFile != nullptr) {
-			DEBUG_LOG(("BIGFileSystem::loadMods - loading %s into the directory tree.", TheGlobalData->m_modBIG.str()));
-			loadIntoDirectoryTree(archiveFile, TRUE);
 			m_archiveFileMap[TheGlobalData->m_modBIG] = archiveFile;
 			DEBUG_LOG(("BIGFileSystem::loadMods - %s inserted into the archive file map.", TheGlobalData->m_modBIG.str()));
 		}
