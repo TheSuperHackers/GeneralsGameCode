@@ -38,6 +38,7 @@
 #include "GameClient/InGameUI.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
+#include "GameLogic/PartitionManager.h"
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
@@ -109,6 +110,9 @@ MinefieldBehavior::MinefieldBehavior( Thing *thing, const ModuleData* moduleData
 	m_ignoreDamage = false;
 	m_regenerates = d->m_regenerates;
 	m_draining = false;
+	m_covered = false;
+	m_coverSetIndestructible = false;
+	m_recheckCover = false;
 	m_virtualMinesRemaining = d->m_numVirtualMines;
 	for (Int i = 0; i < MAX_IMMUNITY; ++i)
 	{
@@ -209,6 +213,16 @@ UpdateSleepTime MinefieldBehavior::update()
 		--m_scootFramesLeft;
 	}
 
+	// recheck the cover once landed, the destroy hook cannot see a scooting mine
+	if (m_recheckCover && m_scootFramesLeft == 0)
+	{
+		m_recheckCover = false;
+		if (m_covered && !isUnderStructure(nullptr))
+		{
+			setCovered(FALSE);
+		}
+	}
+
 	// check for expired immunities.
 	for (Int i = 0; i < MAX_IMMUNITY; ++i)
 	{
@@ -239,6 +253,12 @@ UpdateSleepTime MinefieldBehavior::update()
 				Object* producer = TheGameLogic->findObjectByID(producerID);
 				if (producer == nullptr || producer->isEffectivelyDead())
 				{
+					if (m_covered)
+					{
+						TheGameLogic->destroyObject(obj);
+						return UPDATE_SLEEP_FOREVER;
+					}
+
 					m_regenerates = false;
 					m_draining = true;
 					static const NameKeyType key_AutoHealBehavior = NAMEKEY("AutoHealBehavior");
@@ -439,7 +459,7 @@ void MinefieldBehavior::onCollide( Object *other, const Coord3D *loc, const Coor
 //-------------------------------------------------------------------------------------------------
 void MinefieldBehavior::onDamage( DamageInfo *damageInfo )
 {
-	if (m_ignoreDamage)
+	if (m_ignoreDamage || m_covered)
 		return;
 
 	const MinefieldBehaviorModuleData* d = getMinefieldBehaviorModuleData();
@@ -517,12 +537,22 @@ void MinefieldBehavior::onDie( const DamageInfo *damageInfo )
 //-------------------------------------------------------------------------------------------------
 void MinefieldBehavior::disarm()
 {
+	if (m_covered)
+		return;
+
 	if (!m_regenerates)
 	{
 		TheGameLogic->destroyObject(getObject());
 		return;
 	}
 
+	spendMines();
+}
+
+// ------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void MinefieldBehavior::spendMines()
+{
 	// detonation never puts our health below this, since we probably auto-regen
 	const Real MIN_HEALTH = 0.1f;
 
@@ -547,6 +577,72 @@ void MinefieldBehavior::disarm()
 	m_virtualMinesRemaining = 0;
 	getObject()->setModelConditionState(MODELCONDITION_RUBBLE);
 	getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_MASKED ) );
+}
+
+// ------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void MinefieldBehavior::setCovered(Bool covered)
+{
+	if (covered == m_covered)
+		return;
+
+	Object* obj = getObject();
+	BodyModuleInterface* body = obj->getBodyModule();
+
+	if (covered)
+	{
+		if (!m_regenerates)
+		{
+			TheGameLogic->destroyObject(obj);
+			return;
+		}
+
+		spendMines();
+		m_covered = true;
+		if (m_scootFramesLeft > 0)
+			m_recheckCover = true;
+		if (body && !body->isIndestructible())
+		{
+			body->setIndestructible(TRUE);
+			m_coverSetIndestructible = true;
+		}
+	}
+	else
+	{
+		m_covered = false;
+		if (body && m_coverSetIndestructible)
+		{
+			body->setIndestructible(FALSE);
+		}
+		m_coverSetIndestructible = false;
+
+		spendMines();
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+Bool MinefieldBehavior::isUnderStructure(const Object* ignore) const
+{
+	// Same central third as SkipIfThisMuchUnderStructure
+	const Real UNDER_STRUCTURE_FRACTION = 0.33f;
+
+	const Object* obj = getObject();
+	GeometryInfo geom = obj->getGeometryInfo();
+	geom.expandFootprint(geom.getBoundingCircleRadius() * -(1.0f - UNDER_STRUCTURE_FRACTION));
+	ObjectIterator* iter = ThePartitionManager->iteratePotentialCollisions( obj->getPosition(), geom, obj->getOrientation() );
+	MemoryPoolObjectHolder hold( iter );
+	for (Object* them = iter->first(); them; them = iter->next())
+	{
+		if (them == ignore || them->isDestroyed() || !them->isKindOf(KINDOF_STRUCTURE) || them->isKindOf(KINDOF_REBUILD_HOLE))
+			continue;
+
+		if (them->getID() == obj->getProducerID())
+			continue;
+
+		return TRUE;
+	}
+	return FALSE;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -600,6 +696,7 @@ void MinefieldBehavior::setScootParms(const Coord3D& start, const Coord3D& end)
 			m_scootAccel.z = TheGlobalData->m_gravity;
 			obj->setPosition(&start);
 			m_scootFramesLeft = scootFromStartingPointTime;
+			m_recheckCover = m_covered;
 
 			// we need to wake ourselves up because we could be lying here sleeping forever
 			setWakeFrame( obj, calcSleepTime() );
@@ -623,13 +720,19 @@ void MinefieldBehavior::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: TheSuperHackers @bugfix Serialize the cover state of mines under structures
+	*/
 // ------------------------------------------------------------------------------------------------
 void MinefieldBehavior::xfer( Xfer *xfer )
 {
 
 	// version
-	XferVersion currentVersion = 1;
+#if RETAIL_COMPATIBLE_XFER_SAVE
+	const XferVersion currentVersion = 1;
+#else
+	const XferVersion currentVersion = 2;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -655,6 +758,13 @@ void MinefieldBehavior::xfer( Xfer *xfer )
 	xfer->xferBool( &m_ignoreDamage );
 	xfer->xferBool( &m_regenerates );
 	xfer->xferBool( &m_draining );
+
+	if( version >= 2 )
+	{
+		xfer->xferBool( &m_covered );
+		xfer->xferBool( &m_coverSetIndestructible );
+		xfer->xferBool( &m_recheckCover );
+	}
 
 	// immunities
 	UnsignedByte maxImmunity = MAX_IMMUNITY;

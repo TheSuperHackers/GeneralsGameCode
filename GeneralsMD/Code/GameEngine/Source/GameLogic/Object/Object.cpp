@@ -782,6 +782,20 @@ const Object* Object::getOuterObject() const
 	return this;
 }
 
+#if !RETAIL_COMPATIBLE_CRC && !RETAIL_COMPATIBLE_XFER_SAVE
+//-------------------------------------------------------------------------------------------------
+static LandMineInterface* findLandMineInterface(Object* mine)
+{
+	for (BehaviorModule** b = mine->getBehaviorModules(); *b; ++b)
+	{
+		LandMineInterface* lmi = (*b)->getLandMineInterface();
+		if (lmi)
+			return lmi;
+	}
+	return nullptr;
+}
+#endif
+
 //-------------------------------------------------------------------------------------------------
 /** Run from GameLogic::destroyObject */
 //-------------------------------------------------------------------------------------------------
@@ -821,6 +835,25 @@ void Object::onDestroy()
 	{
 		(*b)->onDelete();
 	}
+
+#if !RETAIL_COMPATIBLE_CRC && !RETAIL_COMPATIBLE_XFER_SAVE
+	if (isKindOf(KINDOF_STRUCTURE))
+	{
+		ObjectIterator* iter = ThePartitionManager->iteratePotentialCollisions( getPosition(), getGeometryInfo(), getOrientation() );
+		MemoryPoolObjectHolder hold( iter );
+		for (Object* them = iter->first(); them; them = iter->next())
+		{
+			if (them->isKindOf(KINDOF_MINE) && !them->isDestroyed())
+			{
+				LandMineInterface* lmi = findLandMineInterface(them);
+				if (lmi && lmi->isCovered() && !lmi->isUnderStructure(this))
+				{
+					lmi->setCovered(FALSE);
+				}
+			}
+		}
+	}
+#endif
 
 	//Have to remove ourself from looking as well.  RebuildHoleWorkers definitely hit here.
 	handlePartitionCellMaintenance();
@@ -1087,7 +1120,20 @@ void Object::setStatus( ObjectStatusMaskType objectStatus, Bool set )
 					}
 					else
 					{
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
 						TheGameLogic->destroyObject(them);
+#else
+						// TheSuperHackers @bugfix arcticdolphin 23/10/2026 Keep allied mines under the structure dormant instead of deleting them.
+						LandMineInterface* lmi = findLandMineInterface(them);
+						if (lmi && r == ALLIES && isKindOf(KINDOF_STRUCTURE) && !isKindOf(KINDOF_REBUILD_HOLE) && getID() != them->getProducerID())
+						{
+							lmi->setCovered(TRUE);
+						}
+						else
+						{
+							TheGameLogic->destroyObject(them);
+						}
+#endif
 					}
 				}
 			}
@@ -2049,6 +2095,18 @@ Real Object::estimateDamage( DamageInfoInput& damageInfo ) const
 //-------------------------------------------------------------------------------------------------
 void Object::kill( DamageType damageType, DeathType deathType )
 {
+#if !RETAIL_COMPATIBLE_CRC && !RETAIL_COMPATIBLE_XFER_SAVE
+	if (isKindOf(KINDOF_MINE))
+	{
+		LandMineInterface* lmi = findLandMineInterface(this);
+		if (lmi && lmi->isCovered())
+		{
+			TheGameLogic->destroyObject(this);
+			return;
+		}
+	}
+#endif
+
 	DamageInfo damageInfo;
 
 	// Do unmodifiable damage equal to their max health to kill.
