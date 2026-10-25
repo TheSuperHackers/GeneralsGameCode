@@ -28,9 +28,9 @@
  *                                                                                             *
  *                      $Author:: Jani_p                                                      $*
  *                                                                                             *
- *                     $Modtime:: 6/27/01 7:52p                                               $*
+ *                     $Modtime:: 11/25/01 6:06p                                              $*
  *                                                                                             *
- *                    $Revision:: 4                                                           $*
+ *                    $Revision:: 5                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -312,7 +312,7 @@ bool HRawAnimClass::read_channel(ChunkLoadClass & cload,MotionChannelClass * * n
 	{
 		if (pre30)
 		{
-			channel->PivotIdx += 1;
+			channel->Set_Pivot(channel->Get_Pivot() + 1);
 		}
 
 		*newchan = channel;
