@@ -22,15 +22,15 @@
  *                                                                                             *
  *                 Project Name : WW3D                                                         *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/ww3d2/meshgeometry.cpp                            $*
+ *                     $Archive:: /Commando/Code/ww3d2/meshgeometry.cpp                       $*
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Vss_sync                                                    $*
+ *                      $Author:: Jani_p                                                      $*
  *                                                                                             *
- *                     $Modtime:: 8/29/01 7:29p                                               $*
+ *                     $Modtime:: 11/24/01 5:34p                                              $*
  *                                                                                             *
- *                    $Revision:: 13                                                          $*
+ *                    $Revision:: 14                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -96,6 +96,10 @@
 #include "WWDebug/wwmemlog.h"
 #include "w3d_file.h"
 #include "WWMath/vp.h"
+#include "htree.h"
+#include "WWMath/matrix4.h"
+#include "rinfo.h"
+#include "camera.h"
 
 
 #if (OPTIMIZE_PLANEEQ_RAM)
@@ -216,7 +220,15 @@ MeshGeometryClass & MeshGeometryClass::operator = (const MeshGeometryClass & tha
 		REF_PTR_SET(PlaneEq,that.PlaneEq);
 		REF_PTR_SET(VertexShadeIdx,that.VertexShadeIdx);
 		REF_PTR_SET(VertexBoneLink,that.VertexBoneLink);
-		REF_PTR_SET(CullTree,that.CullTree);
+
+		// Clone the cull tree..
+		REF_PTR_RELEASE(CullTree);
+
+		if (that.CullTree) {
+			CullTree = NEW_REF(AABTreeClass, ());
+			*CullTree = *that.CullTree;
+			CullTree->Set_Mesh(this);
+		}
 	}
 	return * this;
 }
@@ -1097,8 +1109,8 @@ bool MeshGeometryClass::cast_ray_brute_force(RayCollisionTestClass & raytest)
 		tri.N = (Vector3 *)&(norms[srtri]);
 #endif
 
-		hit = hit | CollisionMath::Collide(raytest.Ray, tri, raytest.Result);
-		if (hit) {
+		if (CollisionMath::Collide(raytest.Ray, tri, raytest.Result)) {
+			hit = true;
 			raytest.Result->SurfaceType = Get_Poly_Surface_Type (srtri);
 		}
 
@@ -2010,4 +2022,106 @@ void MeshGeometryClass::Scale(const Vector3 &sc)
 	}
 	// pnormals are plane equations...
 	Set_Flag(DIRTY_PLANES,true);
+
+	// the cull tree is invalid, release it and make a new one
+	if (CullTree) {
+		// If the scale is uniform, we can scale the cull tree, which is a lot faster than creating a new one
+		if (fabs(sc[0]-sc[1])<WWMATH_EPSILON && fabs(sc[0]-sc[2])<WWMATH_EPSILON) {
+			// create a copy of the old culltree
+			AABTreeClass *temp = NEW_REF(AABTreeClass, ());
+			*temp = *CullTree;
+			temp->Set_Mesh(this);
+			REF_PTR_SET(CullTree, temp);
+			REF_PTR_RELEASE(temp);
+			CullTree->Scale(sc[0]);
+		}
+		else {
+			REF_PTR_RELEASE(CullTree);
+			Generate_Culling_Tree();
+		}
+	}
+}
+
+
+// Destination pointers MUST point to arrays large enough to hold all vertices
+void MeshGeometryClass::get_deformed_vertices(Vector3 *dst_vert,const HTreeClass * htree)
+{
+	Vector3 * src_vert = Vertex->Get_Array();
+	uint16 * bonelink = VertexBoneLink->Get_Array();
+	for (int vi = 0; vi < Get_Vertex_Count(); vi++) {
+		const Matrix3D & tm = htree->Get_Transform(bonelink[vi]);
+		Matrix3D::Transform_Vector(tm, src_vert[vi], &(dst_vert[vi]));
+	}
+}
+
+
+// Destination pointers MUST point to arrays large enough to hold all vertices
+void MeshGeometryClass::get_deformed_vertices(Vector3 *dst_vert, Vector3 *dst_norm,const HTreeClass * htree)
+{
+	int vi;
+	int vertex_count=Get_Vertex_Count();
+	Vector3 * src_vert = Vertex->Get_Array();
+#if (OPTIMIZE_VNORMS)
+	Vector3 * src_norm = (Vector3 *)Get_Vertex_Normal_Array();
+#else
+	Vector3 * src_norm = VertexNorm->Get_Array();
+#endif
+	uint16 * bonelink = VertexBoneLink->Get_Array();
+
+	for (vi = 0; vi < vertex_count;) {
+		const Matrix3D & tm = htree->Get_Transform(bonelink[vi]);
+
+		// Make a copy so we can set the translation to zero
+		Matrix3D mytm=tm;
+
+		int idx=bonelink[vi];
+		int cnt;
+		for (cnt = vi; cnt < vertex_count; cnt++) {
+			if (idx!=bonelink[cnt]) {
+				break;
+			}
+		}
+
+		VectorProcessorClass::Transform(dst_vert+vi,src_vert+vi,mytm,cnt-vi);
+		mytm.Set_Translation(Vector3(0.0f,0.0f,0.0f));
+		VectorProcessorClass::Transform(dst_norm+vi,src_norm+vi,mytm,cnt-vi);
+		vi=cnt;
+	}
+}
+
+// Destination pointers MUST point to arrays large enough to hold all vertices
+void MeshGeometryClass::get_deformed_screenspace_vertices(Vector4 *dst_vert,const RenderInfoClass & rinfo,const Matrix3D & mesh_transform,const HTreeClass * htree)
+{
+	Matrix4x4 prj = rinfo.Camera.Get_Projection_Matrix() * rinfo.Camera.Get_View_Matrix() * mesh_transform;
+
+	Vector3 * src_vert = Vertex->Get_Array();
+	int vertex_count=Get_Vertex_Count();
+
+	if (Get_Flag(SKIN) && VertexBoneLink && htree) {
+		uint16 * bonelink = VertexBoneLink->Get_Array();
+		for (int vi = 0; vi < vertex_count;) {
+			int idx=bonelink[vi];
+
+			Matrix4x4 tm = prj * htree->Get_Transform(idx);
+
+			// Count equal matrices (the vertices should be pre-sorted by matrices they use)
+			int cnt = vi;
+			for (; cnt < vertex_count; cnt++) if (idx!=bonelink[cnt]) break;
+
+			// Transform to screenspace (x,y,z,w)
+			VectorProcessorClass::Transform(
+				dst_vert+vi,
+				src_vert+vi,
+				tm,
+				cnt-vi);
+
+			vi=cnt;
+		}
+	} else {
+		VectorProcessorClass::Transform(
+			dst_vert,
+			src_vert,
+			prj,
+			vertex_count);
+	}
 }
