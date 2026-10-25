@@ -76,7 +76,7 @@
 #include "Utils.h"
 #include "WinFix.h"
 #include "Wnd_File.h"
-#include "Lib/PathUtil.h"
+#include <Lib/PathUtil.h>
 #include <winver.h>
 #include <shlwapi.h>
 //#include "resources.h"

@@ -255,8 +255,8 @@ void GUIEdit::setSaveFile( const char *fullPathAndFilename )
 	strlcpy(m_savePathAndFilename, fullPathAndFilename, ARRAY_SIZE(m_savePathAndFilename));
 
 	//
-	// copy everything after the last '\' from the full path, this will
-	// be just the filename with extension
+	// copy everything after the last path separator from the full path,
+	// this will be just the filename with extension
 	//
 	ptr = getFileName( fullPathAndFilename );
 	strlcpy(m_saveFilename, ptr, ARRAY_SIZE(m_saveFilename));

@@ -575,7 +575,7 @@ SoundRenderObjDefClass::Create_Sound () const
 	//
 	StringClass real_filename(Settings.Filename,true);
 	if (Settings.Filename.Get_Length () > 2 && Settings.Filename[1] != ':') {
-		real_filename = getFileName (Settings.Filename);
+		real_filename = getFileName (Settings.Filename.str());
 	}
 
 	//

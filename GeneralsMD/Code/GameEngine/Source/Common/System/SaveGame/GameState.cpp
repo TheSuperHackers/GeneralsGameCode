@@ -859,11 +859,11 @@ AsciiString GameState::getMapLeafName(const AsciiString& in) const
 }
 
 // ------------------------------------------------------------------------------------------------
-static const char* findLastBackslashInRangeInclusive(const char* start, const char* end)
+static const char* findLastPathSeparatorInRangeInclusive(const char* start, const char* end)
 {
 	while (end >= start)
 	{
-		if (*end == '\\')
+		if (isPathSeparator(*end))
 			return end;
 		--end;
 	}
@@ -875,10 +875,10 @@ static AsciiString getMapLeafAndDirName(const AsciiString& in)
 {
 	const char* start = in.str();
 	const char* end = in.str() + in.getLength() - 1;
-	const char* p = findLastBackslashInRangeInclusive(start, end);
+	const char* p = findLastPathSeparatorInRangeInclusive(start, end);
 	if (p)
 	{
-		const char* p2 = findLastBackslashInRangeInclusive(start, p-1);
+		const char* p2 = findLastPathSeparatorInRangeInclusive(start, p-1);
 		if (p2)
 		{
 			// we have something like:
@@ -895,7 +895,7 @@ static AsciiString getMapLeafAndDirName(const AsciiString& in)
 	}
 	else
 	{
-		DEBUG_CRASH(("Illegal map-dir-name... should have at least one backslash"));
+		DEBUG_CRASH(("Illegal map-dir-name... should have at least one path separator"));
 		return in;
 	}
 }

@@ -102,8 +102,8 @@ CSaveSettingsDialog::OnBrowseButton ()
 	 LPTSTR pszPath = getLastPathSeparator (szFileName);
 	 if (pszPath)
 	 {
-			::SetCurrentDirectory (pszPath);
-		  pszPath[0] = 0;
+			pszPath[0] = 0;
+			::SetCurrentDirectory (szFileName);
 	 }
 
 
