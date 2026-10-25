@@ -39,12 +39,12 @@ void TextureAtlasClass::Reset()
 	Pages.clear();
 }
 
-const TextureAtlasClass::TextureLocation* TextureAtlasClass::Find_Or_Insert(TextureClass* source, const bool premultiplyAlpha)
+TextureAtlasClass::TextureLocation TextureAtlasClass::Find_Or_Insert(TextureClass* source, const bool premultiplyAlpha)
 {
 	// Skip textures without name as it is required for indexing.
 	if (source == nullptr || source->Get_Texture_Name().Is_Empty())
 	{
-		return nullptr;
+		return TextureLocation::Create_Invalid();
 	}
 
 	TextureLocationMap& locations = TextureLocations[premultiplyAlpha ? PREMULTIPLY_ON : PREMULTIPLY_OFF];
@@ -54,7 +54,7 @@ const TextureAtlasClass::TextureLocation* TextureAtlasClass::Find_Or_Insert(Text
 		// To prevent lag spikes, limit the number of textures that can be inserted (packed) per frame.
 		if (!Has_Pack_Budget())
 		{
-			return nullptr;
+			return TextureLocation::Create_Invalid();
 		}
 
 		if (!source->Is_Initialized())
@@ -68,13 +68,7 @@ const TextureAtlasClass::TextureLocation* TextureAtlasClass::Find_Or_Insert(Text
 		++PacksThisFrame;
 	}
 
-	// Packing failed: unsupported size, no room left, or a page could not be created or written.
-	if (it->second.page == nullptr)
-	{
-		return nullptr;
-	}
-
-	return &it->second;
+	return it->second;
 }
 
 TextureAtlasClass::TextureLocation TextureAtlasClass::Pack_Texture(TextureClass* source, const bool premultiplyAlpha)

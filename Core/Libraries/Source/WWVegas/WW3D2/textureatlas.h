@@ -56,11 +56,12 @@ public:
 		{
 			TextureLocation location;
 			location.page = nullptr;
+			location.uvRect.Set(0.0f, 0.0f, 1.0f, 1.0f);
 			return location;
 		}
 	};
 
-	const TextureLocation* Find_Or_Insert(TextureClass* source, bool premultiplyAlpha);    // Gets the page holding the texture and its uv rectangle, or nullptr if not found.
+	TextureLocation Find_Or_Insert(TextureClass* source, bool premultiplyAlpha);    // Gets the page holding the texture and its uv rectangle, or a nullptr page if not found.
 	void Reset();    // Release all pages.
 
 	static int Wrap_Or_Clamp(int coordinate, int size, bool wrap);
