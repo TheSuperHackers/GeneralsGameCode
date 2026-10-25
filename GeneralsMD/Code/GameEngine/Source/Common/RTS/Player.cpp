@@ -699,7 +699,14 @@ void Player::update()
 	{
 		UnsignedInt now = TheGameLogic->getFrame();
 		//Only check and post the message once every second so we don't spam the message stream to account for lag.
-		if( now % LOGICFRAMES_PER_SECOND == 0 )
+		Bool checkRetaliationMode = (now % LOGICFRAMES_PER_SECOND == 0);
+#if RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @info The local player of a network game only goes in game on logic frame 1.
+		// Retail clients therefore never sent the message of logic frame 0, but the one a second later.
+		if( now == 0 && TheGameLogic->isInMultiplayerGame() )
+			checkRetaliationMode = FALSE;
+#endif
+		if( checkRetaliationMode )
 		{
 			if( TheGlobalData->m_clientRetaliationModeEnabled != isLogicalRetaliationModeEnabled() )
 			{
