@@ -57,6 +57,7 @@ struct NewParticleStruct
 	Vector3			Position;	// Particle position in worldspace.
 	Vector3			Velocity;	// Particle velocity in worldspace.
 	unsigned int	TimeStamp;	// Millisecond time at creation.
+	unsigned char	GroupID;		// Group ID of the particle
 
 	// These are needed by DynamicVectorClass (will probably never be used).
 	bool operator != (const NewParticleStruct & p)
@@ -87,7 +88,7 @@ class ParticleBufferClass : public RenderObjClass
 			ParticlePropertyStruct<float> &size, ParticlePropertyStruct<float> &rotation,
 			float orient_rnd, ParticlePropertyStruct<float> &frame,
 			ParticlePropertyStruct<float> &blurtime, Vector3 accel,
-			float max_age, TextureClass *tex, ShaderClass shader, bool pingpong,
+			float max_age, float future_start, TextureClass *tex, ShaderClass shader, bool pingpong,
 			int render_mode, int frame_mode, const W3dEmitterLinePropertiesStruct * line_props);
 
 		ParticleBufferClass(const ParticleBufferClass & src);
@@ -181,6 +182,7 @@ class ParticleBufferClass : public RenderObjClass
 		float						Get_Particle_Size () const	{ return SizeKeyFrameValues[0]; }
 		Vector3					Get_Acceleration () const		{ return Accel * 1000000.0F; }
 		float						Get_Lifetime () const			{ return (float(MaxAge)) / 1000.0F; }
+		float						Get_Future_Start_Time() const{ return (float(FutureStartTime)) / 1000.0f; }
 		Vector3					Get_Start_Color () const		{ return ColorKeyFrameValues[0]; }
 		float						Get_Start_Opacity () const	{ return AlphaKeyFrameValues[0]; }
 		Vector3					Get_End_Color () const			{ return (NumColorKeyFrames > 1) ? ColorKeyFrameValues[NumColorKeyFrames - 1] : ColorKeyFrameValues[0]; }
@@ -217,6 +219,8 @@ class ParticleBufferClass : public RenderObjClass
 		void						Get_Frame_Key_Frames (ParticlePropertyStruct<float> &frames) const;
 		void						Get_Blur_Time_Key_Frames (ParticlePropertyStruct<float> &blurtimes) const;
 		float						Get_Initial_Orientation_Random () const { return InitialOrientationRandom; }
+
+		void						Set_Current_GroupID(unsigned char grp) { CurrentGroupID = grp; }
 
 		// Total Active Particle Buffer Count
 		static unsigned int	Get_Total_Active_Count()	{ return TotalActiveCount; }
@@ -275,6 +279,7 @@ class ParticleBufferClass : public RenderObjClass
 		Vector3			Accel;			// Worldspace acceleration per ms^2.
 		bool				HasAccel;		// Is the acceleration non-zero?
 		unsigned int	MaxAge;			// Maximum age in milliseconds.
+		unsigned int	FutureStartTime;// Future start time in milliseconds
 		unsigned int	LastUpdateTime;// Time at last update.
 		bool				IsEmitterDead;
 		float				MaxSize;			// Used for BBox calculations
@@ -424,4 +429,6 @@ class ParticleBufferClass : public RenderObjClass
 		// particle buffer can have. We can change these from being global to
 		// being per-buffer later if we wish. Default is NO_MAX_SCREEN_SIZE.
 		static float						LODMaxScreenSizes[17];
+
+		unsigned char						CurrentGroupID;
 };
