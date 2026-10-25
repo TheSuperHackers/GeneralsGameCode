@@ -22,7 +22,7 @@
 #include "WWMath/vector2i.h"
 #include "WWMath/wwmath.h"
 #include "WW3D2/ww3d.h"
-#include "Utility/premultiply_alpha.h"
+#include <Utility/premultiply_alpha.h>
 #include <d3d8.h>
 #include <string.h>
 
@@ -39,7 +39,7 @@ void TextureAtlasClass::Reset()
 	Pages.clear();
 }
 
-TextureClass* TextureAtlasClass::Find_Or_Insert(TextureClass* source, const bool premultiply, Vector4& rect)
+const TextureAtlasClass::TextureLocation* TextureAtlasClass::Find_Or_Insert(TextureClass* source, const bool premultiplyAlpha)
 {
 	// Skip textures without name as it is required for indexing.
 	if (source == nullptr || source->Get_Texture_Name().Is_Empty())
@@ -47,7 +47,7 @@ TextureClass* TextureAtlasClass::Find_Or_Insert(TextureClass* source, const bool
 		return nullptr;
 	}
 
-	TextureLocationMap& locations = TextureLocations[premultiply ? PREMULTIPLY_ON : PREMULTIPLY_OFF];
+	TextureLocationMap& locations = TextureLocations[premultiplyAlpha ? PREMULTIPLY_ON : PREMULTIPLY_OFF];
 	TextureLocationMap::iterator it = locations.find(source->Get_Texture_Name());
 	if (it == locations.end())
 	{
@@ -63,27 +63,26 @@ TextureClass* TextureAtlasClass::Find_Or_Insert(TextureClass* source, const bool
 		}
 
 		// Try to add a texture. If rejected, will be marked invalid, such that it will not get a retry later.
-		TextureLocation packedTexture = Pack_Texture(source, premultiply);
+		TextureLocation packedTexture = Pack_Texture(source, premultiplyAlpha);
 		it = locations.insert(std::make_pair(source->Get_Texture_Name(), packedTexture)).first;
 		++PacksThisFrame;
 	}
 
 	// Packing failed: unsupported size, no room left, or a page could not be created or written.
-	if (it->second.pageIndex == TextureAtlas::INVALID_PAGE)
+	if (it->second.page == nullptr)
 	{
 		return nullptr;
 	}
 
-	rect = it->second.uvRect;
-	return Pages[it->second.pageIndex].texture.Peek();
+	return &it->second;
 }
 
-TextureAtlasClass::TextureLocation TextureAtlasClass::Pack_Texture(TextureClass* source, const bool premultiply)
+TextureAtlasClass::TextureLocation TextureAtlasClass::Pack_Texture(TextureClass* source, const bool premultiplyAlpha)
 {
 	// A texture can be initialized without a D3D texture, e.g. with texturing disabled.
 	if (source->Peek_D3D_Texture() == nullptr)
 	{
-		return TextureLocation::Invalid();
+		return TextureLocation::Create_Invalid();
 	}
 
 	const int width = source->Get_Width();
@@ -97,7 +96,7 @@ TextureAtlasClass::TextureLocation TextureAtlasClass::Pack_Texture(TextureClass*
 	const bool fitsOnPage = cellWidth <= TextureAtlas::PAGE_SIZE && cellHeight <= TextureAtlas::PAGE_SIZE;
 	if (!powerOfTwo || !largeEnough || !fitsOnPage)
 	{
-		return TextureLocation::Invalid();
+		return TextureLocation::Create_Invalid();
 	}
 
 	// Reserve space in the atlas, then write the new texture to it.
@@ -105,14 +104,14 @@ TextureAtlasClass::TextureLocation TextureAtlasClass::Pack_Texture(TextureClass*
 	int x = 0;
 	int y = 0;
 	if (!Allocate_Cell(cellWidth, cellHeight, pageIndex, x, y) ||
-	    !Copy_To_Cell(source, Pages[pageIndex].texture.Peek(), premultiply, x + TextureAtlas::PADDING, y + TextureAtlas::PADDING))
+	    !Copy_To_Cell(source, Pages[pageIndex].texture.Peek(), premultiplyAlpha, x + TextureAtlas::PADDING, y + TextureAtlas::PADDING))
 	{
-		return TextureLocation::Invalid();
+		return TextureLocation::Create_Invalid();
 	}
 
 	TextureLocation location;
 	constexpr const float scale = 1.0f / TextureAtlas::PAGE_SIZE;
-	location.pageIndex = pageIndex;
+	location.page = Pages[pageIndex].texture.Peek();
 	location.uvRect.Set((x + TextureAtlas::PADDING) * scale,
 	                    (y + TextureAtlas::PADDING) * scale,
 	                    (x + TextureAtlas::PADDING + width) * scale,
@@ -205,7 +204,7 @@ bool TextureAtlasClass::Create_Page()
 	return true;
 }
 
-bool TextureAtlasClass::Copy_To_Cell(TextureClass* source, TextureClass* page, const bool premultiply, const int left, const int top)
+bool TextureAtlasClass::Copy_To_Cell(TextureClass* source, TextureClass* page, const bool premultiplyAlpha, const int left, const int top)
 {
 	const int sourceLevels = (int)source->Peek_D3D_Texture()->GetLevelCount();
 
@@ -247,7 +246,7 @@ bool TextureAtlasClass::Copy_To_Cell(TextureClass* source, TextureClass* page, c
 		}
 
 		// Premultiply the copied texels. Filtered levels come from the level above, which is already premultiplied.
-		if (level < sourceLevels && premultiply)
+		if (level < sourceLevels && premultiplyAlpha)
 		{
 			premultiply_alpha(cell + padding * pitch + padding * sizeof(unsigned), pitch, width, height);
 		}

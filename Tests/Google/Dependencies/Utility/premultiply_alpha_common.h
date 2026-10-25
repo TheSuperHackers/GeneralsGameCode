@@ -21,9 +21,11 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+using PremultiplyAlphaFunction = void (*)(unsigned char* pixels, Int pitch, Int width, Int height);
+
 // Checks every color and alpha pair against rounded c * a / 255. Each row holds one alpha with all 256 colors plus
 // 3 fixed pixels, so the width is not a multiple of 4 and remainders run too. The rest of each row must stay untouched.
-inline void testPremultiplyAlpha(void (*premultiply)(unsigned char*, Int, Int, Int))
+inline void testPremultiplyAlpha(PremultiplyAlphaFunction premultiplyAlphaFunction)
 {
 	constexpr Int width = 259;
 	constexpr Int stride = width + 5;
@@ -44,7 +46,7 @@ inline void testPremultiplyAlpha(void (*premultiply)(unsigned char*, Int, Int, I
 	}
 	const std::vector<UnsignedInt> source = pixels;
 
-	premultiply(reinterpret_cast<unsigned char*>(pixels.data()), stride * Int(sizeof(UnsignedInt)), width, height);
+	premultiplyAlphaFunction(reinterpret_cast<unsigned char*>(pixels.data()), stride * Int(sizeof(UnsignedInt)), width, height);
 
 	Int mismatches = 0;
 	for (Int i = 0; i < stride * height; ++i)

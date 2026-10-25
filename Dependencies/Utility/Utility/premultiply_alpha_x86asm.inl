@@ -26,7 +26,6 @@ inline void premultiply_alpha(unsigned char* pixels, int pitch, int width, int h
 		const int groups = width / 4;
 		if (groups != 0)
 		{
-			// clang-format off
 			__asm {
 				mov esi, line
 				mov ecx, groups
@@ -213,7 +212,6 @@ inline void premultiply_alpha(unsigned char* pixels, int pitch, int width, int h
 				dec ecx
 				jnz next_group
 			}
-			// clang-format on
 		}
 
 		// The last 0 to 3 pixels of the line.

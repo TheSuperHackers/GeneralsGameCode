@@ -32,7 +32,6 @@ constexpr const int MIP_LEVEL_COUNT = 5;
 constexpr const int PADDING = 1 << (MIP_LEVEL_COUNT - 1);
 constexpr const int MAX_PAGES = 4;
 constexpr const int MAX_PACKS_PER_FRAME = 2;    // Spreads a burst of new textures over several frames.
-constexpr const int INVALID_PAGE = -1;    // Page index of a texture that cannot be packed.
 }    // namespace TextureAtlas
 
 /// Packs textures into shared atlas pages.
@@ -48,7 +47,20 @@ public:
 	  , PacksThisFrame(0)
 	{}
 
-	TextureClass* Find_Or_Insert(TextureClass* source, bool premultiply, Vector4& rect);    // Gets the page holding the texture and its uv rectangle, packing the texture first if needed.
+	struct TextureLocation
+	{
+		TextureClass* page;    // nullptr if the texture could not be packed.
+		Vector4 uvRect;
+
+		static TextureLocation Create_Invalid()
+		{
+			TextureLocation location;
+			location.page = nullptr;
+			return location;
+		}
+	};
+
+	const TextureLocation* Find_Or_Insert(TextureClass* source, bool premultiplyAlpha);    // Gets the page holding the texture and its uv rectangle, or nullptr if not found.
 	void Reset();    // Release all pages.
 
 	static int Wrap_Or_Clamp(int coordinate, int size, bool wrap);
@@ -69,28 +81,16 @@ private:
 		int usedHeight;
 	};
 
-	struct TextureLocation
-	{
-		int pageIndex;
-		Vector4 uvRect;
-		static TextureLocation Invalid()
-		{
-			TextureLocation location;
-			location.pageIndex = TextureAtlas::INVALID_PAGE;
-			return location;
-		}
-	};
-
 	typedef std::map<StringClass, TextureLocation> TextureLocationMap;
 
 	bool Has_Pack_Budget();
-	TextureLocation Pack_Texture(TextureClass* source, bool premultiply);
+	TextureLocation Pack_Texture(TextureClass* source, bool premultiplyAlpha);
 	bool Allocate_Cell(int width, int height, int& pageIndex, int& x, int& y);
 	bool Create_Page();
-	static bool Copy_To_Cell(TextureClass* source, TextureClass* page, bool premultiply, int left, int top);
+	static bool Copy_To_Cell(TextureClass* source, TextureClass* page, bool premultiplyAlpha, int left, int top);
 
 	std::vector<Page> Pages;
-	TextureLocationMap TextureLocations[2];    // Two keys for premultiply off/on.
+	TextureLocationMap TextureLocations[2];    // Two keys for premultiply alpha off/on.
 	unsigned PackFrame;
 	int PacksThisFrame;
 };
