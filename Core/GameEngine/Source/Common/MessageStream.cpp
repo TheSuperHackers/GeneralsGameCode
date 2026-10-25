@@ -1083,16 +1083,6 @@ void MessageStream::propagateMessages()
 	{
 		for( msg=m_firstMessage; msg; msg=next )
 		{
-			// TheSuperHackers @tweak Delete messages that we know are redundant. This can reduce network traffic.
-			// @info If there is a need to look back on previous messages, then first invalidate the messages in this loop
-			// before deleting them later.
-			if (isRedundantMessage(msg))
-			{
-				next = msg->next();
-				deleteInstance(msg);
-				continue;
-			}
-
 			if (ss->m_translator
 #if defined(RTS_DEBUG)
 				&& !isInvalidDebugCommand(msg->getType())
@@ -1112,9 +1102,19 @@ void MessageStream::propagateMessages()
 		}
 	}
 
-
-	// transfer all messages that reached the end of the stream to TheCommandList
+	// Transfer all messages that reached the end of the stream to TheCommandList.
+	// Note that the client translators above can also create game messages.
 	TheCommandList->appendMessageList( m_firstMessage );
+
+	// TheSuperHackers @tweak Delete network messages that are redundant. This can reduce network traffic.
+	for( msg=TheCommandList->getFirstMessage(); msg; msg=next )
+	{
+		next = msg->next();
+		if (isRedundantNetworkMessage(msg))
+		{
+			deleteInstance(msg);
+		}
+	}
 
 	// clear the stream
 	m_firstMessage = nullptr;
@@ -1122,7 +1122,7 @@ void MessageStream::propagateMessages()
 
 }
 
-Bool MessageStream::isRedundantMessage(const GameMessage *msg) const
+Bool MessageStream::isRedundantNetworkMessage(const GameMessage *msg) const
 {
 	switch (msg->getType())
 	{
@@ -1156,6 +1156,15 @@ Bool MessageStream::isRedundantMessage(const GameMessage *msg) const
 		case GameMessage::MSG_SELECT_TEAM8:
 		case GameMessage::MSG_SELECT_TEAM9:
 			return true;
+		}
+		break;
+	}
+	case GameMessage::MSG_SET_REPLAY_CAMERA:
+	{
+		for (const GameMessage* msgNext = msg->next(); msgNext; msgNext = msgNext->next())
+		{
+			if (msgNext->getType() == GameMessage::MSG_SET_REPLAY_CAMERA)
+				return true;
 		}
 		break;
 	}
