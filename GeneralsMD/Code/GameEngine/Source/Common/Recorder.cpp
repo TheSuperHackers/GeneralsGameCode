@@ -105,30 +105,17 @@ static FILE* openStatsLogFile()
 
 RecorderClass::CRCInfo::CRCInfo() :
 	m_sawCRCMismatch(FALSE),
-	m_skippedOne(FALSE),
 	m_localPlayer(0)
 {}
 
-RecorderClass::CRCInfo::CRCInfo(UnsignedInt localPlayer, Bool isMultiplayer)
+RecorderClass::CRCInfo::CRCInfo(UnsignedInt localPlayer)
 {
 	m_sawCRCMismatch = FALSE;
-	m_skippedOne = !isMultiplayer;
 	m_localPlayer = localPlayer;
 }
 
 void RecorderClass::CRCInfo::addCRC(UnsignedInt val)
 {
-	// TheSuperHackers @fix helmutbuhler 03/04/2025
-	// In Multiplayer, the first MSG_LOGIC_CRC message somehow doesn't make it through the network.
-	// Perhaps this happens because the network is not yet set up on frame 0.
-	// So we also don't queue up the first local crc message, otherwise the crc
-	// messages wouldn't match up anymore and we'd desync immediately during playback.
-	if (!m_skippedOne)
-	{
-		m_skippedOne = TRUE;
-		return;
-	}
-
 	m_data.push_back(val);
 	//DEBUG_LOG(("CRCInfo::addCRC() - crc %8.8X pushes list to %d entries (full=%d)", val, m_data.size(), !m_data.empty()));
 }
@@ -474,8 +461,8 @@ void RecorderClass::updateRecord()
 			 msg->getArgument(0)->integer != GAME_SINGLE_PLAYER && // Due to the massive amount of scripts that use <local player> in GC and single player, replays have been cut for them.
 			 msg->getArgument(0)->integer != GAME_NONE)
 		{
-			m_originalGameMode = (GameMode)msg->getArgument(0)->integer;
-			DEBUG_LOG(("RecorderClass::updateRecord() - original game is mode %d", m_originalGameMode));
+			const GameMode originalGameMode = (GameMode)msg->getArgument(0)->integer;
+			DEBUG_LOG(("RecorderClass::updateRecord() - original game is mode %d", originalGameMode));
 			lastFrame = 0;
 			GameDifficulty diff = DIFFICULTY_NORMAL;
 			if (msg->getArgumentCount() >= 2)
@@ -487,7 +474,7 @@ void RecorderClass::updateRecord()
 			if (msg->getArgumentCount() >= 4)
 				maxFPS = msg->getArgument(3)->integer;
 
-			startRecording(diff, m_originalGameMode, rankPoints, maxFPS);
+			startRecording(diff, originalGameMode, rankPoints, maxFPS);
 		} else if (msg->getType() == GameMessage::MSG_CLEAR_GAME_DATA) {
 			if (m_file != nullptr) {
 				lastFrame = -1;
@@ -525,6 +512,7 @@ void RecorderClass::startRecording(GameDifficulty diff, GameMode originalGameMod
 	reset();
 
 	m_mode = RECORDERMODETYPE_RECORD;
+	m_originalGameMode = originalGameMode;
 
 	AsciiString filepath = getReplayDir();
 
@@ -1214,8 +1202,7 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 
 	m_file->read(&m_originalGameMode, sizeof(m_originalGameMode));
 
-	const Bool isMultiplayer = rts::isMultiplayerGame(m_originalGameMode);
-	m_crcInfo = CRCInfo(header.localPlayerIndex, isMultiplayer);
+	m_crcInfo = CRCInfo(header.localPlayerIndex);
 	DEBUG_LOG(("Player index is %d, replay CRC interval is %d", m_crcInfo.getLocalPlayer(), REPLAY_CRC_INTERVAL));
 
 	Int rankPoints = 0;
