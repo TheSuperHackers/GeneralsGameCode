@@ -418,7 +418,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		commandName = " (CRC message!)";
 	}
 #if 0
-	if (commandName.isNotEmpty() /*&& msg->getType() != GameMessage::MSG_FRAME_TICK*/)
+	if (commandName.isNotEmpty())
 	{
 		DEBUG_LOG(("Frame %d: GameLogic::logicMessageDispatcher() saw a %s from player %d (%ls)", getFrame(), commandName.str(),
 			msgPlayer->getPlayerIndex(), msgPlayer->getPlayerDisplayName().str()));
