@@ -22,13 +22,13 @@
  *                                                                                             *
  *                 Project Name : WW3D                                                         *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/ww3d2/vertmaterial.h                              $*
+ *                     $Archive:: /Commando/Code/ww3d2/vertmaterial.h                         $*
  *                                                                                             *
  *                       Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 8/29/01 7:29p                                               $*
+ *                     $Modtime:: 4/27/01 2:22p                                               $*
  *                                                                                             *
- *                    $Revision:: 26                                                          $*
+ *                    $Revision:: 25                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -198,6 +198,8 @@ public:
 	WW3DErrorType		Load_W3D(ChunkLoadClass & cload);
 	WW3DErrorType		Save_W3D(ChunkSaveClass & csave);
 
+	void					Parse_W3dVertexMaterialStruct(const W3dVertexMaterialStruct & vmat);
+	void					Parse_Mapping_Args(const W3dVertexMaterialStruct & vmat,char * mapping0_arg_buffer,char * mapping1_arg_buffer);
 	void					Init_From_Material3(const W3dMaterial3Struct & mat3);
 
 	/*
@@ -257,7 +259,7 @@ private:
 	*/
 	void					Apply() const;
 	/*
-	** Apply the render states corresponding to a null vertex material to D3D
+	** Apply the render states corresponding to a nullptr vertex material to D3D
 	*/
 	static void			Apply_Null();
 	unsigned long		Compute_CRC() const;
