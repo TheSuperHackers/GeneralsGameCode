@@ -165,6 +165,12 @@ class ParticleEmitterClass : public RenderObjClass
 		void						Stop();
 		bool						Is_Stopped();
 
+		// Yet another way to make an emitter stop rendering (besides setting Hidden or Animation_Hidden).
+		// We added this because we needed a way independent from the other two. This would be appropriate
+		// to set, for example, when setting RINFO_OVERRIDE_ADDITIONAL_PASSES_ONLY on the container.
+		void						Set_Invisible(bool onoff)	{ IsInvisible = onoff; }
+		bool						Is_Invisible()			{ return IsInvisible; }
+
 		// Change starting position/velocity/acceleration parameters:
 		void Set_Position_Randomizer(Vector3Randomizer *rand);
 		void Set_Velocity_Randomizer(Vector3Randomizer *rand);
@@ -223,6 +229,7 @@ class ParticleEmitterClass : public RenderObjClass
 		float						Get_Particle_Size () const	{ return Buffer->Get_Particle_Size(); }
 		Vector3					Get_Acceleration () const		{ return Buffer->Get_Acceleration (); }
 		float						Get_Lifetime () const			{ return Buffer->Get_Lifetime (); }
+		float						Get_Future_Start_Time () const { return Buffer->Get_Future_Start_Time(); }
 		Vector3					Get_End_Color () const			{ return Buffer->Get_End_Color (); }
 		float						Get_End_Opacity () const		{ return Buffer->Get_End_Opacity (); }
 		TextureClass *			Get_Texture () const			{ return Buffer->Get_Texture (); }
@@ -319,10 +326,14 @@ class ParticleEmitterClass : public RenderObjClass
 		char *						UserString;
 		bool							RemoveOnComplete;	// Should this emitter destroy itself when it completes?
 		bool							IsInScene;
+		unsigned char				GroupID;				// The group ID of a particle. A start causes the group ID to increment.
 
 		// This pointer is used only for sending new particles to the particle
 		// buffer and for informing the buffer when the emitter is destroyed.
 		ParticleBufferClass *	Buffer;
+
+		// See comments on Set/Is_Invisible
+		bool							IsInvisible;
 
 		// This is used to set the global behavior of emitters...
 		// Should they be removed from the scene when they complete their

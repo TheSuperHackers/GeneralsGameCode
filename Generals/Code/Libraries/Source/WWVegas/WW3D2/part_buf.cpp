@@ -91,6 +91,7 @@ ParticleBufferClass::ParticleBufferClass
 	ParticlePropertyStruct<float> &blurtime,
 	Vector3 accel,
 	float max_age,
+	float future_start,
 	TextureClass *tex,
 	ShaderClass shader,
 	bool pingpong,
@@ -105,6 +106,7 @@ ParticleBufferClass::ParticleBufferClass
 	RenderMode(render_mode),
 	FrameMode(frame_mode),
 	MaxAge(1000.0f * max_age),
+	FutureStartTime(1000.0f * future_start),
 	LastUpdateTime(WW3D::Get_Sync_Time()),
 	IsEmitterDead(false),
 	MaxSize(0.0f),
@@ -176,7 +178,8 @@ ParticleBufferClass::ParticleBufferClass
 	TimeStamp(nullptr),
 	Emitter(emitter),
 	DecimationThreshold(0U),
-	ProjectedArea(0.0f)
+	ProjectedArea(0.0f),
+	CurrentGroupID(0)
 {
 	LodCount = 17;
 	LodBias = 1.0f;
@@ -275,6 +278,7 @@ ParticleBufferClass::ParticleBufferClass(const ParticleBufferClass & src) :
 	RenderMode(src.RenderMode),
 	FrameMode(src.FrameMode),
 	MaxAge(src.MaxAge),
+	FutureStartTime(src.FutureStartTime),
 	LastUpdateTime(WW3D::Get_Sync_Time()),
 	IsEmitterDead(false),
 	MaxSize(src.MaxSize),
