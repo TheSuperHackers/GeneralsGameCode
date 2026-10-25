@@ -398,7 +398,7 @@ void DrawObject::updateMeshVB()
 
 
 	Int numPoly = m_moldMesh->Get_Model()->Get_Polygon_Count();
-	const Vector3i *pPoly =m_moldMesh->Get_Model()->Get_Polygon_Array();
+	const TriIndex *pPoly =m_moldMesh->Get_Model()->Get_Polygon_Array();
 	if (3*numPoly+9 >= NUM_FEEDBACK_INDEX) {
 		return;
 	}

@@ -22,13 +22,13 @@
  *                                                                                             *
  *                 Project Name : WW3D                                                         *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/ww3d2/meshmdlio.cpp                               $*
+ *                     $Archive:: /Commando/Code/ww3d2/meshmdlio.cpp                          $*
  *                                                                                             *
  *                       Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 8/29/01 7:29p                                               $*
+ *                     $Modtime:: 1/18/02 3:09p                                               $*
  *                                                                                             *
- *                    $Revision:: 22                                                          $*
+ *                    $Revision:: 27                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -1009,7 +1009,7 @@ WW3DErrorType MeshModelClass::read_textures(ChunkLoadClass & cload,MeshLoadConte
 		  newtex != nullptr;
 		  newtex = ::Load_Texture (cload)) {
 
-		// Add this texture to our contex and release our local hold on it
+		// Add this texture to our context and release our local hold on it
 		context->Add_Texture(newtex);
 		newtex->Release_Ref();
 	}
@@ -1650,6 +1650,13 @@ void MeshModelClass::post_process()
 	}
 #endif
 
+	// skinned meshes should not have cull trees
+	if (Get_Flag(MeshGeometryClass::SKIN)) {
+		if (CullTree) {
+			REF_PTR_RELEASE(CullTree);
+		}
+	}
+
 	// turn off backface culling if the mesh is supposed to be two-sided
 	if (Get_Flag(MeshGeometryClass::TWO_SIDED)) {
 
@@ -1669,6 +1676,12 @@ void MeshModelClass::post_process()
 	// if default isn't set
 	if (Get_Flag(SORT) && SortLevel==SORT_LEVEL_NONE && WW3D::Is_Munge_Sort_On_Load_Enabled()) {
 		compute_static_sort_levels();
+	}
+
+	// If we need to, modify the mesh model to support overbrightening (change all
+	// GRADIENT_MODULATE to GRADIENT_MODULATE2X)
+	if (WW3D::Is_Overbright_Modify_On_Load_Enabled()) {
+		modify_for_overbright();
 	}
 }
 
@@ -1773,7 +1786,7 @@ unsigned int MeshModelClass::get_sort_flags(int pass) const
 		scat = Get_Single_Shader(pass).Get_SS_Category();
 		flags |= (1 << scat);
 	}
-	return false;
+	return flags;
 }
 
 unsigned int MeshModelClass::get_sort_flags() const
@@ -1792,6 +1805,7 @@ void MeshModelClass::compute_static_sort_levels()
 		SSCAT_OPAQUE_BF		= (1 << ShaderClass::SSCAT_OPAQUE),
 		SSCAT_ALPHA_TEST_BF	= (1 << ShaderClass::SSCAT_ALPHA_TEST),
 		SSCAT_ADDITIVE_BF		= (1 << ShaderClass::SSCAT_ADDITIVE),
+		SSCAT_SCREEN_BF		= (1 << ShaderClass::SSCAT_SCREEN),
 		SSCAT_OTHER_BF			= (1 << ShaderClass::SSCAT_OTHER)
 	};
 
@@ -1810,7 +1824,7 @@ void MeshModelClass::compute_static_sort_levels()
 		SortLevel = SORT_LEVEL_BIN3;
 		break;
 
-	case (SSCAT_ADDITIVE_BF | SSCAT_ALPHA_TEST_BF):
+	case SSCAT_SCREEN_BF:
 		SortLevel = SORT_LEVEL_BIN2;
 		break;
 
@@ -1820,6 +1834,33 @@ void MeshModelClass::compute_static_sort_levels()
 	};
 }
 
+void MeshModelClass::modify_for_overbright()
+{
+	// Iterate over all passes
+	int pass_cnt = Get_Pass_Count();
+	for (int pass_idx = 0; pass_idx < pass_cnt; pass_idx++) {
+
+		// First do single shader
+		ShaderClass shader = Get_Single_Shader(pass_idx);
+		if (shader.Get_Primary_Gradient() == ShaderClass::GRADIENT_MODULATE) {
+			shader.Set_Primary_Gradient(ShaderClass::GRADIENT_MODULATE2X);
+			Set_Single_Shader(shader, pass_idx);
+		}
+
+		// Now do all other shaders
+		if (Has_Shader_Array(pass_idx)) {
+			int p_cnt = Get_Polygon_Count();
+			for (int p_idx = 0; p_idx < p_cnt; p_idx++) {
+				shader = Get_Shader(p_idx, pass_idx);
+				if (shader.Get_Primary_Gradient() == ShaderClass::GRADIENT_MODULATE) {
+					shader.Set_Primary_Gradient(ShaderClass::GRADIENT_MODULATE2X);
+					Set_Shader(p_idx, shader, pass_idx);
+				}
+			}
+		}
+	}
+
+}
 
 void MeshModelClass::install_materials(MeshLoadContextClass * context)
 {
@@ -1833,9 +1874,14 @@ void MeshModelClass::install_materials(MeshLoadContextClass * context)
 	/*
 	** Finish configuring the vertex materials and color arrays.
 	*/
-	DefMatDesc->Post_Load_Process (true);
+	bool lighting_enabled=true;
+	// vertex-lit models need the lighting turned off!
+	if (Get_Flag(MeshGeometryClass::PRELIT_VERTEX)) {
+		lighting_enabled=false;
+	}
+	DefMatDesc->Post_Load_Process (lighting_enabled,this);
 	if (AlternateMatDesc != nullptr) {
-		AlternateMatDesc->Post_Load_Process (true);
+		AlternateMatDesc->Post_Load_Process (lighting_enabled,this);
 	}
 
 	/*

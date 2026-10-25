@@ -22,13 +22,13 @@
  *                                                                                             *
  *                 Project Name : WW3D                                                         *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/ww3d2/meshmdl.h                                   $*
+ *                     $Archive:: /Commando/Code/ww3d2/meshmdl.h                              $*
  *                                                                                             *
  *                       Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 8/29/01 7:29p                                               $*
+ *                     $Modtime:: 11/24/01 6:17p                                              $*
  *                                                                                             *
- *                    $Revision:: 38                                                          $*
+ *                    $Revision:: 40                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -148,7 +148,6 @@ public:
 class MeshModelClass : public MeshGeometryClass
 {
 	W3DMPO_CODE(MeshModelClass)
-	GapFillerClass* GapFiller;
 
 public:
 
@@ -277,18 +276,6 @@ protected:
 
 	int Register_Type();
 
-	// functions to compute the deformed vertices of skins.
-	// Destination pointers MUST point to arrays large enough to hold all vertices
-	void get_deformed_vertices(Vector3 *dst_vert, Vector3 *dst_norm, const HTreeClass * htree);
-	void get_deformed_vertices(Vector3 *dst_vert, const HTreeClass * htree);
-	void get_deformed_screenspace_vertices(Vector4 *dst_vert,const RenderInfoClass & rinfo,const Matrix3D & mesh_tm,const HTreeClass * htree);
-	void compose_deformed_vertex_buffer(
-		VertexFormatXYZNDUV2* verts,
-		const Vector2* uv0,
-		const Vector2* uv1,
-		const unsigned* diffuse,
-		const HTreeClass * htree);
-
 	// loading
 	WW3DErrorType read_chunks(ChunkLoadClass & cload,MeshLoadContextClass * context);
 	WW3DErrorType read_texcoords(ChunkLoadClass & cload,MeshLoadContextClass * context);
@@ -320,6 +307,7 @@ protected:
 	unsigned int get_sort_flags(int pass) const;
 	unsigned int get_sort_flags() const;
 	void compute_static_sort_levels();
+	void modify_for_overbright();
 
 	// mat info support
 	void install_materials(MeshLoadContextClass * loadinfo);
@@ -340,6 +328,10 @@ protected:
 	// DX8 Mesh rendering system data
 	DX8PolygonRendererList								PolygonRendererList;
 
+	// Jani: Adding this here temporarily... must fine better place
+	GapFillerClass *										GapFiller;
+	bool														HasBeenInUse;	// For debugging purposes!
+
 	friend class MeshClass;
 	friend class MeshDeformSetClass;
 	friend class MeshDeformClass;
@@ -348,35 +340,3 @@ protected:
 	friend class DX8MeshRendererClass;
 	friend class DX8PolygonRendererClass;
 };
-
-
-
-
-/*********************************************************************************************************
-**
-** MeshModelClass Inline Functions
-**
-*********************************************************************************************************/
-
-
-#if 0
-inline void	MeshModelClass::Apply_Deformation (float percent, bool additive)
-{
-	MeshDeformer.Apply (*this, percent, additive);
-}
-
-inline void	MeshModelClass::Apply_Deformation (int set_index, float percent, bool additive)
-{
-	MeshDeformer.Apply (*this, set_index, percent, additive);
-}
-
-inline void	MeshModelClass::Apply_Deformation (const Vector3 &point, float percent, bool additive)
-{
-	MeshDeformer.Apply (*this, point, percent, additive);
-}
-
-inline void	MeshModelClass::Apply_Deformation (const SphereClass &sphere, float percent, bool additive)
-{
-	MeshDeformer.Apply (*this, sphere, percent, additive);
-}
-#endif
