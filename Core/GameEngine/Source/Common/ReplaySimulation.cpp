@@ -26,7 +26,6 @@
 #include "Common/WorkerProcess.h"
 #include "GameLogic/GameLogic.h"
 #include "GameClient/GameClient.h"
-#include "Lib/PathUtil.h"
 
 
 Bool ReplaySimulation::s_isRunning = false;
