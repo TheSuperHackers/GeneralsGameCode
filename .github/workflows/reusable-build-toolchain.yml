@@ -178,8 +178,21 @@ jobs:
       - name: Test ${{ inputs.game }} with CTest Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
         if: ${{ inputs.tests }}
         shell: pwsh
+        env:
+          GTEST_FILTER: -RenderingTest.*
         run: |
           ctest --preset ${{ inputs.preset }} --verbose
+
+      # For the rendering check in ci.yml.
+      - name: Upload Rendering Test Executable
+        if: ${{ inputs.tests && inputs.preset == 'win32' }}
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: ${{ inputs.game }}-win32-rendering-tests
+          path: build/${{ inputs.preset }}/Tests/Google/Release/${{ inputs.game == 'Generals' && 'g' || 'z' }}_googletest.exe
+          # Pull requests compare their rendering with main.
+          retention-days: ${{ github.ref == 'refs/heads/main' && 90 || 7 }}
+          if-no-files-found: error
 
       - name: Collect ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
         shell: pwsh

@@ -237,3 +237,25 @@ jobs:
       userdata: "GeneralsReplays/GeneralsZH/1.04"
       preset: ${{ matrix.preset }}
     secrets: inherit
+
+  renderingcheck-generals:
+    name: Rendering Check Generals
+    needs: [detect-changes, build-generals-win32]
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generals == 'true' || needs.detect-changes.outputs.shared == 'true' }}
+    permissions:
+      contents: read
+      actions: read
+    uses: ./.github/workflows/reusable-check-rendering.yml
+    with:
+      game: "Generals"
+
+  renderingcheck-generalsmd:
+    name: Rendering Check GeneralsMD
+    needs: [detect-changes, build-generalsmd-win32]
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
+    permissions:
+      contents: read
+      actions: read
+    uses: ./.github/workflows/reusable-check-rendering.yml
+    with:
+      game: "GeneralsMD"

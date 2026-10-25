@@ -1,0 +1,232 @@
+name: Check Rendering
+
+# WARNING: Do not declare permissions in this reusable workflow.
+# Declare the required permissions in each calling job:
+#   contents: read - required to find the base commit.
+#   actions: read - required to download the rendering tests of the base commit.
+
+on:
+  workflow_call:
+    inputs:
+      game:
+        required: true
+        type: string
+        description: "Game to check (Generals, GeneralsMD)"
+
+jobs:
+  rendering:
+    name: win32
+    runs-on: windows-2022
+    timeout-minutes: 15
+    env:
+      GAME: ${{ inputs.game }}
+      TEST_NAME: ${{ inputs.game == 'Generals' && 'g_googletest' || 'z_googletest' }}
+      GTEST_FILTER: RenderingTest.*
+      GTEST_FAIL_IF_NO_TEST_SELECTED: 1
+      GTEST_OUTPUT: xml:results.xml
+      DXVK_VERSION: 2.6.2
+      DXVK_SHA256: 17761876556afd55736cb895d184f5a1c55d43350f1b1e3b129f8d28706d7992
+      MESA_VERSION: 26.2.4
+      MESA_SHA256: 351fc8c8b695878ffb3eaa044b3ead08672a48b1a045e3c3e3975811df0f6695
+      VULKAN_RUNTIME_VERSION: 1.4.363.0
+      VULKAN_RUNTIME_SHA256: a25a927aa8b9f0371048f1861cf88ac3b9bc9b1fb332c42d897c8ab32695769a
+    steps:
+      - name: Download MSVC Rendering Tests
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
+        with:
+          name: ${{ inputs.game }}-win32-rendering-tests
+          path: build/rendering-tests
+
+      - name: Install DXVK and Lavapipe
+        run: |
+          $PSNativeCommandUseErrorActionPreference = $true
+          function Get-Checked($url, $out, $sha) {
+            curl.exe --fail --location --retry 3 --output $out $url
+            if ((Get-FileHash $out SHA256).Hash -ne $sha) { throw "SHA256 mismatch for $url" }
+          }
+          $dxvk = "dxvk-$env:DXVK_VERSION"
+          Get-Checked "https://github.com/doitsujin/dxvk/releases/download/v$env:DXVK_VERSION/$dxvk.tar.gz" build/dxvk.tar.gz $env:DXVK_SHA256
+          Get-Checked "https://github.com/pal1000/mesa-dist-win/releases/download/$env:MESA_VERSION/mesa3d-$env:MESA_VERSION-release-msvc.7z" build/mesa.7z $env:MESA_SHA256
+          Get-Checked "https://sdk.lunarg.com/sdk/download/$env:VULKAN_RUNTIME_VERSION/windows/vulkan-runtime-components.zip" build/vulkan.zip $env:VULKAN_RUNTIME_SHA256
+          New-Item -ItemType Directory build/runtime | Out-Null
+          tar -C build/runtime -xf build/dxvk.tar.gz --strip-components=2 "$dxvk/x32/d3d8.dll" "$dxvk/x32/d3d9.dll"
+          7z e build/vulkan.zip -obuild/runtime "VulkanRT-X64-$env:VULKAN_RUNTIME_VERSION-Components/x86/vulkan-1.dll"
+          7z e build/mesa.7z -obuild/lavapipe x86/vulkan_lvp.dll x86/lvp_icd.x86.json
+          # The elevated runner ignores VK_DRIVER_FILES.
+          reg add HKLM\SOFTWARE\WOW6432Node\Khronos\Vulkan\Drivers /v "$PWD\build\lavapipe\lvp_icd.x86.json" /t REG_DWORD /d 0 /f
+
+      - name: Run Rendering Google Tests
+        working-directory: build/rendering-tests
+        timeout-minutes: 5
+        run: |
+          Copy-Item ../runtime/* .
+          & "./$env:TEST_NAME.exe"
+
+      - name: Download Base Rendering Tests
+        id: base
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          # The previous main commit for a push, the main commit that a pull request merges into, or else the merge base.
+          $repo = "repos/$env:GITHUB_REPOSITORY"
+          $base = switch ($env:GITHUB_EVENT_NAME) {
+            'push' { $env:PUSH_BEFORE }
+            'pull_request' { $env:PR_BASE }
+            default { gh api "$repo/compare/main...$env:GITHUB_SHA" --jq .merge_base_commit.sha }
+          }
+          if ($LASTEXITCODE) { $base = $null }
+          # Without a package, the nearest ancestor that has one renders the same.
+          $commits = @()
+          if ($base) {
+            $commits = gh api "$repo/commits?sha=$base&per_page=20" --jq '.[].sha'
+            if ($LASTEXITCODE) { $commits = @() }
+          }
+          foreach ($commit in $commits) {
+            $runs = gh api "$repo/actions/runs?head_sha=$commit" --jq ".workflow_runs[] | select(.id != $env:GITHUB_RUN_ID) | .id"
+            if ($LASTEXITCODE) { continue }
+            foreach ($run in $runs) {
+              gh run download $run --repo $env:GITHUB_REPOSITORY --name "${env:GAME}-win32-rendering-tests" --dir build/rendering-tests-base
+              if ($LASTEXITCODE -eq 0) {
+                "Using the rendering tests of run $run for commit $commit (base commit $base)"
+                "sha=$commit" >> $env:GITHUB_OUTPUT
+                exit 0
+              }
+              Remove-Item -Recurse -Force -ErrorAction Ignore build/rendering-tests-base
+            }
+          }
+          "::notice title=Rendering::No rendering tests found for base commit $($base ?? 'unknown'), so the images are not compared"
+          exit 0
+
+      - name: Run Base Rendering Google Tests
+        if: ${{ always() && steps.base.outputs.sha }}
+        working-directory: build/rendering-tests-base
+        timeout-minutes: 5
+        run: |
+          Copy-Item ../runtime/* .
+          & "./$env:TEST_NAME.exe"
+          if ($LASTEXITCODE) { "::warning title=Rendering::The base rendering tests failed, so only the images they wrote are compared" }
+          exit 0
+
+      - name: Compare Rendering with Base
+        id: compare
+        if: always()
+        env:
+          BASE_SHA: ${{ steps.base.outputs.sha }}
+        run: |
+          $since = if ($env:BASE_SHA) { "since base $($env:BASE_SHA.Substring(0, 10))" } else { '(no base found)' }
+          function Get-Image($path) {
+            if (Test-Path $path) { "<img src=`"data:image/png;base64,$([Convert]::ToBase64String([IO.File]::ReadAllBytes((Resolve-Path $path))))`">" }
+          }
+          # A pixel changes when a color channel differs by more than 16 levels, as in the ignoreLess mode of Resemble.js.
+          Add-Type -AssemblyName System.Drawing
+          function Get-Mismatch($oldPath, $newPath) {
+            $old, $new = foreach ($path in $oldPath, $newPath) {
+              $bitmap = [Drawing.Bitmap]::new((Resolve-Path $path).Path)
+              $data = $bitmap.LockBits([Drawing.Rectangle]::new(0, 0, $bitmap.Width, $bitmap.Height), 'ReadOnly', 'Format32bppArgb')
+              $bytes = [byte[]]::new($data.Stride * $data.Height)
+              [Runtime.InteropServices.Marshal]::Copy($data.Scan0, $bytes, 0, $bytes.Length)
+              $bitmap.Dispose()
+              , $bytes
+            }
+            if ($old.Length -ne $new.Length) { return 100 }
+            $count = 0
+            for ($i = 0; $i -lt $old.Length; $i += 4) {
+              if ([Math]::Abs($old[$i] - $new[$i]) -gt 16 -or [Math]::Abs($old[$i + 1] - $new[$i + 1]) -gt 16 -or [Math]::Abs($old[$i + 2] - $new[$i + 2]) -gt 16) { $count++ }
+            }
+            # Rounded up, so that a single pixel shows.
+            [Math]::Ceiling(10000 * $count / ($old.Length / 4)) / 100
+          }
+          $images = foreach ($name in (Get-ChildItem build/rendering-tests*/*_RenderTest/*.png).Name | Sort-Object -Unique) {
+            $old = Get-Image build/rendering-tests-base/*_RenderTest/$name
+            $new = Get-Image build/rendering-tests/*_RenderTest/$name
+            $mismatch = if ($old -and $new -and $old -ne $new) { Get-Mismatch build/rendering-tests-base/*_RenderTest/$name build/rendering-tests/*_RenderTest/$name } else { 0 }
+            $state = if (!$old) { 'new' } elseif (!$new) { 'removed' } elseif ($mismatch -eq 0) { 'unchanged' } else { 'changed' }
+            [pscustomobject]@{ Name = $name; State = $state; Old = $old; New = $new; Mismatch = $mismatch }
+          }
+          $changes = ($images | Where-Object State -in 'changed', 'removed' | ForEach-Object { "$($_.Name) $($_.State)" }) -join ', '
+          "changes=$changes" >> $env:GITHUB_OUTPUT
+          "message=$(if ($changes) { $changes } else { 'No changes' }) $since" >> $env:GITHUB_OUTPUT
+          $counts = ($images | Group-Object State | ForEach-Object { "$($_.Count) $($_.Name)" }) -join ', '
+          "### $env:GAME Rendering`n`n$counts $since.`n" >> $env:GITHUB_STEP_SUMMARY
+          # One self-contained page with a card per test, changes first.
+          $order = 'changed', 'removed', 'new', 'unchanged'
+          $tests = $images | Group-Object { $_.Name -replace '_\d+\.png$' } | ForEach-Object {
+            [pscustomobject]@{ Name = $_.Name; Images = $_.Group; State = $_.Group.State | Sort-Object { $order.IndexOf($_) } | Select-Object -First 1 }
+          }
+          $cards = foreach ($test in $tests | Sort-Object { $order.IndexOf($_.State) }, Name) {
+            $index = 0
+            $rows = foreach ($image in $test.Images | Sort-Object { ($_.Name -replace '^.*_(\d+)\.png$', '$1') -as [int] }) {
+              $title = if ($index++ -eq 0) { "<h2>$($test.Name)</h2>" }
+              $number = if ($test.Images.Count -gt 1) { "<span class=number>$($image.Name -replace '^.*_(\d+)\.png$', '#$1')</span>" }
+              $diff, $percent = if ($image.State -eq 'changed') { ' class=diff', "<span class=percent>$($image.Mismatch)% of the pixels differ</span>" }
+              "<div class=`"image $($image.State)`"><div>$title$number<span class=`"state $($image.State)`">$($image.State)</span>$percent</div><div>$($image.Old)</div><div>$($image.New)</div><div$diff></div></div>"
+            }
+            "<section class=$($test.State)>$($rows -join '')</section>"
+          }
+          @"
+          <!doctype html>
+          <meta charset="utf-8">
+          <title>$env:GAME rendering $since</title>
+          <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3/dist/index.global.js" integrity="sha384-2ql948lIdLcGEE0/qxNiudyTjgauA3RDJERu5xW75kFCvSl5a9odyQYCb6tEjnmB" crossorigin="anonymous"></script>
+          <script src="https://cdn.jsdelivr.net/npm/resemblejs@5.0.0/resemble.js" integrity="sha384-DzcP9yqL1XF598WKUVQbQhW9mpjmq4x8k9J9T/JTfVJffHmQWHLdFXDfQPjdRQd6" crossorigin="anonymous"></script>
+          <style type="text/tailwindcss">
+          body { @apply bg-slate-100 p-8 font-sans text-slate-800; }
+          h1 { @apply text-2xl font-semibold; }
+          h1 + p { @apply mt-1 text-slate-500; }
+          .columns, .image { @apply grid gap-8; grid-template-columns: 12rem repeat(3, 256px); }
+          .columns { @apply mt-6 px-4 text-sm font-medium text-slate-500; }
+          section { @apply mt-3 w-fit rounded-xl bg-white p-4 shadow-sm; }
+          section.changed { @apply bg-rose-50 shadow-rose-200; }
+          .image + .image { @apply mt-4; }
+          .image.changed > :nth-child(3) img { @apply ring-2 ring-rose-400; }
+          h2 { @apply mb-2 font-mono text-sm font-medium; }
+          img { @apply rounded-md; }
+          .number { @apply mr-2 text-xs text-slate-500; }
+          .state { @apply inline-block rounded-full px-2 py-0.5 text-xs; }
+          .state.changed { @apply bg-rose-200 text-rose-900; }
+          .state.new { @apply bg-sky-100 text-sky-800; }
+          .state.removed { @apply bg-slate-200 text-slate-700; }
+          .state.unchanged { @apply bg-emerald-100 text-emerald-800; }
+          .percent { @apply mt-1 block text-xs text-slate-500; }
+          </style>
+          <h1>$env:GAME rendering</h1>
+          <p>$counts $since</p>
+          <div class=columns><div></div><div>Base</div><div>This commit</div><div>Difference</div></div>
+          $($cards -join "`n")
+          <script>
+          resemble.outputSettings({ transparency: 0.3 });
+          for (const cell of document.querySelectorAll('.diff')) {
+            const row = cell.parentElement;
+            const [base, current] = row.querySelectorAll('img');
+            resemble(base.src).compareTo(current.src).ignoreLess().onComplete(data => {
+              cell.innerHTML = '<img src="' + data.getImageDataUrl() + '">';
+            });
+          }
+          </script>
+          "@ | Set-Content "build/$env:GAME-rendering-report.html"
+
+      - name: Upload Rendering Report
+        id: report
+        if: always()
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          path: build/${{ inputs.game }}-rendering-report.html
+          archive: false
+          retention-days: 7
+          if-no-files-found: warn
+
+      # Changes fail pull requests and are warnings on main.
+      - name: Check Rendering Changes
+        if: always()
+        env:
+          CHANGES: ${{ steps.compare.outputs.changes }}
+          MESSAGE: ${{ steps.compare.outputs.message }}
+          REPORT_URL: ${{ steps.report.outputs.artifact-url }}
+        run: |
+          "[Open the $env:GAME rendering report]($env:REPORT_URL)" >> $env:GITHUB_STEP_SUMMARY
+          $level = if (!$env:CHANGES) { 'notice' } elseif ($env:GITHUB_EVENT_NAME -eq 'pull_request') { 'error' } else { 'warning' }
+          "::$level title=$env:GAME rendering::$env:MESSAGE. Report: $env:REPORT_URL"
+          if ($level -eq 'error') { exit 1 }
