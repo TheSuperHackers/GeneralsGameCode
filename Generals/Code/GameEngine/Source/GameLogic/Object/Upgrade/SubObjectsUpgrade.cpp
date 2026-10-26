@@ -44,7 +44,7 @@
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_OBJECT_STATUS_NAMES
 #include "Common/Player.h"
@@ -57,20 +57,20 @@
 //-------------------------------------------------------------------------------------------------
 void SubObjectsUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpgradeModuleData::buildFieldParse(p);
+	UpgradeModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "ShowSubObjects", INI::parseAsciiStringVectorAppend, nullptr, offsetof( SubObjectsUpgradeModuleData, m_showSubObjectNames ) },
-		{ "HideSubObjects", INI::parseAsciiStringVectorAppend, nullptr, offsetof( SubObjectsUpgradeModuleData, m_hideSubObjectNames ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "ShowSubObjects", INI::parseAsciiStringVectorAppend, nullptr, offsetof(SubObjectsUpgradeModuleData, m_showSubObjectNames) },
+		{ "HideSubObjects", INI::parseAsciiStringVectorAppend, nullptr, offsetof(SubObjectsUpgradeModuleData, m_hideSubObjectNames) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SubObjectsUpgrade::SubObjectsUpgrade( Thing *thing, const ModuleData* moduleData ) : UpgradeModule( thing, moduleData )
+SubObjectsUpgrade::SubObjectsUpgrade(Thing* thing, const ModuleData* moduleData)
+  : UpgradeModule(thing, moduleData)
 {
 }
 
@@ -84,45 +84,45 @@ SubObjectsUpgrade::~SubObjectsUpgrade()
 //-------------------------------------------------------------------------------------------------
 void SubObjectsUpgrade::upgradeImplementation()
 {
-	const SubObjectsUpgradeModuleData *data = getSubObjectsUpgradeModuleData();
+	const SubObjectsUpgradeModuleData* data = getSubObjectsUpgradeModuleData();
 	UpgradeMaskType activation, conflicting;
-	getUpgradeActivationMasks( activation, conflicting );
+	getUpgradeActivationMasks(activation, conflicting);
 
-	//First make sure we have the right combination of upgrades
+	// First make sure we have the right combination of upgrades
 
-	if( getObject()->getObjectCompletedUpgradeMask().testForAny( conflicting ) )
+	if (getObject()->getObjectCompletedUpgradeMask().testForAny(conflicting))
 	{
-		//If it has ANY of the conflicting OBJECT upgrades, then don't do it!
+		// If it has ANY of the conflicting OBJECT upgrades, then don't do it!
 		return;
 	}
-	if( getObject()->getControllingPlayer()->getCompletedUpgradeMask().testForAny( conflicting ) )
+	if (getObject()->getControllingPlayer()->getCompletedUpgradeMask().testForAny(conflicting))
 	{
-		//If it has ANY of the conflicting PLAYER upgrades, then don't do it!
+		// If it has ANY of the conflicting PLAYER upgrades, then don't do it!
 		return;
 	}
 
-	Object *obj = getObject();
-	Drawable *draw = obj->getDrawable();
-	if( draw )
+	Object* obj = getObject();
+	Drawable* draw = obj->getDrawable();
+	if (draw)
 	{
 		std::vector<AsciiString>::const_iterator subObjectName;
 		Bool updateSubObjects = false;
 
-		//Show these subobjects
-		for( subObjectName = data->m_showSubObjectNames.begin(); subObjectName != data->m_showSubObjectNames.end(); ++subObjectName )
+		// Show these subobjects
+		for (subObjectName = data->m_showSubObjectNames.begin(); subObjectName != data->m_showSubObjectNames.end(); ++subObjectName)
 		{
-			draw->showSubObject( *subObjectName, true );
+			draw->showSubObject(*subObjectName, true);
 			updateSubObjects = true;
 		}
 
-		//Hide these subobjects
-		for( subObjectName = data->m_hideSubObjectNames.begin(); subObjectName != data->m_hideSubObjectNames.end(); ++subObjectName )
+		// Hide these subobjects
+		for (subObjectName = data->m_hideSubObjectNames.begin(); subObjectName != data->m_hideSubObjectNames.end(); ++subObjectName)
 		{
-			draw->showSubObject( *subObjectName, false );
+			draw->showSubObject(*subObjectName, false);
 			updateSubObjects = true;
 		}
 
-		if( updateSubObjects )
+		if (updateSubObjects)
 		{
 			draw->updateSubObjects();
 		}
@@ -130,12 +130,10 @@ void SubObjectsUpgrade::upgradeImplementation()
 }
 
 //------------------------------------------------------------------------------------------------
-void SubObjectsUpgrade::crc( Xfer *xfer )
+void SubObjectsUpgrade::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpgradeModule::crc( xfer );
-
+	UpgradeModule::crc(xfer);
 }
 
 //------------------------------------------------------------------------------------------------
@@ -143,24 +141,20 @@ void SubObjectsUpgrade::crc( Xfer *xfer )
 // Version Info:
 // 1: Initial version
 //------------------------------------------------------------------------------------------------
-void SubObjectsUpgrade::xfer( Xfer *xfer )
+void SubObjectsUpgrade::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpgradeModule::xfer( xfer );
-
+	UpgradeModule::xfer(xfer);
 }
 
 //------------------------------------------------------------------------------------------------
 void SubObjectsUpgrade::loadPostProcess()
 {
-
 	// extend base class
 	UpgradeModule::loadPostProcess();
-
 }

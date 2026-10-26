@@ -38,13 +38,13 @@ protected:
 	Coord3D m_mouseDownPt;
 
 protected:
-	MapObject *pickScorch(Coord3D loc);
+	MapObject* pickScorch(Coord3D loc);
 
 public:
 	/// Perform tool on mouse down.
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void activate() override; ///< Become the current tool.
-	virtual void deactivate() override; ///< Become not the current tool.
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void activate() override;    ///< Become the current tool.
+	virtual void deactivate() override;    ///< Become not the current tool.
 };

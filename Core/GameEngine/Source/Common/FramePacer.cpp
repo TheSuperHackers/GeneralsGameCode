@@ -27,7 +27,6 @@
 #include "GameNetwork/NetworkDefs.h"
 #include "GameNetwork/NetworkInterface.h"
 
-
 FramePacer* TheFramePacer = nullptr;
 
 FramePacer::FramePacer()
@@ -37,7 +36,7 @@ FramePacer::FramePacer()
 
 	m_maxFPS = BaseFps;
 	m_logicTimeScaleFPS = LOGICFRAMES_PER_SECOND;
-	m_updateTime = 1.0f / (Real)BaseFps; // initialized to something to avoid division by zero on first use
+	m_updateTime = 1.0f / (Real)BaseFps;    // initialized to something to avoid division by zero on first use
 	m_logicFramePhase = 1.0f;
 	m_enableFpsLimit = FALSE;
 	m_enableLogicTimeScale = FALSE;
@@ -82,18 +81,18 @@ void FramePacer::reset()
 	m_logicFramePhase = 1.0f;
 }
 
-void FramePacer::setFramesPerSecondLimit( Int fps )
+void FramePacer::setFramesPerSecondLimit(Int fps)
 {
 	DEBUG_LOG(("FramePacer::setFramesPerSecondLimit() - setting max fps to %d (TheGlobalData->m_useFpsLimit == %d)", fps, TheGlobalData->m_useFpsLimit));
 	m_maxFPS = fps;
 }
 
-Int FramePacer::getFramesPerSecondLimit()  const
+Int FramePacer::getFramesPerSecondLimit() const
 {
 	return m_maxFPS;
 }
 
-void FramePacer::enableFramesPerSecondLimit( Bool enable )
+void FramePacer::enableFramesPerSecondLimit(Bool enable)
 {
 	m_enableFpsLimit = enable;
 }
@@ -109,14 +108,14 @@ Bool FramePacer::isActualFramesPerSecondLimitEnabled() const
 
 	if (TheTacticalView != nullptr)
 	{
-		allowFpsLimit &= TheTacticalView->getTimeMultiplier()<=1 && !TheScriptEngine->isTimeFast();
+		allowFpsLimit &= TheTacticalView->getTimeMultiplier() <= 1 && !TheScriptEngine->isTimeFast();
 	}
 
 	if (TheGameLogic != nullptr)
 	{
 #if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 		allowFpsLimit &= !(!TheGameLogic->isGamePaused() && TheGlobalData->m_TiVOFastMode);
-#else	//always allow this cheat key if we're in a replay game.
+#else    // always allow this cheat key if we're in a replay game.
 		allowFpsLimit &= !(!TheGameLogic->isGamePaused() && TheGlobalData->m_TiVOFastMode && TheGameLogic->isInReplayGame());
 #endif
 	}
@@ -132,12 +131,12 @@ Int FramePacer::getActualFramesPerSecondLimit() const
 	return isActualFramesPerSecondLimitEnabled() ? getFramesPerSecondLimit() : RenderFpsPreset::UncappedFpsValue;
 }
 
-Real FramePacer::getUpdateTime()  const
+Real FramePacer::getUpdateTime() const
 {
 	return m_updateTime;
 }
 
-Real FramePacer::getUpdateFps()  const
+Real FramePacer::getUpdateFps() const
 {
 	return 1.0f / m_updateTime;
 }
@@ -169,7 +168,7 @@ Bool FramePacer::isGameHalted() const
 	return m_isGameHalted;
 }
 
-void FramePacer::setLogicTimeScaleFps( Int fps )
+void FramePacer::setLogicTimeScaleFps(Int fps)
 {
 	m_logicTimeScaleFPS = fps;
 }
@@ -179,7 +178,7 @@ Int FramePacer::getLogicTimeScaleFps() const
 	return m_logicTimeScaleFPS;
 }
 
-void FramePacer::enableLogicTimeScale( Bool enable )
+void FramePacer::enableLogicTimeScale(Bool enable)
 {
 	m_enableLogicTimeScale = enable;
 }

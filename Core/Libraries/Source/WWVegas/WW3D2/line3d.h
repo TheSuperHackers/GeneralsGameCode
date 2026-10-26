@@ -42,7 +42,7 @@
 #include "WWMath/vector4.h"
 #include "WW3D2/shader.h"
 
-class	VertexMaterialClass;
+class VertexMaterialClass;
 class RenderInfoClass;
 
 /*
@@ -56,62 +56,60 @@ class Line3DClass : public RenderObjClass
 {
 	W3DMPO_CODE(Line3DClass)
 
-	public:
+public:
+	Line3DClass(const Vector3& start, const Vector3& end, float width,
+	            float r, float g, float b, float opacity = 1.0f);
+	Line3DClass(const Line3DClass& src);
+	Line3DClass& operator=(const Line3DClass& that);
+	virtual ~Line3DClass() override;
+	virtual RenderObjClass* Clone() const override;
 
-		Line3DClass (const Vector3 & start, const Vector3 & end, float width,
-			float r, float g, float b, float opacity = 1.0f);
-		Line3DClass(const Line3DClass & src);
-		Line3DClass & operator = (const Line3DClass & that);
-		virtual ~Line3DClass() override;
-		virtual RenderObjClass * Clone() const override;
+	// class id of this render object
+	virtual int Class_ID() const override { return CLASSID_LINE3D; }
 
-		// class id of this render object
-		virtual int Class_ID() const override { return CLASSID_LINE3D; }
+	virtual void Render(RenderInfoClass& rfinfo) override;
 
-		virtual void		Render(RenderInfoClass & rfinfo) override;
+	// scale the 3D line symmetrically about its center.
+	virtual void Scale(float scale) override;
+	virtual void Scale(float scalex, float scaley, float scalez) override;
 
-		// scale the 3D line symmetrically about its center.
-		virtual void		Scale(float scale) override;
-		virtual void		Scale(float scalex, float scaley, float scalez) override;
+	// returns the number of polygons in the render object
+	virtual int Get_Num_Polys() const override;
 
-		// returns the number of polygons in the render object
-		virtual int Get_Num_Polys() const override;
+	// Get the object space bounding volumes
+	virtual void Get_Obj_Space_Bounding_Sphere(SphereClass& sphere) const override;
+	virtual void Get_Obj_Space_Bounding_Box(AABoxClass& box) const override;
 
-      // Get the object space bounding volumes
-      virtual void	Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
-      virtual void	Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
+	// The following functions are unique to Line3DClass:
 
-		// The following functions are unique to Line3DClass:
+	// Reset the line start and end points
+	void Reset(const Vector3& new_start, const Vector3& new_end);
 
-		// Reset the line start and end points
-		void Reset(const Vector3 & new_start, const Vector3 & new_end);
+	// Reset line start and end points, and the line width
+	void Reset(const Vector3& new_start, const Vector3& new_end, float new_width);
 
-		// Reset line start and end points, and the line width
-		void Reset(const Vector3 & new_start, const Vector3 & new_end, float new_width);
+	// Reset the line color
+	void Re_Color(float r, float g, float b);
 
-		// Reset the line color
-		void Re_Color(float r, float g, float b);
+	// Reset the line opacity
+	void Set_Opacity(float opacity);
 
-		// Reset the line opacity
-		void Set_Opacity(float opacity);
+	// For non-opaque lines, allow them to render last.
+	virtual void Set_Sort_Level(int level) override { SortLevel = level; }
+	virtual int Get_Sort_Level() const override { return SortLevel; }
 
-		// For non-opaque lines, allow them to render last.
-		virtual void							Set_Sort_Level(int level) override { SortLevel = level; }
-		virtual int							Get_Sort_Level() const override { return SortLevel; }
+protected:
+	// This is kept to facilitate changing the line endpoints.
+	float Length;
 
-	protected:
+	// This is kept to facilitate changing the line width.
+	float Width;
 
-		// This is kept to facilitate changing the line endpoints.
-		float Length;
-
-		// This is kept to facilitate changing the line width.
-		float Width;
-
-		// shader
-		ShaderClass				Shader;
-		// vertices
-		Vector3						vert[8];
-		// color
-		Vector4						Color;
-		char														SortLevel;
+	// shader
+	ShaderClass Shader;
+	// vertices
+	Vector3 vert[8];
+	// color
+	Vector4 Color;
+	char SortLevel;
 };

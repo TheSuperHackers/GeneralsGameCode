@@ -26,48 +26,48 @@
 
 #include <math.h>
 
-static void appendSimulationMathCrc(XferCRC &xfer)
+static void appendSimulationMathCrc(XferCRC& xfer)
 {
-    Matrix3D matrix;
-    Matrix3D factorsMatrix;
+	Matrix3D matrix;
+	Matrix3D factorsMatrix;
 
-    matrix.Set(
-        4.1f, 1.2f, 0.3f, 0.4f,
-        0.5f, 3.6f, 0.7f, 0.8f,
-        0.9f, 1.0f, 2.1f, 1.2f);
+	matrix.Set(
+	  4.1f, 1.2f, 0.3f, 0.4f,
+	  0.5f, 3.6f, 0.7f, 0.8f,
+	  0.9f, 1.0f, 2.1f, 1.2f);
 
-    factorsMatrix.Set(
-        WWMath::Sinf(0.7f) * WWMath::Log10f(2.3f),
-        WWMath::Cosf(1.1f) * WWMath::Powf(1.1f, 2.0f),
-        WWMath::Tanf(0.3f),
-        WWMath::Asinf(0.967302263f),
-        WWMath::Acosf(0.967302263f),
-        WWMath::Atanf(0.967302263f) * WWMath::Powf(1.1f, 2.0f),
-        WWMath::Atan2f(0.4f, 1.3f),
-        WWMath::Sinhf(0.2f),
-        WWMath::Coshf(0.4f) * WWMath::Tanhf(0.5f),
-        WWMath::Sqrtf(55788.84375f),
-        WWMath::Expf(0.1f) * WWMath::Log10f(2.3f),
-        WWMath::Logf(1.4f));
+	factorsMatrix.Set(
+	  WWMath::Sinf(0.7f) * WWMath::Log10f(2.3f),
+	  WWMath::Cosf(1.1f) * WWMath::Powf(1.1f, 2.0f),
+	  WWMath::Tanf(0.3f),
+	  WWMath::Asinf(0.967302263f),
+	  WWMath::Acosf(0.967302263f),
+	  WWMath::Atanf(0.967302263f) * WWMath::Powf(1.1f, 2.0f),
+	  WWMath::Atan2f(0.4f, 1.3f),
+	  WWMath::Sinhf(0.2f),
+	  WWMath::Coshf(0.4f) * WWMath::Tanhf(0.5f),
+	  WWMath::Sqrtf(55788.84375f),
+	  WWMath::Expf(0.1f) * WWMath::Log10f(2.3f),
+	  WWMath::Logf(1.4f));
 
-    Matrix3D::Multiply(matrix, factorsMatrix, &matrix);
-    matrix.Get_Inverse(matrix);
+	Matrix3D::Multiply(matrix, factorsMatrix, &matrix);
+	matrix.Get_Inverse(matrix);
 
-    xfer.xferMatrix3D(&matrix);
+	xfer.xferMatrix3D(&matrix);
 }
 
 UnsignedInt SimulationMathCrc::calculate()
 {
-    XferCRC xfer;
-    xfer.open("SimulationMathCrc");
+	XferCRC xfer;
+	xfer.open("SimulationMathCrc");
 
-    setFPMode();
+	setFPMode();
 
-    appendSimulationMathCrc(xfer);
+	appendSimulationMathCrc(xfer);
 
-    _fpreset();
+	_fpreset();
 
-    xfer.close();
+	xfer.close();
 
-    return xfer.getCRC();
+	return xfer.getCRC();
 }

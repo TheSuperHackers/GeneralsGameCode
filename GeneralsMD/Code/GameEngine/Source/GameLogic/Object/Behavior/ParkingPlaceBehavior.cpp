@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 #include "Common/CRCDebug.h"
 #include "Common/Xfer.h"
 #include "Common/ThingTemplate.h"
@@ -44,11 +44,10 @@
 #include "GameLogic/TerrainLogic.h"
 #include "Common/Team.h"
 
-
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ParkingPlaceBehavior::ParkingPlaceBehavior( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+ParkingPlaceBehavior::ParkingPlaceBehavior(Thing* thing, const ModuleData* moduleData)
+  : UpdateModule(thing, moduleData)
 {
 	m_gotInfo = false;
 	m_heliRallyPoint.zero();
@@ -68,11 +67,15 @@ ParkingPlaceBehavior::~ParkingPlaceBehavior()
 void ParkingPlaceBehavior::buildInfo()
 {
 	if (m_gotInfo)
+	{
 		return;
+	}
 
 	if (getObject()->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION) ||
-			getObject()->testStatus(OBJECT_STATUS_SOLD))
+	    getObject()->testStatus(OBJECT_STATUS_SOLD))
+	{
 		return;
+	}
 
 	const ParkingPlaceBehaviorModuleData* d = getParkingPlaceBehaviorModuleData();
 	ProductionUpdateInterface* pu = getObject()->getProductionUpdateInterface();
@@ -89,15 +92,15 @@ void ParkingPlaceBehavior::buildInfo()
 				AsciiString tmp;
 				Matrix3D mtx;
 
-				tmp.format("Runway%dPark%dHan",col+1,row+1);
+				tmp.format("Runway%dPark%dHan", col + 1, row + 1);
 				getObject()->getSingleLogicalBonePosition(tmp.str(), &info.m_hangarStart, &mtx);
 				info.m_hangarStartOrient = mtx.Get_Z_Rotation();
 
-				tmp.format("Runway%dParking%d",col+1,row+1);
+				tmp.format("Runway%dParking%d", col + 1, row + 1);
 				getObject()->getSingleLogicalBonePosition(tmp.str(), &info.m_location, &mtx);
 				info.m_orientation = mtx.Get_Z_Rotation();
 
-				tmp.format("Runway%dPrep%d",col+1,row+1);
+				tmp.format("Runway%dPrep%d", col + 1, row + 1);
 				getObject()->getSingleLogicalBonePosition(tmp.str(), &info.m_prep, nullptr);
 
 				info.m_runway = col;
@@ -105,7 +108,9 @@ void ParkingPlaceBehavior::buildInfo()
 				info.m_objectInSpace = INVALID_ID;
 				info.m_reservedForExit = false;
 				if (pu)
+				{
 					pu->setHoldDoorOpen(info.m_door, false);
+				}
 
 				m_spaces.push_back(info);
 			}
@@ -120,10 +125,10 @@ void ParkingPlaceBehavior::buildInfo()
 		{
 			AsciiString tmp;
 
-			tmp.format("RunwayStart%d",col+1);
+			tmp.format("RunwayStart%d", col + 1);
 			getObject()->getSingleLogicalBonePosition(tmp.str(), &info.m_start, nullptr);
 
-			tmp.format("RunwayEnd%d",col+1);
+			tmp.format("RunwayEnd%d", col + 1);
 			getObject()->getSingleLogicalBonePosition(tmp.str(), &info.m_end, nullptr);
 
 			info.m_inUseBy = INVALID_ID;
@@ -154,7 +159,9 @@ void ParkingPlaceBehavior::purgeDead()
 					it->m_reservedForExit = false;
 					it->m_postponedRunwayReservationForTakeoff = false;
 					if (pu)
+					{
 						pu->setHoldDoorOpen(it->m_door, false);
+					}
 				}
 			}
 		}
@@ -202,7 +209,9 @@ void ParkingPlaceBehavior::purgeDead()
 			}
 		}
 		if (anythingPurged)
+		{
 			resetWakeFrame();
+		}
 	}
 }
 
@@ -211,29 +220,35 @@ void ParkingPlaceBehavior::purgeDead()
 Bool ParkingPlaceBehavior::hasReservedSpace(ObjectID id) const
 {
 	if (!m_gotInfo)
+	{
 		return false;
+	}
 
-	if (id == INVALID_ID)	// shouldn't call this way, but Weapon mistakenly does sometimes, so check for it
+	if (id == INVALID_ID)    // shouldn't call this way, but Weapon mistakenly does sometimes, so check for it
+	{
 		return false;
+	}
 
 	for (std::vector<ParkingPlaceInfo>::const_iterator it = m_spaces.begin(); it != m_spaces.end(); ++it)
 	{
 		if (it->m_objectInSpace == id)
+		{
 			return true;
+		}
 	}
 	return false;
 }
 
 //-------------------------------------------------------------------------------------------------
-Int ParkingPlaceBehavior::getSpaceIndex( ObjectID id ) const
+Int ParkingPlaceBehavior::getSpaceIndex(ObjectID id) const
 {
-	if( id == INVALID_ID )
+	if (id == INVALID_ID)
 	{
 		return -1;
 	}
 
 	Int index = 0;
-	for( std::vector<ParkingPlaceInfo>::const_iterator it = m_spaces.begin(); it != m_spaces.end(); it++, index++ )
+	for (std::vector<ParkingPlaceInfo>::const_iterator it = m_spaces.begin(); it != m_spaces.end(); it++, index++)
 	{
 		if (it->m_objectInSpace == id)
 		{
@@ -249,12 +264,16 @@ ParkingPlaceBehavior::ParkingPlaceInfo* ParkingPlaceBehavior::findPPI(ObjectID i
 	DEBUG_ASSERTCRASH(id != INVALID_ID, ("call findEmptyPPI instead"));
 
 	if (!m_gotInfo || id == INVALID_ID)
+	{
 		return nullptr;
+	}
 
 	for (std::vector<ParkingPlaceInfo>::iterator it = m_spaces.begin(); it != m_spaces.end(); ++it)
 	{
 		if (it->m_objectInSpace == id)
+		{
 			return &(*it);
+		}
 	}
 
 	return nullptr;
@@ -264,12 +283,16 @@ ParkingPlaceBehavior::ParkingPlaceInfo* ParkingPlaceBehavior::findPPI(ObjectID i
 ParkingPlaceBehavior::ParkingPlaceInfo* ParkingPlaceBehavior::findEmptyPPI()
 {
 	if (!m_gotInfo)
+	{
 		return nullptr;
+	}
 
 	for (std::vector<ParkingPlaceInfo>::iterator it = m_spaces.begin(); it != m_spaces.end(); ++it)
 	{
 		if (it->m_objectInSpace == INVALID_ID && it->m_reservedForExit == false)
+		{
 			return &(*it);
+		}
 	}
 
 	return nullptr;
@@ -280,7 +303,9 @@ ParkingPlaceBehavior::ParkingPlaceInfo* ParkingPlaceBehavior::findEmptyPPI()
 Bool ParkingPlaceBehavior::shouldReserveDoorWhenQueued(const ThingTemplate* thing) const
 {
 	if (thing->isKindOf(KINDOF_PRODUCED_AT_HELIPAD))
+	{
 		return false;
+	}
 
 	return true;
 }
@@ -289,11 +314,15 @@ Bool ParkingPlaceBehavior::shouldReserveDoorWhenQueued(const ThingTemplate* thin
 // note: called from client, so MUST NOT modify self in any way, or desyncs will occur
 Bool ParkingPlaceBehavior::hasAvailableSpaceFor(const ThingTemplate* thing) const
 {
-	if (!m_gotInfo)	// degenerate case, shouldn't happen, but just in case...
+	if (!m_gotInfo)    // degenerate case, shouldn't happen, but just in case...
+	{
 		return false;
+	}
 
 	if (thing->isKindOf(KINDOF_PRODUCED_AT_HELIPAD))
+	{
 		return true;
+	}
 
 	for (std::vector<ParkingPlaceInfo>::const_iterator it = m_spaces.begin(); it != m_spaces.end(); ++it)
 	{
@@ -333,25 +362,25 @@ Bool ParkingPlaceBehavior::reserveSpace(ObjectID id, Real parkingOffset, Parking
 		if (ppi == nullptr)
 		{
 			DEBUG_CRASH(("No parking places!"));
-			return false;	// nothing available
+			return false;    // nothing available
 		}
 	}
 
 	ppi->m_objectInSpace = id;
 	ppi->m_reservedForExit = false;
 
-	if( d->m_landingDeckHeightOffset )
+	if (d->m_landingDeckHeightOffset)
 	{
-		Object *obj = TheGameLogic->findObjectByID( id );
-		if( obj )
+		Object* obj = TheGameLogic->findObjectByID(id);
+		if (obj)
 		{
-			obj->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DECK_HEIGHT_OFFSET ) );
+			obj->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_DECK_HEIGHT_OFFSET));
 		}
 	}
 
 	if (info)
 	{
-		calcPPInfo( id, info );
+		calcPPInfo(id, info);
 		if (parkingOffset != 0.0f)
 		{
 			info->parkingSpace.x += parkingOffset * Cos(ppi->m_orientation);
@@ -361,24 +390,25 @@ Bool ParkingPlaceBehavior::reserveSpace(ObjectID id, Real parkingOffset, Parking
 
 	ProductionUpdateInterface* pu = getObject()->getProductionUpdateInterface();
 	if (pu)
+	{
 		pu->setHoldDoorOpen(ppi->m_door, true);
+	}
 
 	return true;
 }
 
 //-------------------------------------------------------------------------------------------------
-void ParkingPlaceBehavior::calcPPInfo( ObjectID id, PPInfo *info )
+void ParkingPlaceBehavior::calcPPInfo(ObjectID id, PPInfo* info)
 {
-
-	ParkingPlaceInfo* ppi = findPPI( id );
-	if( !ppi )
+	ParkingPlaceInfo* ppi = findPPI(id);
+	if (!ppi)
 	{
-		//Utter failure.
+		// Utter failure.
 		return;
 	}
-	const RunwayInfo& rr = m_runways[ ppi->m_runway ];
+	const RunwayInfo& rr = m_runways[ppi->m_runway];
 
-	if( info )
+	if (info)
 	{
 		const ParkingPlaceBehaviorModuleData* d = getParkingPlaceBehaviorModuleData();
 		info->parkingSpace = d->m_parkInHangars ? ppi->m_hangarStart : ppi->m_location;
@@ -387,7 +417,7 @@ void ParkingPlaceBehavior::calcPPInfo( ObjectID id, PPInfo *info )
 		info->runwayStart = rr.m_start;
 		info->runwayEnd = rr.m_end;
 		info->runwayApproach = rr.m_end;
-		//const Real APPROACH_DIST = 0.5f;	// no, too short, planes may not have enough space to drop altitude
+		// const Real APPROACH_DIST = 0.5f;	// no, too short, planes may not have enough space to drop altitude
 		const Real APPROACH_DIST = 0.75f;
 		info->runwayApproach.x += (rr.m_end.x - rr.m_start.x) * APPROACH_DIST;
 		info->runwayApproach.y += (rr.m_end.y - rr.m_start.y) * APPROACH_DIST;
@@ -396,9 +426,9 @@ void ParkingPlaceBehavior::calcPPInfo( ObjectID id, PPInfo *info )
 		info->hangarInternal = ppi->m_hangarStart;
 		info->hangarInternalOrient = ppi->m_hangarStartOrient;
 
-		//Cache the runway's takeoff distance used by JetAIUpdate for calculating lift.
+		// Cache the runway's takeoff distance used by JetAIUpdate for calculating lift.
 		Coord3D vector = info->runwayStart;
-		vector.sub( info->runwayEnd );
+		vector.sub(info->runwayEnd);
 		info->runwayTakeoffDist = vector.length();
 
 		for (std::vector<RunwayInfo>::iterator it = m_runways.begin(); it != m_runways.end(); ++it)
@@ -430,17 +460,18 @@ void ParkingPlaceBehavior::releaseSpace(ObjectID id)
 			it->m_reservedForExit = false;
 			it->m_postponedRunwayReservationForTakeoff = false;
 			if (pu)
+			{
 				pu->setHoldDoorOpen(it->m_door, false);
+			}
 			break;
 		}
 	}
 
-	Object *obj = TheGameLogic->findObjectByID( id );
-	if( obj )
+	Object* obj = TheGameLogic->findObjectByID(id);
+	if (obj)
 	{
-		obj->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DECK_HEIGHT_OFFSET ) );
+		obj->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_DECK_HEIGHT_OFFSET));
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -459,9 +490,9 @@ Int ParkingPlaceBehavior::getRunwayIndex(ObjectID id)
 }
 
 //-------------------------------------------------------------------------------------------------
-ObjectID ParkingPlaceBehavior::getRunwayReservation( Int runway, RunwayReservationType type )
+ObjectID ParkingPlaceBehavior::getRunwayReservation(Int runway, RunwayReservationType type)
 {
-	//Note: We don't care about type because these runways share the runway for taking off and landing.
+	// Note: We don't care about type because these runways share the runway for taking off and landing.
 	buildInfo();
 	purgeDead();
 	return m_runways[runway].m_inUseBy;
@@ -523,7 +554,9 @@ Bool ParkingPlaceBehavior::reserveRunway(ObjectID id, Bool forLanding)
 		{
 #if !RETAIL_COMPATIBLE_CRC
 			if (postponeRunwayReservation(i, forLanding))
+			{
 				return false;
+			}
 #endif
 
 			runway = m_spaces[i].m_runway;
@@ -561,7 +594,7 @@ Bool ParkingPlaceBehavior::reserveRunway(ObjectID id, Bool forLanding)
 	else if (!forLanding && info.m_nextInLineForTakeoff == INVALID_ID)
 	{
 		info.m_nextInLineForTakeoff = id;
-		return false;	// yes, that's right
+		return false;    // yes, that's right
 	}
 
 	return false;
@@ -612,7 +645,9 @@ void ParkingPlaceBehavior::setHealee(Object* healee, Bool add)
 		for (std::list<HealingInfo>::const_iterator it = m_healing.begin(); it != m_healing.end(); ++it)
 		{
 			if (it->m_gettingHealedID == healee->getID())
+			{
 				return;
+			}
 		}
 		HealingInfo info;
 		info.m_gettingHealedID = healee->getID();
@@ -649,11 +684,13 @@ void ParkingPlaceBehavior::defectAllParkedUnits(Team* newTeam, UnsignedInt detec
 		{
 			Object* obj = TheGameLogic->findObjectByID(it->m_objectInSpace);
 			if (obj == nullptr || obj->isEffectivelyDead())
+			{
 				continue;
+			}
 
 			// srj sez: evil. fix better someday.
 			static NameKeyType jetKey = TheNameKeyGenerator->nameToKey("JetAIUpdate");
-			JetAIUpdate* ju = (JetAIUpdate *)obj->findUpdateModule(jetKey);
+			JetAIUpdate* ju = (JetAIUpdate*)obj->findUpdateModule(jetKey);
 			Bool takeoffOrLanding = ju ? ju->friend_isTakeoffOrLandingInProgress() : false;
 
 			if (obj->isAboveTerrain() && !takeoffOrLanding)
@@ -663,7 +700,9 @@ void ParkingPlaceBehavior::defectAllParkedUnits(Team* newTeam, UnsignedInt detec
 				{
 					releaseSpace(obj->getID());
 					if (obj->getProducerID() == getObject()->getID())
+					{
 						obj->setProducer(nullptr);
+					}
 				}
 			}
 			else
@@ -688,15 +727,19 @@ void ParkingPlaceBehavior::killAllParkedUnits()
 		{
 			Object* obj = TheGameLogic->findObjectByID(it->m_objectInSpace);
 			if (obj == nullptr || obj->isEffectivelyDead())
+			{
 				continue;
+			}
 
 			// srj sez: evil. fix better someday.
 			static NameKeyType jetKey = TheNameKeyGenerator->nameToKey("JetAIUpdate");
-			JetAIUpdate* ju = (JetAIUpdate *)obj->findUpdateModule(jetKey);
+			JetAIUpdate* ju = (JetAIUpdate*)obj->findUpdateModule(jetKey);
 			Bool takeoffOrLanding = ju ? ju->friend_isTakeoffOrLandingInProgress() : false;
 
 			if (obj->isAboveTerrain() && !takeoffOrLanding)
+			{
 				continue;
+			}
 
 			obj->kill();
 		}
@@ -706,7 +749,7 @@ void ParkingPlaceBehavior::killAllParkedUnits()
 }
 
 //-------------------------------------------------------------------------------------------------
-void ParkingPlaceBehavior::onDie( const DamageInfo *damageInfo )
+void ParkingPlaceBehavior::onDie(const DamageInfo* damageInfo)
 {
 	killAllParkedUnits();
 }
@@ -741,13 +784,13 @@ UpdateSleepTime ParkingPlaceBehavior::update()
 					healInfo.in.m_damageType = DAMAGE_HEALING;
 					healInfo.in.m_deathType = DEATH_NONE;
 					healInfo.in.m_sourceID = getObject()->getID();
-  				healInfo.in.m_amount = HEAL_RATE_FRAMES * d->m_healAmount * SECONDS_PER_LOGICFRAME_REAL;
+					healInfo.in.m_amount = HEAL_RATE_FRAMES * d->m_healAmount * SECONDS_PER_LOGICFRAME_REAL;
 
-//          if ( objToHeal->isKindOf( KINDOF_PRODUCED_AT_HELIPAD ) )
-//            healInfo.in.m_amount += HEAL_RATE_FRAMES * d->m_extraHealAmount4Helicopters * SECONDS_PER_LOGICFRAME_REAL;
+					//          if ( objToHeal->isKindOf( KINDOF_PRODUCED_AT_HELIPAD ) )
+					//            healInfo.in.m_amount += HEAL_RATE_FRAMES * d->m_extraHealAmount4Helicopters * SECONDS_PER_LOGICFRAME_REAL;
 
-					BodyModuleInterface *body = objToHeal->getBodyModule();
-					body->attemptHealing( &healInfo );
+					BodyModuleInterface* body = objToHeal->getBodyModule();
+					body->attemptHealing(&healInfo);
 					++it;
 				}
 			}
@@ -758,7 +801,7 @@ UpdateSleepTime ParkingPlaceBehavior::update()
 }
 
 //-------------------------------------------------------------------------------------------------
-ExitDoorType ParkingPlaceBehavior::reserveDoorForExit( const ThingTemplate* objType, Object *specificObject )
+ExitDoorType ParkingPlaceBehavior::reserveDoorForExit(const ThingTemplate* objType, Object* specificObject)
 {
 	buildInfo();
 	purgeDead();
@@ -782,7 +825,7 @@ ExitDoorType ParkingPlaceBehavior::reserveDoorForExit( const ThingTemplate* objT
 }
 
 //-------------------------------------------------------------------------------------------------
-void ParkingPlaceBehavior::exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor ) ///< Here is the thing I want you to exit
+void ParkingPlaceBehavior::exitObjectViaDoor(Object* newObj, ExitDoorType exitDoor)    ///< Here is the thing I want you to exit
 {
 	if (exitDoor != DOOR_NONE_NEEDED)
 	{
@@ -807,8 +850,8 @@ void ParkingPlaceBehavior::exitObjectViaDoor( Object *newObj, ExitDoorType exitD
 	}
 
 	/// @todo srj -- this is evil. fix.
-	static NameKeyType jetKey = TheNameKeyGenerator->nameToKey( "JetAIUpdate" );
-	JetAIUpdate* ju = (JetAIUpdate *)newObj->findUpdateModule( jetKey );
+	static NameKeyType jetKey = TheNameKeyGenerator->nameToKey("JetAIUpdate");
+	JetAIUpdate* ju = (JetAIUpdate*)newObj->findUpdateModule(jetKey);
 	Real parkingOffset = ju ? ju->friend_getParkingOffset() : 0.0f;
 	Bool producedAtHelipad = newObj->isKindOf(KINDOF_PRODUCED_AT_HELIPAD);
 
@@ -832,7 +875,7 @@ void ParkingPlaceBehavior::exitObjectViaDoor( Object *newObj, ExitDoorType exitD
 	{
 		CRCDEBUG_LOG(("Produced at hangar (door = %d)", exitDoor));
 		DEBUG_ASSERTCRASH(exitDoor != DOOR_NONE_NEEDED, ("Hmm, unlikely"));
-		if (!reserveSpace(newObj->getID(), parkingOffset, &ppinfo)) //&loc, &orient, nullptr, nullptr, nullptr, nullptr, &hangarInternal, &hangOrient))
+		if (!reserveSpace(newObj->getID(), parkingOffset, &ppinfo))    //&loc, &orient, nullptr, nullptr, nullptr, nullptr, &hangarInternal, &hangOrient))
 		{
 			DEBUG_CRASH(("no spaces available, how did we get here?"));
 			ppinfo.parkingSpace = *getObject()->getPosition();
@@ -844,43 +887,43 @@ void ParkingPlaceBehavior::exitObjectViaDoor( Object *newObj, ExitDoorType exitD
 	DUMPCOORD3D(&ppinfo.parkingSpace);
 	DUMPREAL(ppinfo.parkingOrientation);
 
-	newObj->setPosition( &ppinfo.hangarInternal );
-	newObj->setOrientation( ppinfo.hangarInternalOrient );
-	TheAI->pathfinder()->addObjectToPathfindMap( newObj );
+	newObj->setPosition(&ppinfo.hangarInternal);
+	newObj->setOrientation(ppinfo.hangarInternalOrient);
+	TheAI->pathfinder()->addObjectToPathfindMap(newObj);
 
-	AIUpdateInterface  *ai = newObj->getAIUpdateInterface();
-	if( ai )
+	AIUpdateInterface* ai = newObj->getAIUpdateInterface();
+	if (ai)
 	{
 		Bool movedToRallyPoint = FALSE;
-		if( producedAtHelipad )
+		if (producedAtHelipad)
 		{
-			const Coord3D *rallyPoint = getRallyPoint();
-			if( rallyPoint )
+			const Coord3D* rallyPoint = getRallyPoint();
+			if (rallyPoint)
 			{
-				ai->aiMoveToPosition( rallyPoint, CMD_FROM_AI );
+				ai->aiMoveToPosition(rallyPoint, CMD_FROM_AI);
 				movedToRallyPoint = TRUE;
 			}
 		}
-		if( !movedToRallyPoint )
+		if (!movedToRallyPoint)
 		{
-			if( !newObj->isKindOf( KINDOF_PRODUCED_AT_HELIPAD ) )
+			if (!newObj->isKindOf(KINDOF_PRODUCED_AT_HELIPAD))
 			{
 				std::vector<Coord3D> exitPath;
 				exitPath.push_back(ppinfo.parkingSpace);
-				ai->aiFollowExitProductionPath( &exitPath, getObject(), CMD_FROM_AI );
+				ai->aiFollowExitProductionPath(&exitPath, getObject(), CMD_FROM_AI);
 			}
 			else
 			{
 				// Lorenzen sez: aiMoveToPosition has an added benefit.
 				// It invokes the pathfinder to find a vacant destination.
-	      ai->aiMoveToPosition( &ppinfo.parkingSpace, CMD_FROM_AI );
+				ai->aiMoveToPosition(&ppinfo.parkingSpace, CMD_FROM_AI);
 			}
 		}
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-void ParkingPlaceBehavior::unreserveDoorForExit( ExitDoorType exitDoor )
+void ParkingPlaceBehavior::unreserveDoorForExit(ExitDoorType exitDoor)
 {
 	if (exitDoor != DOOR_NONE_NEEDED)
 	{
@@ -888,29 +931,29 @@ void ParkingPlaceBehavior::unreserveDoorForExit( ExitDoorType exitDoor )
 		{
 			if (it->m_door == exitDoor)
 			{
-				//DEBUG_ASSERTCRASH(it->m_reservedForExit, ("ParkingPlaceBehavior::unreserveDoorForExit: door %d was not reserved",exitDoor));
+				// DEBUG_ASSERTCRASH(it->m_reservedForExit, ("ParkingPlaceBehavior::unreserveDoorForExit: door %d was not reserved",exitDoor));
 				it->m_objectInSpace = INVALID_ID;
 				it->m_reservedForExit = false;
 				return;
 			}
 		}
 
-		DEBUG_CRASH(("ParkingPlaceBehavior::unreserveDoorForExit: door %d was not found",exitDoor));
+		DEBUG_CRASH(("ParkingPlaceBehavior::unreserveDoorForExit: door %d was not found", exitDoor));
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-void ParkingPlaceBehavior::setRallyPoint( const Coord3D *pos )
+void ParkingPlaceBehavior::setRallyPoint(const Coord3D* pos)
 {
 	m_heliRallyPointExists = TRUE;
-	m_heliRallyPoint.set( *pos );
+	m_heliRallyPoint.set(*pos);
 	// nothing
 }
 
 //-------------------------------------------------------------------------------------------------
 const Coord3D* ParkingPlaceBehavior::getRallyPoint() const
 {
-	if( m_heliRallyPointExists )
+	if (m_heliRallyPointExists)
 	{
 		return &m_heliRallyPoint;
 	}
@@ -918,50 +961,48 @@ const Coord3D* ParkingPlaceBehavior::getRallyPoint() const
 }
 
 //-------------------------------------------------------------------------------------------------
-//We only use this for the helipad -- therefore the exit position is the helipad creation point.
+// We only use this for the helipad -- therefore the exit position is the helipad creation point.
 //-------------------------------------------------------------------------------------------------
-Bool ParkingPlaceBehavior::getExitPosition( Coord3D& exitPosition ) const
+Bool ParkingPlaceBehavior::getExitPosition(Coord3D& exitPosition) const
 {
 	Matrix3D mtx;
-	return getObject()->getSingleLogicalBonePosition("HeliPark01", &exitPosition, &mtx );
+	return getObject()->getSingleLogicalBonePosition("HeliPark01", &exitPosition, &mtx);
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ParkingPlaceBehavior::getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset ) const
+Bool ParkingPlaceBehavior::getNaturalRallyPoint(Coord3D& rallyPoint, Bool offset) const
 {
 	Matrix3D mtx;
-	return getObject()->getSingleLogicalBonePosition("HeliPark01", &rallyPoint, &mtx );
+	return getObject()->getSingleLogicalBonePosition("HeliPark01", &rallyPoint, &mtx);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ParkingPlaceBehavior::crc( Xfer *xfer )
+void ParkingPlaceBehavior::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
-
+	UpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void ParkingPlaceBehavior::xfer( Xfer *xfer )
+void ParkingPlaceBehavior::xfer(Xfer* xfer)
 {
 	Int i;
 
 	// version
 	const XferVersion currentVersion = 3;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
-	if( xfer->getXferMode() == XFER_LOAD )
+	if (xfer->getXferMode() == XFER_LOAD)
 	{
 		// first, build our info, so it won't be overwritten later.
 		buildInfo();
@@ -969,25 +1010,21 @@ void ParkingPlaceBehavior::xfer( Xfer *xfer )
 
 	// spaces info count and data
 	UnsignedByte spacesCount = m_spaces.size();
-	xfer->xferUnsignedByte( &spacesCount );
-	if( xfer->getXferMode() == XFER_SAVE )
+	xfer->xferUnsignedByte(&spacesCount);
+	if (xfer->getXferMode() == XFER_SAVE)
 	{
-
 		// save all elements
 		std::vector< ParkingPlaceInfo >::iterator it;
-		for( it = m_spaces.begin(); it != m_spaces.end(); ++it )
+		for (it = m_spaces.begin(); it != m_spaces.end(); ++it)
 		{
-
 			// object in this space
-			xfer->xferObjectID( &((*it).m_objectInSpace) );
+			xfer->xferObjectID(&((*it).m_objectInSpace));
 
 			// reserved for exit
-			xfer->xferBool( &((*it).m_reservedForExit) );
-
+			xfer->xferBool(&((*it).m_reservedForExit));
 		}
-
 	}
-	else if( xfer->getXferMode() == XFER_LOAD )
+	else if (xfer->getXferMode() == XFER_LOAD)
 	{
 		ObjectID objectID;
 		Bool reservedForExit;
@@ -995,113 +1032,93 @@ void ParkingPlaceBehavior::xfer( Xfer *xfer )
 		// read all elements
 		std::vector< ParkingPlaceInfo >::iterator it;
 		it = m_spaces.begin();
-		for( i = 0; i < spacesCount; ++i )
+		for (i = 0; i < spacesCount; ++i)
 		{
-
 			// read object id
-			xfer->xferObjectID( &objectID );
+			xfer->xferObjectID(&objectID);
 
 			// read reserved flag
-			xfer->xferBool( &reservedForExit );
+			xfer->xferBool(&reservedForExit);
 
 			// store in vector if the vector does indeed still have room for this entry
-			if( it != m_spaces.end() )
+			if (it != m_spaces.end())
 			{
-
 				(*it).m_objectInSpace = objectID;
 				(*it).m_reservedForExit = reservedForExit;
 				++it;
-
 			}
-
 		}
-
 	}
 
 	// runways could and info
 	UnsignedByte runwaysCount = m_runways.size();
-	xfer->xferUnsignedByte( &runwaysCount );
-	if( xfer->getXferMode() == XFER_SAVE )
+	xfer->xferUnsignedByte(&runwaysCount);
+	if (xfer->getXferMode() == XFER_SAVE)
 	{
-
 		// save all elements
 		std::vector< RunwayInfo >::iterator it;
-		for( it = m_runways.begin(); it != m_runways.end(); ++it )
+		for (it = m_runways.begin(); it != m_runways.end(); ++it)
 		{
-
 			// save object ID
-			xfer->xferObjectID( &((*it).m_inUseBy) );
-			xfer->xferObjectID( &((*it).m_nextInLineForTakeoff) );
-			xfer->xferBool( &((*it).m_wasInLine) );
-
+			xfer->xferObjectID(&((*it).m_inUseBy));
+			xfer->xferObjectID(&((*it).m_nextInLineForTakeoff));
+			xfer->xferBool(&((*it).m_wasInLine));
 		}
-
 	}
-	else if( xfer->getXferMode() == XFER_LOAD )
+	else if (xfer->getXferMode() == XFER_LOAD)
 	{
 		// read all elements
 		std::vector< RunwayInfo >::iterator it;
 		it = m_runways.begin();
-		for( i = 0; i < runwaysCount; ++i )
+		for (i = 0; i < runwaysCount; ++i)
 		{
-
 			ObjectID inUseBy;
 			ObjectID nextInLineForTakeoff;
 			Bool wasInLine;
 
 			// read object ID
-			xfer->xferObjectID( &inUseBy );
-			xfer->xferObjectID( &nextInLineForTakeoff );
-			xfer->xferBool( &wasInLine );
+			xfer->xferObjectID(&inUseBy);
+			xfer->xferObjectID(&nextInLineForTakeoff);
+			xfer->xferBool(&wasInLine);
 
 			// store in vector if the vector does indeed still have room for this entry
-			if( it != m_runways.end() )
+			if (it != m_runways.end())
 			{
-
 				(*it).m_inUseBy = inUseBy;
 				(*it).m_nextInLineForTakeoff = nextInLineForTakeoff;
 				(*it).m_wasInLine = wasInLine;
 				++it;
-
 			}
-
 		}
-
 	}
 
 	// healees
 	UnsignedByte healCount = m_healing.size();
-	xfer->xferUnsignedByte( &healCount );
-	if( xfer->getXferMode() == XFER_SAVE )
+	xfer->xferUnsignedByte(&healCount);
+	if (xfer->getXferMode() == XFER_SAVE)
 	{
-
 		// save all elements
 		std::list< HealingInfo >::iterator it;
-		for( it = m_healing.begin(); it != m_healing.end(); ++it )
+		for (it = m_healing.begin(); it != m_healing.end(); ++it)
 		{
-
 			// save object ID
-			xfer->xferObjectID( &((*it).m_gettingHealedID) );
-			xfer->xferUnsignedInt( &((*it).m_healStartFrame) );
-
+			xfer->xferObjectID(&((*it).m_gettingHealedID));
+			xfer->xferUnsignedInt(&((*it).m_healStartFrame));
 		}
-
 	}
-	else if( xfer->getXferMode() == XFER_LOAD )
+	else if (xfer->getXferMode() == XFER_LOAD)
 	{
 		// read all elements
 		m_healing.clear();
-		for( i = 0; i < healCount; ++i )
+		for (i = 0; i < healCount; ++i)
 		{
 			HealingInfo info;
 
 			// read object ID
-			xfer->xferObjectID( &info.m_gettingHealedID );
-			xfer->xferUnsignedInt( &info.m_healStartFrame );
+			xfer->xferObjectID(&info.m_gettingHealedID);
+			xfer->xferUnsignedInt(&info.m_healStartFrame);
 			m_healing.push_back(info);
-
 		}
-
 	}
 
 	if (version >= 2)
@@ -1122,7 +1139,6 @@ void ParkingPlaceBehavior::xfer( Xfer *xfer )
 			m_nextHealFrame = 0;
 		}
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1130,12 +1146,10 @@ void ParkingPlaceBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void ParkingPlaceBehavior::loadPostProcess()
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
 
 	// no, this is bad.. it is NOT SAFE to call setWakeFrame from the xfer system. crap. (srj)
 	// make sure we are awake... old save games let us sleep
-	//setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
-
+	// setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 }

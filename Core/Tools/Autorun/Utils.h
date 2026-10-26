@@ -38,33 +38,31 @@
 
 #include <windows.h>
 
-
 /******************************************************************************
 **	Swaps two objects.
 */
-template<class T>
-void swap( T & left, T & right )
+template <class T>
+void swap(T& left, T& right)
 {
 	T temp;
 
-	temp  = left;
-	left  = right;
+	temp = left;
+	left = right;
 	right = temp;
 }
 
-
-void		Fix_Single_Ampersands  			( LPSTR pszString, bool upper_case );
-void		Fix_Single_Ampersands  			( unichar *pszString, bool upper_case );
-//UnicodeString Fix_Single_Ampersands ( UnicodeString string, bool upper_case);
-void		Fix_Double_Ampersands  			( LPSTR string, bool upper_case );
-void *		Load_Alloc_Data					( char *filename, long *filesize=0 );
-void *		Load_File						( char *filename, long *filesize=0 );
-char *		Make_Current_Path_To			( const char *filename, char *path );
-unichar *	Make_Current_Path_To			( const unichar *filename, unichar *path );
-char *		Path_Add_Back_Slash				( char *path );
-char *		Path_Remove_Back_Slash			( char *path );
-unichar *	Path_Add_Back_Slash				( unichar *path );
-unichar *	Path_Remove_Back_Slash			( unichar *path );
-void		PlugInProductName				( char *szString, int nName );
-void		PlugInProductName				( char *szString, char *szName );
-void		PlugInProductName				( unichar *szString, const unichar *szName );
+void Fix_Single_Ampersands(LPSTR pszString, bool upper_case);
+void Fix_Single_Ampersands(unichar* pszString, bool upper_case);
+// UnicodeString Fix_Single_Ampersands ( UnicodeString string, bool upper_case);
+void Fix_Double_Ampersands(LPSTR string, bool upper_case);
+void* Load_Alloc_Data(char* filename, long* filesize = 0);
+void* Load_File(char* filename, long* filesize = 0);
+char* Make_Current_Path_To(const char* filename, char* path);
+unichar* Make_Current_Path_To(const unichar* filename, unichar* path);
+char* Path_Add_Back_Slash(char* path);
+char* Path_Remove_Back_Slash(char* path);
+unichar* Path_Add_Back_Slash(unichar* path);
+unichar* Path_Remove_Back_Slash(unichar* path);
+void PlugInProductName(char* szString, int nName);
+void PlugInProductName(char* szString, char* szName);
+void PlugInProductName(unichar* szString, const unichar* szName);

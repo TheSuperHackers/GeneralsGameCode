@@ -19,7 +19,8 @@
 
 #include "clang-tidy/ClangTidyCheck.h"
 
-namespace clang::tidy::generalsgamecode::readability {
+namespace clang::tidy::generalsgamecode::readability
+{
 
 /// Finds uses of getLength() == 0 or getLength() > 0 on AsciiString and
 /// UnicodeString, and Get_Length() == 0 on StringClass and WideStringClass,
@@ -29,17 +30,20 @@ namespace clang::tidy::generalsgamecode::readability {
 ///
 /// For the user-facing documentation see:
 /// http://clang.llvm.org/extra/clang-tidy/checks/generals-use-is-empty.html
-class UseIsEmptyCheck : public ClangTidyCheck {
+class UseIsEmptyCheck : public ClangTidyCheck
+{
 public:
-  UseIsEmptyCheck(StringRef Name, ClangTidyContext *Context)
-      : ClangTidyCheck(Name, Context) {}
-  void registerMatchers(ast_matchers::MatchFinder *Finder) override;
-  void check(const ast_matchers::MatchFinder::MatchResult &Result) override;
-  bool isLanguageVersionSupported(const LangOptions &LangOpts) const override {
-    return LangOpts.CPlusPlus;
-  }
+	UseIsEmptyCheck(StringRef Name, ClangTidyContext* Context)
+	  : ClangTidyCheck(Name, Context)
+	{}
+	void registerMatchers(ast_matchers::MatchFinder* Finder) override;
+	void check(const ast_matchers::MatchFinder::MatchResult& Result) override;
+	bool isLanguageVersionSupported(const LangOptions& LangOpts) const override
+	{
+		return LangOpts.CPlusPlus;
+	}
 };
 
-} // namespace clang::tidy::generalsgamecode::readability
+}    // namespace clang::tidy::generalsgamecode::readability
 
-#endif // LLVM_CLANG_TOOLS_EXTRA_CLANG_TIDY_GENERALSGAMECODE_READABILITY_USEISEMPTYCHECK_H
+#endif    // LLVM_CLANG_TOOLS_EXTRA_CLANG_TIDY_GENERALSGAMECODE_READABILITY_USEISEMPTYCHECK_H

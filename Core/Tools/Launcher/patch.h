@@ -24,4 +24,4 @@
 #include "wdebug.h"
 #include "process.h"
 
-void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex);
+void Apply_Patch(char* patchfile, ConfigFile& config, int skuIndex);

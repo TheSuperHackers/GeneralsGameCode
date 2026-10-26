@@ -44,11 +44,10 @@ CWDumpEditView::~CWDumpEditView()
 {
 }
 
-
 BEGIN_MESSAGE_MAP(CWDumpEditView, CEditView)
-	//{{AFX_MSG_MAP(CWDumpEditView)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CWDumpEditView)
+// NOTE - the ClassWizard will add and remove mapping macros here.
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -72,7 +71,7 @@ void CWDumpEditView::Dump(CDumpContext& dc) const
 {
 	CEditView::Dump(dc);
 }
-#endif //RTS_DEBUG
+#endif    // RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CWDumpEditView message handlers
@@ -86,34 +85,36 @@ void CWDumpEditView::OnInitialUpdate()
 void CWDumpEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	// TODO: Add your specialized code here and/or call the base class
-	CEdit &edit = GetEditCtrl();
+	CEdit& edit = GetEditCtrl();
 	edit.SetReadOnly(TRUE);
-	CWdumpDoc *doc= (CWdumpDoc *) GetDocument();
-	ChunkItem *item = doc->m_ChunkItem;
+	CWdumpDoc* doc = (CWdumpDoc*)GetDocument();
+	ChunkItem* item = doc->m_ChunkItem;
 
-	if(item == nullptr) {
+	if (item == nullptr)
+	{
 		edit.SetWindowText("Load a chunk file and select the chunk in the tree view to see it's hex data here.");
-		return; // no selected chunk item, leave a clear screen.
+		return;    // no selected chunk item, leave a clear screen.
 	}
-	if(item->Type != nullptr && item->Type->Wrapper) {
+	if (item->Type != nullptr && item->Type->Wrapper)
+	{
 		CString text;
 		text.Format("This chunk is a wrapper chunk for other chunks. Its total length is %d bytes.", item->Length);
 		edit.SetWindowText(text);
 		return;
 	}
-	if(item->Length == 0) {
+	if (item->Length == 0)
+	{
 		edit.SetWindowText("This chunk contains no data.");
 		return;
 	}
-	char *text = Build_Hex_Text((unsigned char *) item->Data, item->Length);
+	char* text = Build_Hex_Text((unsigned char*)item->Data, item->Length);
 
 	edit.SetWindowText(text);
 
-	delete [] text;
+	delete[] text;
 }
 
-
-char * CWDumpEditView::Build_Hex_Text(unsigned char * Source, int Length)
+char* CWDumpEditView::Build_Hex_Text(unsigned char* Source, int Length)
 {
 	// Limit the shown bytes so that the buffer size cannot overflow. Retail leaf chunks stay below 64 KiB.
 	const int max_length = 1024 * 1024;
@@ -126,22 +127,27 @@ char * CWDumpEditView::Build_Hex_Text(unsigned char * Source, int Length)
 	const int reserved_length = (hidden_length > 0) ? 64 : 0;
 	const size_t buf_size = (size_t)Length * 5 + per_line * 5 + reserved_length;
 
-	char *buffer = new char[buf_size];
-	char *dest = buffer;
+	char* buffer = new char[buf_size];
+	char* dest = buffer;
 
-	while(lines--) {
-		if(lines == 0 && Length % per_line != 0) {
+	while (lines--)
+	{
+		if (lines == 0 && Length % per_line != 0)
+		{
 			per_line = Length % per_line;
 		}
 
 		// Print bytes every 3 characters.
 		int counter = 0;
-		do {
+		do
+		{
 			sprintf(dest, "%02x ", Source[counter]);
 			dest += 3;
-		} while(++counter < per_line);
+		}
+		while (++counter < per_line);
 
-		if (per_line < max_per_line) {
+		if (per_line < max_per_line)
+		{
 			// Print spaces at left-over blank bytes in last row.
 			const int blank_length = max_per_line - per_line;
 			const int skip_char_count = blank_length * 3;
@@ -155,13 +161,19 @@ char * CWDumpEditView::Build_Hex_Text(unsigned char * Source, int Length)
 
 		// Print ascii characters.
 		counter = 0;
-		do {
+		do
+		{
 			char c = Source[counter];
-			if(c >= 32 && c <= 192)
+			if (c >= 32 && c <= 192)
+			{
 				*dest++ = c;
+			}
 			else
+			{
 				*dest++ = '.';
-		} while(++counter < per_line);
+			}
+		}
+		while (++counter < per_line);
 
 		// Print line break.
 		*dest++ = '\r';
@@ -170,7 +182,8 @@ char * CWDumpEditView::Build_Hex_Text(unsigned char * Source, int Length)
 		Source += per_line;
 	}
 
-	if(hidden_length > 0) {
+	if (hidden_length > 0)
+	{
 		dest += sprintf(dest, "... %d more bytes not shown", hidden_length);
 	}
 

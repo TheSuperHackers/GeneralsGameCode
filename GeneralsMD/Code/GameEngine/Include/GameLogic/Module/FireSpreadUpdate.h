@@ -38,7 +38,7 @@ class ObjectCreationList;
 class FireSpreadUpdateModuleData : public UpdateModuleData
 {
 public:
-	const ObjectCreationList *m_oclEmbers;
+	const ObjectCreationList* m_oclEmbers;
 	UnsignedInt m_minSpreadTryDelayData;
 	UnsignedInt m_maxSpreadTryDelayData;
 	Real m_spreadTryRange;
@@ -48,20 +48,17 @@ public:
 	static void buildFieldParse(MultiIniFieldParse& p);
 
 private:
-
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class FireSpreadUpdate : public UpdateModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( FireSpreadUpdate, "FireSpreadUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( FireSpreadUpdate, FireSpreadUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FireSpreadUpdate, "FireSpreadUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(FireSpreadUpdate, FireSpreadUpdateModuleData)
 
 public:
-
-	FireSpreadUpdate( Thing *thing, const ModuleData* moduleData );
+	FireSpreadUpdate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual UpdateSleepTime update() override;
@@ -69,7 +66,5 @@ public:
 	void startFireSpreading();
 
 protected:
-
 	UnsignedInt calcNextSpreadDelay();
-
 };

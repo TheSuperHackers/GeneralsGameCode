@@ -39,6 +39,6 @@
 #include "Win32Device/GameClient/Win32Mouse.h"
 
 // EXTERNAL ///////////////////////////////////////////////////////////////////
-extern HINSTANCE ApplicationHInstance;  ///< our application instance
-extern HWND ApplicationHWnd;  ///< our application window handle
-extern Win32Mouse *TheWin32Mouse;  ///< global for win32 mouse only!
+extern HINSTANCE ApplicationHInstance;    ///< our application instance
+extern HWND ApplicationHWnd;    ///< our application window handle
+extern Win32Mouse* TheWin32Mouse;    ///< global for win32 mouse only!

@@ -59,19 +59,15 @@
 //-----------------------------------------------------------------------------
 class W3DFontLibrary : public FontLibrary
 {
-
 public:
-
-	W3DFontLibrary() { }
-	virtual ~W3DFontLibrary() override { }
+	W3DFontLibrary() {}
+	virtual ~W3DFontLibrary() override {}
 
 protected:
-
 	/// load the font data pointer based on everything else we already have set
-	virtual Bool loadFontData( GameFont *font ) override;
+	virtual Bool loadFontData(GameFont* font) override;
 	/// release the font data pointer
-	virtual void releaseFontData( GameFont *font ) override;
-
+	virtual void releaseFontData(GameFont* font) override;
 };
 
 // INLINING ///////////////////////////////////////////////////////////////////

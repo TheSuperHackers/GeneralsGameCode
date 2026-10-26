@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_OBJECT_STATUS_NAMES
 #include "Common/Player.h"
@@ -47,16 +47,15 @@ GrantUpgradeCreateModuleData::GrantUpgradeCreateModuleData()
 // ------------------------------------------------------------------------------------------------
 void GrantUpgradeCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  CreateModuleData::buildFieldParse(p);
+	CreateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "UpgradeToGrant",	INI::parseAsciiString,		nullptr, offsetof( GrantUpgradeCreateModuleData, m_upgradeName ) },
-		{ "ExemptStatus",	ObjectStatusMaskType::parseFromINI, nullptr, offsetof( GrantUpgradeCreateModuleData, m_exemptStatus ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "UpgradeToGrant", INI::parseAsciiString, nullptr, offsetof(GrantUpgradeCreateModuleData, m_upgradeName) },
+		{ "ExemptStatus", ObjectStatusMaskType::parseFromINI, nullptr, offsetof(GrantUpgradeCreateModuleData, m_exemptStatus) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -65,7 +64,8 @@ void GrantUpgradeCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GrantUpgradeCreate::GrantUpgradeCreate( Thing *thing, const ModuleData* moduleData ) : CreateModule( thing, moduleData )
+GrantUpgradeCreate::GrantUpgradeCreate(Thing* thing, const ModuleData* moduleData)
+  : CreateModule(thing, moduleData)
 {
 }
 
@@ -73,7 +73,6 @@ GrantUpgradeCreate::GrantUpgradeCreate( Thing *thing, const ModuleData* moduleDa
 //-------------------------------------------------------------------------------------------------
 GrantUpgradeCreate::~GrantUpgradeCreate()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -81,90 +80,86 @@ GrantUpgradeCreate::~GrantUpgradeCreate()
 //-------------------------------------------------------------------------------------------------
 void GrantUpgradeCreate::onCreate()
 {
-
 	ObjectStatusMaskType exemptStatus = getGrantUpgradeCreateModuleData()->m_exemptStatus;
 	ObjectStatusMaskType currentStatus = getObject()->getStatusBits();
-	if( exemptStatus.test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+	if (exemptStatus.test(OBJECT_STATUS_UNDER_CONSTRUCTION))
 	{
-		if(	!currentStatus.test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+		if (!currentStatus.test(OBJECT_STATUS_UNDER_CONSTRUCTION))
 		{
-			const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( getGrantUpgradeCreateModuleData()->m_upgradeName );
-			if( !upgradeTemplate )
+			const UpgradeTemplate* upgradeTemplate = TheUpgradeCenter->findUpgrade(getGrantUpgradeCreateModuleData()->m_upgradeName);
+			if (!upgradeTemplate)
 			{
-				DEBUG_CRASH( ("GrantUpdateCreate for %s can't find upgrade template %s.", getObject()->getName().str(), getGrantUpgradeCreateModuleData()->m_upgradeName.str() ) );
+				DEBUG_CRASH(("GrantUpdateCreate for %s can't find upgrade template %s.", getObject()->getName().str(), getGrantUpgradeCreateModuleData()->m_upgradeName.str()));
 				return;
 			}
 
-			if( upgradeTemplate->getUpgradeType() == UPGRADE_TYPE_PLAYER )
+			if (upgradeTemplate->getUpgradeType() == UPGRADE_TYPE_PLAYER)
 			{
 				// get the player
-				Player *player = getObject()->getControllingPlayer();
-				player->addUpgrade( upgradeTemplate, UPGRADE_STATUS_COMPLETE );
+				Player* player = getObject()->getControllingPlayer();
+				player->addUpgrade(upgradeTemplate, UPGRADE_STATUS_COMPLETE);
 			}
 			else
 			{
-				getObject()->giveUpgrade( upgradeTemplate );
+				getObject()->giveUpgrade(upgradeTemplate);
 			}
 		}
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void GrantUpgradeCreate::onBuildComplete()
 {
-	if( ! shouldDoOnBuildComplete() )
-		return;
-
-	CreateModule::onBuildComplete(); // extend
-
-	const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( getGrantUpgradeCreateModuleData()->m_upgradeName );
-	if( !upgradeTemplate )
+	if (!shouldDoOnBuildComplete())
 	{
-		DEBUG_CRASH( ("GrantUpdateCreate for %s can't find upgrade template %s.", getObject()->getName().str(), getGrantUpgradeCreateModuleData()->m_upgradeName.str() ) );
 		return;
 	}
 
-	if( upgradeTemplate->getUpgradeType() == UPGRADE_TYPE_PLAYER )
+	CreateModule::onBuildComplete();    // extend
+
+	const UpgradeTemplate* upgradeTemplate = TheUpgradeCenter->findUpgrade(getGrantUpgradeCreateModuleData()->m_upgradeName);
+	if (!upgradeTemplate)
+	{
+		DEBUG_CRASH(("GrantUpdateCreate for %s can't find upgrade template %s.", getObject()->getName().str(), getGrantUpgradeCreateModuleData()->m_upgradeName.str()));
+		return;
+	}
+
+	if (upgradeTemplate->getUpgradeType() == UPGRADE_TYPE_PLAYER)
 	{
 		// get the player
-		Player *player = getObject()->getControllingPlayer();
-		player->addUpgrade( upgradeTemplate, UPGRADE_STATUS_COMPLETE );
+		Player* player = getObject()->getControllingPlayer();
+		player->addUpgrade(upgradeTemplate, UPGRADE_STATUS_COMPLETE);
 	}
 	else
 	{
-		getObject()->giveUpgrade( upgradeTemplate );
+		getObject()->giveUpgrade(upgradeTemplate);
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void GrantUpgradeCreate::crc( Xfer *xfer )
+void GrantUpgradeCreate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	CreateModule::crc( xfer );
-
+	CreateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void GrantUpgradeCreate::xfer( Xfer *xfer )
+void GrantUpgradeCreate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CreateModule::xfer( xfer );
-
+	CreateModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -172,8 +167,6 @@ void GrantUpgradeCreate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void GrantUpgradeCreate::loadPostProcess()
 {
-
 	// extend base class
 	CreateModule::loadPostProcess();
-
 }

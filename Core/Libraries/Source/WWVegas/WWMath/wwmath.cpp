@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "wwmath.h"
 #include "lookuptable.h"
 #include <stdlib.h>
@@ -47,45 +46,49 @@ float _FastAsinTable[ARC_TABLE_SIZE];
 float _FastSinTable[SIN_TABLE_SIZE];
 float _FastInvSinTable[SIN_TABLE_SIZE];
 
-void		WWMath::Init()
+void WWMath::Init()
 {
 	LookupTableMgrClass::Init();
 
-	int a=0;
-	for (;a<ARC_TABLE_SIZE;++a) {
-		float cv=float(a-ARC_TABLE_SIZE/2)*(1.0f/(ARC_TABLE_SIZE/2));
+	int a = 0;
+	for (; a < ARC_TABLE_SIZE; ++a)
+	{
+		float cv = float(a - ARC_TABLE_SIZE / 2) * (1.0f / (ARC_TABLE_SIZE / 2));
 #if RETAIL_COMPATIBLE_CRC
-		_FastAcosTable[a]=acos(cv);
-		_FastAsinTable[a]=asin(cv);
+		_FastAcosTable[a] = acos(cv);
+		_FastAsinTable[a] = asin(cv);
 #else
-		_FastAcosTable[a]=Acosf(cv);
-		_FastAsinTable[a]=Asinf(cv);
+		_FastAcosTable[a] = Acosf(cv);
+		_FastAsinTable[a] = Asinf(cv);
 #endif
 	}
 
-	for (a=0;a<SIN_TABLE_SIZE;++a) {
-		float cv= (float)a * 2.0f * WWMATH_PI / SIN_TABLE_SIZE; //float(a-SIN_TABLE_SIZE/2)*(1.0f/(SIN_TABLE_SIZE/2));
+	for (a = 0; a < SIN_TABLE_SIZE; ++a)
+	{
+		float cv = (float)a * 2.0f * WWMATH_PI / SIN_TABLE_SIZE;    // float(a-SIN_TABLE_SIZE/2)*(1.0f/(SIN_TABLE_SIZE/2));
 #if RETAIL_COMPATIBLE_CRC
-		_FastSinTable[a]=sin(cv);
+		_FastSinTable[a] = sin(cv);
 #else
-		_FastSinTable[a]=Sinf(cv);
+		_FastSinTable[a] = Sinf(cv);
 #endif
 
-		if (a>0) {
-			_FastInvSinTable[a]=1.0f/_FastSinTable[a];
-		} else {
-			_FastInvSinTable[a]=WWMATH_FLOAT_MAX;
+		if (a > 0)
+		{
+			_FastInvSinTable[a] = 1.0f / _FastSinTable[a];
+		}
+		else
+		{
+			_FastInvSinTable[a] = WWMATH_FLOAT_MAX;
 		}
 	}
 }
 
-void		WWMath::Shutdown()
+void WWMath::Shutdown()
 {
 	LookupTableMgrClass::Shutdown();
 }
 
-float		WWMath::Random_Float()
+float WWMath::Random_Float()
 {
 	return ((float)(rand() & 0xFFF)) / (float)(0xFFF);
 }
-

@@ -16,14 +16,13 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-static const PoolInitRec DefaultDMA[] =
-{
+static const PoolInitRec DefaultDMA[] = {
 	//          name, allocSize, initialCount, overflowCount
-	{   "dmaPool_16",        16,        65536,          1024 },
-	{   "dmaPool_32",        32,       150000,          1024 },
-	{   "dmaPool_64",        64,        60000,          1024 },
-	{  "dmaPool_128",       128,        32768,          1024 },
-	{  "dmaPool_256",       256,         8192,          1024 },
-	{  "dmaPool_512",       512,         8192,          1024 },
-	{ "dmaPool_1024",      1024,        24000,          1024 }
+	{ "dmaPool_16", 16, 65536, 1024 },
+	{ "dmaPool_32", 32, 150000, 1024 },
+	{ "dmaPool_64", 64, 60000, 1024 },
+	{ "dmaPool_128", 128, 32768, 1024 },
+	{ "dmaPool_256", 256, 8192, 1024 },
+	{ "dmaPool_512", 512, 8192, 1024 },
+	{ "dmaPool_1024", 1024, 24000, 1024 }
 };

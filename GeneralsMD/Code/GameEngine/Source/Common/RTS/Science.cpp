@@ -27,14 +27,13 @@
 // Desc:      @todo
 //-----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "Common/Player.h"
 #include "Common/Science.h"
 
 ScienceStore* TheScienceStore = nullptr;
-
 
 //-----------------------------------------------------------------------------
 void ScienceStore::init()
@@ -47,7 +46,7 @@ void ScienceStore::init()
 ScienceStore::~ScienceStore()
 {
 	// nope.
-	//m_sciences.clear();
+	// m_sciences.clear();
 
 	// go through all sciences and delete any overrides
 	for (ScienceInfoVec::iterator it = m_sciences.begin(); it != m_sciences.end(); /*++it*/)
@@ -62,7 +61,7 @@ ScienceStore::~ScienceStore()
 void ScienceStore::reset()
 {
 	// nope.
-	//m_sciences.clear();
+	// m_sciences.clear();
 
 	// go through all sciences and delete any overrides
 	for (ScienceInfoVec::iterator it = m_sciences.begin(); it != m_sciences.end(); /*++it*/)
@@ -84,7 +83,9 @@ void ScienceStore::reset()
 ScienceType ScienceStore::getScienceFromInternalName(const AsciiString& name) const
 {
 	if (name.isEmpty())
+	{
 		return SCIENCE_INVALID;
+	}
 	NameKeyType nkt = TheNameKeyGenerator->nameToKey(name);
 	ScienceType st = (ScienceType)nkt;
 	return st;
@@ -94,7 +95,9 @@ ScienceType ScienceStore::getScienceFromInternalName(const AsciiString& name) co
 AsciiString ScienceStore::getInternalNameForScience(ScienceType science) const
 {
 	if (science == SCIENCE_INVALID)
+	{
 		return AsciiString::TheEmptyString;
+	}
 	NameKeyType nk = (NameKeyType)(science);
 	return TheNameKeyGenerator->keyToName(nk);
 }
@@ -122,7 +125,9 @@ void ScienceInfo::addRootSciences(ScienceVec& v) const
 	{
 		// we're a root. add ourselves.
 		if (std::find(v.begin(), v.end(), m_science) == v.end())
+		{
 			v.push_back(m_science);
+		}
 	}
 	else
 	{
@@ -131,7 +136,9 @@ void ScienceInfo::addRootSciences(ScienceVec& v) const
 		{
 			const ScienceInfo* si = TheScienceStore->findScienceInfo(*it);
 			if (si)
+			{
 				si->addRootSciences(v);
+			}
 		}
 	}
 }
@@ -152,7 +159,7 @@ const ScienceInfo* ScienceStore::findScienceInfo(ScienceType st) const
 }
 
 //-----------------------------------------------------------------------------
-/*static*/ void ScienceStore::friend_parseScienceDefinition( INI* ini )
+/*static*/ void ScienceStore::friend_parseScienceDefinition(INI* ini)
 {
 	const char* c = ini->getNextToken();
 	NameKeyType nkt = NAMEKEY(c);
@@ -160,14 +167,12 @@ const ScienceInfo* ScienceStore::findScienceInfo(ScienceType st) const
 
 	if (TheScienceStore)
 	{
-
-		static const FieldParse myFieldParse[] =
-		{
-			{ "PrerequisiteSciences", INI::parseScienceVector, nullptr, offsetof( ScienceInfo, m_prereqSciences ) },
-			{ "SciencePurchasePointCost", INI::parseInt, nullptr, offsetof( ScienceInfo, m_sciencePurchasePointCost ) },
-			{ "IsGrantable", INI::parseBool, nullptr, offsetof( ScienceInfo, m_grantable ) },
-			{ "DisplayName", INI::parseAndTranslateLabel, nullptr, offsetof( ScienceInfo, m_name) },
-			{ "Description", INI::parseAndTranslateLabel, nullptr, offsetof( ScienceInfo, m_description) },
+		static const FieldParse myFieldParse[] = {
+			{ "PrerequisiteSciences", INI::parseScienceVector, nullptr, offsetof(ScienceInfo, m_prereqSciences) },
+			{ "SciencePurchasePointCost", INI::parseInt, nullptr, offsetof(ScienceInfo, m_sciencePurchasePointCost) },
+			{ "IsGrantable", INI::parseBool, nullptr, offsetof(ScienceInfo, m_grantable) },
+			{ "DisplayName", INI::parseAndTranslateLabel, nullptr, offsetof(ScienceInfo, m_name) },
+			{ "Description", INI::parseAndTranslateLabel, nullptr, offsetof(ScienceInfo, m_description) },
 			{ nullptr, nullptr, nullptr, 0 }
 		};
 
@@ -192,7 +197,7 @@ const ScienceInfo* ScienceStore::findScienceInfo(ScienceType st) const
 			{
 				// only add if it's not overriding an existing one.
 				info = newInfo;
-				info->markAsOverride();	// yep, so we will get cleared on reset()
+				info->markAsOverride();    // yep, so we will get cleared on reset()
 				TheScienceStore->m_sciences.push_back(info);
 			}
 			else
@@ -202,18 +207,18 @@ const ScienceInfo* ScienceStore::findScienceInfo(ScienceType st) const
 
 				*newInfo = *info;
 				info->setNextOverride(newInfo);
-				newInfo->markAsOverride();	// must do AFTER the copy
+				newInfo->markAsOverride();    // must do AFTER the copy
 
 				// use the newly created override for us to set values with etc
 				info = newInfo;
-				//TheScienceStore->m_sciences.push_back(info);	// NO, BAD, WRONG -- don't add in this case.
+				// TheScienceStore->m_sciences.push_back(info);	// NO, BAD, WRONG -- don't add in this case.
 			}
 		}
 		else
 		{
 			if (info != nullptr)
 			{
-				DEBUG_CRASH(("duplicate science %s!",c));
+				DEBUG_CRASH(("duplicate science %s!", c));
 				throw INI_INVALID_DATA;
 			}
 			info = newInstance(ScienceInfo);
@@ -314,7 +319,7 @@ Bool ScienceStore::playerHasRootPrereqsForScience(const Player* player, ScienceT
 
 //-----------------------------------------------------------------------------
 /** return a list of the sciences the given player can purchase now, and a list he might be able to purchase in the future,
-	but currently lacks prereqs or points for. (either might be an empty list) */
+  but currently lacks prereqs or points for. (either might be an empty list) */
 void ScienceStore::getPurchasableSciences(const Player* player, ScienceVec& purchasable, ScienceVec& potentiallyPurchasable) const
 {
 	purchasable.clear();
@@ -355,7 +360,7 @@ ScienceType ScienceStore::friend_lookupScience(const char* scienceName) const
 	ScienceType st = (ScienceType)nkt;
 	if (!isValidScience(st))
 	{
-		DEBUG_CRASH(("Science name %s not known! (Did you define it in Science.ini?)",scienceName));
+		DEBUG_CRASH(("Science name %s not known! (Did you define it in Science.ini?)", scienceName));
 		throw INI_INVALID_DATA;
 	}
 	return st;
@@ -369,8 +374,7 @@ Bool ScienceStore::isValidScience(ScienceType st) const
 }
 
 //-----------------------------------------------------------------------------
-void INI::parseScienceDefinition( INI* ini )
+void INI::parseScienceDefinition(INI* ini)
 {
 	ScienceStore::friend_parseScienceDefinition(ini);
 }
-

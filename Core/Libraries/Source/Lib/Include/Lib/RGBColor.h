@@ -20,21 +20,20 @@
 
 struct RGBColor
 {
-	Real red, green, blue;		// range between 0 and 1
+	Real red, green, blue;    // range between 0 and 1
 
 	Int getAsInt() const
 	{
-		return
-			((Int)(red * 255.0) << 16) |
-			((Int)(green * 255.0) << 8) |
-			((Int)(blue * 255.0) << 0);
+		return ((Int)(red * 255.0) << 16) |
+		       ((Int)(green * 255.0) << 8) |
+		       ((Int)(blue * 255.0) << 0);
 	}
 
 	void setFromInt(Int c)
 	{
 		red = ((c >> 16) & 0xff) / 255.0f;
-		green = ((c >>  8) & 0xff) / 255.0f;
-		blue = ((c >>  0) & 0xff) / 255.0f;
+		green = ((c >> 8) & 0xff) / 255.0f;
+		blue = ((c >> 0) & 0xff) / 255.0f;
 	}
 
 	RGBColor& operator+=(const RGBColor& c)
@@ -156,19 +155,14 @@ struct RGBColor
 		res /= s;
 		return res;
 	}
-
 };
 
 struct RGBAColorReal
 {
-
-	Real red, green, blue, alpha;  // range between 0.0 and 1.0
-
+	Real red, green, blue, alpha;    // range between 0.0 and 1.0
 };
 
 struct RGBAColorInt
 {
-
-	UnsignedInt red, green, blue, alpha;  // range between 0 and 255
-
+	UnsignedInt red, green, blue, alpha;    // range between 0 and 255
 };

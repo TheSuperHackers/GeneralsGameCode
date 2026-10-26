@@ -26,27 +26,28 @@
 
 class CBackgroundBMPDialog : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CBackgroundBMPDialog(CWnd* pParent = nullptr);   // standard constructor
+	CBackgroundBMPDialog(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CBackgroundBMPDialog)
-	enum { IDD = IDD_BACKGROUND_BMP };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_BACKGROUND_BMP
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CBackgroundBMPDialog)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CBackgroundBMPDialog)
 	virtual BOOL OnInitDialog() override;

@@ -44,9 +44,7 @@
 #include "WWLib/multilist.h"
 #include "wwmath.h"
 
-
 class Curve1DClass;
-
 
 /**
 ** LookupTableClass
@@ -55,38 +53,38 @@ class Curve1DClass;
 class LookupTableClass : public RefCountClass, public MultiListObjectClass
 {
 public:
-
 	LookupTableClass(int sample_count = 256);
 	virtual ~LookupTableClass() override;
 
-	void								Init(const char * name,Curve1DClass * curve);
-	float								Get_Value(float input);
-	float								Get_Value_Quick(float input);
-	const char *					Get_Name()							{ return Name; }
+	void Init(const char* name, Curve1DClass* curve);
+	float Get_Value(float input);
+	float Get_Value_Quick(float input);
+	const char* Get_Name() { return Name; }
+
 protected:
-
-	StringClass						Name;				// name of this table
-	float								MinInputValue;
-	float								MaxInputValue;
-	float								OOMaxMinusMin;
-	SimpleVecClass<float>		OutputSamples;
-
+	StringClass Name;    // name of this table
+	float MinInputValue;
+	float MaxInputValue;
+	float OOMaxMinusMin;
+	SimpleVecClass<float> OutputSamples;
 };
 
 inline float LookupTableClass::Get_Value(float input)
 {
-	if (input <= MinInputValue) {
+	if (input <= MinInputValue)
+	{
 		return OutputSamples[0];
 	}
-	if (input >= MaxInputValue) {
-		return OutputSamples[OutputSamples.Length()-1];
+	if (input >= MaxInputValue)
+	{
+		return OutputSamples[OutputSamples.Length() - 1];
 	}
 
-	float normalized_input = (float)(OutputSamples.Length()-1) * (input - MinInputValue) * OOMaxMinusMin;
+	float normalized_input = (float)(OutputSamples.Length() - 1) * (input - MinInputValue) * OOMaxMinusMin;
 	float input0 = WWMath::Floorf(normalized_input);
 
 	int index0 = WWMath::Float_To_Long(input0);
-	int index1 = index0+1;
+	int index1 = index0 + 1;
 	float lerp = normalized_input - input0;
 
 	return OutputSamples[index0] + lerp * (OutputSamples[index1] - OutputSamples[index0]);
@@ -94,17 +92,18 @@ inline float LookupTableClass::Get_Value(float input)
 
 inline float LookupTableClass::Get_Value_Quick(float input)
 {
-	if (input <= MinInputValue) {
+	if (input <= MinInputValue)
+	{
 		return OutputSamples[0];
 	}
-	if (input >= MaxInputValue) {
-		return OutputSamples[OutputSamples.Length()-1];
+	if (input >= MaxInputValue)
+	{
+		return OutputSamples[OutputSamples.Length() - 1];
 	}
 
-	int index = (OutputSamples.Length()-1) * WWMath::Float_To_Long((input - MinInputValue) * OOMaxMinusMin);
+	int index = (OutputSamples.Length() - 1) * WWMath::Float_To_Long((input - MinInputValue) * OOMaxMinusMin);
 	return OutputSamples[index];
 }
-
 
 /**
 ** LookupTableMgrClass
@@ -120,17 +119,15 @@ public:
 	~LookupTableMgrClass();
 
 	// init and shutdown are automatically called from WWMath::Init, WWMath::Shutdown...
-	static void					Init();
-	static void					Shutdown();
+	static void Init();
+	static void Shutdown();
 
-	static bool					Add_Table(LookupTableClass * table);
-	static bool					Remove_Table(LookupTableClass * table);
-	static LookupTableClass *	Get_Table(const char * name);
+	static bool Add_Table(LookupTableClass* table);
+	static bool Remove_Table(LookupTableClass* table);
+	static LookupTableClass* Get_Table(const char* name);
 
-	static void					Reset();
+	static void Reset();
 
 protected:
-
-	static RefMultiListClass<LookupTableClass>	Tables;
-
+	static RefMultiListClass<LookupTableClass> Tables;
 };

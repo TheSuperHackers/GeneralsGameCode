@@ -40,4 +40,4 @@
 
 class ClassDesc;
 
-ClassDesc * Get_Grid_Snap_Modifier_Desc();
+ClassDesc* Get_Grid_Snap_Modifier_Desc();

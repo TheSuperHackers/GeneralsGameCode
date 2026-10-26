@@ -27,13 +27,13 @@
 // Desc:       Access for creating game managed display strings
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/DisplayStringManager.h"
 #include "GameClient/GlobalLanguage.h"
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-DisplayStringManager *TheDisplayStringManager = nullptr;
+DisplayStringManager* TheDisplayStringManager = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS
@@ -43,105 +43,102 @@ DisplayStringManager *TheDisplayStringManager = nullptr;
 //-------------------------------------------------------------------------------------------------
 DisplayStringManager::DisplayStringManager()
 {
-
 	m_stringList = nullptr;
 	m_currentCheckpoint = nullptr;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 DisplayStringManager::~DisplayStringManager()
 {
-
 	//
 	// we only keep track of the strings, we do NOT de-allocate them, our
 	// list better be cleaned out before we destroy ourselves
 	//
-	assert( m_stringList == nullptr );
-
+	assert(m_stringList == nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Link a display string to the master list */
 //-------------------------------------------------------------------------------------------------
-void DisplayStringManager::link( DisplayString *string )
+void DisplayStringManager::link(DisplayString* string)
 {
-
-	assert( string );
-	assert( string->m_next == nullptr );
-	assert( string->m_prev == nullptr );
+	assert(string);
+	assert(string->m_next == nullptr);
+	assert(string->m_prev == nullptr);
 
 	string->m_next = m_stringList;
-	if( m_stringList )
+	if (m_stringList)
+	{
 		m_stringList->m_prev = string;
+	}
 
 	m_stringList = string;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Unlink a display string from the master list */
 //-------------------------------------------------------------------------------------------------
-void DisplayStringManager::unLink( DisplayString *string )
+void DisplayStringManager::unLink(DisplayString* string)
 {
+	assert(string);
+	assert(m_stringList);
 
-	assert( string );
-	assert( m_stringList );
-
-	if( string->m_next )
+	if (string->m_next)
+	{
 		string->m_next->m_prev = string->m_prev;
-	if( string->m_prev )
+	}
+	if (string->m_prev)
+	{
 		string->m_prev->m_next = string->m_next;
+	}
 	else
 	{
-
-		assert( string == m_stringList );
+		assert(string == m_stringList);
 		m_stringList = string->m_next;
-
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Assign the default font to a new display string */
 //-------------------------------------------------------------------------------------------------
-void DisplayStringManager::setDefaultFont( DisplayString *string )
+void DisplayStringManager::setDefaultFont(DisplayString* string)
 {
-
 	if (TheGlobalLanguageData && TheGlobalLanguageData->m_defaultDisplayStringFont.name.isNotEmpty())
 	{
 		string->setFont(TheFontLibrary->getFont(
-			TheGlobalLanguageData->m_defaultDisplayStringFont.name,
-			TheGlobalLanguageData->m_defaultDisplayStringFont.size,
-			TheGlobalLanguageData->m_defaultDisplayStringFont.bold) );
+		  TheGlobalLanguageData->m_defaultDisplayStringFont.name,
+		  TheGlobalLanguageData->m_defaultDisplayStringFont.size,
+		  TheGlobalLanguageData->m_defaultDisplayStringFont.bold));
 	}
 	else
-		string->setFont( TheFontLibrary->getFont( "Times New Roman", 12, FALSE ) );
-
+	{
+		string->setFont(TheFontLibrary->getFont("Times New Roman", 12, FALSE));
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Remove a display string from the master list and delete the data */
 //-------------------------------------------------------------------------------------------------
-void DisplayStringManager::freeDisplayString( DisplayString *string )
+void DisplayStringManager::freeDisplayString(DisplayString* string)
 {
-
 	// sanity
-	if( string == nullptr )
+	if (string == nullptr)
+	{
 		return;
+	}
 
 	// unlink
-	unLink( string );
+	unLink(string);
 
 	// if the string happens to fall where our current checkpoint was, set the checkpoint to null
-	if ( m_currentCheckpoint == string) {
+	if (m_currentCheckpoint == string)
+	{
 		m_currentCheckpoint = nullptr;
 	}
 
 	// free data
 	deleteInstance(string);
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -169,10 +166,10 @@ void DisplayStringManagerDummy::postProcessLoad()
 //-------------------------------------------------------------------------------------------------
 /** Same default font as W3DDisplayStringManager, because callers read the font height */
 //-------------------------------------------------------------------------------------------------
-DisplayString *DisplayStringManagerDummy::newDisplayString()
+DisplayString* DisplayStringManagerDummy::newDisplayString()
 {
-	DisplayString *newString = newInstance(DisplayStringDummy);
-	setDefaultFont( newString );
-	link( newString );
+	DisplayString* newString = newInstance(DisplayStringDummy);
+	setDefaultFont(newString);
+	link(newString);
 	return newString;
 }

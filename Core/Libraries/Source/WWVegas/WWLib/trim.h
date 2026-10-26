@@ -38,5 +38,5 @@
 
 #include <wchar.h>
 
-char * strtrim(char * buffer);
-unichar * wcstrim(unichar * buffer);
+char* strtrim(char* buffer);
+unichar* wcstrim(unichar* buffer);

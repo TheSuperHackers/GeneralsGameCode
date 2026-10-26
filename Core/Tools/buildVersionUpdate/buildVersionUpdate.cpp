@@ -38,9 +38,9 @@
 #define NUMFMT "#define %s %d\n"
 #define NUMFMT_MINOR "#define %s %d			///< This effects the replay version number.\n"
 
-static void writeVersion(char *file, int major, int minor, int build)
+static void writeVersion(char* file, int major, int minor, int build)
 {
-	FILE *filePtr = fopen(file, "w");
+	FILE* filePtr = fopen(file, "w");
 	// Clobber the file.  Hey, this is a simple program.
 	if (file)
 	{
@@ -64,27 +64,27 @@ static void writeVersion(char *file, int major, int minor, int build)
 	}
 }
 
-static void usage(char *progname)
+static void usage(char* progname)
 {
 	if (progname)
 	{
-		printf ("Usage: %s versionfile.h", progname);
+		printf("Usage: %s versionfile.h", progname);
 	}
 }
 
 int APIENTRY WinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
-                     LPSTR     lpCmdLine,
-                     int       nCmdShow)
+                     LPSTR lpCmdLine,
+                     int nCmdShow)
 {
 	/*
 	** Convert WinMain arguments to simple main argc and argv
 	*/
 	int argc = 1;
-	char * argv[20];
+	char* argv[20];
 	argv[0] = nullptr;
 
-	char * token = strtok(lpCmdLine, " ");
+	char* token = strtok(lpCmdLine, " ");
 	while (argc < 20 && token != nullptr)
 	{
 		argv[argc++] = strtrim(token);
@@ -101,44 +101,46 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	}
 	else
 	{
-		char *target = argv[argc-1];
-		FILE *filePtr;
+		char* target = argv[argc - 1];
+		FILE* filePtr;
 
-		if (target) {
+		if (target)
+		{
 			filePtr = fopen(target, "r+");
 			if (filePtr)
 			{
 				char buffer[256];
-				char *stringPtr = nullptr;
+				char* stringPtr = nullptr;
 
 				while (!feof(filePtr))
 				{
 					fread(buffer, 256, 1, filePtr);
 					if ((stringPtr = strstr(buffer, VERSION_STRING)) != nullptr)
 					{
-						char *ptr;
+						char* ptr;
 
 						// Looking for '#define VERSION "x.y.z"'
-						ptr = strtok(stringPtr, " ");	// The VERSION
-						ptr = strtok(nullptr, "\n");			// The remainder
+						ptr = strtok(stringPtr, " ");    // The VERSION
+						ptr = strtok(nullptr, "\n");    // The remainder
 
 						if (*ptr == '\"')
 						{
-							ptr++; // Inc past the first "
-							ptr = strtok(ptr, ".");	// The first number
+							ptr++;    // Inc past the first "
+							ptr = strtok(ptr, ".");    // The first number
 							major = atoi(ptr);
-							ptr = strtok(nullptr, ".");  // The second number
+							ptr = strtok(nullptr, ".");    // The second number
 							minor = atoi(ptr);
-							ptr = strtok(nullptr, "\""); // The final number
+							ptr = strtok(nullptr, "\"");    // The final number
 							build = atoi(ptr);
 							fclose(filePtr);
 
 							writeVersion(target, major, minor, ++build);
-							printf ("Build %d Version %d.%d.%d\n", build, major, minor, build);
+							printf("Build %d Version %d.%d.%d\n", build, major, minor, build);
 							break;
-						} else
+						}
+						else
 						{
-							printf ("Build 0. Oops, didn't find a string of the format: '#define VERSION \"x.y.z\"'");
+							printf("Build 0. Oops, didn't find a string of the format: '#define VERSION \"x.y.z\"'");
 						}
 					}
 				}

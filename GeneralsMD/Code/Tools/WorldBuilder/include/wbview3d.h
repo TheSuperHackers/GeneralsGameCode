@@ -16,7 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 // WbView3d.h
 // Class to encapsulate height map.
 // Author: Steven Johnson, Aug 2001
@@ -35,8 +34,8 @@
 #include "Common/ModelState.h"
 #include "WW3D2/dx8wrapper.h"
 
-//#include "GameLogic/Module/BodyModule.h" -- Yikes... not necessary to include this! (KM)
-enum BodyDamageType CPP_11(: Int); //Ahhhh much better!
+// #include "GameLogic/Module/BodyModule.h" -- Yikes... not necessary to include this! (KM)
+enum BodyDamageType CPP_11( : Int);    // Ahhhh much better!
 
 class WorldHeightMap;
 class LayerClass;
@@ -59,27 +58,25 @@ struct ID3DXFont;
 class WbView3d : public WbView, public DX8_CleanupHook
 {
 protected:
-	WbView3d();           // protected constructor used by dynamic creation
+	WbView3d();    // protected constructor used by dynamic creation
 	DECLARE_DYNCREATE(WbView3d)
 
-// Attributes
+	// Attributes
 public:
-
 	// DX8_CleanupHook methods
-	virtual void ReleaseResources() override;	///< Release all dx8 resources so the device can be reset.
-	virtual void ReAcquireResources() override;  ///< Reacquire all resources after device reset.
+	virtual void ReleaseResources() override;    ///< Release all dx8 resources so the device can be reset.
+	virtual void ReAcquireResources() override;    ///< Reacquire all resources after device reset.
 
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(WbView3d)
-	protected:
-	virtual void OnDraw(CDC* pDC) override;      // overridden to draw this view
+protected:
+	virtual void OnDraw(CDC* pDC) override;    // overridden to draw this view
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	virtual ~WbView3d() override;
 #ifdef RTS_DEBUG
@@ -148,81 +145,78 @@ protected:
 	afx_msg void OnUpdateViewShowMapBoundaries(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowAmbientSounds();
 	afx_msg void OnUpdateViewShowAmbientSounds(CCmdUI* pCmdUI);
-  afx_msg void OnViewShowSoundCircles();
-  afx_msg void OnUpdateViewShowSoundCircles(CCmdUI* pCmdUI);
-  //}}AFX_MSG
+	afx_msg void OnViewShowSoundCircles();
+	afx_msg void OnUpdateViewShowSoundCircles(CCmdUI* pCmdUI);
+	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 private:
-	HINSTANCE								m_hInst;
-	W3DAssetManager					*m_assetManager;
-	SkeletonSceneClass			*m_scene;
-	SkeletonSceneClass			*m_overlayScene;
-	SkeletonSceneClass			*m_baseBuildScene;
-	SkeletonSceneClass			*m_transparentObjectsScene;
-	CameraClass							*m_camera;
-	WBHeightMap							*m_heightMapRenderObj;
+	HINSTANCE m_hInst;
+	W3DAssetManager* m_assetManager;
+	SkeletonSceneClass* m_scene;
+	SkeletonSceneClass* m_overlayScene;
+	SkeletonSceneClass* m_baseBuildScene;
+	SkeletonSceneClass* m_transparentObjectsScene;
+	CameraClass* m_camera;
+	WBHeightMap* m_heightMapRenderObj;
 
-	RenderObjClass					*m_objectToolTrackingObj;
-	Bool										m_showObjToolTrackingObj;
-	AsciiString							m_objectToolTrackingModelName;
+	RenderObjClass* m_objectToolTrackingObj;
+	Bool m_showObjToolTrackingObj;
+	AsciiString m_objectToolTrackingModelName;
 
-	Real										m_mouseWheelOffset;
-	Real										m_groundLevel;
-	Coord3D									m_cameraOffset;
-	CPoint									m_actualWinSize;
-	Real										m_theta;
-	Real										m_cameraAngle;
-	Real										m_FXPitch;
-	Bool										m_doPitch;
-	Real										m_actualHeightAboveGround;	// for camera tool display only
-	Vector3									m_cameraSource;							// for camera tool display only
-	Vector3									m_cameraTarget;							// for camera tool display only
-	Int											m_time;
-	Int											m_updateCount;
-	UINT										m_timer;
-	DrawObject							*m_drawObject;
-	RefRenderObjListClass		m_lightList;
-	LayerClass							*m_layer;
-	LayerClass							*m_buildLayer;
-	IntersectionClass				*m_intersector;
-	Bool										m_showWireframe;
-	Bool										m_ww3dInited;
-	Bool										m_needToLoadRoads;
-	LightClass							*m_globalLight[MAX_GLOBAL_LIGHTS];
-	RenderObjClass						*m_lightFeedbackMesh[MAX_GLOBAL_LIGHTS];
+	Real m_mouseWheelOffset;
+	Real m_groundLevel;
+	Coord3D m_cameraOffset;
+	CPoint m_actualWinSize;
+	Real m_theta;
+	Real m_cameraAngle;
+	Real m_FXPitch;
+	Bool m_doPitch;
+	Real m_actualHeightAboveGround;    // for camera tool display only
+	Vector3 m_cameraSource;    // for camera tool display only
+	Vector3 m_cameraTarget;    // for camera tool display only
+	Int m_time;
+	Int m_updateCount;
+	UINT m_timer;
+	DrawObject* m_drawObject;
+	RefRenderObjListClass m_lightList;
+	LayerClass* m_layer;
+	LayerClass* m_buildLayer;
+	IntersectionClass* m_intersector;
+	Bool m_showWireframe;
+	Bool m_ww3dInited;
+	Bool m_needToLoadRoads;
+	LightClass* m_globalLight[MAX_GLOBAL_LIGHTS];
+	RenderObjClass* m_lightFeedbackMesh[MAX_GLOBAL_LIGHTS];
 
-	Real										m_buildRedMultiplier;
+	Real m_buildRedMultiplier;
 
-	Real										m_curTrackingZ;
+	Real m_curTrackingZ;
 
+	Bool m_projection;    ///< True if top down projection instead of "isometric" perspective.
+	Bool m_showEntireMap;    ///< True if drawing entire map instead of cached fast subset.
+	Bool m_showShadows;    ///< True if drawing shadows.
+	Bool m_firstPaint;    ///< True if we haven't painted yet.
+	Bool m_showLayersList;    ///< Flag whether the layers list is visible or not.
+	Bool m_showMapBoundaries;    ///< Flag whether to show all the map boundaries or not
+	Bool m_showAmbientSounds;    ///< Flag whether to show all the ambient sounds or not
+	Bool m_showSoundCircles;    ///< Flag whether to show the minimum and maximum radii of the ambient sounds attached to the selected object
+	Bool m_showBoundingBoxes;
+	Bool m_showSightRanges;
+	Bool m_showWeaponRanges;
+	Bool m_highlightTestArt;
+	Bool m_showLetterbox;
 
-	Bool										m_projection; ///< True if top down projection instead of "isometric" perspective.
-	Bool										m_showEntireMap; ///< True if drawing entire map instead of cached fast subset.
-	Bool										m_showShadows; ///< True if drawing shadows.
-	Bool										m_firstPaint;  ///< True if we haven't painted yet.
-	Bool										m_showLayersList;	///< Flag whether the layers list is visible or not.
-	Bool										m_showMapBoundaries;	///< Flag whether to show all the map boundaries or not
-	Bool										m_showAmbientSounds;	///< Flag whether to show all the ambient sounds or not
-  Bool										m_showSoundCircles;	///< Flag whether to show the minimum and maximum radii of the ambient sounds attached to the selected object
-	Bool										m_showBoundingBoxes;
-	Bool										m_showSightRanges;
-	Bool										m_showWeaponRanges;
-	Bool										m_highlightTestArt;
-	Bool										m_showLetterbox;
-
-
-	ID3DXFont*							m3DFont;
-	Int											m_pickPixels;
-	Int											m_partialMapSize;
+	ID3DXFont* m3DFont;
+	Int m_pickPixels;
+	Int m_partialMapSize;
 
 protected:
-
 	UINT getLastDrawTime();
 	void init3dScene();
 	void initAssets();
 	void initWW3D();
-  void drawCircle( HDC hdc, const Coord3D & centerPoint, Real radius, COLORREF color );
+	void drawCircle(HDC hdc, const Coord3D& centerPoint, Real radius, COLORREF color);
 	void drawLabels(HDC hdc);
 	void drawLabels();
 	void shutdownWW3D();
@@ -235,19 +229,19 @@ protected:
 	void updateTrees();
 
 public:
-	virtual Bool viewToDocCoords(CPoint curPt, Coord3D *newPt, Bool constrain=true) override;
+	virtual Bool viewToDocCoords(CPoint curPt, Coord3D* newPt, Bool constrain = true) override;
 	virtual Bool docToViewCoords(Coord3D curPt, CPoint* newPt) override;
 
-	virtual void updateHeightMapInView(WorldHeightMap *htMap, Bool partial, const IRegion2D &partialRange) override;
+	virtual void updateHeightMapInView(WorldHeightMap* htMap, Bool partial, const IRegion2D& partialRange) override;
 
 	/// Invalidates an object. Pass null to inval all objects.
-	virtual void invalObjectInView(MapObject *pObj) override;
+	virtual void invalObjectInView(MapObject* pObj) override;
 
 	// find the best model for an object
 	AsciiString getBestModelName(const ThingTemplate* tt, const ModelConditionFlags& c);
 
 	/// Invalidates an build list object.
-	void invalBuildListItemInView(BuildListInfo *pBuild);
+	void invalBuildListItemInView(BuildListInfo* pBuild);
 
 	/// Invalidates the area of one height map cell in the 2d view.
 	virtual void invalidateCellInView(int xIndex, int yIndex) override;
@@ -260,36 +254,36 @@ public:
 	virtual void pitchCamera(Real delta) override;
 	void setCameraPitch(Real absolutePitch);
 	Real getCameraPitch();
-	Real getCurrentZoom(); //WST 10/17/2002
+	Real getCurrentZoom();    // WST 10/17/2002
 	Real getHeightAboveGround() { return m_actualHeightAboveGround; }
 	Vector3 getCameraSource() { return m_cameraSource; }
 	Vector3 getCameraTarget() { return m_cameraTarget; }
 	Real getCameraAngle() { return m_cameraAngle; }
-	CPoint getActualWinSize() {return m_actualWinSize;}
+	CPoint getActualWinSize() { return m_actualWinSize; }
 
-	virtual MapObject *picked3dObjectInView(CPoint viewPt) override;
-	virtual BuildListInfo *pickedBuildObjectInView(CPoint viewPt) override;
+	virtual MapObject* picked3dObjectInView(CPoint viewPt) override;
+	virtual BuildListInfo* pickedBuildObjectInView(CPoint viewPt) override;
 
-	void removeFenceListObjects(MapObject *pObject);
-	void updateFenceListObjects(MapObject *pObject);
+	void removeFenceListObjects(MapObject* pObject);
+	void updateFenceListObjects(MapObject* pObject);
 
 	/// Removes all render objects.  Call when swithing to a new map.
 	void resetRenderObjects();
 
 	void stepTimeOfDay();
 
-	void reset3dEngineDisplaySize(Int width, Int height); ///< Closes & reinitializes w3d.
-	void setLighting(const GlobalData::TerrainLighting *tl, Int whichLighting, Int whichLight=0);
+	void reset3dEngineDisplaySize(Int width, Int height);    ///< Closes & reinitializes w3d.
+	void setLighting(const GlobalData::TerrainLighting* tl, Int whichLighting, Int whichLight = 0);
 
-	DrawObject *getDrawObject() {return m_drawObject;};
+	DrawObject* getDrawObject() { return m_drawObject; };
 
-	AsciiString getModelNameAndScale(MapObject *pMapObj, Real *scale, BodyDamageType curDamageState);
+	AsciiString getModelNameAndScale(MapObject* pMapObj, Real* scale, BodyDamageType curDamageState);
 
-	virtual Int getPickPixels() override {return m_pickPixels;}
-	virtual Bool viewToDocCoordZ(CPoint curPt, Coord3D *newPt, Real Z) override;
+	virtual Int getPickPixels() override { return m_pickPixels; }
+	virtual Bool viewToDocCoordZ(CPoint curPt, Coord3D* newPt, Real Z) override;
+
 public:
-
-//	void init(CWorldBuilderView *pMainView, HINSTANCE hInstance, CWnd* parent);
+	//	void init(CWorldBuilderView *pMainView, HINSTANCE hInstance, CWnd* parent);
 	void redraw();
 
 	virtual void setCenterInView(Real x, Real y) override;
@@ -297,7 +291,7 @@ public:
 	Bool getShowTerrain();
 	Bool getShowWireframe();
 
-	void setObjTracking(MapObject *pMapObj, Coord3D pos, Real angle, Bool show);
+	void setObjTracking(MapObject* pMapObj, Coord3D pos, Real angle, Bool show);
 	void setViewLayersList(Bool showLayersList) { m_showLayersList = showLayersList; }
 
 	Bool getShowMapBoundaryFeedback() const { return m_showMapBoundaries; }
@@ -305,21 +299,20 @@ public:
 
 	void togglePitchAndRotation() { m_doPitch = !m_doPitch; }
 	virtual Bool isDoingPitch() override { return m_doPitch; }
-	void setShowBoundingBoxes(Bool toggle) {m_showBoundingBoxes = toggle;}
-	Bool getShowBoundingBoxes() { return m_showBoundingBoxes;}
-	void setShowSightRanges(Bool toggle) {m_showSightRanges = toggle;}
-	Bool getShowSightRanges() { return m_showSightRanges;}
-	void setShowWeaponRanges(Bool toggle) {m_showWeaponRanges = toggle;}
-	Bool getShowWeaponRanges() { return m_showWeaponRanges;}
-	void setHighlightTestArt(Bool toggle) {m_highlightTestArt = toggle;}
-	Bool getHighlightTestArt() { return m_highlightTestArt;}
-	void setShowLetterbox(Bool toggle) {m_showLetterbox = toggle;}
-	Bool getShowLetterbox() { return m_showLetterbox;}
+	void setShowBoundingBoxes(Bool toggle) { m_showBoundingBoxes = toggle; }
+	Bool getShowBoundingBoxes() { return m_showBoundingBoxes; }
+	void setShowSightRanges(Bool toggle) { m_showSightRanges = toggle; }
+	Bool getShowSightRanges() { return m_showSightRanges; }
+	void setShowWeaponRanges(Bool toggle) { m_showWeaponRanges = toggle; }
+	Bool getShowWeaponRanges() { return m_showWeaponRanges; }
+	void setHighlightTestArt(Bool toggle) { m_highlightTestArt = toggle; }
+	Bool getHighlightTestArt() { return m_highlightTestArt; }
+	void setShowLetterbox(Bool toggle) { m_showLetterbox = toggle; }
+	Bool getShowLetterbox() { return m_showLetterbox; }
 };
 
 inline UINT WbView3d::getLastDrawTime() { return m_time; }
 inline Bool WbView3d::getShowWireframe() { return m_showWireframe; }
-
 
 /////////////////////////////////////////////////////////////////////////////
 

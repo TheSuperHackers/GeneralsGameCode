@@ -46,14 +46,16 @@
 class DX8Caps
 {
 public:
-	enum DriverVersionStatusType {
+	enum DriverVersionStatusType
+	{
 		DRIVER_STATUS_UNKNOWN,
 		DRIVER_STATUS_GOOD,
 		DRIVER_STATUS_OK,
 		DRIVER_STATUS_BAD
 	};
 
-	enum VendorIdType {
+	enum VendorIdType
+	{
 		VENDOR_UNKNOWN,
 		VENDOR_NVIDIA,
 		VENDOR_ATI,
@@ -70,7 +72,8 @@ public:
 		VENDOR_COUNT
 	};
 
-	enum DeviceTypeATI {
+	enum DeviceTypeATI
+	{
 		DEVICE_ATI_UNKNOWN,
 		DEVICE_ATI_RAGE_II,
 		DEVICE_ATI_RAGE_II_PLUS,
@@ -99,7 +102,8 @@ public:
 		DEVICE_ATI_COUNT
 	};
 
-	enum DeviceType3DLabs {
+	enum DeviceType3DLabs
+	{
 		DEVICE_3DLABS_UNKNOWN,
 		DEVICE_3DLABS_PERMEDIA,
 		DEVICE_3DLABS_300SX,
@@ -120,7 +124,8 @@ public:
 		DEVICE_3DLABS_COUNT
 	};
 
-	enum DeviceTypeNVidia {
+	enum DeviceTypeNVidia
+	{
 		DEVICE_NVIDIA_UNKNOWN,
 		DEVICE_NVIDIA_GEFORCE3,
 		DEVICE_NVIDIA_QUADRO2_PRO,
@@ -165,7 +170,8 @@ public:
 		DEVICE_NVIDIA_COUNT
 	};
 
-	enum DeviceType3Dfx {
+	enum DeviceType3Dfx
+	{
 		DEVICE_3DFX_UNKNOWN,
 		DEVICE_3DFX_VOODOO_5500_AGP,
 		DEVICE_3DFX_VOODOO_3,
@@ -177,7 +183,8 @@ public:
 		DEVICE_3DFX_COUNT
 	};
 
-	enum DeviceTypeMatrox {
+	enum DeviceTypeMatrox
+	{
 		DEVICE_MATROX_UNKNOWN,
 		DEVICE_MATROX_G550,
 		DEVICE_MATROX_G400,
@@ -195,14 +202,16 @@ public:
 		DEVICE_MATROX_COUNT
 	};
 
-	enum DeviceTypePowerVR {
+	enum DeviceTypePowerVR
+	{
 		DEVICE_POWERVR_UNKNOWN,
 		DEVICE_POWERVR_KYRO,
 
 		DEVICE_POWERVR_COUNT
 	};
 
-	enum DeviceTypeS3 {
+	enum DeviceTypeS3
+	{
 		DEVICE_S3_UNKNOWN,
 		DEVICE_S3_SAVAGE_MX,
 		DEVICE_S3_SAVAGE_4,
@@ -211,7 +220,8 @@ public:
 		DEVICE_S3_COUNT
 	};
 
-	enum DeviceTypeIntel {
+	enum DeviceTypeIntel
+	{
 		DEVICE_INTEL_UNKNOWN,
 		DEVICE_INTEL_810,
 		DEVICE_INTEL_810E,
@@ -220,9 +230,8 @@ public:
 		DEVICE_INTEL_COUNT
 	};
 
-
-	DX8Caps(IDirect3D8* direct3d, const D3DCAPS8& caps,WW3DFormat display_format, const D3DADAPTER_IDENTIFIER8& adapter_id);
-	DX8Caps(IDirect3D8* direct3d, IDirect3DDevice8* D3DDevice,WW3DFormat display_format, const D3DADAPTER_IDENTIFIER8& adapter_id);
+	DX8Caps(IDirect3D8* direct3d, const D3DCAPS8& caps, WW3DFormat display_format, const D3DADAPTER_IDENTIFIER8& adapter_id);
+	DX8Caps(IDirect3D8* direct3d, IDirect3DDevice8* D3DDevice, WW3DFormat display_format, const D3DADAPTER_IDENTIFIER8& adapter_id);
 	static void Shutdown();
 
 	void Compute_Caps(WW3DFormat display_format, const D3DADAPTER_IDENTIFIER8& adapter_id);
@@ -252,17 +261,17 @@ public:
 	//
 	// -------------------------------------------------------------------------
 
-	int Get_Vertex_Shader_Major_Version() const { return 0xff&(VertexShaderVersion>>8); }
-	int Get_Vertex_Shader_Minor_Version() const { return 0xff&(VertexShaderVersion); }
-	int Get_Pixel_Shader_Major_Version() const { return 0xff&(PixelShaderVersion>>8); }
-	int Get_Pixel_Shader_Minor_Version() const { return 0xff&(PixelShaderVersion); }
-	int Get_Max_Simultaneous_Textures()	const { return MaxSimultaneousTextures;}
+	int Get_Vertex_Shader_Major_Version() const { return 0xff & (VertexShaderVersion >> 8); }
+	int Get_Vertex_Shader_Minor_Version() const { return 0xff & (VertexShaderVersion); }
+	int Get_Pixel_Shader_Major_Version() const { return 0xff & (PixelShaderVersion >> 8); }
+	int Get_Pixel_Shader_Minor_Version() const { return 0xff & (PixelShaderVersion); }
+	int Get_Max_Simultaneous_Textures() const { return MaxSimultaneousTextures; }
 
 	bool Support_Texture_Format(WW3DFormat format) const { return SupportTextureFormat[format]; }
 	bool Support_Render_To_Texture_Format(WW3DFormat format) const { return SupportRenderToTextureFormat[format]; }
 	bool Support_Depth_Stencil_Format(WW3DZFormat format) const { return SupportDepthStencilFormat[format]; }
 
-	D3DCAPS8 const & Get_DX8_Caps() const { return Caps; }
+	D3DCAPS8 const& Get_DX8_Caps() const { return Caps; }
 
 	const StringClass& Get_Log() const { return CapsLog; }
 	const StringClass& Get_Compact_Log() const { return CompactLog; }
@@ -287,8 +296,8 @@ private:
 	static DeviceTypeIntel Get_Intel_Device(unsigned device_id);
 
 	void Init_Caps(IDirect3DDevice8* D3DDevice);
-	void Check_Texture_Format_Support(WW3DFormat display_format,const D3DCAPS8& caps);
-	void Check_Render_To_Texture_Support(WW3DFormat display_format,const D3DCAPS8& caps);
+	void Check_Texture_Format_Support(WW3DFormat display_format, const D3DCAPS8& caps);
+	void Check_Render_To_Texture_Support(WW3DFormat display_format, const D3DCAPS8& caps);
 	void Check_Depth_Stencil_Support(WW3DFormat display_format, const D3DCAPS8& caps);
 	void Check_Texture_Compression_Support(const D3DCAPS8& caps);
 	void Check_Bumpmap_Support(const D3DCAPS8& caps);
@@ -327,7 +336,7 @@ private:
 	DriverVersionStatusType DriverVersionStatus;
 	VendorIdType VendorId;
 	StringClass DriverDLL;
-	IDirect3D8* Direct3D; // warning XDK name conflict KJM
+	IDirect3D8* Direct3D;    // warning XDK name conflict KJM
 	StringClass CapsLog;
 	StringClass CompactLog;
 };

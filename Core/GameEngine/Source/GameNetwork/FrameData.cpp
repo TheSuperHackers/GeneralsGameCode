@@ -22,8 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "GameNetwork/FrameData.h"
 #include "GameNetwork/networkutil.h"
@@ -56,14 +55,15 @@ FrameData::~FrameData()
 void FrameData::init()
 {
 	m_frame = 0;
-	if (m_commandList == nullptr) {
+	if (m_commandList == nullptr)
+	{
 		m_commandList = newInstance(NetCommandList);
 		m_commandList->init();
 	}
 	m_commandList->reset();
 
 	m_frameCommandCount = -1;
-	//DEBUG_LOG(("FrameData::init"));
+	// DEBUG_LOG(("FrameData::init"));
 	m_commandCount = 0;
 	m_lastFailedCC = -2;
 	m_lastFailedFrameCC = -2;
@@ -72,52 +72,62 @@ void FrameData::init()
 /**
  * Reset this thing.
  */
-void FrameData::reset() {
+void FrameData::reset()
+{
 	init();
 }
 
 /**
  * update the thing, doesn't do anything at the moment.
  */
-void FrameData::update() {
+void FrameData::update()
+{
 }
 
 /**
  * return the frame number this frame data is associated with.
  */
-UnsignedInt FrameData::getFrame() {
+UnsignedInt FrameData::getFrame()
+{
 	return m_frame;
 }
 
 /**
  * Assign the frame number this frame data is associated with.
  */
-void FrameData::setFrame(UnsignedInt frame) {
+void FrameData::setFrame(UnsignedInt frame)
+{
 	m_frame = frame;
 }
 
 /**
  * Returns true if all the frame command count is equal to the number of commands that have been received.
  */
-FrameDataReturnType FrameData::allCommandsReady(Bool debugSpewage) {
-	if (m_frameCommandCount == m_commandCount) {
+FrameDataReturnType FrameData::allCommandsReady(Bool debugSpewage)
+{
+	if (m_frameCommandCount == m_commandCount)
+	{
 		m_lastFailedFrameCC = -2;
 		m_lastFailedCC = -2;
 		return FRAMEDATA_READY;
 	}
 
-	if (debugSpewage) {
-		if ((m_lastFailedFrameCC != m_frameCommandCount) || (m_lastFailedCC != m_commandCount)) {
+	if (debugSpewage)
+	{
+		if ((m_lastFailedFrameCC != m_frameCommandCount) || (m_lastFailedCC != m_commandCount))
+		{
 			DEBUG_LOG(("FrameData::allCommandsReady - failed, frame command count = %d, command count = %d", m_frameCommandCount, m_commandCount));
 			m_lastFailedFrameCC = m_frameCommandCount;
 			m_lastFailedCC = m_commandCount;
 		}
 	}
 
-	if (m_commandCount > m_frameCommandCount) {
+	if (m_commandCount > m_frameCommandCount)
+	{
 		DEBUG_LOG(("FrameData::allCommandsReady - There are more commands than there should be (%d, should be %d).  Commands in command list are...", m_commandCount, m_frameCommandCount));
-		NetCommandRef *ref = m_commandList->getFirstMessage();
-		while (ref != nullptr) {
+		NetCommandRef* ref = m_commandList->getFirstMessage();
+		while (ref != nullptr)
+		{
 			DEBUG_LOG(("%s, frame = %d, id = %d", GetNetCommandTypeAsString(ref->getCommand()->getNetCommandType()), ref->getCommand()->getExecutionFrame(), ref->getCommand()->getID()));
 			ref = ref->getNext();
 		}
@@ -133,56 +143,64 @@ FrameDataReturnType FrameData::allCommandsReady(Bool debugSpewage) {
 /**
  * Set the command count for this frame
  */
-void FrameData::setFrameCommandCount(UnsignedInt frameCommandCount) {
-	//DEBUG_LOG(("setFrameCommandCount to %d for frame %d", frameCommandCount, m_frame));
+void FrameData::setFrameCommandCount(UnsignedInt frameCommandCount)
+{
+	// DEBUG_LOG(("setFrameCommandCount to %d for frame %d", frameCommandCount, m_frame));
 	m_frameCommandCount = frameCommandCount;
 }
 
 /**
  * Get the command count for this frame.
  */
-UnsignedInt FrameData::getFrameCommandCount() {
+UnsignedInt FrameData::getFrameCommandCount()
+{
 	return m_frameCommandCount;
 }
 
 /**
  * return the number of commands received so far.
  */
-UnsignedInt FrameData::getCommandCount() {
+UnsignedInt FrameData::getCommandCount()
+{
 	return m_commandCount;
 }
 
 /**
  * Add a command to this frame
  */
-void FrameData::addCommand(NetCommandMsg *msg) {
+void FrameData::addCommand(NetCommandMsg* msg)
+{
 	// need to add the message in order of command ID
-	if (m_commandList == nullptr) {
+	if (m_commandList == nullptr)
+	{
 		init();
 	}
 
 	// We don't need to worry about setting the relay since its not getting sent anywhere.
-	if (m_commandList->findMessage(msg) != nullptr) {
+	if (m_commandList->findMessage(msg) != nullptr)
+	{
 		// We don't want to add the same command twice.
 		return;
 	}
 	m_commandList->addMessage(msg);
 
 	++m_commandCount;
-	//DEBUG_LOG(("added command %d, type = %d(%s), command count = %d, frame command count = %d", msg->getID(), msg->getNetCommandType(), GetNetCommandTypeAsString(msg->getNetCommandType()), m_commandCount, m_frameCommandCount));
+	// DEBUG_LOG(("added command %d, type = %d(%s), command count = %d, frame command count = %d", msg->getID(), msg->getNetCommandType(), GetNetCommandTypeAsString(msg->getNetCommandType()), m_commandCount, m_frameCommandCount));
 }
 
 /**
  * Return the list of commands for this frame
  */
-NetCommandList * FrameData::getCommandList() {
+NetCommandList* FrameData::getCommandList()
+{
 	return m_commandList;
 }
 
 /**
  * Set both the command count and the frame command count to 0.
  */
-void FrameData::zeroFrame() {
+void FrameData::zeroFrame()
+{
 	m_commandCount = 0;
 	m_frameCommandCount = 0;
 }
@@ -190,8 +208,10 @@ void FrameData::zeroFrame() {
 /**
  * destroy all the commands in this frame.
  */
-void FrameData::destroyGameMessages() {
-	if (m_commandList == nullptr) {
+void FrameData::destroyGameMessages()
+{
+	if (m_commandList == nullptr)
+	{
 		return;
 	}
 

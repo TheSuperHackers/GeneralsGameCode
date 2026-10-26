@@ -25,7 +25,7 @@
 // real-valued range defined by low and high values
 struct RealRange
 {
-	Real lo, hi;							// low and high values of the range
+	Real lo, hi;    // low and high values of the range
 
 	void zero()
 	{
@@ -40,9 +40,9 @@ struct RealRange
 
 	// combine the given range with us such that we now encompass
 	// both ranges
-	void combine( RealRange &other )
+	void combine(RealRange& other)
 	{
-		lo = min( lo, other.lo );
-		hi = max( hi, other.hi );
+		lo = min(lo, other.lo);
+		hi = max(hi, other.hi);
 	}
 };

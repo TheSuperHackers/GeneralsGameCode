@@ -39,12 +39,12 @@ class UpgradeMuxData;
 class FireOCLAfterWeaponCooldownUpdateModuleData : public UpdateModuleData
 {
 public:
-	UpgradeMuxData			m_upgradeMuxData;
-	ObjectCreationList	*m_ocl;
-	WeaponSlotType			m_weaponSlot;
-	UnsignedInt					m_minShotsRequired;
-	UnsignedInt					m_oclLifetimePerSecond;
-	UnsignedInt					m_oclMaxFrames;
+	UpgradeMuxData m_upgradeMuxData;
+	ObjectCreationList* m_ocl;
+	WeaponSlotType m_weaponSlot;
+	UnsignedInt m_minShotsRequired;
+	UnsignedInt m_oclLifetimePerSecond;
+	UnsignedInt m_oclMaxFrames;
 
 	FireOCLAfterWeaponCooldownUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
@@ -53,17 +53,15 @@ public:
 //-------------------------------------------------------------------------------------------------
 class FireOCLAfterWeaponCooldownUpdate : public UpdateModule, public UpgradeMux
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( FireOCLAfterWeaponCooldownUpdate, "FireOCLAfterWeaponCooldownUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( FireOCLAfterWeaponCooldownUpdate, FireOCLAfterWeaponCooldownUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FireOCLAfterWeaponCooldownUpdate, "FireOCLAfterWeaponCooldownUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(FireOCLAfterWeaponCooldownUpdate, FireOCLAfterWeaponCooldownUpdateModuleData)
 
 public:
-
-	FireOCLAfterWeaponCooldownUpdate( Thing *thing, const ModuleData* moduleData );
+	FireOCLAfterWeaponCooldownUpdate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	// update methods
-	virtual UpdateSleepTime update() override;							///< called once per frame
+	virtual UpdateSleepTime update() override;    ///< called once per frame
 
 protected:
 	virtual void upgradeImplementation() override
@@ -92,9 +90,7 @@ protected:
 	void fireOCL();
 
 private:
-
-	Bool				m_valid;
+	Bool m_valid;
 	UnsignedInt m_consecutiveShots;
 	UnsignedInt m_startFrame;
-
 };

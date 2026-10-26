@@ -32,31 +32,35 @@ class BuildListInfo;
 
 class BuildList : public COptionsPanel, public PopupSliderOwner
 {
-// Construction
+	// Construction
 public:
- 	BuildList(CWnd* pParent = nullptr);   ///< standard constructor
+	BuildList(CWnd* pParent = nullptr);    ///< standard constructor
 
-	virtual ~BuildList() override;   ///< standard destructor
-	enum { NAME_MAX_LEN = 64 };
-// Dialog Data
+	virtual ~BuildList() override;    ///< standard destructor
+	enum
+	{
+		NAME_MAX_LEN = 64
+	};
+	// Dialog Data
 	//{{AFX_DATA(BuildList)
-	enum { IDD = IDD_BUILD_LIST_PANEL };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_BUILD_LIST_PANEL
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(BuildList)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-	virtual void OnOK() override {return;};  ///< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel() override {return;}; ///< Modeless dialogs don't close on ESC, so eat this for modeless.
+	virtual void OnOK() override { return; };    ///< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnCancel() override { return; };    ///< Modeless dialogs don't close on ESC, so eat this for modeless.
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(BuildList)
 	virtual BOOL OnInitDialog() override;
@@ -76,17 +80,16 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-
 protected:
-	Int					m_curSide;
-	Int					m_curBuildList;
+	Int m_curSide;
+	Int m_curBuildList;
 	WBPopupSliderButton m_heightSlider;
 	WBPopupSliderButton m_angleSlider;
-	Real				m_angle;
-	Real				m_height;
+	Real m_angle;
+	Real m_height;
 
-	static BuildList	*m_staticThis;
-	static Bool			m_updating;
+	static BuildList* m_staticThis;
+	static Bool m_updating;
 
 protected:
 	void loadSides();
@@ -94,13 +97,18 @@ protected:
 
 public:
 	static void addBuilding(Coord3D loc, Real angle, AsciiString name);
-	static void update() {if (m_staticThis) m_staticThis->loadSides();};
-	static void setSelectedBuildList(BuildListInfo *pInfo);
+	static void update()
+	{
+		if (m_staticThis)
+		{
+			m_staticThis->loadSides();
+		}
+	};
+	static void setSelectedBuildList(BuildListInfo* pInfo);
 
-	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial) override;
+	virtual void GetPopSliderInfo(const long sliderID, long* pMin, long* pMax, long* pLineSize, long* pInitial) override;
 	virtual void PopSliderChanged(const long sliderID, long theVal) override;
 	virtual void PopSliderFinished(const long sliderID, long theVal) override;
-
 };
 
 //{{AFX_INSERT_LOCATION}}

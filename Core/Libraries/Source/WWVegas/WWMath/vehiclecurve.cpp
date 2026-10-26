@@ -39,30 +39,25 @@
 #include "matrix3d.h"
 #include "WWDebug/wwmemlog.h"
 
-
 //////////////////////////////////////////////////////////////////////
 //	Local prototypes
 //////////////////////////////////////////////////////////////////////
-bool	Find_Tangent (const Vector3 &center, float radius, const Vector3 &point, bool clockwise, float *result);
-float	Get_Angle_Delta (float angle1, float angle2, bool clockwise);
-void	Find_Turn_Arc (const Matrix3D &transform, float radius, const Vector3 &prev_pt, const Vector3 &curr_pt, const Vector3 &next_pt, Vector3 *arc_center, bool *is_right_turn);
-void	Find_Tangents (float radius, const Vector3 &prev_pt, const Vector3 &curr_pt, const Vector3 &next_pt, const Vector3 &arc_center, bool is_right_turn, float *point_angle, float *angle_in_delta, float *angle_out_delta);
-
+bool Find_Tangent(const Vector3& center, float radius, const Vector3& point, bool clockwise, float* result);
+float Get_Angle_Delta(float angle1, float angle2, bool clockwise);
+void Find_Turn_Arc(const Matrix3D& transform, float radius, const Vector3& prev_pt, const Vector3& curr_pt, const Vector3& next_pt, Vector3* arc_center, bool* is_right_turn);
+void Find_Tangents(float radius, const Vector3& prev_pt, const Vector3& curr_pt, const Vector3& next_pt, const Vector3& arc_center, bool is_right_turn, float* point_angle, float* angle_in_delta, float* angle_out_delta);
 
 //////////////////////////////////////////////////////////////////////
 //
 //	Find_Tangent
 //
 //////////////////////////////////////////////////////////////////////
-bool
-Find_Tangent
-(
-	const Vector3 &	center,
-	float					radius,
-	const Vector3 &	point,
-	bool					clockwise,
-	float	*				result
-)
+bool Find_Tangent(
+  const Vector3& center,
+  float radius,
+  const Vector3& point,
+  bool clockwise,
+  float* result)
 {
 	bool retval = false;
 
@@ -72,27 +67,30 @@ Find_Tangent
 	float delta_x = point.X - center.X;
 	float delta_y = point.Y - center.Y;
 	float dist = WWMath::Sqrt(delta_x * delta_x + delta_y * delta_y);
-	if (dist >= radius) {
-
+	if (dist >= radius)
+	{
 		//
 		//	Determine the offset angle (from the line between the point and center)
 		// where the 2 tangent points lie.
 		//
-		float angle_offset	= WWMath::Acos (radius / dist);
-		float base_angle		= WWMath::Atan2 (delta_x, -delta_y);
-		base_angle = WWMath::Wrap (base_angle, 0, DEG_TO_RADF (360));
+		float angle_offset = WWMath::Acos(radius / dist);
+		float base_angle = WWMath::Atan2(delta_x, -delta_y);
+		base_angle = WWMath::Wrap(base_angle, 0, DEG_TO_RADF(360));
 
 		//
 		//	Determine which tangent angle we would come across first, depending
 		// on our orientation
 		//
 		float angle = 0;
-		if (clockwise) {
+		if (clockwise)
+		{
 			angle = base_angle - angle_offset;
-		} else {
+		}
+		else
+		{
 			angle = base_angle + angle_offset;
 		}
-		angle = WWMath::Wrap (angle, 0, DEG_TO_RADF (360));
+		angle = WWMath::Wrap(angle, 0, DEG_TO_RADF(360));
 		(*result) = angle;
 
 		retval = true;
@@ -100,7 +98,6 @@ Find_Tangent
 
 	return retval;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -112,46 +109,44 @@ Find_Tangent
 // the delta.
 //
 //////////////////////////////////////////////////////////////////////
-float
-Get_Angle_Delta
-(
-	float	angle1,
-	float angle2,
-	bool	clockwise
-)
+float Get_Angle_Delta(
+  float angle1,
+  float angle2,
+  bool clockwise)
 {
 	float result = angle1 - angle2;
 
-	if (clockwise) {
-		if (angle1 < angle2) {
-			result = angle1 - (angle2 - DEG_TO_RADF (360));
+	if (clockwise)
+	{
+		if (angle1 < angle2)
+		{
+			result = angle1 - (angle2 - DEG_TO_RADF(360));
 		}
-	} else {
-		if (angle1 > angle2) {
-			result = (angle1 - DEG_TO_RADF (360)) - angle2;
+	}
+	else
+	{
+		if (angle1 > angle2)
+		{
+			result = (angle1 - DEG_TO_RADF(360)) - angle2;
 		}
 	}
 
 	return result;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 //
 //	Find_Turn_Arc
 //
 //////////////////////////////////////////////////////////////////////
-void
-Find_Turn_Arc
-(
-	const Matrix3D &	transform,
-	float					radius,
-	const Vector3 &	prev_pt,
-	const Vector3 &	curr_pt,
-	const Vector3 &	next_pt,
-	Vector3 *			arc_center,
-	bool *				is_right_turn
-)
+void Find_Turn_Arc(
+  const Matrix3D& transform,
+  float radius,
+  const Vector3& prev_pt,
+  const Vector3& curr_pt,
+  const Vector3& next_pt,
+  Vector3* arc_center,
+  bool* is_right_turn)
 {
 	//
 	//	The center of the turn arc can lie anywhere on the circle centered
@@ -161,11 +156,11 @@ Find_Turn_Arc
 	// the point halfway between the angles formed by the (prev-curr) and
 	// (next-curr) vectors.
 	//
-	float angle1 = ::WWMath::Atan2 ((prev_pt.Y - curr_pt.Y), prev_pt.X - curr_pt.X);
-	angle1 = WWMath::Wrap (angle1, 0, DEG_TO_RADF (360));
+	float angle1 = ::WWMath::Atan2((prev_pt.Y - curr_pt.Y), prev_pt.X - curr_pt.X);
+	angle1 = WWMath::Wrap(angle1, 0, DEG_TO_RADF(360));
 
-	float angle2 = ::WWMath::Atan2 ((next_pt.Y - curr_pt.Y), next_pt.X - curr_pt.X);
-	angle2 = WWMath::Wrap (angle2, 0, DEG_TO_RADF (360));
+	float angle2 = ::WWMath::Atan2((next_pt.Y - curr_pt.Y), next_pt.X - curr_pt.X);
+	angle2 = WWMath::Wrap(angle2, 0, DEG_TO_RADF(360));
 
 	float avg_angle = (angle1 + angle2) * 0.5F;
 
@@ -173,122 +168,125 @@ Find_Turn_Arc
 	//	Find the shortest delta between the two angles (either clockwise or
 	// counterclockwise).
 	//
-	float delta1 = WWMath::Fabsf_Legacy (::Get_Angle_Delta (angle1, angle2, true));
-	float delta2 = WWMath::Fabsf_Legacy (::Get_Angle_Delta (angle1, angle2, false));
-	if (delta1 < delta2) {
+	float delta1 = WWMath::Fabsf_Legacy(::Get_Angle_Delta(angle1, angle2, true));
+	float delta2 = WWMath::Fabsf_Legacy(::Get_Angle_Delta(angle1, angle2, false));
+	if (delta1 < delta2)
+	{
 		avg_angle = angle1 - (delta1 * 0.5F);
-	} else {
+	}
+	else
+	{
 		avg_angle = angle1 + (delta2 * 0.5F);
 	}
 
 	//
 	//	Find the point on the circle at this angle
 	//
-	arc_center->X = curr_pt.X + (radius * ::WWMath::Cosf_Legacy (avg_angle));
-	arc_center->Y = curr_pt.Y + (radius * ::WWMath::Sinf_Legacy (avg_angle));
+	arc_center->X = curr_pt.X + (radius * ::WWMath::Cosf_Legacy(avg_angle));
+	arc_center->Y = curr_pt.Y + (radius * ::WWMath::Sinf_Legacy(avg_angle));
 	arc_center->Z = curr_pt.Z;
 
 	//
 	//	Will we be making a right turn or a left turn?
 	//
 	Vector3 rel_center;
-	Matrix3D::Inverse_Transform_Vector (transform, *arc_center, &rel_center);
+	Matrix3D::Inverse_Transform_Vector(transform, *arc_center, &rel_center);
 	(*is_right_turn) = (rel_center.Y > 0);
 }
-
 
 //////////////////////////////////////////////////////////////////////
 //
 //	Find_Tangents
 //
 //////////////////////////////////////////////////////////////////////
-void
-Find_Tangents
-(
-	float					radius,
-	const Vector3 &	prev_pt,
-	const Vector3 &	curr_pt,
-	const Vector3 &	next_pt,
-	const Vector3 &	arc_center,
-	bool					is_right_turn,
-	float *				point_angle,
-	float *				angle_in_delta,
-	float *				angle_out_delta
-)
+void Find_Tangents(
+  float radius,
+  const Vector3& prev_pt,
+  const Vector3& curr_pt,
+  const Vector3& next_pt,
+  const Vector3& arc_center,
+  bool is_right_turn,
+  float* point_angle,
+  float* angle_in_delta,
+  float* angle_out_delta)
 {
-
 	//
 	//	Find the 'in' and 'out' tangent angles
 	//
-	float angle_in	= 0;
+	float angle_in = 0;
 	float angle_out = 0;
-	bool valid_in = ::Find_Tangent (arc_center, radius, prev_pt, is_right_turn, &angle_in);
-	bool valid_out = ::Find_Tangent (arc_center, radius, next_pt, !is_right_turn, &angle_out);
+	bool valid_in = ::Find_Tangent(arc_center, radius, prev_pt, is_right_turn, &angle_in);
+	bool valid_out = ::Find_Tangent(arc_center, radius, next_pt, !is_right_turn, &angle_out);
 
 	//
 	//	Find the angle where the current position lies on the turn arc
 	//
-	(*point_angle) = ::WWMath::Atan2 (curr_pt.X - arc_center.X, -(curr_pt.Y - arc_center.Y));
-	(*point_angle) = WWMath::Wrap ((*point_angle), 0, DEG_TO_RADF (360));
+	(*point_angle) = ::WWMath::Atan2(curr_pt.X - arc_center.X, -(curr_pt.Y - arc_center.Y));
+	(*point_angle) = WWMath::Wrap((*point_angle), 0, DEG_TO_RADF(360));
 
 	//
 	//	If the tangent-in is valid, find its delta from the 'point angle.
 	//
-	if (valid_in) {
-		(*angle_in_delta) = ::Get_Angle_Delta (angle_in, (*point_angle), is_right_turn);
-	} else {
+	if (valid_in)
+	{
+		(*angle_in_delta) = ::Get_Angle_Delta(angle_in, (*point_angle), is_right_turn);
+	}
+	else
+	{
 		(*angle_in_delta) = 0;
 	}
 
 	//
 	//	If the tangent-out is valid, find its delta from the 'point angle.
 	//
-	if (valid_out) {
-		(*angle_out_delta) = ::Get_Angle_Delta (angle_out, (*point_angle), !is_right_turn);
-	} else {
+	if (valid_out)
+	{
+		(*angle_out_delta) = ::Get_Angle_Delta(angle_out, (*point_angle), !is_right_turn);
+	}
+	else
+	{
 		(*angle_out_delta) = 0;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////
 //
 //	Update_Arc_List
 //
 //////////////////////////////////////////////////////////////////////
-void
-VehicleCurveClass::Update_Arc_List ()
+void VehicleCurveClass::Update_Arc_List()
 {
 	WWMEMLOG(MEM_PATHFIND);
-	m_ArcList.Delete_All ();
+	m_ArcList.Delete_All();
 
 	//
 	//	Bail out if there is nothing to do
 	//
-	int count = Key_Count ();
-	if (count == 0) {
-		return ;
+	int count = Key_Count();
+	if (count == 0)
+	{
+		return;
 	}
 
 	//
 	//	Add a record for the starting point of the arc...
 	//
 	ArcInfoStruct arc_start;
-	arc_start.point_in			= Keys[0].Point;
-	arc_start.point_out			= Keys[0].Point;
-	arc_start.center				= Keys[0].Point;
-	arc_start.point_angle		= 0;
-	arc_start.radius				= 0;
-	arc_start.angle_in_delta	= 0;
-	arc_start.angle_out_delta	= 0;
-	m_ArcList.Add (arc_start);
+	arc_start.point_in = Keys[0].Point;
+	arc_start.point_out = Keys[0].Point;
+	arc_start.center = Keys[0].Point;
+	arc_start.point_angle = 0;
+	arc_start.radius = 0;
+	arc_start.angle_in_delta = 0;
+	arc_start.angle_out_delta = 0;
+	m_ArcList.Add(arc_start);
 
 	//
 	//	Loop over each 'interior' point and generate arc information
 	// for each.
 	//
-	for (int index = 1; index < count - 1; index ++) {
-
+	for (int index = 1; index < count - 1; index++)
+	{
 		//
 		//	Get information about the previous, next, and current points.
 		//
@@ -296,155 +294,157 @@ VehicleCurveClass::Update_Arc_List ()
 		Vector3 next_pt;
 		Vector3 curr_pt;
 		float time = 0;
-		Get_Key (index-1, &prev_pt, &time);
-		Get_Key (index,	&curr_pt, &time);
-		Get_Key (index+1, &next_pt, &time);
+		Get_Key(index - 1, &prev_pt, &time);
+		Get_Key(index, &curr_pt, &time);
+		Get_Key(index + 1, &next_pt, &time);
 
 		//
 		//	Determine the last known point on the path
 		//
-		Vector3 last_path_pt = m_ArcList[index-1].point_out;
+		Vector3 last_path_pt = m_ArcList[index - 1].point_out;
 
 		//
 		//	Create a transformation matrix to simulate the vehicle's position and
 		// orientation at the last point...
 		//
-		Vector3 x_vector (curr_pt - last_path_pt);
-		Vector3 z_vector (0, 0, 1);
-		x_vector.Normalize ();
+		Vector3 x_vector(curr_pt - last_path_pt);
+		Vector3 z_vector(0, 0, 1);
+		x_vector.Normalize();
 #ifdef ALLOW_TEMPORARIES
-		Vector3 y_vector = Vector3::Cross_Product (x_vector, z_vector);
+		Vector3 y_vector = Vector3::Cross_Product(x_vector, z_vector);
 #else
 		Vector3 y_vector;
-		Vector3::Cross_Product (x_vector, z_vector, &y_vector);
+		Vector3::Cross_Product(x_vector, z_vector, &y_vector);
 #endif
-		Matrix3D tm (x_vector, y_vector, z_vector, last_path_pt);
+		Matrix3D tm(x_vector, y_vector, z_vector, last_path_pt);
 
 		//
 		//	Find where the turn arc should be centered and whether we should
 		// make a right-turn or a left turn...
 		//
 		bool is_right_turn = false;
-		Vector3 arc_center (0, 0, 0);
-		::Find_Turn_Arc (	tm,
-								m_Radius,
-								last_path_pt,
-								curr_pt,
-								next_pt,
-								&arc_center,
-								&is_right_turn);
+		Vector3 arc_center(0, 0, 0);
+		::Find_Turn_Arc(tm,
+		                m_Radius,
+		                last_path_pt,
+		                curr_pt,
+		                next_pt,
+		                &arc_center,
+		                &is_right_turn);
 
 		//
 		//	Determine where the vehicle should enter and exit the turn
 		//
-		float angle_in_delta		= 0;
-		float angle_out_delta	= 0;
-		float point_angle			= 0;
-		::Find_Tangents (	m_Radius,
-								last_path_pt,
-								curr_pt,
-								next_pt,
-								arc_center,
-								is_right_turn,
-								&point_angle,
-								&angle_in_delta,
-								&angle_out_delta);
+		float angle_in_delta = 0;
+		float angle_out_delta = 0;
+		float point_angle = 0;
+		::Find_Tangents(m_Radius,
+		                last_path_pt,
+		                curr_pt,
+		                next_pt,
+		                arc_center,
+		                is_right_turn,
+		                &point_angle,
+		                &angle_in_delta,
+		                &angle_out_delta);
 
 		//
 		//	Determine at what points these angles intersect the arc
 		//
-		Vector3 point_in (0, 0, 0);
-		point_in.X = arc_center.X + (m_Radius * ::WWMath::Sinf_Legacy (point_angle + angle_in_delta));
-		point_in.Y = arc_center.Y + (m_Radius * -::WWMath::Cosf_Legacy (point_angle + angle_in_delta));
+		Vector3 point_in(0, 0, 0);
+		point_in.X = arc_center.X + (m_Radius * ::WWMath::Sinf_Legacy(point_angle + angle_in_delta));
+		point_in.Y = arc_center.Y + (m_Radius * -::WWMath::Cosf_Legacy(point_angle + angle_in_delta));
 
-		Vector3 point_out (0, 0, 0);
-		point_out.X = arc_center.X + (m_Radius * ::WWMath::Sinf_Legacy (point_angle + angle_out_delta));
-		point_out.Y = arc_center.Y + (m_Radius * -::WWMath::Cosf_Legacy (point_angle + angle_out_delta));
+		Vector3 point_out(0, 0, 0);
+		point_out.X = arc_center.X + (m_Radius * ::WWMath::Sinf_Legacy(point_angle + angle_out_delta));
+		point_out.Y = arc_center.Y + (m_Radius * -::WWMath::Cosf_Legacy(point_angle + angle_out_delta));
 
 		//
 		//	Sanity check to ensure the vehicle doesn't try to go the long way around the
 		// turn arc...
 		//
-		if (	angle_in_delta > DEG_TO_RADF (200) || angle_out_delta > DEG_TO_RADF (200) ||
-				angle_in_delta < -DEG_TO_RADF (200) || angle_out_delta < -DEG_TO_RADF (200) )
+		if (angle_in_delta > DEG_TO_RADF(200) || angle_out_delta > DEG_TO_RADF(200) ||
+		    angle_in_delta < -DEG_TO_RADF(200) || angle_out_delta < -DEG_TO_RADF(200))
 		{
 			//
 			//	Record information about this arc
 			//
 			ArcInfoStruct arc_info;
-			arc_info.center				= curr_pt;
-			arc_info.point_angle			= 0;
-			arc_info.point_in				= curr_pt;
-			arc_info.point_out			= curr_pt;
-			arc_info.radius				= 0;
-			arc_info.angle_in_delta		= 0;
-			arc_info.angle_out_delta	= 0;
-			m_ArcList.Add (arc_info);
-
-		} else {
-
+			arc_info.center = curr_pt;
+			arc_info.point_angle = 0;
+			arc_info.point_in = curr_pt;
+			arc_info.point_out = curr_pt;
+			arc_info.radius = 0;
+			arc_info.angle_in_delta = 0;
+			arc_info.angle_out_delta = 0;
+			m_ArcList.Add(arc_info);
+		}
+		else
+		{
 			//
 			//	Record information about this arc
 			//
 			ArcInfoStruct arc_info;
-			arc_info.center				= arc_center;
-			arc_info.point_angle			= point_angle;
-			arc_info.point_in				= point_in;
-			arc_info.point_out			= point_out;
-			arc_info.radius				= m_Radius;
-			arc_info.angle_in_delta		= angle_in_delta;
-			arc_info.angle_out_delta	= angle_out_delta;
-			m_ArcList.Add (arc_info);
+			arc_info.center = arc_center;
+			arc_info.point_angle = point_angle;
+			arc_info.point_in = point_in;
+			arc_info.point_out = point_out;
+			arc_info.radius = m_Radius;
+			arc_info.angle_in_delta = angle_in_delta;
+			arc_info.angle_out_delta = angle_out_delta;
+			m_ArcList.Add(arc_info);
 		}
 	}
 
 	//
 	//	Add a record for the starting point of the arc...
 	//
-	if (count > 1) {
+	if (count > 1)
+	{
 		ArcInfoStruct arc_end;
-		arc_end.point_in				= Keys[count-1].Point;
-		arc_end.point_out				= Keys[count-1].Point;
-		arc_end.center					= Keys[count-1].Point;
-		arc_end.point_angle			= 0;
-		arc_end.radius					= 0;
-		arc_end.angle_in_delta		= 0;
-		arc_end.angle_out_delta		= 0;
-		m_ArcList.Add (arc_end);
+		arc_end.point_in = Keys[count - 1].Point;
+		arc_end.point_out = Keys[count - 1].Point;
+		arc_end.center = Keys[count - 1].Point;
+		arc_end.point_angle = 0;
+		arc_end.radius = 0;
+		arc_end.angle_in_delta = 0;
+		arc_end.angle_out_delta = 0;
+		m_ArcList.Add(arc_end);
 	}
 
 	m_IsDirty = false;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 //
 //	Evaluate
 //
 //////////////////////////////////////////////////////////////////////
-void
-VehicleCurveClass::Evaluate (float time, Vector3 *set_val)
+void VehicleCurveClass::Evaluate(float time, Vector3* set_val)
 {
-	int count = Keys.Count ();
+	int count = Keys.Count();
 	m_Sharpness = 0;
 
-	if (time < Keys[0].Time) {
-		*set_val		= Keys[0].Point;
-		m_LastTime	= Keys[0].Time;
+	if (time < Keys[0].Time)
+	{
+		*set_val = Keys[0].Point;
+		m_LastTime = Keys[0].Time;
 		return;
 	}
 
-	if (time >= Keys[count - 1].Time) {
-		*set_val		= Keys[count - 1].Point;
-		m_LastTime	= Keys[count - 1].Time;
+	if (time >= Keys[count - 1].Time)
+	{
+		*set_val = Keys[count - 1].Point;
+		m_LastTime = Keys[count - 1].Time;
 		return;
 	}
 
 	//
 	//	Update the arc information if any of the keys have changed...
 	//
-	if (m_IsDirty) {
-		Update_Arc_List ();
+	if (m_IsDirty)
+	{
+		Update_Arc_List();
 	}
 
 	//
@@ -453,10 +453,10 @@ VehicleCurveClass::Evaluate (float time, Vector3 *set_val)
 	int index0 = 0;
 	int index1 = 0;
 	float seg_time = 0;
-	Find_Interval (time, &index0, &index1, &seg_time);
+	Find_Interval(time, &index0, &index1, &seg_time);
 
-	ArcInfoStruct &arc_info0 = m_ArcList[index0];
-	ArcInfoStruct &arc_info1 = m_ArcList[index1];
+	ArcInfoStruct& arc_info0 = m_ArcList[index0];
+	ArcInfoStruct& arc_info1 = m_ArcList[index1];
 
 	//
 	//	Determine the lengths of each segment of this curve.
@@ -465,10 +465,10 @@ VehicleCurveClass::Evaluate (float time, Vector3 *set_val)
 	//		- Straight line from exit of last curve to enter of this curve
 	//		- Enter curve for the current point
 	//
-	float arc_length0		= arc_info0.radius * WWMath::Fabsf_Legacy (arc_info0.angle_out_delta);
-	float arc_length1		= arc_info1.radius * WWMath::Fabsf_Legacy (arc_info1.angle_in_delta);
-	float other_length	= ((arc_info1.point_in - arc_info0.point_out).Length ()) / 2;
-	float total_length	= arc_length0 + arc_length1 + other_length;
+	float arc_length0 = arc_info0.radius * WWMath::Fabsf_Legacy(arc_info0.angle_out_delta);
+	float arc_length1 = arc_info1.radius * WWMath::Fabsf_Legacy(arc_info1.angle_in_delta);
+	float other_length = ((arc_info1.point_in - arc_info0.point_out).Length()) / 2;
+	float total_length = arc_length0 + arc_length1 + other_length;
 
 	//
 	//	Determine at what times we should switch between parts of the segment
@@ -479,52 +479,55 @@ VehicleCurveClass::Evaluate (float time, Vector3 *set_val)
 	//
 	//	Determine which part of the segment we are on
 	//
-	if (seg_time < time1) {
-
+	if (seg_time < time1)
+	{
 		//
 		//	We are on the initial curve of the segment, so calculate where
 		// on the curve we are...
 		//
-		//float percent = seg_time / time1;
-		//float angle = arc_info0.point_angle + (arc_info0.angle_out_delta) * percent;
+		// float percent = seg_time / time1;
+		// float angle = arc_info0.point_angle + (arc_info0.angle_out_delta) * percent;
 		float angle = arc_info0.point_angle + arc_info0.angle_out_delta;
 
-		set_val->X = arc_info0.center.X + (arc_info0.radius * ::WWMath::Sinf_Legacy (angle));
-		set_val->Y = arc_info0.center.Y + (arc_info0.radius * -::WWMath::Cosf_Legacy (angle));
+		set_val->X = arc_info0.center.X + (arc_info0.radius * ::WWMath::Sinf_Legacy(angle));
+		set_val->Y = arc_info0.center.Y + (arc_info0.radius * -::WWMath::Cosf_Legacy(angle));
 
-		m_Sharpness = WWMath::Clamp (WWMath::Fabsf_Legacy (arc_info0.angle_out_delta) / DEG_TO_RADF (15), 0, 1.0F);
+		m_Sharpness = WWMath::Clamp(WWMath::Fabsf_Legacy(arc_info0.angle_out_delta) / DEG_TO_RADF(15), 0, 1.0F);
 		m_SharpnessPos.X = set_val->X;
 		m_SharpnessPos.Y = set_val->Y;
 		m_SharpnessPos.Z = Keys[index0].Point.Z + (Keys[index1].Point.Z - Keys[index0].Point.Z) * seg_time;
 
 		m_LastTime = Keys[index0].Time + (Keys[index1].Time - Keys[index0].Time) * time1;
-
-	} else if (seg_time < time2) {
-
+	}
+	else if (seg_time < time2)
+	{
 		//
 		//	We are on the line between the two curves, so calculate where on
 		// the line we are
 		//
 		float percent = (seg_time - time1) / (time2 - time1);
 
-		if (percent == 0) {
+		if (percent == 0)
+		{
 			set_val->X = arc_info0.point_out.X;
 			set_val->Y = arc_info0.point_out.Y;
-		} else {
+		}
+		else
+		{
 			set_val->X = arc_info1.point_in.X;
 			set_val->Y = arc_info1.point_in.Y;
 		}
 
-		//set_val->X = arc_info0.point_out.X + (arc_info1.point_in.X - arc_info0.point_out.X) * percent;
-		//set_val->Y = arc_info0.point_out.Y + (arc_info1.point_in.Y - arc_info0.point_out.Y) * percent;
+		// set_val->X = arc_info0.point_out.X + (arc_info1.point_in.X - arc_info0.point_out.X) * percent;
+		// set_val->Y = arc_info0.point_out.Y + (arc_info1.point_in.Y - arc_info0.point_out.Y) * percent;
 
-		m_Sharpness = WWMath::Clamp (WWMath::Fabsf_Legacy (arc_info1.angle_out_delta) / DEG_TO_RADF (15), 0, 1.0F);
+		m_Sharpness = WWMath::Clamp(WWMath::Fabsf_Legacy(arc_info1.angle_out_delta) / DEG_TO_RADF(15), 0, 1.0F);
 		m_SharpnessPos = arc_info1.point_in;
 
 		m_LastTime = Keys[index0].Time + (Keys[index1].Time - Keys[index0].Time) * time2;
-
-	} else {
-
+	}
+	else
+	{
 		//
 		//	We are on the ending curve of the segment, so calculate where
 		// on the curve we are...
@@ -537,10 +540,10 @@ VehicleCurveClass::Evaluate (float time, Vector3 *set_val)
 
 		float angle = arc_info1.point_angle + (arc_info1.angle_out_delta);
 
-		set_val->X = arc_info1.center.X + (arc_info1.radius * ::WWMath::Sinf_Legacy (angle));
-		set_val->Y = arc_info1.center.Y + (arc_info1.radius * -::WWMath::Cosf_Legacy (angle));
+		set_val->X = arc_info1.center.X + (arc_info1.radius * ::WWMath::Sinf_Legacy(angle));
+		set_val->Y = arc_info1.center.Y + (arc_info1.radius * -::WWMath::Cosf_Legacy(angle));
 
-		m_Sharpness = WWMath::Clamp (WWMath::Fabsf_Legacy (arc_info1.angle_out_delta) / DEG_TO_RADF (15), 0, 1.0F);
+		m_Sharpness = WWMath::Clamp(WWMath::Fabsf_Legacy(arc_info1.angle_out_delta) / DEG_TO_RADF(15), 0, 1.0F);
 		m_SharpnessPos.X = set_val->X;
 		m_SharpnessPos.Y = set_val->Y;
 		m_SharpnessPos.Z = Keys[index0].Point.Z + (Keys[index1].Point.Z - Keys[index0].Point.Z) * seg_time;

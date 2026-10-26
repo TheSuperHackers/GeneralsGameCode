@@ -38,5 +38,5 @@ private:
 public:
 	PlaceEventTranslator();
 	virtual ~PlaceEventTranslator() override;
-	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg) override;
+	virtual GameMessageDisposition translateGameMessage(const GameMessage* msg) override;
 };

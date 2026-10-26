@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -38,64 +38,65 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SupplyWarehouseCreate::SupplyWarehouseCreate( Thing *thing, const ModuleData* moduleData ) : CreateModule( thing, moduleData )
+SupplyWarehouseCreate::SupplyWarehouseCreate(Thing* thing, const ModuleData* moduleData)
+  : CreateModule(thing, moduleData)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SupplyWarehouseCreate::~SupplyWarehouseCreate()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 void SupplyWarehouseCreate::onCreate()
 {
 	// Warehouses are never Built.
-	if( ThePlayerList == nullptr )
-		return;
-
-	for( Int playerIndex = ThePlayerList->getPlayerCount() - 1; playerIndex >= 0; playerIndex-- )
+	if (ThePlayerList == nullptr)
 	{
-		Player *currentPlayer = ThePlayerList->getNthPlayer( playerIndex );
-		if( currentPlayer == nullptr )
+		return;
+	}
+
+	for (Int playerIndex = ThePlayerList->getPlayerCount() - 1; playerIndex >= 0; playerIndex--)
+	{
+		Player* currentPlayer = ThePlayerList->getNthPlayer(playerIndex);
+		if (currentPlayer == nullptr)
+		{
 			continue;
-		ResourceGatheringManager *manager = currentPlayer->getResourceGatheringManager();
-		if( manager == nullptr )
+		}
+		ResourceGatheringManager* manager = currentPlayer->getResourceGatheringManager();
+		if (manager == nullptr)
+		{
 			continue;
-		manager->addSupplyWarehouse( getObject() );
+		}
+		manager->addSupplyWarehouse(getObject());
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void SupplyWarehouseCreate::crc( Xfer *xfer )
+void SupplyWarehouseCreate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	CreateModule::crc( xfer );
-
+	CreateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void SupplyWarehouseCreate::xfer( Xfer *xfer )
+void SupplyWarehouseCreate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CreateModule::xfer( xfer );
-
+	CreateModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -103,8 +104,6 @@ void SupplyWarehouseCreate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void SupplyWarehouseCreate::loadPostProcess()
 {
-
 	// extend base class
 	CreateModule::loadPostProcess();
-
 }

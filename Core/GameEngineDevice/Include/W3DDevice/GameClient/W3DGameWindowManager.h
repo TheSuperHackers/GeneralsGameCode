@@ -37,20 +37,18 @@
 
 //-------------------------------------------------------------------------------------------------
 /** W3D implementation of the game window manager which controls all windows
-	* and user interface controls */
+ * and user interface controls */
 //-------------------------------------------------------------------------------------------------
 class W3DGameWindowManager : public GameWindowManager
 {
-
 public:
-
 	W3DGameWindowManager();
 	virtual ~W3DGameWindowManager() override;
 
-	virtual void init() override;  ///< initialize the singlegon
+	virtual void init() override;    ///< initialize the singlegon
 
-	virtual GameWindow *allocateNewWindow() override;  ///< allocate a new game window
-	virtual GameWinDrawFunc getDefaultDraw() override;  ///< return default draw func to use
+	virtual GameWindow* allocateNewWindow() override;    ///< allocate a new game window
+	virtual GameWinDrawFunc getDefaultDraw() override;    ///< return default draw func to use
 
 	virtual GameWinDrawFunc getPushButtonImageDrawFunc() override;
 	virtual GameWinDrawFunc getPushButtonDrawFunc() override;
@@ -76,11 +74,10 @@ public:
 	virtual GameWinDrawFunc getTextEntryDrawFunc() override;
 
 protected:
-
 };
 
 // INLINE //////////////////////////////////////////////////////////////////////////////////////////
-inline GameWindow *W3DGameWindowManager::allocateNewWindow() { return newInstance(W3DGameWindow); }
+inline GameWindow* W3DGameWindowManager::allocateNewWindow() { return newInstance(W3DGameWindow); }
 inline GameWinDrawFunc W3DGameWindowManager::getDefaultDraw() { return W3DGameWinDefaultDraw; }
 inline GameWinDrawFunc W3DGameWindowManager::getPushButtonImageDrawFunc() { return W3DGadgetPushButtonImageDraw; }
 inline GameWinDrawFunc W3DGameWindowManager::getPushButtonDrawFunc() { return W3DGadgetPushButtonDraw; }

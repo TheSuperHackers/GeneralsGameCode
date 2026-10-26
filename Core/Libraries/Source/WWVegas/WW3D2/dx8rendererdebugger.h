@@ -49,6 +49,7 @@ class MeshClass;
 class DX8RendererDebugger
 {
 	static bool Enabled;
+
 public:
 	static void Enable(bool enable);
 	WWINLINE static bool Is_Enabled() { return Enabled; }

@@ -31,145 +31,145 @@
 static bool Initialized = false;
 static bool Lite = false;
 
-bool Renderer::Init(void * window, bool lite)
+bool Renderer::Init(void* window, bool lite)
 {
-    WWASSERT(!Initialized);
-    if (Initialized)
-    {
-        return true;
-    }
+	WWASSERT(!Initialized);
+	if (Initialized)
+	{
+		return true;
+	}
 
-    Init_D3D_To_WW3_Conversion();
-    WWDEBUG_SAY(("Init DX8Wrapper"));
-    if (!DX8Wrapper::Init(window, lite))
-    {
-        return false;
-    }
+	Init_D3D_To_WW3_Conversion();
+	WWDEBUG_SAY(("Init DX8Wrapper"));
+	if (!DX8Wrapper::Init(window, lite))
+	{
+		return false;
+	}
 
-    Initialized = true;
-    Lite = lite;
-    return true;
+	Initialized = true;
+	Lite = lite;
+	return true;
 }
 
 void Renderer::Shutdown()
 {
-    if (Initialized && !Lite)
-    {
-        DX8Wrapper::Shutdown();
-    }
-    Initialized = false;
+	if (Initialized && !Lite)
+	{
+		DX8Wrapper::Shutdown();
+	}
+	Initialized = false;
 }
 
 int Renderer::Get_Render_Device_Count()
 {
-    return DX8Wrapper::Get_Render_Device_Count();
+	return DX8Wrapper::Get_Render_Device_Count();
 }
 
 int Renderer::Get_Render_Device()
 {
-    return DX8Wrapper::Get_Render_Device();
+	return DX8Wrapper::Get_Render_Device();
 }
 
-const char * Renderer::Get_Render_Device_Name(int device_index)
+const char* Renderer::Get_Render_Device_Name(int device_index)
 {
-    return DX8Wrapper::Get_Render_Device_Name(device_index);
+	return DX8Wrapper::Get_Render_Device_Name(device_index);
 }
 
-void Renderer::Get_Device_Resolution(int & width, int & height, int & bits, bool & windowed)
+void Renderer::Get_Device_Resolution(int& width, int& height, int& bits, bool& windowed)
 {
-    DX8Wrapper::Get_Device_Resolution(width, height, bits, windowed);
+	DX8Wrapper::Get_Device_Resolution(width, height, bits, windowed);
 }
 
-void Renderer::Get_Render_Target_Resolution(int & width, int & height, int & bits, bool & windowed)
+void Renderer::Get_Render_Target_Resolution(int& width, int& height, int& bits, bool& windowed)
 {
-    DX8Wrapper::Get_Render_Target_Resolution(width, height, bits, windowed);
+	DX8Wrapper::Get_Render_Target_Resolution(width, height, bits, windowed);
 }
 
 int Renderer::Get_Device_Resolution_Width()
 {
-    return DX8Wrapper::Get_Device_Resolution_Width();
+	return DX8Wrapper::Get_Device_Resolution_Width();
 }
 
 int Renderer::Get_Device_Resolution_Height()
 {
-    return DX8Wrapper::Get_Device_Resolution_Height();
+	return DX8Wrapper::Get_Device_Resolution_Height();
 }
 
 bool Renderer::Is_Windowed()
 {
-    return DX8Wrapper::Is_Windowed();
+	return DX8Wrapper::Is_Windowed();
 }
 
 int Renderer::Get_Texture_Bitdepth()
 {
-    return DX8Wrapper::Get_Texture_Bitdepth();
+	return DX8Wrapper::Get_Texture_Bitdepth();
 }
 
 int Renderer::Get_Swap_Interval()
 {
-    return DX8Wrapper::Get_Swap_Interval();
+	return DX8Wrapper::Get_Swap_Interval();
 }
 
 bool Renderer::Has_Stencil()
 {
-    return DX8Wrapper::Has_Stencil();
+	return DX8Wrapper::Has_Stencil();
 }
 
 WW3DFormat Renderer::Get_Back_Buffer_Format()
 {
-    return DX8Wrapper::getBackBufferFormat();
+	return DX8Wrapper::getBackBufferFormat();
 }
 
 void Renderer::Set_Gamma(float gamma, float bright, float contrast, bool calibrate, bool uselimit)
 {
-    DX8Wrapper::Set_Gamma(gamma, bright, contrast, calibrate, uselimit);
+	DX8Wrapper::Set_Gamma(gamma, bright, contrast, calibrate, uselimit);
 }
 
 void Renderer::Begin_Scene()
 {
-    DX8Wrapper::Begin_Scene();
+	DX8Wrapper::Begin_Scene();
 }
 
 void Renderer::End_Scene(bool flip_frame)
 {
-    DX8Wrapper::End_Scene(flip_frame);
+	DX8Wrapper::End_Scene(flip_frame);
 }
 
 void Renderer::Flip_To_Primary()
 {
-    DX8Wrapper::Flip_To_Primary();
+	DX8Wrapper::Flip_To_Primary();
 }
 
 void Renderer::Clear(bool clear_color, bool clear_z_stencil,
-                     const Vector3 & color,
+                     const Vector3& color,
                      float dest_alpha, float z, unsigned int stencil)
 {
-    DX8Wrapper::Clear(clear_color, clear_z_stencil, color, dest_alpha, z, stencil);
+	DX8Wrapper::Clear(clear_color, clear_z_stencil, color, dest_alpha, z, stencil);
 }
 
-void Renderer::Set_Viewport(const RenderViewport & viewport)
+void Renderer::Set_Viewport(const RenderViewport& viewport)
 {
-    D3DVIEWPORT8 vp;
-    vp.X      = viewport.x;
-    vp.Y      = viewport.y;
-    vp.Width  = viewport.width;
-    vp.Height = viewport.height;
-    vp.MinZ   = viewport.min_z;
-    vp.MaxZ   = viewport.max_z;
-    DX8Wrapper::Set_Viewport(&vp);
+	D3DVIEWPORT8 vp;
+	vp.X = viewport.x;
+	vp.Y = viewport.y;
+	vp.Width = viewport.width;
+	vp.Height = viewport.height;
+	vp.MinZ = viewport.min_z;
+	vp.MaxZ = viewport.max_z;
+	DX8Wrapper::Set_Viewport(&vp);
 }
 
 void Renderer::Invalidate_Cached_Render_States()
 {
-    DX8Wrapper::Invalidate_Cached_Render_States();
+	DX8Wrapper::Invalidate_Cached_Render_States();
 }
 
-void Renderer::Set_Ambient(const Vector3 & color)
+void Renderer::Set_Ambient(const Vector3& color)
 {
-    DX8Wrapper::Set_Ambient(color);
+	DX8Wrapper::Set_Ambient(color);
 }
 
-void Renderer::Set_Light_Environment(LightEnvironmentClass * light_env)
+void Renderer::Set_Light_Environment(LightEnvironmentClass* light_env)
 {
-    DX8Wrapper::Set_Light_Environment(light_env);
+	DX8Wrapper::Set_Light_Environment(light_env);
 }

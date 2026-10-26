@@ -93,4 +93,4 @@
 // function on a case by case basis. No need to be told of this.
 #pragma warning(disable : 4710)
 
-#endif // defined(_MSC_VER)
+#endif    // defined(_MSC_VER)

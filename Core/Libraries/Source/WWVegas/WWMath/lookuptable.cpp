@@ -39,22 +39,20 @@
 #include "lookuptable.h"
 #include "curve.h"
 
-
 /*
 ** Static members
 */
-RefMultiListClass<LookupTableClass>	LookupTableMgrClass::Tables;
-
+RefMultiListClass<LookupTableClass> LookupTableMgrClass::Tables;
 
 /***********************************************************************************************
 **
 ** LookupTableClass Implementation
 **
 ***********************************************************************************************/
-LookupTableClass::LookupTableClass(int sample_count) :
-	MinInputValue(0.0f),
-	MaxInputValue(0.0f),
-	OutputSamples(sample_count)
+LookupTableClass::LookupTableClass(int sample_count)
+  : MinInputValue(0.0f)
+  , MaxInputValue(0.0f)
+  , OutputSamples(sample_count)
 {
 }
 
@@ -62,26 +60,25 @@ LookupTableClass::~LookupTableClass()
 {
 }
 
-void LookupTableClass::Init(const char * name,Curve1DClass * curve)
+void LookupTableClass::Init(const char* name, Curve1DClass* curve)
 {
 	// copy the name
 	Name = name;
 
 	// Store the min and max input values for the table
-	curve->Get_Key(0,nullptr,&MinInputValue,nullptr);
-	curve->Get_Key(curve->Key_Count()-1,nullptr,&MaxInputValue,nullptr);
+	curve->Get_Key(0, nullptr, &MinInputValue, nullptr);
+	curve->Get_Key(curve->Key_Count() - 1, nullptr, &MaxInputValue, nullptr);
 	OOMaxMinusMin = 1.0f / (MaxInputValue - MinInputValue);
 
 	// Sample the curve and store the output values
-	for (int i=0; i<OutputSamples.Length(); i++) {
+	for (int i = 0; i < OutputSamples.Length(); i++)
+	{
 		float x = MinInputValue + (MaxInputValue - MinInputValue) * (float)i / (float)(OutputSamples.Length() - 1);
 		float y;
-		curve->Evaluate(x,&y);
+		curve->Evaluate(x, &y);
 		OutputSamples[i] = y;
 	}
 }
-
-
 
 /***********************************************************************************************
 **
@@ -91,12 +88,12 @@ void LookupTableClass::Init(const char * name,Curve1DClass * curve)
 void LookupTableMgrClass::Init()
 {
 	// create a default table that the user can use in an emergency
-	LookupTableClass * default_table = NEW_REF(LookupTableClass,(2));
-	LinearCurve1DClass * default_curve = W3DNEW LinearCurve1DClass;
+	LookupTableClass* default_table = NEW_REF(LookupTableClass, (2));
+	LinearCurve1DClass* default_curve = W3DNEW LinearCurve1DClass;
 
-	default_curve->Add_Key(0.5f,0.0f);
-	default_curve->Add_Key(0.5f,1.0f);
-	default_table->Init("DefaultTable",default_curve);
+	default_curve->Add_Key(0.5f, 0.0f);
+	default_curve->Add_Key(0.5f, 1.0f);
+	default_table->Init("DefaultTable", default_curve);
 	Add_Table(default_table);
 
 	delete default_curve;
@@ -110,33 +107,33 @@ void LookupTableMgrClass::Shutdown()
 
 void LookupTableMgrClass::Reset()
 {
-	while (Tables.Peek_Head() != nullptr) {
+	while (Tables.Peek_Head() != nullptr)
+	{
 		Tables.Release_Head();
 	}
 }
 
-bool LookupTableMgrClass::Add_Table(LookupTableClass * table)
+bool LookupTableMgrClass::Add_Table(LookupTableClass* table)
 {
 	return Tables.Add(table);
 }
 
-bool LookupTableMgrClass::Remove_Table(LookupTableClass * table)
+bool LookupTableMgrClass::Remove_Table(LookupTableClass* table)
 {
 	return Tables.Remove(table);
 }
 
-LookupTableClass * LookupTableMgrClass::Get_Table(const char * name)
+LookupTableClass* LookupTableMgrClass::Get_Table(const char* name)
 {
 	// find the table with this name...
 	RefMultiListIterator<LookupTableClass> it(&Tables);
-	for (it.First(); !it.Is_Done(); it.Next()) {
-		if (stricmp(it.Peek_Obj()->Get_Name(),name) == 0) {
-			return it.Get_Obj(); // add a reference for the user...
+	for (it.First(); !it.Is_Done(); it.Next())
+	{
+		if (stricmp(it.Peek_Obj()->Get_Name(), name) == 0)
+		{
+			return it.Get_Obj();    // add a reference for the user...
 		}
 	}
 
 	return nullptr;
 }
-
-
-

@@ -66,74 +66,65 @@ class BinkVideoStream : public VideoStream
 {
 	friend class BinkVideoPlayer;
 
-	protected:
+protected:
+	HBINK m_handle;    ///< Bink streaming handle;
+	Char* m_memFile;    ///< Pointer to memory resident file
 
-		HBINK					m_handle;														///< Bink streaming handle;
-		Char					*m_memFile;													///< Pointer to memory resident file
+	BinkVideoStream();    ///< only BinkVideoPlayer can create these
+	virtual ~BinkVideoStream() override;
 
-		BinkVideoStream();																///< only BinkVideoPlayer can create these
-		virtual ~BinkVideoStream() override;
+public:
+	virtual void update() override;    ///< Update bink stream
 
-	public:
-
-		virtual void update() override;											///< Update bink stream
-
-		virtual Bool	isFrameReady() override;								///< Is the frame ready to be displayed
-		virtual void	frameDecompress() override;						///< Render current frame in to buffer
-		virtual void	frameRender( VideoBuffer *buffer ) override; ///< Render current frame in to buffer
-		virtual void	frameNext() override;									///< Advance to next frame
-		virtual Int		frameIndex() override;									///< Returns zero based index of current frame
-		virtual Int		frameCount() override;									///< Returns the total number of frames in the stream
-		virtual void	frameGoto( Int index ) override;							///< Go to the spcified frame index
-		virtual Int		height() override;											///< Return the height of the video
-		virtual Int		width() override;											///< Return the width of the video
-
-
+	virtual Bool isFrameReady() override;    ///< Is the frame ready to be displayed
+	virtual void frameDecompress() override;    ///< Render current frame in to buffer
+	virtual void frameRender(VideoBuffer* buffer) override;    ///< Render current frame in to buffer
+	virtual void frameNext() override;    ///< Advance to next frame
+	virtual Int frameIndex() override;    ///< Returns zero based index of current frame
+	virtual Int frameCount() override;    ///< Returns the total number of frames in the stream
+	virtual void frameGoto(Int index) override;    ///< Go to the spcified frame index
+	virtual Int height() override;    ///< Return the height of the video
+	virtual Int width() override;    ///< Return the width of the video
 };
 
 //===============================
 // BinkVideoPlayer
 //===============================
 /**
-  *	Bink video playback code.
-	*/
+ *	Bink video playback code.
+ */
 //===============================
 
 class BinkVideoPlayer : public VideoPlayer
 {
-	public:
+public:
+	// subsytem requirements
+	virtual void init() override;    ///< Initialize video playback code
+	virtual void reset() override;    ///< Reset video playback
+	virtual void update() override;    ///< Services all audio tasks. Should be called frequently
 
-		// subsytem requirements
-		virtual void	init() override;														///< Initialize video playback code
-		virtual void	reset() override;													///< Reset video playback
-		virtual void	update() override;													///< Services all audio tasks. Should be called frequently
+	virtual void deinit() override;    ///< Close down player
 
-		virtual void	deinit() override;													///< Close down player
+	BinkVideoPlayer();
+	virtual ~BinkVideoPlayer() override;
 
+	// service
+	virtual void loseFocus() override;    ///< Should be called when application loses focus
+	virtual void regainFocus() override;    ///< Should be called when application regains focus
 
-		BinkVideoPlayer();
-		virtual ~BinkVideoPlayer() override;
+	virtual VideoStreamInterface* open(AsciiString movieTitle) override;    ///< Open video file for playback
+	virtual VideoStreamInterface* load(AsciiString movieTitle) override;    ///< Load video file in to memory for playback
 
-		// service
-		virtual void	loseFocus() override;											///< Should be called when application loses focus
-		virtual void	regainFocus() override;										///< Should be called when application regains focus
+	virtual void notifyVideoPlayerOfNewProvider(Bool nowHasValid) override;
+	virtual void setVolume(Real volume) override;
+	virtual void initializeBinkWithMiles();
 
-		virtual VideoStreamInterface*	open( AsciiString movieTitle ) override;	///< Open video file for playback
-		virtual VideoStreamInterface*	load( AsciiString movieTitle ) override;	///< Load video file in to memory for playback
+protected:
+	VideoStreamInterface* createStream(HBINK handle);
 
-		virtual void notifyVideoPlayerOfNewProvider( Bool nowHasValid ) override;
-		virtual void setVolume( Real volume ) override;
-		virtual void initializeBinkWithMiles();
-
-	protected:
-
-		VideoStreamInterface* createStream( HBINK handle );
-
-	private:
-
-		static Int	calculateMovieAudioVolume( Real volume );
+private:
+	static Int calculateMovieAudioVolume(Real volume);
 };
-
 
 //----------------------------------------------------------------------------
 //           Inlining

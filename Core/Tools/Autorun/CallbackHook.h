@@ -17,66 +17,66 @@
 */
 
 /******************************************************************************
-*
-* FILE
-*     $Archive: /Renegade Setup/Autorun/CallbackHook.h $
-*
-* DESCRIPTION
-*
-* PROGRAMMER
-*     Steven Clinard
-*     $Author: Maria_l $
-*
-* VERSION INFO
-*     $Modtime: 8/14/00 7:52p $
-*     $Revision: 2 $
-*
-******************************************************************************/
+ *
+ * FILE
+ *     $Archive: /Renegade Setup/Autorun/CallbackHook.h $
+ *
+ * DESCRIPTION
+ *
+ * PROGRAMMER
+ *     Steven Clinard
+ *     $Author: Maria_l $
+ *
+ * VERSION INFO
+ *     $Modtime: 8/14/00 7:52p $
+ *     $Revision: 2 $
+ *
+ ******************************************************************************/
 
 #pragma once
 
 class CallbackHook
+{
+public:
+	CallbackHook()
+	{}
+
+	virtual ~CallbackHook()
+	{}
+
+	virtual bool DoCallback() const
+	{ return false; }
+
+protected:
+	CallbackHook(const CallbackHook&);
+	const CallbackHook& operator=(const CallbackHook&);
+};
+
+template <class T>
+class Callback : public CallbackHook
+{
+public:
+	Callback(bool (*callback)(T), T userdata)
+	  : mCallback(callback)
+	  , mUserData(userdata)
 	{
-	public:
-		CallbackHook()
-			{}
+	}
 
-		virtual ~CallbackHook()
-			{}
-
-		virtual bool DoCallback() const
-			{return false;}
-
-	protected:
-		CallbackHook(const CallbackHook&);
-		const CallbackHook& operator=(const CallbackHook&);
-	};
-
-
-template<class T> class Callback : public CallbackHook
+	virtual ~Callback()
 	{
-	public:
-		Callback(bool (*callback)(T), T userdata)
-			: mCallback(callback),
-			  mUserData(userdata)
-			{
-			}
+	}
 
-		virtual ~Callback()
-			{
-			}
+	virtual bool DoCallback() const
+	{
+		if (mCallback != nullptr)
+		{
+			return mCallback(mUserData);
+		}
 
-		virtual bool DoCallback() const
-			{
-			if (mCallback != nullptr)
-				{
-				return mCallback(mUserData);
-				}
+		return false;
+	}
 
-			return false;
-			}
-
-	private:
-		bool (*mCallback)(T);
-		T mUserData;
-	};
+private:
+	bool (*mCallback)(T);
+	T mUserData;
+};

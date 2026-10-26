@@ -46,33 +46,36 @@ class HSVClass;
 */
 class HSVClass
 {
-	private:
-		static HSVClass const BlackColor;
+private:
+	static HSVClass const BlackColor;
 
-	public:
-		HSVClass() : Hue(0), Saturation(0), Value(0) {};
-		HSVClass(unsigned char hue, unsigned char saturation, unsigned char value) :
-				Hue(hue),
-				Saturation(saturation),
-				Value(value)
-			{};
-		operator RGBClass () const;
+public:
+	HSVClass()
+	  : Hue(0)
+	  , Saturation(0)
+	  , Value(0) {};
+	HSVClass(unsigned char hue, unsigned char saturation, unsigned char value)
+	  : Hue(hue)
+	  , Saturation(saturation)
+	  , Value(value) {};
+	operator RGBClass() const;
 
-		enum {
-			MAX_VALUE=255
-		};
+	enum
+	{
+		MAX_VALUE = 255
+	};
 
-		void Adjust(int ratio, HSVClass const & hsv);
-		int Difference(HSVClass const & hsv) const;
-		int Get_Hue() const {return(Hue);};
-		int Get_Saturation() const {return(Saturation);};
-		int Get_Value() const {return(Value);};
-		void Set_Hue(unsigned char value) {Hue = value;}
-		void Set_Saturation(unsigned char value) {Saturation = value;}
-		void Set_Value(unsigned char value) {Value = value;}
+	void Adjust(int ratio, HSVClass const& hsv);
+	int Difference(HSVClass const& hsv) const;
+	int Get_Hue() const { return (Hue); };
+	int Get_Saturation() const { return (Saturation); };
+	int Get_Value() const { return (Value); };
+	void Set_Hue(unsigned char value) { Hue = value; }
+	void Set_Saturation(unsigned char value) { Saturation = value; }
+	void Set_Value(unsigned char value) { Value = value; }
 
-	private:
-		unsigned char Hue;
-		unsigned char Saturation;
-		unsigned char Value;
+private:
+	unsigned char Hue;
+	unsigned char Saturation;
+	unsigned char Value;
 };

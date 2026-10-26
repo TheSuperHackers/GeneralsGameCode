@@ -24,24 +24,24 @@
 
 struct Region2D
 {
-	Coord2D lo, hi;						// bounds of 2D rectangular region
+	Coord2D lo, hi;    // bounds of 2D rectangular region
 
 	// Keep only the overlapping portion of both regions.
-	void intersectWith( const Region2D &other )
+	void intersectWith(const Region2D& other)
 	{
 		lo.updateMax(other.lo);
 		hi.updateMin(other.hi);
 	}
 
 	// Expand to include the other region.
-	void uniteWith( const Region2D &other )
+	void uniteWith(const Region2D& other)
 	{
 		lo.updateMin(other.lo);
 		hi.updateMax(other.hi);
 	}
 
 	// Expand to include the point.
-	void uniteWith( const Coord2D &point )
+	void uniteWith(const Coord2D& point)
 	{
 		lo.updateMin(point);
 		hi.updateMax(point);
@@ -61,19 +61,19 @@ struct Region2D
 	Real width() const { return hi.x - lo.x; }
 	Real height() const { return hi.y - lo.y; }
 
-	Bool contains( Real x, Real y ) const { return (lo.x <= x) && (x <= hi.x) && (lo.y <= y) && (y <= hi.y); }
-	Bool containsWithin( Real x, Real y ) const { return (lo.x < x) && (x < hi.x) && (lo.y < y) && (y < hi.y); }
+	Bool contains(Real x, Real y) const { return (lo.x <= x) && (x <= hi.x) && (lo.y <= y) && (y <= hi.y); }
+	Bool containsWithin(Real x, Real y) const { return (lo.x < x) && (x < hi.x) && (lo.y < y) && (y < hi.y); }
 
-	Bool contains( const Coord2D& point ) const { return contains(point.x, point.y); }
-	Bool containsWithin( const Coord2D& point ) const { return containsWithin(point.x, point.y); }
+	Bool contains(const Coord2D& point) const { return contains(point.x, point.y); }
+	Bool containsWithin(const Coord2D& point) const { return containsWithin(point.x, point.y); }
 
-	Bool contains( const Region2D& other ) const
+	Bool contains(const Region2D& other) const
 	{
 		return (lo.x <= other.lo.x) && (other.hi.x <= hi.x) &&
-					 (lo.y <= other.lo.y) && (other.hi.y <= hi.y);
+		       (lo.y <= other.lo.y) && (other.hi.y <= hi.y);
 	}
 
-	Bool containsWithin( const Region2D& other ) const
+	Bool containsWithin(const Region2D& other) const
 	{
 		return (lo.x < other.lo.x) && (other.hi.x < hi.x) &&
 		       (lo.y < other.lo.y) && (other.hi.y < hi.y);

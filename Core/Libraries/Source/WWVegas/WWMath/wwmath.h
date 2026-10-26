@@ -50,39 +50,39 @@
 /*
 ** Some global constants.
 */
-#define WWMATH_EPSILON		0.0001f
-#define WWMATH_EPSILON2		WWMATH_EPSILON * WWMATH_EPSILON
-#define WWMATH_HALF_PI		1.570796327f
-#define WWMATH_PI			3.141592654f
-#define WWMATH_TWO_PI		6.283185308f
-#define WWMATH_FLOAT_MAX	(FLT_MAX)
-#define WWMATH_FLOAT_MIN	(FLT_MIN)
-#define WWMATH_SQRT2		1.414213562f
-#define WWMATH_SQRT3		1.732050808f
-#define WWMATH_OOSQRT2		0.707106781f
-#define WWMATH_OOSQRT3		0.577350269f
+#define WWMATH_EPSILON 0.0001f
+#define WWMATH_EPSILON2 WWMATH_EPSILON* WWMATH_EPSILON
+#define WWMATH_HALF_PI 1.570796327f
+#define WWMATH_PI 3.141592654f
+#define WWMATH_TWO_PI 6.283185308f
+#define WWMATH_FLOAT_MAX (FLT_MAX)
+#define WWMATH_FLOAT_MIN (FLT_MIN)
+#define WWMATH_SQRT2 1.414213562f
+#define WWMATH_SQRT3 1.732050808f
+#define WWMATH_OOSQRT2 0.707106781f
+#define WWMATH_OOSQRT3 0.577350269f
 
 /*
 **	Macros to convert between degrees and radians
 */
 #ifndef RAD_TO_DEG
-#define RAD_TO_DEG(x)	(((double)x)*180.0/WWMATH_PI)
+#define RAD_TO_DEG(x) (((double)x) * 180.0 / WWMATH_PI)
 #endif
 
 #ifndef DEG_TO_RAD
-#define DEG_TO_RAD(x)	(((double)x)*WWMATH_PI/180.0)
+#define DEG_TO_RAD(x) (((double)x) * WWMATH_PI / 180.0)
 #endif
 
 #ifndef RAD_TO_DEGF
-#define RAD_TO_DEGF(x)	(((float)x)*180.0f/WWMATH_PI)
+#define RAD_TO_DEGF(x) (((float)x) * 180.0f / WWMATH_PI)
 #endif
 
 #ifndef DEG_TO_RADF
-#define DEG_TO_RADF(x)	(((float)x)*WWMATH_PI/180.0f)
+#define DEG_TO_RADF(x) (((float)x) * WWMATH_PI / 180.0f)
 #endif
 
-const int ARC_TABLE_SIZE=1024;
-const int SIN_TABLE_SIZE=1024;
+const int ARC_TABLE_SIZE = 1024;
+const int SIN_TABLE_SIZE = 1024;
 extern float _FastAcosTable[ARC_TABLE_SIZE];
 extern float _FastAsinTable[ARC_TABLE_SIZE];
 extern float _FastSinTable[SIN_TABLE_SIZE];
@@ -97,128 +97,126 @@ extern float _FastInvSinTable[SIN_TABLE_SIZE];
 class WWMath
 {
 public:
+	// Initialization and Shutdown.  Other math sub-systems which require initialization and
+	// shutdown processing will be handled in these functions
+	static void Init();
+	static void Shutdown();
 
-// Initialization and Shutdown.  Other math sub-systems which require initialization and
-// shutdown processing will be handled in these functions
-static void				Init();
-static void				Shutdown();
+	// The float overloads of Sqrt, Acos, Asin, Atan, Atan2, Cos, Sin, Tan and Fabs keep a float argument
+	// from being promoted to the double overload. With deterministic math they call the single-precision
+	// GameMath functions (gm_*f), which are guaranteed to be cross-platform bit-identical, whereas the
+	// double-precision ones (gm_*) can diverge by 1 ULP due to FPU precision differences (x87 vs NEON).
+	static WWINLINE double Pow(double x, double y);
+	static WWINLINE float Powf(float x, float y);
+	static WWINLINE float Sqrt(float x);
+	static WWINLINE double Sqrt(double x);
+	static WWINLINE float Sqrtf(float x);
+	static WWINLINE float Inv_Sqrt_Legacy(float a);
+	static WWINLINE double Inv_Sqrt(double x);
+	static WWINLINE float Inv_Sqrtf(float x);
 
-// The float overloads of Sqrt, Acos, Asin, Atan, Atan2, Cos, Sin, Tan and Fabs keep a float argument
-// from being promoted to the double overload. With deterministic math they call the single-precision
-// GameMath functions (gm_*f), which are guaranteed to be cross-platform bit-identical, whereas the
-// double-precision ones (gm_*) can diverge by 1 ULP due to FPU precision differences (x87 vs NEON).
-static WWINLINE double Pow(double x, double y);
-static WWINLINE float  Powf(float x, float y);
-static WWINLINE float  Sqrt(float x);
-static WWINLINE double Sqrt(double x);
-static WWINLINE float  Sqrtf(float x);
-static WWINLINE float  Inv_Sqrt_Legacy(float a);
-static WWINLINE double Inv_Sqrt(double x);
-static WWINLINE float  Inv_Sqrtf(float x);
+	static WWINLINE float Fast_Acos(float val);
+	static WWINLINE float Fast_Asin(float val);
+	static WWINLINE float Acos(float x);
+	static WWINLINE double Acos(double x);
+	static WWINLINE float Acosf(float x);
+	static WWINLINE float Asin(float x);
+	static WWINLINE double Asin(double x);
+	static WWINLINE float Asinf(float x);
+	static WWINLINE float Atan(float x);
+	static WWINLINE double Atan(double x);
+	static WWINLINE float Atanf(float x);
+	static WWINLINE float Atan2(float x, float y);
+	static WWINLINE double Atan2(double x, double y);
+	static WWINLINE float Atan2f(float x, float y);
 
-static WWINLINE float  Fast_Acos(float val);
-static WWINLINE float  Fast_Asin(float val);
-static WWINLINE float  Acos(float x);
-static WWINLINE double Acos(double x);
-static WWINLINE float  Acosf(float x);
-static WWINLINE float  Asin(float x);
-static WWINLINE double Asin(double x);
-static WWINLINE float  Asinf(float x);
-static WWINLINE float  Atan(float x);
-static WWINLINE double Atan(double x);
-static WWINLINE float  Atanf(float x);
-static WWINLINE float  Atan2(float x, float y);
-static WWINLINE double Atan2(double x, double y);
-static WWINLINE float  Atan2f(float x, float y);
+	static WWINLINE float Fast_Cos(float val);
+	static WWINLINE float Fast_Inv_Cos(float val);
+	static WWINLINE float Fast_Sin(float val);
+	static WWINLINE float Fast_Inv_Sin(float val);
+	static WWINLINE float Cos(float val);
+	static WWINLINE double Cos(double val);
+	static WWINLINE float Cosf(float val);
+	static WWINLINE float Cosf_Legacy(float val);
+	static WWINLINE float Sin(float val);
+	static WWINLINE double Sin(double val);
+	static WWINLINE float Sinf(float val);
+	static WWINLINE float Sinf_Legacy(float val);
+	static WWINLINE float Tan(float x);
+	static WWINLINE double Tan(double x);
+	static WWINLINE float Tanf(float x);
 
-static WWINLINE float  Fast_Cos(float val);
-static WWINLINE float  Fast_Inv_Cos(float val);
-static WWINLINE float  Fast_Sin(float val);
-static WWINLINE float  Fast_Inv_Sin(float val);
-static WWINLINE float  Cos(float val);
-static WWINLINE double Cos(double val);
-static WWINLINE float  Cosf(float val);
-static WWINLINE float  Cosf_Legacy(float val);
-static WWINLINE float  Sin(float val);
-static WWINLINE double Sin(double val);
-static WWINLINE float  Sinf(float val);
-static WWINLINE float  Sinf_Legacy(float val);
-static WWINLINE float  Tan(float x);
-static WWINLINE double Tan(double x);
-static WWINLINE float  Tanf(float x);
+	static WWINLINE double Cosh(double x);
+	static WWINLINE float Coshf(float x);
+	static WWINLINE double Sinh(double x);
+	static WWINLINE float Sinhf(float x);
+	static WWINLINE double Tanh(double x);
+	static WWINLINE float Tanhf(float x);
 
-static WWINLINE double Cosh(double x);
-static WWINLINE float  Coshf(float x);
-static WWINLINE double Sinh(double x);
-static WWINLINE float  Sinhf(float x);
-static WWINLINE double Tanh(double x);
-static WWINLINE float  Tanhf(float x);
+	static WWINLINE float Fabs(float x);
+	static WWINLINE double Fabs(double x);
+	static WWINLINE float Fabsf(float x);
+	static WWINLINE float Fabsf_Legacy(float val);
 
-static WWINLINE float  Fabs(float x);
-static WWINLINE double Fabs(double x);
-static WWINLINE float  Fabsf(float x);
-static WWINLINE float  Fabsf_Legacy(float val);
+	static WWINLINE double Ceil(double x);
+	static WWINLINE float Ceilf(float x);
+	static WWINLINE double Floor(double x);
+	static WWINLINE float Floorf(float x);
+	static WWINLINE double Round(double x) { return Floor(x + 0.5); }
+	static WWINLINE float Roundf(float x) { return Floorf(x + 0.5f); }
 
-static WWINLINE double Ceil(double x);
-static WWINLINE float  Ceilf(float x);
-static WWINLINE double Floor(double x);
-static WWINLINE float  Floorf(float x);
-static WWINLINE double Round(double x) { return Floor(x + 0.5); }
-static WWINLINE float  Roundf(float x) { return Floorf(x + 0.5f); }
+	static WWINLINE double Exp(double x);
+	static WWINLINE float Expf(float x);
+	static WWINLINE double Log10(double x);
+	static WWINLINE float Log10f(float x);
+	static WWINLINE double Log(double x);
+	static WWINLINE float Logf(float x);
 
-static WWINLINE double Exp(double x);
-static WWINLINE float  Expf(float x);
-static WWINLINE double Log10(double x);
-static WWINLINE float  Log10f(float x);
-static WWINLINE double Log(double x);
-static WWINLINE float  Logf(float x);
+	static WWINLINE bool Fast_Is_Float_Positive(const float& val);
+	static WWINLINE bool Is_Power_Of_2(const unsigned int val);
 
-static WWINLINE bool	Fast_Is_Float_Positive(const float & val);
-static WWINLINE bool	Is_Power_Of_2(const unsigned int val);
+	static float Random_Float();
 
-static float			Random_Float();
+	static WWINLINE float Random_Float(float min, float max);
+	static WWINLINE float Clamp(float val, float min = 0.0f, float max = 1.0f);
+	static WWINLINE double Clamp(double val, double min = 0.0f, double max = 1.0f);
+	static WWINLINE int Clamp_Int(int val, int min_val, int max_val);
+	static WWINLINE float Wrap(float val, float min = 0.0f, float max = 1.0f);
+	static WWINLINE double Wrap(double val, double min = 0.0f, double max = 1.0f);
+	static WWINLINE float Min(float a, float b);
+	static WWINLINE float Max(float a, float b);
 
-static WWINLINE float	Random_Float(float min,float max);
-static WWINLINE float	Clamp(float val, float min = 0.0f, float max = 1.0f);
-static WWINLINE double	Clamp(double val, double min = 0.0f, double max = 1.0f);
-static WWINLINE int		Clamp_Int(int val, int min_val, int max_val);
-static WWINLINE float	Wrap(float val, float min = 0.0f, float max = 1.0f);
-static WWINLINE double	Wrap(double val, double min = 0.0f, double max = 1.0f);
-static WWINLINE float	Min(float a, float b);
-static WWINLINE float	Max(float a, float b);
+	// Linearly interpolates between a and b using parameter t in [0, 1].
+	// t = 0 returns a, t = 1 returns b, values in between return a proportionate blend.
+	static WWINLINE float Lerp(float a, float b, float t);
+	static WWINLINE double Lerp(double a, double b, float t);
 
-// Linearly interpolates between a and b using parameter t in [0, 1].
-// t = 0 returns a, t = 1 returns b, values in between return a proportionate blend.
-static WWINLINE float	Lerp(float a, float b, float t);
-static WWINLINE double	Lerp(double a, double b, float t);
+	// Computes the interpolation parameter t such that v = Lerp(a, b, t).
+	// Returns where v lies between a and b as a ratio, typically in [0, 1].
+	static WWINLINE float Inverse_Lerp(float a, float b, float v);
+	static WWINLINE double Inverse_Lerp(double a, double b, float v);
 
-// Computes the interpolation parameter t such that v = Lerp(a, b, t).
-// Returns where v lies between a and b as a ratio, typically in [0, 1].
-static WWINLINE float	Inverse_Lerp(float a, float b, float v);
-static WWINLINE double	Inverse_Lerp(double a, double b, float v);
+	static WWINLINE bool Is_Valid_Float(float x);
+	static WWINLINE bool Is_Valid_Double(double x);
 
-static WWINLINE bool	Is_Valid_Float(float x);
-static WWINLINE bool	Is_Valid_Double(double x);
+	static WWINLINE int Float_To_Int_Chop(float f);
+	static WWINLINE int Float_To_Int_Floor(float f);
+	static WWINLINE long Float_To_Long(float f);
+	static WWINLINE long Float_To_Long(double f);
+	static WWINLINE int Float_As_Int(const float f) { return std::bit_cast<int>(f); }
+	static WWINLINE unsigned char Unit_Float_To_Byte(float f) { return (unsigned char)(f * 255.0f); }
+	static WWINLINE float Byte_To_Unit_Float(unsigned char byte) { return ((float)byte) / 255.0f; }
 
-static WWINLINE int		Float_To_Int_Chop(float f);
-static WWINLINE int		Float_To_Int_Floor(float f);
-static WWINLINE long	Float_To_Long(float f);
-static WWINLINE long	Float_To_Long(double f);
-static WWINLINE int		Float_As_Int(const float f) { return std::bit_cast<int>(f); }
-static WWINLINE unsigned char	Unit_Float_To_Byte(float f) { return (unsigned char)(f*255.0f); }
-static WWINLINE float	Byte_To_Unit_Float(unsigned char byte) { return ((float)byte) / 255.0f; }
+	static WWINLINE float Normalize_Angle(float angle);    // Normalizes the angle to the range -PI..PI
 
-static WWINLINE float	Normalize_Angle(float angle); // Normalizes the angle to the range -PI..PI
-
-static WWINLINE float	Div_Safe(float dividend, float divisor, float epsilon = WWMATH_EPSILON);
-static WWINLINE double	Div_Safe(double dividend, double divisor, double epsilon = WWMATH_EPSILON);
-
+	static WWINLINE float Div_Safe(float dividend, float divisor, float epsilon = WWMATH_EPSILON);
+	static WWINLINE double Div_Safe(double dividend, double divisor, double epsilon = WWMATH_EPSILON);
 };
 
 WWINLINE double WWMath::Pow(double x, double y)
 {
 #if USE_DETERMINISTIC_MATH
-	return (double)gm_powf((float)x, (float)y); // gm_pow diverges on x87, gm_powf is bit-identical
+	return (double)gm_powf((float)x, (float)y);    // gm_pow diverges on x87, gm_powf is bit-identical
 #else
 	return pow(x, y);
 #endif
@@ -333,18 +331,19 @@ WWINLINE float WWMath::Inv_Sqrtf(float x)
 WWINLINE float WWMath::Fast_Acos(float val)
 {
 	// Near -1 and +1, the table becomes too inaccurate
-	if (Fabsf_Legacy(val) > 0.975f) {
+	if (Fabsf_Legacy(val) > 0.975f)
+	{
 		return Acos(val);
 	}
 
-	val*=float(ARC_TABLE_SIZE/2);
+	val *= float(ARC_TABLE_SIZE / 2);
 
-	int idx0=Float_To_Int_Floor(val);
-	int idx1=idx0+1;
-	float frac=val-(float)idx0;
+	int idx0 = Float_To_Int_Floor(val);
+	int idx1 = idx0 + 1;
+	float frac = val - (float)idx0;
 
-	idx0+=ARC_TABLE_SIZE/2;
-	idx1+=ARC_TABLE_SIZE/2;
+	idx0 += ARC_TABLE_SIZE / 2;
+	idx1 += ARC_TABLE_SIZE / 2;
 
 	// we dont even get close to the edge of the table...
 	assert((idx0 >= 0) && (idx0 < ARC_TABLE_SIZE));
@@ -357,18 +356,19 @@ WWINLINE float WWMath::Fast_Acos(float val)
 WWINLINE float WWMath::Fast_Asin(float val)
 {
 	// Near -1 and +1, the table becomes too inaccurate
-	if (Fabsf_Legacy(val) > 0.975f) {
+	if (Fabsf_Legacy(val) > 0.975f)
+	{
 		return Asin(val);
 	}
 
-	val*=float(ARC_TABLE_SIZE/2);
+	val *= float(ARC_TABLE_SIZE / 2);
 
-	int idx0=Float_To_Int_Floor(val);
-	int idx1=idx0+1;
-	float frac=val-(float)idx0;
+	int idx0 = Float_To_Int_Floor(val);
+	int idx1 = idx0 + 1;
+	float frac = val - (float)idx0;
 
-	idx0+=ARC_TABLE_SIZE/2;
-	idx1+=ARC_TABLE_SIZE/2;
+	idx0 += ARC_TABLE_SIZE / 2;
+	idx1 += ARC_TABLE_SIZE / 2;
 
 	// we dont even get close to the edge of the table...
 	assert((idx0 >= 0) && (idx0 < ARC_TABLE_SIZE));
@@ -444,7 +444,7 @@ WWINLINE float WWMath::Atan(float x)
 WWINLINE double WWMath::Atan(double x)
 {
 #if USE_DETERMINISTIC_MATH
-	return (double) gm_atanf((float)x); // gm_atan diverges on x87, gm_atanf is bit-identical
+	return (double)gm_atanf((float)x);    // gm_atan diverges on x87, gm_atanf is bit-identical
 #else
 	return atan(x);
 #endif
@@ -471,7 +471,7 @@ WWINLINE float WWMath::Atan2(float x, float y)
 WWINLINE double WWMath::Atan2(double x, double y)
 {
 #if USE_DETERMINISTIC_MATH
-	return (double) gm_atan2f((float)x, (float)y); // gm_atan2 diverges on x87, gm_atan2f is bit-identical
+	return (double)gm_atan2f((float)x, (float)y);    // gm_atan2 diverges on x87, gm_atan2f is bit-identical
 #else
 	return atan2(x, y);
 #endif
@@ -488,22 +488,22 @@ WWINLINE float WWMath::Atan2f(float x, float y)
 
 WWINLINE float WWMath::Fast_Cos(float val)
 {
-	val+=(WWMATH_PI * 0.5f);
-	val*=float(SIN_TABLE_SIZE) / (2.0f * WWMATH_PI);
+	val += (WWMATH_PI * 0.5f);
+	val *= float(SIN_TABLE_SIZE) / (2.0f * WWMATH_PI);
 
-	int idx0=Float_To_Int_Floor(val);
-	int idx1=idx0+1;
-	float frac=val-(float)idx0;
+	int idx0 = Float_To_Int_Floor(val);
+	int idx1 = idx0 + 1;
+	float frac = val - (float)idx0;
 
-	idx0 = ((unsigned)idx0) & (SIN_TABLE_SIZE-1);
-	idx1 = ((unsigned)idx1) & (SIN_TABLE_SIZE-1);
+	idx0 = ((unsigned)idx0) & (SIN_TABLE_SIZE - 1);
+	idx1 = ((unsigned)idx1) & (SIN_TABLE_SIZE - 1);
 
 	return (1.0f - frac) * _FastSinTable[idx0] + frac * _FastSinTable[idx1];
 }
 
 WWINLINE float WWMath::Fast_Inv_Cos(float val)
 {
-#if 0 // TODO: more testing, not reliable!
+#if 0    // TODO: more testing, not reliable!
 	float index = val + (WWMATH_PI * 0.5f);
 	index *= float(SIN_TABLE_SIZE) / (2.0f * WWMATH_PI);
 
@@ -527,21 +527,21 @@ WWINLINE float WWMath::Fast_Inv_Cos(float val)
 
 WWINLINE float WWMath::Fast_Sin(float val)
 {
-	val*=float(SIN_TABLE_SIZE) / (2.0f * WWMATH_PI);
+	val *= float(SIN_TABLE_SIZE) / (2.0f * WWMATH_PI);
 
-	int idx0=Float_To_Int_Floor(val);
-	int idx1=idx0+1;
-	float frac=val-(float)idx0;
+	int idx0 = Float_To_Int_Floor(val);
+	int idx1 = idx0 + 1;
+	float frac = val - (float)idx0;
 
-	idx0 = ((unsigned)idx0) & (SIN_TABLE_SIZE-1);
-	idx1 = ((unsigned)idx1) & (SIN_TABLE_SIZE-1);
+	idx0 = ((unsigned)idx0) & (SIN_TABLE_SIZE - 1);
+	idx1 = ((unsigned)idx1) & (SIN_TABLE_SIZE - 1);
 
 	return (1.0f - frac) * _FastSinTable[idx0] + frac * _FastSinTable[idx1];
 }
 
 WWINLINE float WWMath::Fast_Inv_Sin(float val)
 {
-#if 0 // TODO: more testing, not reliable!
+#if 0    // TODO: more testing, not reliable!
 	float index = val * float(SIN_TABLE_SIZE) / (2.0f * WWMATH_PI);
 
 	int idx0=Float_To_Int_Floor(index);
@@ -769,8 +769,8 @@ WWINLINE float WWMath::Fabsf_Legacy(float val)
 	return gm_fabsf(val);
 
 #elif defined(_MSC_VER) && defined(_M_IX86)
-	int value=std::bit_cast<int>(val);
-	value&=0x7fffffff;
+	int value = std::bit_cast<int>(val);
+	value &= 0x7fffffff;
 	return std::bit_cast<float>(value);
 
 #else
@@ -868,52 +868,78 @@ WWINLINE float WWMath::Logf(float x)
 #endif
 }
 
-WWINLINE bool WWMath::Fast_Is_Float_Positive(const float & val)
+WWINLINE bool WWMath::Fast_Is_Float_Positive(const float& val)
 {
 	return !(std::bit_cast<int>(val) & 0x80000000);
 }
 
 WWINLINE bool WWMath::Is_Power_Of_2(const unsigned int val)
 {
-	return !((val)&val-1);
+	return !((val)&val - 1);
 }
 
-WWINLINE float WWMath::Random_Float(float min,float max)
+WWINLINE float WWMath::Random_Float(float min, float max)
 {
-	return Random_Float() * (max-min) + min;
+	return Random_Float() * (max - min) + min;
 }
 
 WWINLINE float WWMath::Clamp(float val, float min /*= 0.0f*/, float max /*= 1.0f*/)
 {
-	if(val < min) return min;
-	if(val > max) return max;
+	if (val < min)
+	{
+		return min;
+	}
+	if (val > max)
+	{
+		return max;
+	}
 	return val;
 }
 
 WWINLINE double WWMath::Clamp(double val, double min /*= 0.0f*/, double max /*= 1.0f*/)
 {
-	if(val < min) return min;
-	if(val > max) return max;
+	if (val < min)
+	{
+		return min;
+	}
+	if (val > max)
+	{
+		return max;
+	}
 	return val;
 }
 
 WWINLINE int WWMath::Clamp_Int(int val, int min_val, int max_val)
 {
-	if(val < min_val) return min_val;
-	if(val > max_val) return max_val;
+	if (val < min_val)
+	{
+		return min_val;
+	}
+	if (val > max_val)
+	{
+		return max_val;
+	}
 	return val;
 }
 
 WWINLINE float WWMath::Wrap(float val, float min /*= 0.0f*/, float max /*= 1.0f*/)
 {
 	// Implemented as an if rather than a while, to long loops
-	if ( val >= max )	val -= (max-min);
-	if ( val < min )	val += (max-min);
+	if (val >= max)
+	{
+		val -= (max - min);
+	}
+	if (val < min)
+	{
+		val += (max - min);
+	}
 
-	if ( val < min ) {
+	if (val < min)
+	{
 		val = min;
 	}
-	if ( val > max ) {
+	if (val > max)
+	{
 		val = max;
 	}
 	return val;
@@ -922,12 +948,20 @@ WWINLINE float WWMath::Wrap(float val, float min /*= 0.0f*/, float max /*= 1.0f*
 WWINLINE double WWMath::Wrap(double val, double min /*= 0.0f*/, double max /*= 1.0f*/)
 {
 	// Implemented as an if rather than a while, to long loops
-	if ( val >= max )	val -= (max-min);
-	if ( val < min )	val += (max-min);
-	if ( val < min ) {
+	if (val >= max)
+	{
+		val -= (max - min);
+	}
+	if (val < min)
+	{
+		val += (max - min);
+	}
+	if (val < min)
+	{
 		val = min;
 	}
-	if ( val > max ) {
+	if (val > max)
+	{
 		val = max;
 	}
 	return val;
@@ -935,24 +969,30 @@ WWINLINE double WWMath::Wrap(double val, double min /*= 0.0f*/, double max /*= 1
 
 WWINLINE float WWMath::Min(float a, float b)
 {
-	if (a<b) return a;
+	if (a < b)
+	{
+		return a;
+	}
 	return b;
 }
 
 WWINLINE float WWMath::Max(float a, float b)
 {
-	if (a>b) return a;
+	if (a > b)
+	{
+		return a;
+	}
 	return b;
 }
 
 WWINLINE float WWMath::Lerp(float a, float b, float t)
 {
-	return (a + (b - a)*t);
+	return (a + (b - a) * t);
 }
 
 WWINLINE double WWMath::Lerp(double a, double b, float t)
 {
-	return (a + (b - a)*t);
+	return (a + (b - a) * t);
 }
 
 WWINLINE float WWMath::Inverse_Lerp(float a, float b, float v)
@@ -967,11 +1007,12 @@ WWINLINE double WWMath::Inverse_Lerp(double a, double b, float v)
 
 WWINLINE bool WWMath::Is_Valid_Float(float x)
 {
-	unsigned long * plong = (unsigned long *)(&x);
-	unsigned long exponent = ((*plong) & 0x7F800000) >> (32-9);
+	unsigned long* plong = (unsigned long*)(&x);
+	unsigned long exponent = ((*plong) & 0x7F800000) >> (32 - 9);
 
 	// if exponent is 0xFF, this is a NAN
-	if (exponent == 0xFF) {
+	if (exponent == 0xFF)
+	{
 		return false;
 	}
 	return true;
@@ -979,11 +1020,12 @@ WWINLINE bool WWMath::Is_Valid_Float(float x)
 
 WWINLINE bool WWMath::Is_Valid_Double(double x)
 {
-	unsigned long * plong = (unsigned long *)(&x) + 1;
-	unsigned long exponent = ((*plong) & 0x7FF00000) >> (32-12);
+	unsigned long* plong = (unsigned long*)(&x) + 1;
+	unsigned long exponent = ((*plong) & 0x7FF00000) >> (32 - 12);
 
 	// if exponent is 0x7FF, this is a NAN
-	if (exponent == 0x7FF) {
+	if (exponent == 0x7FF)
+	{
 		return false;
 	}
 	return true;
@@ -1027,27 +1069,27 @@ WWINLINE long WWMath::Float_To_Long(double f)
 
 WWINLINE int WWMath::Float_To_Int_Chop(float f)
 {
-    int a	= std::bit_cast<int>(f);				// take bit pattern of float into a register
-    int sign	= (a>>31);												// sign = 0xFFFFFFFF if original value is negative, 0 if positive
-    int mantissa	= (a&((1<<23)-1))|(1<<23);						// extract mantissa and add the hidden bit
-    int exponent	= ((a&0x7fffffff)>>23)-127;					// extract the exponent
-    int r	= ((unsigned int)(mantissa)<<8)>>(31-exponent);	// ((1<<exponent)*mantissa)>>24 -- (we know that mantissa > (1<<24))
-    return ((r ^ (sign)) - sign ) &~ (exponent>>31);			// add original sign. If exponent was negative, make return value 0.
+	int a = std::bit_cast<int>(f);    // take bit pattern of float into a register
+	int sign = (a >> 31);    // sign = 0xFFFFFFFF if original value is negative, 0 if positive
+	int mantissa = (a & ((1 << 23) - 1)) | (1 << 23);    // extract mantissa and add the hidden bit
+	int exponent = ((a & 0x7fffffff) >> 23) - 127;    // extract the exponent
+	int r = ((unsigned int)(mantissa) << 8) >> (31 - exponent);    // ((1<<exponent)*mantissa)>>24 -- (we know that mantissa > (1<<24))
+	return ((r ^ (sign)) - sign) & ~(exponent >> 31);    // add original sign. If exponent was negative, make return value 0.
 }
 
 WWINLINE int WWMath::Float_To_Int_Floor(float f)
 {
-	int a			= std::bit_cast<int>(f);			// take bit pattern of float into a register
-	int sign		= (a>>31);												// sign = 0xFFFFFFFF if original value is negative, 0 if positive
-	a&=0x7fffffff;															// we don't need the sign any more
+	int a = std::bit_cast<int>(f);    // take bit pattern of float into a register
+	int sign = (a >> 31);    // sign = 0xFFFFFFFF if original value is negative, 0 if positive
+	a &= 0x7fffffff;    // we don't need the sign any more
 
-	int exponent	= (a>>23)-127;										// extract the exponent
-	int expsign	= ~(exponent>>31);									// 0xFFFFFFFF if exponent is positive, 0 otherwise
-	int imask		= ( (1<<(31-(exponent))))-1;					// mask for true integer values
-	int mantissa	= (a&((1<<23)-1));								// extract mantissa (without the hidden bit)
-	int r			= ((unsigned int)(mantissa|(1<<23))<<8)>>(31-exponent);	// ((1<<exponent)*(mantissa|hidden bit))>>24 -- (we know that mantissa > (1<<24))
+	int exponent = (a >> 23) - 127;    // extract the exponent
+	int expsign = ~(exponent >> 31);    // 0xFFFFFFFF if exponent is positive, 0 otherwise
+	int imask = ((1 << (31 - (exponent)))) - 1;    // mask for true integer values
+	int mantissa = (a & ((1 << 23) - 1));    // extract mantissa (without the hidden bit)
+	int r = ((unsigned int)(mantissa | (1 << 23)) << 8) >> (31 - exponent);    // ((1<<exponent)*(mantissa|hidden bit))>>24 -- (we know that mantissa > (1<<24))
 
-	r = ((r & expsign) ^ (sign)) + ((!((mantissa<<8)&imask)&(expsign^((a-1)>>31)))&sign);	// if (fabs(value)<1.0) value = 0; copy sign; if (value < 0 && value==(int)(value)) value++;
+	r = ((r & expsign) ^ (sign)) + ((!((mantissa << 8) & imask) & (expsign ^ ((a - 1) >> 31))) & sign);    // if (fabs(value)<1.0) value = 0; copy sign; if (value < 0 && value==(int)(value)) value++;
 	return r;
 }
 

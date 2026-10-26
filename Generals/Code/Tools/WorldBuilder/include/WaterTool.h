@@ -29,7 +29,7 @@ class PolygonTrigger;
 class MovePolygonUndoable;
 /*************************************************************************/
 /**                             WaterTool
-	 Does the add/select water polygon operation.
+   Does the add/select water polygon operation.
 ***************************************************************************/
 ///  Select tile tool.
 class WaterTool : public PolygonTool
@@ -39,23 +39,23 @@ public:
 	virtual ~WaterTool() override;
 
 protected:
-	static Bool		m_water_isActive;
+	static Bool m_water_isActive;
 
-	Real	m_currentZ;
+	Real m_currentZ;
 
 public:
-	static Bool isActive() {return m_water_isActive;};
+	static Bool isActive() { return m_water_isActive; };
 
 public:
 	/// Perform tool on mouse down.
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
 	virtual void setCursor() override;
-	virtual void activate() override; ///< Become the current tool.
-	virtual void deactivate() override; ///< Become not the current tool.
+	virtual void activate() override;    ///< Become the current tool.
+	virtual void deactivate() override;    ///< Become not the current tool.
 
 protected:
-	void fillTheArea(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	PolygonTrigger *adjustSpacing(PolygonTrigger *trigger, Real spacing);
+	void fillTheArea(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc);
+	PolygonTrigger* adjustSpacing(PolygonTrigger* trigger, Real spacing);
 };

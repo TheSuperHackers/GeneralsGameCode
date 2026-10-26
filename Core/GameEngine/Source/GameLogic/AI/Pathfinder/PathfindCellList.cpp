@@ -23,7 +23,9 @@
 Bool PathfindCellList::canReverseSort(PathfindCell& currentCell) const
 {
 	if (m_head && m_tail)
+	{
 		return m_head->getTotalCostDifference(currentCell) > m_tail->getTotalCostDifference(currentCell);
+	}
 
 	return false;
 }

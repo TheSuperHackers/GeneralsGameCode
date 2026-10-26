@@ -34,19 +34,22 @@ public:
 	virtual ~HandScrollTool() override;
 
 protected:
-	enum {HYSTERESIS = 3};
-	CPoint	m_prevPt2d;
-	CPoint	m_downPt2d;
-	Bool		m_scrolling;
-	UINT		m_mouseDownTime;		// if m_trackingMode != TRACK_NONE, tickcount when mouse went down
+	enum
+	{
+		HYSTERESIS = 3
+	};
+	CPoint m_prevPt2d;
+	CPoint m_downPt2d;
+	Bool m_scrolling;
+	UINT m_mouseDownTime;    // if m_trackingMode != TRACK_NONE, tickcount when mouse went down
 
 public:
 	/// Start scrolling.
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
 	/// Scroll.
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
 	/// End scroll.
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void activate() override; ///< Become the current tool.
-	virtual Bool followsTerrain() override {return false;};
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void activate() override;    ///< Become the current tool.
+	virtual Bool followsTerrain() override { return false; };
 };

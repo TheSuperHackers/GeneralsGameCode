@@ -37,21 +37,20 @@ class BuildListInfo;
 class Undoable : public RefCountClass
 {
 protected:
-	Undoable *mNext;
+	Undoable* mNext;
 
 public:
-		Undoable();
+	Undoable();
 
-		virtual ~Undoable() override;
+	virtual ~Undoable() override;
 
 public:
-	virtual void Do()=0; ///< pure virtual.
-	virtual void Undo()=0;///< pure virtual.
+	virtual void Do() = 0;    ///< pure virtual.
+	virtual void Undo() = 0;    ///< pure virtual.
 	virtual void Redo();
 
-	void LinkNext(Undoable *pNext);
-	Undoable *GetNext() {return mNext;};
-
+	void LinkNext(Undoable* pNext);
+	Undoable* GetNext() { return mNext; };
 };
 
 class CWorldBuilderDoc;
@@ -66,22 +65,20 @@ entire height map. */
 class WBDocUndoable : public Undoable
 {
 protected:
-	CWorldBuilderDoc			*mPDoc;								///< Not ref counted.  This undoable should be in a list attached to the doc anyway.
-	WorldHeightMapEdit		*mPNewHeightMapData;  ///< ref counted.
-	WorldHeightMapEdit		*mPOldHeightMapData;  ///< ref counted.
-	Bool									m_offsetObjects;			///< If true, apply m_objOffset.
-	Coord3D								m_objOffset;					///< Offset to adjust all objects.
-
+	CWorldBuilderDoc* mPDoc;    ///< Not ref counted.  This undoable should be in a list attached to the doc anyway.
+	WorldHeightMapEdit* mPNewHeightMapData;    ///< ref counted.
+	WorldHeightMapEdit* mPOldHeightMapData;    ///< ref counted.
+	Bool m_offsetObjects;    ///< If true, apply m_objOffset.
+	Coord3D m_objOffset;    ///< Offset to adjust all objects.
 
 public:
-		WBDocUndoable(CWorldBuilderDoc *pDoc, WorldHeightMapEdit *pNewHtMap, Coord3D *pObjOffset = nullptr);
+	WBDocUndoable(CWorldBuilderDoc* pDoc, WorldHeightMapEdit* pNewHtMap, Coord3D* pObjOffset = nullptr);
 
-		// destructor.
-		virtual ~WBDocUndoable() override;
-		virtual void Do() override;
-		virtual void Undo() override;
-		virtual void Redo() override;
-
+	// destructor.
+	virtual ~WBDocUndoable() override;
+	virtual void Do() override;
+	virtual void Undo() override;
+	virtual void Redo() override;
 };
 
 ///                            AddObjectUndoable
@@ -90,20 +87,19 @@ to the height map.  If it is a linked list, adds all objects. */
 class AddObjectUndoable : public Undoable
 {
 protected:
-	CWorldBuilderDoc *m_pDoc;  ///< Not ref counted.  This undoable should be in a list attached to the doc anyway.
-	MapObject				 *m_objectToAdd;
-	Int							  m_numObjects;
-	Bool							m_addedToList;
+	CWorldBuilderDoc* m_pDoc;    ///< Not ref counted.  This undoable should be in a list attached to the doc anyway.
+	MapObject* m_objectToAdd;
+	Int m_numObjects;
+	Bool m_addedToList;
 
 public:
-		AddObjectUndoable(CWorldBuilderDoc *pDoc, MapObject *pObjectToAdd);
+	AddObjectUndoable(CWorldBuilderDoc* pDoc, MapObject* pObjectToAdd);
 
-		// destructor.
-		virtual ~AddObjectUndoable() override;
-		virtual void Do() override;
-		virtual void Undo() override;
+	// destructor.
+	virtual ~AddObjectUndoable() override;
+	virtual void Do() override;
+	virtual void Undo() override;
 };
-
 
 ///                            ModifyObjectUndoable
 /** An undoable that actually undoes something.  Modifies an object's
@@ -112,51 +108,51 @@ location and angle. */
 class MoveInfo
 {
 public:
-	MoveInfo(MapObject *pObjToMove);
+	MoveInfo(MapObject* pObjToMove);
 	~MoveInfo();
-	void DoMove(CWorldBuilderDoc *pDoc);
-	void UndoMove(CWorldBuilderDoc *pDoc);
+	void DoMove(CWorldBuilderDoc* pDoc);
+	void UndoMove(CWorldBuilderDoc* pDoc);
 
-	void SetOffset(CWorldBuilderDoc *pDoc, Real x, Real y);
-	void SetZOffset(CWorldBuilderDoc *pDoc, Real z);
-	void RotateTo(CWorldBuilderDoc *pDoc, Real angle);
-	void SetThingTemplate(CWorldBuilderDoc *pDoc, const ThingTemplate* thing);
-	void SetName(CWorldBuilderDoc *pDoc, AsciiString name);
+	void SetOffset(CWorldBuilderDoc* pDoc, Real x, Real y);
+	void SetZOffset(CWorldBuilderDoc* pDoc, Real z);
+	void RotateTo(CWorldBuilderDoc* pDoc, Real angle);
+	void SetThingTemplate(CWorldBuilderDoc* pDoc, const ThingTemplate* thing);
+	void SetName(CWorldBuilderDoc* pDoc, AsciiString name);
 
 public:
-	MapObject				 *m_objectToModify;
-	MoveInfo				 *m_next;
-	Real							m_newAngle;
-	Real							m_oldAngle;
-	Coord3D						m_newLocation;
-	Coord3D						m_oldLocation;
-	const ThingTemplate*		m_oldThing;
-	const ThingTemplate*		m_newThing;
-	AsciiString					m_oldName;
-	AsciiString					m_newName;
+	MapObject* m_objectToModify;
+	MoveInfo* m_next;
+	Real m_newAngle;
+	Real m_oldAngle;
+	Coord3D m_newLocation;
+	Coord3D m_oldLocation;
+	const ThingTemplate* m_oldThing;
+	const ThingTemplate* m_newThing;
+	AsciiString m_oldName;
+	AsciiString m_newName;
 };
 
 class ModifyObjectUndoable : public Undoable
 {
 protected:
-	CWorldBuilderDoc*	m_pDoc;  ///< Not ref counted.  This undoable should be in a list attached to the doc anyway.
-	MoveInfo*					m_moveList;
-	Bool							m_inval;
+	CWorldBuilderDoc* m_pDoc;    ///< Not ref counted.  This undoable should be in a list attached to the doc anyway.
+	MoveInfo* m_moveList;
+	Bool m_inval;
 
 public:
-		ModifyObjectUndoable(CWorldBuilderDoc *pDoc);
-		// destructor.
-		virtual ~ModifyObjectUndoable() override;
+	ModifyObjectUndoable(CWorldBuilderDoc* pDoc);
+	// destructor.
+	virtual ~ModifyObjectUndoable() override;
 
-		virtual void Do() override;
-		virtual void Undo() override;
-		virtual void Redo() override;
+	virtual void Do() override;
+	virtual void Undo() override;
+	virtual void Redo() override;
 
-		void SetOffset(Real x, Real y);
-		void SetZOffset(Real z);
-		void RotateTo(Real angle);
-		void SetThingTemplate(const ThingTemplate* thing);
-		void SetName(AsciiString name);
+	void SetOffset(Real x, Real y);
+	void SetZOffset(Real z);
+	void RotateTo(Real angle);
+	void SetThingTemplate(const ThingTemplate* thing);
+	void SetName(AsciiString name);
 };
 
 ///                            ModifyFlagsUndoable
@@ -166,50 +162,47 @@ flags. */
 class FlagsInfo
 {
 public:
-	FlagsInfo(MapObject *pObjToMove, Int flagMask, Int flagValue );
+	FlagsInfo(MapObject* pObjToMove, Int flagMask, Int flagValue);
 	~FlagsInfo();
-	void DoFlags(CWorldBuilderDoc *pDoc);
-	void UndoFlags(CWorldBuilderDoc *pDoc);
+	void DoFlags(CWorldBuilderDoc* pDoc);
+	void UndoFlags(CWorldBuilderDoc* pDoc);
 
 public:
-	MapObject				 *m_objectToModify;
-	FlagsInfo				 *m_next;
-	Int								m_flagMask;
-	Int								m_newValue;
-	Int								m_oldValue;
+	MapObject* m_objectToModify;
+	FlagsInfo* m_next;
+	Int m_flagMask;
+	Int m_newValue;
+	Int m_oldValue;
 };
 
 class ModifyFlagsUndoable : public Undoable
 {
 protected:
-	CWorldBuilderDoc *m_pDoc;  ///< Not ref counted.  This undoable should be in a list attached to the doc anyway.
-	FlagsInfo *m_flagsList;
+	CWorldBuilderDoc* m_pDoc;    ///< Not ref counted.  This undoable should be in a list attached to the doc anyway.
+	FlagsInfo* m_flagsList;
 
 public:
-		ModifyFlagsUndoable(CWorldBuilderDoc *pDoc, Int flagMask, Int flagValue);
-		// destructor.
-		virtual ~ModifyFlagsUndoable() override;
+	ModifyFlagsUndoable(CWorldBuilderDoc* pDoc, Int flagMask, Int flagValue);
+	// destructor.
+	virtual ~ModifyFlagsUndoable() override;
 
-		virtual void Do() override;
-		virtual void Undo() override;
-		virtual void Redo() override;
-
+	virtual void Do() override;
+	virtual void Undo() override;
+	virtual void Redo() override;
 };
 
 class SidesListUndoable : public Undoable
 {
 protected:
-	SidesList		m_old, m_new;
-	CWorldBuilderDoc *m_pDoc;  ///< Not ref counted.  This undoable should be in a list attached to the doc anyway.
+	SidesList m_old, m_new;
+	CWorldBuilderDoc* m_pDoc;    ///< Not ref counted.  This undoable should be in a list attached to the doc anyway.
 
 public:
-
-	SidesListUndoable(const SidesList& newSL, CWorldBuilderDoc *pDoc);
+	SidesListUndoable(const SidesList& newSL, CWorldBuilderDoc* pDoc);
 	virtual ~SidesListUndoable() override;
 
 	virtual void Do() override;
 	virtual void Undo() override;
-
 };
 
 class DictItemUndoable : public Undoable
@@ -219,25 +212,22 @@ protected:
 	std::vector<Dict*> m_dictToModify;
 	std::vector<Dict> m_oldDictData;
 	Dict m_newDictData;
-	CWorldBuilderDoc *m_pDoc;
+	CWorldBuilderDoc* m_pDoc;
 	Bool m_inval;
 	NameKeyType m_key;
 
 public:
-
 	static Dict buildSingleItemDict(AsciiString k, Dict::DataType t, AsciiString v);
 
 	// if you want to just add/modify/remove a single dict item, pass the item's key.
 	// if you want to substitute the entire contents of the new dict, pass NAMEKEY_INVALID.
-	DictItemUndoable(Dict **d, Dict data, NameKeyType key, Int dictsToModify = 1, CWorldBuilderDoc *pDoc = nullptr, Bool inval = false);
+	DictItemUndoable(Dict** d, Dict data, NameKeyType key, Int dictsToModify = 1, CWorldBuilderDoc* pDoc = nullptr, Bool inval = false);
 	// destructor.
 	virtual ~DictItemUndoable() override;
 
 	virtual void Do() override;
 	virtual void Undo() override;
-
 };
-
 
 ///                            DeleteObjectUndoable
 /** An undoable that actually undoes something.  Deletes an object. */
@@ -245,31 +235,31 @@ public:
 class DeleteInfo
 {
 public:
-	DeleteInfo(MapObject *pObjToDelete);
+	DeleteInfo(MapObject* pObjToDelete);
 	~DeleteInfo();
-	void DoDelete(WorldHeightMapEdit *pMap);
-	void UndoDelete(WorldHeightMapEdit *pMap);
+	void DoDelete(WorldHeightMapEdit* pMap);
+	void UndoDelete(WorldHeightMapEdit* pMap);
 
 public:
-	Bool						 m_didDelete;
-	MapObject				 *m_objectToDelete;
-	MapObject				 *m_priorObject;
-	DeleteInfo			 *m_next;
+	Bool m_didDelete;
+	MapObject* m_objectToDelete;
+	MapObject* m_priorObject;
+	DeleteInfo* m_next;
 };
-
 
 class DeleteObjectUndoable : public Undoable
 {
 protected:
-	CWorldBuilderDoc *m_pDoc;  ///< Not ref counted.  This undoable should be in a list attached to the doc anyway.
-	DeleteInfo *m_deleteList;
-public:
-		DeleteObjectUndoable(CWorldBuilderDoc *pDoc);
+	CWorldBuilderDoc* m_pDoc;    ///< Not ref counted.  This undoable should be in a list attached to the doc anyway.
+	DeleteInfo* m_deleteList;
 
-		// destructor.
-		virtual ~DeleteObjectUndoable() override;
-		virtual void Do() override;
-		virtual void Undo() override;
+public:
+	DeleteObjectUndoable(CWorldBuilderDoc* pDoc);
+
+	// destructor.
+	virtual ~DeleteObjectUndoable() override;
+	virtual void Do() override;
+	virtual void Undo() override;
 };
 
 ///                            AddPolygonUndoable
@@ -277,14 +267,15 @@ public:
 class AddPolygonUndoable : public Undoable
 {
 protected:
-	PolygonTrigger *m_trigger;
-	Bool					 m_isTriggerInList;
+	PolygonTrigger* m_trigger;
+	Bool m_isTriggerInList;
+
 public:
-		AddPolygonUndoable( PolygonTrigger *pTrig);
-		// destructor.
-		virtual ~AddPolygonUndoable() override;
-		virtual void Do() override;
-		virtual void Undo() override;
+	AddPolygonUndoable(PolygonTrigger* pTrig);
+	// destructor.
+	virtual ~AddPolygonUndoable() override;
+	virtual void Do() override;
+	virtual void Undo() override;
 };
 
 ///                            AddPolygonPointUndoable
@@ -292,14 +283,15 @@ public:
 class AddPolygonPointUndoable : public Undoable
 {
 protected:
-	PolygonTrigger *m_trigger;
-	ICoord3D				m_point;
+	PolygonTrigger* m_trigger;
+	ICoord3D m_point;
+
 public:
-		AddPolygonPointUndoable(PolygonTrigger *pTrig, ICoord3D pt);
-		// destructor.
-		virtual ~AddPolygonPointUndoable() override;
-		virtual void Do() override;
-		virtual void Undo() override;
+	AddPolygonPointUndoable(PolygonTrigger* pTrig, ICoord3D pt);
+	// destructor.
+	virtual ~AddPolygonPointUndoable() override;
+	virtual void Do() override;
+	virtual void Undo() override;
 };
 
 ///                            ModifyPolygonPointUndoable
@@ -307,16 +299,17 @@ public:
 class ModifyPolygonPointUndoable : public Undoable
 {
 protected:
-	PolygonTrigger *m_trigger;
-	Int							m_pointIndex;
-	ICoord3D				m_point;
-	ICoord3D				m_savPoint;
+	PolygonTrigger* m_trigger;
+	Int m_pointIndex;
+	ICoord3D m_point;
+	ICoord3D m_savPoint;
+
 public:
-		ModifyPolygonPointUndoable(PolygonTrigger *pTrig, Int ndx);
-		// destructor.
-		virtual ~ModifyPolygonPointUndoable() override;
-		virtual void Do() override;
-		virtual void Undo() override;
+	ModifyPolygonPointUndoable(PolygonTrigger* pTrig, Int ndx);
+	// destructor.
+	virtual ~ModifyPolygonPointUndoable() override;
+	virtual void Do() override;
+	virtual void Undo() override;
 };
 
 ///                            MovePolygonUndoable
@@ -324,18 +317,19 @@ public:
 class MovePolygonUndoable : public Undoable
 {
 protected:
-	PolygonTrigger *m_trigger;
-	ICoord3D				m_point;
-	ICoord3D				m_offset;
-public:
-		MovePolygonUndoable(PolygonTrigger *pTrig);
-		// destructor.
-		virtual ~MovePolygonUndoable() override;
-		virtual void Do() override;
-		virtual void Undo() override;
+	PolygonTrigger* m_trigger;
+	ICoord3D m_point;
+	ICoord3D m_offset;
 
-		void SetOffset(const ICoord3D &offset);
-		PolygonTrigger *getTrigger() {return m_trigger;}
+public:
+	MovePolygonUndoable(PolygonTrigger* pTrig);
+	// destructor.
+	virtual ~MovePolygonUndoable() override;
+	virtual void Do() override;
+	virtual void Undo() override;
+
+	void SetOffset(const ICoord3D& offset);
+	PolygonTrigger* getTrigger() { return m_trigger; }
 };
 
 ///                            InsertPolygonPointUndoable
@@ -343,15 +337,16 @@ public:
 class InsertPolygonPointUndoable : public Undoable
 {
 protected:
-	PolygonTrigger *m_trigger;
-	Int							m_pointIndex;
-	ICoord3D				m_point;
+	PolygonTrigger* m_trigger;
+	Int m_pointIndex;
+	ICoord3D m_point;
+
 public:
-		InsertPolygonPointUndoable(PolygonTrigger *pTrig, ICoord3D pt, Int ndx);
-		// destructor.
-		virtual ~InsertPolygonPointUndoable() override;
-		virtual void Do() override;
-		virtual void Undo() override;
+	InsertPolygonPointUndoable(PolygonTrigger* pTrig, ICoord3D pt, Int ndx);
+	// destructor.
+	virtual ~InsertPolygonPointUndoable() override;
+	virtual void Do() override;
+	virtual void Undo() override;
 };
 
 ///                            DeletePolygonPointUndoable
@@ -359,15 +354,16 @@ public:
 class DeletePolygonPointUndoable : public Undoable
 {
 protected:
-	PolygonTrigger *m_trigger;
-	Int							m_pointIndex;
-	ICoord3D				m_point;
+	PolygonTrigger* m_trigger;
+	Int m_pointIndex;
+	ICoord3D m_point;
+
 public:
-		DeletePolygonPointUndoable(PolygonTrigger *pTrig, Int ndx);
-		// destructor.
-		virtual ~DeletePolygonPointUndoable() override;
-		virtual void Do() override;
-		virtual void Undo() override;
+	DeletePolygonPointUndoable(PolygonTrigger* pTrig, Int ndx);
+	// destructor.
+	virtual ~DeletePolygonPointUndoable() override;
+	virtual void Do() override;
+	virtual void Undo() override;
 };
 
 ///                            DeletePolygonUndoable
@@ -375,12 +371,13 @@ public:
 class DeletePolygonUndoable : public Undoable
 {
 protected:
-	PolygonTrigger *m_trigger;
-	Bool					 m_isTriggerInList;
+	PolygonTrigger* m_trigger;
+	Bool m_isTriggerInList;
+
 public:
-		DeletePolygonUndoable(PolygonTrigger *pTrig);
-		// destructor.
-		virtual ~DeletePolygonUndoable() override;
-		virtual void Do() override;
-		virtual void Undo() override;
+	DeletePolygonUndoable(PolygonTrigger* pTrig);
+	// destructor.
+	virtual ~DeletePolygonUndoable() override;
+	virtual void Do() override;
+	virtual void Undo() override;
 };

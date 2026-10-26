@@ -30,7 +30,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "StdAfx.h"
 #include "EmitterInstanceList.h"
 #include "Utils.h"
@@ -40,51 +39,50 @@
 //	~EmitterInstanceListClass
 //
 /////////////////////////////////////////////////////////////////////
-EmitterInstanceListClass::~EmitterInstanceListClass ()
+EmitterInstanceListClass::~EmitterInstanceListClass()
 {
-	Free_List ();
+	Free_List();
 }
-
 
 /////////////////////////////////////////////////////////////////////
 //
 //	Free_List
 //
 /////////////////////////////////////////////////////////////////////
-void
-EmitterInstanceListClass::Free_List ()
+void EmitterInstanceListClass::Free_List()
 {
 	//
 	//	Release our hold on each of the emitter pointers
 	//
-	for (int index = 0; index < m_List.Count (); index ++) {
-		REF_PTR_RELEASE (m_List[index]);
+	for (int index = 0; index < m_List.Count(); index++)
+	{
+		REF_PTR_RELEASE(m_List[index]);
 	}
 
-	m_List.Delete_All ();
+	m_List.Delete_All();
 }
-
 
 /////////////////////////////////////////////////////////////////////
 //
 //	Add_Emitter
 //
 /////////////////////////////////////////////////////////////////////
-void
-EmitterInstanceListClass::Add_Emitter (ParticleEmitterClass *emitter)
+void EmitterInstanceListClass::Add_Emitter(ParticleEmitterClass* emitter)
 {
-	ASSERT (emitter != nullptr);
-	if (emitter != nullptr) {
-
+	ASSERT(emitter != nullptr);
+	if (emitter != nullptr)
+	{
 		//
 		//	If this is the first emitter in the list, then initialize
 		// the definition to it's state
 		//
-		if (m_List.Count () == 0) {
-			ParticleEmitterDefClass *def = emitter->Build_Definition ();
-			if (def != nullptr) {
-				ParticleEmitterDefClass::operator= (*def);
-				SAFE_DELETE (def);
+		if (m_List.Count() == 0)
+		{
+			ParticleEmitterDefClass* def = emitter->Build_Definition();
+			if (def != nullptr)
+			{
+				ParticleEmitterDefClass::operator=(*def);
+				SAFE_DELETE(def);
 			}
 		}
 
@@ -92,148 +90,144 @@ EmitterInstanceListClass::Add_Emitter (ParticleEmitterClass *emitter)
 		//	Add this emitter to the list and put a hold on its reference
 		//
 		if (emitter)
+		{
 			emitter->Add_Ref();
-		m_List.Add (emitter);
+		}
+		m_List.Add(emitter);
 	}
 }
-
 
 /////////////////////////////////////////////////////////////////////
 //
 //	Set_Velocity
 //
 /////////////////////////////////////////////////////////////////////
-void
-EmitterInstanceListClass::Set_Velocity (const Vector3 &value)
+void EmitterInstanceListClass::Set_Velocity(const Vector3& value)
 {
-	ParticleEmitterDefClass::Set_Velocity (value);
+	ParticleEmitterDefClass::Set_Velocity(value);
 
 	//
 	//	Pass this setting onto the emitters immediately
 	//
-	for (int index = 0; index < m_List.Count (); index ++) {
-		m_List[index]->Set_Base_Velocity (value);
+	for (int index = 0; index < m_List.Count(); index++)
+	{
+		m_List[index]->Set_Base_Velocity(value);
 	}
 }
-
 
 /////////////////////////////////////////////////////////////////////
 //
 //	Set_Acceleration
 //
 /////////////////////////////////////////////////////////////////////
-void
-EmitterInstanceListClass::Set_Acceleration (const Vector3 &value)
+void EmitterInstanceListClass::Set_Acceleration(const Vector3& value)
 {
-	ParticleEmitterDefClass::Set_Acceleration (value);
+	ParticleEmitterDefClass::Set_Acceleration(value);
 
 	//
 	//	Pass this setting onto the emitters immediately
 	//
-	for (int index = 0; index < m_List.Count (); index ++) {
-		m_List[index]->Set_Acceleration (value);
+	for (int index = 0; index < m_List.Count(); index++)
+	{
+		m_List[index]->Set_Acceleration(value);
 	}
 }
-
 
 /////////////////////////////////////////////////////////////////////
 //
 //	Set_Burst_Size
 //
 /////////////////////////////////////////////////////////////////////
-void
-EmitterInstanceListClass::Set_Burst_Size (unsigned int count)
+void EmitterInstanceListClass::Set_Burst_Size(unsigned int count)
 {
-	ParticleEmitterDefClass::Set_Burst_Size (count);
+	ParticleEmitterDefClass::Set_Burst_Size(count);
 
 	//
 	//	Pass this setting onto the emitters immediately
 	//
-	for (int index = 0; index < m_List.Count (); index ++) {
-		m_List[index]->Set_Burst_Size (count);
+	for (int index = 0; index < m_List.Count(); index++)
+	{
+		m_List[index]->Set_Burst_Size(count);
 	}
 }
-
 
 /////////////////////////////////////////////////////////////////////
 //
 //	Set_Outward_Vel
 //
 /////////////////////////////////////////////////////////////////////
-void
-EmitterInstanceListClass::Set_Outward_Vel (float value)
+void EmitterInstanceListClass::Set_Outward_Vel(float value)
 {
-	ParticleEmitterDefClass::Set_Outward_Vel (value);
+	ParticleEmitterDefClass::Set_Outward_Vel(value);
 
 	//
 	//	Pass this setting onto the emitters immediately
 	//
-	for (int index = 0; index < m_List.Count (); index ++) {
-		m_List[index]->Set_Outwards_Velocity (value);
+	for (int index = 0; index < m_List.Count(); index++)
+	{
+		m_List[index]->Set_Outwards_Velocity(value);
 	}
 }
-
 
 /////////////////////////////////////////////////////////////////////
 //
 //	Set_Vel_Inherit
 //
 /////////////////////////////////////////////////////////////////////
-void
-EmitterInstanceListClass::Set_Vel_Inherit (float value)
+void EmitterInstanceListClass::Set_Vel_Inherit(float value)
 {
-	ParticleEmitterDefClass::Set_Vel_Inherit (value);
+	ParticleEmitterDefClass::Set_Vel_Inherit(value);
 
 	//
 	//	Pass this setting onto the emitters immediately
 	//
-	for (int index = 0; index < m_List.Count (); index ++) {
-		m_List[index]->Set_Velocity_Inheritance_Factor (value);
+	for (int index = 0; index < m_List.Count(); index++)
+	{
+		m_List[index]->Set_Velocity_Inheritance_Factor(value);
 	}
 }
-
 
 /////////////////////////////////////////////////////////////////////
 //
 //	Set_Velocity_Random
 //
 /////////////////////////////////////////////////////////////////////
-void
-EmitterInstanceListClass::Set_Velocity_Random (Vector3Randomizer *randomizer)
+void EmitterInstanceListClass::Set_Velocity_Random(Vector3Randomizer* randomizer)
 {
-	ParticleEmitterDefClass::Set_Velocity_Random (randomizer);
-	if (randomizer != nullptr) {
-
+	ParticleEmitterDefClass::Set_Velocity_Random(randomizer);
+	if (randomizer != nullptr)
+	{
 		//
 		//	Pass this setting onto the emitters immediately
 		//
-		for (int index = 0; index < m_List.Count (); index ++) {
-			m_List[index]->Set_Velocity_Randomizer (randomizer->Clone ());
+		for (int index = 0; index < m_List.Count(); index++)
+		{
+			m_List[index]->Set_Velocity_Randomizer(randomizer->Clone());
 		}
 	}
 }
-
 
 /////////////////////////////////////////////////////////////////////
 //
 //	Set_Color_Keyframes
 //
 /////////////////////////////////////////////////////////////////////
-void
-EmitterInstanceListClass::Set_Color_Keyframes (ParticlePropertyStruct<Vector3> &keyframes)
+void EmitterInstanceListClass::Set_Color_Keyframes(ParticlePropertyStruct<Vector3>& keyframes)
 {
 	//
 	//	Make sure tha any value that is supposed to go to zero, really
 	//	does even if its got a randomizer.
 	//
-	if (	(keyframes.Rand.X != 0) ||
-			(keyframes.Rand.Y != 0) ||
-			(keyframes.Rand.Z != 0))
+	if ((keyframes.Rand.X != 0) ||
+	    (keyframes.Rand.Y != 0) ||
+	    (keyframes.Rand.Z != 0))
 	{
-		for (UINT index = 0; index < keyframes.NumKeyFrames; index ++) {
+		for (UINT index = 0; index < keyframes.NumKeyFrames; index++)
+		{
 			if ((keyframes.Values[index].X <= 0.000001F) &&
-				 (keyframes.Values[index].Y <= 0.000001F) &&
-				 (keyframes.Values[index].Z <= 0.000001F)) {
+			    (keyframes.Values[index].Y <= 0.000001F) &&
+			    (keyframes.Values[index].Z <= 0.000001F))
+			{
 				keyframes.Values[index].X = -keyframes.Rand.X;
 				keyframes.Values[index].Y = -keyframes.Rand.Y;
 				keyframes.Values[index].Z = -keyframes.Rand.Z;
@@ -241,24 +235,23 @@ EmitterInstanceListClass::Set_Color_Keyframes (ParticlePropertyStruct<Vector3> &
 		}
 	}
 
-	ParticleEmitterDefClass::Set_Color_Keyframes (keyframes);
+	ParticleEmitterDefClass::Set_Color_Keyframes(keyframes);
 
 	//
 	//	Pass this setting onto the emitters immediately
 	//
-	for (int index = 0; index < m_List.Count (); index ++) {
-		m_List[index]->Reset_Colors (keyframes);
+	for (int index = 0; index < m_List.Count(); index++)
+	{
+		m_List[index]->Reset_Colors(keyframes);
 	}
 }
-
 
 /////////////////////////////////////////////////////////////////////
 //
 //	Set_Opacity_Keyframes
 //
 /////////////////////////////////////////////////////////////////////
-void
-EmitterInstanceListClass::Set_Opacity_Keyframes (ParticlePropertyStruct<float> &keyframes)
+void EmitterInstanceListClass::Set_Opacity_Keyframes(ParticlePropertyStruct<float>& keyframes)
 {
 	//
 	//	Make sure tha any value that is supposed to go to zero, really
@@ -266,31 +259,32 @@ EmitterInstanceListClass::Set_Opacity_Keyframes (ParticlePropertyStruct<float> &
 	//
 	if (keyframes.Rand != 0)
 	{
-		for (UINT index = 0; index < keyframes.NumKeyFrames; index ++) {
-			if (keyframes.Values[index] <= 0.000001F) {
+		for (UINT index = 0; index < keyframes.NumKeyFrames; index++)
+		{
+			if (keyframes.Values[index] <= 0.000001F)
+			{
 				keyframes.Values[index] = -keyframes.Rand;
 			}
 		}
 	}
 
-	ParticleEmitterDefClass::Set_Opacity_Keyframes (keyframes);
+	ParticleEmitterDefClass::Set_Opacity_Keyframes(keyframes);
 
 	//
 	//	Pass this setting onto the emitters immediately
 	//
-	for (int index = 0; index < m_List.Count (); index ++) {
-		m_List[index]->Reset_Opacity (keyframes);
+	for (int index = 0; index < m_List.Count(); index++)
+	{
+		m_List[index]->Reset_Opacity(keyframes);
 	}
 }
-
 
 /////////////////////////////////////////////////////////////////////
 //
 //	Set_Size_Keyframes
 //
 /////////////////////////////////////////////////////////////////////
-void
-EmitterInstanceListClass::Set_Size_Keyframes (ParticlePropertyStruct<float> &keyframes)
+void EmitterInstanceListClass::Set_Size_Keyframes(ParticlePropertyStruct<float>& keyframes)
 {
 	//
 	//	Make sure tha any value that is supposed to go to zero, really
@@ -298,40 +292,41 @@ EmitterInstanceListClass::Set_Size_Keyframes (ParticlePropertyStruct<float> &key
 	//
 	if (keyframes.Rand != 0)
 	{
-		for (UINT index = 0; index < keyframes.NumKeyFrames; index ++) {
-			if (keyframes.Values[index] <= 0.000001F) {
+		for (UINT index = 0; index < keyframes.NumKeyFrames; index++)
+		{
+			if (keyframes.Values[index] <= 0.000001F)
+			{
 				keyframes.Values[index] = -keyframes.Rand;
 			}
 		}
 	}
 
-	ParticleEmitterDefClass::Set_Size_Keyframes (keyframes);
+	ParticleEmitterDefClass::Set_Size_Keyframes(keyframes);
 
 	//
 	//	Pass this setting onto the emitters immediately
 	//
-	for (int index = 0; index < m_List.Count (); index ++) {
-		m_List[index]->Reset_Size (keyframes);
+	for (int index = 0; index < m_List.Count(); index++)
+	{
+		m_List[index]->Reset_Size(keyframes);
 	}
 }
-
-
 
 /////////////////////////////////////////////////////////////////////
 //
 //	Set_Rotation_Keyframes
 //
 /////////////////////////////////////////////////////////////////////
-void
-EmitterInstanceListClass::Set_Rotation_Keyframes (ParticlePropertyStruct<float> &keyframes, float orient_rnd)
+void EmitterInstanceListClass::Set_Rotation_Keyframes(ParticlePropertyStruct<float>& keyframes, float orient_rnd)
 {
-	ParticleEmitterDefClass::Set_Rotation_Keyframes (keyframes, orient_rnd);
+	ParticleEmitterDefClass::Set_Rotation_Keyframes(keyframes, orient_rnd);
 
 	//
 	//	Pass this setting onto the emitters immediately
 	//
-	for (int index = 0; index < m_List.Count (); index ++) {
-		m_List[index]->Reset_Rotations (keyframes, orient_rnd);
+	for (int index = 0; index < m_List.Count(); index++)
+	{
+		m_List[index]->Reset_Rotations(keyframes, orient_rnd);
 	}
 }
 
@@ -340,16 +335,16 @@ EmitterInstanceListClass::Set_Rotation_Keyframes (ParticlePropertyStruct<float> 
 //	Set_Frame_Keyframes
 //
 /////////////////////////////////////////////////////////////////////
-void
-EmitterInstanceListClass::Set_Frame_Keyframes (ParticlePropertyStruct<float> &keyframes)
+void EmitterInstanceListClass::Set_Frame_Keyframes(ParticlePropertyStruct<float>& keyframes)
 {
-	ParticleEmitterDefClass::Set_Frame_Keyframes (keyframes);
+	ParticleEmitterDefClass::Set_Frame_Keyframes(keyframes);
 
 	//
 	//	Pass this setting onto the emitters immediately
 	//
-	for (int index = 0; index < m_List.Count (); index ++) {
-		m_List[index]->Reset_Frames (keyframes);
+	for (int index = 0; index < m_List.Count(); index++)
+	{
+		m_List[index]->Reset_Frames(keyframes);
 	}
 }
 
@@ -358,82 +353,83 @@ EmitterInstanceListClass::Set_Frame_Keyframes (ParticlePropertyStruct<float> &ke
 //	Set_Blur_Time_Keyframes
 //
 /////////////////////////////////////////////////////////////////////
-void
-EmitterInstanceListClass::Set_Blur_Time_Keyframes (ParticlePropertyStruct<float> &keyframes)
+void EmitterInstanceListClass::Set_Blur_Time_Keyframes(ParticlePropertyStruct<float>& keyframes)
 {
-	ParticleEmitterDefClass::Set_Blur_Time_Keyframes (keyframes);
+	ParticleEmitterDefClass::Set_Blur_Time_Keyframes(keyframes);
 
 	//
 	//	Pass this setting onto the emitters immediately
 	//
-	for (int index = 0; index < m_List.Count (); index ++) {
-		m_List[index]->Reset_Blur_Times (keyframes);
+	for (int index = 0; index < m_List.Count(); index++)
+	{
+		m_List[index]->Reset_Blur_Times(keyframes);
 	}
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////////
 //
 //	Get_Color_Keyframes
 //
-void
-EmitterInstanceListClass::Get_Color_Keyframes (ParticlePropertyStruct<Vector3> &keyframes) const
+void EmitterInstanceListClass::Get_Color_Keyframes(ParticlePropertyStruct<Vector3>& keyframes) const
 {
-	ParticleEmitterDefClass::Get_Color_Keyframes (keyframes);
+	ParticleEmitterDefClass::Get_Color_Keyframes(keyframes);
 
 	//
 	//	Normalize the data
 	//
-	for (UINT index = 0; index < keyframes.NumKeyFrames; index ++) {
-		if (keyframes.Values[index].X <= 0.000001F) {
+	for (UINT index = 0; index < keyframes.NumKeyFrames; index++)
+	{
+		if (keyframes.Values[index].X <= 0.000001F)
+		{
 			keyframes.Values[index].X = 0;
 		}
-		if (keyframes.Values[index].Y <= 0.000001F) {
+		if (keyframes.Values[index].Y <= 0.000001F)
+		{
 			keyframes.Values[index].Y = 0;
 		}
-		if (keyframes.Values[index].Z <= 0.000001F) {
+		if (keyframes.Values[index].Z <= 0.000001F)
+		{
 			keyframes.Values[index].Z = 0;
 		}
 	}
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////////
 //
 //	Get_Opacity_Keyframes
 //
-void
-EmitterInstanceListClass::Get_Opacity_Keyframes (ParticlePropertyStruct<float> &keyframes) const
+void EmitterInstanceListClass::Get_Opacity_Keyframes(ParticlePropertyStruct<float>& keyframes) const
 {
-	ParticleEmitterDefClass::Get_Opacity_Keyframes (keyframes);
+	ParticleEmitterDefClass::Get_Opacity_Keyframes(keyframes);
 
 	//
 	//	Normalize the data
 	//
-	for (UINT index = 0; index < keyframes.NumKeyFrames; index ++) {
-		if (keyframes.Values[index] <= 0.000001F) {
+	for (UINT index = 0; index < keyframes.NumKeyFrames; index++)
+	{
+		if (keyframes.Values[index] <= 0.000001F)
+		{
 			keyframes.Values[index] = 0;
 		}
 	}
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////////
 //
 //	Get_Size_Keyframes
 //
-void
-EmitterInstanceListClass::Get_Size_Keyframes (ParticlePropertyStruct<float> &keyframes) const
+void EmitterInstanceListClass::Get_Size_Keyframes(ParticlePropertyStruct<float>& keyframes) const
 {
-	ParticleEmitterDefClass::Get_Size_Keyframes (keyframes);
+	ParticleEmitterDefClass::Get_Size_Keyframes(keyframes);
 
 	//
 	//	Normalize the data
 	//
-	for (UINT index = 0; index < keyframes.NumKeyFrames; index ++) {
-		if (keyframes.Values[index] <= 0.000001F) {
+	for (UINT index = 0; index < keyframes.NumKeyFrames; index++)
+	{
+		if (keyframes.Values[index] <= 0.000001F)
+		{
 			keyframes.Values[index] = 0;
 		}
 	}
 }
-

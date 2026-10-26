@@ -28,25 +28,23 @@ class CWBFrameWnd : public CFrameWnd
 {
 	DECLARE_DYNCREATE(CWBFrameWnd)
 protected:
-	CWBFrameWnd();           // protected constructor used by dynamic creation
+	CWBFrameWnd();    // protected constructor used by dynamic creation
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	//{{AFX_VIRTUAL(CWBFrameWnd)
-	public:
+public:
 	virtual BOOL LoadFrame(UINT nIDResource,
-				DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,
-				CWnd* pParentWnd = nullptr,
-				CCreateContext* pContext = nullptr) override;
+	                       DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,
+	                       CWnd* pParentWnd = nullptr,
+	                       CCreateContext* pContext = nullptr) override;
 	// ClassWizard generated virtual function overrides
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	virtual ~CWBFrameWnd() override;
 
@@ -56,27 +54,26 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 protected:
-	CellSizeToolBar		m_cellSizeToolBar;
-
+	CellSizeToolBar m_cellSizeToolBar;
 };
 
 class CWB3dFrameWnd : public CMainFrame
 {
 	DECLARE_DYNCREATE(CWB3dFrameWnd)
 protected:
-	CWB3dFrameWnd();           // protected constructor used by dynamic creation
-// Operations
+	CWB3dFrameWnd();    // protected constructor used by dynamic creation
+	// Operations
 public:
-// Overrides
+	// Overrides
 	virtual BOOL LoadFrame(UINT nIDResource,
-				DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,
-				CWnd* pParentWnd = nullptr,
-				CCreateContext* pContext = nullptr) override;
+	                       DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,
+	                       CWnd* pParentWnd = nullptr,
+	                       CCreateContext* pContext = nullptr) override;
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CWB3dFrameWnd)
-	public:
+public:
 	//}}AFX_VIRTUAL
-// Implementation
+	// Implementation
 protected:
 	virtual ~CWB3dFrameWnd() override;
 	// Generated message map functions
@@ -92,7 +89,6 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
-
 
 /////////////////////////////////////////////////////////////////////////////
 

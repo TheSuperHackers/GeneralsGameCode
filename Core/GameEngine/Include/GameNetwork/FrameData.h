@@ -26,13 +26,15 @@
 
 #include "GameNetwork/NetCommandList.h"
 
-enum FrameDataReturnType CPP_11(: Int) {
+enum FrameDataReturnType CPP_11( : Int)
+{
 	FRAMEDATA_NOTREADY,
 	FRAMEDATA_RESEND,
 	FRAMEDATA_READY
 };
 
-class FrameData {
+class FrameData
+{
 public:
 	FrameData();
 	~FrameData();
@@ -44,10 +46,10 @@ public:
 	UnsignedInt getFrame();
 	void setFrame(UnsignedInt frame);
 	FrameDataReturnType allCommandsReady(Bool debugSpewage);
-	NetCommandList * getCommandList();
+	NetCommandList* getCommandList();
 	void setFrameCommandCount(UnsignedInt totalCommandCount);
 	UnsignedInt getFrameCommandCount();
-	void addCommand(NetCommandMsg *msg);
+	void addCommand(NetCommandMsg* msg);
 	UnsignedInt getCommandCount();
 	void zeroFrame();
 	void destroyGameMessages();
@@ -56,7 +58,7 @@ protected:
 	UnsignedInt m_frame;
 	UnsignedInt m_frameCommandCount;
 	UnsignedInt m_commandCount;
-	NetCommandList *m_commandList;
+	NetCommandList* m_commandList;
 	UnsignedInt m_lastFailedCC;
 	UnsignedInt m_lastFailedFrameCC;
 };

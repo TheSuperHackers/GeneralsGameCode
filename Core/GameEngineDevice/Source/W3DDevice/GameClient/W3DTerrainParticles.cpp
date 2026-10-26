@@ -46,13 +46,21 @@ UnsignedByte getUVOutcode(const Real u, const Real v)
 {
 	UnsignedByte outcode = 0;
 	if (u < 0.0f)
+	{
 		outcode |= U_MIN;
+	}
 	else if (u > 1.0f)
+	{
 		outcode |= U_MAX;
+	}
 	if (v < 0.0f)
+	{
 		outcode |= V_MIN;
+	}
 	else if (v > 1.0f)
+	{
 		outcode |= V_MAX;
+	}
 	return outcode;
 }
 
@@ -93,11 +101,15 @@ W3DTerrainParticles::W3DTerrainParticles()
 void W3DTerrainParticles::render()
 {
 	if (m_pointCount <= 0 || !m_pointLoc || !TheTerrainRenderObject)
+	{
 		return;
+	}
 
 	const WorldHeightMap* map = TheTerrainRenderObject->getMap();
 	if (!map)
+	{
 		return;
+	}
 
 	updateSettings();
 
@@ -105,7 +117,9 @@ void W3DTerrainParticles::render()
 	{
 		const Real size = m_pointSize ? m_pointSize->Get_Array()[p] : m_defaultPointSize;
 		if (size < TerrainParticles::MIN_PARTICLE_SIZE)
+		{
 			continue;
+		}
 
 		const Vector3 loc = m_pointLoc->Get_Array()[p];
 		const UnsignedByte orientation = m_pointOrientation ? m_pointOrientation->Get_Array()[p] : m_defaultPointOrientation;
@@ -116,8 +130,10 @@ void W3DTerrainParticles::render()
 
 		const IRegion2D bounds = calcTerrainBounds(*map, loc, projectedRadius);
 		if (bounds.width() < 2 || bounds.height() < 2)
+		{
 			continue;
-		
+		}
+
 		const UnsignedInt diffuse = m_pointDiffuse ? DX8Wrapper::Convert_Color_Clamp(m_pointDiffuse->Get_Array()[p]) : m_defaultDiffuse;
 
 		ParticleContext particle;
@@ -204,7 +220,9 @@ UnsignedShort W3DTerrainParticles::addVertex(const WorldHeightMap& map, const Pa
 
 	// The vertex may not exist yet, or may have been removed in the last flush.
 	if (index != TerrainParticles::INVALID_VERTEX)
+	{
 		return index;
+	}
 
 	// Write the vertex data.
 	index = m_numVertices++;
@@ -227,7 +245,9 @@ inline void W3DTerrainParticles::addTriangle(UnsignedShort a, UnsignedShort b, U
 {
 	// Skip the triangle when all UV coordinates are outside (transparent).
 	if ((m_outcodes[a] & m_outcodes[b] & m_outcodes[c]) != 0)
+	{
 		return;
+	}
 
 	// Write the index data.
 	m_indexData[m_numIndices++] = a;
@@ -355,11 +375,11 @@ void W3DTerrainParticles::setShader(ShaderClass shader)
 }
 
 void W3DTerrainParticles::setArrays(
-	ShareBufferClass<Vector3>* locs,
-	ShareBufferClass<Vector4>* diffuse,
-	ShareBufferClass<Real>* sizes,
-	ShareBufferClass<UnsignedByte>* orientations,
-	Int activePointCount)
+  ShareBufferClass<Vector3>* locs,
+  ShareBufferClass<Vector4>* diffuse,
+  ShareBufferClass<Real>* sizes,
+  ShareBufferClass<UnsignedByte>* orientations,
+  Int activePointCount)
 {
 	DEBUG_ASSERTCRASH(locs, ("Missing locations."));
 	DEBUG_ASSERTCRASH(activePointCount <= locs->Get_Count(), ("Active point count higher than available points."));

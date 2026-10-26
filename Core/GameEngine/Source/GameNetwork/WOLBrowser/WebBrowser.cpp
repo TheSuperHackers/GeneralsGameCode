@@ -23,34 +23,33 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /******************************************************************************
-*
-* NAME
-*     $Archive:  $
-*
-* DESCRIPTION
-*
-* PROGRAMMER
-*     Bryan Cleveland
-*     $Author:  $
-*
-* VERSION INFO
-*     $Revision:  $
-*     $Modtime:  $
-*
-******************************************************************************/
+ *
+ * NAME
+ *     $Archive:  $
+ *
+ * DESCRIPTION
+ *
+ * PROGRAMMER
+ *     Bryan Cleveland
+ *     $Author:  $
+ *
+ * VERSION INFO
+ *     $Revision:  $
+ *     $Modtime:  $
+ *
+ ******************************************************************************/
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
-//#include "WinMain.h"
+// #include "WinMain.h"
 #include "GameNetwork/WOLBrowser/WebBrowser.h"
 #include "GameClient/GameWindow.h"
 #include "GameClient/Display.h"
 
-
 /**
-	* OLEInitializer class - Init and shutdown OLE & COM as a global
-	* object.  Scary, nasty stuff, COM.  /me shivers.
-	*/
+ * OLEInitializer class - Init and shutdown OLE & COM as a global
+ * object.  Scary, nasty stuff, COM.  /me shivers.
+ */
 class OLEInitializer
 {
 public:
@@ -58,7 +57,7 @@ public:
 	{
 		// Initialize this instance
 		OleInitialize(nullptr);
-	 }
+	}
 	~OLEInitializer()
 	{
 		OleUninitialize();
@@ -67,59 +66,59 @@ public:
 OLEInitializer g_OLEInitializer;
 CComModule _Module;
 
-CComObject<WebBrowser> * TheWebBrowser = nullptr;
-
+CComObject<WebBrowser>* TheWebBrowser = nullptr;
 
 /******************************************************************************
-*
-* NAME
-*     WebBrowser::WebBrowser
-*
-* DESCRIPTION
-*     Default constructor
-*
-* INPUTS
-*     NONE
-*
-* RESULT
-*     NONE
-*
-******************************************************************************/
+ *
+ * NAME
+ *     WebBrowser::WebBrowser
+ *
+ * DESCRIPTION
+ *     Default constructor
+ *
+ * INPUTS
+ *     NONE
+ *
+ * RESULT
+ *     NONE
+ *
+ ******************************************************************************/
 
-WebBrowser::WebBrowser() :
-		mRefCount(1)
+WebBrowser::WebBrowser()
+  : mRefCount(1)
 {
 	DEBUG_LOG(("Instantiating embedded WebBrowser"));
 	m_urlList = nullptr;
 }
 
-
 /******************************************************************************
-*
-* NAME
-*     WebBrowser::~WebBrowser
-*
-* DESCRIPTION
-*     Destructor
-*
-* INPUTS
-*     NONE
-*
-* RESULT
-*     NONE
-*
-******************************************************************************/
+ *
+ * NAME
+ *     WebBrowser::~WebBrowser
+ *
+ * DESCRIPTION
+ *     Destructor
+ *
+ * INPUTS
+ *     NONE
+ *
+ * RESULT
+ *     NONE
+ *
+ ******************************************************************************/
 
 WebBrowser::~WebBrowser()
 {
 	DEBUG_LOG(("Destructing embedded WebBrowser"));
-	if (this == TheWebBrowser) {
+	if (this == TheWebBrowser)
+	{
 		DEBUG_LOG(("WebBrowser::~WebBrowser - setting TheWebBrowser to null"));
 		TheWebBrowser = nullptr;
 	}
-	WebBrowserURL *url = m_urlList;
-	while (url != nullptr) {
-		WebBrowserURL *temp = url;
+	WebBrowserURL* url = m_urlList;
+	while (url != nullptr)
+	{
+		WebBrowserURL* temp = url;
 		url = url->m_next;
 		deleteInstance(temp);
 		temp = nullptr;
@@ -129,11 +128,10 @@ WebBrowser::~WebBrowser()
 //-------------------------------------------------------------------------------------------------
 /** The INI data fields for Webpage URL's */
 //-------------------------------------------------------------------------------------------------
-const FieldParse WebBrowserURL::m_URLFieldParseTable[] =
-{
+const FieldParse WebBrowserURL::m_URLFieldParseTable[] = {
 
-	{ "URL",										INI::parseAsciiString,							nullptr, offsetof( WebBrowserURL, m_url ) },
-	{ nullptr,											nullptr,																nullptr, 0 },
+	{ "URL", INI::parseAsciiString, nullptr, offsetof(WebBrowserURL, m_url) },
+	{ nullptr, nullptr, nullptr, 0 },
 
 };
 
@@ -148,43 +146,43 @@ WebBrowserURL::~WebBrowserURL()
 {
 }
 /******************************************************************************
-*
-* NAME
-*     WebBrowser::init
-*
-* DESCRIPTION
-*     Perform post creation initialization.
-*
-* INPUTS
-*     NONE
-*
-* RESULT
-*     NONE
-*
-******************************************************************************/
+ *
+ * NAME
+ *     WebBrowser::init
+ *
+ * DESCRIPTION
+ *     Perform post creation initialization.
+ *
+ * INPUTS
+ *     NONE
+ *
+ * RESULT
+ *     NONE
+ *
+ ******************************************************************************/
 
 void WebBrowser::init()
 {
 	m_urlList = nullptr;
 	INI ini;
-	ini.loadFileDirectory( "Data\\INI\\Webpages", INI_LOAD_OVERWRITE, nullptr );
+	ini.loadFileDirectory("Data\\INI\\Webpages", INI_LOAD_OVERWRITE, nullptr);
 }
 
 /******************************************************************************
-*
-* NAME
-*     WebBrowser::reset
-*
-* DESCRIPTION
-*     Perform post creation initialization.
-*
-* INPUTS
-*     NONE
-*
-* RESULT
-*     NONE
-*
-******************************************************************************/
+ *
+ * NAME
+ *     WebBrowser::reset
+ *
+ * DESCRIPTION
+ *     Perform post creation initialization.
+ *
+ * INPUTS
+ *     NONE
+ *
+ * RESULT
+ *     NONE
+ *
+ ******************************************************************************/
 
 void WebBrowser::reset()
 {
@@ -194,9 +192,9 @@ void WebBrowser::update()
 {
 }
 
-WebBrowserURL * WebBrowser::findURL(AsciiString tag)
+WebBrowserURL* WebBrowser::findURL(AsciiString tag)
 {
-	WebBrowserURL *retval = m_urlList;
+	WebBrowserURL* retval = m_urlList;
 
 	while ((retval != nullptr) && tag.compareNoCase(retval->m_tag.str()))
 	{
@@ -206,9 +204,9 @@ WebBrowserURL * WebBrowser::findURL(AsciiString tag)
 	return retval;
 }
 
-WebBrowserURL * WebBrowser::makeNewURL(AsciiString tag)
+WebBrowserURL* WebBrowser::makeNewURL(AsciiString tag)
 {
-	WebBrowserURL *newURL = newInstance(WebBrowserURL);
+	WebBrowserURL* newURL = newInstance(WebBrowserURL);
 
 	newURL->m_tag = tag;
 
@@ -219,18 +217,18 @@ WebBrowserURL * WebBrowser::makeNewURL(AsciiString tag)
 }
 
 /******************************************************************************
-*
-* NAME
-*     IUnknown::QueryInterface
-*
-* DESCRIPTION
-*
-* INPUTS
-*     IID - Interface ID
-*
-* RESULT
-*
-******************************************************************************/
+ *
+ * NAME
+ *     IUnknown::QueryInterface
+ *
+ * DESCRIPTION
+ *
+ * INPUTS
+ *     IID - Interface ID
+ *
+ * RESULT
+ *
+ ******************************************************************************/
 
 STDMETHODIMP WebBrowser::QueryInterface(REFIID iid, void** ppv) IUNKNOWN_NOEXCEPT
 {
@@ -250,40 +248,38 @@ STDMETHODIMP WebBrowser::QueryInterface(REFIID iid, void** ppv) IUNKNOWN_NOEXCEP
 	return S_OK;
 }
 
-
 /******************************************************************************
-*
-* NAME
-*     IUnknown::AddRef
-*
-* DESCRIPTION
-*
-* INPUTS
-*     NONE
-*
-* RESULT
-*
-******************************************************************************/
+ *
+ * NAME
+ *     IUnknown::AddRef
+ *
+ * DESCRIPTION
+ *
+ * INPUTS
+ *     NONE
+ *
+ * RESULT
+ *
+ ******************************************************************************/
 
 ULONG STDMETHODCALLTYPE WebBrowser::AddRef() IUNKNOWN_NOEXCEPT
 {
 	return ++mRefCount;
 }
 
-
 /******************************************************************************
-*
-* NAME
-*     IUnknown::Release
-*
-* DESCRIPTION
-*
-* INPUTS
-*     NONE
-*
-* RESULT
-*
-******************************************************************************/
+ *
+ * NAME
+ *     IUnknown::Release
+ *
+ * DESCRIPTION
+ *
+ * INPUTS
+ *     NONE
+ *
+ * RESULT
+ *
+ ******************************************************************************/
 
 ULONG STDMETHODCALLTYPE WebBrowser::Release() IUNKNOWN_NOEXCEPT
 {
@@ -293,7 +289,8 @@ ULONG STDMETHODCALLTYPE WebBrowser::Release() IUNKNOWN_NOEXCEPT
 	if (mRefCount == 0)
 	{
 		DEBUG_LOG(("WebBrowser::Release - all references released, deleting the object."));
-		if (this == TheWebBrowser) {
+		if (this == TheWebBrowser)
+		{
 			TheWebBrowser = nullptr;
 		}
 		delete this;

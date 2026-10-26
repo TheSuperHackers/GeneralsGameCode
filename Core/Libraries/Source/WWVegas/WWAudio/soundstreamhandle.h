@@ -38,21 +38,19 @@
 
 #include "soundhandle.h"
 
-
 //////////////////////////////////////////////////////////////////////
 //
 //	SoundStreamHandleClass
 //
 //////////////////////////////////////////////////////////////////////
-class SoundStreamHandleClass	: public SoundHandleClass
+class SoundStreamHandleClass : public SoundHandleClass
 {
 public:
-
 	///////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////////////
-	SoundStreamHandleClass  ();
-	virtual ~SoundStreamHandleClass () override;
+	SoundStreamHandleClass();
+	virtual ~SoundStreamHandleClass() override;
 
 	///////////////////////////////////////////////////////////////////
 	//	Public methods
@@ -61,38 +59,37 @@ public:
 	//
 	//	RTTI
 	//
-	virtual SoundStreamHandleClass *	As_SoundStreamHandleClass () override { return this; }
+	virtual SoundStreamHandleClass* As_SoundStreamHandleClass() override { return this; }
 
 	//
 	//	Handle access
 	//
-	virtual HSAMPLE						Get_HSAMPLE () override { return SampleHandle; }
-	virtual HSTREAM						Get_HSTREAM () override { return StreamHandle; }
+	virtual HSAMPLE Get_HSAMPLE() override { return SampleHandle; }
+	virtual HSTREAM Get_HSTREAM() override { return StreamHandle; }
 
 	//
 	//	Inherited
 	//
-	virtual void							Set_Miles_Handle (uint32 handle) override;
-	virtual void							Initialize (SoundBufferClass *buffer) override;
-	virtual void							Start_Sample () override;
-	virtual void							Stop_Sample () override;
-	virtual void							Resume_Sample () override;
-	virtual void							End_Sample () override;
-	virtual void							Set_Sample_Pan (S32 pan) override;
-	virtual S32							Get_Sample_Pan () override;
-	virtual void							Set_Sample_Volume (S32 volume) override;
-	virtual S32							Get_Sample_Volume () override;
-	virtual void							Set_Sample_Loop_Count (U32 count) override;
-	virtual U32							Get_Sample_Loop_Count () override;
-	virtual void							Set_Sample_MS_Position (U32 ms) override;
-	virtual void							Get_Sample_MS_Position (S32 *len, S32 *pos) override;
-	virtual void							Set_Sample_User_Data (S32 i, void *val) override;
-	virtual void *							Get_Sample_User_Data (S32 i) override;
-	virtual S32							Get_Sample_Playback_Rate () override;
-	virtual void							Set_Sample_Playback_Rate (S32 rate) override;
+	virtual void Set_Miles_Handle(uint32 handle) override;
+	virtual void Initialize(SoundBufferClass* buffer) override;
+	virtual void Start_Sample() override;
+	virtual void Stop_Sample() override;
+	virtual void Resume_Sample() override;
+	virtual void End_Sample() override;
+	virtual void Set_Sample_Pan(S32 pan) override;
+	virtual S32 Get_Sample_Pan() override;
+	virtual void Set_Sample_Volume(S32 volume) override;
+	virtual S32 Get_Sample_Volume() override;
+	virtual void Set_Sample_Loop_Count(U32 count) override;
+	virtual U32 Get_Sample_Loop_Count() override;
+	virtual void Set_Sample_MS_Position(U32 ms) override;
+	virtual void Get_Sample_MS_Position(S32* len, S32* pos) override;
+	virtual void Set_Sample_User_Data(S32 i, void* val) override;
+	virtual void* Get_Sample_User_Data(S32 i) override;
+	virtual S32 Get_Sample_Playback_Rate() override;
+	virtual void Set_Sample_Playback_Rate(S32 rate) override;
 
 protected:
-
 	///////////////////////////////////////////////////////////////////
 	//	Protected methods
 	///////////////////////////////////////////////////////////////////
@@ -100,6 +97,6 @@ protected:
 	///////////////////////////////////////////////////////////////////
 	//	Protected member data
 	///////////////////////////////////////////////////////////////////
-	HSAMPLE		SampleHandle;
-	HSTREAM		StreamHandle;
+	HSAMPLE SampleHandle;
+	HSTREAM StreamHandle;
 };

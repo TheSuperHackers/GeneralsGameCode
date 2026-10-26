@@ -39,7 +39,6 @@
 class PaletteClass;
 class HSVClass;
 
-
 /*
 **	Each color entry is represented by this class. It holds the values for the color
 **	guns. The gun values are recorded in device dependent format, but the interface
@@ -47,43 +46,55 @@ class HSVClass;
 */
 class RGBClass
 {
-	public:
-		RGBClass() : Red(0), Green(0), Blue(0) {}
-		RGBClass(unsigned char red, unsigned char green, unsigned char blue) : Red(red), Green(green), Blue(blue) {}
-		operator HSVClass () const;
-		RGBClass & operator = (RGBClass const & rgb) {
-			if (this == &rgb) return(*this);
-
-			Red = rgb.Red;
-			Green = rgb.Green;
-			Blue = rgb.Blue;
-			return(*this);
+public:
+	RGBClass()
+	  : Red(0)
+	  , Green(0)
+	  , Blue(0)
+	{}
+	RGBClass(unsigned char red, unsigned char green, unsigned char blue)
+	  : Red(red)
+	  , Green(green)
+	  , Blue(blue)
+	{}
+	operator HSVClass() const;
+	RGBClass& operator=(RGBClass const& rgb)
+	{
+		if (this == &rgb)
+		{
+			return (*this);
 		}
 
-		enum {
-			MAX_VALUE=255
-		};
+		Red = rgb.Red;
+		Green = rgb.Green;
+		Blue = rgb.Blue;
+		return (*this);
+	}
 
-		void Adjust(int ratio, RGBClass const & rgb);
-		int Difference(RGBClass const & rgb) const;
-		int Get_Red() const {return (Red);}
-		int Get_Green() const {return(Green);}
-		int Get_Blue() const {return(Blue);}
-		void Set_Red(unsigned char value) {Red = value;}
-		void Set_Green(unsigned char value) {Green = value;}
-		void Set_Blue(unsigned char value) {Blue = value;}
+	enum
+	{
+		MAX_VALUE = 255
+	};
 
-	private:
+	void Adjust(int ratio, RGBClass const& rgb);
+	int Difference(RGBClass const& rgb) const;
+	int Get_Red() const { return (Red); }
+	int Get_Green() const { return (Green); }
+	int Get_Blue() const { return (Blue); }
+	void Set_Red(unsigned char value) { Red = value; }
+	void Set_Green(unsigned char value) { Green = value; }
+	void Set_Blue(unsigned char value) { Blue = value; }
 
-		friend class PaletteClass;
+private:
+	friend class PaletteClass;
 
-		/*
-		**	These hold the actual color gun values in machine independent scale. This
-		**	means the values range from 0 to 255.
-		*/
-		unsigned char Red;
-		unsigned char Green;
-		unsigned char Blue;
+	/*
+	**	These hold the actual color gun values in machine independent scale. This
+	**	means the values range from 0 to 255.
+	*/
+	unsigned char Red;
+	unsigned char Green;
+	unsigned char Blue;
 };
 
 extern RGBClass const BlackColor;

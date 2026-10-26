@@ -37,29 +37,27 @@
 //-------------------------------------------------------------------------------------------------
 class DisplayStringManager : public SubsystemInterface
 {
-
 public:
-
 	DisplayStringManager();
 	virtual ~DisplayStringManager() override;
 
-	virtual void init() override {}			///< initialize the factory
-	virtual void reset() override {}			///< reset system
-	virtual void update() override {};		///< update anything we need to in our strings
+	virtual void init() override {}    ///< initialize the factory
+	virtual void reset() override {}    ///< reset system
+	virtual void update() override {};    ///< update anything we need to in our strings
 
-	virtual DisplayString *newDisplayString() = 0;  ///< allocate new display string
-	virtual void freeDisplayString( DisplayString *string );  ///< free string
+	virtual DisplayString* newDisplayString() = 0;    ///< allocate new display string
+	virtual void freeDisplayString(DisplayString* string);    ///< free string
 
-	virtual DisplayString *getGroupNumeralString( Int numeral ) = 0;
-	virtual DisplayString *getFormationLetterString() = 0;
+	virtual DisplayString* getGroupNumeralString(Int numeral) = 0;
+	virtual DisplayString* getFormationLetterString() = 0;
+
 protected:
+	void link(DisplayString* string);    ///< link display string to list
+	void unLink(DisplayString* string);    ///< unlink display string from list
+	void setDefaultFont(DisplayString* string);    ///< assign the default display string font
 
-	void link( DisplayString *string );  ///< link display string to list
-	void unLink( DisplayString *string );  ///< unlink display string from list
-	void setDefaultFont( DisplayString *string );  ///< assign the default display string font
-
-	DisplayString *m_stringList;  ///< list of all display strings
-	DisplayString *m_currentCheckpoint; ///< current checkpoint of strings to be freed
+	DisplayString* m_stringList;    ///< list of all display strings
+	DisplayString* m_currentCheckpoint;    ///< current checkpoint of strings to be freed
 };
 
 // TheSuperHackers @performance CryoTheRenegade 14/10/2026
@@ -72,14 +70,14 @@ public:
 
 	virtual void postProcessLoad() override;
 
-	virtual DisplayString *newDisplayString() override;
+	virtual DisplayString* newDisplayString() override;
 
-	virtual DisplayString *getGroupNumeralString( Int numeral ) override { return m_markerString; }
-	virtual DisplayString *getFormationLetterString() override { return m_markerString; }
+	virtual DisplayString* getGroupNumeralString(Int numeral) override { return m_markerString; }
+	virtual DisplayString* getFormationLetterString() override { return m_markerString; }
 
 private:
-	DisplayString *m_markerString; ///< shared by all group numerals and the formation letter
+	DisplayString* m_markerString;    ///< shared by all group numerals and the formation letter
 };
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
-extern DisplayStringManager *TheDisplayStringManager;  ///< singleton extern
+extern DisplayStringManager* TheDisplayStringManager;    ///< singleton extern

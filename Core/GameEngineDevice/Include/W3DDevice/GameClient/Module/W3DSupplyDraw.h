@@ -46,17 +46,15 @@ public:
 //-------------------------------------------------------------------------------------------------
 class W3DSupplyDraw : public W3DModelDraw
 {
-
- 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DSupplyDraw, "W3DSupplyDraw" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( W3DSupplyDraw, W3DSupplyDrawModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(W3DSupplyDraw, "W3DSupplyDraw")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(W3DSupplyDraw, W3DSupplyDrawModuleData)
 
 public:
-
-	W3DSupplyDraw( Thing *thing, const ModuleData* moduleData );
+	W3DSupplyDraw(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void updateDrawModuleSupplyStatus( Int maxSupply, Int currentSupply ) override; ///< This will do visual feedback on Supplies carried
-	virtual void reactToGeometryChange() override { }
+	virtual void updateDrawModuleSupplyStatus(Int maxSupply, Int currentSupply) override;    ///< This will do visual feedback on Supplies carried
+	virtual void reactToGeometryChange() override {}
 
 protected:
 	Int m_totalBones;

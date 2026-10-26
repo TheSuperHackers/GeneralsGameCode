@@ -27,9 +27,8 @@
 // Desc:   Shoot something that collides with me every frame with my weapon
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 #define DEFINE_OBJECT_STATUS_NAMES
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
@@ -39,24 +38,23 @@
 //-------------------------------------------------------------------------------------------------
 void FireWeaponCollideModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  CollideModuleData::buildFieldParse(p);
+	CollideModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "CollideWeapon",		INI::parseWeaponTemplate,						nullptr, offsetof( FireWeaponCollideModuleData, m_collideWeaponTemplate ) },
-		{ "FireOnce",					INI::parseBool,											nullptr, offsetof( FireWeaponCollideModuleData, m_fireOnce ) },
-		{ "RequiredStatus",		ObjectStatusMaskType::parseFromINI,	nullptr, offsetof( FireWeaponCollideModuleData, m_requiredStatus ) },
-		{ "ForbiddenStatus",	ObjectStatusMaskType::parseFromINI,	nullptr, offsetof( FireWeaponCollideModuleData, m_forbiddenStatus ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "CollideWeapon", INI::parseWeaponTemplate, nullptr, offsetof(FireWeaponCollideModuleData, m_collideWeaponTemplate) },
+		{ "FireOnce", INI::parseBool, nullptr, offsetof(FireWeaponCollideModuleData, m_fireOnce) },
+		{ "RequiredStatus", ObjectStatusMaskType::parseFromINI, nullptr, offsetof(FireWeaponCollideModuleData, m_requiredStatus) },
+		{ "ForbiddenStatus", ObjectStatusMaskType::parseFromINI, nullptr, offsetof(FireWeaponCollideModuleData, m_forbiddenStatus) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireWeaponCollide::FireWeaponCollide( Thing *thing, const ModuleData* moduleData ) :
-	CollideModule( thing, moduleData ),
-	m_collideWeapon(nullptr)
+FireWeaponCollide::FireWeaponCollide(Thing* thing, const ModuleData* moduleData)
+  : CollideModule(thing, moduleData)
+  , m_collideWeapon(nullptr)
 {
 	m_collideWeapon = TheWeaponStore->allocateNewWeapon(getFireWeaponCollideModuleData()->m_collideWeaponTemplate, PRIMARY_WEAPON);
 	m_everFired = FALSE;
@@ -72,41 +70,49 @@ FireWeaponCollide::~FireWeaponCollide()
 //-------------------------------------------------------------------------------------------------
 /** The die callback. */
 //-------------------------------------------------------------------------------------------------
-void FireWeaponCollide::onCollide( Object *other, const Coord3D *loc, const Coord3D *normal )
+void FireWeaponCollide::onCollide(Object* other, const Coord3D* loc, const Coord3D* normal)
 {
-	if( other == nullptr )
-		return; //Don't shoot the ground
+	if (other == nullptr)
+	{
+		return;    // Don't shoot the ground
+	}
 
-	Object *me = getObject();
+	Object* me = getObject();
 
 	// This will fire at you every frame, because multiple people could be colliding and we want
 	// to hurt them all.  Another solution would be to keep a Map of other->objetIDs and
 	// delays for each individually.  However, this solution here is so quick and simple that it
 	// warrants the "do it eventually if we need it" clause.
-	if( shouldFireWeapon() )
+	if (shouldFireWeapon())
 	{
-		m_collideWeapon->loadAmmoNow( me );
-		m_collideWeapon->fireWeapon( me, other );
+		m_collideWeapon->loadAmmoNow(me);
+		m_collideWeapon->fireWeapon(me, other);
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
 Bool FireWeaponCollide::shouldFireWeapon()
 {
-	const FireWeaponCollideModuleData *d = getFireWeaponCollideModuleData();
+	const FireWeaponCollideModuleData* d = getFireWeaponCollideModuleData();
 
 	ObjectStatusMaskType status = getObject()->getStatusBits();
 
-	//We need all required status or else we fail
-	if( !status.testForAll( d->m_requiredStatus ) )
+	// We need all required status or else we fail
+	if (!status.testForAll(d->m_requiredStatus))
+	{
 		return FALSE;
+	}
 
-	//If we have any forbidden statii, then fail
-	if( status.testForAny( d->m_forbiddenStatus ) )
+	// If we have any forbidden statii, then fail
+	if (status.testForAny(d->m_forbiddenStatus))
+	{
 		return FALSE;
+	}
 
-	if( m_everFired && d->m_fireOnce )
-		return FALSE;// can only fire once ever
+	if (m_everFired && d->m_fireOnce)
+	{
+		return FALSE;    // can only fire once ever
+	}
 
 	return TRUE;
 }
@@ -114,52 +120,44 @@ Bool FireWeaponCollide::shouldFireWeapon()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void FireWeaponCollide::crc( Xfer *xfer )
+void FireWeaponCollide::crc(Xfer* xfer)
 {
-
 	// extend base class
-	CollideModule::crc( xfer );
-
+	CollideModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void FireWeaponCollide::xfer( Xfer *xfer )
+void FireWeaponCollide::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CollideModule::xfer( xfer );
+	CollideModule::xfer(xfer);
 
 	// weapon
 	Bool collideWeaponPresent = m_collideWeapon ? TRUE : FALSE;
-	xfer->xferBool( &collideWeaponPresent );
-	if( collideWeaponPresent )
+	xfer->xferBool(&collideWeaponPresent);
+	if (collideWeaponPresent)
 	{
-
-		DEBUG_ASSERTCRASH( m_collideWeapon != nullptr,
-											 ("FireWeaponCollide::xfer - m_collideWeapon present mismatch") );
-		xfer->xferSnapshot( m_collideWeapon );
-
+		DEBUG_ASSERTCRASH(m_collideWeapon != nullptr,
+		                  ("FireWeaponCollide::xfer - m_collideWeapon present mismatch"));
+		xfer->xferSnapshot(m_collideWeapon);
 	}
 	else
 	{
-
-		DEBUG_ASSERTCRASH( m_collideWeapon == nullptr,
-											 ("FireWeaponCollide::Xfer - m_collideWeapon missing mismatch" ));
-
+		DEBUG_ASSERTCRASH(m_collideWeapon == nullptr,
+		                  ("FireWeaponCollide::Xfer - m_collideWeapon missing mismatch"));
 	}
 
 	// ever fired
-	xfer->xferBool( &m_everFired );
-
+	xfer->xferBool(&m_everFired);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -167,8 +165,6 @@ void FireWeaponCollide::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void FireWeaponCollide::loadPostProcess()
 {
-
 	// extend base class
 	CollideModule::loadPostProcess();
-
 }

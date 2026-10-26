@@ -47,20 +47,25 @@
 */
 class BufferPipe : public Pipe
 {
-	public:
-		BufferPipe(Buffer const & buffer) : BufferPtr(buffer), Index(0) {}
-		BufferPipe(void * buffer, int length) : BufferPtr(buffer, length), Index(0) {}
-		virtual int Put(void const * source, int slen) override;
+public:
+	BufferPipe(Buffer const& buffer)
+	  : BufferPtr(buffer)
+	  , Index(0)
+	{}
+	BufferPipe(void* buffer, int length)
+	  : BufferPtr(buffer, length)
+	  , Index(0)
+	{}
+	virtual int Put(void const* source, int slen) override;
 
-	private:
-		Buffer BufferPtr;
-		int Index;
+private:
+	Buffer BufferPtr;
+	int Index;
 
-		bool Is_Valid() {return(BufferPtr.Is_Valid());}
-		BufferPipe(BufferPipe & rvalue);
-		BufferPipe & operator = (BufferPipe const & pipe);
+	bool Is_Valid() { return (BufferPtr.Is_Valid()); }
+	BufferPipe(BufferPipe& rvalue);
+	BufferPipe& operator=(BufferPipe const& pipe);
 };
-
 
 /*
 **	This is a store-to-file pipe terminator. Use it as the final link in a pipe process that
@@ -69,20 +74,25 @@ class BufferPipe : public Pipe
 */
 class FilePipe : public Pipe
 {
-	public:
-		FilePipe(FileClass * file) : File(file), HasOpened(false) {}
-		FilePipe(FileClass & file) : File(&file), HasOpened(false) {}
-		virtual ~FilePipe() override;
+public:
+	FilePipe(FileClass* file)
+	  : File(file)
+	  , HasOpened(false)
+	{}
+	FilePipe(FileClass& file)
+	  : File(&file)
+	  , HasOpened(false)
+	{}
+	virtual ~FilePipe() override;
 
-		virtual int Put(void const * source, int slen) override;
-		virtual int End() override;
+	virtual int Put(void const* source, int slen) override;
+	virtual int End() override;
 
-	private:
-		FileClass * File;
-		bool HasOpened;
+private:
+	FileClass* File;
+	bool HasOpened;
 
-		bool Valid_File() {return(File != nullptr);}
-		FilePipe(FilePipe & rvalue);
-		FilePipe & operator = (FilePipe const & pipe);
-
+	bool Valid_File() { return (File != nullptr); }
+	FilePipe(FilePipe& rvalue);
+	FilePipe& operator=(FilePipe const& pipe);
 };

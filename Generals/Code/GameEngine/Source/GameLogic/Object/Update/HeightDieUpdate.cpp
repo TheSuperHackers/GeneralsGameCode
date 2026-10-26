@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
@@ -42,42 +42,36 @@
 #include "GameLogic/Module/HeightDieUpdate.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 HeightDieUpdateModuleData::HeightDieUpdateModuleData()
 {
-
 	m_targetHeightAboveTerrain = 0.0f;
 	m_targetHeightIncludesStructures = FALSE;
 	m_onlyWhenMovingDown = FALSE;
 	m_destroyAttachedParticlesAtHeight = -1.0f;
 	m_snapToGroundOnDeath = FALSE;
 	m_initialDelay = 0;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void HeightDieUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
+	UpdateModuleData::buildFieldParse(p);
 
-  UpdateModuleData::buildFieldParse( p );
-
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "TargetHeight", INI::parseReal, nullptr, offsetof( HeightDieUpdateModuleData, m_targetHeightAboveTerrain ) },
-		{ "TargetHeightIncludesStructures", INI::parseBool, nullptr, offsetof( HeightDieUpdateModuleData, m_targetHeightIncludesStructures ) },
-		{ "OnlyWhenMovingDown", INI::parseBool, nullptr, offsetof( HeightDieUpdateModuleData, m_onlyWhenMovingDown ) },
-		{ "DestroyAttachedParticlesAtHeight", INI::parseReal, nullptr, offsetof( HeightDieUpdateModuleData, m_destroyAttachedParticlesAtHeight ) },
-		{ "SnapToGroundOnDeath", INI::parseBool, nullptr, offsetof( HeightDieUpdateModuleData, m_snapToGroundOnDeath ) },
-		{ "InitialDelay", INI::parseDurationUnsignedInt, nullptr, offsetof( HeightDieUpdateModuleData, m_initialDelay ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "TargetHeight", INI::parseReal, nullptr, offsetof(HeightDieUpdateModuleData, m_targetHeightAboveTerrain) },
+		{ "TargetHeightIncludesStructures", INI::parseBool, nullptr, offsetof(HeightDieUpdateModuleData, m_targetHeightIncludesStructures) },
+		{ "OnlyWhenMovingDown", INI::parseBool, nullptr, offsetof(HeightDieUpdateModuleData, m_onlyWhenMovingDown) },
+		{ "DestroyAttachedParticlesAtHeight", INI::parseReal, nullptr, offsetof(HeightDieUpdateModuleData, m_destroyAttachedParticlesAtHeight) },
+		{ "SnapToGroundOnDeath", INI::parseBool, nullptr, offsetof(HeightDieUpdateModuleData, m_snapToGroundOnDeath) },
+		{ "InitialDelay", INI::parseDurationUnsignedInt, nullptr, offsetof(HeightDieUpdateModuleData, m_initialDelay) },
 		{ nullptr, nullptr, nullptr, 0 }
 
 	};
 
-  p.add(dataFieldParse);
-
+	p.add(dataFieldParse);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,8 +80,8 @@ void HeightDieUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-HeightDieUpdate::HeightDieUpdate( Thing *thing, const ModuleData* moduleData )
-																: UpdateModule( thing, moduleData )
+HeightDieUpdate::HeightDieUpdate(Thing* thing, const ModuleData* moduleData)
+  : UpdateModule(thing, moduleData)
 {
 	m_hasDied = FALSE;
 	m_particlesDestroyed = FALSE;
@@ -96,14 +90,12 @@ HeightDieUpdate::HeightDieUpdate( Thing *thing, const ModuleData* moduleData )
 	m_lastPosition.z = -1.0f;
 	m_earliestDeathFrame = UINT_MAX;
 	// m_lastPosition = *thing->getPosition();
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 HeightDieUpdate::~HeightDieUpdate()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -111,45 +103,46 @@ HeightDieUpdate::~HeightDieUpdate()
 UpdateSleepTime HeightDieUpdate::update()
 {
 	UnsignedInt now = TheGameLogic->getFrame();
-	if( m_earliestDeathFrame == UINT_MAX )
+	if (m_earliestDeathFrame == UINT_MAX)
+	{
 		m_earliestDeathFrame = now + getHeightDieUpdateModuleData()->m_initialDelay;
+	}
 
 	// If at least a one frame delay has been set, then stop for a while
-	if( m_earliestDeathFrame > now )
+	if (m_earliestDeathFrame > now)
+	{
 		return UPDATE_SLEEP_NONE;
+	}
 
 	// do nothing if we're contained within other objects ... like a transport
-	if( getObject()->getContainedBy() != nullptr )
+	if (getObject()->getContainedBy() != nullptr)
 	{
-
 		// keep track of our last position even though we're not doing anything yet
 		m_lastPosition = *getObject()->getPosition();
 
 		// get outta here
 		return UPDATE_SLEEP_NONE;
-
 	}
 
 	// get the module data
-	const HeightDieUpdateModuleData *modData = getHeightDieUpdateModuleData();
+	const HeightDieUpdateModuleData* modData = getHeightDieUpdateModuleData();
 
 	// get our current position
-	const Coord3D *pos = getObject()->getPosition();
+	const Coord3D* pos = getObject()->getPosition();
 
 	Bool directionOK = TRUE;
-	if( m_hasDied == FALSE )
+	if (m_hasDied == FALSE)
 	{
-
-		if( modData->m_onlyWhenMovingDown )
+		if (modData->m_onlyWhenMovingDown)
 		{
-
-			if( pos->z >= m_lastPosition.z )
+			if (pos->z >= m_lastPosition.z)
+			{
 				directionOK = FALSE;
-
+			}
 		}
 
 		// get the terrain height
-		Real terrainHeightAtPos = TheTerrainLogic->getGroundHeight( pos->x, pos->y );
+		Real terrainHeightAtPos = TheTerrainLogic->getGroundHeight(pos->x, pos->y);
 
 		// if including structures, check for bridges
 		if (modData->m_targetHeightIncludesStructures)
@@ -159,7 +152,9 @@ UpdateSleepTime HeightDieUpdate::update()
 			{
 				Real layerHeight = TheTerrainLogic->getLayerHeight(pos->x, pos->y, layer);
 				if (layerHeight > terrainHeightAtPos)
+				{
 					terrainHeightAtPos = layerHeight;
+				}
 			}
 		}
 
@@ -174,35 +169,36 @@ UpdateSleepTime HeightDieUpdate::update()
 		// if we consider objects under us ... we will die when we are the specified distance above
 		// those objects
 		//
-		if( modData->m_targetHeightIncludesStructures == TRUE )
+		if (modData->m_targetHeightIncludesStructures == TRUE)
 		{
-
 			// scan all objects in the radius of our extent and find the tallest height among them
-			PartitionFilterAcceptByKindOf filter1( MAKE_KINDOF_MASK( KINDOF_STRUCTURE ),KINDOFMASK_NONE );
-			PartitionFilter *filters[] = { &filter1, nullptr };
+			PartitionFilterAcceptByKindOf filter1(MAKE_KINDOF_MASK(KINDOF_STRUCTURE), KINDOFMASK_NONE);
+			PartitionFilter* filters[] = { &filter1, nullptr };
 			Real range = getObject()->getGeometryInfo().getBoundingCircleRadius();
-			ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( getObject(),
-																																				 range,
-																																				 FROM_BOUNDINGSPHERE_3D,
-																																				 filters );
-			MemoryPoolObjectHolder hold( iter );
-			Object *obj;
+			ObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(getObject(),
+			                                                                  range,
+			                                                                  FROM_BOUNDINGSPHERE_3D,
+			                                                                  filters);
+			MemoryPoolObjectHolder hold(iter);
+			Object* obj;
 
 			Real tallestHeight = 0.0f;
 			Real thisHeight;
-			for( obj = iter->first(); obj; obj = iter->next() )
+			for (obj = iter->first(); obj; obj = iter->next())
 			{
-
 				// ignore ourselves
-				if( obj == getObject() )
+				if (obj == getObject())
+				{
 					continue;
+				}
 
 				// store the height of the tallest object under us
 				thisHeight = obj->getGeometryInfo().getMaxHeightAbovePosition();
 
-				if( thisHeight > tallestHeight )
+				if (thisHeight > tallestHeight)
+				{
 					tallestHeight = thisHeight;
-
+				}
 			}
 
 			//
@@ -210,26 +206,25 @@ UpdateSleepTime HeightDieUpdate::update()
 			// entry for the object that has this update ... or it is the building height of the
 			// tallest thing under us
 			//
-			if( tallestHeight > modData->m_targetHeightAboveTerrain )
+			if (tallestHeight > modData->m_targetHeightAboveTerrain)
+			{
 				targetHeight = tallestHeight + terrainHeightAtPos;
-
+			}
 		}
 
 		// if we are below the target height ... DIE!
-		if( pos->z < targetHeight && directionOK )
+		if (pos->z < targetHeight && directionOK)
 		{
-
 			// if we're supposed to snap us to the ground on death do so
 			// AND: even if we're not snapping to ground, be sure we don't go BELOW ground
-			if( modData->m_snapToGroundOnDeath || pos->z < terrainHeightAtPos )
+			if (modData->m_snapToGroundOnDeath || pos->z < terrainHeightAtPos)
 			{
 				Coord3D ground;
 
 				ground.x = pos->x;
 				ground.y = pos->y;
 				ground.z = terrainHeightAtPos;
-				getObject()->setPosition( &ground );
-
+				getObject()->setPosition(&ground);
 			}
 
 			// kill the object
@@ -237,76 +232,71 @@ UpdateSleepTime HeightDieUpdate::update()
 
 			// we have died ... don't do this again
 			m_hasDied = TRUE;
-
 		}
-
 	}
 
 	//
 	// if our height is below the destroy attached particles height above the terrain, clean
 	// them up from the particle system
 	//
-	if( m_particlesDestroyed == FALSE && pos->z < modData->m_destroyAttachedParticlesAtHeight && (m_hasDied || directionOK) )
+	if (m_particlesDestroyed == FALSE && pos->z < modData->m_destroyAttachedParticlesAtHeight && (m_hasDied || directionOK))
 	{
-
 		// destroy them
-		TheParticleSystemManager->destroyAttachedSystems( getObject() );
+		TheParticleSystemManager->destroyAttachedSystems(getObject());
 
 		// don't do this again
 		m_particlesDestroyed = TRUE;
-
 	}
 
 	// save our current position as the last position we monitored
 	m_lastPosition = *pos;
 
 	return UPDATE_SLEEP_NONE;
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void HeightDieUpdate::crc( Xfer *xfer )
+void HeightDieUpdate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
-
+	UpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version
-	* 2: m_earliestDeathFrame
-*/
+ * Version Info:
+ * 1: Initial version
+ * 2: m_earliestDeathFrame
+ */
 // ------------------------------------------------------------------------------------------------
-void HeightDieUpdate::xfer( Xfer *xfer )
+void HeightDieUpdate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// has died
-	xfer->xferBool( &m_hasDied );
+	xfer->xferBool(&m_hasDied);
 
 	// particles destroyed
-	xfer->xferBool( &m_particlesDestroyed );
+	xfer->xferBool(&m_particlesDestroyed);
 
 	// last position
-	xfer->xferCoord3D( &m_lastPosition );
+	xfer->xferCoord3D(&m_lastPosition);
 
-	if( version >= 2 )
-		xfer->xferUnsignedInt( &m_earliestDeathFrame );
+	if (version >= 2)
+	{
+		xfer->xferUnsignedInt(&m_earliestDeathFrame);
+	}
 	else
+	{
 		m_earliestDeathFrame = 0;
-
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -314,8 +304,6 @@ void HeightDieUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void HeightDieUpdate::loadPostProcess()
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
-
 }

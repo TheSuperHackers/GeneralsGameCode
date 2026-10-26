@@ -29,20 +29,18 @@ extern "C" {
 #include "gnu_regex.h"
 }
 
-
 // The regular expression syntax options that RegularExpressionClass uses.
 // The dirty details of each option are described in "gnu_regex.h"
-#define OUR_SYNTAX_OPTIONS																									\
-	RE_CHAR_CLASSES |					/* Support character classes such as [:alpha:] and [:digit:] */	\
-	RE_CONTEXT_INDEP_ANCHORS |		/* ^ and $ are always anchors (outside bracket expressions)  */	\
-	RE_CONTEXT_INDEP_OPS |			/* operators such as + * ? are always considered operators   */	\
-	RE_CONTEXT_INVALID_OPS |		/* operators are invalid as the first characters in a string */	\
-	RE_INTERVALS |						/* { } are used to define intervals                          */	\
-	RE_NO_BK_BRACES |					/* { } are interval markers and \{ \} are literals           */	\
-	RE_NO_BK_PARENS |					/* ( ) are group markers and \( \) are literals              */	\
-	RE_NO_BK_VBAR |					/* | is the OR operator and \| is a literal                  */	\
-	RE_NO_EMPTY_RANGES				/* [z-a] is an invalid range but [a-z] is valid              */
-
+#define OUR_SYNTAX_OPTIONS \
+	RE_CHAR_CLASSES | /* Support character classes such as [:alpha:] and [:digit:] */ \
+	  RE_CONTEXT_INDEP_ANCHORS | /* ^ and $ are always anchors (outside bracket expressions)  */ \
+	  RE_CONTEXT_INDEP_OPS | /* operators such as + * ? are always considered operators   */ \
+	  RE_CONTEXT_INVALID_OPS | /* operators are invalid as the first characters in a string */ \
+	  RE_INTERVALS | /* { } are used to define intervals                          */ \
+	  RE_NO_BK_BRACES | /* { } are interval markers and \{ \} are literals           */ \
+	  RE_NO_BK_PARENS | /* ( ) are group markers and \( \) are literals              */ \
+	  RE_NO_BK_VBAR | /* | is the OR operator and \| is a literal                  */ \
+	  RE_NO_EMPTY_RANGES /* [z-a] is an invalid range but [a-z] is valid              */
 
 /*
 ** Definition of private DataStruct for RegularExpressionClass
@@ -50,24 +48,26 @@ extern "C" {
 
 struct RegularExpressionClass::DataStruct
 {
-	DataStruct ()
-	:	IsValid(false)
+	DataStruct()
+	  : IsValid(false)
 	{
 		// Blank out the expression structure.
 		memset(&CompiledExpr, 0, sizeof(CompiledExpr));
 	}
 
-	~DataStruct ()
+	~DataStruct()
 	{
 		ClearExpression();
 	}
 
-	void ClearExpression ()
+	void ClearExpression()
 	{
 		// If the expression was valid, let the gnu_regex library
 		// deallocate any memory it had allocated for it.
 		if (IsValid)
+		{
 			regfree(&CompiledExpr);
+		}
 
 		// Blank out the expression structure.
 		memset(&CompiledExpr, 0, sizeof(CompiledExpr));
@@ -79,26 +79,23 @@ struct RegularExpressionClass::DataStruct
 		IsValid = false;
 	}
 
-
 	// The regular expression that has been compiled.
-	StringClass	ExprString;
+	StringClass ExprString;
 
 	// gnu_regex compiled version of the regular expression used
 	// during matching or any form of evaluation
-	regex_t		CompiledExpr;
+	regex_t CompiledExpr;
 
 	// True if CompiledExpr is valid.
-	bool			IsValid;
+	bool IsValid;
 };
-
-
 
 /*
 ** RegularExpressionClass Implementation
 */
 
-RegularExpressionClass::RegularExpressionClass (const char *expression)
-:	Data(0)
+RegularExpressionClass::RegularExpressionClass(const char* expression)
+  : Data(0)
 {
 	// Allocate our private members.
 	Data = new DataStruct;
@@ -106,12 +103,13 @@ RegularExpressionClass::RegularExpressionClass (const char *expression)
 
 	// Compile the expression if we were given one.
 	if (expression)
+	{
 		Compile(expression);
+	}
 }
 
-
-RegularExpressionClass::RegularExpressionClass (const RegularExpressionClass &copy)
-:	Data(0)
+RegularExpressionClass::RegularExpressionClass(const RegularExpressionClass& copy)
+  : Data(0)
 {
 	// Allocate our private members.
 	Data = new DataStruct;
@@ -125,15 +123,13 @@ RegularExpressionClass::RegularExpressionClass (const RegularExpressionClass &co
 	}
 }
 
-
-RegularExpressionClass::~RegularExpressionClass ()
+RegularExpressionClass::~RegularExpressionClass()
 {
 	delete Data;
 	Data = 0;
 }
 
-
-bool RegularExpressionClass::Compile (const char *expression)
+bool RegularExpressionClass::Compile(const char* expression)
 {
 	assert(Data);
 	assert(expression);
@@ -147,8 +143,8 @@ bool RegularExpressionClass::Compile (const char *expression)
 	reg_syntax_t old_syntax = re_set_syntax(OUR_SYNTAX_OPTIONS);
 
 	// Compile the given expression.
-	const char *error_str = re_compile_pattern(expression,
-		strlen(expression), &Data->CompiledExpr);
+	const char* error_str = re_compile_pattern(expression,
+	                                           strlen(expression), &Data->CompiledExpr);
 
 	// Restore the old syntax setting.
 	re_set_syntax(old_syntax);
@@ -163,21 +159,21 @@ bool RegularExpressionClass::Compile (const char *expression)
 	return false;
 }
 
-
-bool RegularExpressionClass::Is_Valid () const
+bool RegularExpressionClass::Is_Valid() const
 {
 	assert(Data);
 	return Data->IsValid;
 }
 
-
-bool RegularExpressionClass::Match (const char *string) const
+bool RegularExpressionClass::Match(const char* string) const
 {
 	assert(Data);
 
 	// If we have no valid compiled expression, we can't match Jack.
 	if (!Data->IsValid)
+	{
 		return false;
+	}
 
 	// Set the regular expression module to the syntax that we
 	// would like to use.
@@ -193,22 +189,25 @@ bool RegularExpressionClass::Match (const char *string) const
 	// re_match returned the number of characters matched. A 0 character
 	// match is valid, and distinctly different than no match at all.
 	if (retval < 0)
+	{
 		return false;
+	}
 
 	// The given string matched our regular expression!
 	return true;
 }
 
-
 /*
 ** Operators
 */
 
-RegularExpressionClass & RegularExpressionClass::operator = (const RegularExpressionClass &rhs)
+RegularExpressionClass& RegularExpressionClass::operator=(const RegularExpressionClass& rhs)
 {
 	// Check for assignment to self.
 	if (*this == rhs)
+	{
 		return *this;
+	}
 
 	// Assign that object to this one.
 	assert(rhs.Data);
@@ -219,8 +218,7 @@ RegularExpressionClass & RegularExpressionClass::operator = (const RegularExpres
 	return *this;
 }
 
-
-bool RegularExpressionClass::operator == (const RegularExpressionClass &rhs) const
+bool RegularExpressionClass::operator==(const RegularExpressionClass& rhs) const
 {
 	// Two RegularExpressionClass objects are equivalent if they both
 	// have the same validity state, and if that state is 'true' both
@@ -228,7 +226,9 @@ bool RegularExpressionClass::operator == (const RegularExpressionClass &rhs) con
 
 	// Check validity states for equality.
 	if (Is_Valid() != rhs.Is_Valid())
+	{
 		return false;
+	}
 
 	// If they're valid, check their expressions.
 	if (Is_Valid())
@@ -236,15 +236,14 @@ bool RegularExpressionClass::operator == (const RegularExpressionClass &rhs) con
 		// The objects are not equivalent if their expression strings
 		// don't match.
 		if (Data->ExprString != rhs.Data->ExprString)
+		{
 			return false;
+		}
 	}
 	return true;
 }
 
-
-inline bool RegularExpressionClass::operator != (const RegularExpressionClass &rhs) const
+inline bool RegularExpressionClass::operator!=(const RegularExpressionClass& rhs) const
 {
 	return !(*this == rhs);
 }
-
-

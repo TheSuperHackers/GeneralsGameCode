@@ -41,128 +41,124 @@ class Object;
 class Drawable;
 class GeometryInfo;
 
-
 class WorldHeightMap;
 struct SeismicSimulationNode;
 class SeismicSimulationFilterBase;
 
-
 #define DEFAULT_SEISMIC_SIMULATION_MAGNITUDE (20.0f)
-struct SeismicSimulationNode; // just a forward declaration folks, no cause for alarm
+struct SeismicSimulationNode;    // just a forward declaration folks, no cause for alarm
 class SeismicSimulationFilterBase
 {
 public:
-  enum SeismicSimStatusCode CPP_11(: Int)
-  {
-    SEISMIC_STATUS_INVALID,
-    SEISMIC_STATUS_ACTIVE,
-    SEISMIC_STATUS_ZERO_ENERGY,
-  };
+	enum SeismicSimStatusCode CPP_11( : Int)
+	{
+		SEISMIC_STATUS_INVALID,
+		SEISMIC_STATUS_ACTIVE,
+		SEISMIC_STATUS_ZERO_ENERGY,
+	};
 
-  virtual SeismicSimStatusCode filterCallback( WorldHeightMapInterfaceClass *heightMap, const SeismicSimulationNode *node ) = 0;
-  virtual Real applyGravityCallback( Real velocityIn ) = 0;
+	virtual SeismicSimStatusCode filterCallback(WorldHeightMapInterfaceClass* heightMap, const SeismicSimulationNode* node) = 0;
+	virtual Real applyGravityCallback(Real velocityIn) = 0;
 };
 
 struct SeismicSimulationNode
 {
-  SeismicSimulationNode()
-  {
-    m_center.x    = 0;
-    m_center.y    = 0;
-    m_radius      = 0;
-    m_region.lo.x = 0;
-    m_region.lo.y = 0;
-    m_region.hi.x = 0;
-    m_region.hi.y = 0;
-    m_clean = FALSE;
-    callbackFilter = nullptr;
-    m_life = 0;
-    m_magnitude = DEFAULT_SEISMIC_SIMULATION_MAGNITUDE;
+	SeismicSimulationNode()
+	{
+		m_center.x = 0;
+		m_center.y = 0;
+		m_radius = 0;
+		m_region.lo.x = 0;
+		m_region.lo.y = 0;
+		m_region.hi.x = 0;
+		m_region.hi.y = 0;
+		m_clean = FALSE;
+		callbackFilter = nullptr;
+		m_life = 0;
+		m_magnitude = DEFAULT_SEISMIC_SIMULATION_MAGNITUDE;
+	}
+	SeismicSimulationNode(const SeismicSimulationNode& ssn)
+	{
+		m_center.x = ssn.m_center.x;
+		m_center.y = ssn.m_center.y;
+		m_radius = ssn.m_radius;
+		m_region.lo.x = ssn.m_region.lo.x;
+		m_region.lo.y = ssn.m_region.lo.y;
+		m_region.hi.x = ssn.m_region.hi.x;
+		m_region.hi.y = ssn.m_region.hi.y;
+		m_clean = ssn.m_clean;
+		callbackFilter = ssn.callbackFilter;
+		m_life = ssn.m_life;
+		m_magnitude = ssn.m_magnitude;
+	}
+	SeismicSimulationNode(const Coord3D* ctr, Real rad, Real mag, SeismicSimulationFilterBase* cbf = nullptr)
+	{
+		m_center.x = REAL_TO_INT_FLOOR(ctr->x / MAP_XY_FACTOR);
+		m_center.y = REAL_TO_INT_FLOOR(ctr->y / MAP_XY_FACTOR);
+		m_radius = (rad - 1) / MAP_XY_FACTOR;
+		UnsignedInt regionSize = rad / MAP_XY_FACTOR;
+		m_region.lo.x = m_center.x - regionSize;
+		m_region.lo.y = m_center.y - regionSize;
+		m_region.hi.x = m_center.x + regionSize;
+		m_region.hi.y = m_center.y + regionSize;
+		m_clean = false;
+		callbackFilter = cbf;
+		m_life = 0;
+		m_magnitude = mag;
+	}
 
-  }
-  SeismicSimulationNode( const SeismicSimulationNode &ssn )
-  {
-    m_center.x    = ssn.m_center.x;
-    m_center.y    = ssn.m_center.y;
-    m_radius      = ssn.m_radius;
-    m_region.lo.x = ssn.m_region.lo.x;
-    m_region.lo.y = ssn.m_region.lo.y;
-    m_region.hi.x = ssn.m_region.hi.x;
-    m_region.hi.y = ssn.m_region.hi.y;
-    m_clean       = ssn.m_clean;
-    callbackFilter= ssn.callbackFilter;
-    m_life        = ssn.m_life;
-    m_magnitude   = ssn.m_magnitude;
+	SeismicSimulationFilterBase::SeismicSimStatusCode handleFilterCallback(WorldHeightMapInterfaceClass* heightMap)
+	{
+		if (callbackFilter == nullptr)
+		{
+			return SeismicSimulationFilterBase::SEISMIC_STATUS_INVALID;
+		}
 
-  }
-  SeismicSimulationNode( const Coord3D* ctr, Real rad, Real mag, SeismicSimulationFilterBase *cbf = nullptr )
-  {
-    m_center.x    = REAL_TO_INT_FLOOR(ctr->x/MAP_XY_FACTOR);
-    m_center.y    = REAL_TO_INT_FLOOR(ctr->y/MAP_XY_FACTOR);
-    m_radius      = (rad-1)/MAP_XY_FACTOR;
-    UnsignedInt regionSize = rad/MAP_XY_FACTOR;
-    m_region.lo.x = m_center.x - regionSize;
-    m_region.lo.y = m_center.y - regionSize;
-    m_region.hi.x = m_center.x + regionSize;
-    m_region.hi.y = m_center.y + regionSize;
-    m_clean       = false;
-    callbackFilter= cbf;
-    m_life        = 0;
-    m_magnitude   = mag;
+		++m_life;
 
-  }
+		return callbackFilter->filterCallback(heightMap, this);
+	}
 
-  SeismicSimulationFilterBase::SeismicSimStatusCode handleFilterCallback( WorldHeightMapInterfaceClass *heightMap )
-  {
-    if ( callbackFilter == nullptr )
-      return SeismicSimulationFilterBase::SEISMIC_STATUS_INVALID;
+	Real applyGravity(Real velocityIn)
+	{
+		DEBUG_ASSERTCRASH(callbackFilter, ("SeismicSimulationNode::applyGravity() has no callback filter!"));
 
-    ++m_life;
+		if (callbackFilter == nullptr)
+		{
+			return velocityIn;    // oops, we have no callback!
+		}
 
-    return callbackFilter->filterCallback( heightMap, this );
-  }
+		return callbackFilter->applyGravityCallback(velocityIn);
+	}
 
-  Real applyGravity( Real velocityIn )
-  {
-    DEBUG_ASSERTCRASH( callbackFilter, ("SeismicSimulationNode::applyGravity() has no callback filter!") );
+	IRegion2D m_region;
+	ICoord2D m_center;
+	Bool m_clean;
+	Real m_magnitude;
+	UnsignedInt m_radius;
+	UnsignedInt m_life;
 
-    if ( callbackFilter == nullptr )
-      return velocityIn;//oops, we have no callback!
-
-    return callbackFilter->applyGravityCallback( velocityIn );
-
-  }
-
-  IRegion2D   m_region;
-  ICoord2D    m_center;
-  Bool        m_clean;
-  Real        m_magnitude;
-  UnsignedInt m_radius;
-  UnsignedInt m_life;
-
-  SeismicSimulationFilterBase *callbackFilter;
-
+	SeismicSimulationFilterBase* callbackFilter;
 };
 typedef std::list<SeismicSimulationNode> SeismicSimulationList;
 typedef SeismicSimulationList::iterator SeismicSimulationListIt;
 
 class DomeStyleSeismicFilter : public SeismicSimulationFilterBase
 {
-  virtual SeismicSimStatusCode filterCallback( WorldHeightMapInterfaceClass *heightMap, const SeismicSimulationNode *node ) override;
-  virtual Real applyGravityCallback( Real velocityIn ) override;
+	virtual SeismicSimStatusCode filterCallback(WorldHeightMapInterfaceClass* heightMap, const SeismicSimulationNode* node) override;
+	virtual Real applyGravityCallback(Real velocityIn) override;
 };
-
 
 //-------------------------------------------------------------------------------------------------
 /** LOD values for terrain, keep this in sync with TerrainLODNames[] */
 //-------------------------------------------------------------------------------------------------
-typedef enum _TerrainLOD CPP_11(: Int)
+typedef enum _TerrainLOD CPP_11( : Int)
 {
 	TERRAIN_LOD_INVALID,
-	TERRAIN_LOD_MIN,  // note that this is less than max
+	TERRAIN_LOD_MIN,    // note that this is less than max
 	TERRAIN_LOD_NO_CLOUDS,
 	TERRAIN_LOD_NO_WATER,
-	TERRAIN_LOD_MAX,  // note that this is larger than min
+	TERRAIN_LOD_MAX,    // note that this is larger than min
 	TERRAIN_LOD_AUTOMATIC,
 	TERRAIN_LOD_DISABLE,
 
@@ -170,8 +166,7 @@ typedef enum _TerrainLOD CPP_11(: Int)
 
 } TerrainLOD;
 #ifdef DEFINE_TERRAIN_LOD_NAMES
-static const char *const TerrainLODNames[] =
-{
+static const char* const TerrainLODNames[] = {
 	"NONE",
 	"MIN",
 	"NO_CLOUDS",
@@ -183,18 +178,19 @@ static const char *const TerrainLODNames[] =
 	nullptr
 };
 static_assert(ARRAY_SIZE(TerrainLODNames) == TERRAIN_LOD_NUM_TYPES + 1, "Incorrect array size");
-#endif  // end DEFINE_TERRAIN_LOD_NAMES
+#endif    // end DEFINE_TERRAIN_LOD_NAMES
 
 //-------------------------------------------------------------------------------------------------
 /** Device independent implementation for visual terrain */
 //-------------------------------------------------------------------------------------------------
 class TerrainVisual : public Snapshot,
-											public SubsystemInterface
+                      public SubsystemInterface
 {
-
 public:
-
-	enum {NumSkyboxTextures = 5};
+	enum
+	{
+		NumSkyboxTextures = 5
+	};
 
 	TerrainVisual();
 	virtual ~TerrainVisual() override;
@@ -203,102 +199,97 @@ public:
 	virtual void reset() override;
 	virtual void update() override;
 
-	virtual Bool load( AsciiString filename );
+	virtual Bool load(AsciiString filename);
 
 	/// get color of texture on the terrain at location specified
-	virtual void getTerrainColorAt( Real x, Real y, RGBColor *pColor ) = 0;
+	virtual void getTerrainColorAt(Real x, Real y, RGBColor* pColor) = 0;
 
 	/// get the terrain tile type at the world location in the (x,y) plane ignoring Z
-	virtual TerrainType *getTerrainTile( Real x, Real y ) = 0;
+	virtual TerrainType* getTerrainTile(Real x, Real y) = 0;
 
 	/** intersect the ray with the terrain, if a hit occurs TRUE is returned
 	and the result point on the terrain is returned in "result" */
-	virtual Bool intersectTerrain( Coord3D *rayStart,
-																 Coord3D *rayEnd,
-																 Coord3D *result ) { return FALSE; }
+	virtual Bool intersectTerrain(Coord3D* rayStart,
+	                              Coord3D* rayEnd,
+	                              Coord3D* result) { return FALSE; }
 
 	//
 	// water methods
 	//
-	virtual void enableWaterGrid( Bool enable ) = 0;
+	virtual void enableWaterGrid(Bool enable) = 0;
 	/// set min/max height values allowed in water grid pointed to by waterTable
-	virtual void setWaterGridHeightClamps( const WaterHandle *waterTable, Real minZ, Real maxZ ) = 0;
+	virtual void setWaterGridHeightClamps(const WaterHandle* waterTable, Real minZ, Real maxZ) = 0;
 	/// adjust falloff parameters for grid change method
-	virtual void setWaterAttenuationFactors( const WaterHandle *waterTable, Real a, Real b, Real c, Real range ) = 0;
+	virtual void setWaterAttenuationFactors(const WaterHandle* waterTable, Real a, Real b, Real c, Real range) = 0;
 	/// set the water table position and orientation in world space
-	virtual void setWaterTransform( const WaterHandle *waterTable, Real angle, Real x, Real y, Real z ) = 0;
-	virtual void setWaterTransform( const Matrix3D *transform ) = 0;
+	virtual void setWaterTransform(const WaterHandle* waterTable, Real angle, Real x, Real y, Real z) = 0;
+	virtual void setWaterTransform(const Matrix3D* transform) = 0;
 	/// get water transform parameters
-	virtual void getWaterTransform( const WaterHandle *waterTable, Matrix3D *transform ) = 0;
+	virtual void getWaterTransform(const WaterHandle* waterTable, Matrix3D* transform) = 0;
 	/// water grid resolution spacing
-	virtual void setWaterGridResolution( const WaterHandle *waterTable, Real gridCellsX, Real gridCellsY, Real cellSize ) = 0;
-	virtual void getWaterGridResolution( const WaterHandle *waterTable, Real *gridCellsX, Real *gridCellsY, Real *cellSize ) = 0;
+	virtual void setWaterGridResolution(const WaterHandle* waterTable, Real gridCellsX, Real gridCellsY, Real cellSize) = 0;
+	virtual void getWaterGridResolution(const WaterHandle* waterTable, Real* gridCellsX, Real* gridCellsY, Real* cellSize) = 0;
 	/// adjust the water grid in world coords by the delta
-	virtual void changeWaterHeight( Real x, Real y, Real delta ) = 0;
+	virtual void changeWaterHeight(Real x, Real y, Real delta) = 0;
 	/// adjust the velocity at a water grid point corresponding to the world x,y
-	virtual void addWaterVelocity( Real worldX, Real worldY, Real velocity, Real preferredHeight ) = 0;
+	virtual void addWaterVelocity(Real worldX, Real worldY, Real velocity, Real preferredHeight) = 0;
 	/// get height of water grid at specified position
-	virtual Bool getWaterGridHeight( Real worldX, Real worldY, Real *height) = 0;
+	virtual Bool getWaterGridHeight(Real worldX, Real worldY, Real* height) = 0;
 
 	/// set detail of terrain tracks.
-	virtual void setTerrainTracksDetail()=0;
-	virtual void setShoreLineDetail()=0;
+	virtual void setTerrainTracksDetail() = 0;
+	virtual void setShoreLineDetail() = 0;
 
 	/// Add a bib for an object at location.
-	virtual void addFactionBib(Object *factionBuilding, Bool highlight, Real extra = 0)=0;
+	virtual void addFactionBib(Object* factionBuilding, Bool highlight, Real extra = 0) = 0;
 	/// Remove a bib.
-	virtual void removeFactionBib(Object *factionBuilding)=0;
+	virtual void removeFactionBib(Object* factionBuilding) = 0;
 
 	/// Add a bib for a drawable at location.
-	virtual void addFactionBibDrawable(Drawable *factionBuilding, Bool highlight, Real extra = 0)=0;
+	virtual void addFactionBibDrawable(Drawable* factionBuilding, Bool highlight, Real extra = 0) = 0;
 	/// Remove a bib.
-	virtual void removeFactionBibDrawable(Drawable *factionBuilding)=0;
+	virtual void removeFactionBibDrawable(Drawable* factionBuilding) = 0;
 
-	virtual void removeAllBibs()=0;
-	virtual void removeBibHighlighting()=0;
+	virtual void removeAllBibs() = 0;
+	virtual void removeBibHighlighting() = 0;
 
 	virtual void removeTreesAndPropsForConstruction(
-		const Coord3D* pos,
-		const GeometryInfo& geom,
-		Real angle
-	) = 0;
+	  const Coord3D* pos,
+	  const GeometryInfo& geom,
+	  Real angle) = 0;
 
-	virtual void addProp(const ThingTemplate *tt, const Coord3D *pos, Real angle) = 0;
+	virtual void addProp(const ThingTemplate* tt, const Coord3D* pos, Real angle) = 0;
 
 	//
 	// Modify height.
 	//
-	virtual void setRawMapHeight(const ICoord2D *gridPos, Int height)=0;
-	virtual Int getRawMapHeight(const ICoord2D *gridPos)=0;
+	virtual void setRawMapHeight(const ICoord2D* gridPos, Int height) = 0;
+	virtual Int getRawMapHeight(const ICoord2D* gridPos) = 0;
 
-
-  ////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////
+	////////////////////////////////////////////////////
+	////////////////////////////////////////////////////
+	////////////////////////////////////////////////////
 #ifdef DO_SEISMIC_SIMULATIONS
-  virtual void updateSeismicSimulations() = 0; /// walk the SeismicSimulationList and, well, do it.
-  virtual void addSeismicSimulation( const SeismicSimulationNode& sim ) = 0;
+	virtual void updateSeismicSimulations() = 0;    /// walk the SeismicSimulationList and, well, do it.
+	virtual void addSeismicSimulation(const SeismicSimulationNode& sim) = 0;
 #endif
-  virtual WorldHeightMap* getLogicHeightMap() {return nullptr;};
-  virtual WorldHeightMap* getClientHeightMap() {return nullptr;};
-  ////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////
-
+	virtual WorldHeightMap* getLogicHeightMap() { return nullptr; };
+	virtual WorldHeightMap* getClientHeightMap() { return nullptr; };
+	////////////////////////////////////////////////////
+	////////////////////////////////////////////////////
+	////////////////////////////////////////////////////
 
 	/// Replace the skybox texture
-	virtual void replaceSkyboxTextures(const AsciiString *oldTexName[NumSkyboxTextures], const AsciiString *newTexName[NumSkyboxTextures])=0;
+	virtual void replaceSkyboxTextures(const AsciiString* oldTexName[NumSkyboxTextures], const AsciiString* newTexName[NumSkyboxTextures]) = 0;
 
 protected:
-
 	// snapshot methods
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
+	virtual void crc(Xfer* xfer) override;
+	virtual void xfer(Xfer* xfer) override;
 	virtual void loadPostProcess() override;
 
-	AsciiString m_filenameString;							///< file with terrain data
-
+	AsciiString m_filenameString;    ///< file with terrain data
 };
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
-extern TerrainVisual *TheTerrainVisual;  ///< singleton extern
+extern TerrainVisual* TheTerrainVisual;    ///< singleton extern

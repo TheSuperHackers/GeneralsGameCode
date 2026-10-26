@@ -33,12 +33,12 @@ class Vector3;
 
 struct RenderViewport
 {
-    unsigned int x;
-    unsigned int y;
-    unsigned int width;
-    unsigned int height;
-    float min_z;
-    float max_z;
+	unsigned int x;
+	unsigned int y;
+	unsigned int width;
+	unsigned int height;
+	float min_z;
+	float max_z;
 };
 
 // The interface holds only the methods that callers route through. The rest of
@@ -47,34 +47,34 @@ struct RenderViewport
 class Renderer
 {
 public:
-    // Initialized in WW3D::Init and shut down in WW3D::Shutdown.
-    static bool Init(void * window, bool lite);
-    static void Shutdown();
+	// Initialized in WW3D::Init and shut down in WW3D::Shutdown.
+	static bool Init(void* window, bool lite);
+	static void Shutdown();
 
-    static int Get_Render_Device_Count();
-    static int Get_Render_Device();
-    static const char * Get_Render_Device_Name(int device_index);
-    static void Get_Device_Resolution(int & width, int & height, int & bits, bool & windowed);
-    static void Get_Render_Target_Resolution(int & width, int & height, int & bits, bool & windowed);
-    static int Get_Device_Resolution_Width();
-    static int Get_Device_Resolution_Height();
-    static bool Is_Windowed();
-    static int Get_Texture_Bitdepth();
-    static int Get_Swap_Interval();
-    static bool Has_Stencil();
-    static WW3DFormat Get_Back_Buffer_Format();
+	static int Get_Render_Device_Count();
+	static int Get_Render_Device();
+	static const char* Get_Render_Device_Name(int device_index);
+	static void Get_Device_Resolution(int& width, int& height, int& bits, bool& windowed);
+	static void Get_Render_Target_Resolution(int& width, int& height, int& bits, bool& windowed);
+	static int Get_Device_Resolution_Width();
+	static int Get_Device_Resolution_Height();
+	static bool Is_Windowed();
+	static int Get_Texture_Bitdepth();
+	static int Get_Swap_Interval();
+	static bool Has_Stencil();
+	static WW3DFormat Get_Back_Buffer_Format();
 
-    static void Set_Gamma(float gamma, float bright, float contrast, bool calibrate = true, bool uselimit = true);
+	static void Set_Gamma(float gamma, float bright, float contrast, bool calibrate = true, bool uselimit = true);
 
-    static void Begin_Scene();
-    static void End_Scene(bool flip_frame = true);
-    static void Flip_To_Primary();
-    static void Clear(bool clear_color, bool clear_z_stencil,
-                      const Vector3 & color,
-                      float dest_alpha = 0.0f, float z = 1.0f, unsigned int stencil = 0);
-    static void Set_Viewport(const RenderViewport & viewport);
-    static void Invalidate_Cached_Render_States();
+	static void Begin_Scene();
+	static void End_Scene(bool flip_frame = true);
+	static void Flip_To_Primary();
+	static void Clear(bool clear_color, bool clear_z_stencil,
+	                  const Vector3& color,
+	                  float dest_alpha = 0.0f, float z = 1.0f, unsigned int stencil = 0);
+	static void Set_Viewport(const RenderViewport& viewport);
+	static void Invalidate_Cached_Render_States();
 
-    static void Set_Ambient(const Vector3 & color);
-    static void Set_Light_Environment(LightEnvironmentClass * light_env);
+	static void Set_Ambient(const Vector3& color);
+	static void Set_Light_Environment(LightEnvironmentClass* light_env);
 };

@@ -21,66 +21,63 @@
 #include "streamer.h"
 #include "odevice.h"
 
-
 // static MyMsgManager         *msg_manager=nullptr;
 
 // static int                paranoid_enabled=0;
-static ostream           *paranoid_ostream=nullptr;
-static Streamer           paranoid_streamer;
+static ostream* paranoid_ostream = nullptr;
+static Streamer paranoid_streamer;
 
 // Don't dare touch this semaphore in application code!
 #ifdef USE_SEM
-Sem4                      MyDebugLibSemaphore;
+Sem4 MyDebugLibSemaphore;
 #else
-CritSec                      MyDebugLibSemaphore;
+CritSec MyDebugLibSemaphore;
 #endif
 
-
-int MyMsgManager::setAllStreams(OutputDevice *device)
+int MyMsgManager::setAllStreams(OutputDevice* device)
 {
-	if (device==nullptr)
-		return(1);
+	if (device == nullptr)
+	{
+		return (1);
+	}
 
 	MYDEBUGLOCK;
 	paranoid_streamer.setOutputDevice(device);
-	delete(paranoid_ostream);
-	paranoid_ostream=new ostream(&paranoid_streamer);
+	delete (paranoid_ostream);
+	paranoid_ostream = new ostream(&paranoid_streamer);
 
 	MYDEBUGUNLOCK;
 
-	return(0);
+	return (0);
 }
 
-
-int MyMsgManager::setParanoidStream(OutputDevice *device)
+int MyMsgManager::setParanoidStream(OutputDevice* device)
 {
-	if (device==nullptr)
-		return(1);
+	if (device == nullptr)
+	{
+		return (1);
+	}
 
 	MYDEBUGLOCK;
 	paranoid_streamer.setOutputDevice(device);
-	delete(paranoid_ostream);
-	paranoid_ostream=new ostream(&paranoid_streamer);
+	delete (paranoid_ostream);
+	paranoid_ostream = new ostream(&paranoid_streamer);
 	MYDEBUGUNLOCK;
 
-	return(0);
+	return (0);
 }
 
-
-
-
-ostream *MyMsgManager::paranoidStream()
+ostream* MyMsgManager::paranoidStream()
 {
-	return(paranoid_ostream);
+	return (paranoid_ostream);
 }
 
-
-int MyMsgManager::ReplaceAllStreams(FileD * output_device, const char *device_filename, const char *copy_filename)
+int MyMsgManager::ReplaceAllStreams(FileD* output_device, const char* device_filename, const char* copy_filename)
 {
 	MYDEBUGLOCK;
 
-	delete(paranoid_ostream);
-	delete(output_device);
+	delete (paranoid_ostream);
+	delete (output_device);
 
 	rename(device_filename, copy_filename);
 
@@ -92,5 +89,5 @@ int MyMsgManager::ReplaceAllStreams(FileD * output_device, const char *device_fi
 
 	MYDEBUGUNLOCK;
 
-	return(0);
+	return (0);
 }

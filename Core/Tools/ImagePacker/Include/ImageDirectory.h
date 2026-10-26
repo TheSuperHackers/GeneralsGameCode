@@ -53,17 +53,14 @@
 //-----------------------------------------------------------------------------
 class ImageDirectory
 {
-
 public:
-
 	ImageDirectory();
 	~ImageDirectory();
 
-	char *m_path;  ///< path for directory
-	UnsignedInt m_imageCount;  ///< images to consider in this directory
-	ImageDirectory *m_next;
-	ImageDirectory *m_prev;
-
+	char* m_path;    ///< path for directory
+	UnsignedInt m_imageCount;    ///< images to consider in this directory
+	ImageDirectory* m_next;
+	ImageDirectory* m_prev;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

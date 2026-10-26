@@ -79,9 +79,7 @@
 #include "Lib/PathUtil.h"
 #include <winver.h>
 #include <shlwapi.h>
-//#include "resources.h"
-
-
+// #include "resources.h"
 
 //----------------------------------------------------------------------------
 //
@@ -98,72 +96,78 @@
 //
 //---------------------------------------------------------------------------
 
-void Fix_Single_Ampersands ( LPSTR pszString, bool upper_case )
+void Fix_Single_Ampersands(LPSTR pszString, bool upper_case)
 {
-	char	pszTemp[ MAX_PATH ];		// variable to hold the string passed
-	char	pszOld[ MAX_PATH ];			// variable to hold the string passed
-	char *	letter;
-	int		i = 0;
+	char pszTemp[MAX_PATH];    // variable to hold the string passed
+	char pszOld[MAX_PATH];    // variable to hold the string passed
+	char* letter;
+	int i = 0;
 
-	lstrcpy((LPSTR)pszOld, (LPSTR)pszString );
+	lstrcpy((LPSTR)pszOld, (LPSTR)pszString);
 	letter = pszOld;
-	memset ( pszTemp, '\0', MAX_PATH );
+	memset(pszTemp, '\0', MAX_PATH);
 
 	//----------------------------------------------------------------------
 	// While our ptr has not passed the end of the string...
 	//----------------------------------------------------------------------
-	while (*letter != '\0') {
-
-		if (*letter == '&') {
-
+	while (*letter != '\0')
+	{
+		if (*letter == '&')
+		{
 			pszTemp[i++] = '&';
 			pszTemp[i++] = '&';
 			letter++;
-
-		} else {
-
-			if ( upper_case ) {
-				pszTemp[i++] = (char) toupper( *( letter++ ));
-			} else {
+		}
+		else
+		{
+			if (upper_case)
+			{
+				pszTemp[i++] = (char)toupper(*(letter++));
+			}
+			else
+			{
 				pszTemp[i++] = *(letter++);
 			}
 		}
 	}
-	strcpy((LPSTR)pszString, (LPSTR)pszTemp );
+	strcpy((LPSTR)pszString, (LPSTR)pszTemp);
 }
 
-void Fix_Single_Ampersands ( unichar *pszString, bool upper_case )
+void Fix_Single_Ampersands(unichar* pszString, bool upper_case)
 {
-	unichar	pszTemp[ MAX_PATH ];		// variable to hold the string passed
-	unichar	pszOld[ MAX_PATH ];			// variable to hold the string passed
-	unichar *letter;
-	int		i = 0;
+	unichar pszTemp[MAX_PATH];    // variable to hold the string passed
+	unichar pszOld[MAX_PATH];    // variable to hold the string passed
+	unichar* letter;
+	int i = 0;
 
-	wcscpy( pszOld, pszString );
+	wcscpy(pszOld, pszString);
 	letter = pszOld;
-	memset ( pszTemp, '\0', MAX_PATH );
+	memset(pszTemp, '\0', MAX_PATH);
 
 	//----------------------------------------------------------------------
 	// While our ptr has not passed the end of the string...
 	//----------------------------------------------------------------------
-	while (*letter != '\0') {
-
-		if (*letter == '&') {
-
+	while (*letter != '\0')
+	{
+		if (*letter == '&')
+		{
 			pszTemp[i++] = '&';
 			pszTemp[i++] = '&';
 			letter++;
-
-		} else {
-
-			if ( upper_case ) {
-				pszTemp[i++] = (char) toupper( *( letter++ ));
-			} else {
+		}
+		else
+		{
+			if (upper_case)
+			{
+				pszTemp[i++] = (char)toupper(*(letter++));
+			}
+			else
+			{
 				pszTemp[i++] = *(letter++);
 			}
 		}
 	}
-	wcscpy( pszString, pszTemp );
+	wcscpy(pszString, pszTemp);
 }
 
 ////////////////UnicodeString Fix_Single_Ampersands( UnicodeString string, bool upper_case)
@@ -201,39 +205,41 @@ void Fix_Single_Ampersands ( unichar *pszString, bool upper_case )
 //
 //---------------------------------------------------------------------------
 
-void Fix_Double_Ampersands ( LPSTR pszString, bool upper_case )
+void Fix_Double_Ampersands(LPSTR pszString, bool upper_case)
 {
-	char pszTemp[ MAX_PATH ];  // variable to hold the string passed
-	char pszOld[ MAX_PATH ];   // variable to hold the string passed
-	char *letter;
-	int  i = 0;
+	char pszTemp[MAX_PATH];    // variable to hold the string passed
+	char pszOld[MAX_PATH];    // variable to hold the string passed
+	char* letter;
+	int i = 0;
 
-	lstrcpy( (LPSTR)pszOld, (LPSTR)pszString );
+	lstrcpy((LPSTR)pszOld, (LPSTR)pszString);
 	letter = pszOld;
-	memset ( pszTemp, '\0', MAX_PATH );
+	memset(pszTemp, '\0', MAX_PATH);
 
 	//----------------------------------------------------------------------
 	// While our ptr has not passed the end of the string...
 	//----------------------------------------------------------------------
-	while (*letter != '\0') {
-
-		if ((*letter == '&') && (*( letter+1 ) == '&')) {
-
+	while (*letter != '\0')
+	{
+		if ((*letter == '&') && (*(letter + 1) == '&'))
+		{
 			pszTemp[i++] = '&';
 			letter = letter + 2;
-
-		} else {
-
-			if ( upper_case ) {
-				pszTemp[i++] = (char) toupper( *( letter++ ));
-			} else {
+		}
+		else
+		{
+			if (upper_case)
+			{
+				pszTemp[i++] = (char)toupper(*(letter++));
+			}
+			else
+			{
 				pszTemp[i++] = *(letter++);
 			}
 		}
 	}
-	strcpy((LPSTR)pszString, (LPSTR)pszTemp );
+	strcpy((LPSTR)pszString, (LPSTR)pszTemp);
 }
-
 
 /******************************************************************************
  * Load_Alloc_Data -- Allocates a buffer and loads the file into it.          *
@@ -252,49 +258,53 @@ void Fix_Double_Ampersands ( LPSTR pszString, bool upper_case )
  *   10/17/1994 JLB : Created.                                                *
  *============================================================================*/
 
-void * Load_Alloc_Data( char *filename, long *filesize )
+void* Load_Alloc_Data(char* filename, long* filesize)
 {
-	int					size, bytes_read;
-	void				*ptr = nullptr;
-	StandardFileClass	file;
+	int size, bytes_read;
+	void* ptr = nullptr;
+	StandardFileClass file;
 
 	//-------------------------------------------------------------------------
 	// Open file in READ ONLY mode.  If fails, exit.
 	//-------------------------------------------------------------------------
-	file.Open( filename, MODE_READ_ONLY );
-	if ( !file.Query_Open()) {
-		return( nullptr );
+	file.Open(filename, MODE_READ_ONLY);
+	if (!file.Query_Open())
+	{
+		return (nullptr);
 	}
 
 	//-------------------------------------------------------------------------
 	// Get filesize and create a buffer.
 	//-------------------------------------------------------------------------
-  	size = file.Query_Size();
+	size = file.Query_Size();
 	ptr = (void*)malloc(size + 1);
-	if ( !ptr ) {
-		return( nullptr );
+	if (!ptr)
+	{
+		return (nullptr);
 	}
 
 	//-------------------------------------------------------------------------
 	// Read data into the buffer, close the file.
 	//-------------------------------------------------------------------------
-	memset( ptr, '\0', size + 1 );
-  	bytes_read = file.Read( ptr, size );
-  	file.Close();
+	memset(ptr, '\0', size + 1);
+	bytes_read = file.Read(ptr, size);
+	file.Close();
 
 	//-------------------------------------------------------------------------
 	// Check return bytes.  It should match the file size.
 	//-------------------------------------------------------------------------
-	assert( bytes_read == size );
-	if ( bytes_read != size ) {
+	assert(bytes_read == size);
+	if (bytes_read != size)
+	{
 		free(ptr);
-		return( nullptr );
+		return (nullptr);
 	}
 
-	if ( filesize != nullptr ) {
+	if (filesize != nullptr)
+	{
 		*filesize = (long)size;
 	}
-	return( ptr );
+	return (ptr);
 }
 
 /****************************************************************************
@@ -311,22 +321,22 @@ void * Load_Alloc_Data( char *filename, long *filesize )
  *   04/13/1998  ML/MG : Created.                                    		*
  *==========================================================================*/
 
-void *Load_File ( char *filename, long *filesize )
+void* Load_File(char* filename, long* filesize)
 {
-	void *ptr = nullptr;
+	void* ptr = nullptr;
 
-	if ( filename == nullptr || filename[0] == '\0' ) {
-		return( nullptr );
+	if (filename == nullptr || filename[0] == '\0')
+	{
+		return (nullptr);
 	}
 
 	//-------------------------------------------------------------------------
 	// Try loading from local directory.
 	//-------------------------------------------------------------------------
-	ptr = Load_Alloc_Data( filename, filesize );
+	ptr = Load_Alloc_Data(filename, filesize);
 
-	return( ptr );
+	return (ptr);
 }
-
 
 /****************************************************************************
  * MAKE_CURRENT_PATH_TO -- Returns a buffer to path desired.				*
@@ -341,42 +351,43 @@ void *Load_File ( char *filename, long *filesize )
  *   10/08/2001  MML : Created.                                    			*
  *==========================================================================*/
 
-char *Make_Current_Path_To ( const char *filename, char *path )
+char* Make_Current_Path_To(const char* filename, char* path)
 {
-	char	szPath	[ _MAX_PATH ];
-	char	drive	[ _MAX_DRIVE];
-	char	dir	 	[ _MAX_DIR  ];
+	char szPath[_MAX_PATH];
+	char drive[_MAX_DRIVE];
+	char dir[_MAX_DIR];
 
-	strcpy( szPath, Args->Get_argv(0));
-	_splitpath( szPath, drive, dir, nullptr, nullptr );
-	_makepath( szPath, drive, dir, nullptr, nullptr );
-	Path_Add_Back_Slash( szPath );
-	strcat( szPath, filename );
+	strcpy(szPath, Args->Get_argv(0));
+	_splitpath(szPath, drive, dir, nullptr, nullptr);
+	_makepath(szPath, drive, dir, nullptr, nullptr);
+	Path_Add_Back_Slash(szPath);
+	strcat(szPath, filename);
 
-	if( path != nullptr ) {
-		strcpy( path, szPath );
+	if (path != nullptr)
+	{
+		strcpy(path, szPath);
 	}
-	return( path );
+	return (path);
 }
 
-unichar *Make_Current_Path_To ( const unichar *filename, unichar *path )
+unichar* Make_Current_Path_To(const unichar* filename, unichar* path)
 {
-	unichar	szPath	[ _MAX_PATH ];
-	unichar	drive	[ _MAX_DRIVE];
-	unichar	dir	 	[ _MAX_DIR  ];
+	unichar szPath[_MAX_PATH];
+	unichar drive[_MAX_DRIVE];
+	unichar dir[_MAX_DIR];
 
-	wcscpy( szPath, (unichar *)Args->Get_argv(0));
-	_wsplitpath( szPath, drive, dir, nullptr, nullptr );
-	_wmakepath( szPath, drive, dir, nullptr, nullptr );
-	Path_Add_Back_Slash( szPath );
-	wcscat( szPath, filename );
+	wcscpy(szPath, (unichar*)Args->Get_argv(0));
+	_wsplitpath(szPath, drive, dir, nullptr, nullptr);
+	_wmakepath(szPath, drive, dir, nullptr, nullptr);
+	Path_Add_Back_Slash(szPath);
+	wcscat(szPath, filename);
 
-	if( path != nullptr ) {
-		wcscpy( path, szPath );
+	if (path != nullptr)
+	{
+		wcscpy(path, szPath);
 	}
-	return( path );
+	return (path);
 }
-
 
 /******************************************************************************
  * Path_Add_Back_Slash -- Add a '\\' to the end of the path.
@@ -391,26 +402,29 @@ unichar *Make_Current_Path_To ( const unichar *filename, unichar *path )
  *   08/14/1998 MML : Created.
  *============================================================================*/
 
-char *Path_Add_Back_Slash ( char *path )
+char* Path_Add_Back_Slash(char* path)
 {
-	if ( path != nullptr && *path != '\0' ) {
-		if ( !isPathSeparator( path[ strlen( path )-1 ] ) ) {
-			 strcat( path, "\\" );
+	if (path != nullptr && *path != '\0')
+	{
+		if (!isPathSeparator(path[strlen(path) - 1]))
+		{
+			strcat(path, "\\");
 		}
 	}
-	return( path );
+	return (path);
 }
 
-unichar *Path_Add_Back_Slash ( unichar *path )
+unichar* Path_Add_Back_Slash(unichar* path)
 {
-	if ( path != nullptr && *path != '\0' ) {
-		if ( !isPathSeparator( path[ wcslen( path )-1 ] ) ) {
-			 wcscat( path, L"\\" );
+	if (path != nullptr && *path != '\0')
+	{
+		if (!isPathSeparator(path[wcslen(path) - 1]))
+		{
+			wcscat(path, L"\\");
 		}
 	}
-	return( path );
+	return (path);
 }
-
 
 /******************************************************************************
  * Path_Remove_Back_Slash -- Remove a '\\' from the end of the path.
@@ -425,24 +439,28 @@ unichar *Path_Add_Back_Slash ( unichar *path )
  *   08/14/1998 MML : Created.
  *============================================================================*/
 
-char *Path_Remove_Back_Slash ( char *path )
+char* Path_Remove_Back_Slash(char* path)
 {
-	if ( path != nullptr && *path != '\0' ) {
-		if ( isPathSeparator( path[ strlen( path )-1 ] ) ) {
-			 path[ strlen( path )-1 ] = '\0';
+	if (path != nullptr && *path != '\0')
+	{
+		if (isPathSeparator(path[strlen(path) - 1]))
+		{
+			path[strlen(path) - 1] = '\0';
 		}
 	}
-	return( path );
+	return (path);
 }
 
-unichar *Path_Remove_Back_Slash ( unichar *path )
+unichar* Path_Remove_Back_Slash(unichar* path)
 {
-	if ( path != nullptr && *path != '\0' ) {
-		if ( isPathSeparator( path[ wcslen( path )-1 ] ) ) {
-			 path[ wcslen( path )-1 ] = L'\0';
+	if (path != nullptr && *path != '\0')
+	{
+		if (isPathSeparator(path[wcslen(path) - 1]))
+		{
+			path[wcslen(path) - 1] = L'\0';
 		}
 	}
-	return( path );
+	return (path);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -455,65 +473,69 @@ unichar *Path_Remove_Back_Slash ( unichar *path )
 /*																	   		*/
 /*--------------------------------------------------------------------------*/
 
-void PlugInProductName ( char *szString, char *szName )
+void PlugInProductName(char* szString, char* szName)
 {
-	int		nCount, nMsgLength;
-	char	szTextBuf[ MAX_PATH ];
-	char	szOut[ MAX_PATH ];
-	char	szProduct[ MAX_PATH ];
-	char *	temp = nullptr;
-	char *	next = nullptr;
+	int nCount, nMsgLength;
+	char szTextBuf[MAX_PATH];
+	char szOut[MAX_PATH];
+	char szProduct[MAX_PATH];
+	char* temp = nullptr;
+	char* next = nullptr;
 
-	if ( szName == nullptr || szName[0] == '\0' ) {
+	if (szName == nullptr || szName[0] == '\0')
+	{
 		return;
 	}
 
 	//--------------------------------------------------------------------------
 	// Find the first appearance of "%P".
 	//--------------------------------------------------------------------------
-	strcpy( szProduct, szName );
-	strcpy( szTextBuf, szString );
-	nMsgLength	= strlen( szTextBuf );
-	nCount		= 0;
-	temp 		= strstr( szTextBuf, "%s" );
+	strcpy(szProduct, szName);
+	strcpy(szTextBuf, szString);
+	nMsgLength = strlen(szTextBuf);
+	nCount = 0;
+	temp = strstr(szTextBuf, "%s");
 
 	//-------------------------------------------------------------
 	// Substitute each "%P" with "%s".  nStrReturn is the index
 	// into the buffer where "%P" was found.
 	//-------------------------------------------------------------
-	while ( temp != nullptr && nCount < 6) {
-		next	= temp+1;
-		nCount	= nCount + 1;
-		temp	= strstr( next, "%s" );
+	while (temp != nullptr && nCount < 6)
+	{
+		next = temp + 1;
+		nCount = nCount + 1;
+		temp = strstr(next, "%s");
 	}
 
 	//-------------------------------------------------------------
 	// Only support up to 5 product name per message.
 	// Do the substitution of the product name and store in szOut.
 	//-------------------------------------------------------------
-	switch( nCount ) {
-		case 1:
-			sprintf( szOut, szTextBuf, szProduct );
-			break;
-		case 2:
-			sprintf( szOut, szTextBuf, szProduct, szProduct );
-			break;
-		case 3:
-			sprintf( szOut, szTextBuf, szProduct, szProduct, szProduct );
-			break;
-		case 4:
-			sprintf( szOut, szTextBuf, szProduct, szProduct, szProduct, szProduct );
-			break;
-		case 5:
-			sprintf( szOut, szTextBuf, szProduct, szProduct, szProduct, szProduct, szProduct, szProduct );
-			break;
+	switch (nCount)
+	{
+	case 1:
+		sprintf(szOut, szTextBuf, szProduct);
+		break;
+	case 2:
+		sprintf(szOut, szTextBuf, szProduct, szProduct);
+		break;
+	case 3:
+		sprintf(szOut, szTextBuf, szProduct, szProduct, szProduct);
+		break;
+	case 4:
+		sprintf(szOut, szTextBuf, szProduct, szProduct, szProduct, szProduct);
+		break;
+	case 5:
+		sprintf(szOut, szTextBuf, szProduct, szProduct, szProduct, szProduct, szProduct, szProduct);
+		break;
 	}
 
 	//-------------------------------------------------------------
 	// Replace szTextBuf with szOut.
 	//-------------------------------------------------------------
-	if ( nCount >= 1 ) {
-		strcpy( szString, szOut );
+	if (nCount >= 1)
+	{
+		strcpy(szString, szOut);
 	}
 }
 
@@ -527,70 +549,70 @@ void PlugInProductName ( char *szString, char *szName )
 /*																	   		*/
 /*--------------------------------------------------------------------------*/
 
-void PlugInProductName( char *szString, int nName )
+void PlugInProductName(char* szString, int nName)
 {
-/*
-	int		nCount, nMsgLength;
-	char	szTextBuf[ MAX_PATH ];
-	char	szOut[ MAX_PATH ];
-	char	szProduct[ MAX_PATH ];
-	char *	temp = nullptr;
-	char *	next = nullptr;
+	/*
+	  int		nCount, nMsgLength;
+	  char	szTextBuf[ MAX_PATH ];
+	  char	szOut[ MAX_PATH ];
+	  char	szProduct[ MAX_PATH ];
+	  char *	temp = nullptr;
+	  char *	next = nullptr;
 
-	if ( nName <= STRNONE ) {
-		nName = STRNONE;
-	}
+	  if ( nName <= STRNONE ) {
+	    nName = STRNONE;
+	  }
 
-	//--------------------------------------------------------------------------
-	// Find the first appearance of "%P".
-	//-------------------------------------------------------------
-//	LoadString( Main::hInstance, nName, szProduct, MAX_PATH );
-	Locale_GetString( nName, szProduct );
+	  //--------------------------------------------------------------------------
+	  // Find the first appearance of "%P".
+	  //-------------------------------------------------------------
+	//	LoadString( Main::hInstance, nName, szProduct, MAX_PATH );
+	  Locale_GetString( nName, szProduct );
 
-	strcpy( szTextBuf, szString );
-	nMsgLength	= strlen( szTextBuf );
-	nCount		= 0;
-	temp 		= strstr( szTextBuf, "%s" );
+	  strcpy( szTextBuf, szString );
+	  nMsgLength	= strlen( szTextBuf );
+	  nCount		= 0;
+	  temp 		= strstr( szTextBuf, "%s" );
 
-	//-------------------------------------------------------------
-	// Substitute each "%P" with "%s".  nStrReturn is the index
-	// into the buffer where "%P" was found.
-	//-------------------------------------------------------------
-	while ( temp != nullptr && nCount < 6) {
-		next	= temp+1;
-		nCount	= nCount + 1;
-		temp	= strstr( next, "%s" );
-	}
+	  //-------------------------------------------------------------
+	  // Substitute each "%P" with "%s".  nStrReturn is the index
+	  // into the buffer where "%P" was found.
+	  //-------------------------------------------------------------
+	  while ( temp != nullptr && nCount < 6) {
+	    next	= temp+1;
+	    nCount	= nCount + 1;
+	    temp	= strstr( next, "%s" );
+	  }
 
-	//-------------------------------------------------------------
-	// Only support up to 5 product name per message.
-	// Do the substitution of the product name and store in szOut.
-	//-------------------------------------------------------------
-	switch( nCount ) {
-		case 1:
-			sprintf( szOut, szTextBuf, szProduct );
-			break;
-		case 2:
-			sprintf( szOut, szTextBuf, szProduct, szProduct );
-			break;
-		case 3:
-			sprintf( szOut, szTextBuf, szProduct, szProduct, szProduct );
-			break;
-		case 4:
-			sprintf( szOut, szTextBuf, szProduct, szProduct, szProduct, szProduct );
-			break;
-		case 5:
-			sprintf( szOut, szTextBuf, szProduct, szProduct, szProduct, szProduct, szProduct, szProduct );
-			break;
-	}
+	  //-------------------------------------------------------------
+	  // Only support up to 5 product name per message.
+	  // Do the substitution of the product name and store in szOut.
+	  //-------------------------------------------------------------
+	  switch( nCount ) {
+	    case 1:
+	      sprintf( szOut, szTextBuf, szProduct );
+	      break;
+	    case 2:
+	      sprintf( szOut, szTextBuf, szProduct, szProduct );
+	      break;
+	    case 3:
+	      sprintf( szOut, szTextBuf, szProduct, szProduct, szProduct );
+	      break;
+	    case 4:
+	      sprintf( szOut, szTextBuf, szProduct, szProduct, szProduct, szProduct );
+	      break;
+	    case 5:
+	      sprintf( szOut, szTextBuf, szProduct, szProduct, szProduct, szProduct, szProduct, szProduct );
+	      break;
+	  }
 
-	//-------------------------------------------------------------
-	// Replace szTextBuf with szOut.
-	//-------------------------------------------------------------
-	if ( nCount >= 1 ) {
-		strcpy( szString, szOut );
-	}
-*/
+	  //-------------------------------------------------------------
+	  // Replace szTextBuf with szOut.
+	  //-------------------------------------------------------------
+	  if ( nCount >= 1 ) {
+	    strcpy( szString, szOut );
+	  }
+	*/
 }
 
 /*--------------------------------------------------------------------------*/
@@ -603,68 +625,68 @@ void PlugInProductName( char *szString, int nName )
 /*																	   		*/
 /*--------------------------------------------------------------------------*/
 
-void PlugInProductName ( unichar *szString, const unichar *szName )
+void PlugInProductName(unichar* szString, const unichar* szName)
 {
-	int		nCount, nMsgLength;
-	unichar	szTextBuf[ MAX_PATH ];
-	unichar	szOut[ MAX_PATH ];
-	unichar	szProduct[ MAX_PATH ];
-	unichar *temp = nullptr;
-	unichar *next = nullptr;
+	int nCount, nMsgLength;
+	unichar szTextBuf[MAX_PATH];
+	unichar szOut[MAX_PATH];
+	unichar szProduct[MAX_PATH];
+	unichar* temp = nullptr;
+	unichar* next = nullptr;
 
-	if ( szName == nullptr || szName[0] == '\0' ) {
+	if (szName == nullptr || szName[0] == '\0')
+	{
 		return;
 	}
 
 	//--------------------------------------------------------------------------
 	// Find the first appearance of "%P".
 	//--------------------------------------------------------------------------
-	wcscpy( szProduct, szName );
-	wcscpy( szTextBuf, szString );
-	nMsgLength	= wcslen( szTextBuf );
-	nCount		= 0;
-	temp 		= wcsstr( szTextBuf, L"%s" );
+	wcscpy(szProduct, szName);
+	wcscpy(szTextBuf, szString);
+	nMsgLength = wcslen(szTextBuf);
+	nCount = 0;
+	temp = wcsstr(szTextBuf, L"%s");
 
 	//-------------------------------------------------------------
 	// Substitute each "%P" with "%s".  nStrReturn is the index
 	// into the buffer where "%P" was found.
 	//-------------------------------------------------------------
-	while ( temp != nullptr && nCount < 6) {
-		next	= temp+1;
-		nCount	= nCount + 1;
-		temp	= wcsstr( next, L"%s" );
+	while (temp != nullptr && nCount < 6)
+	{
+		next = temp + 1;
+		nCount = nCount + 1;
+		temp = wcsstr(next, L"%s");
 	}
 
 	//-------------------------------------------------------------
 	// Only support up to 5 product name per message.
 	// Do the substitution of the product name and store in szOut.
 	//-------------------------------------------------------------
-	switch( nCount ) {
-		case 1:
-			swprintf( szOut, szTextBuf, szProduct );
-			break;
-		case 2:
-			swprintf( szOut, szTextBuf, szProduct, szProduct );
-			break;
-		case 3:
-			swprintf( szOut, szTextBuf, szProduct, szProduct, szProduct );
-			break;
-		case 4:
-			swprintf( szOut, szTextBuf, szProduct, szProduct, szProduct, szProduct );
-			break;
-		case 5:
-			swprintf( szOut, szTextBuf, szProduct, szProduct, szProduct, szProduct, szProduct, szProduct );
-			break;
+	switch (nCount)
+	{
+	case 1:
+		swprintf(szOut, szTextBuf, szProduct);
+		break;
+	case 2:
+		swprintf(szOut, szTextBuf, szProduct, szProduct);
+		break;
+	case 3:
+		swprintf(szOut, szTextBuf, szProduct, szProduct, szProduct);
+		break;
+	case 4:
+		swprintf(szOut, szTextBuf, szProduct, szProduct, szProduct, szProduct);
+		break;
+	case 5:
+		swprintf(szOut, szTextBuf, szProduct, szProduct, szProduct, szProduct, szProduct, szProduct);
+		break;
 	}
 
 	//-------------------------------------------------------------
 	// Replace szTextBuf with szOut.
 	//-------------------------------------------------------------
-	if ( nCount >= 1 ) {
-		wcscpy( szString, szOut );
+	if (nCount >= 1)
+	{
+		wcscpy(szString, szOut);
 	}
 }
-
-
-
-

@@ -45,22 +45,19 @@
 **
 */
 #include "RAWFILE.h"
-class	FileClass;
+class FileClass;
 
 /*
 ** FileFactoryClass is a pure virtual class used to
 ** create FileClasses.
 */
-class	FileFactoryClass {
-
+class FileFactoryClass
+{
 public:
-	virtual ~FileFactoryClass(){};
-	virtual FileClass * Get_File( char const *filename ) = 0;
-	virtual void Return_File( FileClass *file ) = 0;
+	virtual ~FileFactoryClass() {};
+	virtual FileClass* Get_File(char const* filename) = 0;
+	virtual void Return_File(FileClass* file) = 0;
 };
-
-
-
 
 //
 // Handy auto pointer class.  Prevents you from having to call Return_File manually
@@ -68,45 +65,39 @@ public:
 class file_auto_ptr
 {
 public:
-	explicit	file_auto_ptr(FileFactoryClass *fac, const char *filename);
-				~file_auto_ptr();
+	explicit file_auto_ptr(FileFactoryClass* fac, const char* filename);
+	~file_auto_ptr();
 
 	operator FileClass*() const
-		{return (get()); }
+	{ return (get()); }
 
 	FileClass& operator*() const
-		{return (*get()); }
+	{ return (*get()); }
 
-	FileClass *operator->() const
-		{return (get()); }
+	FileClass* operator->() const
+	{ return (get()); }
 
-	FileClass *get() const
-		{return (_Ptr); }
+	FileClass* get() const
+	{ return (_Ptr); }
 
 private:
 	// prevent these from getting auto-generated or used
-						file_auto_ptr(const file_auto_ptr &other);
-	file_auto_ptr	&operator=(const file_auto_ptr &other);
+	file_auto_ptr(const file_auto_ptr& other);
+	file_auto_ptr& operator=(const file_auto_ptr& other);
 
-
-	FileClass			*_Ptr;
-	FileFactoryClass	*_Fac;
+	FileClass* _Ptr;
+	FileFactoryClass* _Fac;
 };
-
-
-
-
-
-
 
 /*
 ** RawFileFactoryClass is a derived FileFactoryClass which
 ** gives RawFileClass objects
 */
-class	RawFileFactoryClass {
+class RawFileFactoryClass
+{
 public:
-	RawFileClass * Get_File( char const *filename );
-	void Return_File( FileClass *file );
+	RawFileClass* Get_File(char const* filename);
+	void Return_File(FileClass* file);
 };
 
 #define no_SIMPLE_FILE
@@ -117,37 +108,36 @@ public:
 ** it currently creates BufferedFileClass objects instead of RawFileClass
 ** objects.
 */
-class	SimpleFileFactoryClass : public FileFactoryClass {
-
+class SimpleFileFactoryClass : public FileFactoryClass
+{
 public:
 	SimpleFileFactoryClass();
 	virtual ~SimpleFileFactoryClass() override {}
 
-	virtual FileClass *	Get_File( char const *filename ) override;
-	virtual void			Return_File( FileClass *file ) override;
+	virtual FileClass* Get_File(char const* filename) override;
+	virtual void Return_File(FileClass* file) override;
 
 	// sub_directory may be a semicolon separated search path.  New files will always
 	//   go in the last dir in the path.
-	void						Get_Sub_Directory( StringClass& new_dir ) const;
-	void						Set_Sub_Directory( const char * sub_directory );
-	void						Prepend_Sub_Directory( const char * sub_directory );
-	void						Append_Sub_Directory( const char * sub_directory );
-	bool						Get_Strip_Path() const								{ return IsStripPath; }
-	void						Set_Strip_Path( bool set )									{ IsStripPath = set; }
-	void						Reset_Sub_Directory()								{ SubDirectory = ""; }
+	void Get_Sub_Directory(StringClass& new_dir) const;
+	void Set_Sub_Directory(const char* sub_directory);
+	void Prepend_Sub_Directory(const char* sub_directory);
+	void Append_Sub_Directory(const char* sub_directory);
+	bool Get_Strip_Path() const { return IsStripPath; }
+	void Set_Strip_Path(bool set) { IsStripPath = set; }
+	void Reset_Sub_Directory() { SubDirectory = ""; }
 
 protected:
-	StringClass				SubDirectory;
-	bool						IsStripPath;
+	StringClass SubDirectory;
+	bool IsStripPath;
 
 	// Mutex must be mutable because const functions lock on it.
-	mutable CriticalSectionClass	Mutex;
+	mutable CriticalSectionClass Mutex;
 };
 
-
-extern FileFactoryClass	*	_TheFileFactory;
-extern RawFileFactoryClass	*	_TheWritingFileFactory;
+extern FileFactoryClass* _TheFileFactory;
+extern RawFileFactoryClass* _TheWritingFileFactory;
 
 // No simple file factory.  jba.
 // (gth) re-enabling this because w3d view uses it
-extern SimpleFileFactoryClass	*	_TheSimpleFileFactory;
+extern SimpleFileFactoryClass* _TheSimpleFileFactory;

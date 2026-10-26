@@ -54,11 +54,11 @@ public:
 	AsciiString address;
 	UnsignedShort port;
 	AsciiString homepageURL;
-	Bool submitReplay; // with game results
+	Bool submitReplay;    // with game results
 	Int index;
 };
 
-typedef std::list<LadderInfo *> LadderInfoList;
+typedef std::list<LadderInfo*> LadderInfoList;
 
 class LadderList
 {
@@ -66,18 +66,18 @@ public:
 	LadderList();
 	~LadderList();
 
-	const LadderInfo* findLadder( const AsciiString& addr, UnsignedShort port );
-	const LadderInfo* findLadderByIndex( Int index );	// doesn't look in local ladders
+	const LadderInfo* findLadder(const AsciiString& addr, UnsignedShort port);
+	const LadderInfo* findLadderByIndex(Int index);    // doesn't look in local ladders
 	const LadderInfoList* getLocalLadders();
 	const LadderInfoList* getSpecialLadders();
 	const LadderInfoList* getStandardLadders();
 
 private:
 	void loadLocalLadders();
-	void checkLadder( AsciiString fname, Int index );
+	void checkLadder(AsciiString fname, Int index);
 	LadderInfoList m_localLadders;
 	LadderInfoList m_specialLadders;
 	LadderInfoList m_standardLadders;
 };
 
-extern LadderList *TheLadderList;
+extern LadderList* TheLadderList;

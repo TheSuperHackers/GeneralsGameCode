@@ -43,22 +43,20 @@
 #include "WWMath/quat.h"
 #include "WW3D2/w3d_file.h"
 
-
 /*
 
-	PivotClass
+  PivotClass
 
-	Each node of the hierarchy tree is represented by a
-	PivotClass.
+  Each node of the hierarchy tree is represented by a
+  PivotClass.
 
 */
 
-//#define LAZY_CAP_MTX_ALLOC
+// #define LAZY_CAP_MTX_ALLOC
 
 struct PivotClass
 {
 public:
-
 	PivotClass();
 	PivotClass(const PivotClass& that);
 	PivotClass& operator=(const PivotClass& that);
@@ -81,24 +79,23 @@ public:
 	}
 
 public:
-	char							Name[W3D_NAME_LEN];
-	PivotClass *			Parent;
-	Matrix3D					BaseTransform;		// base-pose transform (relative to parent).
-	Matrix3D					Transform;				// computed transform for this pivot
+	char Name[W3D_NAME_LEN];
+	PivotClass* Parent;
+	Matrix3D BaseTransform;    // base-pose transform (relative to parent).
+	Matrix3D Transform;    // computed transform for this pivot
 	// User control.  When a pivot is 'captured' animation data is ignored and the
 	// user data is used to control the pivot.
 #ifdef LAZY_CAP_MTX_ALLOC
-	DynamicMatrix3D*	CapTransformPtr;
-	short							Index;
-	bool							IsVisible;				// result of the visibility channel
-	bool							WorldSpaceTranslation;
+	DynamicMatrix3D* CapTransformPtr;
+	short Index;
+	bool IsVisible;    // result of the visibility channel
+	bool WorldSpaceTranslation;
 #else
-	Matrix3D					CapTransform;
-	int								Index;
-	bool							IsVisible;				// result of the visibility channel
-	bool							WorldSpaceTranslation;
-	bool							IsCaptured;
-	bool							Unused;						// padding
+	Matrix3D CapTransform;
+	int Index;
+	bool IsVisible;    // result of the visibility channel
+	bool WorldSpaceTranslation;
+	bool IsCaptured;
+	bool Unused;    // padding
 #endif
-
 };

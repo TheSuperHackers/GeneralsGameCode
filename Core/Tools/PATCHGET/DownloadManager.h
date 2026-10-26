@@ -58,13 +58,13 @@ public:
 	HRESULT update();
 	void reset();
 
-	virtual HRESULT OnError( int error );
+	virtual HRESULT OnError(int error);
 	virtual HRESULT OnEnd();
 	virtual HRESULT OnQueryResume();
-	virtual HRESULT OnProgressUpdate( int bytesread, int totalsize, int timetaken, int timeleft );
-	virtual HRESULT OnStatusUpdate( int status );
+	virtual HRESULT OnProgressUpdate(int bytesread, int totalsize, int timetaken, int timeleft);
+	virtual HRESULT OnStatusUpdate(int status);
 
-	virtual HRESULT downloadFile( std::string server, std::string username, std::string password, std::string file, std::string localfile, std::string regkey, bool tryResume );
+	virtual HRESULT downloadFile(std::string server, std::string username, std::string password, std::string file, std::string localfile, std::string regkey, bool tryResume);
 	std::string getLastLocalFile();
 
 	bool isDone() { return m_sawEnd || m_wasError; }
@@ -74,13 +74,13 @@ public:
 	std::string getStatusString() { return m_statusString; }
 	std::string getErrorString() { return m_errorString; }
 
-	void queueFileForDownload( std::string server, std::string username, std::string password, std::string file, std::string localfile, std::string regkey, bool tryResume );
+	void queueFileForDownload(std::string server, std::string username, std::string password, std::string file, std::string localfile, std::string regkey, bool tryResume);
 	bool isFileQueuedForDownload() { return !m_queuedDownloads.empty(); }
 	HRESULT downloadNextQueuedFile();
 
 private:
 	bool m_winsockInit;
-	CDownload *m_download;
+	CDownload* m_download;
 	bool m_wasError;
 	bool m_sawEnd;
 	std::string m_errorString;
@@ -90,6 +90,6 @@ protected:
 	std::list<QueuedDownload> m_queuedDownloads;
 };
 
-extern DownloadManager *TheDownloadManager;
+extern DownloadManager* TheDownloadManager;
 
-} // namespace patchget
+}    // namespace patchget

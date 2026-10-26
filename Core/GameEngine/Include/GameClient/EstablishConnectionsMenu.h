@@ -27,12 +27,14 @@
 #include "GameNetwork/NetworkDefs.h"
 #include "GameNetwork/NAT.h"
 
-enum EstablishConnectionsMenuStateType CPP_11(: Int) {
+enum EstablishConnectionsMenuStateType CPP_11( : Int)
+{
 	ESTABLISHCONNECTIONSMENUSTATETYPE_SCREENON,
 	ESTABLISHCONNECTIONSMENUSTATETYPE_SCREENOFF
 };
 
-class EstablishConnectionsMenu {
+class EstablishConnectionsMenu
+{
 public:
 	EstablishConnectionsMenu();
 	virtual ~EstablishConnectionsMenu();
@@ -47,9 +49,9 @@ public:
 protected:
 	EstablishConnectionsMenuStateType m_menuState;
 
-	static const char *const m_playerReadyControlNames[MAX_SLOTS];
-	static const char *const m_playerNameControlNames[MAX_SLOTS];
-	static const char *const m_playerStatusControlNames[MAX_SLOTS];
+	static const char* const m_playerReadyControlNames[MAX_SLOTS];
+	static const char* const m_playerNameControlNames[MAX_SLOTS];
+	static const char* const m_playerStatusControlNames[MAX_SLOTS];
 };
 
-extern EstablishConnectionsMenu *TheEstablishConnectionsMenu;
+extern EstablishConnectionsMenu* TheEstablishConnectionsMenu;

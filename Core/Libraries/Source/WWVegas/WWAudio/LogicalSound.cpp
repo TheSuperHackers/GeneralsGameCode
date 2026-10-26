@@ -34,87 +34,80 @@
 #include "WWAudio.h"
 #include "SoundScene.h"
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	LogicalSoundClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-LogicalSoundClass::LogicalSoundClass ()
-	:	m_DropOffRadius (1),
-		m_TypeMask (0),
-		m_Position (0, 0, 0),
-		m_IsSingleShot (false),
-		m_OldestListenerTimestamp (0),
-		m_MaxListeners (0),
-		m_NotifyDelayInMS (2000),
-		m_LastNotification (0)
+LogicalSoundClass::LogicalSoundClass()
+  : m_DropOffRadius(1)
+  , m_TypeMask(0)
+  , m_Position(0, 0, 0)
+  , m_IsSingleShot(false)
+  , m_OldestListenerTimestamp(0)
+  , m_MaxListeners(0)
+  , m_NotifyDelayInMS(2000)
+  , m_LastNotification(0)
 {
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	~LogicalSoundClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-LogicalSoundClass::~LogicalSoundClass ()
+LogicalSoundClass::~LogicalSoundClass()
 {
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	Add_To_Scene
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-void
-LogicalSoundClass::Add_To_Scene (bool /*start_playing*/)
+void LogicalSoundClass::Add_To_Scene(bool /*start_playing*/)
 {
-	SoundSceneClass *scene = WWAudioClass::Get_Instance ()->Get_Sound_Scene ();
-	if ((scene != nullptr) && (m_Scene == nullptr)) {
-
+	SoundSceneClass* scene = WWAudioClass::Get_Instance()->Get_Sound_Scene();
+	if ((scene != nullptr) && (m_Scene == nullptr))
+	{
 		//
 		//	Add this sound to the culling system
 		//
 		m_Scene = scene;
-		scene->Add_Logical_Sound (this, m_IsSingleShot);
+		scene->Add_Logical_Sound(this, m_IsSingleShot);
 	}
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	Remove_From_Scene
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-void
-LogicalSoundClass::Remove_From_Scene ()
+void LogicalSoundClass::Remove_From_Scene()
 {
-	if (m_Scene != nullptr) {
-
+	if (m_Scene != nullptr)
+	{
 		//
 		//	Remove this sound from the culling system
 		//
-		m_Scene->Remove_Logical_Sound (this, m_IsSingleShot);
-		m_Scene					= nullptr;
-		m_PhysWrapper			= nullptr;
-		m_LastNotification	= 0;
+		m_Scene->Remove_Logical_Sound(this, m_IsSingleShot);
+		m_Scene = nullptr;
+		m_PhysWrapper = nullptr;
+		m_LastNotification = 0;
 	}
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	Allow_Notify
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-bool
-LogicalSoundClass::Allow_Notify (uint32 timestamp)
+bool LogicalSoundClass::Allow_Notify(uint32 timestamp)
 {
 	bool retval = false;
 
-	if (m_IsSingleShot || timestamp > (m_LastNotification + m_NotifyDelayInMS)) {
+	if (m_IsSingleShot || timestamp > (m_LastNotification + m_NotifyDelayInMS))
+	{
 		retval = true;
 		m_LastNotification = timestamp;
 	}
@@ -122,19 +115,16 @@ LogicalSoundClass::Allow_Notify (uint32 timestamp)
 	return retval;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	On_Frame_Update
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-bool
-LogicalSoundClass::On_Frame_Update (unsigned int milliseconds)
+bool LogicalSoundClass::On_Frame_Update(unsigned int milliseconds)
 {
 	//
 	// Update the sound's position if its linked to a render object
 	//
-	Apply_Auto_Position ();
-	return SoundSceneObjClass::On_Frame_Update (milliseconds);
+	Apply_Auto_Position();
+	return SoundSceneObjClass::On_Frame_Update(milliseconds);
 }
-

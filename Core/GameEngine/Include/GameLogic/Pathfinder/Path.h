@@ -27,9 +27,9 @@ class PathNode;
 
 struct ClosestPointOnPathInfo
 {
-	Real								distAlongPath;
-	Coord3D							posOnPath;
-	PathfindLayerEnum		layer;
+	Real distAlongPath;
+	Coord3D posOnPath;
+	PathfindLayerEnum layer;
 };
 
 /**
@@ -40,49 +40,52 @@ class Path : public MemoryPoolObject, public Snapshot
 public:
 	Path();
 
-	PathNode *getFirstNode() { return m_path; }
-	PathNode *getLastNode() { return m_pathTail; }
+	PathNode* getFirstNode() { return m_path; }
+	PathNode* getLastNode() { return m_pathTail; }
 
-	void updateLastNode( const Coord3D *pos );
+	void updateLastNode(const Coord3D* pos);
 
-	void prependNode( const Coord3D *pos, PathfindLayerEnum layer );				///< Create a new node at the head of the path
-	void appendNode( const Coord3D *pos, PathfindLayerEnum layer );				///< Create a new node at the end of the path
-	void setBlockedByAlly(Bool blocked) {m_blockedByAlly = blocked;}
-	Bool getBlockedByAlly() {return m_blockedByAlly;}
-	void optimize( const Object *obj, LocomotorSurfaceTypeMask acceptableSurfaces, Bool blocked );			///< Optimize the path to discard redundant nodes
+	void prependNode(const Coord3D* pos, PathfindLayerEnum layer);    ///< Create a new node at the head of the path
+	void appendNode(const Coord3D* pos, PathfindLayerEnum layer);    ///< Create a new node at the end of the path
+	void setBlockedByAlly(Bool blocked) { m_blockedByAlly = blocked; }
+	Bool getBlockedByAlly() { return m_blockedByAlly; }
+	void optimize(const Object* obj, LocomotorSurfaceTypeMask acceptableSurfaces, Bool blocked);    ///< Optimize the path to discard redundant nodes
 
-	void optimizeGroundPath( Bool crusher, Int diameter );			///< Optimize the ground path to discard redundant nodes
-
-	/// Given a location, return nearest location on path, and along-path dist to end as function result
-	void computePointOnPath( const Object *obj, const LocomotorSet& locomotorSet, const Coord3D& pos, ClosestPointOnPathInfo& out);
+	void optimizeGroundPath(Bool crusher, Int diameter);    ///< Optimize the ground path to discard redundant nodes
 
 	/// Given a location, return nearest location on path, and along-path dist to end as function result
-	void peekCachedPointOnPath( Coord3D& pos ) const {pos = m_cpopOut.posOnPath;}
+	void computePointOnPath(const Object* obj, const LocomotorSet& locomotorSet, const Coord3D& pos, ClosestPointOnPathInfo& out);
+
+	/// Given a location, return nearest location on path, and along-path dist to end as function result
+	void peekCachedPointOnPath(Coord3D& pos) const { pos = m_cpopOut.posOnPath; }
 
 	/// Given a flight path, compute the distance to goal (0 if we are past it) & return the goal pos.
-	Real computeFlightDistToGoal( const Coord3D *pos, Coord3D& goalPos );
+	Real computeFlightDistToGoal(const Coord3D* pos, Coord3D& goalPos);
 
 	/// Given a location, return closest location on path, and along-path dist to end as function result
-	void markOptimized() {m_isOptimized = true;}
+	void markOptimized() { m_isOptimized = true; }
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
+	virtual void crc(Xfer* xfer) override;
+	virtual void xfer(Xfer* xfer) override;
 	virtual void loadPostProcess() override;
 
 protected:
-	enum {MAX_CPOP=20};			///< Max times we will return the cached cpop.
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( Path, "PathPool" );							///< @todo Set real numbers for mem alloc
+	enum
+	{
+		MAX_CPOP = 20
+	};    ///< Max times we will return the cached cpop.
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Path, "PathPool");    ///< @todo Set real numbers for mem alloc
 
-	PathNode*		m_path;															///< The list of PathNode objects that define the path
-	PathNode*		m_pathTail;
-	Bool				m_isOptimized;											///< True if the path has been optimized
-	Bool				m_blockedByAlly;										///< An ally needs to move off of this path.
+	PathNode* m_path;    ///< The list of PathNode objects that define the path
+	PathNode* m_pathTail;
+	Bool m_isOptimized;    ///< True if the path has been optimized
+	Bool m_blockedByAlly;    ///< An ally needs to move off of this path.
 	// caching info for computePointOnPath.
-	Bool										m_cpopValid;
-	Int											m_cpopCountdown;				///< We only return the same cpop MAX_CPOP times.  It is occasionally possible to get stuck.
-	Coord3D									m_cpopIn;
-	ClosestPointOnPathInfo	m_cpopOut;
-	const PathNode*					m_cpopRecentStart;
+	Bool m_cpopValid;
+	Int m_cpopCountdown;    ///< We only return the same cpop MAX_CPOP times.  It is occasionally possible to get stuck.
+	Coord3D m_cpopIn;
+	ClosestPointOnPathInfo m_cpopOut;
+	const PathNode* m_cpopRecentStart;
 };

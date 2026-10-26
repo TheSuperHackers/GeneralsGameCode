@@ -42,7 +42,6 @@
 
 #include "RAWFILE.h"
 
-
 /*
 **	This is the definition of a buffered read raw file class.
 */
@@ -50,29 +49,27 @@ class BufferedFileClass : public RawFileClass
 {
 	typedef RawFileClass BASECLASS;
 
-	public:
+public:
+	BufferedFileClass(char const* filename);
+	BufferedFileClass();
+	BufferedFileClass(RawFileClass const& f);
+	BufferedFileClass& operator=(BufferedFileClass const& f);
+	virtual ~BufferedFileClass() override;
 
-		BufferedFileClass(char const *filename);
-		BufferedFileClass();
-		BufferedFileClass (RawFileClass const & f);
-		BufferedFileClass & operator = (BufferedFileClass const & f);
-		virtual ~BufferedFileClass() override;
+	virtual int Read(void* buffer, int size) override;
+	virtual int Seek(int pos, int dir = SEEK_CUR) override;
+	virtual int Write(void const* buffer, int size) override;
+	virtual void Close() override;
 
-		virtual int Read(void *buffer, int size) override;
-		virtual int Seek(int pos, int dir=SEEK_CUR) override;
-		virtual int Write(void const *buffer, int size) override;
-		virtual void Close() override;
+protected:
+	static void Set_Desired_Buffer_Size(int size) { _DesiredBufferSize = size; }
 
-	protected:
+	void Reset_Buffer();
 
-		static	void		Set_Desired_Buffer_Size( int size ) { _DesiredBufferSize = size; }
-
-		void					Reset_Buffer();
-
-	private:
-		unsigned char *	Buffer;				// The read buffer
-		unsigned int		BufferSize;			// The allocated size of the read buffer
-		int					BufferAvailable;	// The amount of data in the read buffer
-		int					BufferOffset;		// The data already given out
-		static	int		_DesiredBufferSize;
+private:
+	unsigned char* Buffer;    // The read buffer
+	unsigned int BufferSize;    // The allocated size of the read buffer
+	int BufferAvailable;    // The amount of data in the read buffer
+	int BufferOffset;    // The data already given out
+	static int _DesiredBufferSize;
 };

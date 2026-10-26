@@ -23,34 +23,35 @@
 
 #include "resource.h"
 
-#define  OPTIONS_PANEL_SECTION "OptionsWindow"
+#define OPTIONS_PANEL_SECTION "OptionsWindow"
 
 /////////////////////////////////////////////////////////////////////////////
 // COptionsPanel dialog
 
 class COptionsPanel : public CDialog
 {
-// Construction
+	// Construction
 public:
-	COptionsPanel(Int dlgid = 0, CWnd* pParent = nullptr);   // standard constructor
+	COptionsPanel(Int dlgid = 0, CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(COptionsPanel)
-	enum { IDD = IDD_NO_OPTIONS };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_NO_OPTIONS
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(COptionsPanel)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(COptionsPanel)
 	afx_msg void OnMove(int x, int y);
