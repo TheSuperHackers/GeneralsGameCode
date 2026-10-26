@@ -152,8 +152,21 @@ enum { K_SCRIPT_LIST_DATA_VERSION_1 = 1,
 			K_SCRIPT_CONDITION_VERSION_2 = 2,
 			K_SCRIPT_CONDITION_VERSION_3 = 3,
 			K_SCRIPTS_DATA_VERSION_1,
+			// Zero Hour versions. Kept after K_SCRIPTS_DATA_VERSION_1 so its implicit value does not change.
+			K_SCRIPT_ACTION_VERSION_2 = 2,		// Added action name key.
+			K_SCRIPT_CONDITION_VERSION_4 = 4,	// Added condition name key.
 			end_of_the_enumeration
 };
+
+// Deletes the parameters read for a script action or condition type that Generals does not know.
+static void deleteParameters(Parameter **parms, Int &numParms)
+{
+	for (Int i=0; i<numParms; i++) {
+		deleteInstance(parms[i]);
+		parms[i] = nullptr;
+	}
+	numParms = 0;
+}
 
 static Condition::ConditionType ParameterChangesVer2[] =
 {
@@ -1658,11 +1671,23 @@ Bool Condition::ParseConditionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 	Condition	*pCondition = newInstance(Condition);
 	OrCondition *pOr = (OrCondition *)userData;
 	pCondition->m_conditionType = (enum ConditionType)file.readInt();
+	// TheSuperHackers @bugfix Skip the name key that Zero Hour writes after the type. See readActionType.
+	if (info->version >= K_SCRIPT_CONDITION_VERSION_4) {
+		file.readNameKey();
+	}
+	const Bool unknownType = pCondition->m_conditionType < 0 || pCondition->m_conditionType >= NUM_ITEMS;
+	if (unknownType) {
+		DEBUG_LOG(("Unknown script condition %d. Making it false.", pCondition->m_conditionType));
+		pCondition->m_conditionType = CONDITION_FALSE;
+	}
 	pCondition->m_numParms =file.readInt();
 	Int i;
 	for (i=0; i<pCondition->m_numParms; i++)
 	{
 		pCondition->m_parms[i] = Parameter::ReadParameter(file);
+	}
+	if (unknownType) {
+		deleteParameters(pCondition->m_parms, pCondition->m_numParms);
 	}
 
 	if (file.getChunkVersion() < K_SCRIPT_CONDITION_VERSION_2) {
@@ -2341,6 +2366,23 @@ void ScriptAction::WriteActionDataChunk(DataChunkOutput &chunkWriter, ScriptActi
 	}
 }
 
+// TheSuperHackers @bugfix Read the name key that Zero Hour writes after the script action type.
+// The Generals types are the first entries of the Zero Hour lists, so the type number alone identifies them.
+// Types past the end of the Generals list only exist in Zero Hour and become a no-op.
+static ScriptAction::ScriptActionType readActionType(DataChunkInput &file, DataChunkInfo *info, Script *pScript, Bool &unknownType)
+{
+	Int type = file.readInt();
+	if (info->version >= K_SCRIPT_ACTION_VERSION_2) {
+		file.readNameKey();
+	}
+	unknownType = type < 0 || type >= ScriptAction::NUM_ITEMS;
+	if (unknownType) {
+		DEBUG_LOG(("Unknown script action %d in script '%s'. Making it a no-op.", type, pScript->getName().str()));
+		return ScriptAction::NO_OP;
+	}
+	return (ScriptAction::ScriptActionType)type;
+}
+
 /**
 * ScriptAction::ParseActionDataChunk - read an action chunk in a script list.
 * Format is the newer CHUNKY format.
@@ -2354,7 +2396,8 @@ Bool ScriptAction::ParseActionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 
 	ScriptAction	*pScriptAction = newInstance(ScriptAction);
 
-	pScriptAction->m_actionType = (enum ScriptActionType)file.readInt();
+	Bool unknownType;
+	pScriptAction->m_actionType = readActionType(file, info, pScript, unknownType);
 
 #if defined(RTS_DEBUG)
 	const ActionTemplate* at = TheScriptEngine->getActionTemplate(pScriptAction->m_actionType);
@@ -2368,6 +2411,9 @@ Bool ScriptAction::ParseActionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 	for (i=0; i<pScriptAction->m_numParms; i++)
 	{
 		pScriptAction->m_parms[i] = Parameter::ReadParameter(file);
+	}
+	if (unknownType) {
+		deleteParameters(pScriptAction->m_parms, pScriptAction->m_numParms);
 	}
 
 	// heal old files.
@@ -2489,11 +2535,15 @@ Bool ScriptAction::ParseActionFalseDataChunk(DataChunkInput &file, DataChunkInfo
 
 	ScriptAction	*pScriptAction = newInstance(ScriptAction);
 
-	pScriptAction->m_actionType = (enum ScriptActionType)file.readInt();
+	Bool unknownType;
+	pScriptAction->m_actionType = readActionType(file, info, pScript, unknownType);
 	pScriptAction->m_numParms =file.readInt();
 	Int i;
 	for (i=0; i<pScriptAction->m_numParms; i++) {
 		pScriptAction->m_parms[i] = Parameter::ReadParameter(file);
+	}
+	if (unknownType) {
+		deleteParameters(pScriptAction->m_parms, pScriptAction->m_numParms);
 	}
 	/// @todo - Verify read in parameters with current action template.  jba.
 	ScriptAction *pLast = pScript->getFalseAction();
