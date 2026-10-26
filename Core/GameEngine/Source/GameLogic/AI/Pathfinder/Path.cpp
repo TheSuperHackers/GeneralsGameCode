@@ -17,6 +17,7 @@
 */
 
 #include "Common/CRCDebug.h"
+#include "Common/GlobalData.h"
 #include "GameLogic/AI.h"
 #include "GameLogic/AIPathfind.h"
 #include "GameLogic/Object.h"
