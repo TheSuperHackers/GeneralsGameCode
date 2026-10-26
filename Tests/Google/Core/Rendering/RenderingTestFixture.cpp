@@ -50,6 +50,9 @@ void RenderingTest::SetUpTestSuite()
 	// Thumbnails need an asset manager.
 	WW3D::Set_Thumbnail_Enabled(false);
 	ASSERT_EQ(WW3D::Set_Render_Device(0, Width, Height, 32, TRUE), WW3D_ERROR_OK);
+	// capture() reads 32-bit pixels.
+	const WW3DFormat format = Renderer::Get_Back_Buffer_Format();
+	ASSERT_TRUE(format == WW3D_FORMAT_X8R8G8B8 || format == WW3D_FORMAT_A8R8G8B8);
 
 	s_camera = NEW_REF(CameraClass, ());
 	Matrix3D transform;
