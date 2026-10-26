@@ -24,6 +24,7 @@
 #include "Common/GameAudio.h"
 #include "mss/mss.h"
 #include "WWLib/mutex.h"
+#include "Utility/atomic_adapter.h"
 
 class AudioEventRTS;
 class DynamicAudioEventRTS;
@@ -65,7 +66,7 @@ struct PlayingAudio
 	RefCountPtr<DynamicAudioEventRTS> m_audioEventRTS;
 	void *m_file; // The file that was opened to play this
 	PlayingAudioType m_type;
-	volatile PlayingStatus m_status; // This member is adjusted by another running thread.
+	std::atomic<PlayingStatus> m_status; // This member is adjusted by another running thread.
 	Short m_framesFaded;
 	Bool m_fade;
 	volatile Bool m_rerequestOnNextUpdate;
@@ -92,8 +93,6 @@ struct PlayingAudio
 	{
 		return m_status == PS_Playing || m_rerequestOnNextUpdate;
 	}
-
-	static_assert(sizeof(m_status) == sizeof(long), "Must be size of long, because it is used with Interlocked functions");
 };
 
 struct ProviderInfo
