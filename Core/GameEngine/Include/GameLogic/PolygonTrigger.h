@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 // PolygonTrigger.h
 // Class to encapsulate polygon triggers for maps.
 // Note - Polygons are used for two reasons - one is area triggers for
@@ -45,56 +44,53 @@ class Xfer;
 
 // ------------------------------------------------------------------------------------------------
 /** Water handles are used to represent instances of areas of water, no matter which type
-	* of implementation the water is (grid, trigger area, etc) */
+ * of implementation the water is (grid, trigger area, etc) */
 // ------------------------------------------------------------------------------------------------
 class WaterHandle
 {
-
 public:
-
 	WaterHandle() { m_polygon = nullptr; }
 
 	///@todo we need to formalize the water systems
-	PolygonTrigger *m_polygon;	///< valid when water is a polygon area, nullptr if water is a grid
-
+	PolygonTrigger* m_polygon;    ///< valid when water is a polygon area, nullptr if water is a grid
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class PolygonTrigger : public MemoryPoolObject,
-											 public Snapshot
+                       public Snapshot
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PolygonTrigger, "PolygonTrigger")
 
 protected:
-	PolygonTrigger*		m_nextPolygonTrigger;		///< linked list.
-	AsciiString				m_triggerName;		///< The name of this polygon area.
-	Int								m_triggerID; ///< Unique int id for the trigger.
-	WaterHandle				m_waterHandle;		///< handle to use this polygon as a water table
-	ICoord3D*					m_points;	///< Points that are the polygon.
-	Int								m_numPoints; ///< Num points in m_points.
-	Int								m_sizePoints; ///< Space allocated for m_points.
-	mutable IRegion2D	m_bounds;  ///< 2D bounding box for quick checks.
-	mutable Real			m_radius;
-	Int								m_riverStart;	///< Identifies the start point of the river.
-	mutable Bool			m_boundsNeedsUpdate;
-	Bool							m_exportWithScripts;
-	Bool							m_isWaterArea; ///< Used to specify water areas in the map.
-	Bool							m_isRiver;		///< Used to specify that a water area is a river.
-	AsciiString			m_layerName;  ///< Used to specify the layer in the World Builder.
-	Bool				m_shouldRender;
-	Bool				m_selected;
+	PolygonTrigger* m_nextPolygonTrigger;    ///< linked list.
+	AsciiString m_triggerName;    ///< The name of this polygon area.
+	Int m_triggerID;    ///< Unique int id for the trigger.
+	WaterHandle m_waterHandle;    ///< handle to use this polygon as a water table
+	ICoord3D* m_points;    ///< Points that are the polygon.
+	Int m_numPoints;    ///< Num points in m_points.
+	Int m_sizePoints;    ///< Space allocated for m_points.
+	mutable IRegion2D m_bounds;    ///< 2D bounding box for quick checks.
+	mutable Real m_radius;
+	Int m_riverStart;    ///< Identifies the start point of the river.
+	mutable Bool m_boundsNeedsUpdate;
+	Bool m_exportWithScripts;
+	Bool m_isWaterArea;    ///< Used to specify water areas in the map.
+	Bool m_isRiver;    ///< Used to specify that a water area is a river.
+	AsciiString m_layerName;    ///< Used to specify the layer in the World Builder.
+	Bool m_shouldRender;
+	Bool m_selected;
 
 	static PolygonTrigger* ThePolygonTriggerListPtr;
-	static Int s_currentID; ///< Current id for new triggers.
+	static Int s_currentID;    ///< Current id for new triggers.
 
 protected:
 	void reallocate();
 	void updateBounds() const;
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
+	virtual void crc(Xfer* xfer) override;
+	virtual void xfer(Xfer* xfer) override;
 	virtual void loadPostProcess() override;
 
 public:
@@ -102,51 +98,62 @@ public:
 	//~PolygonTrigger();		///< Note that deleting the head of a list deletes all linked objects in the list.
 
 public:
-	static PolygonTrigger *getFirstPolygonTrigger() {return ThePolygonTriggerListPtr;}
-	static PolygonTrigger *getPolygonTriggerByID(Int triggerID);
-	static Bool ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
+	static PolygonTrigger* getFirstPolygonTrigger() { return ThePolygonTriggerListPtr; }
+	static PolygonTrigger* getPolygonTriggerByID(Int triggerID);
+	static Bool ParsePolygonTriggersDataChunk(DataChunkInput& file, DataChunkInfo* info, void* userData);
 	/// Writes Triggers Info
-	static void WritePolygonTriggersDataChunk(DataChunkOutput &chunkWriter);
+	static void WritePolygonTriggersDataChunk(DataChunkOutput& chunkWriter);
 	static void deleteTriggers();
 
 public:
-	static void addPolygonTrigger(PolygonTrigger *pTrigger);
-	static void removePolygonTrigger(PolygonTrigger *pTrigger);
-	void setNextPoly(PolygonTrigger *nextPoly) {m_nextPolygonTrigger = nextPoly;} ///< Link the next map object.
-	void addPoint(const ICoord3D &point);
-	void setPoint(const ICoord3D &point, Int ndx);
-	void insertPoint(const ICoord3D &point, Int ndx);
+	static void addPolygonTrigger(PolygonTrigger* pTrigger);
+	static void removePolygonTrigger(PolygonTrigger* pTrigger);
+	void setNextPoly(PolygonTrigger* nextPoly) { m_nextPolygonTrigger = nextPoly; }    ///< Link the next map object.
+	void addPoint(const ICoord3D& point);
+	void setPoint(const ICoord3D& point, Int ndx);
+	void insertPoint(const ICoord3D& point, Int ndx);
 	void deletePoint(Int ndx);
-	void setTriggerName(AsciiString name) {m_triggerName = name;};
+	void setTriggerName(AsciiString name) { m_triggerName = name; };
 
-	void setLayerName(AsciiString name) {m_layerName = name;};
-	AsciiString getLayerName()  const {return m_layerName;}
+	void setLayerName(AsciiString name) { m_layerName = name; };
+	AsciiString getLayerName() const { return m_layerName; }
 
-	void setShouldRender(Bool toggle) {m_shouldRender = toggle;}
-	Bool getShouldRender() {return m_shouldRender;}
+	void setShouldRender(Bool toggle) { m_shouldRender = toggle; }
+	Bool getShouldRender() { return m_shouldRender; }
 
-	void setSelected(Bool toggle) {m_selected = toggle;}
-	Bool getSelected() {return m_selected;}
+	void setSelected(Bool toggle) { m_selected = toggle; }
+	Bool getSelected() { return m_selected; }
 
 	void getCenterPoint(Coord3D* pOutCoord) const;
 	Real getRadius() const;
 
 public:
-	const ICoord3D *getPoint(Int ndx) const {if (ndx<0) ndx=0; if (ndx>=m_numPoints) ndx=m_numPoints-1; return m_points+ndx;} ///< Get a point.
-	Int getNumPoints() const {return m_numPoints;}
-	Int getID() const {return m_triggerID;}
-	PolygonTrigger *getNext() {return m_nextPolygonTrigger;}
-	const PolygonTrigger *getNext() const {return m_nextPolygonTrigger;}
-	const AsciiString& getTriggerName()  const {return m_triggerName;} ///< Gets the trigger name.
-	Bool pointInTrigger(ICoord3D &point) const;
-	Bool doExportWithScripts() const {return m_exportWithScripts;}
-	void setDoExportWithScripts(Bool val) {m_exportWithScripts = val;}
-	Bool isWaterArea() const {return m_isWaterArea;}
-	void setWaterArea(Bool val) {m_isWaterArea = val;}
-	Bool isRiver() const {return m_isRiver;}
-	void setRiver(Bool val) {m_isRiver = val;}
-	Int getRiverStart() const {return m_riverStart;}
-	void setRiverStart(Int val) {m_riverStart = val;}
+	const ICoord3D* getPoint(Int ndx) const
+	{
+		if (ndx < 0)
+		{
+			ndx = 0;
+		}
+		if (ndx >= m_numPoints)
+		{
+			ndx = m_numPoints - 1;
+		}
+		return m_points + ndx;
+	}    ///< Get a point.
+	Int getNumPoints() const { return m_numPoints; }
+	Int getID() const { return m_triggerID; }
+	PolygonTrigger* getNext() { return m_nextPolygonTrigger; }
+	const PolygonTrigger* getNext() const { return m_nextPolygonTrigger; }
+	const AsciiString& getTriggerName() const { return m_triggerName; }    ///< Gets the trigger name.
+	Bool pointInTrigger(ICoord3D& point) const;
+	Bool doExportWithScripts() const { return m_exportWithScripts; }
+	void setDoExportWithScripts(Bool val) { m_exportWithScripts = val; }
+	Bool isWaterArea() const { return m_isWaterArea; }
+	void setWaterArea(Bool val) { m_isWaterArea = val; }
+	Bool isRiver() const { return m_isRiver; }
+	void setRiver(Bool val) { m_isRiver = val; }
+	Int getRiverStart() const { return m_riverStart; }
+	void setRiverStart(Int val) { m_riverStart = val; }
 	const WaterHandle* getWaterHandle() const;
 	Bool isValid() const;
 };

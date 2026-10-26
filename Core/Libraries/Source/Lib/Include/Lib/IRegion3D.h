@@ -24,24 +24,24 @@
 
 struct IRegion3D
 {
-	ICoord3D lo, hi;					// axis-aligned bounding box
+	ICoord3D lo, hi;    // axis-aligned bounding box
 
 	// Keep only the overlapping portion of both regions.
-	void intersectWith( const IRegion3D &other )
+	void intersectWith(const IRegion3D& other)
 	{
 		lo.updateMax(other.lo);
 		hi.updateMin(other.hi);
 	}
 
 	// Expand to include the other region.
-	void uniteWith( const IRegion3D &other )
+	void uniteWith(const IRegion3D& other)
 	{
 		lo.updateMin(other.lo);
 		hi.updateMax(other.hi);
 	}
 
 	// Expand to include the point.
-	void uniteWith( const ICoord3D &point )
+	void uniteWith(const ICoord3D& point)
 	{
 		lo.updateMin(point);
 		hi.updateMax(point);
@@ -62,46 +62,46 @@ struct IRegion3D
 	Int height() const { return hi.y - lo.y; }
 	Int depth() const { return hi.z - lo.z; }
 
-	Bool contains( Int x, Int y, Int z ) const
+	Bool contains(Int x, Int y, Int z) const
 	{
 		return (lo.x <= x) && (x <= hi.x) &&
-					 (lo.y <= y) && (y <= hi.y) &&
-					 (lo.z <= z) && (z <= hi.z);
+		       (lo.y <= y) && (y <= hi.y) &&
+		       (lo.z <= z) && (z <= hi.z);
 	}
 
-	Bool containsWithin( Int x, Int y, Int z ) const
+	Bool containsWithin(Int x, Int y, Int z) const
 	{
 		return (lo.x < x) && (x < hi.x) &&
 		       (lo.y < y) && (y < hi.y) &&
 		       (lo.z < z) && (z < hi.z);
 	}
 
-	Bool contains( const ICoord3D& point ) const { return contains(point.x, point.y, point.z); }
-	Bool containsWithin( const ICoord3D& point ) const { return containsWithin(point.x, point.y, point.z); }
+	Bool contains(const ICoord3D& point) const { return contains(point.x, point.y, point.z); }
+	Bool containsWithin(const ICoord3D& point) const { return containsWithin(point.x, point.y, point.z); }
 
-	Bool contains( const IRegion3D& other ) const
+	Bool contains(const IRegion3D& other) const
 	{
 		return (lo.x <= other.lo.x) && (other.hi.x <= hi.x) &&
-					 (lo.y <= other.lo.y) && (other.hi.y <= hi.y) &&
-					 (lo.z <= other.lo.z) && (other.hi.z <= hi.z);
+		       (lo.y <= other.lo.y) && (other.hi.y <= hi.y) &&
+		       (lo.z <= other.lo.z) && (other.hi.z <= hi.z);
 	}
 
-	Bool containsWithin( const IRegion3D& other ) const
+	Bool containsWithin(const IRegion3D& other) const
 	{
 		return (lo.x < other.lo.x) && (other.hi.x < hi.x) &&
 		       (lo.y < other.lo.y) && (other.hi.y < hi.y) &&
 		       (lo.z < other.lo.z) && (other.hi.z < hi.z);
 	}
 
-	Bool contains( const ICoord2D& point ) const
+	Bool contains(const ICoord2D& point) const
 	{
 		return (lo.x <= point.x) && (point.x <= hi.x) &&
-					 (lo.y <= point.y) && (point.y <= hi.y);
+		       (lo.y <= point.y) && (point.y <= hi.y);
 	}
 
-	Bool containsWithin( const ICoord2D& point ) const
+	Bool containsWithin(const ICoord2D& point) const
 	{
 		return (lo.x < point.x) && (point.x < hi.x) &&
-					 (lo.y < point.y) && (point.y < hi.y);
+		       (lo.y < point.y) && (point.y < hi.y);
 	}
 };

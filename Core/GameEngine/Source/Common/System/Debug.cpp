@@ -23,8 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
-
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES
 
@@ -32,7 +31,7 @@
 // Uncomment this to show normal logging stuff in the crc logging.
 // This can be helpful for context, but can also clutter diffs because normal logs aren't necessarily
 // deterministic or the same on all peers in multiplayer games.
-//#define INCLUDE_DEBUG_LOG_IN_CRC_LOG
+// #define INCLUDE_DEBUG_LOG_IN_CRC_LOG
 
 #include "Common/CommandLine.h"
 #include "Common/Debug.h"
@@ -43,49 +42,56 @@
 #include "GameClient/Keyboard.h"
 #include "GameClient/Mouse.h"
 #if defined(DEBUG_STACKTRACE) || defined(IG_DEBUG_STACKTRACE)
-	#include "Common/StackDump.h"
+#include "Common/StackDump.h"
 #endif
 #ifdef RTS_ENABLE_CRASHDUMP
 #include "MiniDumper/MiniDumper.h"
 #endif
 
-
 // Horrible reference, but we really, really need to know if we are windowed.
 extern bool DX8Wrapper_IsWindowed;
 extern HWND ApplicationHWnd;
 
-extern const char *gAppPrefix; /// So WB can have a different log file name.
+extern const char* gAppPrefix;    /// So WB can have a different log file name.
 
 #ifdef ALLOW_DEBUG_UTILS
 // ----------------------------------------------------------------------------
 static bool queryIgnoreAsserts()
 {
 	if (!DX8Wrapper_IsWindowed)
+	{
 		return true;
+	}
 	if (TheGlobalData && TheGlobalData->m_headless)
+	{
 		return true;
+	}
 #ifdef DEBUG_CRASHING
 	if (TheGlobalData && TheGlobalData->m_debugIgnoreAsserts)
+	{
 		return true;
+	}
 #endif
 
 	return false;
 }
 
 // ----------------------------------------------------------------------------
-static void *queryMainWindow()
+static void* queryMainWindow()
 {
 	return ApplicationHWnd;
 }
 
 #ifdef DEBUG_STACKTRACE
 // ----------------------------------------------------------------------------
-static void handleStackDump(void (*output)(const char *line))
+static void handleStackDump(void (*output)(const char* line))
 {
 	if (TheGlobalData && TheGlobalData->m_debugIgnoreStackTrace)
+	{
 		return;
+	}
 
-	const int STACKTRACE_SIZE	= 24;
+	const int STACKTRACE_SIZE = 24;
 	// Skips FillStackAddresses, this function and the debug function that calls it, so that the trace begins at DebugCrash.
 	const int STACKTRACE_SKIP = 3;
 	void* stacktrace[STACKTRACE_SIZE];
@@ -99,15 +105,19 @@ static void handleStackDump(void (*output)(const char *line))
 // ----------------------------------------------------------------------------
 static void handleCrashIgnored()
 {
-	if( TheKeyboard )
+	if (TheKeyboard)
+	{
 		TheKeyboard->resetKeys();
-	if( TheMouse )
+	}
+	if (TheMouse)
+	{
 		TheMouse->reset();
+	}
 }
 
 #ifdef INCLUDE_DEBUG_LOG_IN_CRC_LOG
 // ----------------------------------------------------------------------------
-static void handleLog(const char *buffer, const char *endline)
+static void handleLog(const char* buffer, const char* endline)
 {
 	addCRCDebugLineNoCounter("%s%s", buffer, endline);
 }
@@ -117,14 +127,16 @@ static void handleLog(const char *buffer, const char *endline)
 // GameDebugInit
 // ----------------------------------------------------------------------------
 /**
-	Initialize the debug utilities for an application that uses the game engine.
-	This connects them to the game engine and opens the log file of the client instance.
+  Initialize the debug utilities for an application that uses the game engine.
+  This connects them to the game engine and opens the log file of the client instance.
 */
 void GameDebugInit(int flags)
 {
 	// just quietly allow multiple calls to this, so that static ctors can call it.
 	if (DebugGetFlags() != 0)
+	{
 		return;
+	}
 
 	DebugSetIgnoreAssertsQuery(queryIgnoreAsserts);
 	DebugSetMainWindowQuery(queryMainWindow);
@@ -144,7 +156,9 @@ void GameDebugInit(int flags)
 	CommandLine::parseCommandLineForStartup();
 
 	if (!rts::ClientInstance::initialize())
+	{
 		return;
+	}
 
 	char suffix[32];
 	suffix[0] = 0;
@@ -156,40 +170,38 @@ void GameDebugInit(int flags)
 	DebugOpenLogFile(gAppPrefix, suffix);
 #endif
 }
-#endif // ALLOW_DEBUG_UTILS
+#endif    // ALLOW_DEBUG_UTILS
 
 // ----------------------------------------------------------------------------
 // ReleaseCrash
 // ----------------------------------------------------------------------------
 /**
-	Halt the application, EVEN IN FINAL RELEASE BUILDS. This should be called
-	only when a crash is guaranteed by continuing, and no meaningful continuation
-	of processing is possible, even by throwing an exception.
+  Halt the application, EVEN IN FINAL RELEASE BUILDS. This should be called
+  only when a crash is guaranteed by continuing, and no meaningful continuation
+  of processing is possible, even by throwing an exception.
 */
 
-	#define RELEASECRASH_FILE_NAME				"ReleaseCrashInfo.txt"
-	#define RELEASECRASH_FILE_NAME_PREV		"ReleaseCrashInfoPrev.txt"
+#define RELEASECRASH_FILE_NAME "ReleaseCrashInfo.txt"
+#define RELEASECRASH_FILE_NAME_PREV "ReleaseCrashInfoPrev.txt"
 
-	static FILE *theReleaseCrashLogFile = nullptr;
+static FILE* theReleaseCrashLogFile = nullptr;
 
-	static void releaseCrashLogOutput(const char *buffer)
+static void releaseCrashLogOutput(const char* buffer)
+{
+	if (theReleaseCrashLogFile)
 	{
-		if (theReleaseCrashLogFile)
-		{
-			fprintf(theReleaseCrashLogFile, "%s\n", buffer);
-			fflush(theReleaseCrashLogFile);
-		}
+		fprintf(theReleaseCrashLogFile, "%s\n", buffer);
+		fflush(theReleaseCrashLogFile);
 	}
+}
 
-
-static const char *getCurrentTimeString()
+static const char* getCurrentTimeString()
 {
 	time_t aclock;
 	time(&aclock);
-	struct tm *newtime = localtime(&aclock);
+	struct tm* newtime = localtime(&aclock);
 	return asctime(newtime);
 }
-
 
 static void TriggerMiniDump()
 {
@@ -205,8 +217,7 @@ static void TriggerMiniDump()
 #endif
 }
 
-
-void ReleaseCrash(const char *reason)
+void ReleaseCrash(const char* reason)
 {
 	const DebugCrashHandler crashHandler = DebugGetCrashHandler();
 	if (crashHandler != nullptr)
@@ -216,19 +227,22 @@ void ReleaseCrash(const char *reason)
 
 	/// do additional reporting on the crash, if possible
 
-	if (!DX8Wrapper_IsWindowed) {
-		if (ApplicationHWnd) {
+	if (!DX8Wrapper_IsWindowed)
+	{
+		if (ApplicationHWnd)
+		{
 			ShowWindow(ApplicationHWnd, SW_HIDE);
 		}
 	}
 
 	TriggerMiniDump();
 
-	char prevbuf[ _MAX_PATH ];
-	char curbuf[ _MAX_PATH ];
+	char prevbuf[_MAX_PATH];
+	char curbuf[_MAX_PATH];
 
-	if (TheGlobalData==nullptr) {
-		return; // We are shutting down, and TheGlobalData has been freed.  jba. [4/15/2003]
+	if (TheGlobalData == nullptr)
+	{
+		return;    // We are shutting down, and TheGlobalData has been freed.  jba. [4/15/2003]
 	}
 
 	strlcpy(prevbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(prevbuf));
@@ -236,7 +250,7 @@ void ReleaseCrash(const char *reason)
 	strlcpy(curbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(curbuf));
 	strlcat(curbuf, RELEASECRASH_FILE_NAME, ARRAY_SIZE(curbuf));
 
- 	remove(prevbuf);
+	remove(prevbuf);
 	if (rename(curbuf, prevbuf) != 0)
 	{
 #ifdef DEBUG_LOGGING
@@ -255,7 +269,7 @@ void ReleaseCrash(const char *reason)
 	{
 		fprintf(theReleaseCrashLogFile, "Release Crash at %s; Reason %s\n", getCurrentTimeString(), reason);
 		fprintf(theReleaseCrashLogFile, "\nLast error:\n%s\n\nCurrent stack:\n", g_LastErrorDump.str());
-		const int STACKTRACE_SIZE	= 12;
+		const int STACKTRACE_SIZE = 12;
 		const int STACKTRACE_SKIP = 6;
 		void* stacktrace[STACKTRACE_SIZE];
 		::FillStackAddresses(stacktrace, STACKTRACE_SIZE, STACKTRACE_SKIP);
@@ -266,32 +280,33 @@ void ReleaseCrash(const char *reason)
 		theReleaseCrashLogFile = nullptr;
 	}
 
-	if (!DX8Wrapper_IsWindowed) {
-		if (ApplicationHWnd) {
+	if (!DX8Wrapper_IsWindowed)
+	{
+		if (ApplicationHWnd)
+		{
 			ShowWindow(ApplicationHWnd, SW_HIDE);
 		}
 	}
 
 #if defined(RTS_DEBUG)
-	/* static */ char buff[8192]; // not so static so we can be threadsafe
+	/* static */ char buff[8192];    // not so static so we can be threadsafe
 	snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);
 	if (crashHandler == nullptr && !(TheGlobalData && TheGlobalData->m_headless))
 	{
-		::MessageBox(nullptr, buff, "Technical Difficulties...", MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
+		::MessageBox(nullptr, buff, "Technical Difficulties...", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 	}
 #else
-// crash error messaged changed 3/6/03 BGC
-//	::MessageBox(nullptr, "Sorry, a serious error occurred.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
-//	::MessageBox(nullptr, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
+	// crash error messaged changed 3/6/03 BGC
+	//	::MessageBox(nullptr, "Sorry, a serious error occurred.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
+	//	::MessageBox(nullptr, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
 
-// crash error message changed again 8/22/03 M Lorenzen... made this message box modal to the system so it will appear on top of any task-modal windows, splash-screen, etc.
+	// crash error message changed again 8/22/03 M Lorenzen... made this message box modal to the system so it will appear on top of any task-modal windows, splash-screen, etc.
 	if (crashHandler == nullptr && !(TheGlobalData && TheGlobalData->m_headless))
 	{
 		::MessageBox(nullptr, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.",
-			"Technical Difficulties...",
-			MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
+		             "Technical Difficulties...",
+		             MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 	}
-
 
 #endif
 
@@ -300,7 +315,8 @@ void ReleaseCrash(const char *reason)
 
 void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 {
-	if (!TheGameText) {
+	if (!TheGameText)
+	{
 		ReleaseCrash(m.str());
 		// This won't ever return
 		return;
@@ -317,11 +333,12 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 	UnicodeString prompt = TheGameText->fetch(p);
 	UnicodeString mesg = TheGameText->fetch(m);
 
-
 	/// do additional reporting on the crash, if possible
 
-	if (!DX8Wrapper_IsWindowed) {
-		if (ApplicationHWnd) {
+	if (!DX8Wrapper_IsWindowed)
+	{
+		if (ApplicationHWnd)
+		{
 			ShowWindow(ApplicationHWnd, SW_HIDE);
 		}
 	}
@@ -331,15 +348,15 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		::MessageBoxW(nullptr, mesg.str(), prompt.str(), MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 	}
 
-	char prevbuf[ _MAX_PATH ];
-	char curbuf[ _MAX_PATH ];
+	char prevbuf[_MAX_PATH];
+	char curbuf[_MAX_PATH];
 
 	strlcpy(prevbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(prevbuf));
 	strlcat(prevbuf, RELEASECRASH_FILE_NAME_PREV, ARRAY_SIZE(prevbuf));
 	strlcpy(curbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(curbuf));
 	strlcat(curbuf, RELEASECRASH_FILE_NAME, ARRAY_SIZE(curbuf));
 
- 	remove(prevbuf);
+	remove(prevbuf);
 	if (rename(curbuf, prevbuf) != 0)
 	{
 #ifdef DEBUG_LOGGING
@@ -358,7 +375,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 	{
 		fprintf(theReleaseCrashLogFile, "Release Crash at %s; Reason %ls\n", getCurrentTimeString(), mesg.str());
 
-		const int STACKTRACE_SIZE	= 12;
+		const int STACKTRACE_SIZE = 12;
 		const int STACKTRACE_SKIP = 6;
 		void* stacktrace[STACKTRACE_SIZE];
 		::FillStackAddresses(stacktrace, STACKTRACE_SIZE, STACKTRACE_SKIP);

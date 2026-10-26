@@ -20,5 +20,5 @@
 
 #include "Common/GameState.h"
 
-void presentSaveResult( const SaveResult &result );
-void presentLoadResult( SaveCode result, const AsciiString &filename );
+void presentSaveResult(const SaveResult& result);
+void presentLoadResult(SaveCode result, const AsciiString& filename);

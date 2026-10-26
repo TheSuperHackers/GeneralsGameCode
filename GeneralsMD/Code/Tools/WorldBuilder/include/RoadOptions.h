@@ -31,32 +31,36 @@ class WorldHeightMapEdit;
 
 class RoadOptions : public COptionsPanel
 {
-// Construction
+	// Construction
 public:
-	RoadOptions(CWnd* pParent = nullptr);   ///< standard constructor
+	RoadOptions(CWnd* pParent = nullptr);    ///< standard constructor
 
-	virtual ~RoadOptions() override;   ///< standard destructor
-	enum { NAME_MAX_LEN = 64 };
-// Dialog Data
+	virtual ~RoadOptions() override;    ///< standard destructor
+	enum
+	{
+		NAME_MAX_LEN = 64
+	};
+	// Dialog Data
 	//{{AFX_DATA(RoadOptions)
-	enum { IDD = IDD_ROAD_OPTIONS };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_ROAD_OPTIONS
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(RoadOptions)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-	virtual void OnOK() override {return;};  ///< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel() override {return;}; ///< Modeless dialogs don't close on ESC, so eat this for modeless.
+	virtual void OnOK() override { return; };    ///< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnCancel() override { return; };    ///< Modeless dialogs don't close on ESC, so eat this for modeless.
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(RoadOptions)
 	virtual BOOL OnInitDialog() override;
@@ -68,22 +72,21 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
+protected:
+	static RoadOptions* m_staticThis;
+	static Bool m_updating;
+	static Int m_currentRoadIndex;
+	static Int m_numberOfRoads;
+	static Int m_numberOfBridges;
+	static AsciiString m_currentRoadName;
+	static Bool m_angleCorners;
+	static Bool m_tightCurve;
+	static Bool m_doJoin;
+	CTreeCtrl m_roadTreeView;
 
 protected:
-	static RoadOptions *m_staticThis;
-	static Bool				m_updating;
-	static Int				m_currentRoadIndex;
-	static Int				m_numberOfRoads;
-	static Int				m_numberOfBridges;
-	static AsciiString	m_currentRoadName;
-	static Bool				m_angleCorners;
-	static Bool				m_tightCurve;
-	static Bool				m_doJoin;
-	CTreeCtrl					m_roadTreeView;
-
-protected:
-	void addRoad(char *pPath, Int objectNdx, HTREEITEM parent);
-	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
+	void addRoad(char* pPath, Int objectNdx, HTREEITEM parent);
+	HTREEITEM findOrAdd(HTREEITEM parent, const char* pLabel);
 	Bool findAndSelect(HTREEITEM parent, AsciiString label);
 	Bool setRoadTreeViewSelection(HTREEITEM parent, Int selection);
 	void updateLabel();
@@ -91,11 +94,11 @@ protected:
 	void SelectConnected();
 
 public:
-	static AsciiString getCurRoadName() {return m_currentRoadName;}
-	static Bool isBridge() {return (m_currentRoadIndex >= m_numberOfRoads);}
-	static Bool isAngled() {return m_angleCorners;}
-	static Bool isTightCurve() {return m_tightCurve;}
-	static Bool isJoin() {return m_doJoin;}
+	static AsciiString getCurRoadName() { return m_currentRoadName; }
+	static Bool isBridge() { return (m_currentRoadIndex >= m_numberOfRoads); }
+	static Bool isAngled() { return m_angleCorners; }
+	static Bool isTightCurve() { return m_tightCurve; }
+	static Bool isJoin() { return m_doJoin; }
 	static void updateSelection();
 	static Bool selectionIsRoadsOnly();
 	void applyToSelection();

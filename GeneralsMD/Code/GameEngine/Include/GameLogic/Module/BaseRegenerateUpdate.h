@@ -40,25 +40,21 @@ class Thing;
 // ------------------------------------------------------------------------------------------------
 class BaseRegenerateUpdateModuleData : public UpdateModuleData
 {
-
 public:
 	BaseRegenerateUpdateModuleData();
-	static void buildFieldParse( MultiIniFieldParse &p );
-
+	static void buildFieldParse(MultiIniFieldParse& p);
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class BaseRegenerateUpdate : public UpdateModule,
-												 public DamageModuleInterface
+                             public DamageModuleInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( BaseRegenerateUpdate, "BaseRegenerateUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( BaseRegenerateUpdate, BaseRegenerateUpdateModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(BaseRegenerateUpdate, "BaseRegenerateUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(BaseRegenerateUpdate, BaseRegenerateUpdateModuleData);
 
 public:
-
-	BaseRegenerateUpdate( Thing *thing, const ModuleData* moduleData );
+	BaseRegenerateUpdate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | MODULEINTERFACE_DAMAGE; }
@@ -70,11 +66,10 @@ public:
 	virtual UpdateSleepTime update() override;
 
 	// DamageModuleInterface
-	virtual void onDamage( DamageInfo *damageInfo ) override;
-	virtual void onHealing( DamageInfo *damageInfo ) override { }
-	virtual void onBodyDamageStateChange(const DamageInfo* damageInfo, BodyDamageType oldState, BodyDamageType newState) override { }
-	virtual DisabledMaskType getDisabledTypesToProcess() const override { return MAKE_DISABLED_MASK( DISABLED_UNDERPOWERED ); }
+	virtual void onDamage(DamageInfo* damageInfo) override;
+	virtual void onHealing(DamageInfo* damageInfo) override {}
+	virtual void onBodyDamageStateChange(const DamageInfo* damageInfo, BodyDamageType oldState, BodyDamageType newState) override {}
+	virtual DisabledMaskType getDisabledTypesToProcess() const override { return MAKE_DISABLED_MASK(DISABLED_UNDERPOWERED); }
 
 private:
-
 };

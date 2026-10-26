@@ -65,7 +65,6 @@
 //=============================================================================
 ImageInfo::ImageInfo()
 {
-
 	m_area = 0;
 	m_colorDepth = 0;
 	m_size.x = 0;
@@ -82,10 +81,9 @@ ImageInfo::ImageInfo()
 	m_pagePos.lo.y = 0;
 	m_pagePos.hi.x = 0;
 	m_pagePos.hi.y = 0;
-	m_fitBits			 = 0;
+	m_fitBits = 0;
 	m_gutterUsed.x = 0;
 	m_gutterUsed.y = 0;
-
 }
 
 // ImageInfo::~ImageInfo ======================================================
@@ -93,9 +91,7 @@ ImageInfo::ImageInfo()
 //=============================================================================
 ImageInfo::~ImageInfo()
 {
-
-	delete [] m_path;
-	delete [] m_filenameOnly;
-	delete [] m_filenameOnlyNoExt;
-
+	delete[] m_path;
+	delete[] m_filenameOnly;
+	delete[] m_filenameOnlyNoExt;
 }

@@ -36,5 +36,5 @@ extern bool GitHaveInfo;
 extern int GitRevision;
 
 #ifdef __cplusplus
-} // extern "C"
+}    // extern "C"
 #endif

@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/Science.h"
@@ -37,9 +37,8 @@
 #include "GameLogic/Object.h"
 #include "Common/BitFlagsIO.h"
 
-
 // GLOBAL /////////////////////////////////////////////////////////////////////////////////////////
-SpecialPowerStore *TheSpecialPowerStore = nullptr;
+SpecialPowerStore* TheSpecialPowerStore = nullptr;
 
 #define DEFAULT_DEFECTION_DETECTION_PROTECTION_TIME_LIMIT (LOGICFRAMES_PER_SECOND * 10)
 
@@ -48,12 +47,11 @@ SpecialPowerStore *TheSpecialPowerStore = nullptr;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Externs ////////////////////////////////////////////////////////////////////////////////////////
-template<>
-const char* const SpecialPowerMaskType::s_bitNameList[] =
-{
+template <>
+const char* const SpecialPowerMaskType::s_bitNameList[] = {
 	"SPECIAL_INVALID",
 
-	//Superweapons
+	// Superweapons
 	"SPECIAL_DAISY_CUTTER",
 	"SPECIAL_PARADROP_AMERICA",
 	"SPECIAL_CARPET_BOMB",
@@ -79,7 +77,7 @@ const char* const SpecialPowerMaskType::s_bitNameList[] =
 	"SPECIAL_DETONATE_DIRTY_NUKE",
 	"SPECIAL_ARTILLERY_BARRAGE",
 
-	//Special abilities
+	// Special abilities
 	"SPECIAL_MISSILE_DEFENDER_LASER_GUIDED_MISSILES",
 	"SPECIAL_REMOTE_CHARGES",
 	"SPECIAL_TIMED_CHARGES",
@@ -101,8 +99,8 @@ const char* const SpecialPowerMaskType::s_bitNameList[] =
 	"SPECIAL_CIA_INTELLIGENCE",
 	"SPECIAL_CLEANUP_AREA",
 	"SPECIAL_LAUNCH_BAIKONUR_ROCKET",
-  "SPECIAL_SPECTRE_GUNSHIP",
-  "SPECIAL_GPS_SCRAMBLER",
+	"SPECIAL_SPECTRE_GUNSHIP",
+	"SPECIAL_GPS_SCRAMBLER",
 	"SPECIAL_FRENZY",
 	"SPECIAL_SNEAK_ATTACK",
 
@@ -135,14 +133,14 @@ static_assert(ARRAY_SIZE(SpecialPowerMaskType::s_bitNameList) == SpecialPowerMas
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerStore::parseSpecialPowerDefinition( INI *ini )
+void SpecialPowerStore::parseSpecialPowerDefinition(INI* ini)
 {
 	// read the name
 	AsciiString name = ini->getNextToken();
 
-	SpecialPowerTemplate* specialPower = TheSpecialPowerStore->findSpecialPowerTemplatePrivate( name );
+	SpecialPowerTemplate* specialPower = TheSpecialPowerStore->findSpecialPowerTemplatePrivate(name);
 
-	if ( ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES )
+	if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
 	{
 		if (specialPower)
 		{
@@ -151,14 +149,16 @@ void SpecialPowerStore::parseSpecialPowerDefinition( INI *ini )
 			*specialPower = *child;
 			child->setNextOverride(specialPower);
 			specialPower->markAsOverride();
-			//TheSpecialPowerStore->m_specialPowerTemplates.push_back(specialPower); // nope, do NOT do this
+			// TheSpecialPowerStore->m_specialPowerTemplates.push_back(specialPower); // nope, do NOT do this
 		}
 		else
 		{
 			specialPower = newInstance(SpecialPowerTemplate);
-			const SpecialPowerTemplate *defaultTemplate = TheSpecialPowerStore->findSpecialPowerTemplate( "DefaultSpecialPower" );
-			if( defaultTemplate )
+			const SpecialPowerTemplate* defaultTemplate = TheSpecialPowerStore->findSpecialPowerTemplate("DefaultSpecialPower");
+			if (defaultTemplate)
+			{
 				*specialPower = *defaultTemplate;
+			}
 			specialPower->friend_setNameAndID(name, ++TheSpecialPowerStore->m_nextSpecialPowerID);
 			specialPower->markAsOverride();
 			TheSpecialPowerStore->m_specialPowerTemplates.push_back(specialPower);
@@ -173,9 +173,11 @@ void SpecialPowerStore::parseSpecialPowerDefinition( INI *ini )
 		else
 		{
 			specialPower = newInstance(SpecialPowerTemplate);
-			const SpecialPowerTemplate *defaultTemplate = TheSpecialPowerStore->findSpecialPowerTemplate( "DefaultSpecialPower" );
-			if( defaultTemplate )
+			const SpecialPowerTemplate* defaultTemplate = TheSpecialPowerStore->findSpecialPowerTemplate("DefaultSpecialPower");
+			if (defaultTemplate)
+			{
 				*specialPower = *defaultTemplate;
+			}
 			specialPower->friend_setNameAndID(name, ++TheSpecialPowerStore->m_nextSpecialPowerID);
 			TheSpecialPowerStore->m_specialPowerTemplates.push_back(specialPower);
 		}
@@ -183,28 +185,29 @@ void SpecialPowerStore::parseSpecialPowerDefinition( INI *ini )
 
 	// parse the ini definition
 	if (specialPower)
-		ini->initFromINI( specialPower, specialPower->getFieldParse() );
+	{
+		ini->initFromINI(specialPower, specialPower->getFieldParse());
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-/* static */ const FieldParse SpecialPowerTemplate::m_specialPowerFieldParse[] =
-{
+/* static */ const FieldParse SpecialPowerTemplate::m_specialPowerFieldParse[] = {
 
-	{ "ReloadTime",								INI::parseDurationUnsignedInt,		nullptr,	offsetof( SpecialPowerTemplate, m_reloadTime ) },
-	{ "RequiredScience",					INI::parseScience,								nullptr, offsetof( SpecialPowerTemplate, m_requiredScience ) },
-	{ "InitiateSound",						INI::parseAudioEventRTS,					nullptr,	offsetof( SpecialPowerTemplate, m_initiateSound ) },
-	{ "InitiateAtLocationSound",	INI::parseAudioEventRTS,					nullptr,	offsetof( SpecialPowerTemplate, m_initiateAtLocationSound ) },
-	{ "PublicTimer",							INI::parseBool,										nullptr, offsetof( SpecialPowerTemplate, m_publicTimer ) },
-	{ "Enum",											INI::parseIndexList,							SpecialPowerMaskType::getBitNames(), offsetof( SpecialPowerTemplate, m_type ) },
-	{ "DetectionTime",						INI::parseDurationUnsignedInt,		nullptr,	offsetof( SpecialPowerTemplate, m_detectionTime ) },
-	{ "SharedSyncedTimer",				INI::parseBool,										nullptr, offsetof( SpecialPowerTemplate, m_sharedNSync ) },
-	{ "ViewObjectDuration",				INI::parseDurationUnsignedInt,		nullptr,	offsetof( SpecialPowerTemplate, m_viewObjectDuration ) },
-	{ "ViewObjectRange",					INI::parseReal,										nullptr,	offsetof( SpecialPowerTemplate, m_viewObjectRange ) },
-	{ "RadiusCursorRadius",				INI::parseReal,										nullptr,	offsetof( SpecialPowerTemplate, m_radiusCursorRadius ) },
-	{ "ShortcutPower",						INI::parseBool,										nullptr, offsetof( SpecialPowerTemplate, m_shortcutPower ) },
-	{ "AcademyClassify",					INI::parseIndexList,			TheAcademyClassificationTypeNames, offsetof( SpecialPowerTemplate, m_academyClassificationType ) },
-	{ nullptr,	nullptr, nullptr,	0 }
+	{ "ReloadTime", INI::parseDurationUnsignedInt, nullptr, offsetof(SpecialPowerTemplate, m_reloadTime) },
+	{ "RequiredScience", INI::parseScience, nullptr, offsetof(SpecialPowerTemplate, m_requiredScience) },
+	{ "InitiateSound", INI::parseAudioEventRTS, nullptr, offsetof(SpecialPowerTemplate, m_initiateSound) },
+	{ "InitiateAtLocationSound", INI::parseAudioEventRTS, nullptr, offsetof(SpecialPowerTemplate, m_initiateAtLocationSound) },
+	{ "PublicTimer", INI::parseBool, nullptr, offsetof(SpecialPowerTemplate, m_publicTimer) },
+	{ "Enum", INI::parseIndexList, SpecialPowerMaskType::getBitNames(), offsetof(SpecialPowerTemplate, m_type) },
+	{ "DetectionTime", INI::parseDurationUnsignedInt, nullptr, offsetof(SpecialPowerTemplate, m_detectionTime) },
+	{ "SharedSyncedTimer", INI::parseBool, nullptr, offsetof(SpecialPowerTemplate, m_sharedNSync) },
+	{ "ViewObjectDuration", INI::parseDurationUnsignedInt, nullptr, offsetof(SpecialPowerTemplate, m_viewObjectDuration) },
+	{ "ViewObjectRange", INI::parseReal, nullptr, offsetof(SpecialPowerTemplate, m_viewObjectRange) },
+	{ "RadiusCursorRadius", INI::parseReal, nullptr, offsetof(SpecialPowerTemplate, m_radiusCursorRadius) },
+	{ "ShortcutPower", INI::parseBool, nullptr, offsetof(SpecialPowerTemplate, m_shortcutPower) },
+	{ "AcademyClassify", INI::parseIndexList, TheAcademyClassificationTypeNames, offsetof(SpecialPowerTemplate, m_academyClassificationType) },
+	{ nullptr, nullptr, nullptr, 0 }
 
 };
 
@@ -223,14 +226,12 @@ SpecialPowerTemplate::SpecialPowerTemplate()
 	m_viewObjectRange = 0;
 	m_radiusCursorRadius = 0;
 	m_shortcutPower = FALSE;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SpecialPowerTemplate::~SpecialPowerTemplate()
 {
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -241,68 +242,70 @@ SpecialPowerTemplate::~SpecialPowerTemplate()
 //-------------------------------------------------------------------------------------------------
 SpecialPowerStore::SpecialPowerStore()
 {
-
 	m_nextSpecialPowerID = 0;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SpecialPowerStore::~SpecialPowerStore()
 {
-
 	// delete all templates
-	for( size_t i = 0; i < m_specialPowerTemplates.size(); ++i )
-		deleteInstance(m_specialPowerTemplates[ i ]);
+	for (size_t i = 0; i < m_specialPowerTemplates.size(); ++i)
+	{
+		deleteInstance(m_specialPowerTemplates[i]);
+	}
 
 	// erase the list
 	m_specialPowerTemplates.clear();
 
 	// set our count to zero
 	m_nextSpecialPowerID = 0;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SpecialPowerTemplate* SpecialPowerStore::findSpecialPowerTemplatePrivate( AsciiString name )
+SpecialPowerTemplate* SpecialPowerStore::findSpecialPowerTemplatePrivate(AsciiString name)
 {
-
 	// search the template list for matching name
-	for( size_t i = 0; i < m_specialPowerTemplates.size(); ++i )
-		if( m_specialPowerTemplates[ i ]->getName() == name )
-			return m_specialPowerTemplates[ i ];
+	for (size_t i = 0; i < m_specialPowerTemplates.size(); ++i)
+	{
+		if (m_specialPowerTemplates[i]->getName() == name)
+		{
+			return m_specialPowerTemplates[i];
+		}
+	}
 
-	return nullptr;  // not found
-
+	return nullptr;    // not found
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Find a special power template given unique ID */
 //-------------------------------------------------------------------------------------------------
-const SpecialPowerTemplate *SpecialPowerStore::findSpecialPowerTemplateByID( UnsignedInt id )
+const SpecialPowerTemplate* SpecialPowerStore::findSpecialPowerTemplateByID(UnsignedInt id)
 {
-
 	// search the template list for matching name
-	for( size_t i = 0; i < m_specialPowerTemplates.size(); ++i )
-		if( m_specialPowerTemplates[ i ]->getID() == id )
-			return m_specialPowerTemplates[ i ];
+	for (size_t i = 0; i < m_specialPowerTemplates.size(); ++i)
+	{
+		if (m_specialPowerTemplates[i]->getID() == id)
+		{
+			return m_specialPowerTemplates[i];
+		}
+	}
 
-	return nullptr;  // not found
-
+	return nullptr;    // not found
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Find a special power template given index (WB) */
 //-------------------------------------------------------------------------------------------------
-const SpecialPowerTemplate *SpecialPowerStore::getSpecialPowerTemplateByIndex( UnsignedInt index )
+const SpecialPowerTemplate* SpecialPowerStore::getSpecialPowerTemplateByIndex(UnsignedInt index)
 {
-
 	if (index >= 0 && index < m_specialPowerTemplates.size())
-		return m_specialPowerTemplates[ index ];
+	{
+		return m_specialPowerTemplates[index];
+	}
 
-	return nullptr;  // not found
-
+	return nullptr;    // not found
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -310,24 +313,25 @@ const SpecialPowerTemplate *SpecialPowerStore::getSpecialPowerTemplateByIndex( U
 //-------------------------------------------------------------------------------------------------
 Int SpecialPowerStore::getNumSpecialPowers()
 {
-
 	return m_specialPowerTemplates.size();
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** does the object (and therefore the player) meet all the requirements to use this power */
 //-------------------------------------------------------------------------------------------------
-Bool SpecialPowerStore::canUseSpecialPower( Object *obj, const SpecialPowerTemplate *specialPowerTemplate )
+Bool SpecialPowerStore::canUseSpecialPower(Object* obj, const SpecialPowerTemplate* specialPowerTemplate)
 {
-
 	// sanity
-	if( obj == nullptr || specialPowerTemplate == nullptr )
+	if (obj == nullptr || specialPowerTemplate == nullptr)
+	{
 		return FALSE;
+	}
 
 	// as a first sanity check, the object must have a module capable of executing the power
-	if( obj->getSpecialPowerModule( specialPowerTemplate ) == nullptr )
+	if (obj->getSpecialPowerModule(specialPowerTemplate) == nullptr)
+	{
 		return FALSE;
+	}
 
 	//
 	// in order to execute the special powers we have attached special power modules to the objects
@@ -339,22 +343,20 @@ Bool SpecialPowerStore::canUseSpecialPower( Object *obj, const SpecialPowerTempl
 
 	// check for required science
 	ScienceType requiredScience = specialPowerTemplate->getRequiredScience();
-	if( requiredScience != SCIENCE_INVALID )
+	if (requiredScience != SCIENCE_INVALID)
 	{
-		Player *player = obj->getControllingPlayer();
+		Player* player = obj->getControllingPlayer();
 
-		if( player->hasScience( requiredScience ) == FALSE )
+		if (player->hasScience(requiredScience) == FALSE)
+		{
 			return FALSE;
-
+		}
 	}
-
 
 	// I THINK THIS IS WHERE WE BAIL OUT IF A DIFFERENT CONYARD IS ALREADY CHARGING THIS SPECIAL RIGHT NOW //LORENZEN
 
-
 	// all is well
 	return TRUE;
-
 }
 
 //-------------------------------------------------------------------------------------------------

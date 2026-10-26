@@ -32,29 +32,30 @@ class MapObject;
 
 class ScorchOptions : public COptionsPanel, public PopupSliderOwner
 {
-// Construction
+	// Construction
 public:
-	ScorchOptions(CWnd* pParent = nullptr);   // standard constructor
+	ScorchOptions(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(ScorchOptions)
-	enum { IDD = IDD_SCORCH_OPTIONS };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_SCORCH_OPTIONS
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ScorchOptions)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-	virtual void OnOK() override {return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel() override {return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
+	virtual void OnOK() override { return; };    //!< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnCancel() override { return; };    //!< Modeless dialogs don't close on ESC, so eat this for modeless.
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(ScorchOptions)
 	virtual BOOL OnInitDialog() override;
@@ -64,14 +65,14 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	static MapObject *getSingleSelectedScorch();
+	static MapObject* getSingleSelectedScorch();
 	void updateTheUI();
 	WBPopupSliderButton m_radiusPopup;
 	std::vector<Dict*> m_allSelectedDicts;
-	Bool		m_updating; ///<true if the ui is updating itself.
+	Bool m_updating;    ///< true if the ui is updating itself.
 
-	static Scorches	m_scorchtype;
-	static Real		m_scorchsize;
+	static Scorches m_scorchtype;
+	static Real m_scorchsize;
 	static ScorchOptions* m_staticThis;
 	void changeSize();
 	void changeScorch();
@@ -80,10 +81,10 @@ private:
 
 public:
 	static void update();
-	static Scorches getScorchType() {return m_scorchtype;}
-	static Real getScorchSize() {return m_scorchsize;}
+	static Scorches getScorchType() { return m_scorchtype; }
+	static Real getScorchSize() { return m_scorchsize; }
 
-	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial) override;
+	virtual void GetPopSliderInfo(const long sliderID, long* pMin, long* pMax, long* pLineSize, long* pInitial) override;
 	virtual void PopSliderChanged(const long sliderID, long theVal) override;
 	virtual void PopSliderFinished(const long sliderID, long theVal) override;
 };

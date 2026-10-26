@@ -38,8 +38,8 @@
 #include <tracy/Tracy.hpp>
 
 #define PROFILER_ENABLED
-#define PROFILER_FRAME_IMAGE_SIZE 256 // Horizontal size of the frame image in pixels.
-#define PROFILER_FRAME_IMAGE_INTERVAL_MS 500 // Will capture every render frame if set to 0
+#define PROFILER_FRAME_IMAGE_SIZE 256    // Horizontal size of the frame image in pixels.
+#define PROFILER_FRAME_IMAGE_INTERVAL_MS 500    // Will capture every render frame if set to 0
 #define PROFILER_SECTION ZoneScoped
 #define PROFILER_SECTION_NAME(name) ZoneScopedN(name)
 #define PROFILER_SECTION_COLOR(color) ZoneScopedC(color)

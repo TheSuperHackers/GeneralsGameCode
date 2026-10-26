@@ -35,12 +35,12 @@
 // Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
 // existing values!
 //
-enum SpecialPowerType CPP_11(: Int)
+enum SpecialPowerType CPP_11( : Int)
 {
 	SPECIAL_INVALID,
 	// don't forget to add new strings to SpecialPowerMaskType::s_bitNameList[]
 
-	//Superweapons
+	// Superweapons
 	SPECIAL_DAISY_CUTTER,
 	SPECIAL_PARADROP_AMERICA,
 	SPECIAL_CARPET_BOMB,
@@ -67,7 +67,7 @@ enum SpecialPowerType CPP_11(: Int)
 	SPECIAL_ARTILLERY_BARRAGE,
 	// don't forget to add new strings to SpecialPowerMaskType::s_bitNameList[]
 
-	//Special abilities
+	// Special abilities
 	SPECIAL_MISSILE_DEFENDER_LASER_GUIDED_MISSILES,
 	SPECIAL_REMOTE_CHARGES,
 	SPECIAL_TIMED_CHARGES,
@@ -94,4 +94,4 @@ enum SpecialPowerType CPP_11(: Int)
 	// don't forget to add new strings to SpecialPowerMaskType::s_bitNameList[]
 };
 
-	// Definition of these names is located in SpecialPower.cpp
+// Definition of these names is located in SpecialPower.cpp

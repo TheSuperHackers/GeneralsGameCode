@@ -31,7 +31,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/SpecialPower.h"
@@ -45,27 +45,23 @@
 // ------------------------------------------------------------------------------------------------
 DefectorSpecialPowerModuleData::DefectorSpecialPowerModuleData()
 {
-
 	m_fatCursorRadius = 0.0f;
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 
-	//static
+// static
 
- void DefectorSpecialPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
+void DefectorSpecialPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-	SpecialPowerModuleData::buildFieldParse( p );
+	SpecialPowerModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "FatCursorRadius", INI::parseReal, nullptr, offsetof( DefectorSpecialPowerModuleData, m_fatCursorRadius ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "FatCursorRadius", INI::parseReal, nullptr, offsetof(DefectorSpecialPowerModuleData, m_fatCursorRadius) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,35 +70,36 @@ DefectorSpecialPowerModuleData::DefectorSpecialPowerModuleData()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DefectorSpecialPower::DefectorSpecialPower( Thing *thing, const ModuleData *moduleData )
-												: SpecialPowerModule( thing, moduleData )
+DefectorSpecialPower::DefectorSpecialPower(Thing* thing, const ModuleData* moduleData)
+  : SpecialPowerModule(thing, moduleData)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 DefectorSpecialPower::~DefectorSpecialPower()
 {
-
 }
-
 
 // ------------------------------------------------------------------------------------------------
 
-void DefectorSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
+void DefectorSpecialPower::doSpecialPowerAtLocation(const Coord3D* loc, Real angle, UnsignedInt commandOptions)
 {
 	if (getObject()->isDisabled())
+	{
 		return;
+	}
 
 	// only allowed at objects
 }
 
 // ------------------------------------------------------------------------------------------------
-void DefectorSpecialPower::doSpecialPowerAtObject( Object *objectToMakeDefector, UnsignedInt commandOptions )
+void DefectorSpecialPower::doSpecialPowerAtObject(Object* objectToMakeDefector, UnsignedInt commandOptions)
 {
 	if (getObject()->isDisabled())
+	{
 		return;
+	}
 
 	// sanity check
 	if (!objectToMakeDefector)
@@ -111,55 +108,49 @@ void DefectorSpecialPower::doSpecialPowerAtObject( Object *objectToMakeDefector,
 	}
 
 	// another sanity check
-	const Object *self = getObject();
+	const Object* self = getObject();
 	if (!self)
 	{
 		return;
 	}
 
 	// call the base class action cause we are *EXTENDING* functionality
-  SpecialPowerModule::doSpecialPowerAtObject( objectToMakeDefector, commandOptions );
+	SpecialPowerModule::doSpecialPowerAtObject(objectToMakeDefector, commandOptions);
 
-	//AIUpdateInterface *hisAI = objectToMakeDefector->getAIUpdateInterface();
-	//if (hisAI)
+	// AIUpdateInterface *hisAI = objectToMakeDefector->getAIUpdateInterface();
+	// if (hisAI)
 	//{
-		// how do I get at SpecialPowerTemplate::getDetectionTime() from here?
-		const SpecialPowerTemplate *specPowTemp = getSpecialPowerTemplate();
-		UnsignedInt time = specPowTemp->getDetectionTime();
+	//  how do I get at SpecialPowerTemplate::getDetectionTime() from here?
+	const SpecialPowerTemplate* specPowTemp = getSpecialPowerTemplate();
+	UnsignedInt time = specPowTemp->getDetectionTime();
 
-
-		objectToMakeDefector->defect(self->getControllingPlayer()->getDefaultTeam(), time );// @todo lorenzen hook into the new AIUpdateI methods
+	objectToMakeDefector->defect(self->getControllingPlayer()->getDefaultTeam(), time);    // @todo lorenzen hook into the new AIUpdateI methods
 	//}
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void DefectorSpecialPower::crc( Xfer *xfer )
+void DefectorSpecialPower::crc(Xfer* xfer)
 {
-
 	// extend base class
-	SpecialPowerModule::crc( xfer );
-
+	SpecialPowerModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void DefectorSpecialPower::xfer( Xfer *xfer )
+void DefectorSpecialPower::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	SpecialPowerModule::xfer( xfer );
-
+	SpecialPowerModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -167,8 +158,6 @@ void DefectorSpecialPower::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DefectorSpecialPower::loadPostProcess()
 {
-
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
-
 }

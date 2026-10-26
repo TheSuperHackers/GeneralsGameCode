@@ -45,21 +45,18 @@
 class CardinalSpline3DClass : public HermiteSpline3DClass
 {
 public:
+	virtual int Add_Key(const Vector3& point, float t) override;
+	virtual void Remove_Key(int i) override;
+	virtual void Clear_Keys() override;
 
-	virtual int			Add_Key(const Vector3 & point,float t) override;
-	virtual void		Remove_Key(int i) override;
-	virtual void		Clear_Keys() override;
+	virtual void Set_Tightness(int i, float tightness);
+	virtual float Get_Tightness(int i);
 
-	virtual void		Set_Tightness(int i,float tightness);
-	virtual float		Get_Tightness(int i);
-
-	virtual void		Update_Tangents() override;
+	virtual void Update_Tangents() override;
 
 protected:
-
-	DynamicVectorClass<float>	Tightness;
+	DynamicVectorClass<float> Tightness;
 };
-
 
 /**
 ** CardinalSpline1DClass
@@ -68,17 +65,15 @@ protected:
 class CardinalSpline1DClass : public HermiteSpline1DClass
 {
 public:
+	virtual int Add_Key(float point, float t, unsigned int extra = 0) override;
+	virtual void Remove_Key(int i) override;
+	virtual void Clear_Keys() override;
 
-	virtual int			Add_Key(float point,float t,unsigned int extra=0) override;
-	virtual void		Remove_Key(int i) override;
-	virtual void		Clear_Keys() override;
+	virtual void Set_Tightness(int i, float tightness);
+	virtual float Get_Tightness(int i);
 
-	virtual void		Set_Tightness(int i,float tightness);
-	virtual float		Get_Tightness(int i);
-
-	virtual void		Update_Tangents() override;
+	virtual void Update_Tangents() override;
 
 protected:
-
-	DynamicVectorClass<float>	Tightness;
+	DynamicVectorClass<float> Tightness;
 };

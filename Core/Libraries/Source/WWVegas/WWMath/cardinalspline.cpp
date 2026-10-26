@@ -34,18 +34,17 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "cardinalspline.h"
 #include "WWDebug/wwdebug.h"
 
 /*
 ** CardinalSpline3DClass Implementation
 */
-int CardinalSpline3DClass::Add_Key(const Vector3 & point,float t)
+int CardinalSpline3DClass::Add_Key(const Vector3& point, float t)
 {
-	int index = HermiteSpline3DClass::Add_Key(point,t);
+	int index = HermiteSpline3DClass::Add_Key(point, t);
 	float tightness = 0.5f;
-	Tightness.Insert(index,tightness);
+	Tightness.Insert(index, tightness);
 	return index;
 }
 
@@ -61,7 +60,7 @@ void CardinalSpline3DClass::Clear_Keys()
 	HermiteSpline3DClass::Clear_Keys();
 }
 
-void CardinalSpline3DClass::Set_Tightness(int i,float tightness)
+void CardinalSpline3DClass::Set_Tightness(int i, float tightness)
 {
 	WWASSERT(i >= 0);
 	WWASSERT(i < Tightness.Count());
@@ -76,10 +75,12 @@ float CardinalSpline3DClass::Get_Tightness(int i)
 
 void CardinalSpline3DClass::Update_Tangents()
 {
-	if (Keys.Count() < 2) {
-		for (int i=0; i<Keys.Count(); i++) {
-			Tangents[0].InTangent.Set(0,0,0);
-			Tangents[0].OutTangent.Set(0,0,0);
+	if (Keys.Count() < 2)
+	{
+		for (int i = 0; i < Keys.Count(); i++)
+		{
+			Tangents[0].InTangent.Set(0, 0, 0);
+			Tangents[0].OutTangent.Set(0, 0, 0);
 		}
 		return;
 	}
@@ -87,47 +88,46 @@ void CardinalSpline3DClass::Update_Tangents()
 	// First and Last Key:
 	// Only need to compute the OutTangent for key[0] and the InTangent for key[end]
 	int end = Keys.Count() - 1;
-	Tangents[0].InTangent.Set(0,0,0);
-	Tangents[end].OutTangent.Set(0,0,0);
+	Tangents[0].InTangent.Set(0, 0, 0);
+	Tangents[end].OutTangent.Set(0, 0, 0);
 
-	if (IsLooping) {
-
+	if (IsLooping)
+	{
 		// This really only works if the start and end points have the same position...
-		Tangents[0].OutTangent.X = (1.0f - Tightness[0])*(Keys[1].Point.X - Keys[end-1].Point.X);
-		Tangents[0].OutTangent.Y = (1.0f - Tightness[0])*(Keys[1].Point.Y - Keys[end-1].Point.Y);
-		Tangents[0].OutTangent.Z = (1.0f - Tightness[0])*(Keys[1].Point.Z - Keys[end-1].Point.Z);
+		Tangents[0].OutTangent.X = (1.0f - Tightness[0]) * (Keys[1].Point.X - Keys[end - 1].Point.X);
+		Tangents[0].OutTangent.Y = (1.0f - Tightness[0]) * (Keys[1].Point.Y - Keys[end - 1].Point.Y);
+		Tangents[0].OutTangent.Z = (1.0f - Tightness[0]) * (Keys[1].Point.Z - Keys[end - 1].Point.Z);
 		Tangents[end].InTangent = Tangents[0].OutTangent;
+	}
+	else
+	{
+		Tangents[0].OutTangent.X = (1.0f - Tightness[0]) * (Keys[1].Point.X - Keys[0].Point.X);
+		Tangents[0].OutTangent.Y = (1.0f - Tightness[0]) * (Keys[1].Point.Y - Keys[0].Point.Y);
+		Tangents[0].OutTangent.Z = (1.0f - Tightness[0]) * (Keys[1].Point.Z - Keys[0].Point.Z);
 
-	} else {
-
-		Tangents[0].OutTangent.X = (1.0f - Tightness[0])*(Keys[1].Point.X - Keys[0].Point.X);
-		Tangents[0].OutTangent.Y = (1.0f - Tightness[0])*(Keys[1].Point.Y - Keys[0].Point.Y);
-		Tangents[0].OutTangent.Z = (1.0f - Tightness[0])*(Keys[1].Point.Z - Keys[0].Point.Z);
-
-		Tangents[end].InTangent.X = (1.0f - Tightness[0])*(Keys[end].Point.X - Keys[end-1].Point.X);
-		Tangents[end].InTangent.Y = (1.0f - Tightness[0])*(Keys[end].Point.Y - Keys[end-1].Point.Y);
-		Tangents[end].InTangent.Z = (1.0f - Tightness[0])*(Keys[end].Point.Z - Keys[end-1].Point.Z);
-
+		Tangents[end].InTangent.X = (1.0f - Tightness[0]) * (Keys[end].Point.X - Keys[end - 1].Point.X);
+		Tangents[end].InTangent.Y = (1.0f - Tightness[0]) * (Keys[end].Point.Y - Keys[end - 1].Point.Y);
+		Tangents[end].InTangent.Z = (1.0f - Tightness[0]) * (Keys[end].Point.Z - Keys[end - 1].Point.Z);
 	}
 
-	float total_time = (Keys[1].Time - Keys[0].Time) + (Keys[end].Time - Keys[end-1].Time);
-	float in_factor = 2.0f * (Keys[end].Time - Keys[end-1].Time) / total_time;
+	float total_time = (Keys[1].Time - Keys[0].Time) + (Keys[end].Time - Keys[end - 1].Time);
+	float in_factor = 2.0f * (Keys[end].Time - Keys[end - 1].Time) / total_time;
 	float out_factor = 2.0f * (Keys[1].Time - Keys[0].Time) / total_time;
 	Tangents[end].InTangent *= in_factor;
 	Tangents[0].OutTangent *= out_factor;
 
-
 	// inner knots
-	for (int i=1; i<Keys.Count()-1; i++) {
-		Tangents[i].InTangent.X = (1.0f - Tightness[i])*(Keys[i+1].Point.X - Keys[i-1].Point.X);
-		Tangents[i].InTangent.Y = (1.0f - Tightness[i])*(Keys[i+1].Point.Y - Keys[i-1].Point.Y);
-		Tangents[i].InTangent.Z = (1.0f - Tightness[i])*(Keys[i+1].Point.Z - Keys[i-1].Point.Z);
+	for (int i = 1; i < Keys.Count() - 1; i++)
+	{
+		Tangents[i].InTangent.X = (1.0f - Tightness[i]) * (Keys[i + 1].Point.X - Keys[i - 1].Point.X);
+		Tangents[i].InTangent.Y = (1.0f - Tightness[i]) * (Keys[i + 1].Point.Y - Keys[i - 1].Point.Y);
+		Tangents[i].InTangent.Z = (1.0f - Tightness[i]) * (Keys[i + 1].Point.Z - Keys[i - 1].Point.Z);
 		Tangents[i].OutTangent = Tangents[i].InTangent;
 
-		float in_factor = 2.0f * (Keys[i].Time - Keys[i-1].Time) / (Keys[i+1].Time - Keys[i-1].Time);
-		float out_factor = 2.0f * (Keys[i+1].Time - Keys[i].Time) / (Keys[i+1].Time - Keys[i-1].Time);
+		float in_factor = 2.0f * (Keys[i].Time - Keys[i - 1].Time) / (Keys[i + 1].Time - Keys[i - 1].Time);
+		float out_factor = 2.0f * (Keys[i + 1].Time - Keys[i].Time) / (Keys[i + 1].Time - Keys[i - 1].Time);
 
-		Tangents[i].InTangent *= in_factor;			// compensating for the un-even keys
+		Tangents[i].InTangent *= in_factor;    // compensating for the un-even keys
 		Tangents[i].OutTangent *= out_factor;
 	}
 	TangentsDirty = false;
@@ -136,11 +136,11 @@ void CardinalSpline3DClass::Update_Tangents()
 /*
 ** CardinalSpline1DClass Implementation
 */
-int CardinalSpline1DClass::Add_Key(float point,float t,unsigned int extra)
+int CardinalSpline1DClass::Add_Key(float point, float t, unsigned int extra)
 {
-	int index = HermiteSpline1DClass::Add_Key(point,t,extra);
+	int index = HermiteSpline1DClass::Add_Key(point, t, extra);
 	float tightness = 0.5f;
-	Tightness.Insert(index,tightness);
+	Tightness.Insert(index, tightness);
 	return index;
 }
 
@@ -156,7 +156,7 @@ void CardinalSpline1DClass::Clear_Keys()
 	HermiteSpline1DClass::Clear_Keys();
 }
 
-void CardinalSpline1DClass::Set_Tightness(int i,float tightness)
+void CardinalSpline1DClass::Set_Tightness(int i, float tightness)
 {
 	WWASSERT(i >= 0);
 	WWASSERT(i < Tightness.Count());
@@ -171,8 +171,10 @@ float CardinalSpline1DClass::Get_Tightness(int i)
 
 void CardinalSpline1DClass::Update_Tangents()
 {
-	if (Keys.Count() < 2) {
-		for (int i=0; i<Keys.Count(); i++) {
+	if (Keys.Count() < 2)
+	{
+		for (int i = 0; i < Keys.Count(); i++)
+		{
 			Tangents[0].InTangent = 0;
 			Tangents[0].OutTangent = 0;
 		}
@@ -184,37 +186,35 @@ void CardinalSpline1DClass::Update_Tangents()
 	Tangents[0].InTangent = 0;
 	Tangents[end].OutTangent = 0;
 
-	if (IsLooping) {
-
+	if (IsLooping)
+	{
 		// This really only works if the start and end points have the same position...
-		Tangents[0].OutTangent = (1.0f - Tightness[0])*(Keys[1].Point - Keys[end-1].Point);
+		Tangents[0].OutTangent = (1.0f - Tightness[0]) * (Keys[1].Point - Keys[end - 1].Point);
 		Tangents[end].InTangent = Tangents[0].OutTangent;
-
-	} else {
-
-		Tangents[0].OutTangent = (1.0f - Tightness[0])*(Keys[1].Point - Keys[0].Point);
-		Tangents[end].InTangent = (1.0f - Tightness[0])*(Keys[end].Point - Keys[end-1].Point);
+	}
+	else
+	{
+		Tangents[0].OutTangent = (1.0f - Tightness[0]) * (Keys[1].Point - Keys[0].Point);
+		Tangents[end].InTangent = (1.0f - Tightness[0]) * (Keys[end].Point - Keys[end - 1].Point);
 	}
 
-	float total_time = (Keys[1].Time - Keys[0].Time) + (Keys[end].Time - Keys[end-1].Time);
-	float in_factor = 2.0f * (Keys[end].Time - Keys[end-1].Time) / total_time;
+	float total_time = (Keys[1].Time - Keys[0].Time) + (Keys[end].Time - Keys[end - 1].Time);
+	float in_factor = 2.0f * (Keys[end].Time - Keys[end - 1].Time) / total_time;
 	float out_factor = 2.0f * (Keys[1].Time - Keys[0].Time) / total_time;
 	Tangents[end].InTangent *= in_factor;
 	Tangents[0].OutTangent *= out_factor;
 
-
 	// inner knots
-	for (int i=1; i<Keys.Count()-1; i++) {
-		Tangents[i].InTangent = (1.0f - Tightness[i])*(Keys[i+1].Point - Keys[i-1].Point);
+	for (int i = 1; i < Keys.Count() - 1; i++)
+	{
+		Tangents[i].InTangent = (1.0f - Tightness[i]) * (Keys[i + 1].Point - Keys[i - 1].Point);
 		Tangents[i].OutTangent = Tangents[i].InTangent;
 
-		float in_factor = 2.0f * (Keys[i].Time - Keys[i-1].Time) / (Keys[i+1].Time - Keys[i-1].Time);
-		float out_factor = 2.0f * (Keys[i+1].Time - Keys[i].Time) / (Keys[i+1].Time - Keys[i-1].Time);
+		float in_factor = 2.0f * (Keys[i].Time - Keys[i - 1].Time) / (Keys[i + 1].Time - Keys[i - 1].Time);
+		float out_factor = 2.0f * (Keys[i + 1].Time - Keys[i].Time) / (Keys[i + 1].Time - Keys[i - 1].Time);
 
-		Tangents[i].InTangent *= in_factor;			// compensating for the un-even keys
+		Tangents[i].InTangent *= in_factor;    // compensating for the un-even keys
 		Tangents[i].OutTangent *= out_factor;
 	}
 	TangentsDirty = false;
 }
-
-

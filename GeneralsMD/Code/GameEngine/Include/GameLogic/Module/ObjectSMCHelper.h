@@ -36,22 +36,20 @@
 // ------------------------------------------------------------------------------------------------
 class ObjectSMCHelperModuleData : public ModuleData
 {
-
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class ObjectSMCHelper : public ObjectHelper
 {
-
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( ObjectSMCHelper, ObjectSMCHelperModuleData )
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ObjectSMCHelper, "ObjectSMCHelperPool" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(ObjectSMCHelper, ObjectSMCHelperModuleData)
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ObjectSMCHelper, "ObjectSMCHelperPool")
 
 public:
-
-	ObjectSMCHelper( Thing *thing, const ModuleData *modData ) : ObjectHelper( thing, modData ) { }
+	ObjectSMCHelper(Thing* thing, const ModuleData* modData)
+	  : ObjectHelper(thing, modData)
+	{}
 	// virtual destructor prototype provided by memory pool object
 
 	virtual UpdateSleepTime update() override;
-
 };

@@ -34,30 +34,31 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "rcfile.h"
 #include <stdlib.h>
 
-const char * RESOURCE_FILE_TYPE_NAME = "File";
+const char* RESOURCE_FILE_TYPE_NAME = "File";
 
-
-ResourceFileClass::ResourceFileClass(HMODULE hmodule, char const *filename) :
-	ResourceName(nullptr),
-	hModule(nullptr),
-	FileBytes(nullptr),
-	FilePtr(nullptr),
-	EndOfFile(nullptr)
+ResourceFileClass::ResourceFileClass(HMODULE hmodule, char const* filename)
+  : ResourceName(nullptr)
+  , hModule(nullptr)
+  , FileBytes(nullptr)
+  , FilePtr(nullptr)
+  , EndOfFile(nullptr)
 {
 	Set_Name(filename);
-	HRSRC hresource = FindResource(hmodule,ResourceName,RESOURCE_FILE_TYPE_NAME);
+	HRSRC hresource = FindResource(hmodule, ResourceName, RESOURCE_FILE_TYPE_NAME);
 
-	if (hresource) {
-		HGLOBAL hglob = LoadResource(hmodule,hresource);
-		if (hglob) {
-			FileBytes = (unsigned char *)LockResource(hglob);
-			if (FileBytes) {
+	if (hresource)
+	{
+		HGLOBAL hglob = LoadResource(hmodule, hresource);
+		if (hglob)
+		{
+			FileBytes = (unsigned char*)LockResource(hglob);
+			if (FileBytes)
+			{
 				FilePtr = FileBytes;
-				EndOfFile = FileBytes + SizeofResource(hmodule,hresource);
+				EndOfFile = FileBytes + SizeofResource(hmodule, hresource);
 			}
 		}
 	}
@@ -68,49 +69,57 @@ ResourceFileClass::~ResourceFileClass()
 	free(ResourceName);
 }
 
-char const * ResourceFileClass::Set_Name(char const *filename)
+char const* ResourceFileClass::Set_Name(char const* filename)
 {
 	free(ResourceName);
 	ResourceName = nullptr;
 
-	if (filename) {
+	if (filename)
+	{
 		ResourceName = strdup(filename);
 	}
 	return ResourceName;
 }
 
-int ResourceFileClass::Read(void *buffer, int size)
+int ResourceFileClass::Read(void* buffer, int size)
 {
-	if (!FilePtr) return 0;
+	if (!FilePtr)
+	{
+		return 0;
+	}
 
-	if (FilePtr + size > EndOfFile) {
+	if (FilePtr + size > EndOfFile)
+	{
 		size = EndOfFile - FilePtr;
 	}
-	memcpy(buffer,FilePtr,size);
+	memcpy(buffer, FilePtr, size);
 	FilePtr += size;
 	return size;
 }
 
 int ResourceFileClass::Seek(int pos, int dir)
 {
-	switch (dir) {
-		case SEEK_SET:
-			FilePtr = FileBytes + pos;
-			break;
+	switch (dir)
+	{
+	case SEEK_SET:
+		FilePtr = FileBytes + pos;
+		break;
 
-		case SEEK_CUR:
-			FilePtr = FilePtr + pos;
-			break;
+	case SEEK_CUR:
+		FilePtr = FilePtr + pos;
+		break;
 
-		case SEEK_END:
-			FilePtr = EndOfFile + pos;
-			break;
+	case SEEK_END:
+		FilePtr = EndOfFile + pos;
+		break;
 	}
 
-	if (FilePtr > EndOfFile) {
+	if (FilePtr > EndOfFile)
+	{
 		FilePtr = EndOfFile;
 	}
-	if (FilePtr < FileBytes) {
+	if (FilePtr < FileBytes)
+	{
 		FilePtr = FileBytes;
 	}
 
@@ -122,6 +131,6 @@ int ResourceFileClass::Size()
 	return EndOfFile - FileBytes;
 }
 
-void ResourceFileClass::Error(int /*error*/, int /*canretry*/, char const * /*filename*/)
+void ResourceFileClass::Error(int /*error*/, int /*canretry*/, char const* /*filename*/)
 {
 }

@@ -38,32 +38,30 @@
 class Object;
 class SpecialPowerTemplate;
 struct FieldParse;
-enum ScienceType CPP_11(: Int);
-
+enum ScienceType CPP_11( : Int);
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class SpecialPowerModuleInterface
 {
 public:
-
-	virtual Bool isModuleForPower( const SpecialPowerTemplate *specialPowerTemplate ) const = 0;
+	virtual Bool isModuleForPower(const SpecialPowerTemplate* specialPowerTemplate) const = 0;
 	virtual Bool isReady() const = 0;
-//  This is the althernate way to one-at-a-time BlackLotus' specials; we'll keep it commented her until Dustin decides, or until 12/10/02
-//	virtual Bool isBusy() const = 0;
+	//  This is the althernate way to one-at-a-time BlackLotus' specials; we'll keep it commented her until Dustin decides, or until 12/10/02
+	//	virtual Bool isBusy() const = 0;
 	virtual Real getPercentReady() const = 0;
 	virtual UnsignedInt getReadyFrame() const = 0;
 	virtual AsciiString getPowerName() const = 0;
 	virtual const SpecialPowerTemplate* getSpecialPowerTemplate() const = 0;
 	virtual ScienceType getRequiredScience() const = 0;
 	virtual void onSpecialPowerCreation() = 0;
-	virtual void setReadyFrame( UnsignedInt frame ) = 0;
-	virtual void pauseCountdown( Bool pause ) = 0;
-	virtual void doSpecialPower( UnsignedInt commandOptions ) = 0;
-	virtual void doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions ) = 0;
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions ) = 0;
-	virtual void doSpecialPowerUsingWaypoints( const Waypoint *way, UnsignedInt commandOptions ) = 0;
-	virtual void markSpecialPowerTriggered( const Coord3D *location ) = 0;
+	virtual void setReadyFrame(UnsignedInt frame) = 0;
+	virtual void pauseCountdown(Bool pause) = 0;
+	virtual void doSpecialPower(UnsignedInt commandOptions) = 0;
+	virtual void doSpecialPowerAtObject(Object* obj, UnsignedInt commandOptions) = 0;
+	virtual void doSpecialPowerAtLocation(const Coord3D* loc, Real angle, UnsignedInt commandOptions) = 0;
+	virtual void doSpecialPowerUsingWaypoints(const Waypoint* way, UnsignedInt commandOptions) = 0;
+	virtual void markSpecialPowerTriggered(const Coord3D* location) = 0;
 	virtual void startPowerRecharge() = 0;
 	virtual const AudioEventRTS& getInitiateSound() const = 0;
 	virtual Bool startsReady() const = 0;
@@ -75,68 +73,65 @@ public:
 class SpecialPowerModuleData : public BehaviorModuleData
 {
 public:
-
 	SpecialPowerModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-	const SpecialPowerTemplate *m_specialPowerTemplate;		///< pointer to the special power template
-	AudioEventRTS			m_initiateSound;
-	Bool							m_updateModuleStartsAttack;	///< update module determines when the special power actually starts! If true, update module is required.
-	Bool							m_startsPaused; ///< Paused on creation, someone else will have to unpause (like upgrade module, or script)
-	Bool							m_startsReady; ///< If true, the special power will be ready immediately, otherwise it will have a reload time on creation.
-	Bool							m_scriptedSpecialPowerOnly;
+	const SpecialPowerTemplate* m_specialPowerTemplate;    ///< pointer to the special power template
+	AudioEventRTS m_initiateSound;
+	Bool m_updateModuleStartsAttack;    ///< update module determines when the special power actually starts! If true, update module is required.
+	Bool m_startsPaused;    ///< Paused on creation, someone else will have to unpause (like upgrade module, or script)
+	Bool m_startsReady;    ///< If true, the special power will be ready immediately, otherwise it will have a reload time on creation.
+	Bool m_scriptedSpecialPowerOnly;
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class SpecialPowerModule : public BehaviorModule,
-													 public SpecialPowerModuleInterface
+                           public SpecialPowerModuleInterface
 {
-
-	MEMORY_POOL_GLUE_ABC( SpecialPowerModule )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( SpecialPowerModule, SpecialPowerModuleData )
+	MEMORY_POOL_GLUE_ABC(SpecialPowerModule)
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(SpecialPowerModule, SpecialPowerModuleData)
 
 public:
-
-	SpecialPowerModule( Thing* thing, const ModuleData* moduleData );
+	SpecialPowerModule(Thing* thing, const ModuleData* moduleData);
 
 	static Int getInterfaceMask() { return MODULEINTERFACE_SPECIAL_POWER; }
 
 	// BehaviorModule
 	virtual SpecialPowerModuleInterface* getSpecialPower() override { return this; }
 
-	virtual Bool isModuleForPower( const SpecialPowerTemplate *specialPowerTemplate ) const override;	///< is this module for the specified special power
-	virtual Bool isReady() const override; 						///< is this special power available now
-//  This is the althernate way to one-at-a-time BlackLotus' specials; we'll keep it commented her until Dustin decides, or until 12/10/02
-//	Bool isBusy() const { return FALSE; }
+	virtual Bool isModuleForPower(const SpecialPowerTemplate* specialPowerTemplate) const override;    ///< is this module for the specified special power
+	virtual Bool isReady() const override;    ///< is this special power available now
+	//  This is the althernate way to one-at-a-time BlackLotus' specials; we'll keep it commented her until Dustin decides, or until 12/10/02
+	//	Bool isBusy() const { return FALSE; }
 
-	virtual Real getPercentReady() const override;		///< get the percent ready (1.0 = ready now, 0.5 = half charged up etc.)
+	virtual Real getPercentReady() const override;    ///< get the percent ready (1.0 = ready now, 0.5 = half charged up etc.)
 
-	virtual UnsignedInt getReadyFrame() const override;		///< get the frame at which we are ready
+	virtual UnsignedInt getReadyFrame() const override;    ///< get the frame at which we are ready
 	virtual AsciiString getPowerName() const override;
 	void syncReadyFrameToStatusQuo();
 
 	virtual const SpecialPowerTemplate* getSpecialPowerTemplate() const override;
 	virtual ScienceType getRequiredScience() const override;
 
-	virtual void onSpecialPowerCreation() override;	// called by a create module to start our countdown
+	virtual void onSpecialPowerCreation() override;    // called by a create module to start our countdown
 	//
 	// The following methods are for use by the scripting engine ONLY
 	//
 
-	virtual void setReadyFrame( UnsignedInt frame ) override { m_availableOnFrame = frame; }
-	UnsignedInt getReadyFrame() { return m_availableOnFrame; }// USED BY PLAYER TO KEEP RECHARGE TIMERS IN SYNC
-	virtual void pauseCountdown( Bool pause ) override;
+	virtual void setReadyFrame(UnsignedInt frame) override { m_availableOnFrame = frame; }
+	UnsignedInt getReadyFrame() { return m_availableOnFrame; }    // USED BY PLAYER TO KEEP RECHARGE TIMERS IN SYNC
+	virtual void pauseCountdown(Bool pause) override;
 
 	//
 	// the following methods should be *EXTENDED* for any special power module implementations
 	// and carry out the special power executions
 	//
-	virtual void doSpecialPower( UnsignedInt commandOptions ) override;
-	virtual void doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions ) override;
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions ) override;
-	virtual void doSpecialPowerUsingWaypoints( const Waypoint *way, UnsignedInt commandOptions ) override;
+	virtual void doSpecialPower(UnsignedInt commandOptions) override;
+	virtual void doSpecialPowerAtObject(Object* obj, UnsignedInt commandOptions) override;
+	virtual void doSpecialPowerAtLocation(const Coord3D* loc, Real angle, UnsignedInt commandOptions) override;
+	virtual void doSpecialPowerUsingWaypoints(const Waypoint* way, UnsignedInt commandOptions) override;
 
 	/**
 	 Now, there are special powers that require some preliminary processing before the actual
@@ -149,10 +144,10 @@ public:
 	 module. The update module then orders the unit to move within range, and it isn't until the
 	 hacker start the physical attack, that the timer is reset and the attack technically begins.
 	*/
-	virtual void markSpecialPowerTriggered( const Coord3D *location ) override;
+	virtual void markSpecialPowerTriggered(const Coord3D* location) override;
 
 	/** start the recharge process for this special power. public because some powers call it repeatedly.
-	*/
+	 */
 	virtual void startPowerRecharge() override;
 	virtual const AudioEventRTS& getInitiateSound() const override;
 
@@ -160,16 +155,14 @@ public:
 	virtual Bool isScriptOnly() const override;
 
 protected:
-
-	Bool initiateIntentToDoSpecialPower( const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions );
-	void triggerSpecialPower( const Coord3D *location );
-	void createViewObject( const Coord3D *location );
+	Bool initiateIntentToDoSpecialPower(const Object* targetObj, const Coord3D* targetPos, const Waypoint* way, UnsignedInt commandOptions);
+	void triggerSpecialPower(const Coord3D* location);
+	void createViewObject(const Coord3D* location);
 	void resolveSpecialPower();
-	void aboutToDoSpecialPower( const Coord3D *location );
+	void aboutToDoSpecialPower(const Coord3D* location);
 
-	UnsignedInt m_availableOnFrame;			///< on this frame, this special power is available
-	Int m_pausedCount;									///< Reference count of sources pausing me
+	UnsignedInt m_availableOnFrame;    ///< on this frame, this special power is available
+	Int m_pausedCount;    ///< Reference count of sources pausing me
 	UnsignedInt m_pausedOnFrame;
 	Real m_pausedPercent;
-
 };

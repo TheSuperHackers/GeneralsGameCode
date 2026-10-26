@@ -33,33 +33,28 @@
 
 #include "GameLogic/Module/DamageModule.h"
 
-//#include "GameLogic/Module/BodyModule.h" -- Yikes... not necessary to include this! (KM)
-enum BodyDamageType CPP_11(: Int); //Ahhhh much better!
-
+// #include "GameLogic/Module/BodyModule.h" -- Yikes... not necessary to include this! (KM)
+enum BodyDamageType CPP_11( : Int);    // Ahhhh much better!
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
 class BoneFXDamage : public DamageModule
 {
-
-	MAKE_STANDARD_MODULE_MACRO( BoneFXDamage );
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( BoneFXDamage, "BoneFXDamage" )
+	MAKE_STANDARD_MODULE_MACRO(BoneFXDamage);
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(BoneFXDamage, "BoneFXDamage")
 
 public:
-
-	BoneFXDamage( Thing *thing, const ModuleData* moduleData );
+	BoneFXDamage(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	// damage module methods
-	virtual void onDamage( DamageInfo *damageInfo ) override { }
-	virtual void onHealing( DamageInfo *damageInfo ) override { }
-	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
-																				BodyDamageType oldState,
-																				BodyDamageType newState ) override;
+	virtual void onDamage(DamageInfo* damageInfo) override {}
+	virtual void onHealing(DamageInfo* damageInfo) override {}
+	virtual void onBodyDamageStateChange(const DamageInfo* damageInfo,
+	                                     BodyDamageType oldState,
+	                                     BodyDamageType newState) override;
 
 protected:
-
 	virtual void onObjectCreated() override;
-
 };

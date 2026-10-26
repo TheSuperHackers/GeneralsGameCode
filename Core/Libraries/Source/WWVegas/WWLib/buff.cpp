@@ -40,10 +40,9 @@
  *   Buffer::~Buffer -- Destructor for buffer object.                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
+#include "always.h"
 #include "BUFF.h"
-//#include	<stddef.h>
-
+// #include	<stddef.h>
 
 /***********************************************************************************************
  * Buffer::Buffer -- Constructor for buffer object.                                            *
@@ -64,43 +63,43 @@
  * HISTORY:                                                                                    *
  *   07/29/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-Buffer::Buffer(void * buffer, long size) :
-	BufferPtr(buffer),
-	Size(size),
-	IsAllocated(false)
+Buffer::Buffer(void* buffer, long size)
+  : BufferPtr(buffer)
+  , Size(size)
+  , IsAllocated(false)
 {
-	if (buffer == nullptr && size > 0) {
+	if (buffer == nullptr && size > 0)
+	{
 		BufferPtr = W3DNEWARRAY char[size];
 		IsAllocated = true;
 	}
 }
-
 
 // Alternate constructor for char * pointer.
-Buffer::Buffer(char * buffer, long size) :
-	BufferPtr(buffer),
-	Size(size),
-	IsAllocated(false)
+Buffer::Buffer(char* buffer, long size)
+  : BufferPtr(buffer)
+  , Size(size)
+  , IsAllocated(false)
 {
-	if (buffer == nullptr && size > 0) {
+	if (buffer == nullptr && size > 0)
+	{
 		BufferPtr = W3DNEWARRAY char[size];
 		IsAllocated = true;
 	}
 }
-
 
 // Alternate constructor for void const * pointer.
-Buffer::Buffer(void const * buffer, long size) :
-	BufferPtr((void*)buffer),
-	Size(size),
-	IsAllocated(false)
+Buffer::Buffer(void const* buffer, long size)
+  : BufferPtr((void*)buffer)
+  , Size(size)
+  , IsAllocated(false)
 {
-	if (buffer == nullptr && size > 0) {
+	if (buffer == nullptr && size > 0)
+	{
 		BufferPtr = W3DNEWARRAY char[size];
 		IsAllocated = true;
 	}
 }
-
 
 /***********************************************************************************************
  * Buffer::Buffer -- Self-allocating constructor for buffer object.                            *
@@ -119,17 +118,17 @@ Buffer::Buffer(void const * buffer, long size) :
  * HISTORY:                                                                                    *
  *   07/29/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-Buffer::Buffer(long size) :
-	BufferPtr(nullptr),
-	Size(size),
-	IsAllocated(false)
+Buffer::Buffer(long size)
+  : BufferPtr(nullptr)
+  , Size(size)
+  , IsAllocated(false)
 {
-	if (size > 0) {
+	if (size > 0)
+	{
 		BufferPtr = W3DNEWARRAY char[size];
 		IsAllocated = true;
 	}
 }
-
 
 /***********************************************************************************************
  * Buffer::Buffer -- Copy constructor for buffer object.                                       *
@@ -146,13 +145,12 @@ Buffer::Buffer(long size) :
  * HISTORY:                                                                                    *
  *   08/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-Buffer::Buffer(Buffer const & buffer) :
-	IsAllocated(false)
+Buffer::Buffer(Buffer const& buffer)
+  : IsAllocated(false)
 {
 	BufferPtr = buffer.BufferPtr;
 	Size = buffer.Size;
 }
-
 
 /***********************************************************************************************
  * Buffer::operator = -- Assignment operator for the buffer object.                            *
@@ -169,19 +167,20 @@ Buffer::Buffer(Buffer const & buffer) :
  * HISTORY:                                                                                    *
  *   08/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-Buffer & Buffer::operator = (Buffer const & buffer)
+Buffer& Buffer::operator=(Buffer const& buffer)
 {
-	if (&buffer != this) {
-		if (IsAllocated) {
-			delete [] BufferPtr;
+	if (&buffer != this)
+	{
+		if (IsAllocated)
+		{
+			delete[] BufferPtr;
 		}
 		IsAllocated = false;
 		BufferPtr = buffer.BufferPtr;
 		Size = buffer.Size;
 	}
-	return(*this);
+	return (*this);
 }
-
 
 /***********************************************************************************************
  * Buffer::~Buffer -- Destructor for buffer object.                                            *
@@ -202,7 +201,6 @@ Buffer::~Buffer()
 	Reset();
 }
 
-
 /***********************************************************************************************
  * Buffer::Reset -- Clears the buffer object to null state.                                    *
  *                                                                                             *
@@ -222,8 +220,9 @@ Buffer::~Buffer()
  *=============================================================================================*/
 void Buffer::Reset()
 {
-	if (IsAllocated) {
-		delete [] BufferPtr;
+	if (IsAllocated)
+	{
+		delete[] BufferPtr;
 	}
 	BufferPtr = nullptr;
 	Size = 0;

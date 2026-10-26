@@ -63,27 +63,35 @@
  * HISTORY:                                                                                    *
  *   3/29/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-inline void get_far_extent(const Vector3 & normal,const Vector3 & extent,Vector3 * posfarpt)
+inline void get_far_extent(const Vector3& normal, const Vector3& extent, Vector3* posfarpt)
 {
-	if (WWMath::Fast_Is_Float_Positive(normal.X)) {
+	if (WWMath::Fast_Is_Float_Positive(normal.X))
+	{
 		posfarpt->X = extent.X;
-	} else {
+	}
+	else
+	{
 		posfarpt->X = -extent.X;
 	}
 
-	if (WWMath::Fast_Is_Float_Positive(normal.Y)) {
+	if (WWMath::Fast_Is_Float_Positive(normal.Y))
+	{
 		posfarpt->Y = extent.Y;
-	} else {
+	}
+	else
+	{
 		posfarpt->Y = -extent.Y;
 	}
 
-	if (WWMath::Fast_Is_Float_Positive(normal.Z)) {
+	if (WWMath::Fast_Is_Float_Positive(normal.Z))
+	{
 		posfarpt->Z = extent.Z;
-	} else {
+	}
+	else
+	{
 		posfarpt->Z = -extent.Z;
 	}
 }
-
 
 /***********************************************************************************************
  * CollisionMath::Overlap_Test -- Tests overlap between a plane and a point                    *
@@ -97,20 +105,20 @@ inline void get_far_extent(const Vector3 & normal,const Vector3 & extent,Vector3
  * HISTORY:                                                                                    *
  *   3/29/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-inline
-CollisionMath::OverlapType
-CollisionMath::Overlap_Test(const PlaneClass & plane,const Vector3 & point)
+inline CollisionMath::OverlapType
+CollisionMath::Overlap_Test(const PlaneClass& plane, const Vector3& point)
 {
-	float delta = Vector3::Dot_Product(point,plane.N) - plane.D;
-	if (delta > COINCIDENCE_EPSILON) {
+	float delta = Vector3::Dot_Product(point, plane.N) - plane.D;
+	if (delta > COINCIDENCE_EPSILON)
+	{
 		return POS;
 	}
-	if (delta < -COINCIDENCE_EPSILON) {
+	if (delta < -COINCIDENCE_EPSILON)
+	{
 		return NEG;
 	}
 	return ON;
 }
-
 
 /***********************************************************************************************
  * CollisionMath::Overlap_Test -- Tests overlap between a plane and an AABox                   *
@@ -124,24 +132,25 @@ CollisionMath::Overlap_Test(const PlaneClass & plane,const Vector3 & point)
  * HISTORY:                                                                                    *
  *   3/29/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-inline
-CollisionMath::OverlapType
-CollisionMath::Overlap_Test(const PlaneClass & plane,const AABoxClass & box)
+inline CollisionMath::OverlapType
+CollisionMath::Overlap_Test(const PlaneClass& plane, const AABoxClass& box)
 {
 	// First, we determine the the near and far points of the box in the
 	// direction of the plane normal
 	Vector3 posfarpt;
 	Vector3 negfarpt;
 
-	get_far_extent(plane.N,box.Extent,&posfarpt);
+	get_far_extent(plane.N, box.Extent, &posfarpt);
 
 	negfarpt = -posfarpt;
 	posfarpt += box.Center;
 	negfarpt += box.Center;
-	if (Overlap_Test(plane,negfarpt) == POS) {
+	if (Overlap_Test(plane, negfarpt) == POS)
+	{
 		return POS;
 	}
-	if (Overlap_Test(plane,posfarpt) == NEG) {
+	if (Overlap_Test(plane, posfarpt) == NEG)
+	{
 		return NEG;
 	}
 	return BOTH;

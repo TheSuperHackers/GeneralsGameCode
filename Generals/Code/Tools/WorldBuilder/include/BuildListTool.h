@@ -30,7 +30,7 @@ class BuildListInfo;
 
 /*************************************************************************/
 /**                             BuildListTool
-	 Does the add item to build list tool operation.
+   Does the add item to build list tool operation.
 ***************************************************************************/
 class BuildListTool : public Tool
 {
@@ -38,21 +38,21 @@ protected:
 	CPoint m_downPt2d;
 	Coord3D m_downPt3d;
 	Coord3D m_prevPt3d;
-	BuildListInfo *m_curObject;
+	BuildListInfo* m_curObject;
 
-	Bool m_moving; ///< True if we are drag moving an object.
-	Bool m_rotating; ///< True if we are rotating an object.
+	Bool m_moving;    ///< True if we are drag moving an object.
+	Bool m_rotating;    ///< True if we are rotating an object.
 
-	Bool m_mouseUpRotate;///< True if we are over the "rotate" hotspot.
+	Bool m_mouseUpRotate;    ///< True if we are over the "rotate" hotspot.
 	HCURSOR m_rotateCursor;
-	Bool m_mouseUpMove;///< True if we are over the "move" hotspot.
+	Bool m_mouseUpMove;    ///< True if we are over the "move" hotspot.
 	HCURSOR m_moveCursor;
 	HCURSOR m_pointerCursor;
 	PickUnitDialog m_pickBuildingDlg;
 	Bool m_created;
 
-	static PickUnitDialog *m_static_pickBuildingDlg;
-	static Bool	m_isActive;
+	static PickUnitDialog* m_static_pickBuildingDlg;
+	static Bool m_isActive;
 
 public:
 	BuildListTool();
@@ -64,14 +64,14 @@ private:
 
 public:
 	static void addBuilding();
-	static Bool isActive() {return m_isActive;};
+	static Bool isActive() { return m_isActive; };
 
 public:
 	/// Perform tool on mouse down.
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
 	virtual void setCursor() override;
-	virtual void activate() override; ///< Become the current tool.
-	virtual void deactivate() override; ///< Become not the current tool.
+	virtual void activate() override;    ///< Become the current tool.
+	virtual void deactivate() override;    ///< Become not the current tool.
 };

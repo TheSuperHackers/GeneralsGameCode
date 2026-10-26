@@ -27,9 +27,8 @@
 // Desc:   Behavior that Disables the building on ReallyDamaged edge state, and manages an Update timer to heal
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 #include "Common/Xfer.h"
 #include "GameLogic/Module/SupplyWarehouseCripplingBehavior.h"
 #include "GameLogic/GameLogic.h"
@@ -39,30 +38,29 @@
 //-------------------------------------------------------------------------------------------------
 SupplyWarehouseCripplingBehaviorModuleData::SupplyWarehouseCripplingBehaviorModuleData()
 {
-	m_selfHealSupression = 0; ///< Time since last damage until I can start to heal
-	m_selfHealDelay = 0;			///< Once I am okay to heal, how often to do so
-	m_selfHealAmount = 0;							///< And how much
+	m_selfHealSupression = 0;    ///< Time since last damage until I can start to heal
+	m_selfHealDelay = 0;    ///< Once I am okay to heal, how often to do so
+	m_selfHealAmount = 0;    ///< And how much
 }
 
 //-------------------------------------------------------------------------------------------------
 /*static*/ void SupplyWarehouseCripplingBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "SelfHealSupression",	INI::parseDurationUnsignedInt,	nullptr, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealSupression) },
-		{ "SelfHealDelay",			INI::parseDurationUnsignedInt,	nullptr, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealDelay) },
-		{ "SelfHealAmount",			INI::parseReal,									nullptr, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealAmount) },
+	static const FieldParse dataFieldParse[] = {
+		{ "SelfHealSupression", INI::parseDurationUnsignedInt, nullptr, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealSupression) },
+		{ "SelfHealDelay", INI::parseDurationUnsignedInt, nullptr, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealDelay) },
+		{ "SelfHealAmount", INI::parseReal, nullptr, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealAmount) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  UpdateModuleData::buildFieldParse(p);
-  p.add(dataFieldParse);
+	UpdateModuleData::buildFieldParse(p);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SupplyWarehouseCripplingBehavior::SupplyWarehouseCripplingBehavior( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+SupplyWarehouseCripplingBehavior::SupplyWarehouseCripplingBehavior(Thing* thing, const ModuleData* moduleData)
+  : UpdateModule(thing, moduleData)
 {
 	m_healingSupressedUntilFrame = 0;
 	m_nextHealingFrame = 0;
@@ -78,20 +76,24 @@ SupplyWarehouseCripplingBehavior::~SupplyWarehouseCripplingBehavior()
 //-------------------------------------------------------------------------------------------------
 /** Damage has been dealt, this is an opportunity to react to that damage */
 //-------------------------------------------------------------------------------------------------
-void SupplyWarehouseCripplingBehavior::onDamage( DamageInfo *damageInfo )
+void SupplyWarehouseCripplingBehavior::onDamage(DamageInfo* damageInfo)
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 	resetSelfHealSupression();
-	setWakeFrame(getObject(), UPDATE_SLEEP(m_healingSupressedUntilFrame - now));// we got hit, time to get up for work after a quick snooze
+	setWakeFrame(getObject(), UPDATE_SLEEP(m_healingSupressedUntilFrame - now));    // we got hit, time to get up for work after a quick snooze
 }
 
 //-------------------------------------------------------------------------------------------------
 void SupplyWarehouseCripplingBehavior::onBodyDamageStateChange(const DamageInfo* damageInfo, BodyDamageType oldState, BodyDamageType newState)
 {
-	if( newState == BODY_REALLYDAMAGED )
+	if (newState == BODY_REALLYDAMAGED)
+	{
 		startCrippledEffects();
-	else if( oldState == BODY_REALLYDAMAGED )
+	}
+	else if (oldState == BODY_REALLYDAMAGED)
+	{
 		stopCrippledEffects();
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -105,8 +107,10 @@ UpdateSleepTime SupplyWarehouseCripplingBehavior::update()
 
 	getObject()->attemptHealing(md->m_selfHealAmount, nullptr);
 
-	if( getObject()->getBodyModule()->getHealth() == getObject()->getBodyModule()->getMaxHealth() )
-		return UPDATE_SLEEP_FOREVER;// this can't be in onHealing, as the healing comes from here
+	if (getObject()->getBodyModule()->getHealth() == getObject()->getBodyModule()->getMaxHealth())
+	{
+		return UPDATE_SLEEP_FOREVER;    // this can't be in onHealing, as the healing comes from here
+	}
 	// in the update, and sleep settings in onHealing would be overridden by my return value.
 
 	// Delay between heals is also handled by sleeping the module.  How cool is that?
@@ -126,50 +130,46 @@ void SupplyWarehouseCripplingBehavior::resetSelfHealSupression()
 // ------------------------------------------------------------------------------------------------
 void SupplyWarehouseCripplingBehavior::startCrippledEffects()
 {
-	DockUpdateInterface *myDock = getObject()->getDockUpdateInterface();
-	myDock->setDockCrippled( TRUE );
+	DockUpdateInterface* myDock = getObject()->getDockUpdateInterface();
+	myDock->setDockCrippled(TRUE);
 }
 
 // ------------------------------------------------------------------------------------------------
 void SupplyWarehouseCripplingBehavior::stopCrippledEffects()
 {
-	DockUpdateInterface *myDock = getObject()->getDockUpdateInterface();
-	myDock->setDockCrippled( FALSE );
+	DockUpdateInterface* myDock = getObject()->getDockUpdateInterface();
+	myDock->setDockCrippled(FALSE);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void SupplyWarehouseCripplingBehavior::crc( Xfer *xfer )
+void SupplyWarehouseCripplingBehavior::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
-
+	UpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void SupplyWarehouseCripplingBehavior::xfer( Xfer *xfer )
+void SupplyWarehouseCripplingBehavior::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// healing suppressed until frame
-	xfer->xferUnsignedInt( &m_healingSupressedUntilFrame );
+	xfer->xferUnsignedInt(&m_healingSupressedUntilFrame);
 
 	// next healing frame
-	xfer->xferUnsignedInt( &m_nextHealingFrame );
-
+	xfer->xferUnsignedInt(&m_nextHealingFrame);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -177,8 +177,6 @@ void SupplyWarehouseCripplingBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void SupplyWarehouseCripplingBehavior::loadPostProcess()
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
-
 }

@@ -33,42 +33,43 @@ class ModifyObjectUndoable;
 extern const char* NEUTRAL_TEAM_UI_STR;
 extern const char* NEUTRAL_TEAM_INTERNAL_STR;
 
-
 /////////////////////////////////////////////////////////////////////////////
 // MapObjectProps dialog
 
 class MapObjectProps : public COptionsPanel, public PopupSliderOwner
 {
-// Construction
+	// Construction
 public:
-	MapObjectProps(Dict* dictToEdit = nullptr, const char* title = nullptr, CWnd* pParent = nullptr);   // standard constructor
+	MapObjectProps(Dict* dictToEdit = nullptr, const char* title = nullptr, CWnd* pParent = nullptr);    // standard constructor
 	virtual ~MapObjectProps() override;
 	void makeMain();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(MapObjectProps)
-	enum { IDD = IDD_MAPOBJECT_PROPS };
+	enum
+	{
+		IDD = IDD_MAPOBJECT_PROPS
+	};
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(MapObjectProps)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	void getAllSelectedDicts();
 	Dict** getAllSelectedDictsData();
 
-	static MapObjectProps *TheMapObjectProps;
+	static MapObjectProps* TheMapObjectProps;
 
 	Dict* m_dictToEdit;
 	std::vector<Dict*> m_allSelectedDicts;
 	const char* m_title;
-	MapObject *m_selectedObject;
+	MapObject* m_selectedObject;
 
 	void updateTheUI();
 	void enableButtons();
@@ -77,7 +78,7 @@ protected:
 	WBPopupSliderButton m_angleSlider;
 	Real m_angle;
 	Real m_height;
-	ModifyObjectUndoable *m_posUndoable;
+	ModifyObjectUndoable* m_posUndoable;
 
 	// Generated message map functions
 	//{{AFX_MSG(MapObjectProps)
@@ -140,13 +141,12 @@ protected:
 	void _DictToPrebuiltUpgrades();
 
 public:
-	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial) override;
+	virtual void GetPopSliderInfo(const long sliderID, long* pMin, long* pMax, long* pLineSize, long* pInitial) override;
 	virtual void PopSliderChanged(const long sliderID, long theVal) override;
 	virtual void PopSliderFinished(const long sliderID, long theVal) override;
 
-	static MapObject *getSingleSelectedMapObject();
+	static MapObject* getSingleSelectedMapObject();
 	static void update();
-
 };
 
 //{{AFX_INSERT_LOCATION}}

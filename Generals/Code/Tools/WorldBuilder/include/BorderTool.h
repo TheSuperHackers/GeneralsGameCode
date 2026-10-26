@@ -22,27 +22,32 @@
 
 class BorderTool : public Tool
 {
-	protected:
-		enum ModificationType { MOD_TYPE_INVALID, MOD_TYPE_UP, MOD_TYPE_FREE, MOD_TYPE_RIGHT };
-		Bool m_mouseDown;
-		Bool m_addingNewBorder;
-		Int m_modifyBorderNdx;
-		ModificationType m_modificationType;
+protected:
+	enum ModificationType
+	{
+		MOD_TYPE_INVALID,
+		MOD_TYPE_UP,
+		MOD_TYPE_FREE,
+		MOD_TYPE_RIGHT
+	};
+	Bool m_mouseDown;
+	Bool m_addingNewBorder;
+	Int m_modifyBorderNdx;
+	ModificationType m_modificationType;
 
+public:
+	BorderTool();
+	virtual ~BorderTool() override;
 
-	public:
-		BorderTool();
-		virtual ~BorderTool() override;
+	Int getToolID() { return m_toolID; }
+	virtual void setCursor() override;
 
-		Int getToolID() {return m_toolID;}
-		virtual void setCursor() override;
+	virtual void activate() override;
+	virtual void deactivate() override;
 
-		virtual void activate() override;
-		virtual void deactivate() override;
+	virtual Bool followsTerrain() override { return false; }
 
-		virtual Bool followsTerrain() override { return false;	}
-
-		virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-		virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-		virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
 };

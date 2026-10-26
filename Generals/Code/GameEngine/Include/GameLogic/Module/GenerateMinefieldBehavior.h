@@ -34,45 +34,41 @@
 #include "GameLogic/Module/DieModule.h"
 #include "GameLogic/Module/UpgradeModule.h"
 
-
 //-------------------------------------------------------------------------------------------------
 class GenerateMinefieldBehaviorModuleData : public BehaviorModuleData
 {
 public:
-	UpgradeMuxData				m_upgradeMuxData;
-	AsciiString						m_mineName;
-	const FXList*					m_genFX;
-	Real									m_distanceAroundObject;
-	Real									m_minesPerSquareFoot;
-	Real									m_randomJitter;
-	Real									m_skipIfThisMuchUnderStructure;
-	Bool									m_onDeath;
-	Bool									m_borderOnly;
-	Bool									m_alwaysCircular;
-	Bool									m_smartBorder;
-	Bool									m_smartBorderSkipInterior;
+	UpgradeMuxData m_upgradeMuxData;
+	AsciiString m_mineName;
+	const FXList* m_genFX;
+	Real m_distanceAroundObject;
+	Real m_minesPerSquareFoot;
+	Real m_randomJitter;
+	Real m_skipIfThisMuchUnderStructure;
+	Bool m_onDeath;
+	Bool m_borderOnly;
+	Bool m_alwaysCircular;
+	Bool m_smartBorder;
+	Bool m_smartBorderSkipInterior;
 
 	GenerateMinefieldBehaviorModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
 private:
-
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class GenerateMinefieldBehavior : public BehaviorModule,
-																	public DieModuleInterface,
-																	public UpgradeMux
+                                  public DieModuleInterface,
+                                  public UpgradeMux
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( GenerateMinefieldBehavior, "GenerateMinefieldBehavior" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( GenerateMinefieldBehavior, GenerateMinefieldBehaviorModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GenerateMinefieldBehavior, "GenerateMinefieldBehavior")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(GenerateMinefieldBehavior, GenerateMinefieldBehaviorModuleData)
 
 public:
-
-	GenerateMinefieldBehavior( Thing *thing, const ModuleData* moduleData );
+	GenerateMinefieldBehavior(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	// module methods
@@ -83,12 +79,11 @@ public:
 	virtual UpgradeModuleInterface* getUpgrade() override { return this; }
 
 	// DamageModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo ) override;
+	virtual void onDie(const DamageInfo* damageInfo) override;
 
 	void setMinefieldTarget(const Coord3D* pos);
 
 protected:
-
 	virtual void upgradeImplementation() override;
 	virtual Bool isSubObjectsUpgrade() override { return false; }
 
@@ -104,7 +99,6 @@ protected:
 	{
 		return getGenerateMinefieldBehaviorModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
 	}
-
 
 private:
 	Coord3D m_target;

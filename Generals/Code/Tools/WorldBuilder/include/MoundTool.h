@@ -29,12 +29,15 @@ class WorldHeightMapEdit;
 ***************************************************************************/
 class MoundTool : public Tool
 {
-	enum {MIN_DELAY_TIME=60}; // 60 ms minimum delay between applications.
+	enum
+	{
+		MIN_DELAY_TIME = 60
+	};    // 60 ms minimum delay between applications.
 protected:
-	WorldHeightMapEdit *m_htMapEditCopy; //< ref counted.
-	WorldHeightMapEdit *m_htMapSaveCopy; //< ref counted.
-	Bool								m_raising;  ///< True if mounding, false if digging.
-	Int									m_lastMoveTime;  ///< Last system clock time.
+	WorldHeightMapEdit* m_htMapEditCopy;    //< ref counted.
+	WorldHeightMapEdit* m_htMapSaveCopy;    //< ref counted.
+	Bool m_raising;    ///< True if mounding, false if digging.
+	Int m_lastMoveTime;    ///< Last system clock time.
 
 	static Int m_moundHeight;
 	static Int m_brushWidth;
@@ -45,19 +48,19 @@ public:
 	virtual ~MoundTool() override;
 
 public:
-	static Int getMoundHeight() {return m_moundHeight;};
+	static Int getMoundHeight() { return m_moundHeight; };
 	static void setMoundHeight(Int height);
-	static Int getWidth() {return m_brushWidth;};  ///<Returns width.
-	static Int getFeather() {return m_brushFeather;}; ///<Returns feather.
+	static Int getWidth() { return m_brushWidth; };    ///< Returns width.
+	static Int getFeather() { return m_brushFeather; };    ///< Returns feather.
 	static void setWidth(Int width);
 	static void setFeather(Int feather);
 
 public:
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual WorldHeightMapEdit *getHeightMap() override {return m_htMapEditCopy;};
-	virtual void activate() override; ///< Become the current tool.
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual WorldHeightMapEdit* getHeightMap() override { return m_htMapEditCopy; };
+	virtual void activate() override;    ///< Become the current tool.
 };
 
 /*************************************************************************
@@ -67,5 +70,4 @@ class DigTool : public MoundTool
 {
 public:
 	DigTool();
-
 };

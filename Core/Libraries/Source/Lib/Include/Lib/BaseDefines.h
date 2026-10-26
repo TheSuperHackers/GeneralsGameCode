@@ -19,11 +19,11 @@
 #pragma once
 
 #ifndef RETAIL_COMPATIBLE_CRC
-#define RETAIL_COMPATIBLE_CRC (1) // Game is expected to be CRC compatible with retail Generals 1.08, Zero Hour 1.04
+#define RETAIL_COMPATIBLE_CRC (1)    // Game is expected to be CRC compatible with retail Generals 1.08, Zero Hour 1.04
 #endif
 
 #ifndef USE_DETERMINISTIC_MATH
-#define USE_DETERMINISTIC_MATH (1) // Game uses deterministic math for game simulation compatibility among different system architectures in peer to peer networks
+#define USE_DETERMINISTIC_MATH (1)    // Game uses deterministic math for game simulation compatibility among different system architectures in peer to peer networks
 #endif
 
 #if defined(__has_include)
@@ -33,5 +33,5 @@
 #endif
 
 #if !HAS_GAMEMATH || RETAIL_COMPATIBLE_CRC
-#undef USE_DETERMINISTIC_MATH // Unfortunately cannot actually use deterministic math
+#undef USE_DETERMINISTIC_MATH    // Unfortunately cannot actually use deterministic math
 #endif

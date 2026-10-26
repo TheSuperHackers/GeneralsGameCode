@@ -54,33 +54,23 @@
 #include "Common/LocalFileSystem.h"
 #include "Common/PerfTimer.h"
 
-
-
 DECLARE_PERF_TIMER(FileSystem)
 
 //----------------------------------------------------------------------------
 //         Externals
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Data
@@ -90,18 +80,18 @@ DECLARE_PERF_TIMER(FileSystem)
 // TheFileSystem
 //===============================
 /**
-  *	This is the FileSystem's singleton class. All file access
-	* should be through TheFileSystem, unless code needs to use an explicit
-	* File or FileSystem derivative.
-	*
-	* Using TheFileSystem->open and File exclusively for file access, particularly
-	* in library or modular code, allows applications to transparently implement
-	* file access as they see fit. This is particularly important for code that
-	* needs to be shared between applications, such as games and tools.
-	*/
+ *	This is the FileSystem's singleton class. All file access
+ * should be through TheFileSystem, unless code needs to use an explicit
+ * File or FileSystem derivative.
+ *
+ * Using TheFileSystem->open and File exclusively for file access, particularly
+ * in library or modular code, allows applications to transparently implement
+ * file access as they see fit. This is particularly important for code that
+ * needs to be shared between applications, such as games and tools.
+ */
 //===============================
 
-FileSystem	*TheFileSystem = nullptr;
+FileSystem* TheFileSystem = nullptr;
 
 //----------------------------------------------------------------------------
 //         Private Prototypes
@@ -115,10 +105,14 @@ FileSystem	*TheFileSystem = nullptr;
 static UnsignedByte toPathKeyChar(Char ch)
 {
 	if (isPathSeparator(ch))
+	{
 		return '\\';
+	}
 
 	if (ch >= 'A' && ch <= 'Z')
+	{
 		return (UnsignedByte)(ch + ('a' - 'A'));
+	}
 
 	return (UnsignedByte)ch;
 }
@@ -130,7 +124,9 @@ static const Char* getPathKeyPairEnd(const Char* path)
 {
 #ifdef _WIN32
 	if (isPathSeparator(path[0]) && isPathSeparator(path[1]))
+	{
 		return path + 2;
+	}
 #endif
 	return path;
 }
@@ -144,11 +140,9 @@ static const Char* getFileExistKey(Char* keyBuffer, size_t keyBufferSize, const 
 }
 #endif
 
-
 //----------------------------------------------------------------------------
 //         Public Functions
 //----------------------------------------------------------------------------
-
 
 //============================================================================
 // FileSystem::FileSystem
@@ -156,7 +150,6 @@ static const Char* getFileExistKey(Char* keyBuffer, size_t keyBufferSize, const 
 
 FileSystem::FileSystem()
 {
-
 }
 
 //============================================================================
@@ -165,14 +158,13 @@ FileSystem::FileSystem()
 
 FileSystem::~FileSystem()
 {
-
 }
 
 //============================================================================
 // FileSystem::init
 //============================================================================
 
-void		FileSystem::init()
+void FileSystem::init()
 {
 	TheLocalFileSystem->init();
 	TheArchiveFileSystem->init();
@@ -182,7 +174,7 @@ void		FileSystem::init()
 // FileSystem::update
 //============================================================================
 
-void		FileSystem::update()
+void FileSystem::update()
 {
 	USE_PERF_TIMER(FileSystem)
 	TheLocalFileSystem->update();
@@ -193,7 +185,7 @@ void		FileSystem::update()
 // FileSystem::reset
 //============================================================================
 
-void		FileSystem::reset()
+void FileSystem::reset()
 {
 	USE_PERF_TIMER(FileSystem)
 	TheLocalFileSystem->reset();
@@ -204,17 +196,17 @@ void		FileSystem::reset()
 // FileSystem::open
 //============================================================================
 
-File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize, FileInstance instance )
+File* FileSystem::openFile(const Char* filename, Int access, size_t bufferSize, FileInstance instance)
 {
 	USE_PERF_TIMER(FileSystem)
-	File *file = nullptr;
+	File* file = nullptr;
 
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
 	Char keyBuffer[_MAX_PATH];
 	const Char* key = getFileExistKey(keyBuffer, ARRAY_SIZE(keyBuffer), filename);
 #endif
 
-	if ( TheLocalFileSystem != nullptr )
+	if (TheLocalFileSystem != nullptr)
 	{
 		if (instance != 0)
 		{
@@ -225,7 +217,7 @@ File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize
 		}
 		else
 		{
-			file = TheLocalFileSystem->openFile( filename, access, bufferSize );
+			file = TheLocalFileSystem->openFile(filename, access, bufferSize);
 
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
 			if (file != nullptr && (file->getAccess() & File::CREATE))
@@ -236,7 +228,9 @@ File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize
 				{
 					++it->second.instanceExists;
 					if (it->second.instanceDoesNotExist != ~FileInstance(0))
+					{
 						++it->second.instanceDoesNotExist;
+					}
 				}
 				else
 				{
@@ -247,10 +241,10 @@ File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize
 		}
 	}
 
-	if ( (TheArchiveFileSystem != nullptr) && (file == nullptr) )
+	if ((TheArchiveFileSystem != nullptr) && (file == nullptr))
 	{
 		// TheSuperHackers @todo Pass 'access' here?
-		file = TheArchiveFileSystem->openFile( filename, 0, instance );
+		file = TheArchiveFileSystem->openFile(filename, 0, instance);
 	}
 
 	return file;
@@ -260,7 +254,7 @@ File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize
 // FileSystem::doesFileExist
 //============================================================================
 
-Bool FileSystem::doesFileExist(const Char *filename, FileInstance instance) const
+Bool FileSystem::doesFileExist(const Char* filename, FileInstance instance) const
 {
 	USE_PERF_TIMER(FileSystem)
 
@@ -275,9 +269,13 @@ Bool FileSystem::doesFileExist(const Char *filename, FileInstance instance) cons
 		{
 			// Must test instanceDoesNotExist first!
 			if (instance >= it->second.instanceDoesNotExist)
+			{
 				return FALSE;
+			}
 			if (instance <= it->second.instanceExists)
+			{
 				return TRUE;
+			}
 		}
 	}
 #endif
@@ -323,7 +321,7 @@ Bool FileSystem::doesFileExist(const Char *filename, FileInstance instance) cons
 //============================================================================
 // FileSystem::getFileListInDirectory
 //============================================================================
-void FileSystem::getFileListInDirectory(const AsciiString& directory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const
+void FileSystem::getFileListInDirectory(const AsciiString& directory, const AsciiString& searchName, FilenameList& filenameList, Bool searchSubdirectories) const
 {
 	USE_PERF_TIMER(FileSystem)
 	TheLocalFileSystem->getFileListInDirectory(AsciiString::TheEmptyString, directory, searchName, filenameList, searchSubdirectories);
@@ -333,26 +331,30 @@ void FileSystem::getFileListInDirectory(const AsciiString& directory, const Asci
 //============================================================================
 // FileSystem::getFileInfo
 //============================================================================
-Bool FileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo, FileInstance instance) const
+Bool FileSystem::getFileInfo(const AsciiString& filename, FileInfo* fileInfo, FileInstance instance) const
 {
 	USE_PERF_TIMER(FileSystem)
 
 	// TheSuperHackers @todo Add file info cache?
 
-	if (fileInfo == nullptr) {
+	if (fileInfo == nullptr)
+	{
 		return FALSE;
 	}
 	memset(fileInfo, 0, sizeof(*fileInfo));
 
-	if (TheLocalFileSystem->getFileInfo(filename, fileInfo)) {
-		if (instance == 0) {
+	if (TheLocalFileSystem->getFileInfo(filename, fileInfo))
+	{
+		if (instance == 0)
+		{
 			return TRUE;
 		}
 
 		--instance;
 	}
 
-	if (TheArchiveFileSystem->getFileInfo(filename, fileInfo, instance)) {
+	if (TheArchiveFileSystem->getFileInfo(filename, fileInfo, instance))
+	{
 		return TRUE;
 	}
 
@@ -365,7 +367,8 @@ Bool FileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo, Fi
 Bool FileSystem::createDirectory(AsciiString directory)
 {
 	USE_PERF_TIMER(FileSystem)
-	if (TheLocalFileSystem != nullptr) {
+	if (TheLocalFileSystem != nullptr)
+	{
 		return TheLocalFileSystem->createDirectory(directory);
 	}
 	return FALSE;
@@ -476,7 +479,9 @@ Bool FileSystem::makePathKey(Char* key, size_t keySize, const Char* path)
 		const UnsignedByte ch = toPathKeyChar(*path);
 
 		if (ch == '\0')
+		{
 			break;
+		}
 
 		if (key == keyEnd)
 		{
@@ -490,7 +495,9 @@ Bool FileSystem::makePathKey(Char* key, size_t keySize, const Char* path)
 		if (ch == '\\')
 		{
 			while (path > pairEnd && isPathSeparator(*path))
+			{
 				++path;
+			}
 		}
 	}
 
@@ -512,7 +519,9 @@ Int FileSystem::comparePath(const Char* a, const Char* b)
 		const UnsignedByte cb = toPathKeyChar(*b);
 
 		if (ca != cb || ca == '\0')
+		{
 			return (Int)ca - (Int)cb;
+		}
 
 		++a;
 		++b;
@@ -520,9 +529,13 @@ Int FileSystem::comparePath(const Char* a, const Char* b)
 		if (ca == '\\')
 		{
 			while (a > pairEndA && isPathSeparator(*a))
+			{
 				++a;
+			}
 			while (b > pairEndB && isPathSeparator(*b))
+			{
 				++b;
+			}
 		}
 	}
 }

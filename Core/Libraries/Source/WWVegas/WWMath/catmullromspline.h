@@ -45,9 +45,8 @@
 class CatmullRomSpline3DClass : public HermiteSpline3DClass
 {
 public:
-	virtual void					Update_Tangents() override;
+	virtual void Update_Tangents() override;
 };
-
 
 /**
 ** CatmullRomSpline1DClass
@@ -56,5 +55,5 @@ public:
 class CatmullRomSpline1DClass : public HermiteSpline1DClass
 {
 public:
-	virtual void					Update_Tangents() override;
+	virtual void Update_Tangents() override;
 };

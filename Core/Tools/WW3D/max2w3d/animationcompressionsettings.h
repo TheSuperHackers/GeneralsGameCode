@@ -42,7 +42,6 @@
 #include <max.h>
 #include "w3dutil.h"
 
-
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 //	AnimationCompressionSettingsDialogClass
@@ -51,40 +50,37 @@
 class AnimationCompressionSettingsDialogClass
 {
 public:
-
 	//////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	//////////////////////////////////////////////////////////////////
-	AnimationCompressionSettingsDialogClass (Interface *maxinterface, HWND parent_wnd = nullptr);
-	~AnimationCompressionSettingsDialogClass ();
-
+	AnimationCompressionSettingsDialogClass(Interface* maxinterface, HWND parent_wnd = nullptr);
+	~AnimationCompressionSettingsDialogClass();
 
 	//////////////////////////////////////////////////////////////////
 	//	Public methods
 	//////////////////////////////////////////////////////////////////
 
-	void			Set_Options (W3dExportOptionsStruct *options)	{ Options = options; }
-	int			Do_Modal ();
+	void Set_Options(W3dExportOptionsStruct* options) { Options = options; }
+	int Do_Modal();
 
 private:
-
 	//////////////////////////////////////////////////////////////////
 	//	Static methods
 	//////////////////////////////////////////////////////////////////
-	static BOOL CALLBACK	Real_Message_Proc (HWND wnd, UINT message, WPARAM wparam, LPARAM lparam);
+	static BOOL CALLBACK Real_Message_Proc(HWND wnd, UINT message, WPARAM wparam, LPARAM lparam);
 
 	//////////////////////////////////////////////////////////////////
 	//	Private methods
 	//////////////////////////////////////////////////////////////////
-	BOOL			Message_Proc (UINT message, WPARAM wparam, LPARAM lparam);
-	void			Initialize_Controls ();
-	void			Save_Settings ();
+	BOOL Message_Proc(UINT message, WPARAM wparam, LPARAM lparam);
+	void Initialize_Controls();
+	void Save_Settings();
 
 	//////////////////////////////////////////////////////////////////
 	//	Private member data
 	//////////////////////////////////////////////////////////////////
-	W3dExportOptionsStruct *	Options;
-	Interface *						MaxInterface;
-	HWND								Wnd;
-	HWND								ParentWnd;
+	W3dExportOptionsStruct* Options;
+	Interface* MaxInterface;
+	HWND Wnd;
+	HWND ParentWnd;
 };

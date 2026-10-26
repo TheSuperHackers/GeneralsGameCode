@@ -42,16 +42,16 @@ public:
 	virtual void postProcessLoad() override;
 
 	// ArchiveFile operations
-	virtual void closeAllArchiveFiles() override;											///< Close all Archivefiles currently open
+	virtual void closeAllArchiveFiles() override;    ///< Close all Archivefiles currently open
 
 	// File operations
-	virtual ArchiveFile * openArchiveFile(const Char *filename) override;
-	virtual void closeArchiveFile(const Char *filename) override;
-	virtual void closeAllFiles() override;															///< Close all files associated with ArchiveFiles
+	virtual ArchiveFile* openArchiveFile(const Char* filename) override;
+	virtual void closeArchiveFile(const Char* filename) override;
+	virtual void closeAllFiles() override;    ///< Close all files associated with ArchiveFiles
 
 	virtual Bool loadArchiveFilesFromDirectory(AsciiString dir, AsciiString fileMask, Bool overwrite = FALSE) override;
 
 	virtual void loadMods() override;
-protected:
 
+protected:
 };

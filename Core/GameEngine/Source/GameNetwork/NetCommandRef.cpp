@@ -22,8 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "GameNetwork/NetCommandRef.h"
 
@@ -35,9 +34,9 @@ static UnsignedInt refNum = 0;
  * Constructor.  Attach to the given network command.
  */
 #ifdef DEBUG_NETCOMMANDREF
-NetCommandRef::NetCommandRef(NetCommandMsg *msg, char *filename, int line)
+NetCommandRef::NetCommandRef(NetCommandMsg* msg, char* filename, int line)
 #else
-NetCommandRef::NetCommandRef(NetCommandMsg *msg)
+NetCommandRef::NetCommandRef(NetCommandMsg* msg)
 #endif
 {
 	m_msg = msg;
@@ -72,4 +71,3 @@ NetCommandRef::~NetCommandRef()
 	DEBUG_LOG(("NetCommandRef %d deleted", m_id));
 #endif
 }
-

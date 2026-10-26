@@ -27,33 +27,31 @@
 #include "WWMath/matrix4.h"
 #include "GameClient/Shadow.h"
 
-class Drawable;	//forward reference
+class Drawable;    // forward reference
 
 // ShadowManager -------------------------------------------------------------
 class W3DShadowManager
 {
-
 public:
-
 	W3DShadowManager();
 	~W3DShadowManager();
-	Bool init();	///<initialize resources used by manager, must have valid D3D device.
-	void queueShadows(Bool state) {m_isShadowScene=state;}	///<flags system to process shadows on next render call.
+	Bool init();    ///< initialize resources used by manager, must have valid D3D device.
+	void queueShadows(Bool state) { m_isShadowScene = state; }    ///< flags system to process shadows on next render call.
 
 	// shadow list management
 	void Reset();
-	Shadow* addShadow( RenderObjClass *robj,Shadow::ShadowTypeInfo *shadowInfo=nullptr, Drawable *draw=nullptr);	///< adds shadow caster to rendering system.
-	void removeShadow(Shadow *shadow);	///< removed shadow from rendering system and frees its resources.
-	void removeAllShadows(); ///< Remove all shadows.
-	void setShadowColor(UnsignedInt color) { m_shadowColor=color;}	///<sets the shadow color and alpha, value in ARGB format.
-	UnsignedInt getShadowColor() { return m_shadowColor;}	///<gets the shadow color and alpha, value in ARGB format.
-	void setLightPosition(Int lightIndex, Real x, Real y, Real z);	///<sets the position of a specific light source.
+	Shadow* addShadow(RenderObjClass* robj, Shadow::ShadowTypeInfo* shadowInfo = nullptr, Drawable* draw = nullptr);    ///< adds shadow caster to rendering system.
+	void removeShadow(Shadow* shadow);    ///< removed shadow from rendering system and frees its resources.
+	void removeAllShadows();    ///< Remove all shadows.
+	void setShadowColor(UnsignedInt color) { m_shadowColor = color; }    ///< sets the shadow color and alpha, value in ARGB format.
+	UnsignedInt getShadowColor() { return m_shadowColor; }    ///< gets the shadow color and alpha, value in ARGB format.
+	void setLightPosition(Int lightIndex, Real x, Real y, Real z);    ///< sets the position of a specific light source.
 	void setTimeOfDay(TimeOfDay tod);
-	void invalidateCachedLightPositions();	///<forces shadow volumes to update regardless of last lightposition
-	Vector3 &getLightPosWorld(Int lightIndex);	///<returns the position of specified light source.
-	Bool	isShadowScene()	{return m_isShadowScene;}
-	void setStencilShadowMask(int mask) {m_stencilShadowMask=mask;}	///<mask used to mask out stencil bits used for storing occlusion/playerColor
-	Int getStencilShadowMask()	{return m_stencilShadowMask;}
+	void invalidateCachedLightPositions();    ///< forces shadow volumes to update regardless of last lightposition
+	Vector3& getLightPosWorld(Int lightIndex);    ///< returns the position of specified light source.
+	Bool isShadowScene() { return m_isShadowScene; }
+	void setStencilShadowMask(int mask) { m_stencilShadowMask = mask; }    ///< mask used to mask out stencil bits used for storing occlusion/playerColor
+	Int getStencilShadowMask() { return m_stencilShadowMask; }
 
 	// rendering
 	void RenderShadows();
@@ -61,10 +59,9 @@ public:
 	Bool ReAcquireResources();
 
 protected:
-
-		Bool	m_isShadowScene;	///<flag if current scene needs shadows.  No shadows on pre-pass and 2D.
-		UnsignedInt m_shadowColor;	///<color and alpha for all shadows in scene.
-		Int m_stencilShadowMask;
+	Bool m_isShadowScene;    ///< flag if current scene needs shadows.  No shadows on pre-pass and 2D.
+	UnsignedInt m_shadowColor;    ///< color and alpha for all shadows in scene.
+	Int m_stencilShadowMask;
 };
 
-extern W3DShadowManager *TheW3DShadowManager;
+extern W3DShadowManager* TheW3DShadowManager;

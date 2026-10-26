@@ -42,7 +42,7 @@
 //
 //-----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ProductionPrerequisite.h"
 #include "Common/Player.h"
@@ -51,7 +51,6 @@
 #include "GameLogic/Object.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/GameText.h"
-
 
 //-----------------------------------------------------------------------------
 ProductionPrerequisite::ProductionPrerequisite()
@@ -69,7 +68,6 @@ void ProductionPrerequisite::init()
 {
 	m_prereqUnits.clear();
 	m_prereqSciences.clear();
-
 }
 
 //=============================================================================
@@ -77,34 +75,35 @@ void ProductionPrerequisite::resolveNames()
 {
 	for (size_t i = 0; i < m_prereqUnits.size(); i++)
 	{
-
 		//
 		// note that this will find the template at the "top most" level (not override
 		// sub-templates), which is what we want ... we conceptually only have one
 		// template for any given thing, it's only the *data* that is overridden
 		//
-		m_prereqUnits[i].unit = TheThingFactory->findTemplate(m_prereqUnits[i].name);	// might be null
+		m_prereqUnits[i].unit = TheThingFactory->findTemplate(m_prereqUnits[i].name);    // might be null
 
- 		/** @todo for now removing this assert until we can completely remove
- 		the GDF stuff, the problem is that some INI files refer to GDF names, and they
- 		aren't yet loaded in the world builder but will all go away later anyway etc */
-		DEBUG_ASSERTCRASH(m_prereqUnits[i].unit,("could not find prereq %s",m_prereqUnits[i].name.str()));
+		/** @todo for now removing this assert until we can completely remove
+		the GDF stuff, the problem is that some INI files refer to GDF names, and they
+		aren't yet loaded in the world builder but will all go away later anyway etc */
+		DEBUG_ASSERTCRASH(m_prereqUnits[i].unit, ("could not find prereq %s", m_prereqUnits[i].name.str()));
 
-		m_prereqUnits[i].name.clear(); // we're done with it
-
+		m_prereqUnits[i].name.clear();    // we're done with it
 	}
-
 }
 
 //-----------------------------------------------------------------------------
-Int ProductionPrerequisite::calcNumPrereqUnitsOwned(const Player *player, Int counts[MAX_PREREQ]) const
+Int ProductionPrerequisite::calcNumPrereqUnitsOwned(const Player* player, Int counts[MAX_PREREQ]) const
 {
-	const ThingTemplate *tmpls[MAX_PREREQ];
+	const ThingTemplate* tmpls[MAX_PREREQ];
 	Int cnt = m_prereqUnits.size();
 	if (cnt > MAX_PREREQ)
+	{
 		cnt = MAX_PREREQ;
+	}
 	for (int i = 0; i < cnt; i++)
+	{
 		tmpls[i] = m_prereqUnits[i].unit;
+	}
 	player->countObjectsByThingTemplate(cnt, tmpls, false, counts);
 	return cnt;
 }
@@ -116,16 +115,20 @@ Int ProductionPrerequisite::getAllPossibleBuildFacilityTemplates(const ThingTemp
 	for (size_t i = 0; i < m_prereqUnits.size(); i++)
 	{
 		if (i > 0 && !(m_prereqUnits[i].flags & UNIT_OR_WITH_PREV))
+		{
 			break;
+		}
 		if (count >= maxtmpls)
+		{
 			break;
+		}
 		tmpls[count++] = m_prereqUnits[i].unit;
 	}
 	return count;
 }
 
 //-----------------------------------------------------------------------------
-const ThingTemplate *ProductionPrerequisite::getExistingBuildFacilityTemplate( const Player *player ) const
+const ThingTemplate* ProductionPrerequisite::getExistingBuildFacilityTemplate(const Player* player) const
 {
 	DEBUG_ASSERTCRASH(player, ("player may not be null"));
 	if (!m_prereqUnits.empty())
@@ -135,27 +138,35 @@ const ThingTemplate *ProductionPrerequisite::getExistingBuildFacilityTemplate( c
 		for (int i = 0; i < cnt; i++)
 		{
 			if (i > 0 && !(m_prereqUnits[i].flags & UNIT_OR_WITH_PREV))
+			{
 				break;
+			}
 			if (ownCount[i])
+			{
 				return m_prereqUnits[i].unit;
+			}
 		}
 	}
 	return nullptr;
 }
 
 //-----------------------------------------------------------------------------
-Bool ProductionPrerequisite::isSatisfied(const Player *player) const
+Bool ProductionPrerequisite::isSatisfied(const Player* player) const
 {
 	Int i;
 
 	if (!player)
+	{
 		return false;
+	}
 
 	// gotta have all the prereq sciences.
 	for (i = 0; i < m_prereqSciences.size(); i++)
 	{
 		if (!player->hasScience(m_prereqSciences[i]))
+		{
 			return false;
+		}
 	}
 
 	// the player must have at least one instance of each prereq unit.
@@ -167,17 +178,21 @@ Bool ProductionPrerequisite::isSatisfied(const Player *player) const
 	{
 		if (m_prereqUnits[i].flags & UNIT_OR_WITH_PREV)
 		{
-			ownCount[i] += ownCount[i-1];	// lump 'em together for prereq purposes
-			ownCount[i-1] = -1;						// flag for "ignore me"
+			ownCount[i] += ownCount[i - 1];    // lump 'em together for prereq purposes
+			ownCount[i - 1] = -1;    // flag for "ignore me"
 		}
 	}
 
 	for (i = 0; i < cnt; i++)
 	{
-		if (ownCount[i] == -1)	// the magic "ignore me" flag
+		if (ownCount[i] == -1)    // the magic "ignore me" flag
+		{
 			continue;
-		if (ownCount[i] == 0)		// everything not ignored, is required
+		}
+		if (ownCount[i] == 0)    // everything not ignored, is required
+		{
 			return false;
+		}
 	}
 
 	return true;
@@ -185,27 +200,26 @@ Bool ProductionPrerequisite::isSatisfied(const Player *player) const
 
 //-------------------------------------------------------------------------------------------------
 /** Add a unit prerequisite, if 'orWithPrevious' is set then this unit is said
-	* to be an alternate prereq to the previously added unit, otherwise this becomes
-	* a new 'block' and is required in ADDITION to other entries.
-	* Return FALSE if no space left to add unit */
+ * to be an alternate prereq to the previously added unit, otherwise this becomes
+ * a new 'block' and is required in ADDITION to other entries.
+ * Return FALSE if no space left to add unit */
 //-------------------------------------------------------------------------------------------------
-void ProductionPrerequisite::addUnitPrereq( AsciiString unit, Bool orUnitWithPrevious )
+void ProductionPrerequisite::addUnitPrereq(AsciiString unit, Bool orUnitWithPrevious)
 {
 	PrereqUnitRec info;
 	info.name = unit;
 	info.flags = orUnitWithPrevious ? UNIT_OR_WITH_PREV : 0;
 	info.unit = nullptr;
 	m_prereqUnits.push_back(info);
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Add a unit prerequisite, if 'orWithPrevious' is set then this unit is said
-	* to be an alternate prereq to the previously added unit, otherwise this becomes
-	* a new 'block' and is required in ADDITION to other entries.
-	* Return FALSE if no space left to add unit */
+ * to be an alternate prereq to the previously added unit, otherwise this becomes
+ * a new 'block' and is required in ADDITION to other entries.
+ * Return FALSE if no space left to add unit */
 //-------------------------------------------------------------------------------------------------
-void ProductionPrerequisite::addUnitPrereq( const std::vector<AsciiString>& units )
+void ProductionPrerequisite::addUnitPrereq(const std::vector<AsciiString>& units)
 {
 	Bool orWithPrevious = false;
 	for (size_t i = 0; i < units.size(); ++i)
@@ -213,18 +227,18 @@ void ProductionPrerequisite::addUnitPrereq( const std::vector<AsciiString>& unit
 		addUnitPrereq(units[i], orWithPrevious);
 		orWithPrevious = true;
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
 // returns an asciistring which is a list of all the prerequisites
 // not satisfied yet
-UnicodeString ProductionPrerequisite::getRequiresList(const Player *player) const
+UnicodeString ProductionPrerequisite::getRequiresList(const Player* player) const
 {
-
 	// if player is invalid, return empty string
 	if (!player)
+	{
 		return UnicodeString::TheEmptyString;
+	}
 
 	UnicodeString requiresList = UnicodeString::TheEmptyString;
 
@@ -243,28 +257,28 @@ UnicodeString ProductionPrerequisite::getRequiresList(const Player *player) cons
 	{
 		if (m_prereqUnits[i].flags & UNIT_OR_WITH_PREV)
 		{
-			orRequirements[i] = TRUE;     // set the flag for this unit to be "ored" with previous
-			ownCount[i] += ownCount[i-1];	// lump 'em together for prereq purposes
-			ownCount[i-1] = -1;						// flag for "ignore me"
+			orRequirements[i] = TRUE;    // set the flag for this unit to be "ored" with previous
+			ownCount[i] += ownCount[i - 1];    // lump 'em together for prereq purposes
+			ownCount[i - 1] = -1;    // flag for "ignore me"
 		}
 	}
 
 	// check to see if anything is required
-	const ThingTemplate *unit;
+	const ThingTemplate* unit;
 	UnicodeString unitName;
 	Bool firstRequirement = true;
 	for (i = 0; i < cnt; i++)
 	{
 		// we have an unfulfilled requirement
-		if (ownCount[i] == 0) {
-
-			if(orRequirements[i])
+		if (ownCount[i] == 0)
+		{
+			if (orRequirements[i])
 			{
-				unit = m_prereqUnits[i-1].unit;
+				unit = m_prereqUnits[i - 1].unit;
 				unitName = unit->getDisplayName();
-				unitName.concat( L" " );
+				unitName.concat(L" ");
 				unitName.concat(TheGameText->fetch("CONTROLBAR:OrRequirement", nullptr));
-				unitName.concat( L" " );
+				unitName.concat(L" ");
 				requiresList.concat(unitName);
 			}
 
@@ -273,15 +287,19 @@ UnicodeString ProductionPrerequisite::getRequiresList(const Player *player) cons
 			unitName = unit->getDisplayName();
 
 			// gets command button, and then modifies unitName
-			//CommandButton *cmdButton = TheControlBar->findCommandButton(unit->getName());
-			//if (cmdButton)
-				//unitName.translate(TheGameText->fetch(cmdButton->m_textLabel.str()));
+			// CommandButton *cmdButton = TheControlBar->findCommandButton(unit->getName());
+			// if (cmdButton)
+			// unitName.translate(TheGameText->fetch(cmdButton->m_textLabel.str()));
 
 			// format name appropriately with 'returns' if necessary
 			if (firstRequirement)
+			{
 				firstRequirement = false;
+			}
 			else
+			{
 				unitName.concat(L"\n");
+			}
 
 			// add it to the list
 			requiresList.concat(unitName);
@@ -293,13 +311,19 @@ UnicodeString ProductionPrerequisite::getRequiresList(const Player *player) cons
 	for (i = 0; i < m_prereqSciences.size(); i++)
 	{
 		if (!player->hasScience(m_prereqSciences[i]))
+		{
 			hasSciences = FALSE;
+		}
 	}
 
-	if (hasSciences == FALSE) {
-		if (firstRequirement) {
+	if (hasSciences == FALSE)
+	{
+		if (firstRequirement)
+		{
 			firstRequirement = false;
-		} else {
+		}
+		else
+		{
 			unitName.concat(L"\n");
 		}
 		requiresList.concat(TheGameText->fetch("CONTROLBAR:GeneralsPromotion", nullptr));

@@ -43,7 +43,6 @@
 #include "chunkio.h"
 #include "PROGRESS.h"
 
-
 /*******************************************************************************************
 **
 ** LightGlareSaveClass - Create a Light Glare definition from a Max mesh.  In the initial
@@ -53,23 +52,21 @@
 class LightGlareSaveClass
 {
 public:
-
-	enum {
-		EX_UNKNOWN = 0,	// exception error codes
+	enum
+	{
+		EX_UNKNOWN = 0,    // exception error codes
 		EX_CANCEL = 1
 	};
 
-	LightGlareSaveClass(		char *						mesh_name,
-									char *						container_name,
-									INode *						inode,
-									Matrix3 &					exportspace,
-									TimeValue					curtime,
-									Progress_Meter_Class &	meter);
+	LightGlareSaveClass(char* mesh_name,
+	                    char* container_name,
+	                    INode* inode,
+	                    Matrix3& exportspace,
+	                    TimeValue curtime,
+	                    Progress_Meter_Class& meter);
 
-	int Write_To_File(ChunkSaveClass & csave);
+	int Write_To_File(ChunkSaveClass& csave);
 
 private:
-
-	W3dLightGlareStruct		GlareData;
-
+	W3dLightGlareStruct GlareData;
 };

@@ -43,45 +43,55 @@
 
 #include "Utility/endian_compat.h"
 
+static const char* BIGFileIdentifier = "BIGF";
 
-static const char *BIGFileIdentifier = "BIGF";
-
-BIGFileSystem::BIGFileSystem() : ArchiveFileSystem() {
+BIGFileSystem::BIGFileSystem()
+  : ArchiveFileSystem()
+{
 }
 
-BIGFileSystem::~BIGFileSystem() {
+BIGFileSystem::~BIGFileSystem()
+{
 }
 
-void BIGFileSystem::init() {
+void BIGFileSystem::init()
+{
 	DEBUG_ASSERTCRASH(TheLocalFileSystem != nullptr, ("TheLocalFileSystem must be initialized before TheArchiveFileSystem."));
-	if (TheLocalFileSystem == nullptr) {
+	if (TheLocalFileSystem == nullptr)
+	{
 		return;
 	}
 
 	loadArchiveFilesFromDirectory("", "*.big");
 
 #if RTS_ZEROHOUR
-    // load original Generals assets
-    AsciiString installPath;
-    GetStringFromGeneralsRegistry("", "InstallPath", installPath );
-    //@todo this will need to be ramped up to a crash for release
-    DEBUG_ASSERTCRASH(!installPath.isEmpty(), ("Be 1337! Go install Generals!"));
-    if (!installPath.isEmpty())
-      loadArchiveFilesFromDirectory(installPath, "*.big");
+	// load original Generals assets
+	AsciiString installPath;
+	GetStringFromGeneralsRegistry("", "InstallPath", installPath);
+	//@todo this will need to be ramped up to a crash for release
+	DEBUG_ASSERTCRASH(!installPath.isEmpty(), ("Be 1337! Go install Generals!"));
+	if (!installPath.isEmpty())
+	{
+		loadArchiveFilesFromDirectory(installPath, "*.big");
+	}
 #endif
 }
 
-void BIGFileSystem::reset() {
+void BIGFileSystem::reset()
+{
 }
 
-void BIGFileSystem::update() {
+void BIGFileSystem::update()
+{
 }
 
-void BIGFileSystem::postProcessLoad() {
+void BIGFileSystem::postProcessLoad()
+{
 }
 
-ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
-	File *fp = TheLocalFileSystem->openFile(filename, File::READ | File::BINARY);
+ArchiveFile* BIGFileSystem::openArchiveFile(const Char* filename)
+{
+	File* fp = TheLocalFileSystem->openFile(filename, File::READ | File::BINARY);
 	AsciiString archiveFileName;
 	archiveFileName = filename;
 	archiveFileName.toLower();
@@ -90,16 +100,18 @@ ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
 
 	DEBUG_LOG(("BIGFileSystem::openArchiveFile - opening BIG file %s", filename));
 
-	if (fp == nullptr) {
+	if (fp == nullptr)
+	{
 		DEBUG_CRASH(("Could not open archive file %s for parsing", filename));
 		return nullptr;
 	}
 
 	AsciiString asciibuf;
 	char buffer[_MAX_PATH];
-	fp->read(buffer, 4); // read the "BIG" at the beginning of the file.
+	fp->read(buffer, 4);    // read the "BIG" at the beginning of the file.
 	buffer[4] = 0;
-	if (strcmp(buffer, BIGFileIdentifier) != 0) {
+	if (strcmp(buffer, BIGFileIdentifier) != 0)
+	{
 		DEBUG_CRASH(("Error reading BIG file identifier in file %s", filename));
 		fp->close();
 		fp = nullptr;
@@ -111,7 +123,7 @@ ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
 
 	DEBUG_LOG(("BIGFileSystem::openArchiveFile - size of archive file is %d bytes", archiveFileSize));
 
-//	char t;
+	//	char t;
 
 	// read in the number of files contained in this BIG file.
 	// change the order of the bytes cause the file size is in reverse byte order for some reason.
@@ -119,19 +131,20 @@ ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
 	numLittleFiles = betoh(numLittleFiles);
 
 	DEBUG_LOG(("BIGFileSystem::openArchiveFile - %d are contained in archive", numLittleFiles));
-//	for (Int i = 0; i < 2; ++i) {
-//		t = buffer[i];
-//		buffer[i] = buffer[(4-i)-1];
-//		buffer[(4-i)-1] = t;
-//	}
+	//	for (Int i = 0; i < 2; ++i) {
+	//		t = buffer[i];
+	//		buffer[i] = buffer[(4-i)-1];
+	//		buffer[(4-i)-1] = t;
+	//	}
 
 	// seek to the beginning of the directory listing.
 	fp->seek(0x10, File::START);
 	// read in each directory listing.
 	ArchivedFileInfo fileInfo;
-	ArchiveFile *archiveFile = NEW ArchiveFile(filename, AsciiString::TheEmptyString);
+	ArchiveFile* archiveFile = NEW ArchiveFile(filename, AsciiString::TheEmptyString);
 
-	for (Int i = 0; i < numLittleFiles; ++i) {
+	for (Int i = 0; i < numLittleFiles; ++i)
+	{
 		Int filesize = 0;
 		Int fileOffset = 0;
 		fp->read(&fileOffset, 4);
@@ -146,12 +159,14 @@ ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
 
 		// read in the path name of the file.
 		Int pathIndex = -1;
-		do {
+		do
+		{
 			++pathIndex;
 			fp->read(buffer + pathIndex, 1);
-		} while (buffer[pathIndex] != 0);
+		}
+		while (buffer[pathIndex] != 0);
 
-		char *leafName = getFileName(buffer);
+		char* leafName = getFileName(buffer);
 
 		fileInfo.m_filename = leafName;
 		fileInfo.m_filename.toLower();
@@ -163,7 +178,7 @@ ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
 		AsciiString debugpath;
 		debugpath = path;
 		debugpath.concat(fileInfo.m_filename);
-//		DEBUG_LOG(("BIGFileSystem::openArchiveFile - adding file %s to archive file %s, file number %d", debugpath.str(), fileInfo.m_archiveFilename.str(), i));
+		//		DEBUG_LOG(("BIGFileSystem::openArchiveFile - adding file %s to archive file %s, file number %d", debugpath.str(), fileInfo.m_archiveFilename.str(), i));
 
 		archiveFile->addFile(path, &fileInfo);
 	}
@@ -175,14 +190,17 @@ ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
 	return archiveFile;
 }
 
-void BIGFileSystem::closeArchiveFile(const Char *filename) {
+void BIGFileSystem::closeArchiveFile(const Char* filename)
+{
 	// Need to close the specified big file
-	ArchiveFileMap::iterator it =  m_archiveFileMap.find(filename);
-	if (it == m_archiveFileMap.end()) {
+	ArchiveFileMap::iterator it = m_archiveFileMap.find(filename);
+	if (it == m_archiveFileMap.end())
+	{
 		return;
 	}
 
-	if (stricmp(filename, MUSIC_BIG) == 0) {
+	if (stricmp(filename, MUSIC_BIG) == 0)
+	{
 		// Stop the current audio
 		TheAudio->stopAudio(AudioAffect_Music);
 
@@ -196,33 +214,38 @@ void BIGFileSystem::closeArchiveFile(const Char *filename) {
 	m_archiveFileMap.erase(it);
 }
 
-void BIGFileSystem::closeAllArchiveFiles() {
+void BIGFileSystem::closeAllArchiveFiles()
+{
 }
 
-void BIGFileSystem::closeAllFiles() {
+void BIGFileSystem::closeAllFiles()
+{
 }
 
-Bool BIGFileSystem::loadArchiveFilesFromDirectory(AsciiString dir, AsciiString fileMask, Bool overwrite) {
-
+Bool BIGFileSystem::loadArchiveFilesFromDirectory(AsciiString dir, AsciiString fileMask, Bool overwrite)
+{
 	FilenameList filenameList;
 	TheLocalFileSystem->getFileListInDirectory(dir, "", fileMask, filenameList, TRUE);
 
 	Bool actuallyAdded = FALSE;
 	FilenameListIter it = filenameList.begin();
-	while (it != filenameList.end()) {
+	while (it != filenameList.end())
+	{
 #if RTS_ZEROHOUR
 		// TheSuperHackers @bugfix bobtista 18/11/2025 Skip duplicate INIZH.big in Data\INI to prevent CRC mismatches.
 		// English, Chinese, and Korean SKUs shipped with two INIZH.big files (one in Run directory, one in Run\Data\INI).
 		// The DeleteFile cleanup doesn't work on EA App/Origin installs because the folder is not writable, so we skip loading it instead.
-		if (it->endsWithNoCase("Data\\INI\\INIZH.big") || it->endsWithNoCase("Data/INI/INIZH.big")) {
+		if (it->endsWithNoCase("Data\\INI\\INIZH.big") || it->endsWithNoCase("Data/INI/INIZH.big"))
+		{
 			it++;
 			continue;
 		}
 #endif
 
-		ArchiveFile *archiveFile = openArchiveFile((*it).str());
+		ArchiveFile* archiveFile = openArchiveFile((*it).str());
 
-		if (archiveFile != nullptr) {
+		if (archiveFile != nullptr)
+		{
 			DEBUG_LOG(("BIGFileSystem::loadArchiveFilesFromDirectory - loading %s into the directory tree.", (*it).str()));
 			loadIntoDirectoryTree(archiveFile, overwrite);
 			m_archiveFileMap[(*it)] = archiveFile;
@@ -240,9 +263,10 @@ void BIGFileSystem::loadMods()
 {
 	if (TheGlobalData->m_modBIG.isNotEmpty())
 	{
-		ArchiveFile *archiveFile = openArchiveFile(TheGlobalData->m_modBIG.str());
+		ArchiveFile* archiveFile = openArchiveFile(TheGlobalData->m_modBIG.str());
 
-		if (archiveFile != nullptr) {
+		if (archiveFile != nullptr)
+		{
 			DEBUG_LOG(("BIGFileSystem::loadMods - loading %s into the directory tree.", TheGlobalData->m_modBIG.str()));
 			loadIntoDirectoryTree(archiveFile, TRUE);
 			m_archiveFileMap[TheGlobalData->m_modBIG] = archiveFile;

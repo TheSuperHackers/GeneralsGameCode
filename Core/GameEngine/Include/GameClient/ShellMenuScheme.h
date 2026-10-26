@@ -72,7 +72,6 @@ public:
 	ICoord2D m_endPos;
 	Int m_width;
 	Color m_color;
-
 };
 
 class ShellMenuSchemeImage
@@ -81,10 +80,10 @@ public:
 	ShellMenuSchemeImage();
 	~ShellMenuSchemeImage();
 
-	AsciiString m_name;						///< Name of the image
-	ICoord2D m_position;					///< the position we'll draw it at
-	ICoord2D m_size;							///< the size of the image needed when we draw it
-	Image *m_image;								///< the actual pointer to the mapped image
+	AsciiString m_name;    ///< Name of the image
+	ICoord2D m_position;    ///< the position we'll draw it at
+	ICoord2D m_size;    ///< the size of the image needed when we draw it
+	Image* m_image;    ///< the actual pointer to the mapped image
 };
 
 class ShellMenuScheme
@@ -94,9 +93,8 @@ public:
 	~ShellMenuScheme();
 
 	void draw();
-	void addImage( ShellMenuSchemeImage* schemeImage );
-	void addLine( ShellMenuSchemeLine* schemeLine );
-
+	void addImage(ShellMenuSchemeImage* schemeImage);
+	void addLine(ShellMenuSchemeLine* schemeLine);
 
 	AsciiString m_name;
 
@@ -107,10 +105,6 @@ public:
 	typedef std::list< ShellMenuSchemeLine* > ShellMenuSchemeLineList;
 	typedef ShellMenuSchemeLineList::iterator ShellMenuSchemeLineListIt;
 	ShellMenuSchemeLineList m_lineList;
-
-
-
-
 };
 
 class ShellMenuSchemeManager
@@ -122,26 +116,24 @@ public:
 	void init();
 	void update();
 
-	void setShellMenuScheme( AsciiString name );
+	void setShellMenuScheme(AsciiString name);
 
 	void draw();
 
 	// parse Functions for the INI file
-	const FieldParse *getFieldParse() const { return m_shellMenuSchemeFieldParseTable; }								///< returns the parsing fields
-	static const FieldParse m_shellMenuSchemeFieldParseTable[];																				///< the parse table
-	static void parseImagePart( INI* ini, void *instance, void *store, const void *userData );					///< Parse the image part of the INI file
-	static void parseLinePart( INI* ini, void *instance, void *store, const void *userData );					///< Parse the line part of the INI file
+	const FieldParse* getFieldParse() const { return m_shellMenuSchemeFieldParseTable; }    ///< returns the parsing fields
+	static const FieldParse m_shellMenuSchemeFieldParseTable[];    ///< the parse table
+	static void parseImagePart(INI* ini, void* instance, void* store, const void* userData);    ///< Parse the image part of the INI file
+	static void parseLinePart(INI* ini, void* instance, void* store, const void* userData);    ///< Parse the line part of the INI file
 
-	ShellMenuScheme *newShellMenuScheme(AsciiString name);
+	ShellMenuScheme* newShellMenuScheme(AsciiString name);
 
 private:
-	typedef std::list< ShellMenuScheme* > ShellMenuSchemeList;			///< list of Shell Menu schemes
+	typedef std::list< ShellMenuScheme* > ShellMenuSchemeList;    ///< list of Shell Menu schemes
 	typedef ShellMenuSchemeList::iterator ShellMenuSchemeListIt;
 	ShellMenuSchemeList m_schemeList;
-	ShellMenuScheme *m_currentScheme;
-
+	ShellMenuScheme* m_currentScheme;
 };
-
 
 //-----------------------------------------------------------------------------
 // INLINING ///////////////////////////////////////////////////////////////////

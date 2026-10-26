@@ -25,35 +25,32 @@
 #include "WHeightMapEdit.h"
 #include "Common/MapReaderWriterInfo.h"
 
-static constexpr const Int LARGE_MAP_SIDE = 2048; ///< Memory warning above this squared
+static constexpr const Int LARGE_MAP_SIDE = 2048;    ///< Memory warning above this squared
 
 /////////////////////////////////////////////////////////////////////////////
 // CNewHeightMap dialog
 
-
-CNewHeightMap::CNewHeightMap(TNewHeightInfo *hiP,  const char *label, CWnd* pParent /*=nullptr*/)
-	: CDialog(CNewHeightMap::IDD, pParent)
+CNewHeightMap::CNewHeightMap(TNewHeightInfo* hiP, const char* label, CWnd* pParent /*=nullptr*/)
+  : CDialog(CNewHeightMap::IDD, pParent)
 {
 	mHeightInfo = *hiP;
 	m_label = label;
 	//{{AFX_DATA_INIT(CNewHeightMap)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
-
 
 void CNewHeightMap::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CNewHeightMap)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CNewHeightMap, CDialog)
-	//{{AFX_MSG_MAP(CNewHeightMap)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CNewHeightMap)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -63,27 +60,42 @@ BOOL CNewHeightMap::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	CWnd *edit = GetDlgItem(IDC_INITIAL_HEIGHT);
+	CWnd* edit = GetDlgItem(IDC_INITIAL_HEIGHT);
 	CString val;
 	val.Format("%d", mHeightInfo.initialHeight);
-	if (edit) edit->SetWindowText(val);
+	if (edit)
+	{
+		edit->SetWindowText(val);
+	}
 
 	edit = GetDlgItem(IDC_X_SIZE);
 	val.Format("%d", mHeightInfo.xExtent);
-	if (edit) edit->SetWindowText(val);
+	if (edit)
+	{
+		edit->SetWindowText(val);
+	}
 
 	edit = GetDlgItem(IDC_BORDER_SIZE);
 	val.Format("%d", mHeightInfo.borderWidth);
-	if (edit) edit->SetWindowText(val);
+	if (edit)
+	{
+		edit->SetWindowText(val);
+	}
 
 	edit = GetDlgItem(IDC_Y_SIZE);
 	val.Format("%d", mHeightInfo.yExtent);
-	if (edit) edit->SetWindowText(val);
-	if (m_label) SetWindowText(m_label);
+	if (edit)
+	{
+		edit->SetWindowText(val);
+	}
+	if (m_label)
+	{
+		SetWindowText(m_label);
+	}
 
-
-	CButton *pButton;
-	if (mHeightInfo.forResize) {
+	CButton* pButton;
+	if (mHeightInfo.forResize)
+	{
 		pButton = (CButton*)GetDlgItem(IDC_CENTER);
 		pButton->SetCheck(1);
 		mHeightInfo.anchorBottom = false;
@@ -91,7 +103,9 @@ BOOL CNewHeightMap::OnInitDialog()
 		mHeightInfo.anchorLeft = false;
 		mHeightInfo.anchorRight = false;
 		doAnchorButton(IDC_CENTER);
-	} else {
+	}
+	else
+	{
 		pButton = (CButton*)GetDlgItem(IDC_CENTER);
 		pButton->ShowWindow(SW_HIDE);
 		pButton = (CButton*)GetDlgItem(IDC_TOP_LEFT);
@@ -114,8 +128,8 @@ BOOL CNewHeightMap::OnInitDialog()
 		pButton->ShowWindow(SW_HIDE);
 	}
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE;    // return TRUE unless you set the focus to a control
+	                // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 /** Handles the button press for this button. */
@@ -127,119 +141,130 @@ Bool CNewHeightMap::doAnchorButton(Int buttonID)
 	heightInfo.anchorTop = false;
 	heightInfo.anchorLeft = false;
 	heightInfo.anchorRight = false;
-	switch(buttonID) {
-		case IDC_CENTER:
+	switch (buttonID)
+	{
+	case IDC_CENTER:
 		break;
-		case IDC_TOP_LEFT:
-			heightInfo.anchorTop = true;
-			heightInfo.anchorLeft = true;
+	case IDC_TOP_LEFT:
+		heightInfo.anchorTop = true;
+		heightInfo.anchorLeft = true;
 		break;
-		case IDC_TOP:
-			heightInfo.anchorTop = true;
+	case IDC_TOP:
+		heightInfo.anchorTop = true;
 		break;
-		case IDC_TOP_RIGHT:
-			heightInfo.anchorTop = true;
-			heightInfo.anchorRight = true;
+	case IDC_TOP_RIGHT:
+		heightInfo.anchorTop = true;
+		heightInfo.anchorRight = true;
 		break;
-		case IDC_CENTER_LEFT:
-			heightInfo.anchorLeft = true;
+	case IDC_CENTER_LEFT:
+		heightInfo.anchorLeft = true;
 		break;
-		case IDC_CENTER_RIGHT:
-			heightInfo.anchorRight = true;
+	case IDC_CENTER_RIGHT:
+		heightInfo.anchorRight = true;
 		break;
-		case IDC_BOTTOM:
-			heightInfo.anchorBottom = true;
+	case IDC_BOTTOM:
+		heightInfo.anchorBottom = true;
 		break;
-		case IDC_BOTTOM_LEFT:
-			heightInfo.anchorBottom = true;
-			heightInfo.anchorLeft = true;
+	case IDC_BOTTOM_LEFT:
+		heightInfo.anchorBottom = true;
+		heightInfo.anchorLeft = true;
 		break;
-		case IDC_BOTTOM_RIGHT:
-			heightInfo.anchorBottom = true;
-			heightInfo.anchorRight = true;
+	case IDC_BOTTOM_RIGHT:
+		heightInfo.anchorBottom = true;
+		heightInfo.anchorRight = true;
 		break;
-		default:
-			processed = false;
+	default:
+		processed = false;
 		break;
 	}
-	if (!processed) return(false);
+	if (!processed)
+	{
+		return (false);
+	}
 	mHeightInfo = heightInfo;
-	CButton *pButton;
+	CButton* pButton;
 	pButton = (CButton*)GetDlgItem(IDC_CENTER);
-	pButton->SetCheck(buttonID==IDC_CENTER?1:0);
+	pButton->SetCheck(buttonID == IDC_CENTER ? 1 : 0);
 	pButton = (CButton*)GetDlgItem(IDC_TOP_LEFT);
-	pButton->SetCheck(buttonID==IDC_TOP_LEFT?1:0);
+	pButton->SetCheck(buttonID == IDC_TOP_LEFT ? 1 : 0);
 	pButton = (CButton*)GetDlgItem(IDC_TOP);
-	pButton->SetCheck(buttonID==IDC_TOP?1:0);
+	pButton->SetCheck(buttonID == IDC_TOP ? 1 : 0);
 	pButton = (CButton*)GetDlgItem(IDC_TOP_RIGHT);
-	pButton->SetCheck(buttonID==IDC_TOP_RIGHT?1:0);
+	pButton->SetCheck(buttonID == IDC_TOP_RIGHT ? 1 : 0);
 	pButton = (CButton*)GetDlgItem(IDC_CENTER_LEFT);
-	pButton->SetCheck(buttonID==IDC_CENTER_LEFT?1:0);
+	pButton->SetCheck(buttonID == IDC_CENTER_LEFT ? 1 : 0);
 	pButton = (CButton*)GetDlgItem(IDC_CENTER_RIGHT);
-	pButton->SetCheck(buttonID==IDC_CENTER_RIGHT?1:0);
+	pButton->SetCheck(buttonID == IDC_CENTER_RIGHT ? 1 : 0);
 	pButton = (CButton*)GetDlgItem(IDC_BOTTOM);
-	pButton->SetCheck(buttonID==IDC_BOTTOM?1:0);
+	pButton->SetCheck(buttonID == IDC_BOTTOM ? 1 : 0);
 	pButton = (CButton*)GetDlgItem(IDC_BOTTOM_LEFT);
-	pButton->SetCheck(buttonID==IDC_BOTTOM_LEFT?1:0);
+	pButton->SetCheck(buttonID == IDC_BOTTOM_LEFT ? 1 : 0);
 	pButton = (CButton*)GetDlgItem(IDC_BOTTOM_RIGHT);
-	pButton->SetCheck(buttonID==IDC_BOTTOM_RIGHT?1:0);
+	pButton->SetCheck(buttonID == IDC_BOTTOM_RIGHT ? 1 : 0);
 	pButton = (CButton*)GetDlgItem(IDC_ANCHOR_LABEL);
-	pButton->SetCheck(buttonID==IDC_ANCHOR_LABEL?1:0);
+	pButton->SetCheck(buttonID == IDC_ANCHOR_LABEL ? 1 : 0);
 	return true;
-
 }
-
 
 void CNewHeightMap::OnOK()
 {
-	CWnd *edit = GetDlgItem(IDC_INITIAL_HEIGHT);
+	CWnd* edit = GetDlgItem(IDC_INITIAL_HEIGHT);
 	CString val;
-	if (edit) {
+	if (edit)
+	{
 		edit->GetWindowText(val);
 		mHeightInfo.initialHeight = atoi(val);
 	}
 	edit = GetDlgItem(IDC_X_SIZE);
-	if (edit) {
+	if (edit)
+	{
 		edit->GetWindowText(val);
 		mHeightInfo.xExtent = atoi(val);
 	}
 	edit = GetDlgItem(IDC_Y_SIZE);
-	if (edit) {
+	if (edit)
+	{
 		edit->GetWindowText(val);
 		mHeightInfo.yExtent = atoi(val);
 	}
 	edit = GetDlgItem(IDC_BORDER_SIZE);
-	if (edit) {
+	if (edit)
+	{
 		edit->GetWindowText(val);
 		mHeightInfo.borderWidth = atoi(val);
 	}
 
-	if (!WorldHeightMapEdit::isValidPlayableMapSize(mHeightInfo.xExtent, mHeightInfo.yExtent, mHeightInfo.borderWidth)) {
+	if (!WorldHeightMapEdit::isValidPlayableMapSize(mHeightInfo.xExtent, mHeightInfo.yExtent, mHeightInfo.borderWidth))
+	{
 		CString msg;
 		msg.Format("Map sides including the border must be 1 to %d, with an area of at most %d cells.", MAX_MAP_DIMENSION, MAX_MAP_AREA);
 		AfxMessageBox(msg);
 		return;
 	}
 
-	const Int width = mHeightInfo.xExtent + 2*mHeightInfo.borderWidth;
-	const Int height = mHeightInfo.yExtent + 2*mHeightInfo.borderWidth;
-	if (width * height > sqr(LARGE_MAP_SIDE)) {
+	const Int width = mHeightInfo.xExtent + 2 * mHeightInfo.borderWidth;
+	const Int height = mHeightInfo.yExtent + 2 * mHeightInfo.borderWidth;
+	if (width * height > sqr(LARGE_MAP_SIDE))
+	{
 		CString msg;
 		msg.Format("Maps with more than %d tiles including the border can run out of memory in WorldBuilder. Continue?", sqr(LARGE_MAP_SIDE));
 		if (AfxMessageBox(msg, MB_YESNO) != IDYES)
+		{
 			return;
+		}
 	}
 
 	CDialog::OnOK();
 }
 
-
 BOOL CNewHeightMap::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 	Int cmd = HIWORD(wParam);
-	if (cmd == BN_CLICKED) {
-		Int idButton = (int) LOWORD(wParam);    // identifier of button
-		if (doAnchorButton(idButton)) {
+	if (cmd == BN_CLICKED)
+	{
+		Int idButton = (int)LOWORD(wParam);    // identifier of button
+		if (doAnchorButton(idButton))
+		{
 			return true;
 		}
 	}

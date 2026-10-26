@@ -26,32 +26,33 @@
 
 class CellWidth : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CellWidth(int cellWidth, CWnd* pParent = nullptr);   // standard constructor
+	CellWidth(int cellWidth, CWnd* pParent = nullptr);    // standard constructor
 
-	int GetCellWidth() {return mCellWidth;};
-// Dialog Data
+	int GetCellWidth() { return mCellWidth; };
+	// Dialog Data
 	//{{AFX_DATA(CellWidth)
-	enum { IDD = IDD_CellWidth };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_CellWidth
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CellWidth)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual void OnOK() override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	int mCellWidth;
 
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CellWidth)
 	virtual BOOL OnInitDialog() override;

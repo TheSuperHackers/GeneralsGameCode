@@ -26,42 +26,48 @@
 /////////////////////////////////////////////////////////////////////////////
 // MoundOptions dialog
 
-class MoundOptions : public COptionsPanel	, public PopupSliderOwner
+class MoundOptions : public COptionsPanel, public PopupSliderOwner
 {
-// Construction
+	// Construction
 public:
-	enum {MIN_MOUND_HEIGHT=1,
-				MAX_MOUND_HEIGHT=21
+	enum
+	{
+		MIN_MOUND_HEIGHT = 1,
+		MAX_MOUND_HEIGHT = 21
 	};
 
-// Construction
+	// Construction
 public:
-	enum {MIN_BRUSH_SIZE=1,
-				MAX_BRUSH_SIZE=51,
-				MIN_FEATHER=0,
-				MAX_FEATHER=20};
+	enum
+	{
+		MIN_BRUSH_SIZE = 1,
+		MAX_BRUSH_SIZE = 51,
+		MIN_FEATHER = 0,
+		MAX_FEATHER = 20
+	};
 
-	MoundOptions(CWnd* pParent = nullptr);   // standard constructor
+	MoundOptions(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(MoundOptions)
-	enum { IDD = IDD_BRUSH_OPTIONS };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_BRUSH_OPTIONS
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(MoundOptions)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-	virtual void OnOK() override {return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel() override {return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
+	virtual void OnOK() override { return; };    //!< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnCancel() override { return; };    //!< Modeless dialogs don't close on ESC, so eat this for modeless.
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(MoundOptions)
 	virtual BOOL OnInitDialog() override;
@@ -72,12 +78,12 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	static MoundOptions *m_staticThis;  ///< Reference to the floating panel so SetWidth and SetFeather can be static.
-	static Int m_currentWidth;					///< current brush width in the ui.
-	static Int m_currentFeather;				///< current feather width in the ui.
+	static MoundOptions* m_staticThis;    ///< Reference to the floating panel so SetWidth and SetFeather can be static.
+	static Int m_currentWidth;    ///< current brush width in the ui.
+	static Int m_currentFeather;    ///< current feather width in the ui.
 	static Int m_currentHeight;
 
-	Bool		m_updating; ///<true if the ui is updating itself.
+	Bool m_updating;    ///< true if the ui is updating itself.
 	WBPopupSliderButton m_brushWidthPopup;
 	WBPopupSliderButton m_brushFeatherPopup;
 	WBPopupSliderButton m_brushHeightPopup;
@@ -88,8 +94,7 @@ public:
 	static void setHeight(Int height);
 
 public:
-
-	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial) override;
+	virtual void GetPopSliderInfo(const long sliderID, long* pMin, long* pMax, long* pLineSize, long* pInitial) override;
 	virtual void PopSliderChanged(const long sliderID, long theVal) override;
 	virtual void PopSliderFinished(const long sliderID, long theVal) override;
 };

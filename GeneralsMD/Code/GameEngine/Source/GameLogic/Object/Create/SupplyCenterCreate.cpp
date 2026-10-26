@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -38,16 +38,15 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SupplyCenterCreate::SupplyCenterCreate( Thing *thing, const ModuleData* moduleData ) : CreateModule( thing, moduleData )
+SupplyCenterCreate::SupplyCenterCreate(Thing* thing, const ModuleData* moduleData)
+  : CreateModule(thing, moduleData)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SupplyCenterCreate::~SupplyCenterCreate()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -58,53 +57,57 @@ void SupplyCenterCreate::onCreate()
 //-------------------------------------------------------------------------------------------------
 void SupplyCenterCreate::onBuildComplete()
 {
-	if( ! shouldDoOnBuildComplete() )
-		return;
-
-	CreateModule::onBuildComplete(); // extend
-
-	if( ThePlayerList == nullptr )
-		return;
-
-	for( Int playerIndex = ThePlayerList->getPlayerCount() - 1; playerIndex >= 0; playerIndex-- )
+	if (!shouldDoOnBuildComplete())
 	{
-		Player *currentPlayer = ThePlayerList->getNthPlayer( playerIndex );
-		if( currentPlayer == nullptr )
+		return;
+	}
+
+	CreateModule::onBuildComplete();    // extend
+
+	if (ThePlayerList == nullptr)
+	{
+		return;
+	}
+
+	for (Int playerIndex = ThePlayerList->getPlayerCount() - 1; playerIndex >= 0; playerIndex--)
+	{
+		Player* currentPlayer = ThePlayerList->getNthPlayer(playerIndex);
+		if (currentPlayer == nullptr)
+		{
 			continue;
-		ResourceGatheringManager *manager = currentPlayer->getResourceGatheringManager();
-		if( manager == nullptr )
+		}
+		ResourceGatheringManager* manager = currentPlayer->getResourceGatheringManager();
+		if (manager == nullptr)
+		{
 			continue;
-		manager->addSupplyCenter( getObject() );
+		}
+		manager->addSupplyCenter(getObject());
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void SupplyCenterCreate::crc( Xfer *xfer )
+void SupplyCenterCreate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	CreateModule::crc( xfer );
-
+	CreateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void SupplyCenterCreate::xfer( Xfer *xfer )
+void SupplyCenterCreate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CreateModule::xfer( xfer );
-
+	CreateModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -112,8 +115,6 @@ void SupplyCenterCreate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void SupplyCenterCreate::loadPostProcess()
 {
-
 	// extend base class
 	CreateModule::loadPostProcess();
-
 }

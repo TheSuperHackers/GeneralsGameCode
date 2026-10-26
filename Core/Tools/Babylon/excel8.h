@@ -23,14 +23,17 @@
 class Workbooks : public COleDispatchDriver
 {
 public:
-	Workbooks() {}		// Calls COleDispatchDriver default constructor
-	Workbooks(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
-	Workbooks(const Workbooks& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
+	Workbooks() {}    // Calls COleDispatchDriver default constructor
+	Workbooks(LPDISPATCH pDispatch)
+	  : COleDispatchDriver(pDispatch)
+	{}
+	Workbooks(const Workbooks& dispatchSrc)
+	  : COleDispatchDriver(dispatchSrc)
+	{}
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
 	LPDISPATCH GetApplication();
 	long GetCreator();
@@ -41,9 +44,9 @@ public:
 	LPDISPATCH GetItem(const VARIANT& Index);
 	LPUNKNOWN Get_NewEnum();
 	LPDISPATCH Open(LPCTSTR Filename, const VARIANT& UpdateLinks, const VARIANT& ReadOnly, const VARIANT& Format, const VARIANT& Password, const VARIANT& WriteResPassword, const VARIANT& IgnoreReadOnlyRecommended, const VARIANT& Origin,
-		const VARIANT& Delimiter, const VARIANT& Editable, const VARIANT& Notify, const VARIANT& Converter, const VARIANT& AddToMru);
+	                const VARIANT& Delimiter, const VARIANT& Editable, const VARIANT& Notify, const VARIANT& Converter, const VARIANT& AddToMru);
 	void OpenText(LPCTSTR Filename, const VARIANT& Origin, const VARIANT& StartRow, const VARIANT& DataType, long TextQualifier, const VARIANT& ConsecutiveDelimiter, const VARIANT& Tab, const VARIANT& Semicolon, const VARIANT& Comma,
-		const VARIANT& Space, const VARIANT& Other, const VARIANT& OtherChar, const VARIANT& FieldInfo, const VARIANT& TextVisualLayout);
+	              const VARIANT& Space, const VARIANT& Other, const VARIANT& OtherChar, const VARIANT& FieldInfo, const VARIANT& TextVisualLayout);
 	LPDISPATCH Get_Default(const VARIANT& Index);
 };
 /////////////////////////////////////////////////////////////////////////////
@@ -52,14 +55,17 @@ public:
 class _Application : public COleDispatchDriver
 {
 public:
-	_Application() {}		// Calls COleDispatchDriver default constructor
-	_Application(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
-	_Application(const _Application& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
+	_Application() {}    // Calls COleDispatchDriver default constructor
+	_Application(LPDISPATCH pDispatch)
+	  : COleDispatchDriver(pDispatch)
+	{}
+	_Application(const _Application& dispatchSrc)
+	  : COleDispatchDriver(dispatchSrc)
+	{}
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
 	LPDISPATCH GetApplication();
 	long GetCreator();
@@ -88,26 +94,26 @@ public:
 	VARIANT _Evaluate(const VARIANT& Name);
 	VARIANT ExecuteExcel4Macro(LPCTSTR String);
 	LPDISPATCH Intersect(LPDISPATCH Arg1, LPDISPATCH Arg2, const VARIANT& Arg3, const VARIANT& Arg4, const VARIANT& Arg5, const VARIANT& Arg6, const VARIANT& Arg7, const VARIANT& Arg8, const VARIANT& Arg9, const VARIANT& Arg10,
-		const VARIANT& Arg11, const VARIANT& Arg12, const VARIANT& Arg13, const VARIANT& Arg14, const VARIANT& Arg15, const VARIANT& Arg16, const VARIANT& Arg17, const VARIANT& Arg18, const VARIANT& Arg19, const VARIANT& Arg20,
-		const VARIANT& Arg21, const VARIANT& Arg22, const VARIANT& Arg23, const VARIANT& Arg24, const VARIANT& Arg25, const VARIANT& Arg26, const VARIANT& Arg27, const VARIANT& Arg28, const VARIANT& Arg29, const VARIANT& Arg30);
+	                     const VARIANT& Arg11, const VARIANT& Arg12, const VARIANT& Arg13, const VARIANT& Arg14, const VARIANT& Arg15, const VARIANT& Arg16, const VARIANT& Arg17, const VARIANT& Arg18, const VARIANT& Arg19, const VARIANT& Arg20,
+	                     const VARIANT& Arg21, const VARIANT& Arg22, const VARIANT& Arg23, const VARIANT& Arg24, const VARIANT& Arg25, const VARIANT& Arg26, const VARIANT& Arg27, const VARIANT& Arg28, const VARIANT& Arg29, const VARIANT& Arg30);
 	LPDISPATCH GetNames();
 	LPDISPATCH GetRange(const VARIANT& Cell1, const VARIANT& Cell2);
 	LPDISPATCH GetRows();
 	VARIANT Run(const VARIANT& Macro, const VARIANT& Arg1, const VARIANT& Arg2, const VARIANT& Arg3, const VARIANT& Arg4, const VARIANT& Arg5, const VARIANT& Arg6, const VARIANT& Arg7, const VARIANT& Arg8, const VARIANT& Arg9,
-		const VARIANT& Arg10, const VARIANT& Arg11, const VARIANT& Arg12, const VARIANT& Arg13, const VARIANT& Arg14, const VARIANT& Arg15, const VARIANT& Arg16, const VARIANT& Arg17, const VARIANT& Arg18, const VARIANT& Arg19,
-		const VARIANT& Arg20, const VARIANT& Arg21, const VARIANT& Arg22, const VARIANT& Arg23, const VARIANT& Arg24, const VARIANT& Arg25, const VARIANT& Arg26, const VARIANT& Arg27, const VARIANT& Arg28, const VARIANT& Arg29,
-		const VARIANT& Arg30);
+	            const VARIANT& Arg10, const VARIANT& Arg11, const VARIANT& Arg12, const VARIANT& Arg13, const VARIANT& Arg14, const VARIANT& Arg15, const VARIANT& Arg16, const VARIANT& Arg17, const VARIANT& Arg18, const VARIANT& Arg19,
+	            const VARIANT& Arg20, const VARIANT& Arg21, const VARIANT& Arg22, const VARIANT& Arg23, const VARIANT& Arg24, const VARIANT& Arg25, const VARIANT& Arg26, const VARIANT& Arg27, const VARIANT& Arg28, const VARIANT& Arg29,
+	            const VARIANT& Arg30);
 	VARIANT _Run2(const VARIANT& Macro, const VARIANT& Arg1, const VARIANT& Arg2, const VARIANT& Arg3, const VARIANT& Arg4, const VARIANT& Arg5, const VARIANT& Arg6, const VARIANT& Arg7, const VARIANT& Arg8, const VARIANT& Arg9,
-		const VARIANT& Arg10, const VARIANT& Arg11, const VARIANT& Arg12, const VARIANT& Arg13, const VARIANT& Arg14, const VARIANT& Arg15, const VARIANT& Arg16, const VARIANT& Arg17, const VARIANT& Arg18, const VARIANT& Arg19,
-		const VARIANT& Arg20, const VARIANT& Arg21, const VARIANT& Arg22, const VARIANT& Arg23, const VARIANT& Arg24, const VARIANT& Arg25, const VARIANT& Arg26, const VARIANT& Arg27, const VARIANT& Arg28, const VARIANT& Arg29,
-		const VARIANT& Arg30);
+	              const VARIANT& Arg10, const VARIANT& Arg11, const VARIANT& Arg12, const VARIANT& Arg13, const VARIANT& Arg14, const VARIANT& Arg15, const VARIANT& Arg16, const VARIANT& Arg17, const VARIANT& Arg18, const VARIANT& Arg19,
+	              const VARIANT& Arg20, const VARIANT& Arg21, const VARIANT& Arg22, const VARIANT& Arg23, const VARIANT& Arg24, const VARIANT& Arg25, const VARIANT& Arg26, const VARIANT& Arg27, const VARIANT& Arg28, const VARIANT& Arg29,
+	              const VARIANT& Arg30);
 	LPDISPATCH GetSelection();
 	void SendKeys(const VARIANT& Keys, const VARIANT& Wait);
 	LPDISPATCH GetSheets();
 	LPDISPATCH GetThisWorkbook();
 	LPDISPATCH Union(LPDISPATCH Arg1, LPDISPATCH Arg2, const VARIANT& Arg3, const VARIANT& Arg4, const VARIANT& Arg5, const VARIANT& Arg6, const VARIANT& Arg7, const VARIANT& Arg8, const VARIANT& Arg9, const VARIANT& Arg10, const VARIANT& Arg11,
-		const VARIANT& Arg12, const VARIANT& Arg13, const VARIANT& Arg14, const VARIANT& Arg15, const VARIANT& Arg16, const VARIANT& Arg17, const VARIANT& Arg18, const VARIANT& Arg19, const VARIANT& Arg20, const VARIANT& Arg21,
-		const VARIANT& Arg22, const VARIANT& Arg23, const VARIANT& Arg24, const VARIANT& Arg25, const VARIANT& Arg26, const VARIANT& Arg27, const VARIANT& Arg28, const VARIANT& Arg29, const VARIANT& Arg30);
+	                 const VARIANT& Arg12, const VARIANT& Arg13, const VARIANT& Arg14, const VARIANT& Arg15, const VARIANT& Arg16, const VARIANT& Arg17, const VARIANT& Arg18, const VARIANT& Arg19, const VARIANT& Arg20, const VARIANT& Arg21,
+	                 const VARIANT& Arg22, const VARIANT& Arg23, const VARIANT& Arg24, const VARIANT& Arg25, const VARIANT& Arg26, const VARIANT& Arg27, const VARIANT& Arg28, const VARIANT& Arg29, const VARIANT& Arg30);
 	LPDISPATCH GetWindows();
 	LPDISPATCH GetWorkbooks();
 	LPDISPATCH GetWorksheetFunction();
@@ -219,7 +225,7 @@ public:
 	void SetLeft(double newValue);
 	CString GetLibraryPath();
 	void MacroOptions(const VARIANT& Macro, const VARIANT& Description, const VARIANT& HasMenu, const VARIANT& MenuText, const VARIANT& HasShortcutKey, const VARIANT& ShortcutKey, const VARIANT& Category, const VARIANT& StatusBar,
-		const VARIANT& HelpContextID, const VARIANT& HelpFile);
+	                  const VARIANT& HelpContextID, const VARIANT& HelpFile);
 	void MailLogoff();
 	void MailLogon(const VARIANT& Name, const VARIANT& Password, const VARIANT& DownloadNewMail);
 	VARIANT GetMailSession();
@@ -335,14 +341,17 @@ public:
 class _Workbook : public COleDispatchDriver
 {
 public:
-	_Workbook() {}		// Calls COleDispatchDriver default constructor
-	_Workbook(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
-	_Workbook(const _Workbook& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
+	_Workbook() {}    // Calls COleDispatchDriver default constructor
+	_Workbook(LPDISPATCH pDispatch)
+	  : COleDispatchDriver(pDispatch)
+	{}
+	_Workbook(const _Workbook& dispatchSrc)
+	  : COleDispatchDriver(dispatchSrc)
+	{}
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
 	LPDISPATCH GetApplication();
 	long GetCreator();
@@ -425,7 +434,7 @@ public:
 	void RunAutoMacros(long Which);
 	void Save();
 	void SaveAs(const VARIANT& Filename, const VARIANT& FileFormat, const VARIANT& Password, const VARIANT& WriteResPassword, const VARIANT& ReadOnlyRecommended, const VARIANT& CreateBackup, long AccessMode, const VARIANT& ConflictResolution,
-		const VARIANT& AddToMru, const VARIANT& TextCodepage, const VARIANT& TextVisualLayout);
+	            const VARIANT& AddToMru, const VARIANT& TextCodepage, const VARIANT& TextVisualLayout);
 	void SaveCopyAs(const VARIANT& Filename);
 	BOOL GetSaved();
 	void SetSaved(BOOL bNewValue);
@@ -476,14 +485,17 @@ public:
 class _Worksheet : public COleDispatchDriver
 {
 public:
-	_Worksheet() {}		// Calls COleDispatchDriver default constructor
-	_Worksheet(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
-	_Worksheet(const _Worksheet& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
+	_Worksheet() {}    // Calls COleDispatchDriver default constructor
+	_Worksheet(LPDISPATCH pDispatch)
+	  : COleDispatchDriver(pDispatch)
+	{}
+	_Worksheet(const _Worksheet& dispatchSrc)
+	  : COleDispatchDriver(dispatchSrc)
+	{}
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
 	LPDISPATCH GetApplication();
 	long GetCreator();
@@ -509,7 +521,7 @@ public:
 	BOOL GetProtectionMode();
 	BOOL GetProtectScenarios();
 	void SaveAs(LPCTSTR Filename, const VARIANT& FileFormat, const VARIANT& Password, const VARIANT& WriteResPassword, const VARIANT& ReadOnlyRecommended, const VARIANT& CreateBackup, const VARIANT& AddToMru, const VARIANT& TextCodepage,
-		const VARIANT& TextVisualLayout);
+	            const VARIANT& TextVisualLayout);
 	void Select(const VARIANT& Replace);
 	void Unprotect(const VARIANT& Password);
 	long GetVisible();
@@ -551,8 +563,8 @@ public:
 	void PasteSpecial(const VARIANT& Format, const VARIANT& Link, const VARIANT& DisplayAsIcon, const VARIANT& IconFileName, const VARIANT& IconIndex, const VARIANT& IconLabel);
 	LPDISPATCH PivotTables(const VARIANT& Index);
 	LPDISPATCH PivotTableWizard(const VARIANT& SourceType, const VARIANT& SourceData, const VARIANT& TableDestination, const VARIANT& TableName, const VARIANT& RowGrand, const VARIANT& ColumnGrand, const VARIANT& SaveData,
-		const VARIANT& HasAutoFormat, const VARIANT& AutoPage, const VARIANT& Reserved, const VARIANT& BackgroundQuery, const VARIANT& OptimizeCache, const VARIANT& PageFieldOrder, const VARIANT& PageFieldWrapCount, const VARIANT& ReadData,
-		const VARIANT& Connection);
+	                            const VARIANT& HasAutoFormat, const VARIANT& AutoPage, const VARIANT& Reserved, const VARIANT& BackgroundQuery, const VARIANT& OptimizeCache, const VARIANT& PageFieldOrder, const VARIANT& PageFieldWrapCount, const VARIANT& ReadData,
+	                            const VARIANT& Connection);
 	LPDISPATCH GetRange(const VARIANT& Cell1, const VARIANT& Cell2);
 	LPDISPATCH GetRows();
 	LPDISPATCH Scenarios(const VARIANT& Index);
@@ -584,14 +596,17 @@ public:
 class Range : public COleDispatchDriver
 {
 public:
-	Range() {}		// Calls COleDispatchDriver default constructor
-	Range(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
-	Range(const Range& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
+	Range() {}    // Calls COleDispatchDriver default constructor
+	Range(LPDISPATCH pDispatch)
+	  : COleDispatchDriver(pDispatch)
+	{}
+	Range(const Range& dispatchSrc)
+	  : COleDispatchDriver(dispatchSrc)
+	{}
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
 	LPDISPATCH GetApplication();
 	long GetCreator();
@@ -654,7 +669,7 @@ public:
 	void FillRight();
 	void FillUp();
 	LPDISPATCH Find(const VARIANT& What, const VARIANT& After, const VARIANT& LookIn, const VARIANT& LookAt, const VARIANT& SearchOrder, long SearchDirection, const VARIANT& MatchCase, const VARIANT& MatchByte,
-		const VARIANT& MatchControlCharacters, const VARIANT& MatchDiacritics, const VARIANT& MatchKashida, const VARIANT& MatchAlefHamza);
+	                const VARIANT& MatchControlCharacters, const VARIANT& MatchDiacritics, const VARIANT& MatchKashida, const VARIANT& MatchAlefHamza);
 	LPDISPATCH FindNext(const VARIANT& After);
 	LPDISPATCH FindPrevious(const VARIANT& After);
 	LPDISPATCH GetFont();
@@ -732,7 +747,7 @@ public:
 	LPDISPATCH GetRange(const VARIANT& Cell1, const VARIANT& Cell2);
 	void RemoveSubtotal();
 	BOOL Replace(const VARIANT& What, const VARIANT& Replacement, const VARIANT& LookAt, const VARIANT& SearchOrder, const VARIANT& MatchCase, const VARIANT& MatchByte, const VARIANT& MatchControlCharacters, const VARIANT& MatchDiacritics,
-		const VARIANT& MatchKashida, const VARIANT& MatchAlefHamza);
+	             const VARIANT& MatchKashida, const VARIANT& MatchAlefHamza);
 	LPDISPATCH GetResize(const VARIANT& RowSize, const VARIANT& ColumnSize);
 	long GetRow();
 	LPDISPATCH RowDifferences(const VARIANT& Comparison);
@@ -740,8 +755,8 @@ public:
 	void SetRowHeight(const VARIANT& newValue);
 	LPDISPATCH GetRows();
 	VARIANT Run(const VARIANT& Arg1, const VARIANT& Arg2, const VARIANT& Arg3, const VARIANT& Arg4, const VARIANT& Arg5, const VARIANT& Arg6, const VARIANT& Arg7, const VARIANT& Arg8, const VARIANT& Arg9, const VARIANT& Arg10,
-		const VARIANT& Arg11, const VARIANT& Arg12, const VARIANT& Arg13, const VARIANT& Arg14, const VARIANT& Arg15, const VARIANT& Arg16, const VARIANT& Arg17, const VARIANT& Arg18, const VARIANT& Arg19, const VARIANT& Arg20,
-		const VARIANT& Arg21, const VARIANT& Arg22, const VARIANT& Arg23, const VARIANT& Arg24, const VARIANT& Arg25, const VARIANT& Arg26, const VARIANT& Arg27, const VARIANT& Arg28, const VARIANT& Arg29, const VARIANT& Arg30);
+	            const VARIANT& Arg11, const VARIANT& Arg12, const VARIANT& Arg13, const VARIANT& Arg14, const VARIANT& Arg15, const VARIANT& Arg16, const VARIANT& Arg17, const VARIANT& Arg18, const VARIANT& Arg19, const VARIANT& Arg20,
+	            const VARIANT& Arg21, const VARIANT& Arg22, const VARIANT& Arg23, const VARIANT& Arg24, const VARIANT& Arg25, const VARIANT& Arg26, const VARIANT& Arg27, const VARIANT& Arg28, const VARIANT& Arg29, const VARIANT& Arg30);
 	void Select();
 	void Show();
 	void ShowDependents(const VARIANT& Remove);
@@ -752,7 +767,7 @@ public:
 	VARIANT GetShrinkToFit();
 	void SetShrinkToFit(const VARIANT& newValue);
 	void Sort(const VARIANT& Key1, long Order1, const VARIANT& Key2, const VARIANT& Type, long Order2, const VARIANT& Key3, long Order3, long Header, const VARIANT& OrderCustom, const VARIANT& MatchCase, long Orientation, long SortMethod,
-		const VARIANT& IgnoreControlCharacters, const VARIANT& IgnoreDiacritics, const VARIANT& IgnoreKashida);
+	          const VARIANT& IgnoreControlCharacters, const VARIANT& IgnoreDiacritics, const VARIANT& IgnoreKashida);
 	void SortSpecial(long SortMethod, const VARIANT& Key1, long Order1, const VARIANT& Type, const VARIANT& Key2, long Order2, const VARIANT& Key3, long Order3, long Header, const VARIANT& OrderCustom, const VARIANT& MatchCase, long Orientation);
 	LPDISPATCH GetSoundNote();
 	LPDISPATCH SpecialCells(long Type, const VARIANT& Value);
@@ -764,7 +779,7 @@ public:
 	void Table(const VARIANT& RowInput, const VARIANT& ColumnInput);
 	VARIANT GetText();
 	void TextToColumns(const VARIANT& Destination, long DataType, long TextQualifier, const VARIANT& ConsecutiveDelimiter, const VARIANT& Tab, const VARIANT& Semicolon, const VARIANT& Comma, const VARIANT& Space, const VARIANT& Other,
-		const VARIANT& OtherChar, const VARIANT& FieldInfo);
+	                   const VARIANT& OtherChar, const VARIANT& FieldInfo);
 	VARIANT GetTop();
 	void Ungroup();
 	VARIANT GetUseStandardHeight();
@@ -797,14 +812,17 @@ public:
 class Border : public COleDispatchDriver
 {
 public:
-	Border() {}		// Calls COleDispatchDriver default constructor
-	Border(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
-	Border(const Border& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
+	Border() {}    // Calls COleDispatchDriver default constructor
+	Border(LPDISPATCH pDispatch)
+	  : COleDispatchDriver(pDispatch)
+	{}
+	Border(const Border& dispatchSrc)
+	  : COleDispatchDriver(dispatchSrc)
+	{}
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
 	LPDISPATCH GetApplication();
 	long GetCreator();
@@ -824,14 +842,17 @@ public:
 class Borders : public COleDispatchDriver
 {
 public:
-	Borders() {}		// Calls COleDispatchDriver default constructor
-	Borders(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
-	Borders(const Borders& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
+	Borders() {}    // Calls COleDispatchDriver default constructor
+	Borders(LPDISPATCH pDispatch)
+	  : COleDispatchDriver(pDispatch)
+	{}
+	Borders(const Borders& dispatchSrc)
+	  : COleDispatchDriver(dispatchSrc)
+	{}
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
 	LPDISPATCH GetApplication();
 	long GetCreator();
@@ -857,14 +878,17 @@ public:
 class Interior : public COleDispatchDriver
 {
 public:
-	Interior() {}		// Calls COleDispatchDriver default constructor
-	Interior(LPDISPATCH pDispatch) : COleDispatchDriver(pDispatch) {}
-	Interior(const Interior& dispatchSrc) : COleDispatchDriver(dispatchSrc) {}
+	Interior() {}    // Calls COleDispatchDriver default constructor
+	Interior(LPDISPATCH pDispatch)
+	  : COleDispatchDriver(pDispatch)
+	{}
+	Interior(const Interior& dispatchSrc)
+	  : COleDispatchDriver(dispatchSrc)
+	{}
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
 	LPDISPATCH GetApplication();
 	long GetCreator();

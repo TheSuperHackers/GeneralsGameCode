@@ -40,23 +40,19 @@
 //-------------------------------------------------------------------------------------------------
 class W3DPoliceCarDraw : public W3DTruckDraw
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DPoliceCarDraw, "W3DPoliceCarDraw" )
-	MAKE_STANDARD_MODULE_MACRO( W3DPoliceCarDraw )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(W3DPoliceCarDraw, "W3DPoliceCarDraw")
+	MAKE_STANDARD_MODULE_MACRO(W3DPoliceCarDraw)
 
 public:
-
-	W3DPoliceCarDraw( Thing *thing, const ModuleData* moduleData );
+	W3DPoliceCarDraw(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual void doDrawModule(const Matrix3D* transformMtx) override;
 
 protected:
-
 	/// create the dynamic light for the search light
-	W3DDynamicLight *createDynamicLight();
+	W3DDynamicLight* createDynamicLight();
 
-	W3DDynamicLight *m_light;  ///< light for the POLICECAR
-	Real					m_curFrame;
-
+	W3DDynamicLight* m_light;    ///< light for the POLICECAR
+	Real m_curFrame;
 };

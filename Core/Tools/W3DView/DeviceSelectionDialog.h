@@ -26,29 +26,31 @@
 
 class CDeviceSelectionDialog : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CDeviceSelectionDialog(BOOL bLookupCachedInfo = TRUE, CWnd* pParent = nullptr);   // standard constructor
+	CDeviceSelectionDialog(BOOL bLookupCachedInfo = TRUE, CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CDeviceSelectionDialog)
-	enum { IDD = IDD_RENDER_DEVICE_SELECTOR };
-	CComboBox	m_deviceListComboBox;
+	enum
+	{
+		IDD = IDD_RENDER_DEVICE_SELECTOR
+	};
+	CComboBox m_deviceListComboBox;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDeviceSelectionDialog)
-	public:
+public:
 	virtual int DoModal() override;
-	protected:
+
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CDeviceSelectionDialog)
 	virtual BOOL OnInitDialog() override;
@@ -57,27 +59,26 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-    public:
+public:
+	// Return the selected device index
+	int GetDeviceIndex() const
+	{ return m_iDeviceIndex; }
 
-        // Return the selected device index
-        int GetDeviceIndex () const
-            { return m_iDeviceIndex; }
+	// Return the selected bits per pixel
+	int GetBitsPerPixel() const
+	{ return m_iBitsPerPixel; }
 
-        // Return the selected bits per pixel
-        int GetBitsPerPixel () const
-            { return m_iBitsPerPixel; }
+	const CString& GetDriverName() const
+	{ return m_DriverName; }
 
-        const CString &GetDriverName () const
-            { return m_DriverName; }
+protected:
+	void UpdateDeviceDescription();
 
-    protected:
-        void UpdateDeviceDescription ();
-
-    private:
-        BOOL		m_bLookupCachedInfo;
-        int			m_iDeviceIndex;
-        int			m_iBitsPerPixel;
-		  CString	m_DriverName;
+private:
+	BOOL m_bLookupCachedInfo;
+	int m_iDeviceIndex;
+	int m_iBitsPerPixel;
+	CString m_DriverName;
 };
 
 //{{AFX_INSERT_LOCATION}}

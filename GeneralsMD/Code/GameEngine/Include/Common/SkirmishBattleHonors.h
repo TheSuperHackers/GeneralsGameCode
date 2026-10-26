@@ -101,7 +101,7 @@ public:
 };
 
 void ResetBattleHonorInsertion();
-void InsertBattleHonor(GameWindow *list, const Image *image, Bool enabled, Int itemData, Int& row, Int& column, UnicodeString text = UnicodeString::TheEmptyString, Int extra = 0);
-void BattleHonorTooltip(GameWindow *window,
-												WinInstanceData *instData,
-												UnsignedInt mouse);
+void InsertBattleHonor(GameWindow* list, const Image* image, Bool enabled, Int itemData, Int& row, Int& column, UnicodeString text = UnicodeString::TheEmptyString, Int extra = 0);
+void BattleHonorTooltip(GameWindow* window,
+                        WinInstanceData* instData,
+                        UnsignedInt mouse);

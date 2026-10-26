@@ -38,18 +38,22 @@ std::string intToString(int val)
 		val = -val;
 	}
 	if (val == 0)
+	{
 		return "0";
+	}
 
 	char buf[2];
 	buf[1] = 0;
 	while (val)
 	{
-		buf[0] = '0' + val%10;
+		buf[0] = '0' + val % 10;
 		val /= 10;
 		s.insert(0, buf);
 	}
 	if (neg)
+	{
 		s.insert(0, "-");
+	}
 	return s;
 }
 
@@ -63,15 +67,15 @@ static std::string trim(std::string s, const std::string& delim)
 	}
 
 	i = s.find_last_not_of(delim);
-	if (i>=0 && i<s.npos)
+	if (i >= 0 && i < s.npos)
 	{
-		s = s.substr(0, i+1);
+		s = s.substr(0, i + 1);
 	}
 
 	return s;
 }
 
-static KeyValueMap parseIntoKVPairs( std::string s, const std::string& delim )
+static KeyValueMap parseIntoKVPairs(std::string s, const std::string& delim)
 {
 	KeyValueMap m;
 	bool done = false;
@@ -88,7 +92,7 @@ static KeyValueMap parseIntoKVPairs( std::string s, const std::string& delim )
 		else
 		{
 			kv = s.substr(0, comma);
-			s = s.substr(comma+1);
+			s = s.substr(comma + 1);
 		}
 		s = trim(s, delim);
 		kv = trim(kv, delim);
@@ -103,7 +107,7 @@ static KeyValueMap parseIntoKVPairs( std::string s, const std::string& delim )
 			else
 			{
 				k = trim(trim(kv.substr(0, equals), delim), " \t");
-				v = trim(trim(kv.substr(equals+1), delim), " \t");
+				v = trim(trim(kv.substr(equals + 1), delim), " \t");
 
 				if (!k.empty() && !v.empty())
 				{
@@ -118,20 +122,20 @@ static KeyValueMap parseIntoKVPairs( std::string s, const std::string& delim )
 KVPairClass::KVPairClass()
 {}
 
-KVPairClass::KVPairClass( const std::string& in, const std::string& delim )
+KVPairClass::KVPairClass(const std::string& in, const std::string& delim)
 {
-	set( in, delim );
+	set(in, delim);
 }
 
-void KVPairClass::set( const std::string& in, const std::string& delim )
+void KVPairClass::set(const std::string& in, const std::string& delim)
 {
-	m_map = parseIntoKVPairs( in, delim );
+	m_map = parseIntoKVPairs(in, delim);
 }
 
-void KVPairClass::readFromFile( const std::string& in, const std::string& delim )
+void KVPairClass::readFromFile(const std::string& in, const std::string& delim)
 {
 	m_map.clear();
-	FILE *fp = fopen(in.c_str(), "rb");
+	FILE* fp = fopen(in.c_str(), "rb");
 	if (fp)
 	{
 		std::string s;
@@ -139,8 +143,8 @@ void KVPairClass::readFromFile( const std::string& in, const std::string& delim 
 		int len = ftell(fp);
 		fseek(fp, 0, SEEK_SET);
 
-		char *buf = new char[len + 1];
-		memset(buf, 0, len+1);
+		char* buf = new char[len + 1];
+		memset(buf, 0, len + 1);
 		fread(buf, 1, len, fp);
 		fclose(fp);
 
@@ -150,7 +154,7 @@ void KVPairClass::readFromFile( const std::string& in, const std::string& delim 
 	}
 }
 
-std::string KVPairClass::getStringVal( const std::string& key ) const
+std::string KVPairClass::getStringVal(const std::string& key) const
 {
 	KeyValueMap::const_iterator it = m_map.find(key);
 	if (it == m_map.end())
@@ -160,7 +164,7 @@ std::string KVPairClass::getStringVal( const std::string& key ) const
 	return it->second;
 }
 
-bool KVPairClass::getString( const std::string& key, std::string& val ) const
+bool KVPairClass::getString(const std::string& key, std::string& val) const
 {
 	std::string tmp = getStringVal(key);
 	if (tmp.empty())
@@ -172,7 +176,7 @@ bool KVPairClass::getString( const std::string& key, std::string& val ) const
 	return true;
 }
 
-bool KVPairClass::getInt( const std::string& key, int& val ) const
+bool KVPairClass::getInt(const std::string& key, int& val) const
 {
 	std::string tmp = getStringVal(key);
 	if (tmp.empty())
@@ -184,7 +188,7 @@ bool KVPairClass::getInt( const std::string& key, int& val ) const
 	return true;
 }
 
-bool KVPairClass::getUnsignedInt( const std::string& key, unsigned int& val ) const
+bool KVPairClass::getUnsignedInt(const std::string& key, unsigned int& val) const
 {
 	std::string tmp = getStringVal(key);
 	if (tmp.empty())
@@ -195,4 +199,3 @@ bool KVPairClass::getUnsignedInt( const std::string& key, unsigned int& val ) co
 	val = atoi(tmp.c_str());
 	return true;
 }
-

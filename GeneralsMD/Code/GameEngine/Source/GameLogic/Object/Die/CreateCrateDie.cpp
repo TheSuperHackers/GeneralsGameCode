@@ -27,7 +27,7 @@
 // Desc:   A chance to create a crate on death according to certain condition checks
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
@@ -45,7 +45,8 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CreateCrateDie::CreateCrateDie( Thing *thing, const ModuleData* moduleData ) : DieModule( thing, moduleData )
+CreateCrateDie::CreateCrateDie(Thing* thing, const ModuleData* moduleData)
+  : DieModule(thing, moduleData)
 {
 }
 
@@ -55,69 +56,80 @@ CreateCrateDie::~CreateCrateDie()
 {
 }
 
-void CreateCrateDieModuleData::parseCrateData( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ )
+void CreateCrateDieModuleData::parseCrateData(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
 {
 	CreateCrateDieModuleData* self = (CreateCrateDieModuleData*)instance;
 
 	AsciiString crateName = ini->getNextToken();
 
-	self->m_crateNameList.push_back( crateName );
+	self->m_crateNameList.push_back(crateName);
 }
 
 //-------------------------------------------------------------------------------------------------
 /** The die callback. */
 //-------------------------------------------------------------------------------------------------
-void CreateCrateDie::onDie( const DamageInfo * damageInfo )
+void CreateCrateDie::onDie(const DamageInfo* damageInfo)
 {
 	if (!isDieApplicable(damageInfo))
-		return;
-
-	CrateTemplate const *currentCrateData = nullptr;
-	Object *killer = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
-	Object *me = getObject();
-
-	if( killer && killer->getRelationship( me ) == ALLIES )
-		return; //Nope, no crate for killing ally at all.
-
-	for( AsciiStringListConstIterator iter = getCreateCrateDieModuleData()->m_crateNameList.begin();
-				iter != getCreateCrateDieModuleData()->m_crateNameList.end();
-				iter++
-			)
 	{
-		currentCrateData = TheCrateSystem->findCrateTemplate( *iter );
-		if( currentCrateData )
+		return;
+	}
+
+	CrateTemplate const* currentCrateData = nullptr;
+	Object* killer = TheGameLogic->findObjectByID(damageInfo->in.m_sourceID);
+	Object* me = getObject();
+
+	if (killer && killer->getRelationship(me) == ALLIES)
+	{
+		return;    // Nope, no crate for killing ally at all.
+	}
+
+	for (AsciiStringListConstIterator iter = getCreateCrateDieModuleData()->m_crateNameList.begin();
+	     iter != getCreateCrateDieModuleData()->m_crateNameList.end();
+	     iter++)
+	{
+		currentCrateData = TheCrateSystem->findCrateTemplate(*iter);
+		if (currentCrateData)
 		{
-			if( ! testCreationChance( currentCrateData ) )
-				continue;// always test this
+			if (!testCreationChance(currentCrateData))
+			{
+				continue;    // always test this
+			}
 
-			if( (currentCrateData->m_veterancyLevel != LEVEL_INVALID) && ! testVeterancyLevel( currentCrateData ) )
-				continue; //If this is set up to test and it fails
+			if ((currentCrateData->m_veterancyLevel != LEVEL_INVALID) && !testVeterancyLevel(currentCrateData))
+			{
+				continue;    // If this is set up to test and it fails
+			}
 
-			if( KINDOFMASK_ANY_SET(currentCrateData->m_killedByTypeKindof) && !testKillerType( currentCrateData, killer ) )
-				continue; //If this is set up to test and it fails
+			if (KINDOFMASK_ANY_SET(currentCrateData->m_killedByTypeKindof) && !testKillerType(currentCrateData, killer))
+			{
+				continue;    // If this is set up to test and it fails
+			}
 
-			if( (currentCrateData->m_killerScience != SCIENCE_INVALID)  &&  !testKillerScience( currentCrateData, killer ) )
-				continue; //If this is set up to test and it fails
+			if ((currentCrateData->m_killerScience != SCIENCE_INVALID) && !testKillerScience(currentCrateData, killer))
+			{
+				continue;    // If this is set up to test and it fails
+			}
 
-			Object *crate = createCrate( currentCrateData );//Make the crate
-			if( crate )
+			Object* crate = createCrate(currentCrateData);    // Make the crate
+			if (crate)
 			{
 				// Design needs to set ownership of crates sometimes
-				if( currentCrateData->m_isOwnedByMaker )
+				if (currentCrateData->m_isOwnedByMaker)
 				{
-					crate->setTeam( me->getControllingPlayer()->getDefaultTeam() );
+					crate->setTeam(me->getControllingPlayer()->getDefaultTeam());
 				}
 
 				if (killer)
 				{
 					// If the killer is a computer controlled player, notify that the crate exists.
 					if (killer->getControllingPlayer() &&
-						killer->getControllingPlayer()->getPlayerType()==PLAYER_COMPUTER)
+					    killer->getControllingPlayer()->getPlayerType() == PLAYER_COMPUTER)
 					{
-						AIUpdateInterface *ai = killer->getAIUpdateInterface();
+						AIUpdateInterface* ai = killer->getAIUpdateInterface();
 						if (ai)
 						{
-							ai->notifyCrate( crate->getID() );
+							ai->notifyCrate(crate->getID());
 						}
 					}
 				}
@@ -126,15 +138,15 @@ void CreateCrateDie::onDie( const DamageInfo * damageInfo )
 	}
 }
 
-Bool CreateCrateDie::testCreationChance( CrateTemplate const *currentCrateData )
+Bool CreateCrateDie::testCreationChance(CrateTemplate const* currentCrateData)
 {
 	Real testAgainst = currentCrateData->m_creationChance;
-	Real testWith = GameLogicRandomValueReal( 0, 1 );
+	Real testWith = GameLogicRandomValueReal(0, 1);
 
 	return testWith < testAgainst;
 }
 
-Bool CreateCrateDie::testVeterancyLevel( CrateTemplate const *currentCrateData )
+Bool CreateCrateDie::testVeterancyLevel(CrateTemplate const* currentCrateData)
 {
 	VeterancyLevel testAgainst = currentCrateData->m_veterancyLevel;
 	VeterancyLevel testWith = getObject()->getVeterancyLevel();
@@ -142,52 +154,61 @@ Bool CreateCrateDie::testVeterancyLevel( CrateTemplate const *currentCrateData )
 	return testAgainst == testWith;
 }
 
-Bool CreateCrateDie::testKillerType( CrateTemplate const *currentCrateData, Object *killer )
+Bool CreateCrateDie::testKillerType(CrateTemplate const* currentCrateData, Object* killer)
 {
-	if( killer == nullptr )
+	if (killer == nullptr)
+	{
 		return FALSE;
+	}
 
 	// Must match the whole group of bits set in the KilledBy description (most likely One).
-	if( ! killer->getTemplate()->isKindOfMulti( currentCrateData->m_killedByTypeKindof, KINDOFMASK_NONE ) )
+	if (!killer->getTemplate()->isKindOfMulti(currentCrateData->m_killedByTypeKindof, KINDOFMASK_NONE))
+	{
 		return FALSE;
+	}
 
 	return TRUE;
 }
 
-Bool CreateCrateDie::testKillerScience( CrateTemplate const *currentCrateData, Object *killer )
+Bool CreateCrateDie::testKillerScience(CrateTemplate const* currentCrateData, Object* killer)
 {
-	if( killer == nullptr )
+	if (killer == nullptr)
+	{
 		return FALSE;
+	}
 
 	// killer's player must have the listed science
-	Player *killerPlayer = killer->getControllingPlayer();
+	Player* killerPlayer = killer->getControllingPlayer();
 
-	if( killerPlayer == nullptr )
+	if (killerPlayer == nullptr)
+	{
 		return FALSE;
+	}
 
-	if( ! killerPlayer->hasScience( currentCrateData->m_killerScience ) )
+	if (!killerPlayer->hasScience(currentCrateData->m_killerScience))
+	{
 		return FALSE;
+	}
 
 	return TRUE;
 }
 
-Object *CreateCrateDie::createCrate( CrateTemplate const *currentCrateData )
+Object* CreateCrateDie::createCrate(CrateTemplate const* currentCrateData)
 {
 	Coord3D centerPoint = *getObject()->getPosition();
 	PathfindLayerEnum layer = getObject()->getLayer();
 
 	// CreationChance is used for the success of this block, but this block can have any number of potential actual crates
-	Real multipleCratePick = GameLogicRandomValueReal( 0, 1 );
+	Real multipleCratePick = GameLogicRandomValueReal(0, 1);
 	Real multipleCrateRunningTotal = 0;
 	AsciiString crateName;
 
-	for( crateCreationEntryConstIterator iter = currentCrateData->m_possibleCrates.begin();
-				iter != currentCrateData->m_possibleCrates.end();
-				iter++
-			)
+	for (crateCreationEntryConstIterator iter = currentCrateData->m_possibleCrates.begin();
+	     iter != currentCrateData->m_possibleCrates.end();
+	     iter++)
 	{
 		multipleCrateRunningTotal += (*iter).crateChance;
-		if( multipleCrateRunningTotal > multipleCratePick )
+		if (multipleCrateRunningTotal > multipleCratePick)
 		{
 			// Run through the list of possibles, and if the sum of the chances is greater than my random pick,
 			// then this is the correct one.  (This simulates contiguous %, or weighted distribution)
@@ -197,9 +218,11 @@ Object *CreateCrateDie::createCrate( CrateTemplate const *currentCrateData )
 	}
 	// At this point, I could very well have a "" for the type, if the Designer didn't make the sum of chances 1
 
-	ThingTemplate const *crateType = TheThingFactory->findTemplate( crateName );
-	if( crateType == nullptr )
+	ThingTemplate const* crateType = TheThingFactory->findTemplate(crateName);
+	if (crateType == nullptr)
+	{
 		return nullptr;
+	}
 
 	Bool spotFound = FALSE;
 	Coord3D creationPoint;
@@ -208,11 +231,13 @@ Object *CreateCrateDie::createCrate( CrateTemplate const *currentCrateData )
 	fpOptions.minRadius = 0.0f;
 	fpOptions.maxRadius = 5.0f;
 	fpOptions.relationshipObject = getObject();
-	fpOptions.flags = FPF_IGNORE_ALLY_OR_NEUTRAL_UNITS; // So the dead guy won't block, nor will his dead hulk.
-	if (layer != LAYER_GROUND) {
+	fpOptions.flags = FPF_IGNORE_ALLY_OR_NEUTRAL_UNITS;    // So the dead guy won't block, nor will his dead hulk.
+	if (layer != LAYER_GROUND)
+	{
 		creationPoint = centerPoint;
 		spotFound = true;
-	} else if( ThePartitionManager->findPositionAround( &centerPoint, &fpOptions, &creationPoint ) )
+	}
+	else if (ThePartitionManager->findPositionAround(&centerPoint, &fpOptions, &creationPoint))
 	{
 		spotFound = TRUE;
 	}
@@ -224,26 +249,26 @@ Object *CreateCrateDie::createCrate( CrateTemplate const *currentCrateData )
 		fpOptions.maxRadius = 125.0f;
 		fpOptions.relationshipObject = nullptr;
 		fpOptions.flags = FPF_NONE;
-		if( ThePartitionManager->findPositionAround( &centerPoint, &fpOptions, &creationPoint ) )
+		if (ThePartitionManager->findPositionAround(&centerPoint, &fpOptions, &creationPoint))
 		{
 			spotFound = TRUE;
 		}
 	}
 
-	if( spotFound )
+	if (spotFound)
 	{
-		Object *newCrate = TheThingFactory->newObject( crateType, nullptr );
-		newCrate->setPosition( &creationPoint );
-		newCrate->setOrientation( GameLogicRandomValueReal( 0, 2*PI ) );
+		Object* newCrate = TheThingFactory->newObject(crateType, nullptr);
+		newCrate->setPosition(&creationPoint);
+		newCrate->setOrientation(GameLogicRandomValueReal(0, 2 * PI));
 		newCrate->setLayer(layer);
 
-		Drawable *crateDrawable = newCrate->getDrawable();
+		Drawable* crateDrawable = newCrate->getDrawable();
 
-		if( crateDrawable )
+		if (crateDrawable)
 		{
 			crateDrawable->setTerrainDecal(TERRAIN_DECAL_CRATE);
 			crateDrawable->setTerrainDecalSize(2.5f * newCrate->getGeometryInfo().getMajorRadius(),
-																2.5f * newCrate->getGeometryInfo().getMajorRadius() )	;
+			                                   2.5f * newCrate->getGeometryInfo().getMajorRadius());
 			crateDrawable->setTerrainDecalFadeTarget(1.0f, 0.03f);
 		}
 
@@ -255,30 +280,26 @@ Object *CreateCrateDie::createCrate( CrateTemplate const *currentCrateData )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void CreateCrateDie::crc( Xfer *xfer )
+void CreateCrateDie::crc(Xfer* xfer)
 {
-
 	// extend base class
-	DieModule::crc( xfer );
-
+	DieModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void CreateCrateDie::xfer( Xfer *xfer )
+void CreateCrateDie::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DieModule::xfer( xfer );
-
+	DieModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -286,8 +307,6 @@ void CreateCrateDie::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void CreateCrateDie::loadPostProcess()
 {
-
 	// extend base class
 	DieModule::loadPostProcess();
-
 }

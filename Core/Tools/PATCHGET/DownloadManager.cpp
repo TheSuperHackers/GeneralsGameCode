@@ -28,7 +28,7 @@
 namespace patchget
 {
 
-DownloadManager *TheDownloadManager = nullptr;
+DownloadManager* TheDownloadManager = nullptr;
 
 DownloadManager::DownloadManager()
 {
@@ -48,13 +48,12 @@ DownloadManager::DownloadManager()
 	}
 	else
 	{
-		if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) !=2))
+		if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) != 2))
 		{
 			WSACleanup();
 			m_winsockInit = false;
 		}
 	}
-
 }
 
 DownloadManager::~DownloadManager()
@@ -80,12 +79,12 @@ HRESULT DownloadManager::update()
 	return m_download->PumpMessages();
 }
 
-HRESULT DownloadManager::downloadFile( std::string server, std::string username, std::string password, std::string file, std::string localfile, std::string regkey, bool tryResume )
+HRESULT DownloadManager::downloadFile(std::string server, std::string username, std::string password, std::string file, std::string localfile, std::string regkey, bool tryResume)
 {
-	return m_download->DownloadFile( server.c_str(), username.c_str(), password.c_str(), file.c_str(), localfile.c_str(), regkey.c_str(), tryResume );
+	return m_download->DownloadFile(server.c_str(), username.c_str(), password.c_str(), file.c_str(), localfile.c_str(), regkey.c_str(), tryResume);
 }
 
-void DownloadManager::queueFileForDownload( std::string server, std::string username, std::string password, std::string file, std::string localfile, std::string regkey, bool tryResume )
+void DownloadManager::queueFileForDownload(std::string server, std::string username, std::string password, std::string file, std::string localfile, std::string regkey, bool tryResume)
 {
 	QueuedDownload q;
 	q.file = file;
@@ -108,7 +107,7 @@ HRESULT DownloadManager::downloadNextQueuedFile()
 		q = *it;
 		m_queuedDownloads.pop_front();
 		m_wasError = m_sawEnd = false;
-		return downloadFile( q.server, q.userName, q.password, q.file, q.localFile, q.regKey, q.tryResume );
+		return downloadFile(q.server, q.userName, q.password, q.file, q.localFile, q.regKey, q.tryResume);
 	}
 	else
 	{
@@ -124,33 +123,33 @@ std::string DownloadManager::getLastLocalFile()
 	return buf;
 }
 
-HRESULT DownloadManager::OnError( int error )
+HRESULT DownloadManager::OnError(int error)
 {
 	m_wasError = true;
 	std::string s = Fetch_String(FTP_UnknownError);
 	switch (error)
 	{
-		case DOWNLOADEVENT_NOSUCHSERVER:
-			s = Fetch_String(FTP_NoSuchServer);
-			break;
-		case DOWNLOADEVENT_COULDNOTCONNECT:
-			s = Fetch_String(FTP_CouldNotConnect);
-			break;
-		case DOWNLOADEVENT_LOGINFAILED:
-			s = Fetch_String(FTP_LoginFailed);
-			break;
-		case DOWNLOADEVENT_NOSUCHFILE:
-			s = Fetch_String(FTP_NoSuchFile);
-			break;
-		case DOWNLOADEVENT_LOCALFILEOPENFAILED:
-			s = Fetch_String(FTP_LocalFileOpenFailed);
-			break;
-		case DOWNLOADEVENT_TCPERROR:
-			s = Fetch_String(FTP_TCPError);
-			break;
-		case DOWNLOADEVENT_DISCONNECTERROR:
-			s = Fetch_String(FTP_DisconnectError);
-			break;
+	case DOWNLOADEVENT_NOSUCHSERVER:
+		s = Fetch_String(FTP_NoSuchServer);
+		break;
+	case DOWNLOADEVENT_COULDNOTCONNECT:
+		s = Fetch_String(FTP_CouldNotConnect);
+		break;
+	case DOWNLOADEVENT_LOGINFAILED:
+		s = Fetch_String(FTP_LoginFailed);
+		break;
+	case DOWNLOADEVENT_NOSUCHFILE:
+		s = Fetch_String(FTP_NoSuchFile);
+		break;
+	case DOWNLOADEVENT_LOCALFILEOPENFAILED:
+		s = Fetch_String(FTP_LocalFileOpenFailed);
+		break;
+	case DOWNLOADEVENT_TCPERROR:
+		s = Fetch_String(FTP_TCPError);
+		break;
+	case DOWNLOADEVENT_DISCONNECTERROR:
+		s = Fetch_String(FTP_DisconnectError);
+		break;
 	}
 	m_errorString = s;
 	DEBUG_LOG(("DownloadManager::OnError(): %s(%d)", s.c_str(), error));
@@ -167,49 +166,49 @@ HRESULT DownloadManager::OnEnd()
 HRESULT DownloadManager::OnQueryResume()
 {
 	DEBUG_LOG(("DownloadManager::OnQueryResume()"));
-	//return DOWNLOADEVENT_DONOTRESUME;
+	// return DOWNLOADEVENT_DONOTRESUME;
 	return DOWNLOADEVENT_RESUME;
 }
 
-HRESULT DownloadManager::OnProgressUpdate( int bytesread, int totalsize, int timetaken, int timeleft )
+HRESULT DownloadManager::OnProgressUpdate(int bytesread, int totalsize, int timetaken, int timeleft)
 {
 	DEBUG_LOG(("DownloadManager::OnProgressUpdate(): %d/%d %d/%d", bytesread, totalsize, timetaken, timeleft));
 	return S_OK;
 }
 
-HRESULT DownloadManager::OnStatusUpdate( int status )
+HRESULT DownloadManager::OnStatusUpdate(int status)
 {
 	std::string s = Fetch_String(FTP_StatusNone);
 	switch (status)
 	{
-		case DOWNLOADSTATUS_CONNECTING:
-			s = Fetch_String(FTP_StatusConnecting);
-			break;
-		case DOWNLOADSTATUS_LOGGINGIN:
-			s = Fetch_String(FTP_StatusLoggingIn);
-			break;
-		case DOWNLOADSTATUS_FINDINGFILE:
-			s = Fetch_String(FTP_StatusFindingFile);
-			break;
-		case DOWNLOADSTATUS_QUERYINGRESUME:
-			s = Fetch_String(FTP_StatusQueryingResume);
-			break;
-		case DOWNLOADSTATUS_DOWNLOADING:
-			s = Fetch_String(FTP_StatusDownloading);
-			break;
-		case DOWNLOADSTATUS_DISCONNECTING:
-			s = Fetch_String(FTP_StatusDisconnecting);
-			break;
-		case DOWNLOADSTATUS_FINISHING:
-			s = Fetch_String(FTP_StatusFinishing);
-			break;
-		case DOWNLOADSTATUS_DONE:
-			s = Fetch_String(FTP_StatusDone);
-			break;
+	case DOWNLOADSTATUS_CONNECTING:
+		s = Fetch_String(FTP_StatusConnecting);
+		break;
+	case DOWNLOADSTATUS_LOGGINGIN:
+		s = Fetch_String(FTP_StatusLoggingIn);
+		break;
+	case DOWNLOADSTATUS_FINDINGFILE:
+		s = Fetch_String(FTP_StatusFindingFile);
+		break;
+	case DOWNLOADSTATUS_QUERYINGRESUME:
+		s = Fetch_String(FTP_StatusQueryingResume);
+		break;
+	case DOWNLOADSTATUS_DOWNLOADING:
+		s = Fetch_String(FTP_StatusDownloading);
+		break;
+	case DOWNLOADSTATUS_DISCONNECTING:
+		s = Fetch_String(FTP_StatusDisconnecting);
+		break;
+	case DOWNLOADSTATUS_FINISHING:
+		s = Fetch_String(FTP_StatusFinishing);
+		break;
+	case DOWNLOADSTATUS_DONE:
+		s = Fetch_String(FTP_StatusDone);
+		break;
 	}
 	m_statusString = s;
 	DEBUG_LOG(("DownloadManager::OnStatusUpdate(): %s(%d)", s.c_str(), status));
 	return S_OK;
 }
 
-} // namespace patchget
+}    // namespace patchget

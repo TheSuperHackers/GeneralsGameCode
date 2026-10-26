@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_TIME_OF_DAY_NAMES
 
@@ -44,54 +44,54 @@
 
 //-------------------------------------------------------------------------------------------------
 /** Water setting, note that this does not support override situations.  As the water
-	* system becomes more complex we may want to change this */
+ * system becomes more complex we may want to change this */
 //-------------------------------------------------------------------------------------------------
-void INI::parseWaterSettingDefinition( INI* ini )
+void INI::parseWaterSettingDefinition(INI* ini)
 {
 	AsciiString name;
-	WaterSetting *waterSetting = nullptr;
+	WaterSetting* waterSetting = nullptr;
 
 	// read the name
 	const char* token = ini->getNextToken();
 
-	name.set( token );
+	name.set(token);
 
 	// get the water setting we want to load based on name
-	const char *const *timeOfDayName = TimeOfDayNames;
-	Int timeOfDayIndex = 0;  // TIME_OF_DAY_INVALID
-	while( timeOfDayName && *timeOfDayName )
+	const char* const* timeOfDayName = TimeOfDayNames;
+	Int timeOfDayIndex = 0;    // TIME_OF_DAY_INVALID
+	while (timeOfDayName && *timeOfDayName)
 	{
-
-		if( stricmp( *timeOfDayName, name.str() ) == 0 )
+		if (stricmp(*timeOfDayName, name.str()) == 0)
 		{
-
-			waterSetting = &WaterSettings[ timeOfDayIndex ];
+			waterSetting = &WaterSettings[timeOfDayIndex];
 			break;
-
 		}
 
 		// next name
 		timeOfDayName++;
 		timeOfDayIndex++;
-
 	}
 
 	// check for no time of day match
-	if( waterSetting == nullptr )
+	if (waterSetting == nullptr)
+	{
 		throw INI_INVALID_DATA;
+	}
 
 	// parse the data
-	ini->initFromINI( waterSetting, waterSetting->getFieldParse() );
-
+	ini->initFromINI(waterSetting, waterSetting->getFieldParse());
 }
 
 //-------------------------------------------------------------------------------------------------
-void INI::parseWaterTransparencyDefinition( INI *ini )
+void INI::parseWaterTransparencyDefinition(INI* ini)
 {
-	if (TheWaterTransparency == nullptr) {
+	if (TheWaterTransparency == nullptr)
+	{
 		TheWaterTransparency = newInstance(WaterTransparencySetting);
-	} else if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES) {
-		WaterTransparencySetting* wt = (WaterTransparencySetting*) (TheWaterTransparency.getNonOverloadedPointer());
+	}
+	else if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
+	{
+		WaterTransparencySetting* wt = (WaterTransparencySetting*)(TheWaterTransparency.getNonOverloadedPointer());
 		WaterTransparencySetting* wtOverride = newInstance(WaterTransparencySetting);
 		*wtOverride = *wt;
 
@@ -99,17 +99,20 @@ void INI::parseWaterTransparencyDefinition( INI *ini )
 		wtOverride->markAsOverride();
 
 		wt->friend_getFinalOverride()->setNextOverride(wtOverride);
-	} else {
+	}
+	else
+	{
 		throw INI_INVALID_DATA;
 	}
 
-	WaterTransparencySetting* waterTrans = (WaterTransparencySetting*) (TheWaterTransparency.getNonOverloadedPointer());
-	waterTrans = (WaterTransparencySetting*) (waterTrans->friend_getFinalOverride());
+	WaterTransparencySetting* waterTrans = (WaterTransparencySetting*)(TheWaterTransparency.getNonOverloadedPointer());
+	waterTrans = (WaterTransparencySetting*)(waterTrans->friend_getFinalOverride());
 	// parse the data
-	ini->initFromINI( waterTrans, TheWaterTransparency->getFieldParse() );
+	ini->initFromINI(waterTrans, TheWaterTransparency->getFieldParse());
 
 	// If we overrode any skybox textures, then call the W3D Water stuff.
-	if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES) {
+	if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
+	{
 		// Check to see if we overrode any skybox textures.
 		// If we did, then we need to replace them in the model.
 		// Copy/Paste monkeys PLEASE TAKE NOTE. This technique only works for the skybox because we
@@ -121,24 +124,24 @@ void INI::parseWaterTransparencyDefinition( INI *ini )
 		OVERRIDE<WaterTransparencySetting> wtOverride = TheWaterTransparency;
 
 		if (wtOriginal == wtOverride)
+		{
 			return;
+		}
 
-		const AsciiString *oldTextures[5],*newTextures[5];
+		const AsciiString *oldTextures[5], *newTextures[5];
 
-		//Copy current texture names into arrays
-		oldTextures[0]=&wtOriginal->m_skyboxTextureN;
-		newTextures[0]=&wtOverride->m_skyboxTextureN;
-		oldTextures[1]=&wtOriginal->m_skyboxTextureE;
-		newTextures[1]=&wtOverride->m_skyboxTextureE;
-		oldTextures[2]=&wtOriginal->m_skyboxTextureS;
-		newTextures[2]=&wtOverride->m_skyboxTextureS;
-		oldTextures[3]=&wtOriginal->m_skyboxTextureW;
-		newTextures[3]=&wtOverride->m_skyboxTextureW;
-		oldTextures[4]=&wtOriginal->m_skyboxTextureT;
-		newTextures[4]=&wtOverride->m_skyboxTextureT;
+		// Copy current texture names into arrays
+		oldTextures[0] = &wtOriginal->m_skyboxTextureN;
+		newTextures[0] = &wtOverride->m_skyboxTextureN;
+		oldTextures[1] = &wtOriginal->m_skyboxTextureE;
+		newTextures[1] = &wtOverride->m_skyboxTextureE;
+		oldTextures[2] = &wtOriginal->m_skyboxTextureS;
+		newTextures[2] = &wtOverride->m_skyboxTextureS;
+		oldTextures[3] = &wtOriginal->m_skyboxTextureW;
+		newTextures[3] = &wtOverride->m_skyboxTextureW;
+		oldTextures[4] = &wtOriginal->m_skyboxTextureT;
+		newTextures[4] = &wtOverride->m_skyboxTextureT;
 
 		TheTerrainVisual->replaceSkyboxTextures(oldTextures, newTextures);
 	}
 }
-
-

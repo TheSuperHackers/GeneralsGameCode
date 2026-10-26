@@ -24,7 +24,7 @@
 class PopupSliderOwner
 {
 public:
-	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial)=0;
+	virtual void GetPopSliderInfo(const long sliderID, long* pMin, long* pMax, long* pLineSize, long* pInitial) = 0;
 	virtual void PopSliderChanged(const long sliderID, long theVal) = 0;
 	virtual void PopSliderFinished(const long sliderID, long theVal) = 0;
 };
@@ -36,25 +36,24 @@ public:
 
 class WBPopupSliderButton : public CButton
 {
-// Construction
+	// Construction
 public:
 	WBPopupSliderButton();
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-	void SetupPopSliderButton(CWnd *pParentWnd, long controlID,
-							   PopupSliderOwner *pOwner);
+	void SetupPopSliderButton(CWnd* pParentWnd, long controlID,
+	                          PopupSliderOwner* pOwner);
 
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(WBPopupSliderButton)
-	protected:
+protected:
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~WBPopupSliderButton() override;
 
@@ -69,54 +68,52 @@ protected:
 private:
 	Int m_controlID;
 	Int m_sliderStyle;
-	PopupSliderOwner *m_owner;
+	PopupSliderOwner* m_owner;
 };
 
 /////////////////////////////////////////////////////////////////////////////
-
 
 /////////////////////////////////////////////////////////////////////////////
 // PopupSlider window
 
 /*
-	note: PopupSlider is a self-deleting window. It cannot
-	be instantiated except through its New function, and once
-	its Create() function has been called successfully it should
-	not be deleted. Its PostNcDestroy method will handle that
-	for you.
+  note: PopupSlider is a self-deleting window. It cannot
+  be instantiated except through its New function, and once
+  its Create() function has been called successfully it should
+  not be deleted. Its PostNcDestroy method will handle that
+  for you.
 */
 
 class PopupSlider : public CWnd
 {
-// Construction
+	// Construction
 public:
 	PopupSlider();
 
 public:
 	/*
-		the New function takes care of EVERYTHING for you! It
-		constructs the object, calls its create method,
-		and starts it running
+	  the New function takes care of EVERYTHING for you! It
+	  constructs the object, calls its create method,
+	  and starts it running
 	*/
 	static void New(CWnd* pParentWnd, long kind,
-					PopupSliderOwner *pSliderOwner, long sliderID);
+	                PopupSliderOwner* pSliderOwner, long sliderID);
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(PopupSlider)
-	public:
+public:
 	virtual BOOL Create(const RECT& rect, CWnd* pParentWnd);
-	protected:
+
+protected:
 	virtual void PostNcDestroy() override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~PopupSlider() override;
 
@@ -136,7 +133,7 @@ private:
 	void MoveThumbUnderMouse(int xNew);
 
 	// our owner
-	PopupSliderOwner *mSliderOwner;
+	PopupSliderOwner* mSliderOwner;
 
 	// the slider value
 	long m_curValue;
@@ -164,15 +161,14 @@ private:
 
 private:
 	// the one and only slider windoid that should ever be open
-	static PopupSlider *gPopupSlider;
+	static PopupSlider* gPopupSlider;
 
 	void GetChannelRect(CRect* rect);
 	void GetThumbIconRect(CRect* rect);
 
 	// the background color brush
-	CBrush	m_brush3dFaceColor;
+	CBrush m_brush3dFaceColor;
 };
-
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.

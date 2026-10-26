@@ -26,12 +26,11 @@
 // Simple interface for storing/retrieving registry values
 // Author: Matthew D. Campbell, December 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Registry.h"
 
-
-Bool  getStringFromRegistry(HKEY root, AsciiString path, AsciiString key, AsciiString& val)
+Bool getStringFromRegistry(HKEY root, AsciiString path, AsciiString key, AsciiString& val)
 {
 	HKEY handle;
 	unsigned char buffer[256];
@@ -39,15 +38,15 @@ Bool  getStringFromRegistry(HKEY root, AsciiString path, AsciiString key, AsciiS
 	unsigned long type;
 	int returnValue;
 
-	if ((returnValue = RegOpenKeyEx( root, path.str(), 0, KEY_READ, &handle )) == ERROR_SUCCESS)
+	if ((returnValue = RegOpenKeyEx(root, path.str(), 0, KEY_READ, &handle)) == ERROR_SUCCESS)
 	{
-		returnValue = RegQueryValueEx(handle, key.str(), nullptr, &type, (unsigned char *) &buffer, &size);
-		RegCloseKey( handle );
+		returnValue = RegQueryValueEx(handle, key.str(), nullptr, &type, (unsigned char*)&buffer, &size);
+		RegCloseKey(handle);
 	}
 
 	if (returnValue == ERROR_SUCCESS)
 	{
-		val = (char *)buffer;
+		val = (char*)buffer;
 		return TRUE;
 	}
 
@@ -62,22 +61,22 @@ Bool getUnsignedIntFromRegistry(HKEY root, AsciiString path, AsciiString key, Un
 	unsigned long type;
 	int returnValue;
 
-	if ((returnValue = RegOpenKeyEx( root, path.str(), 0, KEY_READ, &handle )) == ERROR_SUCCESS)
+	if ((returnValue = RegOpenKeyEx(root, path.str(), 0, KEY_READ, &handle)) == ERROR_SUCCESS)
 	{
-		returnValue = RegQueryValueEx(handle, key.str(), nullptr, &type, (unsigned char *) &buffer, &size);
-		RegCloseKey( handle );
+		returnValue = RegQueryValueEx(handle, key.str(), nullptr, &type, (unsigned char*)&buffer, &size);
+		RegCloseKey(handle);
 	}
 
 	if (returnValue == ERROR_SUCCESS)
 	{
-		val = *(UnsignedInt *)buffer;
+		val = *(UnsignedInt*)buffer;
 		return TRUE;
 	}
 
 	return FALSE;
 }
 
-Bool setStringInRegistry( HKEY root, AsciiString path, AsciiString key, AsciiString val)
+Bool setStringInRegistry(HKEY root, AsciiString path, AsciiString key, AsciiString val)
 {
 	HKEY handle;
 	unsigned long type;
@@ -85,18 +84,18 @@ Bool setStringInRegistry( HKEY root, AsciiString path, AsciiString key, AsciiStr
 	int size;
 	char lpClass[] = "REG_NONE";
 
-	if ((returnValue = RegCreateKeyEx( root, path.str(), 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &handle, nullptr )) == ERROR_SUCCESS)
+	if ((returnValue = RegCreateKeyEx(root, path.str(), 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &handle, nullptr)) == ERROR_SUCCESS)
 	{
 		type = REG_SZ;
-		size = val.getLength()+1;
-		returnValue = RegSetValueEx(handle, key.str(), 0, type, (unsigned char *)val.str(), size);
-		RegCloseKey( handle );
+		size = val.getLength() + 1;
+		returnValue = RegSetValueEx(handle, key.str(), 0, type, (unsigned char*)val.str(), size);
+		RegCloseKey(handle);
 	}
 
 	return (returnValue == ERROR_SUCCESS);
 }
 
-Bool setUnsignedIntInRegistry( HKEY root, AsciiString path, AsciiString key, UnsignedInt val)
+Bool setUnsignedIntInRegistry(HKEY root, AsciiString path, AsciiString key, UnsignedInt val)
 {
 	HKEY handle;
 	unsigned long type;
@@ -104,12 +103,12 @@ Bool setUnsignedIntInRegistry( HKEY root, AsciiString path, AsciiString key, Uns
 	int size;
 	char lpClass[] = "REG_NONE";
 
-	if ((returnValue = RegCreateKeyEx( root, path.str(), 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &handle, nullptr )) == ERROR_SUCCESS)
+	if ((returnValue = RegCreateKeyEx(root, path.str(), 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &handle, nullptr)) == ERROR_SUCCESS)
 	{
 		type = REG_DWORD;
 		size = 4;
-		returnValue = RegSetValueEx(handle, key.str(), 0, type, (unsigned char *)&val, size);
-		RegCloseKey( handle );
+		returnValue = RegSetValueEx(handle, key.str(), 0, type, (unsigned char*)&val, size);
+		RegCloseKey(handle);
 	}
 
 	return (returnValue == ERROR_SUCCESS);
@@ -170,9 +169,12 @@ AsciiString GetRegistryLanguage()
 	static Bool cached = FALSE;
 	// NOTE: static causes a memory leak, but we have to keep it because the value is cached.
 	static AsciiString val = "english";
-	if (cached) {
+	if (cached)
+	{
 		return val;
-	} else {
+	}
+	else
+	{
 		cached = TRUE;
 	}
 

@@ -34,39 +34,35 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/ObjectHelper.h"
 
-
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 ObjectHelper::~ObjectHelper()
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void ObjectHelper::sleepUntil(UnsignedInt when)
 {
-	if( getObject()->getStatusBits().test( OBJECT_STATUS_DESTROYED ) )
+	if (getObject()->getStatusBits().test(OBJECT_STATUS_DESTROYED))
+	{
 		return;
+	}
 
 	// note the setWakeFrame(NEVER) actually awakens immediately, since NEVER==0.
 	// when we get NEVER in this case, we really want to sleep forever.
 	// so just special case it.
-	UpdateSleepTime wakeDelay = (when == NEVER || when == FOREVER) ?
-																UPDATE_SLEEP_FOREVER :
-																UPDATE_SLEEP(when - TheGameLogic->getFrame());
+	UpdateSleepTime wakeDelay = (when == NEVER || when == FOREVER) ? UPDATE_SLEEP_FOREVER : UPDATE_SLEEP(when - TheGameLogic->getFrame());
 	setWakeFrame(getObject(), wakeDelay);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ObjectHelper::crc( Xfer *xfer )
+void ObjectHelper::crc(Xfer* xfer)
 {
-
 	// update module crc
-	UpdateModule::crc( xfer );
-
+	UpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -74,17 +70,15 @@ void ObjectHelper::crc( Xfer *xfer )
  * Version Info:
  * 1: Initial Version */
 // ------------------------------------------------------------------------------------------------
-void ObjectHelper::xfer( Xfer *xfer )
+void ObjectHelper::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// update module xfer
-	UpdateModule::xfer( xfer );
-
+	UpdateModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -92,8 +86,6 @@ void ObjectHelper::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void ObjectHelper::loadPostProcess()
 {
-
 	// update module post process
 	UpdateModule::loadPostProcess();
-
 }

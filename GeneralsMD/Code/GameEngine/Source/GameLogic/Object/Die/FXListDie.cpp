@@ -27,9 +27,8 @@
 // Desc:   Simple Die module
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "Common/Player.h"
@@ -44,9 +43,10 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FXListDie::FXListDie( Thing *thing, const ModuleData* moduleData ) : DieModule( thing, moduleData )
+FXListDie::FXListDie(Thing* thing, const ModuleData* moduleData)
+  : DieModule(thing, moduleData)
 {
-	if( getFXListDieModuleData()->m_initiallyActive )
+	if (getFXListDieModuleData()->m_initiallyActive)
 	{
 		giveSelfUpgrade();
 	}
@@ -56,28 +56,31 @@ FXListDie::FXListDie( Thing *thing, const ModuleData* moduleData ) : DieModule( 
 //-------------------------------------------------------------------------------------------------
 FXListDie::~FXListDie()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** The die callback. */
 //-------------------------------------------------------------------------------------------------
-void FXListDie::onDie( const DamageInfo *damageInfo )
+void FXListDie::onDie(const DamageInfo* damageInfo)
 {
 	if (!isUpgradeActive())
-		return;
-	if (!isDieApplicable(damageInfo))
-		return;
-	const FXListDieModuleData* d = getFXListDieModuleData();
-
-	UpgradeMaskType activation, conflicting;
-	getUpgradeActivationMasks( activation, conflicting );
-	Object *obj = getObject();
-	if( obj->getObjectCompletedUpgradeMask().testForAny( conflicting ) )
 	{
 		return;
 	}
-	if( obj->getControllingPlayer() && obj->getControllingPlayer()->getCompletedUpgradeMask().testForAny( conflicting ) )
+	if (!isDieApplicable(damageInfo))
+	{
+		return;
+	}
+	const FXListDieModuleData* d = getFXListDieModuleData();
+
+	UpgradeMaskType activation, conflicting;
+	getUpgradeActivationMasks(activation, conflicting);
+	Object* obj = getObject();
+	if (obj->getObjectCompletedUpgradeMask().testForAny(conflicting))
+	{
+		return;
+	}
+	if (obj->getControllingPlayer() && obj->getControllingPlayer()->getCompletedUpgradeMask().testForAny(conflicting))
 	{
 		return;
 	}
@@ -86,7 +89,7 @@ void FXListDie::onDie( const DamageInfo *damageInfo )
 	{
 		if (d->m_orientToObject)
 		{
-			Object *damageDealer = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
+			Object* damageDealer = TheGameLogic->findObjectByID(damageInfo->in.m_sourceID);
 			FXList::doFXObj(getFXListDieModuleData()->m_defaultDeathFX, getObject(), damageDealer);
 		}
 		else
@@ -99,30 +102,26 @@ void FXListDie::onDie( const DamageInfo *damageInfo )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void FXListDie::crc( Xfer *xfer )
+void FXListDie::crc(Xfer* xfer)
 {
-
 	// extend base class
-	DieModule::crc( xfer );
-
+	DieModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void FXListDie::xfer( Xfer *xfer )
+void FXListDie::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DieModule::xfer( xfer );
-
+	DieModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -130,8 +129,6 @@ void FXListDie::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void FXListDie::loadPostProcess()
 {
-
 	// extend base class
 	DieModule::loadPostProcess();
-
 }

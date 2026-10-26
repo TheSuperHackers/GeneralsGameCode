@@ -32,7 +32,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingFactory.h"
@@ -50,14 +50,15 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-HijackerUpdate::HijackerUpdate( Thing *thing, const ModuleData *moduleData ) : UpdateModule( thing, moduleData )
+HijackerUpdate::HijackerUpdate(Thing* thing, const ModuleData* moduleData)
+  : UpdateModule(thing, moduleData)
 {
 	m_targetID = INVALID_ID;
-	setUpdate( FALSE );
-	setIsInVehicle( FALSE );
+	setUpdate(FALSE);
+	setIsInVehicle(FALSE);
 	m_wasTargetAirborne = false;
 	m_ejectPos.zero();
-//	m_ejectPilotDMI = nullptr;
+	//	m_ejectPilotDMI = nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -70,68 +71,65 @@ HijackerUpdate::~HijackerUpdate()
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime HijackerUpdate::update()
 {
-/// @todo srj use SLEEPY_UPDATE here
+	/// @todo srj use SLEEPY_UPDATE here
 
-	if ( ! m_update) // have not flagged for updating
+	if (!m_update)    // have not flagged for updating
 	{
 		return UPDATE_SLEEP_NONE;
 	}
 
 	if (m_isInVehicle)
 	{
-		Object *obj = getObject();
+		Object* obj = getObject();
 
 		// If hijacker has hijacked a vehicle, he needs to move along with it...
-		//Continually reset position of hijacker to match the position of the target.
-		Object *target = getTargetObject();
-		if( target )
+		// Continually reset position of hijacker to match the position of the target.
+		Object* target = getTargetObject();
+		if (target)
 		{
 			// @todo I think we should test for ! IsEffectivelyDead() as well, here
-			obj->setPosition( target->getPosition() );
+			obj->setPosition(target->getPosition());
 			m_wasTargetAirborne = target->isSignificantlyAboveTerrain();
 			m_ejectPos = *target->getPosition();
 
 			// So, if while I am driving this American war vehicle, I gain skill points, I get to keep them when I wreck the vehicle
-			ExperienceTracker *targetExp = target->getExperienceTracker();
-			ExperienceTracker *jackerExp = obj->getExperienceTracker();
-			if ( targetExp && jackerExp )
+			ExperienceTracker* targetExp = target->getExperienceTracker();
+			ExperienceTracker* jackerExp = obj->getExperienceTracker();
+			if (targetExp && jackerExp)
 			{
-				VeterancyLevel highestLevel = MAX(targetExp->getVeterancyLevel(),jackerExp->getVeterancyLevel());
-				jackerExp->setVeterancyLevel( highestLevel );
-				targetExp->setVeterancyLevel( highestLevel );
+				VeterancyLevel highestLevel = MAX(targetExp->getVeterancyLevel(), jackerExp->getVeterancyLevel());
+				jackerExp->setVeterancyLevel(highestLevel);
+				targetExp->setVeterancyLevel(highestLevel);
 			}
-
 		}
-		else // the car we have been "driving" is dead now, and has safely ejected us
+		else    // the car we have been "driving" is dead now, and has safely ejected us
 		{
 			{
+				// THIS BLOCK RESTORES HIJACKER TO PARTITION MANAGER AND UNHIDES HIM
+				ThePartitionManager->registerObject(obj);
 
-
-				//THIS BLOCK RESTORES HIJACKER TO PARTITION MANAGER AND UNHIDES HIM
-				ThePartitionManager->registerObject( obj );
-
-				if( obj->getDrawable() )
+				if (obj->getDrawable())
 				{
 					// so it is time to unhide ourselves and be a pedestrian hijacker again
-					obj->getDrawable()->setDrawableHidden( false );
+					obj->getDrawable()->setDrawableHidden(false);
 				}
 
 				// We won't come back here until and unless we have hijacked another vehicle
-				obj->clearStatus( MAKE_OBJECT_STATUS_MASK3( OBJECT_STATUS_NO_COLLISIONS, OBJECT_STATUS_MASKED, OBJECT_STATUS_UNSELECTABLE ) );
+				obj->clearStatus(MAKE_OBJECT_STATUS_MASK3(OBJECT_STATUS_NO_COLLISIONS, OBJECT_STATUS_MASKED, OBJECT_STATUS_UNSELECTABLE));
 
 				AIUpdateInterface* ai = obj->getAIUpdateInterface();
-				if ( ai )
+				if (ai)
 				{
-					ai->aiIdle( CMD_FROM_AI );
+					ai->aiIdle(CMD_FROM_AI);
 				}
 
 				if (m_wasTargetAirborne)
 				{
 					const ThingTemplate* putInContainerTmpl = TheThingFactory->findTemplate(getHijackerUpdateModuleData()->m_parachuteName);
-					DEBUG_ASSERTCRASH(putInContainerTmpl,("DeliverPayload: PutInContainer %s not found!",getHijackerUpdateModuleData()->m_parachuteName.str()));
+					DEBUG_ASSERTCRASH(putInContainerTmpl, ("DeliverPayload: PutInContainer %s not found!", getHijackerUpdateModuleData()->m_parachuteName.str()));
 					if (putInContainerTmpl)
 					{
-						Object* container = TheThingFactory->newObject( putInContainerTmpl, obj->getTeam() );
+						Object* container = TheThingFactory->newObject(putInContainerTmpl, obj->getTeam());
 						container->setPosition(&m_ejectPos);
 						if (container->getContain()->isValidContainerFor(obj, true))
 						{
@@ -139,24 +137,19 @@ UpdateSleepTime HijackerUpdate::update()
 						}
 						else
 						{
-							DEBUG_CRASH(("DeliverPayload: PutInContainer %s is full, or not valid for the payload!",getHijackerUpdateModuleData()->m_parachuteName.str()));
+							DEBUG_CRASH(("DeliverPayload: PutInContainer %s is full, or not valid for the payload!", getHijackerUpdateModuleData()->m_parachuteName.str()));
 						}
 					}
-
 				}
-
-
 			}
 
-			setTargetObject( nullptr );
-			setIsInVehicle( FALSE );
-			setUpdate( FALSE );
+			setTargetObject(nullptr);
+			setIsInVehicle(FALSE);
+			setUpdate(FALSE);
 			m_wasTargetAirborne = false;
-
 		}
-
 	}
-	else	// not in vehicle
+	else    // not in vehicle
 	{
 		m_wasTargetAirborne = false;
 	}
@@ -164,85 +157,78 @@ UpdateSleepTime HijackerUpdate::update()
 	return UPDATE_SLEEP_NONE;
 }
 
-
-
-void HijackerUpdate::setTargetObject( const Object *object )
+void HijackerUpdate::setTargetObject(const Object* object)
 {
-  if( object )
-  {
-    m_targetID = object->getID();
+	if (object)
+	{
+		m_targetID = object->getID();
 
 		// here we also test the target to see whether it ejects pilots
 		// when it dies... if so, stores a pointer to that diemoduleinterface
 		// nullptr if not...
 
-//		BehaviorModule **dmi = nullptr;
-//		for( dmi = object->getBehaviorModules(); *dmi; ++dmi )
-//		{
-//			m_ejectPilotDMI = (*dmi)->getEjectPilotDieInterface();
-//			if( m_ejectPilotDMI )
-//				return;
-//		}  // end for dmi
-  }
+		//		BehaviorModule **dmi = nullptr;
+		//		for( dmi = object->getBehaviorModules(); *dmi; ++dmi )
+		//		{
+		//			m_ejectPilotDMI = (*dmi)->getEjectPilotDieInterface();
+		//			if( m_ejectPilotDMI )
+		//				return;
+		//		}  // end for dmi
+	}
 	else
 	{
 		m_targetID = INVALID_ID;
-//		m_ejectPilotDMI = nullptr;
+		//		m_ejectPilotDMI = nullptr;
 	}
-
 }
 
 Object* HijackerUpdate::getTargetObject() const
 {
-  if( m_targetID != INVALID_ID )
-  {
-    return TheGameLogic->findObjectByID( m_targetID );
-  }
-  return nullptr;
+	if (m_targetID != INVALID_ID)
+	{
+		return TheGameLogic->findObjectByID(m_targetID);
+	}
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void HijackerUpdate::crc( Xfer *xfer )
+void HijackerUpdate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
-
+	UpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void HijackerUpdate::xfer( Xfer *xfer )
+void HijackerUpdate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// target ID
-	xfer->xferObjectID( &m_targetID );
+	xfer->xferObjectID(&m_targetID);
 
 	// eject pos
-	xfer->xferCoord3D( &m_ejectPos );
+	xfer->xferCoord3D(&m_ejectPos);
 
 	// update
-	xfer->xferBool( &m_update );
+	xfer->xferBool(&m_update);
 
 	// is in vehicle
-	xfer->xferBool( &m_isInVehicle );
+	xfer->xferBool(&m_isInVehicle);
 
 	// was target airborne
-	xfer->xferBool( &m_wasTargetAirborne );
-
+	xfer->xferBool(&m_wasTargetAirborne);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -250,12 +236,10 @@ void HijackerUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void HijackerUpdate::loadPostProcess()
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
 
 	// set the target object, this will also tie up the m_ejectPilotDMI pointer
-	Object *obj = TheGameLogic->findObjectByID( m_targetID );
-	setTargetObject( obj );
-
+	Object* obj = TheGameLogic->findObjectByID(m_targetID);
+	setTargetObject(obj);
 }

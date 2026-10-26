@@ -37,102 +37,91 @@
 #include "stdafx.h"
 #include "sphereutils.h"
 
-
 /////////////////////////////////////////////////////////////
 //
 //	Resize
 //
 /////////////////////////////////////////////////////////////
-void
-SphereKeysClass::Resize (int max_keys)
+void SphereKeysClass::Resize(int max_keys)
 {
 	//
 	//	Determine the new array size
 	//
-	int blocks		= (max_keys / 10) + 1;
+	int blocks = (max_keys / 10) + 1;
 	int array_size = blocks * 10;
-	if (array_size != m_MaxKeys) {
-
+	if (array_size != m_MaxKeys)
+	{
 		//
 		//	Allocate the new array
 		//
-		W3dSphereKeyFrameStruct *key_array = new W3dSphereKeyFrameStruct[array_size];
+		W3dSphereKeyFrameStruct* key_array = new W3dSphereKeyFrameStruct[array_size];
 
 		//
 		//	Copy the contents of the old array
 		//
-		::memcpy (key_array, m_Keys, m_KeyCount * sizeof (W3dSphereKeyFrameStruct));
+		::memcpy(key_array, m_Keys, m_KeyCount * sizeof(W3dSphereKeyFrameStruct));
 
 		//
 		//	Use the new array
 		//
-		SAFE_DELETE_ARRAY (m_Keys);
-		m_Keys		= key_array;
-		m_MaxKeys	= array_size;
+		SAFE_DELETE_ARRAY(m_Keys);
+		m_Keys = key_array;
+		m_MaxKeys = array_size;
 	}
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //	Add_Keys
 //
 /////////////////////////////////////////////////////////////
-void
-SphereKeysClass::Add_Keys (W3dSphereKeyFrameStruct *keys, int key_count)
+void SphereKeysClass::Add_Keys(W3dSphereKeyFrameStruct* keys, int key_count)
 {
 	//
 	//	Make sure we have a large enough array
 	//
-	Resize (m_KeyCount + key_count);
+	Resize(m_KeyCount + key_count);
 
 	//
 	//	Copy the new keys into our array
 	//
-	::memcpy (&m_Keys[m_KeyCount + 1], keys, key_count * sizeof (W3dSphereKeyFrameStruct));
+	::memcpy(&m_Keys[m_KeyCount + 1], keys, key_count * sizeof(W3dSphereKeyFrameStruct));
 	m_KeyCount += keys;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //	Add_Key
 //
 /////////////////////////////////////////////////////////////
-void
-SphereKeysClass::Add_Key (W3dSphereKeyFrameStruct &keys)
+void SphereKeysClass::Add_Key(W3dSphereKeyFrameStruct& keys)
 {
-	Add_Keys (&keys, 1);
+	Add_Keys(&keys, 1);
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //	Free_Keys
 //
 /////////////////////////////////////////////////////////////
-void
-SphereKeysClass::Free_Keys ()
+void SphereKeysClass::Free_Keys()
 {
-	SAFE_DELETE_ARRAY (m_Keys);
-	m_KeyCount	= 0;
-	m_MaxKeys	= 0;
+	SAFE_DELETE_ARRAY(m_Keys);
+	m_KeyCount = 0;
+	m_MaxKeys = 0;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //	Detach
 //
 /////////////////////////////////////////////////////////////
-void
-SphereKeysClass::Detach ()
+void SphereKeysClass::Detach()
 {
-	m_Keys		= nullptr;
-	m_KeyCount	= 0;
-	m_MaxKeys	= 0;
+	m_Keys = nullptr;
+	m_KeyCount = 0;
+	m_MaxKeys = 0;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
@@ -142,24 +131,25 @@ SphereKeysClass::Detach ()
 //
 /////////////////////////////////////////////////////////////
 static int
-Key_Compare (const void *arg1, const void *arg2)
+Key_Compare(const void* arg1, const void* arg2)
 {
-	ASSERT (arg1 != nullptr);
-	ASSERT (arg2 != nullptr);
-	W3dSphereKeyFrameStruct *key1 = (W3dSphereKeyFrameStruct *)arg1;
-	W3dSphereKeyFrameStruct *key2 = (W3dSphereKeyFrameStruct *)arg2;
+	ASSERT(arg1 != nullptr);
+	ASSERT(arg2 != nullptr);
+	W3dSphereKeyFrameStruct* key1 = (W3dSphereKeyFrameStruct*)arg1;
+	W3dSphereKeyFrameStruct* key2 = (W3dSphereKeyFrameStruct*)arg2;
 
-	int retval	= 0
-	float delta = key1->time_code - key2->time_code;
-	if (delta < 0) {
+	int retval = 0 float delta = key1->time_code - key2->time_code;
+	if (delta < 0)
+	{
 		retval = -1;
-	} else if (delta > 0) {
+	}
+	else if (delta > 0)
+	{
 		retval = 1;
 	}
 
 	return retval;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
@@ -168,11 +158,10 @@ Key_Compare (const void *arg1, const void *arg2)
 //	Linerally sorts the keys based on their time value
 //
 /////////////////////////////////////////////////////////////
-void
-SphereKeysClass::Sort ()
+void SphereKeysClass::Sort()
 {
-	if (m_Keys != nullptr && m_KeyCount > 0) {
-		::qsort (m_Keys, m_KeyCount, sizeof (W3dSphereKeyFrameStruct), Key_Compare);
+	if (m_Keys != nullptr && m_KeyCount > 0)
+	{
+		::qsort(m_Keys, m_KeyCount, sizeof(W3dSphereKeyFrameStruct), Key_Compare);
 	}
 }
-

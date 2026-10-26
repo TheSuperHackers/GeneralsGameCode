@@ -35,13 +35,12 @@
 #include "EAC/huffcodex.h"
 #include "EAC/refcodex.h"
 
-
 // TheSuperHackers @todo Recover debug logging in this file?
 #define DEBUG_LOG(x)
 
-const char *CompressionManager::getCompressionNameByType( CompressionType compType )
+const char* CompressionManager::getCompressionNameByType(CompressionType compType)
 {
-	static const char *s_compressionNames[] = {
+	static const char* s_compressionNames[] = {
 		"No compression",
 		"RefPack",
 		"LZHL",
@@ -62,9 +61,9 @@ const char *CompressionManager::getCompressionNameByType( CompressionType compTy
 }
 
 // For perf timers, so we can have separate ones for compression/decompression
-const char *CompressionManager::getDecompressionNameByType( CompressionType compType )
+const char* CompressionManager::getDecompressionNameByType(CompressionType compType)
 {
-	static const char *s_decompressionNames[] = {
+	static const char* s_decompressionNames[] = {
 		"d_None",
 		"d_RefPack",
 		"d_NoxLZW",
@@ -86,7 +85,7 @@ const char *CompressionManager::getDecompressionNameByType( CompressionType comp
 
 // ---------------------------------------------------------------------------------------
 
-Bool CompressionManager::isDataCompressed( const void *mem, Int len )
+Bool CompressionManager::isDataCompressed(const void* mem, Int len)
 {
 	CompressionType t = getCompressionType(mem, len);
 	return t != COMPRESSION_NONE;
@@ -97,172 +96,211 @@ CompressionType CompressionManager::getPreferredCompression()
 	return COMPRESSION_REFPACK;
 }
 
-
-CompressionType CompressionManager::getCompressionType( const void *mem, Int len )
+CompressionType CompressionManager::getCompressionType(const void* mem, Int len)
 {
 	if (len < 8)
+	{
 		return COMPRESSION_NONE;
+	}
 
-	if ( memcmp( mem, "NOX\0", 4 ) == 0 )
+	if (memcmp(mem, "NOX\0", 4) == 0)
+	{
 		return COMPRESSION_NOXLZH;
-	if ( memcmp( mem, "ZL1\0", 4 ) == 0 )
+	}
+	if (memcmp(mem, "ZL1\0", 4) == 0)
+	{
 		return COMPRESSION_ZLIB1;
-	if ( memcmp( mem, "ZL2\0", 4 ) == 0 )
+	}
+	if (memcmp(mem, "ZL2\0", 4) == 0)
+	{
 		return COMPRESSION_ZLIB2;
-	if ( memcmp( mem, "ZL3\0", 4 ) == 0 )
+	}
+	if (memcmp(mem, "ZL3\0", 4) == 0)
+	{
 		return COMPRESSION_ZLIB3;
-	if ( memcmp( mem, "ZL4\0", 4 ) == 0 )
+	}
+	if (memcmp(mem, "ZL4\0", 4) == 0)
+	{
 		return COMPRESSION_ZLIB4;
-	if ( memcmp( mem, "ZL5\0", 4 ) == 0 )
+	}
+	if (memcmp(mem, "ZL5\0", 4) == 0)
+	{
 		return COMPRESSION_ZLIB5;
-	if ( memcmp( mem, "ZL6\0", 4 ) == 0 )
+	}
+	if (memcmp(mem, "ZL6\0", 4) == 0)
+	{
 		return COMPRESSION_ZLIB6;
-	if ( memcmp( mem, "ZL7\0", 4 ) == 0 )
+	}
+	if (memcmp(mem, "ZL7\0", 4) == 0)
+	{
 		return COMPRESSION_ZLIB7;
-	if ( memcmp( mem, "ZL8\0", 4 ) == 0 )
+	}
+	if (memcmp(mem, "ZL8\0", 4) == 0)
+	{
 		return COMPRESSION_ZLIB8;
-	if ( memcmp( mem, "ZL9\0", 4 ) == 0 )
+	}
+	if (memcmp(mem, "ZL9\0", 4) == 0)
+	{
 		return COMPRESSION_ZLIB9;
-	if ( memcmp( mem, "EAB\0", 4 ) == 0 )
+	}
+	if (memcmp(mem, "EAB\0", 4) == 0)
+	{
 		return COMPRESSION_BTREE;
-	if ( memcmp( mem, "EAH\0", 4 ) == 0 )
+	}
+	if (memcmp(mem, "EAH\0", 4) == 0)
+	{
 		return COMPRESSION_HUFF;
-	if ( memcmp( mem, "EAR\0", 4 ) == 0 )
+	}
+	if (memcmp(mem, "EAR\0", 4) == 0)
+	{
 		return COMPRESSION_REFPACK;
+	}
 
 	return COMPRESSION_NONE;
 }
 
-Int CompressionManager::getMaxCompressedSize( Int uncompressedLen, CompressionType compType )
+Int CompressionManager::getMaxCompressedSize(Int uncompressedLen, CompressionType compType)
 {
 	switch (compType)
 	{
-		case COMPRESSION_NOXLZH:
-			return CalcNewSize(uncompressedLen) + 8;
+	case COMPRESSION_NOXLZH:
+		return CalcNewSize(uncompressedLen) + 8;
 
-		case COMPRESSION_BTREE:   // guessing here
-		case COMPRESSION_HUFF:    // guessing here
-		case COMPRESSION_REFPACK: // guessing here
-			return uncompressedLen + 8;
-		case COMPRESSION_ZLIB1:
-		case COMPRESSION_ZLIB2:
-		case COMPRESSION_ZLIB3:
-		case COMPRESSION_ZLIB4:
-		case COMPRESSION_ZLIB5:
-		case COMPRESSION_ZLIB6:
-		case COMPRESSION_ZLIB7:
-		case COMPRESSION_ZLIB8:
-		case COMPRESSION_ZLIB9:
-			return (Int)(ceil(uncompressedLen * 1.1 + 12 + 8));
+	case COMPRESSION_BTREE:    // guessing here
+	case COMPRESSION_HUFF:    // guessing here
+	case COMPRESSION_REFPACK:    // guessing here
+		return uncompressedLen + 8;
+	case COMPRESSION_ZLIB1:
+	case COMPRESSION_ZLIB2:
+	case COMPRESSION_ZLIB3:
+	case COMPRESSION_ZLIB4:
+	case COMPRESSION_ZLIB5:
+	case COMPRESSION_ZLIB6:
+	case COMPRESSION_ZLIB7:
+	case COMPRESSION_ZLIB8:
+	case COMPRESSION_ZLIB9:
+		return (Int)(ceil(uncompressedLen * 1.1 + 12 + 8));
 	}
 
 	return 0;
 }
 
-Int CompressionManager::getUncompressedSize( const void *mem, Int len )
+Int CompressionManager::getUncompressedSize(const void* mem, Int len)
 {
 	if (len < 8)
+	{
 		return len;
+	}
 
-	CompressionType compType = getCompressionType( mem, len );
+	CompressionType compType = getCompressionType(mem, len);
 	switch (compType)
 	{
-		case COMPRESSION_NOXLZH:
-		case COMPRESSION_ZLIB1:
-		case COMPRESSION_ZLIB2:
-		case COMPRESSION_ZLIB3:
-		case COMPRESSION_ZLIB4:
-		case COMPRESSION_ZLIB5:
-		case COMPRESSION_ZLIB6:
-		case COMPRESSION_ZLIB7:
-		case COMPRESSION_ZLIB8:
-		case COMPRESSION_ZLIB9:
-		case COMPRESSION_BTREE:
-		case COMPRESSION_HUFF:
-		case COMPRESSION_REFPACK:
-			return *(Int *)(((UnsignedByte *)mem)+4);
+	case COMPRESSION_NOXLZH:
+	case COMPRESSION_ZLIB1:
+	case COMPRESSION_ZLIB2:
+	case COMPRESSION_ZLIB3:
+	case COMPRESSION_ZLIB4:
+	case COMPRESSION_ZLIB5:
+	case COMPRESSION_ZLIB6:
+	case COMPRESSION_ZLIB7:
+	case COMPRESSION_ZLIB8:
+	case COMPRESSION_ZLIB9:
+	case COMPRESSION_BTREE:
+	case COMPRESSION_HUFF:
+	case COMPRESSION_REFPACK:
+		return *(Int*)(((UnsignedByte*)mem) + 4);
 	}
 
 	return len;
 }
 
-Int CompressionManager::compressData( CompressionType compType, void *srcVoid, Int srcLen, void *destVoid, Int destLen )
+Int CompressionManager::compressData(CompressionType compType, void* srcVoid, Int srcLen, void* destVoid, Int destLen)
 {
 	if (destLen < 8)
+	{
 		return 0;
+	}
 
 	destLen -= 8;
 
-	UnsignedByte *src = (UnsignedByte *)srcVoid;
-	UnsignedByte *dest = (UnsignedByte *)destVoid;
+	UnsignedByte* src = (UnsignedByte*)srcVoid;
+	UnsignedByte* dest = (UnsignedByte*)destVoid;
 
 	if (compType == COMPRESSION_BTREE)
 	{
 		memcpy(dest, "EAB\0", 4);
-		*(Int *)(dest+4) = 0;
-		Int ret = BTREE_encode(dest+8, src, srcLen);
+		*(Int*)(dest + 4) = 0;
+		Int ret = BTREE_encode(dest + 8, src, srcLen);
 		if (ret)
 		{
-			*(Int *)(dest+4) = srcLen;
+			*(Int*)(dest + 4) = srcLen;
 			return ret + 8;
 		}
 		else
+		{
 			return 0;
+		}
 	}
 	if (compType == COMPRESSION_HUFF)
 	{
 		memcpy(dest, "EAH\0", 4);
-		*(Int *)(dest+4) = 0;
-		Int ret = HUFF_encode(dest+8, src, srcLen);
+		*(Int*)(dest + 4) = 0;
+		Int ret = HUFF_encode(dest + 8, src, srcLen);
 		if (ret)
 		{
-			*(Int *)(dest+4) = srcLen;
+			*(Int*)(dest + 4) = srcLen;
 			return ret + 8;
 		}
 		else
+		{
 			return 0;
+		}
 	}
 	if (compType == COMPRESSION_REFPACK)
 	{
 		memcpy(dest, "EAR\0", 4);
-		*(Int *)(dest+4) = 0;
-		Int ret = REF_encode(dest+8, src, srcLen);
+		*(Int*)(dest + 4) = 0;
+		Int ret = REF_encode(dest + 8, src, srcLen);
 		if (ret)
 		{
-			*(Int *)(dest+4) = srcLen;
+			*(Int*)(dest + 4) = srcLen;
 			return ret + 8;
 		}
 		else
+		{
 			return 0;
+		}
 	}
 
 	if (compType == COMPRESSION_NOXLZH)
 	{
 		memcpy(dest, "NOX\0", 4);
-		*(Int *)(dest+4) = 0;
-		Bool ret = CompressMemory(src, srcLen, dest+8, destLen);
+		*(Int*)(dest + 4) = 0;
+		Bool ret = CompressMemory(src, srcLen, dest + 8, destLen);
 		if (ret)
 		{
-			*(Int *)(dest+4) = srcLen;
+			*(Int*)(dest + 4) = srcLen;
 			return destLen + 8;
 		}
 		else
+		{
 			return 0;
+		}
 	}
 
 	if (compType >= COMPRESSION_ZLIB1 && compType <= COMPRESSION_ZLIB9)
 	{
-		Int level = compType - COMPRESSION_ZLIB1 + 1; // 1-9
+		Int level = compType - COMPRESSION_ZLIB1 + 1;    // 1-9
 		memcpy(dest, "ZL0\0", 4);
 		dest[2] = '0' + level;
-		*(Int *)(dest+4) = 0;
+		*(Int*)(dest + 4) = 0;
 
 		unsigned long outLen = destLen;
-		Int err = compress2( (Bytef*)dest+8, &outLen, (const Bytef*)src, srcLen, level );
+		Int err = compress2((Bytef*)dest + 8, &outLen, (const Bytef*)src, srcLen, level);
 
 		if (err == Z_OK || err == Z_STREAM_END)
 		{
-			*(Int *)(dest+4) = srcLen;
+			*(Int*)(dest + 4) = srcLen;
 			return outLen + 8;
 		}
 		else
@@ -275,57 +313,75 @@ Int CompressionManager::compressData( CompressionType compType, void *srcVoid, I
 	return 0;
 }
 
-Int CompressionManager::decompressData( void *srcVoid, Int srcLen, void *destVoid, Int destLen )
+Int CompressionManager::decompressData(void* srcVoid, Int srcLen, void* destVoid, Int destLen)
 {
 	if (srcLen < 8)
+	{
 		return 0;
+	}
 
-	UnsignedByte *src = (UnsignedByte *)srcVoid;
-	UnsignedByte *dest = (UnsignedByte *)destVoid;
+	UnsignedByte* src = (UnsignedByte*)srcVoid;
+	UnsignedByte* dest = (UnsignedByte*)destVoid;
 
 	CompressionType compType = getCompressionType(src, srcLen);
 
 	if (compType == COMPRESSION_BTREE)
 	{
 		Int slen = srcLen - 8;
-		Int ret = BTREE_decode(dest, src+8, &slen);
+		Int ret = BTREE_decode(dest, src + 8, &slen);
 		if (ret)
+		{
 			return ret;
+		}
 		else
+		{
 			return 0;
+		}
 	}
 	if (compType == COMPRESSION_HUFF)
 	{
 		Int slen = srcLen - 8;
-		Int ret = HUFF_decode(dest, src+8, &slen);
+		Int ret = HUFF_decode(dest, src + 8, &slen);
 		if (ret)
+		{
 			return ret;
+		}
 		else
+		{
 			return 0;
+		}
 	}
 	if (compType == COMPRESSION_REFPACK)
 	{
 		Int slen = srcLen - 8;
-		Int ret = REF_decode(dest, src+8, &slen);
+		Int ret = REF_decode(dest, src + 8, &slen);
 		if (ret)
+		{
 			return ret;
+		}
 		else
+		{
 			return 0;
+		}
 	}
 
 	if (compType == COMPRESSION_NOXLZH)
 	{
-		Bool ret = DecompressMemory(src+8, srcLen-8, dest, destLen);
+		Bool ret = DecompressMemory(src + 8, srcLen - 8, dest, destLen);
 		if (ret)
+		{
 			return destLen;
+		}
 		else
+		{
 			return 0;
+		}
 	}
 
 	if (compType >= COMPRESSION_ZLIB1 && compType <= COMPRESSION_ZLIB9)
 	{
 		unsigned long outLen = destLen;
-		Int err = uncompress((Bytef*)dest, &outLen, (const Bytef*)src+8, srcLen-8);
+		Int err = uncompress((Bytef*)dest, &outLen, (const Bytef*)src + 8, srcLen - 8);
 		if (err == Z_OK || err == Z_STREAM_END)
 		{
 			return outLen;
@@ -333,7 +389,7 @@ Int CompressionManager::decompressData( void *srcVoid, Int srcLen, void *destVoi
 		else
 		{
 			DEBUG_LOG(("ZLib decompression error (src is level %d, %d bytes long) %d",
-				compType - COMPRESSION_ZLIB1 + 1 /* 1-9 */, srcLen, err));
+			           compType - COMPRESSION_ZLIB1 + 1 /* 1-9 */, srcLen, err));
 			return 0;
 		}
 	}
@@ -354,7 +410,10 @@ Int CompressionManager::decompressData( void *srcVoid, Int srcLen, void *destVoi
 #include "Common/file.h"
 
 #include "Common/PerfTimer.h"
-enum { NUM_TIMES = 10 };
+enum
+{
+	NUM_TIMES = 10
+};
 
 struct CompData
 {
@@ -365,11 +424,10 @@ public:
 
 void DoCompressTest()
 {
-
 	Int i;
 
-	PerfGather *s_compressGathers[COMPRESSION_COUNT];
-	PerfGather *s_decompressGathers[COMPRESSION_COUNT];
+	PerfGather* s_compressGathers[COMPRESSION_COUNT];
+	PerfGather* s_decompressGathers[COMPRESSION_COUNT];
 	for (i = 0; i < COMPRESSION_COUNT; ++i)
 	{
 		s_compressGathers[i] = new PerfGather(CompressionManager::getCompressionNameByType((CompressionType)i));
@@ -381,41 +439,41 @@ void DoCompressTest()
 	std::map<AsciiString, MapMetaData>::const_iterator it = TheMapCache->begin();
 	while (it != TheMapCache->end())
 	{
-		//if (it->second.m_isOfficial)
+		// if (it->second.m_isOfficial)
 		//{
-			//++it;
-			//continue;
+		//++it;
+		// continue;
 		//}
-		//static Int count = 0;
-		//if (count++ > 2)
-			//break;
-		File *f = TheFileSystem->openFile(it->first.str());
+		// static Int count = 0;
+		// if (count++ > 2)
+		// break;
+		File* f = TheFileSystem->openFile(it->first.str());
 		if (f)
 		{
 			DEBUG_LOG(("***************************\nTesting '%s'\n", it->first.str()));
 			Int origSize = f->size();
-			UnsignedByte *buf = (UnsignedByte *)f->readEntireAndClose();
-			UnsignedByte *uncompressedBuf = NEW UnsignedByte[origSize];
+			UnsignedByte* buf = (UnsignedByte*)f->readEntireAndClose();
+			UnsignedByte* uncompressedBuf = NEW UnsignedByte[origSize];
 
 			CompData d = s_sizes[it->first];
 			d.origSize = origSize;
 			d.compressedSize[COMPRESSION_NONE] = origSize;
 
-			for (i=COMPRESSION_MIN; i<=COMPRESSION_MAX; ++i)
+			for (i = COMPRESSION_MIN; i <= COMPRESSION_MAX; ++i)
 			{
 				DEBUG_LOG(("================================================="));
 				DEBUG_LOG(("Compression Test %d", i));
 
-				Int maxCompressedSize = CompressionManager::getMaxCompressedSize( origSize, (CompressionType)i );
+				Int maxCompressedSize = CompressionManager::getMaxCompressedSize(origSize, (CompressionType)i);
 				DEBUG_LOG(("Orig size is %d, max compressed size is %d bytes", origSize, maxCompressedSize));
 
-				UnsignedByte *compressedBuf = NEW UnsignedByte[maxCompressedSize];
+				UnsignedByte* compressedBuf = NEW UnsignedByte[maxCompressedSize];
 				memset(compressedBuf, 0, maxCompressedSize);
 				memset(uncompressedBuf, 0, origSize);
 
 				Int compressedLen, decompressedLen;
 
-				for (Int j=0; j < NUM_TIMES; ++j)
+				for (Int j = 0; j < NUM_TIMES; ++j)
 				{
 					s_compressGathers[i]->startTimer();
 					compressedLen = CompressionManager::compressData((CompressionType)i, buf, origSize, compressedBuf, maxCompressedSize);
@@ -425,9 +483,9 @@ void DoCompressTest()
 					s_decompressGathers[i]->stopTimer();
 				}
 				d.compressedSize[i] = compressedLen;
-				DEBUG_LOG(("Compressed len is %d (%g%% of original size)", compressedLen, (double)compressedLen/(double)origSize*100.0));
+				DEBUG_LOG(("Compressed len is %d (%g%% of original size)", compressedLen, (double)compressedLen / (double)origSize * 100.0));
 				DEBUG_ASSERTCRASH(compressedLen, ("Failed to compress"));
-				DEBUG_LOG(("Decompressed len is %d (%g%% of original size)", decompressedLen, (double)decompressedLen/(double)origSize*100.0));
+				DEBUG_LOG(("Decompressed len is %d (%g%% of original size)", decompressedLen, (double)decompressedLen / (double)origSize * 100.0));
 
 				DEBUG_ASSERTCRASH(decompressedLen == origSize, ("orig size does not match compressed+uncompressed output"));
 				if (decompressedLen == origSize)
@@ -457,7 +515,7 @@ void DoCompressTest()
 		++it;
 	}
 
-	for (i=COMPRESSION_MIN; i<=COMPRESSION_MAX; ++i)
+	for (i = COMPRESSION_MIN; i <= COMPRESSION_MAX; ++i)
 	{
 		Real maxCompression = 1000.0f;
 		Real minCompression = 0.0f;
@@ -467,7 +525,7 @@ void DoCompressTest()
 		{
 			CompData d = cd->second;
 
-			Real ratio = d.compressedSize[i]/(Real)d.origSize;
+			Real ratio = d.compressedSize[i] / (Real)d.origSize;
 			maxCompression = min(maxCompression, ratio);
 			minCompression = max(minCompression, ratio);
 
@@ -477,16 +535,16 @@ void DoCompressTest()
 		DEBUG_LOG(("***************************************************"));
 		DEBUG_LOG(("Compression method %s:", CompressionManager::getCompressionNameByType((CompressionType)i)));
 		DEBUG_LOG(("%d bytes compressed to %d (%g%%)", totalUncompressedBytes, totalCompressedBytes,
-			totalCompressedBytes/(Real)totalUncompressedBytes*100.0f));
+		           totalCompressedBytes / (Real)totalUncompressedBytes * 100.0f));
 		DEBUG_LOG(("Min ratio: %g%%, Max ratio: %g%%",
-			minCompression*100.0f, maxCompression*100.0f));
+		           minCompression * 100.0f, maxCompression * 100.0f));
 		DEBUG_LOG((""));
 	}
 
 	PerfGather::dumpAll(10000);
-	//PerfGather::displayGraph(TheGameLogic->getFrame());
+	// PerfGather::displayGraph(TheGameLogic->getFrame());
 	PerfGather::resetAll();
-	CopyFile( "AAAPerfStats.csv", "AAACompressPerfStats.csv", FALSE );
+	CopyFile("AAAPerfStats.csv", "AAACompressPerfStats.csv", FALSE);
 
 	for (i = 0; i < COMPRESSION_COUNT; ++i)
 	{
@@ -496,7 +554,6 @@ void DoCompressTest()
 		delete s_decompressGathers[i];
 		s_decompressGathers[i] = nullptr;
 	}
-
 }
 
-#endif // TEST_COMPRESSION
+#endif    // TEST_COMPRESSION

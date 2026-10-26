@@ -19,5 +19,5 @@
 #pragma once
 
 #define MAX_ENCRYPTED_STRING 8
-//char *do_encrypt(char *, char *);
-char *do_encrypt(char *);
+// char *do_encrypt(char *, char *);
+char* do_encrypt(char*);

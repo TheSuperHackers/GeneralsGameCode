@@ -30,19 +30,34 @@ class AsciiString;
 
 #ifdef ALLOW_DEBUG_UTILS
 
-	// Initializes the debug utilities for an application that uses the game engine.
-	DEBUG_EXTERN_C void GameDebugInit(int flags);
+// Initializes the debug utilities for an application that uses the game engine.
+DEBUG_EXTERN_C void GameDebugInit(int flags);
 
-	#define GAME_DEBUG_INIT(f)			do { GameDebugInit(f); } while (0)
+#define GAME_DEBUG_INIT(f) \
+	do \
+	{ \
+		GameDebugInit(f); \
+	} \
+	while (0)
 
 #else
 
-	#define GAME_DEBUG_INIT(f)			((void)0)
+#define GAME_DEBUG_INIT(f) ((void)0)
 
 #endif
 
 DEBUG_EXTERN_C void ReleaseCrash(const char* reason);
 DEBUG_EXTERN_C void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m);
 
-#define RELEASE_CRASH(m)				do { ReleaseCrash(m); } while (0)
-#define RELEASE_CRASHLOCALIZED(p, m)		do { ReleaseCrashLocalized(p, m); } while (0)
+#define RELEASE_CRASH(m) \
+	do \
+	{ \
+		ReleaseCrash(m); \
+	} \
+	while (0)
+#define RELEASE_CRASHLOCALIZED(p, m) \
+	do \
+	{ \
+		ReleaseCrashLocalized(p, m); \
+	} \
+	while (0)

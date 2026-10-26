@@ -37,8 +37,8 @@
 static const Int MAX_SCROLL = 1000;
 
 /// Constructor
-HandScrollTool::HandScrollTool() :
-	Tool(ID_HAND_SCROLL_TOOL, IDC_HAND_SCROLL)
+HandScrollTool::HandScrollTool()
+  : Tool(ID_HAND_SCROLL_TOOL, IDC_HAND_SCROLL)
 {
 }
 
@@ -53,11 +53,14 @@ HandScrollTool::~HandScrollTool()
 {
 }
 
-void HandScrollTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void HandScrollTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc)
 {
-	if (m != TRACK_L && m != TRACK_R && m != TRACK_M) return;
+	if (m != TRACK_L && m != TRACK_R && m != TRACK_M)
+	{
+		return;
+	}
 
-//	pView->viewToDocCoords(viewPt, &m_prevPt);
+	//	pView->viewToDocCoords(viewPt, &m_prevPt);
 	m_prevPt2d = viewPt;
 	m_downPt2d = viewPt;
 	m_scrolling = false;
@@ -66,45 +69,57 @@ void HandScrollTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CW
 }
 
 /// Left button move code.
-void HandScrollTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void HandScrollTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc)
 {
 	if (m == TRACK_NONE)
+	{
 		return;
+	}
 
-	if (m == TRACK_M) {
-
+	if (m == TRACK_M)
+	{
 		// camera rotation
 		const Real factor = 0.01f;
 		Real rot = factor * (viewPt.x - m_prevPt2d.x);
 		/*
 		if (pView->isDoingPitch())
-			pView->pitchCamera(rot);
+		  pView->pitchCamera(rot);
 		else
 		*/
-			pView->rotateCamera(rot);
+		pView->rotateCamera(rot);
 		m_prevPt2d = viewPt;
-
-	} else if (m == TRACK_L || m == TRACK_R) {
-		if (!m_scrolling) {
+	}
+	else if (m == TRACK_L || m == TRACK_R)
+	{
+		if (!m_scrolling)
+		{
 			// see if we moved enough to start scrolling.
-			if (abs(viewPt.x - m_downPt2d.x) > HYSTERESIS) m_scrolling = true;
-			if (abs(viewPt.y - m_downPt2d.y) > HYSTERESIS) m_scrolling = true;
+			if (abs(viewPt.x - m_downPt2d.x) > HYSTERESIS)
+			{
+				m_scrolling = true;
+			}
+			if (abs(viewPt.y - m_downPt2d.y) > HYSTERESIS)
+			{
+				m_scrolling = true;
+			}
 		}
-		if (!m_scrolling) {
+		if (!m_scrolling)
+		{
 			return;
 		}
 		// Scroll dynamically.
 		Coord3D prev, cur;
 		if (pView->viewToDocCoords(m_prevPt2d, &prev, false) &&
-					pView->viewToDocCoords(viewPt, &cur, false))
+		    pView->viewToDocCoords(viewPt, &cur, false))
 		{
-
 			Real dx = cur.x - prev.x;
 			Real dy = cur.y - prev.y;
-			if (IABS(dx)>MAX_SCROLL) {
+			if (IABS(dx) > MAX_SCROLL)
+			{
 				dx = 0;
 			}
-			if (IABS(dy)>MAX_SCROLL) {
+			if (IABS(dy) > MAX_SCROLL)
+			{
 				dy = 0;
 			}
 			dx /= MAP_XY_FACTOR;
@@ -116,26 +131,37 @@ void HandScrollTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, C
 	}
 }
 
-void HandScrollTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void HandScrollTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc)
 {
-	if (m == TRACK_M) {
+	if (m == TRACK_M)
+	{
 		// if haven't moved, reset view
 		Bool moved = false;
-		if (abs(viewPt.x - m_downPt2d.x) > HYSTERESIS) moved = true;
-		if (abs(viewPt.y - m_downPt2d.y) > HYSTERESIS) moved = true;
+		if (abs(viewPt.x - m_downPt2d.x) > HYSTERESIS)
+		{
+			moved = true;
+		}
+		if (abs(viewPt.y - m_downPt2d.y) > HYSTERESIS)
+		{
+			moved = true;
+		}
 
 		if (!moved && GetTickCount() - m_mouseDownTime < ::GetDoubleClickTime())
 		{
 			pView->setDefaultCamera();
 		}
-	} else if (m == TRACK_L || m == TRACK_R) {
-		if (m_scrolling) {
+	}
+	else if (m == TRACK_L || m == TRACK_R)
+	{
+		if (m_scrolling)
+		{
 			// Tell the view we are done scrolling.
-			pView->scrollInView(0,0,true);
-		} else if (m==TRACK_R) {
+			pView->scrollInView(0, 0, true);
+		}
+		else if (m == TRACK_R)
+		{
 			// Clicked right.  Deselect & go to pointer.
 			WbApp()->selectPointerTool();
 		}
 	}
 }
-

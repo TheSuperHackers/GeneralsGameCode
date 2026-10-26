@@ -39,14 +39,15 @@ class Player;
 //-------------------------------------------------------------------------------------------------
 class RankInfo : public Overridable
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( RankInfo, "RankInfo" );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RankInfo, "RankInfo");
+
 public:
-	UnicodeString		m_rankName;
-	Int							m_skillPointsNeeded;
-	Int							m_sciencePurchasePointsGranted;
-	ScienceVec			m_sciencesGranted;
+	UnicodeString m_rankName;
+	Int m_skillPointsNeeded;
+	Int m_sciencePurchasePointsGranted;
+	ScienceVec m_sciencesGranted;
 };
-//EMPTY_DTOR(RankInfo)
+// EMPTY_DTOR(RankInfo)
 
 //-------------------------------------------------------------------------------------------------
 class RankInfoStore : public SubsystemInterface
@@ -57,7 +58,7 @@ public:
 public:
 	virtual void init() override;
 	virtual void reset() override;
-	virtual void update() override { }
+	virtual void update() override {}
 
 	Int getRankLevelCount() const;
 
@@ -67,7 +68,6 @@ public:
 	static void friend_parseRankDefinition(INI* ini);
 
 private:
-
 	typedef std::vector<RankInfo*> RankInfoVec;
 	RankInfoVec m_rankInfos;
 };

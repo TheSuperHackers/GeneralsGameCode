@@ -53,73 +53,71 @@ class Drawable;
 class INI;
 
 // TYPE DEFINITIONS ///////////////////////////////////////////////////////////////////////////////
-typedef Module *(*NewModuleProc)(Thing *thing, const ModuleData* moduleData);
+typedef Module* (*NewModuleProc)(Thing* thing, const ModuleData* moduleData);
 typedef ModuleData* (*NewModuleDataProc)(INI* ini);
 
 //-------------------------------------------------------------------------------------------------
 /** We use TheModuleFactory to register classes that will be attached
-	* to objects and drawables which will be executed or "called back" in the
-	* correct situations ... such as Die, Damage, Update etc or just as
-	* a place to store data specific to that type of thing */
+ * to objects and drawables which will be executed or "called back" in the
+ * correct situations ... such as Die, Damage, Update etc or just as
+ * a place to store data specific to that type of thing */
 //-------------------------------------------------------------------------------------------------
 class ModuleFactory : public SubsystemInterface, public Snapshot
 {
-
 public:
-
 	ModuleFactory();
 	virtual ~ModuleFactory() override;
 
 	virtual void init() override;
-	virtual void reset() override { }					///< We don't reset during the lifetime of the app
-	virtual void update() override { }					///< As of now, we don't have a need for an update
+	virtual void reset() override {}    ///< We don't reset during the lifetime of the app
+	virtual void update() override {}    ///< As of now, we don't have a need for an update
 
-	Module *newModule( Thing *thing, const AsciiString& name, const ModuleData* data, ModuleType type );  ///< allocate a new module
+	Module* newModule(Thing* thing, const AsciiString& name, const ModuleData* data, ModuleType type);    ///< allocate a new module
 
 	// module-data
 	ModuleData* newModuleDataFromINI(INI* ini, const AsciiString& name, ModuleType type, const AsciiString& moduleTag);
 
 	Int findModuleInterfaceMask(const AsciiString& name, ModuleType type);
 
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
+	virtual void crc(Xfer* xfer) override;
+	virtual void xfer(Xfer* xfer) override;
 	virtual void loadPostProcess() override;
 
 protected:
-
-
 	class ModuleTemplate
 	{
 	public:
-		ModuleTemplate() : m_createProc(nullptr), m_createDataProc(nullptr), m_whichInterfaces(0)
+		ModuleTemplate()
+		  : m_createProc(nullptr)
+		  , m_createDataProc(nullptr)
+		  , m_whichInterfaces(0)
 		{
 		}
 
-		NewModuleProc m_createProc;					///< creation method
-		NewModuleDataProc m_createDataProc;	///< creation method
+		NewModuleProc m_createProc;    ///< creation method
+		NewModuleDataProc m_createDataProc;    ///< creation method
 		Int m_whichInterfaces;
 	};
 
 	const ModuleTemplate* findModuleTemplate(const AsciiString& name, ModuleType type);
 
 	/// adding a new module template to the factory, and assisting macro to make it easier
-	void addModuleInternal( NewModuleProc proc, NewModuleDataProc dataproc, ModuleType type, const AsciiString& name, Int whichIntf );
-	#define addModule( classname )											\
-		addModuleInternal( classname::friend_newModuleInstance,  \
-											 classname::friend_newModuleData,			\
-											 classname::getModuleType(),		\
-											 AsciiString( #classname ),			\
-											 classname::getInterfaceMask())
+	void addModuleInternal(NewModuleProc proc, NewModuleDataProc dataproc, ModuleType type, const AsciiString& name, Int whichIntf);
+#define addModule(classname) \
+	addModuleInternal(classname::friend_newModuleInstance, \
+	                  classname::friend_newModuleData, \
+	                  classname::getModuleType(), \
+	                  AsciiString(#classname), \
+	                  classname::getInterfaceMask())
 
 	static NameKeyType makeDecoratedNameKey(const AsciiString& name, ModuleType type);
 
-	typedef std::map< NameKeyType, ModuleTemplate, std::less<NameKeyType>/**/> ModuleTemplateMap;
+	typedef std::map< NameKeyType, ModuleTemplate, std::less<NameKeyType> /**/> ModuleTemplateMap;
 	typedef std::vector<const ModuleData*> ModuleDataList;
 
-	ModuleTemplateMap			m_moduleTemplateMap;
-	ModuleDataList				m_moduleDataList;
-
+	ModuleTemplateMap m_moduleTemplateMap;
+	ModuleDataList m_moduleDataList;
 };
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
-extern ModuleFactory *TheModuleFactory;  ///< singleton definition
+extern ModuleFactory* TheModuleFactory;    ///< singleton definition

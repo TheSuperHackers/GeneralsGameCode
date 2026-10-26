@@ -31,15 +31,15 @@
 
 namespace TerrainParticles
 {
-	constexpr const UnsignedShort MAX_VERTICES = 32768;
-	constexpr const UnsignedShort MAX_INDICES = 65535;
-	constexpr const UnsignedShort INVALID_VERTEX = MAX_VERTICES + 1;
-	constexpr const Real Z_OFFSET = MAP_HEIGHT_SCALE * 2; // Based on typical Z offsets for field particles.
-														  // These offsets depend on both INI settings and runtime placement.
-	constexpr const Real MIN_PARTICLE_SIZE = MAP_XY_FACTOR * 0.01f; // 1% of a map cell.
+constexpr const UnsignedShort MAX_VERTICES = 32768;
+constexpr const UnsignedShort MAX_INDICES = 65535;
+constexpr const UnsignedShort INVALID_VERTEX = MAX_VERTICES + 1;
+constexpr const Real Z_OFFSET = MAP_HEIGHT_SCALE * 2;    // Based on typical Z offsets for field particles.
+                                                         // These offsets depend on both INI settings and runtime placement.
+constexpr const Real MIN_PARTICLE_SIZE = MAP_XY_FACTOR * 0.01f;    // 1% of a map cell.
 
-	static_assert(MAX_VERTICES < INVALID_VERTEX, "Vertex indices must leave room for the INVALID_VERTEX sentinel value.");
-}
+static_assert(MAX_VERTICES < INVALID_VERTEX, "Vertex indices must leave room for the INVALID_VERTEX sentinel value.");
+}    // namespace TerrainParticles
 
 class AABoxClass;
 class TextureClass;
@@ -65,7 +65,6 @@ public:
 	void render();
 
 private:
-
 	struct ParticleContext;
 
 	void drawRegion(const WorldHeightMap& map, const ParticleContext& particle, const IRegion2D& bounds);
@@ -89,10 +88,10 @@ private:
 	RefCountPtr<TextureClass> m_texture;
 	ShaderClass m_shader;
 
-	RefCountPtr<ShareBufferClass<Vector3>/**/> m_pointLoc;    ///< World-space point locations.
-	RefCountPtr<ShareBufferClass<Vector4>/**/> m_pointDiffuse;    ///< RGBA values (nullptr if not used).
-	RefCountPtr<ShareBufferClass<Real>/**/> m_pointSize;    ///< Size override table (nullptr if not used).
-	RefCountPtr<ShareBufferClass<UnsignedByte>/**/> m_pointOrientation;    ///< Orientation indices (nullptr if not used).
+	RefCountPtr<ShareBufferClass<Vector3> /**/> m_pointLoc;    ///< World-space point locations.
+	RefCountPtr<ShareBufferClass<Vector4> /**/> m_pointDiffuse;    ///< RGBA values (nullptr if not used).
+	RefCountPtr<ShareBufferClass<Real> /**/> m_pointSize;    ///< Size override table (nullptr if not used).
+	RefCountPtr<ShareBufferClass<UnsignedByte> /**/> m_pointOrientation;    ///< Orientation indices (nullptr if not used).
 	Int m_pointCount;    ///< Total point count.
 	IRegion2D m_terrainInViewBounds;    ///< Bounding box of which terrain cell indices are on the screen.
 

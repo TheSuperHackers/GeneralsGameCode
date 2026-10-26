@@ -53,4 +53,4 @@ private:
 	static Bool s_isMultiInstance;
 };
 
-} // namespace rts
+}    // namespace rts

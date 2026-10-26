@@ -37,8 +37,8 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CW3DViewView, CView)
 
 BEGIN_MESSAGE_MAP(CW3DViewView, CView)
-	//{{AFX_MSG_MAP(CW3DViewView)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CW3DViewView)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -47,7 +47,6 @@ END_MESSAGE_MAP()
 CW3DViewView::CW3DViewView()
 {
 	// TODO: add construction code here
-
 }
 
 CW3DViewView::~CW3DViewView()
@@ -87,12 +86,12 @@ void CW3DViewView::Dump(CDumpContext& dc) const
 	CView::Dump(dc);
 }
 
-CW3DViewDoc* CW3DViewView::GetDocument() // non-debug version is inline
+CW3DViewDoc* CW3DViewView::GetDocument()    // non-debug version is inline
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CW3DViewDoc)));
 	return (CW3DViewDoc*)m_pDocument;
 }
-#endif //RTS_DEBUG
+#endif    // RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CW3DViewView message handlers

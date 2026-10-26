@@ -72,83 +72,71 @@
 // W3DGadgetHorizontalSliderDraw ==============================================
 /** Draw colored horizontal slider using standard graphics */
 //=============================================================================
-void W3DGadgetHorizontalSliderDraw( GameWindow *window, WinInstanceData *instData )
+void W3DGadgetHorizontalSliderDraw(GameWindow* window, WinInstanceData* instData)
 {
 	Color backBorder, backColor;
 	ICoord2D origin, size, start, end;
 
 	// get screen position and size
-	window->winGetScreenPosition( &origin.x, &origin.y );
-	window->winGetSize( &size.x, &size.y );
+	window->winGetScreenPosition(&origin.x, &origin.y);
+	window->winGetSize(&size.x, &size.y);
 
 	// get the right colors
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if (BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED) == FALSE)
 	{
-
-		backBorder		= GadgetSliderGetDisabledBorderColor( window );
-		backColor			= GadgetSliderGetDisabledColor( window );
-
+		backBorder = GadgetSliderGetDisabledBorderColor(window);
+		backColor = GadgetSliderGetDisabledColor(window);
 	}
-	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
+	else if (BitIsSet(instData->getState(), WIN_STATE_HILITED))
 	{
-
-		backBorder		= GadgetSliderGetHiliteBorderColor( window );
-		backColor			= GadgetSliderGetHiliteColor( window );
-
+		backBorder = GadgetSliderGetHiliteBorderColor(window);
+		backColor = GadgetSliderGetHiliteColor(window);
 	}
 	else
 	{
-
-		backBorder		= GadgetSliderGetEnabledBorderColor( window );
-		backColor			= GadgetSliderGetEnabledColor( window );
-
+		backBorder = GadgetSliderGetEnabledBorderColor(window);
+		backColor = GadgetSliderGetEnabledColor(window);
 	}
 
 	// draw background border and rect over whole control
-	if( backBorder != WIN_COLOR_UNDEFINED )
+	if (backBorder != WIN_COLOR_UNDEFINED)
 	{
-
 		start.x = origin.x;
 		start.y = origin.y;
 		end.x = start.x + size.x;
 		end.y = start.y + size.y;
-		TheWindowManager->winOpenRect( backBorder, WIN_DRAW_LINE_WIDTH,
-																	 start.x, start.y, end.x, end.y );
-
+		TheWindowManager->winOpenRect(backBorder, WIN_DRAW_LINE_WIDTH,
+		                              start.x, start.y, end.x, end.y);
 	}
-	if( backColor != WIN_COLOR_UNDEFINED )
+	if (backColor != WIN_COLOR_UNDEFINED)
 	{
-
 		start.x = origin.x + 1;
 		start.y = origin.y + 1;
 		end.x = start.x + size.x - 2;
 		end.y = start.y + size.y - 2;
-		TheWindowManager->winFillRect( backColor, WIN_DRAW_LINE_WIDTH,
-																	 start.x, start.y, end.x, end.y );
-
+		TheWindowManager->winFillRect(backColor, WIN_DRAW_LINE_WIDTH,
+		                              start.x, start.y, end.x, end.y);
 	}
-
-
 }
 
 // W3DGadgetHorizontalSliderImageDraw =========================================
 /** Draw horizontal slider with user supplied images */
 //=============================================================================
-void W3DGadgetHorizontalSliderImageDraw( GameWindow *window,
-																				 WinInstanceData *instData )
+void W3DGadgetHorizontalSliderImageDraw(GameWindow* window,
+                                        WinInstanceData* instData)
 {
 	const Image *fillSquare, *blankSquare, *highlightSquare;
 	ICoord2D origin, size, start, end, highlightOffset;
 
 	// get screen position and size
-	window->winGetScreenPosition( &origin.x, &origin.y );
-	window->winGetSize( &size.x, &size.y );
+	window->winGetScreenPosition(&origin.x, &origin.y);
+	window->winGetSize(&size.x, &size.y);
 
-	highlightSquare = GadgetSliderGetHiliteImageLeft( window );
-	blankSquare	= GadgetSliderGetDisabledImageRight( window );
-	fillSquare = GadgetSliderGetDisabledImageLeft( window );
+	highlightSquare = GadgetSliderGetHiliteImageLeft(window);
+	blankSquare = GadgetSliderGetDisabledImageRight(window);
+	fillSquare = GadgetSliderGetDisabledImageLeft(window);
 
-	SliderData *s = (SliderData *)window->winGetUserData();
+	SliderData* s = (SliderData*)window->winGetUserData();
 
 	Real xMulti = INT_TO_REAL(TheDisplay->getWidth()) / DEFAULT_DISPLAY_WIDTH;
 
@@ -156,59 +144,61 @@ void W3DGadgetHorizontalSliderImageDraw( GameWindow *window,
 	Int numBoxes = 0;
 	Int numSelectedBoxes = 0;
 	Int numHighlightBoxes = 0;
-	Int boxWidth = fillSquare->getImageWidth()* xMulti;
+	Int boxWidth = fillSquare->getImageWidth() * xMulti;
 	Int boxPadding = 2;
 	start.x = origin.x;
-	end.x	= start.x + boxWidth;
-	Real selectedPercent = (s->position - s->minVal)/INT_TO_REAL((s->maxVal - s->minVal));
+	end.x = start.x + boxWidth;
+	Real selectedPercent = (s->position - s->minVal) / INT_TO_REAL((s->maxVal - s->minVal));
 	Int maxSelectedX = origin.x + REAL_TO_INT(selectedPercent * size.x);
-	while(end.x < origin.x + size.x )
+	while (end.x < origin.x + size.x)
 	{
 		if (start.x <= maxSelectedX && end.x < origin.x + size.x && s->position != s->minVal)
+		{
 			++numSelectedBoxes;
+		}
 		start.x = end.x + boxPadding;
-		end.x	= start.x + boxWidth;
+		end.x = start.x + boxWidth;
 		++numBoxes;
 	}
 	numHighlightBoxes = numBoxes + 1;
 	Int distanceCovered = end.x - origin.x - boxWidth;
-	highlightOffset.x = -(boxWidth + boxPadding)/2;
-	highlightOffset.y = boxWidth/3;
+	highlightOffset.x = -(boxWidth + boxPadding) / 2;
+	highlightOffset.y = boxWidth / 3;
 	Int blankness = size.x - distanceCovered;
-	origin.x += blankness/2;
+	origin.x += blankness / 2;
 
 	Int i;
-	if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
+	if (BitIsSet(instData->getState(), WIN_STATE_HILITED))
 	{
 		ICoord2D backgroundStart, backgroundEnd;
 		backgroundStart.y = origin.y + highlightOffset.y;
 		backgroundEnd.y = backgroundStart.y + boxWidth + boxPadding;
-		for (i=0; i<numHighlightBoxes; ++i)
+		for (i = 0; i < numHighlightBoxes; ++i)
 		{
-			backgroundStart.x = origin.x + highlightOffset.x + i*(boxWidth+boxPadding);
+			backgroundStart.x = origin.x + highlightOffset.x + i * (boxWidth + boxPadding);
 			backgroundEnd.x = backgroundStart.x + boxWidth + boxPadding;
-			TheWindowManager->winDrawImage( highlightSquare,
-																		backgroundStart.x, backgroundStart.y,
-																		backgroundEnd.x, backgroundEnd.y );
+			TheWindowManager->winDrawImage(highlightSquare,
+			                               backgroundStart.x, backgroundStart.y,
+			                               backgroundEnd.x, backgroundEnd.y);
 		}
 	}
 
 	start.y = origin.y;
 	end.y = start.y + boxWidth;
-	for (i=0; i<numSelectedBoxes; ++i)
+	for (i = 0; i < numSelectedBoxes; ++i)
 	{
-		start.x = origin.x + i*(boxWidth+boxPadding);
+		start.x = origin.x + i * (boxWidth + boxPadding);
 		end.x = start.x + boxWidth;
-		TheWindowManager->winDrawImage( fillSquare,
-																	start.x, start.y,
-																	end.x, end.y );
+		TheWindowManager->winDrawImage(fillSquare,
+		                               start.x, start.y,
+		                               end.x, end.y);
 	}
-	for (i=numSelectedBoxes; i<numBoxes; ++i)
+	for (i = numSelectedBoxes; i < numBoxes; ++i)
 	{
-		start.x = origin.x + i*(boxWidth+boxPadding);
+		start.x = origin.x + i * (boxWidth + boxPadding);
 		end.x = start.x + boxWidth;
-		TheWindowManager->winDrawImage( blankSquare,
-																	start.x, start.y,
-																	end.x, end.y );
+		TheWindowManager->winDrawImage(blankSquare,
+		                               start.x, start.y,
+		                               end.x, end.y);
 	}
 }
