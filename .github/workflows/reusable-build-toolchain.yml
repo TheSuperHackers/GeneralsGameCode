@@ -57,6 +57,8 @@ jobs:
       # Metrics make every vcpkg run open its own exe exclusively to copy itself into
       # TEMP for the telemetry upload, which randomly blocks the next vcpkg launch.
       VCPKG_DISABLE_METRICS: "1"
+      # Weekly releases compile VC6 with /Zi, which ccache cannot cache, and should compile fresh.
+      USE_CCACHE: ${{ startsWith(inputs.preset, 'win32') || (startsWith(inputs.preset, 'vc6') && inputs.preset != 'vc6-weekly') }}
 
     steps:
       - name: Checkout Code
@@ -127,7 +129,7 @@ jobs:
           arch: x86
 
       - name: Set Up ccache
-        if: startsWith(inputs.preset, 'win32')
+        if: env.USE_CCACHE == 'true'
         id: ccache
         shell: pwsh
         env:
@@ -149,10 +151,10 @@ jobs:
           "CCACHE_NOMSVC_UTF8=1" >> $env:GITHUB_ENV
           # Bound each game/preset cache to limit storage across the build matrix.
           "CCACHE_MAXSIZE=500M" >> $env:GITHUB_ENV
-          "toolchain=$env:VCToolsVersion" >> $env:GITHUB_OUTPUT
+          "toolchain=$($env:VCToolsVersion ?? 'VC6SP6')" >> $env:GITHUB_OUTPUT
 
       - name: Cache MSVC Compilation
-        if: startsWith(inputs.preset, 'win32')
+        if: env.USE_CCACHE == 'true'
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: ${{ env.CCACHE_DIR }}
@@ -199,7 +201,7 @@ jobs:
           $buildFlags += "-DRTS_BUILD_OPTION_TESTS=${{ inputs.tests && 'ON' || 'OFF' }}"
           $buildFlags += "-DRTS_BUILD_OPTION_BENCHMARKS=${{ inputs.benchmarks && 'ON' || 'OFF' }}"
 
-          if ("${{ inputs.preset }}" -like "win32*") {
+          if ($env:USE_CCACHE -eq 'true') {
               $buildFlags += "-DCMAKE_C_COMPILER_LAUNCHER=ccache"
               $buildFlags += "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
               # MSVC PCH consumers bypass ccache unless time-macro checking is relaxed.
@@ -210,7 +212,7 @@ jobs:
           cmake --preset ${{ inputs.preset }} $buildFlags
 
       - name: Reset ccache Statistics
-        if: startsWith(inputs.preset, 'win32')
+        if: env.USE_CCACHE == 'true'
         shell: pwsh
         run: ccache --zero-stats
 
@@ -220,7 +222,7 @@ jobs:
           cmake --build --preset ${{ inputs.preset }}
 
       - name: Show ccache Statistics
-        if: ${{ always() && startsWith(inputs.preset, 'win32') && steps.ccache.outcome == 'success' }}
+        if: ${{ always() && env.USE_CCACHE == 'true' && steps.ccache.outcome == 'success' }}
         shell: pwsh
         run: ccache --show-stats --verbose
 
