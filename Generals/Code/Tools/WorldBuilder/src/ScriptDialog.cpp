@@ -1656,6 +1656,7 @@ Bool ScriptDialog::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChunk
 	Int triggerID;
 //	Int maxTriggerId = 0;
 	AsciiString triggerName;
+	AsciiString layerName;
 	// Remove any existing polygon triggers, if any.
 	ScriptDialog *pThis = (ScriptDialog *)userData;
 	pThis->m_firstTrigger = nullptr;
@@ -1667,6 +1668,11 @@ Bool ScriptDialog::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChunk
 		count--;
 		Bool isWater = false;
 		triggerName = file.readAsciiString();
+		// TheSuperHackers @bugfix Read the layer name of version 4 triggers, like PolygonTrigger::ParsePolygonTriggersDataChunk.
+		layerName.clear();
+		if (info->version >= K_TRIGGERS_VERSION_4) {
+			layerName = file.readAsciiString();
+		}
 		triggerID = file.readInt();
 		if (info->version >= K_TRIGGERS_VERSION_2) {
 			isWater = file.readByte();
@@ -1680,6 +1686,7 @@ Bool ScriptDialog::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChunk
 		numPoints = file.readInt();
 		PolygonTrigger *pTrig = newInstance(PolygonTrigger)(numPoints+1);
 		pTrig->setTriggerName(triggerName);
+		pTrig->setLayerName(layerName);
 		pTrig->setWaterArea(isWater);
 		pTrig->setRiver(isRiver);
 		pTrig->setRiverStart(riverStart);
