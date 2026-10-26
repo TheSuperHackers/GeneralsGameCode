@@ -153,9 +153,10 @@ jobs:
           "CCACHE_MAXSIZE=500M" >> $env:GITHUB_ENV
           "toolchain=$($env:VCToolsVersion ?? 'VC6SP6')" >> $env:GITHUB_OUTPUT
 
-      - name: Cache MSVC Compilation
+      - name: Restore MSVC Compilation Cache
         if: env.USE_CCACHE == 'true'
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        id: ccache-restore
+        uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ccache-v1-${{ runner.os }}-${{ runner.arch }}-${{ inputs.game }}-${{ inputs.preset }}-${{ steps.ccache.outputs.toolchain }}-${{ github.sha }}
@@ -225,6 +226,14 @@ jobs:
         if: ${{ always() && env.USE_CCACHE == 'true' && steps.ccache.outcome == 'success' }}
         shell: pwsh
         run: ccache --show-stats --verbose
+
+      # Pull requests only restore, so caches change only after changes reach main.
+      - name: Save MSVC Compilation Cache
+        if: ${{ env.USE_CCACHE == 'true' && github.event_name != 'pull_request' && steps.ccache-restore.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
 
       # The benchmarks are only built, because running them takes too long here.
       # Verbose prints the Google Test output, which lists the test cases of each executable.
