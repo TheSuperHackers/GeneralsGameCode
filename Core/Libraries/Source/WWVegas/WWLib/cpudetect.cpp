@@ -136,7 +136,7 @@ const char* CPUDetectClass::Get_Processor_Manufacturer_Name()
 	return ManufacturerNames[ProcessorManufacturer];
 }
 
-#define ASM_RDTSC _asm _emit 0x0f _asm _emit 0x31
+#define ASM_RDTSC __asm _emit 0x0f __asm _emit 0x31
 
 static unsigned Calculate_Processor_Speed(sint64& ticks_per_second)
 {

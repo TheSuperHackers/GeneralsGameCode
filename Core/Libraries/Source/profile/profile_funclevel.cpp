@@ -47,7 +47,7 @@ static void __declspec(naked) _pleave()
   ProfileFuncLevelTracer *p;
   unsigned curESP,leaveAddr;
 
-  _asm
+  __asm
   {
     push ebp        // this will be overwritten down there...
     push ebp        // setup standard stack frame
@@ -64,7 +64,7 @@ static void __declspec(naked) _pleave()
   leaveAddr=p->Leave(curESP);
   *(unsigned *)(curESP)=leaveAddr;
 
-  _asm
+  __asm
   {
     popad
     add  esp,3*4    // must match sub esp above
@@ -79,7 +79,7 @@ extern "C" void __declspec(naked) __cdecl _penter()
   unsigned callerFunc,ESPonReturn,callerRet;
   ProfileFuncLevelTracer *p;
 
-  _asm
+  __asm
   {
     push ebp
     push eax
@@ -118,7 +118,7 @@ extern "C" void __declspec(naked) __cdecl _penter()
   p->Enter(callerFunc-5,ESPonReturn,callerRet);
 
   // cleanup
-  _asm
+  __asm
   {
     popad
     add  esp,4*4      // must match sub esp above

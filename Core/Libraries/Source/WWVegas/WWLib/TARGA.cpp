@@ -831,7 +831,7 @@ void Targa::XFlip()
 static __forceinline void _swapBytes(char *p1, char *p2, unsigned count)
 {
 #if defined(_MSC_VER) && _MSC_VER < 1300
-  _asm
+  __asm
   {
     mov esi,[p1]
     mov edi,[p2]

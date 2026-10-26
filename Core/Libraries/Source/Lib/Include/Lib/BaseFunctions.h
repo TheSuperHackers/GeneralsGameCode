@@ -51,7 +51,7 @@ __forceinline long fast_float2long_round(float f)
 __forceinline float fast_float_trunc(float f)
 {
 #if defined(_MSC_VER) && _MSC_VER < 1300
-  _asm
+  __asm
   {
     mov ecx,[f]
     shr ecx,23

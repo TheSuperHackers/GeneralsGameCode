@@ -112,7 +112,7 @@ unsigned long Get_CPU_Clock(unsigned long & high)
 **
 */
 
-#define ASM_RDTSC _asm _emit 0x0f _asm _emit 0x31
+#define ASM_RDTSC __asm _emit 0x0f __asm _emit 0x31
 
 // Max # of samplings to allow before giving up and returning current average.
 #define MAX_TRIES			20
