@@ -23,7 +23,6 @@ jobs:
       TEST_NAME: ${{ inputs.game == 'Generals' && 'g_googletest' || 'z_googletest' }}
       GTEST_FILTER: RenderingTest.*
       GTEST_FAIL_IF_NO_TEST_SELECTED: 1
-      GTEST_OUTPUT: xml:results.xml
       DXVK_VERSION: 2.6.2
       DXVK_SHA256: 17761876556afd55736cb895d184f5a1c55d43350f1b1e3b129f8d28706d7992
       MESA_VERSION: 26.2.4
@@ -79,11 +78,8 @@ jobs:
           }
           if ($LASTEXITCODE) { $base = $null }
           # Without a package, the nearest ancestor that has one renders the same.
-          $commits = @()
-          if ($base) {
-            $commits = gh api "$repo/commits?sha=$base&per_page=20" --jq '.[].sha'
-            if ($LASTEXITCODE) { $commits = @() }
-          }
+          $commits = if ($base) { gh api "$repo/commits?sha=$base&per_page=20" --jq '.[].sha' }
+          if ($LASTEXITCODE) { $commits = @() }
           foreach ($commit in $commits) {
             $runs = gh api "$repo/actions/runs?head_sha=$commit" --jq ".workflow_runs[] | select(.id != $env:GITHUB_RUN_ID) | .id"
             if ($LASTEXITCODE) { continue }
@@ -216,7 +212,6 @@ jobs:
           path: build/${{ inputs.game }}-rendering-report.html
           archive: false
           retention-days: 7
-          if-no-files-found: warn
 
       # Changes fail pull requests and are warnings on main.
       - name: Check Rendering Changes

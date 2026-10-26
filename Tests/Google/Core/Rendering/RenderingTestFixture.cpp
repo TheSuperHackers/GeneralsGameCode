@@ -66,11 +66,7 @@ void RenderingTest::TearDownTestSuite()
 	REF_PTR_RELEASE(s_camera);
 	WW3D::Shutdown();
 	WWMath::Shutdown();
-	if (s_window != nullptr)
-	{
-		DestroyWindow(s_window);
-		s_window = nullptr;
-	}
+	DestroyWindow(s_window);
 }
 
 void RenderingTest::SetUp()
