@@ -65,6 +65,7 @@ jobs:
     needs: detect-changes
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generals == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     permissions:
+      actions: write
       contents: read
     strategy:
       matrix:
@@ -95,6 +96,7 @@ jobs:
     needs: detect-changes
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generals == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     permissions:
+      actions: write
       contents: read
       packages: write
     strategy:
@@ -134,6 +136,7 @@ jobs:
     needs: detect-changes
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     permissions:
+      actions: write
       contents: read
     strategy:
       matrix:
@@ -164,6 +167,7 @@ jobs:
     needs: detect-changes
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     permissions:
+      actions: write
       contents: read
       packages: write
     strategy:
