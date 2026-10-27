@@ -22,7 +22,7 @@
 
 #include <windows.h>
 
-#include "../../../Include/W3DDevice/GameClient/W3DProfilerFrameCapture.h"
+#include "W3DDevice/GameClient/W3DProfilerFrameCapture.h"
 
 #include "WW3D2/dx8wrapper.h"
 #include "WW3D2/surfaceclass.h"
