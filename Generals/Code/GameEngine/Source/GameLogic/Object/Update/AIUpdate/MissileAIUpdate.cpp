@@ -553,10 +553,12 @@ void MissileAIUpdate::doAttackState(Bool turnOK)
 		switchToState(ATTACK);
 	}
 
+#if RETAIL_COMPATIBLE_CRC
 	// If I was fired at a flyer and have lost target (most likely they died), then I need to do something better
 	// than cloverleaf around their last spot.
 	if( m_isTrackingTarget && (getGoalObject() == nullptr) )
 		airborneTargetGone();
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -574,10 +576,10 @@ void MissileAIUpdate::doKillState()
 			return;
 		}
 
+#if RETAIL_COMPATIBLE_CRC
 		// srj sez: killstate missiles should not be allowed to live forever.
 		airborneTargetGone();
-
-#if !RETAIL_COMPATIBLE_CRC
+#else
 		// TheSuperHackers @bugfix Stubbjax 01/10/2026 Stop missiles ungracefully deleting if their target
 		// dies or if fuel exhausts within locking distance of a tracked target.
 		if (curLoco)
@@ -625,10 +627,12 @@ void MissileAIUpdate::doKillState()
 			detonate();
 		}
 	}
+#if RETAIL_COMPATIBLE_CRC
 	// If I was fired at a flyer and have lost target (most likely they died), then I need to do something better
 	// than cloverleaf around their last spot.
 	if( m_isTrackingTarget && (getGoalObject() == nullptr) )
 		airborneTargetGone();
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -753,16 +757,16 @@ Also determines whether objects are blocked, and if so, if they are stuck.  jba.
 	return false;
 }
 
+#if RETAIL_COMPATIBLE_CRC
 //-------------------------------------------------------------------------------------------------
 void MissileAIUpdate::airborneTargetGone()
 {
-#if RETAIL_COMPATIBLE_CRC
 	// I would really love it if this could retarget, but all of the targeting and legality is done
 	// by the Weapon that fired me.  The safest thing for me to do in this state is to just run out of gas.
 	m_fuelExpirationDate = TheGameLogic->getFrame();
 	switchToState(KILL_SELF);
-#endif
 }
+#endif
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
