@@ -1936,9 +1936,9 @@ void W3DVolumetricShadow::updateVolumes(Real zoffset)
 }
 
 // Returns the X, Y and Z components of a matrix row.
-static Vector3 getRowXYZ(const Matrix4x4 &matrix, Int row)
+static Vector3 getRowXYZ(const Matrix4x4& matrix, Int row)
 {
-	const Vector4 &r = matrix[row];
+	const Vector4& r = matrix[row];
 	return Vector3(r.X, r.Y, r.Z);
 }
 
@@ -2013,20 +2013,16 @@ void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const 
 #else
 	//When dealing with infinite light sources, we can assume that the shadow doesn't
 	//change much based on object position.  Only the orientation to light matters.
-	Real cosAngle = fabs (Vector3::Dot_Product(getRowXYZ(*prevXForm,0),getRowXYZ(objectToWorld,0)));
-	if (cosAngle >= cosAngleToCare)
-	{	cosAngle = fabs (Vector3::Dot_Product(getRowXYZ(*prevXForm,1),getRowXYZ(objectToWorld,1)));
-		if (cosAngle >= cosAngleToCare)
+	for (Int rowIndex = 0; rowIndex < 3; ++rowIndex)
+	{
+		const Vector3 prevRow = getRowXYZ(*prevXForm, rowIndex);
+		const Vector3 currRow = getRowXYZ(objectToWorld, rowIndex);
+		if (fabs(Vector3::Dot_Product(prevRow, currRow)) < cosAngleToCare)
 		{
-			cosAngle = fabs (Vector3::Dot_Product(getRowXYZ(*prevXForm,2),getRowXYZ(objectToWorld,2)));
-			if (cosAngle < cosAngleToCare)
-				isMeshRotating=true;
+			isMeshRotating = true;
+			break;
 		}
-		else
-			isMeshRotating =true;
 	}
-	else
-		isMeshRotating =true;
 #endif	//near light source
 #endif // CNC3
 

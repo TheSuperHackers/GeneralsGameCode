@@ -1441,6 +1441,29 @@ void WaterRenderObjClass::updateRenderTargetTextures(CameraClass *cam)
 }
 
 //-------------------------------------------------------------------------------------------------
+/** Reflects a point or direction across the horizontal plane at the given height. */
+//-------------------------------------------------------------------------------------------------
+static Vector3 reflectAcrossWaterPlane(const Vector3& point, Real planeHeight)
+{
+	const Vector3 waterNormal(0.0f, 0.0f, 1.0f);
+	const Real distance = Vector3::Dot_Product(point, waterNormal) - planeHeight;
+	return point - (2.0f * distance * waterNormal);
+}
+
+//-------------------------------------------------------------------------------------------------
+/** Reflects a camera transform across the water plane at the given height. */
+//-------------------------------------------------------------------------------------------------
+static Matrix3D reflectCameraTransform(const Matrix3D& transform, Real waterLevel)
+{
+	// The axes are directions, so they reflect across the plane through the origin.
+	return Matrix3D(
+		reflectAcrossWaterPlane(transform.Get_X_Vector(), 0.0f),
+		reflectAcrossWaterPlane(transform.Get_Y_Vector(), 0.0f),
+		reflectAcrossWaterPlane(transform.Get_Z_Vector(), 0.0f),
+		reflectAcrossWaterPlane(transform.Get_Translation(), waterLevel));
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Renders the reflected scene into an offscreen texture. */
 //-------------------------------------------------------------------------------------------------
 void WaterRenderObjClass::renderMirror(CameraClass *cam)
@@ -1451,36 +1474,7 @@ void WaterRenderObjClass::renderMirror(CameraClass *cam)
 	}
 #endif
 	Matrix3D	OldCameraMatrix=cam->Get_Transform();
-	Matrix4x4	FullMatrix4(cam->Get_Transform());	//copy 3x4 matrix into a 4x4
-	Vector3		WaterNormal(0,0,1);	//normal of plane used for reflection
-	Vector4		WaterPlane(WaterNormal.X,WaterNormal.Y,WaterNormal.Z,m_level);
-	Vector3		rRight,rUp,rN,rPos;	//orientation and translation vectors of camera
-
-	Matrix4x4	FullMatrix(FullMatrix4.Transpose());	//swap rows/columns
-
-	//reflect camera right vector
-	Vector3 row(FullMatrix[0].X,FullMatrix[0].Y,FullMatrix[0].Z);
-	Real axis_distance=Vector3::Dot_Product(row,WaterNormal);
-	rRight = row - (2.0f*axis_distance*WaterNormal);
-
-	//reflect camera up vector
-	row.Set(FullMatrix[1].X,FullMatrix[1].Y,FullMatrix[1].Z);
-	axis_distance=Vector3::Dot_Product(row,WaterNormal);
-	rUp = row - (2.0f*axis_distance*WaterNormal);
-
-	//reflect camera n vector
-	row.Set(FullMatrix[2].X,FullMatrix[2].Y,FullMatrix[2].Z);
-	axis_distance=Vector3::Dot_Product(row,WaterNormal);
-	rN = row - (2.0f*axis_distance*WaterNormal);
-
-	//reflect camera position
-	row.Set(FullMatrix[3].X,FullMatrix[3].Y,FullMatrix[3].Z);
-	axis_distance=Vector3::Dot_Product(row,WaterNormal);	//distance cam to origin
-	axis_distance -= WaterPlane.W;	// subtract mirror plane distance to get distance camera to plane
-	rPos = row - (2.0f*axis_distance*WaterNormal);
-
-	//generate a new camera matrix from reflected vectors
-	Matrix3D reflectedTransform(rRight,rUp,rN,rPos);
+	Matrix3D	reflectedTransform(reflectCameraTransform(OldCameraMatrix,m_level));
 
 
 	DX8Wrapper::Set_Render_Target_With_Z((TextureClass*)m_pReflectionTexture);
@@ -1586,36 +1580,8 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 			{
 				//Normal frame buffer reflection water type. Non translucent.  Legacy code we're not using anymore.
 				Matrix3D	OldCameraMatrix=rinfo.Camera.Get_Transform();
-				Matrix4x4	FullMatrix4(rinfo.Camera.Get_Transform());	//copy 3x4 matrix into a 4x4
 				Vector3		WaterNormal(0,0,1);	//normal of plane used for reflection
 				Vector4		WaterPlane(WaterNormal.X,WaterNormal.Y,WaterNormal.Z,m_level);	//assume distance to origin 0
-				Vector3		rRight,rUp,rN,rPos;	//orientation and translation vectors of camera
-
-				Matrix4x4	FullMatrix(FullMatrix4.Transpose());	//swap rows/columns
-
-				//reflect camera right vector
-				Vector3 row(FullMatrix[0].X,FullMatrix[0].Y,FullMatrix[0].Z);
-				Real axis_distance=Vector3::Dot_Product(row,WaterNormal);
-				rRight = row - (2.0f*axis_distance*WaterNormal);
-
-				//reflect camera up vector
-				row.Set(FullMatrix[1].X,FullMatrix[1].Y,FullMatrix[1].Z);
-				axis_distance=Vector3::Dot_Product(row,WaterNormal);
-				rUp = row - (2.0f*axis_distance*WaterNormal);
-
-				//reflect camera n vector
-				row.Set(FullMatrix[2].X,FullMatrix[2].Y,FullMatrix[2].Z);
-				axis_distance=Vector3::Dot_Product(row,WaterNormal);
-				rN = row - (2.0f*axis_distance*WaterNormal);
-
-				//reflect camera position
-				row.Set(FullMatrix[3].X,FullMatrix[3].Y,FullMatrix[3].Z);
-				axis_distance=Vector3::Dot_Product(row,WaterNormal);	//distance cam to origin
-				axis_distance -= WaterPlane.W;	// subtract mirror plane distance to get distance camera to plane
-				rPos = row - (2.0f*axis_distance*WaterNormal);
-
-				//generate a new camera matrix from reflected vectors
-				Matrix3D reflectedTransform(rRight,rUp,rN,rPos);
 
 				//flip the winding order of polygons to draw the reflected back sides.
 				ShaderClass::Invert_Backface_Culling(true);
@@ -1693,6 +1659,7 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 			#endif
 
 			#if 0	// No longer do simple rendering.
+				Matrix3D	reflectedTransform(reflectCameraTransform(OldCameraMatrix,m_level));
 				if (TheGlobalData->m_useWaterPlane)
 				{
 					//@todo : Would it be better to create a new camera or change the transform of the
