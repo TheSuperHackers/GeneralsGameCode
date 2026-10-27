@@ -1474,7 +1474,6 @@ void WaterRenderObjClass::renderMirror(CameraClass *cam)
 	}
 #endif
 	Matrix3D	OldCameraMatrix=cam->Get_Transform();
-	Matrix3D	reflectedTransform(reflectCameraTransform(OldCameraMatrix,m_level));
 
 
 	DX8Wrapper::Set_Render_Target_With_Z((TextureClass*)m_pReflectionTexture);
@@ -1482,6 +1481,7 @@ void WaterRenderObjClass::renderMirror(CameraClass *cam)
 	// Clear the backbuffer
 	if (WW3D::Begin_Render(false,true,Vector3(0.0f,0.0f,0.0f)) == WW3D_ERROR_OK)	//clearing only z-buffer since background always filled with clouds
 	{
+		Matrix3D	reflectedTransform(reflectCameraTransform(OldCameraMatrix,m_level));
 		cam->Set_Transform( reflectedTransform );
 
 		//Force reflected image to be drawn into full texture size - not a viewport inside texture.
@@ -1659,9 +1659,9 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 			#endif
 
 			#if 0	// No longer do simple rendering.
-				Matrix3D	reflectedTransform(reflectCameraTransform(OldCameraMatrix,m_level));
 				if (TheGlobalData->m_useWaterPlane)
 				{
+					Matrix3D	reflectedTransform(reflectCameraTransform(OldCameraMatrix,m_level));
 					//@todo : Would it be better to create a new camera or change the transform of the
 					//existing one?
 					rinfo.Camera.Set_Transform( reflectedTransform );
