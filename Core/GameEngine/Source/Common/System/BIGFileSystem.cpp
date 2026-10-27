@@ -69,19 +69,17 @@ void BIGFileSystem::init() {
 		AsciiString dataDir;
 		while (dataDirs.nextToken(&dataDir, ";"))
 		{
-			if (!dataDir.endsWith("\\") && !dataDir.endsWith("/"))
-				dataDir.concat('\\');
+			FileSystem::appendPathSeparator(dataDir);
 
-			// Validate here, not during startup parsing, which runs before the debug log file is open.
-			const DWORD attributes = GetFileAttributes(dataDir.str());
-			if (attributes == 0xFFFFFFFF || !(attributes & FILE_ATTRIBUTE_DIRECTORY))
+			// Log here, not during startup parsing, which runs before the debug log file is open.
+			if (loadArchiveFilesFromDirectory(dataDir, "*.big"))
 			{
-				DEBUG_LOG(("Data dir '%s' is not a directory. Skipping it.", dataDir.str()));
-				continue;
+				loadedDataDir = TRUE;
 			}
-
-			loadArchiveFilesFromDirectory(dataDir, "*.big");
-			loadedDataDir = TRUE;
+			else
+			{
+				DEBUG_LOG(("Data dir '%s' has no .big files. Skipping it.", dataDir.str()));
+			}
 		}
 	}
 
