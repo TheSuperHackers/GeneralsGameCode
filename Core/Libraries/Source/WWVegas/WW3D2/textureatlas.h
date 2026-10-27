@@ -37,6 +37,9 @@ static_assert(PAGE_SIZE % PADDING == 0, "Page must be sized to a multiple of pad
 }    // namespace TextureAtlas
 
 /// Packs textures into shared atlas pages.
+/// The atlas is lazy-loading, which means that is not guaranteed that a texture will be inserted on the current frame.
+/// Any W3D device using this atlas therefore should have a fallback rendering method that uses the source texture instead.
+///
 /// Page: a texture of size PAGE_SIZE^2 that contains cells.
 /// Cell: one texture plus its padding, a border of repeated edge texels that keeps filtering from reaching a neighbour.
 /// Row: a strip across a page holding cells of the same height, left to right.
