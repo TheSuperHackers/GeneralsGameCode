@@ -316,67 +316,6 @@ void MeshModelClass::get_deformed_vertices(Vector3 *dst_vert, Vector3 *dst_norm,
 	}
 }
 
-// Destination pointer MUST point to arrays large enough to hold all vertices
-void MeshModelClass::compose_deformed_vertex_buffer(
-	VertexFormatXYZNDUV2* verts,
-	const Vector2* uv0,
-	const Vector2* uv1,
-	const unsigned* diffuse,
-	const HTreeClass * htree)
-{
-	int vi;
-	int vertex_count=Get_Vertex_Count();
-	Vector3 * src_vert = Vertex->Get_Array();
-#if (OPTIMIZE_VNORMS)
-	Vector3 * src_norm = (Vector3 *)Get_Vertex_Normal_Array();
-#else
-	Vector3 * src_norm = VertexNorm->Get_Array();
-#endif
-	uint16 * bonelink = VertexBoneLink->Get_Array();
-
-	for (vi = 0; vi < vertex_count;) {
-		const Matrix3D & tm = htree->Get_Transform(bonelink[vi]);
-
-		int idx=bonelink[vi];
-		int cnt;
-		for (cnt = vi; cnt < vertex_count; cnt++) {
-			if (idx!=bonelink[cnt]) {
-				break;
-			}
-		}
-
-		for (int pidx=0;pidx<cnt-vi;++pidx) {
-			const Matrix3D& A=tm;
-			VertexFormatXYZNDUV2* out=verts+vi+pidx;
-			const Vector3& v=*(src_vert+vi+pidx);
-			out->x = (A[0][0] * v.X + A[0][1] * v.Y + A[0][2] * v.Z + A[0][3]);
-			out->y = (A[1][0] * v.X + A[1][1] * v.Y + A[1][2] * v.Z + A[1][3]);
-			out->z = (A[2][0] * v.X + A[2][1] * v.Y + A[2][2] * v.Z + A[2][3]);
-
-			const Vector3& n=*(src_norm+vi+pidx);
-			out->nx = (A[0][0] * n.X + A[0][1] * n.Y + A[0][2] * n.Z);
-			out->ny = (A[1][0] * n.X + A[1][1] * n.Y + A[1][2] * n.Z);
-			out->nz = (A[2][0] * n.X + A[2][1] * n.Y + A[2][2] * n.Z);
-
-			if (diffuse) out->diffuse=diffuse[vi+pidx];
-			else out->diffuse=0;
-			if (uv0)
-			{
-				out->u1=uv0[vi+pidx].X;
-				out->v1=uv0[vi+pidx].Y;
-			}
-			else
-			{
-				out->u2=0.0f;
-				out->v2=0.0f;
-			}
-		}
-
-		vi=cnt;
-	}
-}
-
-
 // Destination pointers MUST point to arrays large enough to hold all vertices
 void MeshModelClass::get_deformed_screenspace_vertices(Vector4 *dst_vert,const RenderInfoClass & rinfo,const Matrix3D & mesh_transform,const HTreeClass * htree)
 {

@@ -516,16 +516,6 @@ void MeshClass::Get_Deformed_Vertices(Vector3 *dst_vert)
 	Model->get_deformed_vertices(dst_vert,Container->Get_HTree());
 }
 
-void MeshClass::Compose_Deformed_Vertex_Buffer(
-	VertexFormatXYZNDUV2* verts,
-	const Vector2* uv0,
-	const Vector2* uv1,
-	const unsigned* diffuse)
-{
-	WWASSERT(Model->Get_Flag(MeshGeometryClass::SKIN));
-	Model->compose_deformed_vertex_buffer(verts,uv0,uv1,diffuse,Container->Get_HTree());
-}
-
 /***********************************************************************************************
  * MeshClass::Create_Decal -- creates a decal on this mesh                                     *
  *                                                                                             *
