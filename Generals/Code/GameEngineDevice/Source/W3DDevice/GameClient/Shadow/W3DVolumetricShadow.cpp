@@ -2661,7 +2661,7 @@ void W3DVolumetricShadow::constructVolume( Vector3 *lightPosObject,Real shadowEx
 }
 
 // Copies a position into a shadow volume vertex.
-static void setVertexXYZ(VertexFormatXYZ &vertex, const Vector3 &position)
+static void setVertexXYZ(VertexFormatXYZ& vertex, const Vector3& position)
 {
 	vertex.x = position.X;
 	vertex.y = position.Y;
