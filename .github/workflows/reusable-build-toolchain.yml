@@ -4,7 +4,6 @@ name: Build Toolchain
 # Declare the required permissions in each calling job:
 #   contents: read - required for all builds.
 #   packages: write - required for vcpkg binary-cache uploads only.
-#   actions: write - required to delete superseded ccache caches.
 
 on:
   workflow_call:
@@ -233,32 +232,10 @@ jobs:
       # Pull requests only restore, so caches change only after changes reach main.
       - name: Save MSVC Compilation Cache
         if: ${{ steps.ccache.outcome == 'success' && github.event_name != 'pull_request' && steps.ccache-restore.outputs.cache-hit != 'true' }}
-        id: ccache-save
         uses: actions/cache/save@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
-
-      # Keep only the newest cache per configuration and branch, so old caches do not crowd out others.
-      - name: Delete Superseded MSVC Compilation Caches
-        if: steps.ccache-save.outcome == 'success'
-        continue-on-error: true
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-          KEY: ${{ steps.ccache-restore.outputs.cache-primary-key }}
-        run: |
-          $prefix = $env:KEY.Substring(0, $env:KEY.Length - $env:GITHUB_SHA.Length)
-          $caches = gh cache list --ref $env:GITHUB_REF --key $prefix --limit 100 --json id,key | ConvertFrom-Json
-          # A failed save only warns, so never delete the older caches without the new one.
-          if ($caches.key -notcontains $env:KEY) {
-              throw "New cache $env:KEY not found, keeping older caches"
-          }
-          $caches | Where-Object key -ne $env:KEY | ForEach-Object {
-              gh cache delete $_.id
-              if ($LASTEXITCODE -ne 0) { throw "Failed to delete cache $($_.key)" }
-          }
 
       # The benchmarks are only built, because running them takes too long here.
       # Verbose prints the Google Test output, which lists the test cases of each executable.

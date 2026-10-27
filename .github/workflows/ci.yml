@@ -65,7 +65,6 @@ jobs:
     needs: detect-changes
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generals == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     permissions:
-      actions: write
       contents: read
     strategy:
       matrix:
@@ -96,7 +95,6 @@ jobs:
     needs: detect-changes
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generals == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     permissions:
-      actions: write
       contents: read
       packages: write
     strategy:
@@ -136,7 +134,6 @@ jobs:
     needs: detect-changes
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     permissions:
-      actions: write
       contents: read
     strategy:
       matrix:
@@ -167,7 +164,6 @@ jobs:
     needs: detect-changes
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     permissions:
-      actions: write
       contents: read
       packages: write
     strategy:
@@ -203,6 +199,36 @@ jobs:
       tests: true
       benchmarks: ${{ matrix.preset == 'win32' }}
     secrets: inherit
+
+  # Runs separately so the build jobs, which also run for pull requests, do not need actions: write.
+  cleanup-ccache:
+    name: Delete Superseded Compiler Caches
+    needs: [build-generals-vc6, build-generals-win32, build-generalsmd-vc6, build-generalsmd-win32]
+    if: ${{ !cancelled() && github.event_name != 'pull_request' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: write
+    steps:
+      - name: Keep Only the Newest Cache per Configuration
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          $caches = @(gh cache list --ref $env:GITHUB_REF --key ccache- --limit 1000 --json id,key | ConvertFrom-Json)
+          if ($LASTEXITCODE -ne 0) { throw "Failed to list caches" }
+          $suffix = "-$env:GITHUB_SHA"
+          $current = @($caches | Where-Object key -like "*$suffix" | ForEach-Object key)
+          foreach ($cache in $caches) {
+              $newest = $cache.key.Substring(0, $cache.key.LastIndexOf('-')) + $suffix
+              # Configurations that did not save a cache in this run keep their older one.
+              if ($cache.key -ne $newest -and $current -contains $newest) {
+                  gh cache delete $cache.id
+                  if ($LASTEXITCODE -ne 0) { throw "Failed to delete cache $($cache.key)" }
+                  Write-Host "Deleted $($cache.key)"
+              }
+          }
 
   replaycheck-generals:
     name: Replay Check Generals${{ matrix.preset && '' }}
