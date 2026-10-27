@@ -27,24 +27,27 @@
 
 namespace TextureAtlas
 {
-constexpr const int PAGE_SIZE = 2048;
+constexpr const int PAGE_SIZE = 2304;    // Size takes into account padding for more efficient packing.
 constexpr const int MIP_LEVEL_COUNT = 5;
-constexpr const int PADDING = 1 << (MIP_LEVEL_COUNT - 1);
+constexpr const int PADDING = 1 << (MIP_LEVEL_COUNT - 1); // Pad the largest mip with a power-of-two value such that the smallest mip gets a 1 px pad.
+                                                          // For example, with 5 mips the padding per level is 16, 8, 4, 2, 1 px.
 constexpr const int MAX_PAGES = 4;
-constexpr const int MAX_PACKS_PER_FRAME = 2;    // Spreads a burst of new textures over several frames.
+constexpr const int DEFAULT_MAX_PACKS_PER_FRAME = 2;    // Spreads a burst of new textures over several frames.
+static_assert(PAGE_SIZE % PADDING == 0, "Page must be sized to a multiple of padding");
 }    // namespace TextureAtlas
 
 /// Packs textures into shared atlas pages.
-/// Page: a 2048x2048 texture with 5 mip levels, holding many cells.
+/// Page: a texture of size PAGE_SIZE^2 that contains cells.
 /// Cell: one texture plus its padding, a border of repeated edge texels that keeps filtering from reaching a neighbour.
 /// Row: a strip across a page holding cells of the same height, left to right.
 /// Premultiply: optionally multiplies a cell's color by its alpha.
 class TextureAtlasClass
 {
 public:
-	TextureAtlasClass()
+	explicit TextureAtlasClass(int maxPacksPerFrame = TextureAtlas::DEFAULT_MAX_PACKS_PER_FRAME)
 	  : PackFrame(0)
 	  , PacksThisFrame(0)
+	  , MaxPacksPerFrame(maxPacksPerFrame)
 	{}
 
 	struct TextureLocation
@@ -94,4 +97,5 @@ private:
 	TextureLocationMap TextureLocations[2];    // Two keys for premultiply alpha off/on.
 	unsigned PackFrame;
 	int PacksThisFrame;
+	int MaxPacksPerFrame;
 };

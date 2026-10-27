@@ -259,7 +259,7 @@ bool TextureAtlasClass::Has_Pack_Budget()
 		PackFrame = WW3D::Get_Frame_Count();
 		PacksThisFrame = 0;
 	}
-	return PacksThisFrame < TextureAtlas::MAX_PACKS_PER_FRAME;
+	return MaxPacksPerFrame <= 0 || PacksThisFrame < MaxPacksPerFrame;
 }
 
 int TextureAtlasClass::Wrap_Or_Clamp(const int coordinate, const int size, const bool wrap)
