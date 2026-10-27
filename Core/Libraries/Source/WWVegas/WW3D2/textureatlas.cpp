@@ -49,7 +49,7 @@ TextureAtlasClass::TextureLocation TextureAtlasClass::Find_Or_Insert(TextureClas
 		return TextureLocation::Create_Invalid();
 	}
 
-	Check_Out_Of_Space();
+	Evict_If_Out_Of_Space();
 
 	TextureLocationMap& locations = TextureLocations[premultiplyAlpha ? PREMULTIPLY_ON : PREMULTIPLY_OFF];
 	TextureLocationMap::iterator it = locations.find(source->Get_Texture_Name());
@@ -75,7 +75,7 @@ TextureAtlasClass::TextureLocation TextureAtlasClass::Find_Or_Insert(TextureClas
 	return it->second;
 }
 
-void TextureAtlasClass::Check_Out_Of_Space()
+void TextureAtlasClass::Evict_If_Out_Of_Space()
 {
 	// Evict only after a texture did not fit in an earlier frame.
 	if (!OutOfSpace || OutOfSpaceFrame == WW3D::Get_Frame_Count() || Pages.empty())

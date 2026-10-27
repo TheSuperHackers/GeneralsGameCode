@@ -93,7 +93,7 @@ private:
 
 	typedef std::map<StringClass, TextureLocation> TextureLocationMap;
 
-	void Check_Out_Of_Space();
+	void Evict_If_Out_Of_Space();
 	bool Has_Pack_Budget();
 	TextureLocation Pack_Texture(TextureClass* source, bool premultiplyAlpha);
 	bool Allocate_Cell(int width, int height, int& pageIndex, int& x, int& y);
