@@ -41,6 +41,7 @@ static_assert(PAGE_SIZE % PADDING == 0, "Page must be sized to a multiple of pad
 /// Cell: one texture plus its padding, a border of repeated edge texels that keeps filtering from reaching a neighbour.
 /// Row: a strip across a page holding cells of the same height, left to right.
 /// Premultiply: optionally multiplies a cell's color by its alpha.
+/// Eviction: when a texture does not fit, the oldest page is emptied in a later frame and reused.
 class TextureAtlasClass
 {
 public:
@@ -48,6 +49,8 @@ public:
 	  : PackFrame(0)
 	  , PacksThisFrame(0)
 	  , MaxPacksPerFrame(maxPacksPerFrame)
+	  , OutOfSpace(false)
+	  , OutOfSpaceFrame(0)
 	{}
 
 	struct TextureLocation
@@ -87,6 +90,7 @@ private:
 
 	typedef std::map<StringClass, TextureLocation> TextureLocationMap;
 
+	void Check_Out_Of_Space();
 	bool Has_Pack_Budget();
 	TextureLocation Pack_Texture(TextureClass* source, bool premultiplyAlpha);
 	bool Allocate_Cell(int width, int height, int& pageIndex, int& x, int& y);
@@ -98,4 +102,6 @@ private:
 	unsigned PackFrame;
 	int PacksThisFrame;
 	int MaxPacksPerFrame;
+	bool OutOfSpace;
+	unsigned OutOfSpaceFrame;
 };

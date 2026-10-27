@@ -24,6 +24,7 @@
 #include "WW3D2/ww3d.h"
 #include <Utility/premultiply_alpha.h>
 #include <d3d8.h>
+#include <algorithm>
 #include <string.h>
 
 enum
@@ -37,6 +38,7 @@ void TextureAtlasClass::Reset()
 	TextureLocations[PREMULTIPLY_OFF].clear();
 	TextureLocations[PREMULTIPLY_ON].clear();
 	Pages.clear();
+	OutOfSpace = false;
 }
 
 TextureAtlasClass::TextureLocation TextureAtlasClass::Find_Or_Insert(TextureClass* source, const bool premultiplyAlpha)
@@ -46,6 +48,8 @@ TextureAtlasClass::TextureLocation TextureAtlasClass::Find_Or_Insert(TextureClas
 	{
 		return TextureLocation::Create_Invalid();
 	}
+
+	Check_Out_Of_Space();
 
 	TextureLocationMap& locations = TextureLocations[premultiplyAlpha ? PREMULTIPLY_ON : PREMULTIPLY_OFF];
 	TextureLocationMap::iterator it = locations.find(source->Get_Texture_Name());
@@ -62,13 +66,46 @@ TextureAtlasClass::TextureLocation TextureAtlasClass::Find_Or_Insert(TextureClas
 			TextureLoader::Request_Foreground_Loading(source);
 		}
 
-		// Try to add a texture. If rejected, will be marked invalid, such that it will not get a retry later.
+		// Try to add a texture. If rejected, will be marked invalid, such that it will not get a retry until the next eviction.
 		TextureLocation packedTexture = Pack_Texture(source, premultiplyAlpha);
 		it = locations.insert(std::make_pair(source->Get_Texture_Name(), packedTexture)).first;
 		++PacksThisFrame;
 	}
 
 	return it->second;
+}
+
+void TextureAtlasClass::Check_Out_Of_Space()
+{
+	// Evict only after a texture did not fit in an earlier frame.
+	if (!OutOfSpace || OutOfSpaceFrame == WW3D::Get_Frame_Count() || Pages.empty())
+	{
+		return;
+	}
+
+	// Forget the textures of the oldest page and the rejected ones, so that they are packed again when drawn.
+	TextureClass* evicted = Pages.front().texture.Peek();
+	for (int i = 0; i < ARRAY_SIZE(TextureLocations); ++i)
+	{
+		TextureLocationMap::iterator it = TextureLocations[i].begin();
+		while (it != TextureLocations[i].end())
+		{
+			if (it->second.page == evicted || it->second.page == nullptr)
+			{
+				TextureLocations[i].erase(it++);
+			}
+			else
+			{
+				++it;
+			}
+		}
+	}
+
+	// Reuse the oldest page as the newest one.
+	std::rotate(Pages.begin(), Pages.begin() + 1, Pages.end());
+	Pages.back().rows.clear();
+	Pages.back().usedHeight = 0;
+	OutOfSpace = false;
 }
 
 TextureAtlasClass::TextureLocation TextureAtlasClass::Pack_Texture(TextureClass* source, const bool premultiplyAlpha)
@@ -145,6 +182,8 @@ bool TextureAtlasClass::Allocate_Cell(const int width, const int height, int& pa
 	// The new cell does not fit, so try to create a new page.
 	if (newRowPage == Pages.size() && !Create_Page())
 	{
+		OutOfSpace = true;
+		OutOfSpaceFrame = WW3D::Get_Frame_Count();
 		return false;
 	}
 
