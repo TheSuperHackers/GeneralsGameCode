@@ -129,9 +129,11 @@ jobs:
         with:
           arch: x86
 
+      # Without ccache the build falls back to an uncached build with precompiled headers.
       - name: Set Up ccache
         if: env.USE_CCACHE == 'true'
         id: ccache
+        continue-on-error: true
         shell: pwsh
         env:
           CCACHE_VERSION: "4.14.2"
@@ -155,7 +157,7 @@ jobs:
           "toolchain=$($env:VCToolsVersion ?? 'VC6SP6')" >> $env:GITHUB_OUTPUT
 
       - name: Restore MSVC Compilation Cache
-        if: env.USE_CCACHE == 'true'
+        if: steps.ccache.outcome == 'success'
         id: ccache-restore
         uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
@@ -203,7 +205,7 @@ jobs:
           $buildFlags += "-DRTS_BUILD_OPTION_TESTS=${{ inputs.tests && 'ON' || 'OFF' }}"
           $buildFlags += "-DRTS_BUILD_OPTION_BENCHMARKS=${{ inputs.benchmarks && 'ON' || 'OFF' }}"
 
-          if ($env:USE_CCACHE -eq 'true') {
+          if ('${{ steps.ccache.outcome }}' -eq 'success') {
               $buildFlags += "-DCMAKE_C_COMPILER_LAUNCHER=ccache"
               $buildFlags += "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
               # MSVC PCH consumers bypass ccache unless time-macro checking is relaxed.
@@ -214,7 +216,7 @@ jobs:
           cmake --preset ${{ inputs.preset }} $buildFlags
 
       - name: Reset ccache Statistics
-        if: env.USE_CCACHE == 'true'
+        if: steps.ccache.outcome == 'success'
         shell: pwsh
         run: ccache --zero-stats
 
@@ -224,13 +226,13 @@ jobs:
           cmake --build --preset ${{ inputs.preset }}
 
       - name: Show ccache Statistics
-        if: ${{ always() && env.USE_CCACHE == 'true' && steps.ccache.outcome == 'success' }}
+        if: ${{ always() && steps.ccache.outcome == 'success' }}
         shell: pwsh
         run: ccache --show-stats --verbose
 
       # Pull requests only restore, so caches change only after changes reach main.
       - name: Save MSVC Compilation Cache
-        if: ${{ env.USE_CCACHE == 'true' && github.event_name != 'pull_request' && steps.ccache-restore.outputs.cache-hit != 'true' }}
+        if: ${{ steps.ccache.outcome == 'success' && github.event_name != 'pull_request' && steps.ccache-restore.outputs.cache-hit != 'true' }}
         id: ccache-save
         uses: actions/cache/save@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
