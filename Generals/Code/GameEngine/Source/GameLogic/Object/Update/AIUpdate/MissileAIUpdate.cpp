@@ -578,6 +578,8 @@ void MissileAIUpdate::doKillState()
 		airborneTargetGone();
 
 #if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix Stubbjax 01/10/2026 Stop missiles ungracefully deleting if their target
+		// dies or if fuel exhausts within locking distance of a tracked target.
 		if (curLoco)
 		{
 			curLoco->setMaxAcceleration(0);
@@ -755,9 +757,6 @@ Also determines whether objects are blocked, and if so, if they are stuck.  jba.
 void MissileAIUpdate::airborneTargetGone()
 {
 #if RETAIL_COMPATIBLE_CRC
-	// TheSuperHackers @bugfix Stubbjax 01/10/2026 Stop missiles ungracefully deleting if their target
-	// dies or if fuel exhausts within locking distance of a tracked target.
-
 	// I would really love it if this could retarget, but all of the targeting and legality is done
 	// by the Weapon that fired me.  The safest thing for me to do in this state is to just run out of gas.
 	m_fuelExpirationDate = TheGameLogic->getFrame();
