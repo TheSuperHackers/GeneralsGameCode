@@ -448,20 +448,13 @@ void MeshGeometryClass::Get_Bounding_Sphere(SphereClass * set_sphere)
  *=============================================================================================*/
 void MeshGeometryClass::Generate_Rigid_APT(const Vector3 & view_dir, SimpleDynVecClass<uint32> & apt)
 {
-	const Vector3 * loc = Get_Vertex_Array();
 	const Vector4 * norms = Get_Plane_Array();
-	const TriIndex * polys = Get_Polygon_Array();
-	TriClass tri;
 
 	for (int poly_counter = 0; poly_counter < PolyCount; poly_counter++) {
 
-		tri.V[0] = &(loc[ polys[poly_counter][0] ]);
-		tri.V[1] = &(loc[ polys[poly_counter][1] ]);
-		tri.V[2] = &(loc[ polys[poly_counter][2] ]);
 		Vector3 normal(norms[poly_counter].X,norms[poly_counter].Y,norms[poly_counter].Z);
-		tri.N = &normal;
 
-		if (Vector3::Dot_Product(*tri.N,view_dir) < 0.0f) {
+		if (Vector3::Dot_Product(normal,view_dir) < 0.0f) {
 			apt.Add(poly_counter);
 		}
 	}
