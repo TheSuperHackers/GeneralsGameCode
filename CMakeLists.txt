@@ -73,6 +73,10 @@ endif()
 include(cmake/lzhl.cmake)
 include(cmake/stb.cmake)
 
+if(RTS_BUILD_OPTION_SDL3 AND NOT IS_VS6_BUILD)
+    include(cmake/sdl3.cmake)
+endif()
+
 if(RTS_BUILD_OPTION_PROFILE_TRACY)
     include(cmake/tracy.cmake)
 else()

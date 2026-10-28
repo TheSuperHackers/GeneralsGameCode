@@ -49,6 +49,7 @@ jobs:
               - 'Dependencies/**'
               - 'GeneralsReplays/**'
               - 'Tests/**'
+              - 'triplets/**'
               - 'vcpkg.json'
 
       - name: Changes Summary

@@ -1090,3 +1090,8 @@ void updateTGAtoDDS()
 
 	system(CONVERT_EXEC1);
 }
+
+UnsignedInt GameEngine::getTicksMsec() const
+{
+	return timeGetTime();
+}

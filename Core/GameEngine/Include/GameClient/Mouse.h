@@ -283,6 +283,7 @@ public:
 
 	virtual void draw() override;													///< draw the mouse
 	virtual void setPosition( Int x, Int y );						///< set the mouse position
+	virtual void syncPositionToSystemCursor() { setPosition( 0, 0 ); }
 	virtual void setCursor( MouseCursor cursor ) = 0;		///< set mouse cursor
 
 	void initCapture(); ///< called once to unlock the mouse capture functionality
