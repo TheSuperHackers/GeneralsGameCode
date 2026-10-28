@@ -478,8 +478,11 @@ void MissileAIUpdate::doAttackState(Bool turnOK)
 
 		if (curLoco)
 		{
-			curLoco->setMaxAcceleration(0);
-			curLoco->setMaxTurnRate(0);
+			curLoco->setMaxAcceleration(0.0f);
+			curLoco->setMaxTurnRate(0.0f);
+#if !RETAIL_COMPATIBLE_CRC
+			curLoco->setMaxBraking(0.0f);
+#endif
 		}
 
 		tossExhaust();
@@ -584,8 +587,9 @@ void MissileAIUpdate::doKillState()
 		// dies or if fuel exhausts within locking distance of a tracked target.
 		if (curLoco)
 		{
-			curLoco->setMaxAcceleration(0);
-			curLoco->setMaxTurnRate(0);
+			curLoco->setMaxAcceleration(0.0f);
+			curLoco->setMaxTurnRate(0.0f);
+			curLoco->setMaxBraking(0.0f);
 		}
 
 		tossExhaust();
@@ -641,8 +645,11 @@ void MissileAIUpdate::doDeadState()
 	Locomotor* curLoco = getCurLocomotor();
 	if (curLoco)
 	{
-		curLoco->setMaxAcceleration(0);
-		curLoco->setMaxTurnRate(0);
+		curLoco->setMaxAcceleration(0.0f);
+		curLoco->setMaxTurnRate(0.0f);
+#if !RETAIL_COMPATIBLE_CRC
+		curLoco->setMaxBraking(0.0f);
+#endif
 	}
 }
 
