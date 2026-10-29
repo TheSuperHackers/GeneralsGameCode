@@ -31,6 +31,7 @@
 #include "WW3D2/pointgr.h"
 #include "WW3D2/streak.h"
 #include "WW3D2/rinfo.h"
+#include "WW3D2/textureatlas.h"
 #include "WWLib/bittype.h"
 
 class W3DTerrainParticles;
@@ -51,9 +52,11 @@ public:
 	///< returns the number of particles shown on screen per frame
 	virtual Int getOnScreenParticleCount() override { return m_onScreenParticleCount; }
 
+	virtual void reset() override;
+
 private:
-	Bool finishedBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture);
-	void initializeBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture);
+	Bool finishedBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture, const ShaderClass& shader);
+	void initializeBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture, const ShaderClass& shader);
 	void flushParticleBatch(RenderInfoClass& rinfo, UnsignedInt& pointCount);
 
 	enum { MAX_POINTS_PER_GROUP = 512 };
@@ -66,9 +69,11 @@ private:
 	ShareBufferClass<Vector4> *m_RGBABuffer;		///< array of particle color and alpha
 	ShareBufferClass<float> *m_sizeBuffer;			///< array of particle sizes
 	ShareBufferClass<uint8> *m_angleBuffer;			///< array of particle orientations
+	TextureAtlasClass m_atlas;						///< pages shared by particles with different textures
+	Vector4 m_uvRects[MAX_POINTS_PER_GROUP];		///< array of particle texture rectangles, for atlas pages
 	AABoxClass m_currentBoundingBox;
 
-	ParticleSystemInfo::ParticleShaderType m_batchShaderType;
+	ShaderClass m_batchShader;									///< the shader used for batched particle draws
 	Bool m_readyToRender;											///< if true, it is OK to render
 	ParticleSystemInfo::ParticleAlignmentType m_batchParticleAlignment;
 };
