@@ -306,7 +306,7 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 
 	// allocate the publicModule arrays
 // pool[]ify
-	m_behaviors = MSGNEW("ModulePtrs") BehaviorModule*[totalModules + 1];
+	m_behaviors = MSGNEW("ModulePtrs") BehaviorModule*[totalModules + 1]();
 	BehaviorModule** curB = m_behaviors;
 	const ModuleInfo& mi = tt->getBehaviorModuleInfo();
 
