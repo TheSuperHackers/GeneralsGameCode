@@ -362,6 +362,19 @@ void SortingRendererClass::Insert_To_Sorting_Pool(SortingNodeStruct* state)
 // ----------------------------------------------------------------------------
 //static unsigned prevLight = 0xffffffff;
 
+static bool Same_Render_State(const RenderStateStruct& a, const RenderStateStruct& b)
+{
+	if (a.shader.Get_Bits()!=b.shader.Get_Bits() || a.material!=b.material || a.material->Get_Lighting())
+		return false;
+
+	for (int i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i) {
+		if (a.Textures[i]!=b.Textures[i])
+			return false;
+	}
+
+	return memcmp(&a.world, &b.world, sizeof(a.world))==0 && memcmp(&a.view, &b.view, sizeof(a.view))==0;
+}
+
 static void Apply_Render_State(RenderStateStruct& render_state)
 {
 	DX8Wrapper::Set_Shader(render_state.shader);
@@ -546,37 +559,23 @@ void SortingRendererClass::Flush_Sorting_Pool()
 
 		DX8Wrapper::Apply_Render_State_Changes();
 
-		unsigned count_to_render=1;
-		unsigned start_index=0;
-		unsigned node_id=tis[chunkOffset].idx;
-		for (unsigned i=chunkOffset + 1;i<chunkEnd;++i) {
-			if (node_id!=tis[i].idx) {
-				SortingNodeStruct* state=overlapping_nodes[node_id];
-				Apply_Render_State(state->sorting_state);
-
-				DX8Wrapper::Draw_Triangles(
-					start_index*3,
-					count_to_render,
-					state->min_vertex_index,
-					state->vertex_count);
-
-				count_to_render=0;
-				start_index=i - chunkOffset;
-				node_id=tis[i].idx;
+		// TheSuperHackers @performance stephanmeesters 18/10/2026 Draw polygons that in the same call when they share the same render state.
+		for (unsigned start=chunkOffset;start<chunkEnd;) {
+			SortingNodeStruct* state=overlapping_nodes[tis[start].idx];
+			unsigned min_vertex=state->min_vertex_index;
+			unsigned end_vertex=min_vertex + state->vertex_count;
+			unsigned end=start + 1;
+			for (;end<chunkEnd;++end) {
+				SortingNodeStruct* node=overlapping_nodes[tis[end].idx];
+				if (node!=state && !Same_Render_State(state->sorting_state, node->sorting_state))
+					break;
+				min_vertex=std::min<unsigned>(min_vertex, node->min_vertex_index);
+				end_vertex=std::max<unsigned>(end_vertex, node->min_vertex_index + node->vertex_count);
 			}
-			count_to_render++;	//keep track of number of polygons of same kind
-		}
 
-		// Render any remaining polygons...
-		if (count_to_render) {
-			SortingNodeStruct* state=overlapping_nodes[node_id];
 			Apply_Render_State(state->sorting_state);
-
-			DX8Wrapper::Draw_Triangles(
-				start_index*3,
-				count_to_render,
-				state->min_vertex_index,
-				state->vertex_count);
+			DX8Wrapper::Draw_Triangles((start - chunkOffset)*3, end - start, min_vertex, end_vertex - min_vertex);
+			start=end;
 		}
 
 		chunkOffset += chunkCount;
