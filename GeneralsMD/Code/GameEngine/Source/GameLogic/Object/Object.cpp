@@ -307,13 +307,17 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	// allocate the publicModule arrays
 // pool[]ify
 	m_behaviors = MSGNEW("ModulePtrs") BehaviorModule*[totalModules + 1];
-	BehaviorModule** curB = m_behaviors;
-	const ModuleInfo& mi = tt->getBehaviorModuleInfo();
+	// explicitly initialize first field as nullptr as Object::pauseAllSpecialPowers relies on it,
+	// which may be called downstream of Player::onPowerBrownOutChange and Object::setTeam
+	m_behaviors[0] = nullptr;
 
 	// set m_team to null before the first call, to avoid naughtiness...
 	// If no team is specified in the constructor, then assign the object
 	// to the neutral team.
 	setTeam(team ? team : ThePlayerList->getNeutralPlayer()->getDefaultTeam());
+
+	BehaviorModule** curB = m_behaviors;
+	const ModuleInfo& mi = tt->getBehaviorModuleInfo();
 
 	// the helpers are done first -- even before Behaviors! -- in case a module needs
 	// to call something that uses them.
