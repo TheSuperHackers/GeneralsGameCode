@@ -207,7 +207,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 							{
 								char message[ _MAX_PATH + 32 ];
 
-								sprintf( message, "Ignoring folder '%s', already in list.", toAdd );
+								snprintf( message, ARRAY_SIZE( message ), "Ignoring folder '%s', already in list.", toAdd );
 								MessageBox( nullptr, message, "Folder Already In List",
 														MB_OK | MB_ICONINFORMATION );
 								continue;
