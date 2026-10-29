@@ -3768,8 +3768,6 @@ bool W3DView::getDesiredTerrainDrawSize(ICoord2D &dimensions, Vector2 &drawCente
 		const Real rayZ = cameraTransform[2][0]*ray.X + cameraTransform[2][1]*ray.Y - cameraTransform[2][2];
 		if (!(rayZ < 0.0f))
 		{
-			dimensions.x = std::min(map->getXExtent(), minimumSize.x);
-			dimensions.y = std::min(map->getYExtent(), minimumSize.y);
 			return true;
 		}
 
