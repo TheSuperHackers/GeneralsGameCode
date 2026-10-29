@@ -653,7 +653,8 @@ void LocomotorStore::reset()
 		Overridable *locoTemp = it->second->deleteOverrides();
 		if (!locoTemp)
 		{
-			m_locomotorTemplates.erase(it);
+			// TheSuperHackers @bugfix Okladnoj 29/10/2026 Advance the iterator before erasing, so the loop does not visit the erased node again.
+			m_locomotorTemplates.erase(it++);
 		}
 		else
 		{
