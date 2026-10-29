@@ -105,6 +105,8 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 
 	// we won't be able to use the power for X number of frames now
 
+	const SpecialPowerModuleData *md = (const SpecialPowerModuleData *)moduleData;
+
 	// if we're pre-built, start counting down
 	if( !getObject()->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 	{
@@ -114,7 +116,8 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 		{
 			startPowerRecharge();
 
-			if (startsReady())
+			// TheSuperHackers @bugfix Stubbjax 29/10/2026 Paused powers become ready when unpaused instead.
+			if (startsReady() && !md->m_startsPaused)
 				m_availableOnFrame = TheGameLogic->getFrame();
 		}
 	}
@@ -122,7 +125,6 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 	// BUT NO MORE, NOW IT IS HANDLED IN PLAYER
 
 	// Some Special powers need to be activated by an Upgrade, so prevent the timer from going until then
-	const SpecialPowerModuleData *md = (const SpecialPowerModuleData *)moduleData;
 	if( md->m_startsPaused )
 		pauseCountdown( TRUE );
 
