@@ -28,6 +28,8 @@
 namespace TextureAtlas
 {
 constexpr const int PAGE_SIZE = 2304;    // Size takes into account padding for more efficient packing.
+                                         // Optimized for the commonly seen texture size 256^2.
+                                         // PAGE_SIZE = 2048 + (2048 / 256) * 2 * PADDING = 2304.
 constexpr const int MIP_LEVEL_COUNT = 5;
 constexpr const int PADDING = 1 << (MIP_LEVEL_COUNT - 1); // Pad the largest mip with a power-of-two value such that the smallest mip gets a 1 px pad.
                                                           // For example, with 5 mips the padding per level is 16, 8, 4, 2, 1 px.
@@ -49,11 +51,11 @@ class TextureAtlasClass
 {
 public:
 	explicit TextureAtlasClass(int maxPacksPerFrame = TextureAtlas::DEFAULT_MAX_PACKS_PER_FRAME)
-	  : PackFrame(0)
+	  : OutOfSpace(false)
 	  , PacksThisFrame(0)
 	  , MaxPacksPerFrame(maxPacksPerFrame)
-	  , OutOfSpace(false)
 	  , OutOfSpaceFrame(0)
+	  , PackFrame(0)
 	{}
 
 	struct TextureLocation
@@ -95,16 +97,16 @@ private:
 
 	void Evict_If_Out_Of_Space();
 	bool Has_Pack_Budget();
-	TextureLocation Pack_Texture(TextureClass* source, bool premultiplyAlpha);
+	TextureLocation Pack_Texture(const TextureClass* source, bool premultiplyAlpha);
 	bool Allocate_Cell(int width, int height, int& pageIndex, int& x, int& y);
 	bool Create_Page();
-	static bool Copy_To_Cell(TextureClass* source, TextureClass* page, bool premultiplyAlpha, int left, int top);
+	static bool Copy_To_Cell(const TextureClass* source, TextureClass* page, bool premultiplyAlpha, int left, int top);
 
 	std::vector<Page> Pages;
 	TextureLocationMap TextureLocations[2];    // Two keys for premultiply alpha off/on.
-	unsigned PackFrame;
+	bool OutOfSpace;
 	int PacksThisFrame;
 	int MaxPacksPerFrame;
-	bool OutOfSpace;
 	unsigned OutOfSpaceFrame;
+	unsigned PackFrame;
 };

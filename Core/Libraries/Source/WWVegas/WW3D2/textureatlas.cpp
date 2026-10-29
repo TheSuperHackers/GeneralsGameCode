@@ -39,6 +39,8 @@ void TextureAtlasClass::Reset()
 	TextureLocations[PREMULTIPLY_ON].clear();
 	Pages.clear();
 	OutOfSpace = false;
+	OutOfSpaceFrame = 0;
+	PacksThisFrame = 0;
 }
 
 TextureAtlasClass::TextureLocation TextureAtlasClass::Find_Or_Insert(TextureClass* source, const bool premultiplyAlpha)
@@ -49,6 +51,7 @@ TextureAtlasClass::TextureLocation TextureAtlasClass::Find_Or_Insert(TextureClas
 		return TextureLocation::Create_Invalid();
 	}
 
+	// Page eviction must happen early to avoid invalidating in-use packed textures in the middle of a render batch.
 	Evict_If_Out_Of_Space();
 
 	TextureLocationMap& locations = TextureLocations[premultiplyAlpha ? PREMULTIPLY_ON : PREMULTIPLY_OFF];
@@ -67,7 +70,7 @@ TextureAtlasClass::TextureLocation TextureAtlasClass::Find_Or_Insert(TextureClas
 		}
 
 		// Try to add a texture. If rejected, will be marked invalid, such that it will not get a retry until the next eviction.
-		TextureLocation packedTexture = Pack_Texture(source, premultiplyAlpha);
+		const TextureLocation packedTexture = Pack_Texture(source, premultiplyAlpha);
 		it = locations.insert(std::make_pair(source->Get_Texture_Name(), packedTexture)).first;
 		++PacksThisFrame;
 	}
@@ -108,7 +111,7 @@ void TextureAtlasClass::Evict_If_Out_Of_Space()
 	OutOfSpace = false;
 }
 
-TextureAtlasClass::TextureLocation TextureAtlasClass::Pack_Texture(TextureClass* source, const bool premultiplyAlpha)
+TextureAtlasClass::TextureLocation TextureAtlasClass::Pack_Texture(const TextureClass* source, const bool premultiplyAlpha)
 {
 	// A texture can be initialized without a D3D texture, e.g. with texturing disabled.
 	if (source->Peek_D3D_Texture() == nullptr)
@@ -237,7 +240,7 @@ bool TextureAtlasClass::Create_Page()
 	return true;
 }
 
-bool TextureAtlasClass::Copy_To_Cell(TextureClass* source, TextureClass* page, const bool premultiplyAlpha, const int left, const int top)
+bool TextureAtlasClass::Copy_To_Cell(const TextureClass* source, TextureClass* page, const bool premultiplyAlpha, const int left, const int top)
 {
 	const int sourceLevels = (int)source->Peek_D3D_Texture()->GetLevelCount();
 

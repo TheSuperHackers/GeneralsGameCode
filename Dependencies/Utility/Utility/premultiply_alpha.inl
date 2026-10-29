@@ -26,10 +26,9 @@ inline void premultiply_alpha(unsigned char* pixels, int pitch, int width, int h
 		{
 			const unsigned int alpha = line[x] >> 24;
 			unsigned int result = line[x] & 0xFF000000u;
-			for (unsigned int shift = 0; shift < 24; shift += 8)
-			{
-				result |= ((((line[x] >> shift) & 255) * alpha + 127) / 255) << shift;
-			}
+			result |= ((line[x] & 255) * alpha + 127) / 255;
+			result |= ((((line[x] >> 8) & 255) * alpha + 127) / 255) << 8;
+			result |= ((((line[x] >> 16) & 255) * alpha + 127) / 255) << 16;
 			line[x] = result;
 		}
 	}
