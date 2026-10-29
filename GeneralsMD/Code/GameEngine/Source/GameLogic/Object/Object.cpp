@@ -626,6 +626,15 @@ Object::~Object()
 	// empty the team
 	setTeam( nullptr );
 
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @info Clear DISABLED_UNDERPOWERED here for performance,
+	// rather than needing to rely on Energy::objectLeavingInfluence.
+	if (isKindOf(KINDOF_POWERED))
+	{
+		clearDisabled(DISABLED_UNDERPOWERED);
+	}
+#endif
+
 	// Object's set of these persist for the life of the object.
 	deleteInstance(m_partitionLastLook);
 	m_partitionLastLook = nullptr;

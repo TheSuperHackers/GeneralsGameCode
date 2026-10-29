@@ -143,6 +143,20 @@ void Energy::objectEnteringInfluence( Object *obj )
 		addConsumption( -energy );
 	else if( energy > 0 )
 		addProduction( energy );
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @tweak Add support for powered objects that consume no energy.
+	else if (obj->isKindOf(KINDOF_POWERED))
+	{
+		if (hasSufficientPower())
+		{
+			obj->clearDisabled(DISABLED_UNDERPOWERED);
+		}
+		else if (!obj->isDisabledByType(DISABLED_UNDERPOWERED))
+		{
+			obj->setDisabled(DISABLED_UNDERPOWERED);
+		}
+	}
+#endif
 
 	// sanity
 	DEBUG_ASSERTCRASH( m_energyProduction >= 0 && m_energyConsumption >= 0,
