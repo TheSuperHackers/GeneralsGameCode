@@ -187,7 +187,8 @@ void CPUDetectClass::Init_Processor_Manufacturer()
 	VendorID[0] = 0;
 	unsigned max_cpuid;
 	unsigned ebx, ecx, edx;
-	if (CPUID(max_cpuid, ebx, ecx, edx, 0)) {
+	if (CPUID(max_cpuid, ebx, ecx, edx, 0))
+	{
 		// The vendor string is stored in EBX, EDX, ECX order
 		memcpy(&VendorID[0], &ebx, sizeof(ebx));
 		memcpy(&VendorID[4], &edx, sizeof(edx));
@@ -735,10 +736,11 @@ void CPUDetectClass::Init_Processor_Family()
 }
 
 // Copies the EAX, EBX, ECX and EDX values of a CPUID call into a 16 character buffer.
-static void Copy_CPUID_String(char *dest, unsigned cpuid_type)
+static void Copy_CPUID_String(char* dest, unsigned cpuid_type)
 {
 	unsigned regs[4];
-	if (CPUDetectClass::CPUID(regs[0], regs[1], regs[2], regs[3], cpuid_type)) {
+	if (CPUDetectClass::CPUID(regs[0], regs[1], regs[2], regs[3], cpuid_type))
+	{
 		memcpy(dest, regs, sizeof(regs));
 	}
 }
