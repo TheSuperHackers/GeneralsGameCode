@@ -2348,7 +2348,8 @@ void MilesAudioManager::processPlayingList()
 			}
 			else
 			{
-				Real volForConsideration = getEffectiveVolume(playing->m_audioEventRTS.Peek());
+				const Real effectiveVolume = getEffectiveVolume(playing->m_audioEventRTS.Peek());
+				Real volForConsideration = effectiveVolume;
 				volForConsideration /= (m_sound3DVolume > 0.0f ? m_soundVolume : 1.0f);
 				Bool playAnyways = BitIsSet( playing->m_audioEventRTS->getAudioEventInfo()->m_type, ST_GLOBAL) ||
 					playing->m_audioEventRTS->getAudioEventInfo()->m_priority == AP_CRITICAL;
@@ -2363,6 +2364,8 @@ void MilesAudioManager::processPlayingList()
 					Real z = pos->z;
 					DEBUG_ASSERTCRASH(playing->m_3DSample, ("3D Sample is not expected to be null"));
 					AIL_set_3D_position( playing->m_3DSample, x, y, z );
+					// TheSuperHackers @bugfix arcticdolphin 13/10/2026 Apply the range volume fade every frame, not only when the sound starts.
+					AIL_set_3D_sample_volume(playing->m_3DSample, effectiveVolume);
 				}
 			}
 		}
