@@ -30,6 +30,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "Common/GameState.h"
 #include "Common/Xfer.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
@@ -256,6 +257,14 @@ void ProjectileStreamUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void ProjectileStreamUpdate::loadPostProcess()
 {
+
+	// TheSuperHackers @bugfix Invalid ring indices can overrun both the projectile and draw point arrays.
+	if( m_nextFreeIndex < 0 || m_nextFreeIndex >= MAX_PROJECTILE_STREAM ||
+			m_firstValidIndex < 0 || m_firstValidIndex >= MAX_PROJECTILE_STREAM )
+	{
+		DEBUG_LOG(( "ProjectileStreamUpdate::loadPostProcess - Invalid projectile index" ));
+		throw SC_INVALID_DATA;
+	}
 
 	// extend base class
 	UpdateModule::loadPostProcess();

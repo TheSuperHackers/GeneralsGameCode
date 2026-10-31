@@ -33,6 +33,7 @@
 #include "Common/Radar.h"
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
+#include "Common/GameState.h"
 #include "Common/Xfer.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/ParticleSys.h"
@@ -926,6 +927,12 @@ void WaveGuideUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void WaveGuideUpdate::loadPostProcess()
 {
+	// TheSuperHackers @bugfix Reject saved shape counts outside the wave point arrays.
+	if( m_shapePointCount < 0 || m_shapePointCount > MAX_WAVEGUIDE_SHAPE_POINTS )
+	{
+		DEBUG_LOG(( "WaveGuideUpdate::loadPostProcess - Invalid saved array bounds" ));
+		throw SC_INVALID_DATA;
+	}
 
 	// extend base class
 	UpdateModule::loadPostProcess();
