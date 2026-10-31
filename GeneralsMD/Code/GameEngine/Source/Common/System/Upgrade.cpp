@@ -209,7 +209,9 @@ void UpgradeTemplate::cacheButtonImage()
 	{
 		m_buttonImage = TheMappedImageCollection->findImageByName( m_buttonImageName );
 		DEBUG_ASSERTCRASH( m_buttonImage, ("UpgradeTemplate: %s is looking for button image %s but can't find it. Skipping...", m_name.str(), m_buttonImageName.str() ) );
-		m_buttonImageName.clear();	// we're done with this, so nuke it
+		// TheSuperHackers @bugfix DrGoldFish 14/10/2026 Retains unresolved button images for a later cache pass.
+		if( m_buttonImage )
+			m_buttonImageName.clear();	// we're done with this, so nuke it
 	}
 }
 
@@ -496,6 +498,10 @@ void UpgradeCenter::parseUpgradeDefinition( INI *ini )
 
 	// parse the ini definition
 	ini->initFromINI( upgrade, upgrade->getFieldParse() );
+
+	// TheSuperHackers @bugfix DrGoldFish 14/10/2026 Keeps map.ini upgrade cameos scoped to the map override lifetime.
+	if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
+		upgrade->cacheButtonImage();
 
 }
 
