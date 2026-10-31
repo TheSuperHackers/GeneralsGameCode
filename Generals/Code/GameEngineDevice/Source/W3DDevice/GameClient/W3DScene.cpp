@@ -1597,29 +1597,6 @@ void RTS3DScene::flushTranslucentObjects(RenderInfoClass & rinfo)
 }
 
 //=============================================================================
-// RTS3DScene::createLightsIterator
-//=============================================================================
-/** Returns an iterator of the lights in the scene. */
-//=============================================================================
-RefRenderObjListIterator * RTS3DScene::createLightsIterator()
-{
-	RefRenderObjListIterator * it = NEW RefRenderObjListIterator(&LightList);	// poolify
-	return it;
-}
-
-
-//=============================================================================
-// RTS3DScene::destroyLightsIterator
-//=============================================================================
-/** Destroys the iterator returned by createLightsIterator. */
-//=============================================================================
-void RTS3DScene::destroyLightsIterator(RefRenderObjListIterator * it)
-{
-	delete it;
-}
-
-
-//=============================================================================
 // RTS3DScene::addDynamicLight
 //=============================================================================
 /** Adds a dynamic light. */
