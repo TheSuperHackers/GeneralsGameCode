@@ -762,6 +762,16 @@ void OptionPreferences::getResolution(Int *xres, Int *yres)
 	*yres=selectedYRes;
 }
 
+Bool OptionPreferences::getWindowed() const
+{
+	return getBool("Windowed", FALSE);
+}
+
+void OptionPreferences::setWindowed(Bool windowed)
+{
+	(*this)["Windowed"] = windowed ? "yes" : "no";
+}
+
 Real OptionPreferences::getMusicVolume()
 {
 	OptionPreferences::const_iterator it = find("MusicVolume");

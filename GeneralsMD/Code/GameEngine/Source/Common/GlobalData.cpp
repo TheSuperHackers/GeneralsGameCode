@@ -1176,6 +1176,8 @@ void GlobalData::reset()
 //-------------------------------------------------------------------------------------------------
 void GlobalData::parseGameDataDefinition( INI* ini )
 {
+	Bool cmdWindowed = TheGlobalData->m_windowed;
+
 	if( TheWritableGlobalData && ini->getLoadType() != INI_LOAD_MULTIFILE)
 	{
 
@@ -1226,6 +1228,15 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	TheWritableGlobalData->m_playerInfoListFontSize = optionPref.getPlayerInfoListFontSize();
 	TheWritableGlobalData->m_showMoneyPerMinute = optionPref.getShowMoneyPerMinute();
 	TheWritableGlobalData->m_gameWindowTransitionSpeedMultiplier = optionPref.getGameWindowTransitionSpeedMultiplier();
+
+	if (TheGlobalData->m_commandLineData.m_windowedCommandLineSpecified)
+	{
+		TheWritableGlobalData->m_windowed = cmdWindowed;
+	}
+	else
+	{
+		TheWritableGlobalData->m_windowed = optionPref.getWindowed();
+	}
 
 	TheWritableGlobalData->m_antiAliasLevel = optionPref.getAntiAliasing();
 	TheWritableGlobalData->m_textureFilteringMode = optionPref.getTextureFilterMode();

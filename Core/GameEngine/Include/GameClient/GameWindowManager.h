@@ -65,6 +65,21 @@ public:
 	std::list<GameWindow *> windows;						///< list of top-level windows in the layout
 };
 
+#include <map>
+
+struct WindowLayoutRules
+{
+	Int unscaledScreenX;
+	Int unscaledScreenY;
+	Int unscaledScreenWidth;
+	Int unscaledScreenHeight;
+	Int createResX;
+	Int createResY;
+};
+
+extern std::map<GameWindow*, WindowLayoutRules> g_windowLayoutRegistry;
+void reflowAllWindows(Int newScreenWidth, Int newScreenHeight);
+
 //-------------------------------------------------------------------------------------------------
 /** There exists a singleton GameWindowManager that defines how we can
 	* interact with the game windowing system */

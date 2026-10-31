@@ -51,6 +51,12 @@
 #include "Common/MessageStream.h"
 #include "Common/PlayerList.h"
 #include "Common/Team.h"
+#include "Common/OptionPreferences.h"
+#include "GameClient/Display.h"
+#include "GameClient/GameWindowTransitions.h"
+#include "GameClient/HeaderTemplate.h"
+#include "GameClient/Shell.h"
+#include "GameClient/View.h"
 #include "GameClient/ClientInstance.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/GameClient.h"
@@ -286,6 +292,215 @@ static const char *messageToString(unsigned int message)
 }
 #endif
 
+volatile bool g_inInternalResize = false;
+volatile bool g_resizePending = false;
+static bool g_inSizeMove = false;
+static Int g_savedWindowedWidth = 800;
+static Int g_savedWindowedHeight = 600;
+
+struct InternalResizeGuard
+{
+	InternalResizeGuard() { g_inInternalResize = true; }
+	~InternalResizeGuard() { g_inInternalResize = false; }
+};
+
+extern void reflowAllWindows(Int newScreenWidth, Int newScreenHeight);
+
+static bool isResizeSafe()
+{
+	if (!TheGameEngine || TheGameEngine->getQuitting())
+	{
+		return false;
+	}
+
+	if (TheDisplay && TheDisplay->isMoviePlaying())
+	{
+		return false;
+	}
+
+	if (TheShell && TheShell->getScreenCount() > 0)
+	{
+		if (TheShell->isAnimFinished())
+		{
+			return true;
+		}
+	}
+
+	if (TheGameLogic && TheGameLogic->isInGame() && !TheGameLogic->isInShellGame())
+	{
+		if (TheGameLogic->isLoadingMap() || TheGameLogic->isLoadingSave() || TheGameLogic->isClearingGameData())
+		{
+			return false;
+		}
+		return true;
+	}
+
+	return false;
+}
+
+static bool performLiveResize(HWND hWnd)
+{
+	InternalResizeGuard guard;
+	if (gInitializing)
+	{
+		return false;
+	}
+
+	RECT rect;
+	if (GetClientRect(hWnd, &rect))
+	{
+		Int newWidth = rect.right - rect.left;
+		Int newHeight = rect.bottom - rect.top;
+
+		if (newWidth <= 0 || newHeight <= 0)
+		{
+			return false;
+		}
+
+		bool desiredD3DWindowed = TheGlobalData ? TheGlobalData->m_windowed : false;
+		bool windowedChanged = (TheDisplay && TheDisplay->getWindowed() != desiredD3DWindowed);
+		if (TheGlobalData && (newWidth != TheGlobalData->m_xResolution || newHeight != TheGlobalData->m_yResolution || windowedChanged))
+		{
+			if (TheDisplay && TheDisplay->setDisplayMode(newWidth, newHeight, TheDisplay->getBitDepth(), desiredD3DWindowed))
+			{
+				if (TheWritableGlobalData)
+				{
+					TheWritableGlobalData->m_xResolution = newWidth;
+					TheWritableGlobalData->m_yResolution = newHeight;
+				}
+
+				if (TheGlobalData->m_windowed)
+				{
+					g_savedWindowedWidth = newWidth;
+					g_savedWindowedHeight = newHeight;
+				}
+
+				if (TheTacticalView)
+				{
+					TheTacticalView->setWidth(newWidth);
+					TheTacticalView->setHeight(newHeight);
+				}
+
+				if (TheHeaderTemplateManager)
+					TheHeaderTemplateManager->onResolutionChanged();
+
+				if (TheMouse)
+					TheMouse->onResolutionChanged();
+
+				if (TheTransitionHandler)
+					TheTransitionHandler->reset();
+
+				reflowAllWindows(newWidth, newHeight);
+
+				if (TheInGameUI)
+				{
+					TheInGameUI->recreateControlBar();
+				}
+
+				OptionPreferences optionPref;
+				optionPref.setWindowed(TheGlobalData->m_windowed);
+				Int prefX = 0, prefY = 0;
+				optionPref.getResolution(&prefX, &prefY);
+				// Do not overwrite native 1080p with title-bar clamped 1061p
+				if (!(prefX == 1920 && prefY == 1080 && newWidth == 1920 && newHeight >= 1040 && newHeight <= 1080))
+				{
+					AsciiString resString;
+					resString.format("%d %d", newWidth, newHeight);
+					optionPref.setAsciiString("Resolution", resString);
+				}
+				optionPref.write();
+
+				return true;
+			}
+			return false;
+		}
+		return true;
+	}
+	return false;
+}
+
+void checkAndApplyDeferredResize()
+{
+	if (g_resizePending && isResizeSafe())
+	{
+		if (performLiveResize(ApplicationHWnd))
+		{
+			g_resizePending = false;
+		}
+	}
+}
+
+static void toggleFullscreen(HWND hWnd)
+{
+	if (!isResizeSafe())
+	{
+		return;
+	}
+
+	if (TheGameEngine && !TheGameEngine->getQuitting() && TheDisplay)
+	{
+		TheWritableGlobalData->m_windowed = !TheGlobalData->m_windowed;
+
+		DWORD windowStyle = WS_POPUP | WS_VISIBLE;
+		DWORD exStyle = 0;
+		Int resX = 0;
+		Int resY = 0;
+
+		MONITORINFO mi = { sizeof(MONITORINFO) };
+		GetMonitorInfo(MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &mi);
+
+		if (TheGlobalData->m_windowed)
+		{
+			windowStyle |= WS_MINIMIZEBOX | WS_SYSMENU | WS_THICKFRAME | WS_CAPTION;
+			resX = g_savedWindowedWidth;
+			resY = g_savedWindowedHeight;
+
+			LONG workWidth = mi.rcWork.right - mi.rcWork.left;
+			LONG workHeight = mi.rcWork.bottom - mi.rcWork.top;
+			if (resX >= workWidth || resY >= workHeight)
+			{
+				if (workWidth >= 1600 && workHeight >= 900) { resX = 1600; resY = 900; }
+				else if (workWidth >= 1280 && workHeight >= 720) { resX = 1280; resY = 720; }
+				else if (workWidth >= 1024 && workHeight >= 768) { resX = 1024; resY = 768; }
+				else { resX = 800; resY = 600; }
+			}
+		}
+		else
+		{
+			windowStyle |= WS_SYSMENU;
+			exStyle |= WS_EX_TOPMOST;
+			resX = mi.rcMonitor.right - mi.rcMonitor.left;
+			resY = mi.rcMonitor.bottom - mi.rcMonitor.top;
+		}
+
+		RECT windowRect = { 0, 0, resX, resY };
+		AdjustWindowRectEx(&windowRect, windowStyle, FALSE, exStyle);
+		LONG width = windowRect.right - windowRect.left;
+		LONG height = windowRect.bottom - windowRect.top;
+
+		LONG x = 0, y = 0;
+		if (TheGlobalData->m_windowed)
+		{
+			LONG targetX = mi.rcWork.left + (mi.rcWork.right - mi.rcWork.left - width) / 2;
+			LONG targetY = mi.rcWork.top + (mi.rcWork.bottom - mi.rcWork.top - height) / 2;
+			x = (mi.rcWork.left > targetX) ? mi.rcWork.left : targetX;
+			y = (mi.rcWork.top > targetY) ? mi.rcWork.top : targetY;
+		}
+		else
+		{
+			x = mi.rcMonitor.left;
+			y = mi.rcMonitor.top;
+		}
+
+		SetWindowLong(hWnd, GWL_STYLE, windowStyle);
+		SetWindowLong(hWnd, GWL_EXSTYLE, exStyle);
+		SetWindowPos(hWnd, TheGlobalData->m_windowed ? HWND_NOTOPMOST : HWND_TOPMOST,
+					 x, y, width, height, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+		UpdateWindow(hWnd);
+		g_resizePending = true;
+	}
+}
+
 // WndProc ====================================================================
 /** Window Procedure */
 //=============================================================================
@@ -355,11 +570,13 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 						return 1;
 					case SC_MOVE:
 					case SC_SIZE:
-					case SC_MAXIMIZE:
 					case SC_MONITORPOWER:
 						if( !TheGlobalData->m_windowed )
 							return 1;
 						break;
+					case SC_MAXIMIZE:
+						// Maximize button is disabled/frozen in windowed mode
+						return 1;
 				}
 				break;
 
@@ -405,6 +622,18 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 
 				break;
 			}
+
+			case WM_ENTERSIZEMOVE:
+				g_inSizeMove = true;
+				break;
+
+			case WM_EXITSIZEMOVE:
+				g_inSizeMove = false;
+				if (!g_inInternalResize)
+				{
+					g_resizePending = true;
+				}
+				break;
 
 			//-------------------------------------------------------------------------
 			case WM_SIZE:
@@ -515,6 +744,14 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 						PostQuitMessage( 0 );
 						break;
 					}
+					case VK_F11:
+					{
+						if (!(lParam & (1 << 30)))
+						{
+							toggleFullscreen(hWnd);
+						}
+						break;
+					}
 				}
 				return 0;
 			}
@@ -597,6 +834,16 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 				if (TheWin32Mouse && (HWND)wParam == ApplicationHWnd)
 					TheWin32Mouse->setCursor(TheWin32Mouse->getMouseCursor());
 				return TRUE;	//tell Windows not to reset mouse cursor image to default.
+			}
+
+			case WM_SYSKEYDOWN:
+			{
+				if (wParam == VK_RETURN && (lParam & (1 << 29)) && !(lParam & (1 << 30)))
+				{
+					toggleFullscreen(hWnd);
+					return 0;
+				}
+				break;
 			}
 
 			case WM_PAINT:
@@ -704,10 +951,19 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 	                     TEXT("Game Window") };
   RegisterClass( &wndClass );
 
+	extern void (*g_checkAndApplyDeferredResizeHook)(void);
+	g_checkAndApplyDeferredResizeHook = checkAndApplyDeferredResize;
+
+	if (TheGlobalData)
+	{
+		g_savedWindowedWidth = TheGlobalData->m_xResolution;
+		g_savedWindowedHeight = TheGlobalData->m_yResolution;
+	}
+
    // Create our main window
 	windowStyle =  WS_POPUP|WS_VISIBLE;
 	if (runWindowed)
-		windowStyle |= WS_MINIMIZEBOX | WS_SYSMENU | WS_DLGFRAME | WS_CAPTION;
+		windowStyle |= WS_MINIMIZEBOX | WS_SYSMENU | WS_THICKFRAME | WS_CAPTION;
 	else
 		windowStyle |= WS_EX_TOPMOST | WS_SYSMENU;
 

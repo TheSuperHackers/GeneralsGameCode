@@ -30,6 +30,8 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include <windows.h>
+void (*g_checkAndApplyDeferredResizeHook)(void) = nullptr;
+
 
 #include "Win32Device/Common/Win32GameEngine.h"
 #include "Common/PerfTimer.h"
@@ -123,6 +125,11 @@ void Win32GameEngine::update()
 	// allow windows to perform regular windows maintenance stuff like msgs
 	serviceWindowsOS();
 
+	extern void (*g_checkAndApplyDeferredResizeHook)(void);
+	if (g_checkAndApplyDeferredResizeHook != nullptr)
+	{
+		g_checkAndApplyDeferredResizeHook();
+	}
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -56,7 +56,7 @@ constexpr const Int SIMULATE_REPLAYS_SEQUENTIAL = -1;
 //-------------------------------------------------------------------------------------------------
 // Command-line parsing state is stored here instead of in CommandLine because
 // the parsing result belongs to the GlobalData instance created during startup.
-class CommandLineData
+struct CommandLineData
 {
 	friend class CommandLine;
 	friend class GlobalData;
@@ -64,10 +64,12 @@ class CommandLineData
 	CommandLineData()
 		: m_hasParsedCommandLineForStartup(false)
 		, m_hasParsedCommandLineForEngineInit(false)
+		, m_windowedCommandLineSpecified(false)
 	{}
 
 	Bool m_hasParsedCommandLineForStartup;
 	Bool m_hasParsedCommandLineForEngineInit;
+	Bool m_windowedCommandLineSpecified;
 	BoolVector m_parsedArguments;
 };
 

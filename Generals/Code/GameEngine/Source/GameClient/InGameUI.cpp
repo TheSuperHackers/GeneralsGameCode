@@ -5908,12 +5908,49 @@ void InGameUI::resetIdleWorker()
 
 void InGameUI::recreateControlBar()
 {
+	Bool wasHidden = (m_controlBarWindow != nullptr) ? m_controlBarWindow->winIsHidden() : FALSE;
+	Bool wasScienceVisible = (TheControlBar != nullptr && TheControlBar->isPurchaseScienceVisible());
+
+	if (TheControlBar)
+	{
+		TheControlBar->showRallyPoint(nullptr);
+	}
+
 	destroyControlBar();
 	createControlBar();
 
 	delete TheControlBar;
 	TheControlBar = NEW ControlBar;
 	TheControlBar->init();
+
+	if (ThePlayerList)
+	{
+		Player *localPlayer = ThePlayerList->getLocalPlayer();
+		if (localPlayer)
+		{
+			TheControlBar->setControlBarSchemeByPlayer(localPlayer);
+			TheControlBar->initSpecialPowershortcutBar(localPlayer);
+		}
+	}
+
+	if (wasHidden)
+	{
+		HideControlBar(TRUE);
+	}
+	else
+	{
+		ShowControlBar(TRUE);
+	}
+
+	if (TheControlBar)
+	{
+		TheControlBar->markUIDirty();
+	}
+
+	if (wasScienceVisible && TheControlBar)
+	{
+		TheControlBar->showPurchaseScience();
+	}
 }
 
 void InGameUI::refreshCustomUiResources()

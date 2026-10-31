@@ -1372,8 +1372,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 		if (comboBoxDetail)
 			comboBoxDetail->winEnable(FALSE);
 
-		if (comboBoxResolution)
-			comboBoxResolution->winEnable(FALSE);
+		// In-game resolution change allowed with live resize reflow
 
 		if (textEntryFirewallPortOverride)
 			textEntryFirewallPortOverride->winEnable(FALSE);
