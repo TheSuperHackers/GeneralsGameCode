@@ -417,7 +417,7 @@ template <> inline unsigned int HashTemplateKeyClass<StringClass>::Get_Hash_Valu
 		}
 		return hval;
 	}
-	uint32_t hval;
+	unsigned int hval;
 	memcpy(&hval, buffer+len-8, sizeof(hval));
 	hval = hval + (hval>>5) + (hval>>10) + (hval >> 20);
 	return hval;
