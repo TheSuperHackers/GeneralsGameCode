@@ -19,6 +19,7 @@
 #include <gtest/gtest.h>
 
 #include "Common/AsciiString.h"
+#include "Common/UnicodeString.h"
 
 TEST(AsciiString, FormatAndConcat)
 {
@@ -27,4 +28,25 @@ TEST(AsciiString, FormatAndConcat)
 	text.concat("!");
 	EXPECT_STREQ(text.str(), "Generals 2003!");
 	EXPECT_EQ(text.getLength(), 14);
+}
+
+TEST(AsciiString, TranslateRoundTripsUtf8)
+{
+	UnicodeString wide;
+	wide.translate(AsciiString("\xC3\xBC"));
+	ASSERT_EQ(wide.getLength(), 1);
+	EXPECT_EQ(wide.str()[0], 0x00FC);
+
+	AsciiString narrow;
+	narrow.translate(wide);
+	EXPECT_STREQ(narrow.str(), "\xC3\xBC");
+}
+
+TEST(UnicodeString, TranslateKeepsLegacyBytes)
+{
+	// A CP1252 byte that is not valid UTF-8 keeps its one-byte-to-one-wide-unit value.
+	UnicodeString wide;
+	wide.translate(AsciiString("\xFC"));
+	ASSERT_EQ(wide.getLength(), 1);
+	EXPECT_EQ(wide.str()[0], 0x00FC);
 }
