@@ -215,6 +215,19 @@ UnsignedInt CaveContain::getContainCount() const
 	return myTracker->getContainCount();
 }
 
+// TheSuperHackers @bugfix arcticdolphin 26/10/2026 Report the heroes in the cave.
+UnsignedInt CaveContain::getHeroUnitsContained() const
+{
+	TunnelTracker *myTracker = TheCaveSystem->getTunnelTrackerForCaveIndex( m_caveIndex );
+	return myTracker->getHeroUnitsContained();
+}
+
+void CaveContain::updateHeroUnitsContained()
+{
+	TunnelTracker *myTracker = TheCaveSystem->getTunnelTrackerForCaveIndex( m_caveIndex );
+	myTracker->updateHeroUnitsContained();
+}
+
 Int CaveContain::getContainMax() const
 {
 	TunnelTracker *myTracker = TheCaveSystem->getTunnelTrackerForCaveIndex( m_caveIndex );

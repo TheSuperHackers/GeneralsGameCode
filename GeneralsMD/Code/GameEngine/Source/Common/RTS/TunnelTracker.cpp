@@ -117,6 +117,12 @@ void TunnelTracker::swapContainedItemsList(ContainedItemsList& newList)
 {
 	m_containList.swap(newList);
 	m_containListSize = (Int)m_containList.size();
+	updateHeroUnitsContained();
+}
+
+void TunnelTracker::updateHeroUnitsContained()
+{
+	m_heroUnitsContained = OpenContain::countHeroUnits( m_containList );
 }
 
 // ------------------------------------------------------------------------
@@ -190,11 +196,7 @@ void TunnelTracker::addToContainList( Object *obj )
 {
 	m_containList.push_back(obj);
 	++m_containListSize;
-
-	if (obj->isKindOf(KINDOF_HERO))
-	{
-		++m_heroUnitsContained;
-	}
+	updateHeroUnitsContained();
 }
 
 // ------------------------------------------------------------------------
@@ -207,12 +209,7 @@ Bool TunnelTracker::removeFromContain( Object *obj, Bool exposeStealthUnits )
 		// note that this invalidates the iterator!
 		m_containList.erase(it);
 		--m_containListSize;
-
-		if (obj->isKindOf(KINDOF_HERO))
-		{
-			DEBUG_ASSERTCRASH(m_heroUnitsContained > 0, ("TunnelTracker::removeFromContain - Removing hero but hero count is %d", m_heroUnitsContained));
-			--m_heroUnitsContained;
-		}
+		updateHeroUnitsContained();
 
 		return true;
 	}
@@ -262,6 +259,7 @@ void TunnelTracker::onTunnelDestroyed( const Object *deadTunnel )
 		iterateContained( destroyObject, nullptr, FALSE );
 		m_containList.clear();
 		m_containListSize = 0;
+		updateHeroUnitsContained();
 	}
 	else
 	{
@@ -302,6 +300,7 @@ void TunnelTracker::onTunnelDestroyed( const Object *deadTunnel )
 		iterateContained( destroyObject, nullptr, FALSE );
 		m_containList.clear();
 		m_containListSize = 0;
+		updateHeroUnitsContained();
 	}
 	else
 	{

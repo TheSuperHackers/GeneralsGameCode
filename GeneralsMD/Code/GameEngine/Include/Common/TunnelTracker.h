@@ -45,6 +45,7 @@ public:
 	void iterateContained( ContainIterateFunc func, void *userData, Bool reverse );
 	UnsignedInt getContainCount() const { return m_containListSize; }
 	UnsignedInt getHeroUnitsContained() const { return m_heroUnitsContained; }
+	void updateHeroUnitsContained();
 	Int getContainMax() const;
 	const ContainedItemsList* getContainedItemsList() const { return &m_containList; }
 	void swapContainedItemsList(ContainedItemsList& newList);

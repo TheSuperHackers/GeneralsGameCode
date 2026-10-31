@@ -176,6 +176,8 @@ public:
 	virtual Real getContainedItemsMass() const override;
 	virtual UnsignedInt getStealthUnitsContained() const override { return m_stealthUnitsContained; }
 	virtual UnsignedInt getHeroUnitsContained() const override { return m_heroUnitsContained; }
+	virtual void updateHeroUnitsContained() override;
+	static UnsignedInt countHeroUnits( const ContainedItemsList &list );
 
 	virtual PlayerMaskType getPlayerWhoEntered() const override { return m_playerEnteredMask; }
 
