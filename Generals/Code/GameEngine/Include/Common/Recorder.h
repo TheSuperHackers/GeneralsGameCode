@@ -92,7 +92,7 @@ protected:
 	{
 	public:
 		CRCInfo();
-		CRCInfo(UnsignedInt localPlayer, Bool isMultiplayer);
+		CRCInfo(UnsignedInt localPlayer);
 		void addCRC(UnsignedInt val);
 		UnsignedInt readCRC();
 		int GetQueueSize() const { return m_data.size(); }
@@ -102,7 +102,6 @@ protected:
 
 	protected:
 		Bool m_sawCRCMismatch;
-		Bool m_skippedOne;
 		UnsignedInt m_localPlayer;
 		std::list<UnsignedInt> m_data;
 	};
@@ -220,7 +219,7 @@ protected:
 	Bool m_doingAnalysis;
 	Bool m_archiveReplays;														///< if true, each replay is archived to the replay archive folder after recording
 
-	GameMode m_originalGameMode; // valid in replays
+	GameMode m_originalGameMode; // valid while recording and in replays
 
 	UnsignedInt m_nextFrame;												///< The Frame that the next message is to be executed on.  This can be -1.
 };
