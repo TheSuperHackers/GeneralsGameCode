@@ -2755,6 +2755,54 @@ void AIGroup::groupCheer( CommandSourceType cmdSource )
 	}
 }
 
+#if !RETAIL_COMPATIBLE_CRC
+// TheSuperHackers @bugfix arcticdolphin 26/10/2026 Only sell objects that show a usable Sell button.
+static Bool canSellFromCommandButton( Object *obj )
+{
+	if( obj->testStatus( OBJECT_STATUS_SOLD ) || obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+	{
+		return FALSE;
+	}
+
+	static const NameKeyType key_OCLUpdate = NAMEKEY( "OCLUpdate" );
+	ContainModuleInterface *contain = obj->getContain();
+	const Bool showsInventory = contain && contain->isGarrisonable() && obj->getCommandSetString().isEmpty();
+	if( !showsInventory && obj->findUpdateModule( key_OCLUpdate ) )
+	{
+		return !obj->isKindOf( KINDOF_TECH_BUILDING );
+	}
+
+	if( obj->testScriptStatusBit( OBJECT_STATUS_SCRIPT_DISABLED ) ||
+			obj->testScriptStatusBit( OBJECT_STATUS_SCRIPT_UNPOWERED ) ||
+			obj->testScriptStatusBit( OBJECT_STATUS_SCRIPT_UNSELLABLE ) )
+	{
+		return FALSE;
+	}
+
+	if( obj->isDisabledByType( DISABLED_UNMANNED ) || obj->isDisabledByType( DISABLED_SUBDUED ) )
+	{
+		return FALSE;
+	}
+
+	const CommandSet *set = TheControlBar->findCommandSet( obj->getCommandSetString() );
+	if( set == nullptr )
+	{
+		return FALSE;
+	}
+
+	for( Int buttonIndex = 0; buttonIndex < MAX_COMMANDS_PER_SET; buttonIndex++ )
+	{
+		const CommandButton *button = set->getCommandButton( buttonIndex );
+		if( button && button->getCommandType() == GUI_COMMAND_SELL && !BitIsSet( button->getOptions(), SCRIPT_ONLY ) )
+		{
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+#endif
+
 /**
 	* Sell all things in the group ... if possible
 	*/
@@ -2778,6 +2826,13 @@ void AIGroup::groupSell( CommandSourceType cmdSource )
 
 	for( size_t j = 0; j < groupObjectsCopy.size(); ++j )
 	{
+#if !RETAIL_COMPATIBLE_CRC
+		if( !canSellFromCommandButton( groupObjectsCopy[j] ) )
+		{
+			continue;
+		}
+#endif
+
 		TheBuildAssistant->sellObject( groupObjectsCopy[j] );
 	}
 
