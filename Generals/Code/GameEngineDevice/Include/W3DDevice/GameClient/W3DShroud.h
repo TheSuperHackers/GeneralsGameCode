@@ -92,6 +92,7 @@ public:
 	Int	 getTextureWidth()		{return m_dstTextureWidth;}	///<internal use by the shader system.
 	Int	 getTextureHeight()		{return m_dstTextureHeight;}
 	W3DShroudLevel getShroudLevel(Int x, Int y);
+	Real sampleShroudLevel(Real worldX, Real worldY); ///< Spatially sample the current visual shroud, in the range 0..255.
 	void setShroudLevel(Int x, Int y, W3DShroudLevel,Bool textureOnly=FALSE);
 	void setShroudFilter(Bool enable);	///<turns on bilinear filtering of shroud cells.
 	void setBorderShroudLevel(W3DShroudLevel level);	///<color that will appear in unused border terrain.
