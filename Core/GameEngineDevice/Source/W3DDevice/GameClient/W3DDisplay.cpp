@@ -3150,7 +3150,11 @@ void W3DDisplay::setClipRegion( IRegion2D *region )
 */
 void W3DDisplay::clearShroud()
 {
-	// nothing
+	// The rewritten cells must not fade in
+	if (TheTerrainRenderObject && TheTerrainRenderObject->getShroud())
+	{
+		TheTerrainRenderObject->getShroud()->requestFogSnap();
+	}
 }
 
 //=============================================================================
