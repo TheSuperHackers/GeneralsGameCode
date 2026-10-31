@@ -50,6 +50,7 @@
 #include "Common/GameAudio.h"
 #include "Common/INI.h"
 #include "Common/OptionPreferences.h"
+#include "Common/Registry.h"
 #include "Common/version.h"
 
 #include "GameLogic/AI.h"
@@ -1191,9 +1192,12 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	// parse the ini weapon definition
 	ini->initFromINI( TheWritableGlobalData, s_GlobalDataFieldParseTable );
 
-	TheWritableGlobalData->m_userDataDir.clear();
-	TheWritableGlobalData->m_userDataDir = BuildUserDataPathFromIni();
-	CreateDirectory(TheWritableGlobalData->m_userDataDir.str(), nullptr);
+	if( ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES )
+	{
+		TheWritableGlobalData->m_userDataDir.clear();
+		TheWritableGlobalData->m_userDataDir = TheWritableGlobalData->BuildUserDataPath();
+		CreateDirectory(TheWritableGlobalData->m_userDataDir.str(), nullptr);
+	}
 
 	// override INI values with user preferences
 	OptionPreferences optionPref;
@@ -1332,7 +1336,30 @@ UnsignedInt GlobalData::generateExeCRC()
 	return exeCRC.get();
 }
 
-AsciiString GlobalData::BuildUserDataPathFromIni()
+static Bool isValidUserDataLeafName(const AsciiString& name)
+{
+	if (name.isEmpty() || strcmp(name.str(), ".") == 0 || strstr(name.str(), "..") != nullptr)
+	{
+		return FALSE;
+	}
+
+	// skip the trail byte of a double byte character, it can be 0x5C
+	for (const unsigned char* c = (const unsigned char*)name.str(); *c != '\0'; ++c)
+	{
+		if (IsDBCSLeadByte(*c) && c[1] != '\0')
+		{
+			++c;
+		}
+		else if (*c == '\\' || *c == '/' || *c == ':')
+		{
+			return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
+AsciiString GlobalData::BuildUserDataPath()
 {
 #if defined(_MSC_VER) && (_MSC_VER < 1300)
 	// VC6 lacks FOLDERID_Documents and KF_FLAG_DEFAULT
@@ -1374,7 +1401,17 @@ AsciiString GlobalData::BuildUserDataPathFromIni()
 		if (!myDocumentsDirectory.endsWith("\\"))
 			myDocumentsDirectory.concat('\\');
 
-		myDocumentsDirectory.concat(TheWritableGlobalData->m_userDataLeafName.str());
+		// INI first, then registry, then the default
+		AsciiString leafName = m_userDataLeafName;
+		if (!isValidUserDataLeafName(leafName))
+		{
+			if (!GetStringFromRegistry("", "UserDataLeafName", leafName) || !isValidUserDataLeafName(leafName))
+			{
+				leafName = "Command and Conquer Generals Data";
+			}
+		}
+
+		myDocumentsDirectory.concat(leafName);
 
 		if (!myDocumentsDirectory.endsWith("\\"))
 			myDocumentsDirectory.concat('\\');
