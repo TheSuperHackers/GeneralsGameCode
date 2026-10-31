@@ -4096,6 +4096,12 @@ void Drawable::friend_bindToObject( Object *obj ) ///< bind this drawable to an 
 	m_object = obj;
 	if (getObject())
 	{
+		// TheSuperHackers @info Set tint status here because the object may get disabled before the drawable is attached.
+		if (getObject()->isKindOf(KINDOF_POWERED) && getObject()->isDisabledByType(DISABLED_UNDERPOWERED))
+		{
+			setTintStatus(TINT_STATUS_DISABLED);
+		}
+
 		if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
 			setIndicatorColor(getObject()->getNightIndicatorColor());
 		else
