@@ -16,6 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "PreRTS.h"
 #include "Common/CRCDebug.h"
 #include "GameLogic/AI.h"
 #include "GameLogic/AIPathfind.h"

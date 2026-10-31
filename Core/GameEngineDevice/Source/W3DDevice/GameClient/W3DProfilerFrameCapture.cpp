@@ -16,9 +16,13 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "Lib/Profile.h"
+
 #ifdef PROFILER_ENABLED
 
-#include "../../../Include/W3DDevice/GameClient/W3DProfilerFrameCapture.h"
+#include <windows.h>
+
+#include "W3DDevice/GameClient/W3DProfilerFrameCapture.h"
 
 #include "WW3D2/dx8wrapper.h"
 #include "WW3D2/surfaceclass.h"
