@@ -282,12 +282,6 @@ protected:
 	void get_deformed_vertices(Vector3 *dst_vert, Vector3 *dst_norm, const HTreeClass * htree);
 	void get_deformed_vertices(Vector3 *dst_vert, const HTreeClass * htree);
 	void get_deformed_screenspace_vertices(Vector4 *dst_vert,const RenderInfoClass & rinfo,const Matrix3D & mesh_tm,const HTreeClass * htree);
-	void compose_deformed_vertex_buffer(
-		VertexFormatXYZNDUV2* verts,
-		const Vector2* uv0,
-		const Vector2* uv1,
-		const unsigned* diffuse,
-		const HTreeClass * htree);
 
 	// loading
 	WW3DErrorType read_chunks(ChunkLoadClass & cload,MeshLoadContextClass * context);
