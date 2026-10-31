@@ -533,11 +533,10 @@ Bool MapCache::loadMapsFromDisk( const AsciiString &mapDir, Bool isOfficial, Boo
 		const char *szFilenameLower = getLastPathSeparator(filepathLower.str());
 		if (!szFilenameLower)
 		{
-			DEBUG_CRASH(("Couldn't find \\ in map name!"));
+			DEBUG_CRASH(("Couldn't find path separator in map name!"));
 			continue;
 		}
 
-		AsciiString endingStr;
 		AsciiString filenameLower = szFilenameLower+1;
 		filenameLower.truncateBy(strlen(mapExtension));
 
@@ -547,7 +546,8 @@ Bool MapCache::loadMapsFromDisk( const AsciiString &mapDir, Bool isOfficial, Boo
 			continue;
 		}
 
-		endingStr.format("%s\\%s%s", filenameLower.str(), filenameLower.str(), mapExtension);
+		AsciiString endingStr;
+		endingStr.format("%s%c%s%s", filenameLower.str(), *szFilenameLower, filenameLower.str(), mapExtension);
 
 		if (!filepathLower.endsWithNoCase(endingStr.str()))
 		{
