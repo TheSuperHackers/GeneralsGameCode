@@ -1053,6 +1053,11 @@ void MilesAudioManager::releaseMilesHandles( PlayingAudio *playing )
 				AIL_register_stream_callback(playing->m_stream, nullptr);
 				AIL_close_stream(playing->m_stream);
 				playing->m_stream = nullptr;
+				// TheSuperHackers @bugfix Release speech exclusion here, not in a stale completion callback for a replaced stream.
+				if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Streaming
+					&& playing->m_audioEventRTS->getUninterruptible()) {
+					setDisallowSpeech(FALSE);
+				}
 			}
 			break;
 		}
@@ -1533,10 +1538,6 @@ void MilesAudioManager::notifyOfAudioCompletion( UnsignedInt handle, UnsignedInt
 	if (!playing) {
 		DEBUG_CRASH(("Audio has completed playing, but we can't seem to find it. - jkmcd"));
 		return;
-	}
-
-	if (getDisallowSpeech() && playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Streaming) {
-		setDisallowSpeech(FALSE);
 	}
 
 	if (playing->m_audioEventRTS->getAudioEventInfo()->m_control & AC_LOOP) {
