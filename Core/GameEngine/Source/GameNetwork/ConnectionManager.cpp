@@ -299,6 +299,7 @@ void ConnectionManager::init()
 	for (i = 0; i < MAX_SLOTS; ++i) {
 		m_packetRouterFallback[i] = -1;
 	}
+	m_currentSenderSlot = -1;
 
 	for (i = 0; i < MAX_SLOTS; ++i) {
 		deleteInstance(m_frameData[i]);
@@ -472,6 +473,7 @@ void ConnectionManager::doRelay() {
 
 			// Get the command list from the packet.
 			NetCommandList *cmdList = packet.getCommandList();
+			m_currentSenderSlot = getSlotOfAddress(m_transport->m_inBuffer[i].addr, m_transport->m_inBuffer[i].port);
 
 			// Iterate through the commands in this packet and send them to the proper connections.
 			for (NetCommandRef* cmd = cmdList->getFirstMessage(); cmd; cmd = cmd->getNext()) {
@@ -495,6 +497,8 @@ void ConnectionManager::doRelay() {
 			break;
 		}
 	}
+
+	m_currentSenderSlot = -1;
 
 	NetCommandList *cmdList = m_netCommandWrapperList->getReadyCommands();
 	for (NetCommandRef* cmd = cmdList->getFirstMessage(); cmd; cmd = cmd->getNext()) {
@@ -2584,4 +2588,13 @@ void ConnectionManager::requestFrameDataResend(Int playerID, UnsignedInt frame) 
 	}
 
 	msg->detach();
+}
+
+Int ConnectionManager::getSlotOfAddress(UnsignedInt addr, UnsignedShort port) {
+	for (Int i = 0; i < MAX_SLOTS; ++i) {
+		if ((m_connections[i] != nullptr) && (m_connections[i]->getUser()->GetIPAddr() == addr) && (m_connections[i]->getUser()->GetPort() == port)) {
+			return i;
+		}
+	}
+	return -1;
 }
