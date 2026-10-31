@@ -621,6 +621,7 @@ void RecorderClass::startRecording(GameDifficulty diff, GameMode originalGameMod
 	{
     if(TheSkirmishGameInfo)
     {
+			TheSkirmishGameInfo->handleOriginalSetups();
 			TheSkirmishGameInfo->setCRCInterval(REPLAY_CRC_INTERVAL);
       theSlotList = GameInfoToAsciiString(TheSkirmishGameInfo);
       DEBUG_LOG(("GameInfo String: %s",theSlotList.str()));
