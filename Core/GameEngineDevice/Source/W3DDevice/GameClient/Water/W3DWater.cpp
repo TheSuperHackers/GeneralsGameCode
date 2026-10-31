@@ -206,12 +206,12 @@ static Bool wireframeForDebug = 0;
 void WaterRenderObjClass::setupJbaWaterShader()
 {
 	if (!TheWaterTransparency->m_additiveBlend)
-		DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaShader);
+		Renderer::Set_Shader(ShaderClass::_PresetAlphaShader);
 	else
-		DX8Wrapper::Set_Shader(ShaderClass::_PresetAdditiveShader);
+		Renderer::Set_Shader(ShaderClass::_PresetAdditiveShader);
 
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vmat);
+	Renderer::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);
 	m_riverTexture->Get_Filter().Set_Mag_Filter(TextureFilterClass::FILTER_TYPE_BEST);
 	m_riverTexture->Get_Filter().Set_Min_Filter(TextureFilterClass::FILTER_TYPE_BEST);
@@ -221,7 +221,7 @@ void WaterRenderObjClass::setupJbaWaterShader()
 //	Setting *setting=&m_settings[m_tod];
 
 
-	DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
+	Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ALPHAOP,   D3DTOP_ADD );
 	if (!m_riverAlphaEdge->Is_Initialized())
 		m_riverAlphaEdge->Init();
@@ -1650,7 +1650,7 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 				m_alphaClippingTexture->Set_Mag_Filter(TextureClass::FILTER_TYPE_NONE);
 				m_alphaClippingTexture->Set_Mip_Mapping(TextureClass::FILTER_TYPE_NONE);
 
-				DX8Wrapper::Set_Texture(0,m_alphaClippingTexture);
+				Renderer::Set_Texture(0,m_alphaClippingTexture);
 
 				//TODO: Will have to make sure that the shader system is not resetting my stage 1 setup
 				//while rendering the scene
@@ -1721,8 +1721,8 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 
 	//Clean up after any pixel shaders.
 	//Force render state apply so that the null texture gets applied to D3D, thus releasing shroud reference count.
-	DX8Wrapper::Apply_Render_State_Changes();
-	DX8Wrapper::Invalidate_Cached_Render_States();
+	Renderer::Apply_Render_State_Changes();
+	Renderer::Invalidate_Cached_Render_States();
 
 	if (m_waterTrackSystem)
 		m_waterTrackSystem->flush(rinfo);
@@ -1791,12 +1791,12 @@ void WaterRenderObjClass::drawSea(RenderInfoClass & rinfo)
 	matWW3D._23=1.0f;
 	matWW3D._44=1.0f;
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);	//position the water surface
-	DX8Wrapper::Set_Texture(0,nullptr);	//we'll be setting our own textures, so reset W3D
-	DX8Wrapper::Set_Texture(1,nullptr);	//we'll be setting our own textures, so reset W3D
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,Transform);	//position the water surface
+	Renderer::Set_Texture(0,nullptr);	//we'll be setting our own textures, so reset W3D
+	Renderer::Set_Texture(1,nullptr);	//we'll be setting our own textures, so reset W3D
 
 
-	DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
+	Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 
 	Vector3 camTran;
 
@@ -1949,7 +1949,7 @@ void WaterRenderObjClass::drawSea(RenderInfoClass & rinfo)
 	m_pDev->SetPixelShader(0);	//turn off pixel shader
 	m_pDev->SetVertexShader(DX8_FVF_XYZDUV1);	//turn off custom vertex shader
 
-	DX8Wrapper::Invalidate_Cached_Render_States();
+	Renderer::Invalidate_Cached_Render_States();
 
 	if (TheTerrainRenderObject->getShroud())
 	{
@@ -2057,7 +2057,7 @@ void WaterRenderObjClass::renderSky()
 
 
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vmat);
+	Renderer::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);
 
 	ShaderClass m_shader2=ShaderClass::_PresetOpaqueShader;
@@ -2065,9 +2065,9 @@ void WaterRenderObjClass::renderSky()
 	m_shader2.Set_Depth_Compare(ShaderClass::PASS_ALWAYS);	//no need to check against z-buffer, sky always rendered first.
 	m_shader2.Set_Depth_Mask(ShaderClass::DEPTH_WRITE_DISABLE);	//sky is always behind everything so no need to update z-buffer
 
-	DX8Wrapper::Set_Shader(m_shader2);
+	Renderer::Set_Shader(m_shader2);
 
-	DX8Wrapper::Set_Texture(0,setting->skyTexture);
+	Renderer::Set_Texture(0,setting->skyTexture);
 
 	//draw an infinite sky plane
 	DynamicVBAccessClass vb_access(BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,4);
@@ -2111,7 +2111,7 @@ void WaterRenderObjClass::renderSky()
 
 	Matrix3D tm(1);
 	tm.Set_Translation(Vector3(0,0,0));
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);
 
 	DX8Wrapper::Draw_Triangles(	0,2, 0,	4);	//draw a quad, 2 triangles, 4 verts
 }
@@ -2153,11 +2153,11 @@ void WaterRenderObjClass::renderSkyBody(Matrix3D *mat)
 	tm.Adjust_Translation(Vector3(SKYBODY_X,SKYBODY_Y,SKYBODY_HEIGHT));
 
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);
 
 
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vmat);
+	Renderer::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);
 
 	ShaderClass m_shader2=ShaderClass::_PresetAlphaShader;
@@ -2165,13 +2165,13 @@ void WaterRenderObjClass::renderSkyBody(Matrix3D *mat)
 	m_shader2.Set_Depth_Compare(ShaderClass::PASS_ALWAYS);	//no need to check against z-buffer, sky always rendered first.
 	m_shader2.Set_Depth_Mask(ShaderClass::DEPTH_WRITE_DISABLE);	//sky is always behind everything so no need to update z-buffer
 
-	DX8Wrapper::Set_Shader(m_shader2);
+	Renderer::Set_Shader(m_shader2);
 
 
 //	DX8Wrapper::Set_Shader(ShaderClass::/*_PresetAdditiveShader*//*_PresetOpaqueShader*/_PresetAlphaShader);
 //	DX8Wrapper::Set_Texture(0,setting->skyBodyTexture);
 
-	DX8Wrapper::Set_Texture(0,m_alphaClippingTexture);
+	Renderer::Set_Texture(0,m_alphaClippingTexture);
 
 	//draw an infinite sky plane
 	DynamicVBAccessClass vb_access(BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,4);
@@ -2362,8 +2362,8 @@ void WaterRenderObjClass::renderWaterMesh()
 
 	m_vertexBufferD3D->Unlock();
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);	//position the water surface
-	DX8Wrapper::Set_Material(m_meshVertexMaterialClass);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,Transform);	//position the water surface
+	Renderer::Set_Material(m_meshVertexMaterialClass);
 
 	ShaderClass::CullModeType oldCullMode=m_shaderClass.Get_Cull_Mode();
 
@@ -2372,25 +2372,25 @@ void WaterRenderObjClass::renderWaterMesh()
 
 	m_shaderClass.Set_Cull_Mode(ShaderClass::CULL_MODE_ENABLE);	//water should be visible from both sides
 
-	DX8Wrapper::Set_Shader(m_shaderClass);
+	Renderer::Set_Shader(m_shaderClass);
 #if 1
 	setupFlatWaterShader();
 #else
 	//DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaqueShader);
-	DX8Wrapper::Set_Texture(0,setting->waterTexture);
-	DX8Wrapper::Set_Texture(1,setting->waterTexture);
+	Renderer::Set_Texture(0,setting->waterTexture);
+	Renderer::Set_Texture(1,setting->waterTexture);
 
-	DX8Wrapper::Set_Light(0,*m_meshLight);
-	DX8Wrapper::Set_Light(1,nullptr);
-	DX8Wrapper::Set_Light(2,nullptr);
-	DX8Wrapper::Set_Light(3,nullptr);
+	Renderer::Set_Light(0,*m_meshLight);
+	Renderer::Clear_Light(1);
+	Renderer::Clear_Light(2);
+	Renderer::Clear_Light(3);
 /*
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_AMBIENT,0);	//turn off scene ambient
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_SPECULARENABLE,TRUE);
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_LOCALVIEWER,TRUE);
 */
 
-	DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
+	Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 #endif
 
 
@@ -2432,8 +2432,8 @@ void WaterRenderObjClass::renderWaterMesh()
 
 	m_vertexBufferD3DOffset += mx*my;	//advance past vertices already in buffer
 
-	DX8Wrapper::Set_Texture(0,nullptr);
-	DX8Wrapper::Set_Texture(1,nullptr);
+	Renderer::Set_Texture(0,nullptr);
+	Renderer::Set_Texture(1,nullptr);
 	ShaderClass::Invalidate();
 	m_shaderClass.Set_Cull_Mode(oldCullMode);	//water should be visible from both sides
 
@@ -2702,7 +2702,7 @@ Real WaterRenderObjClass::getWaterHeight(Real x, Real y)
 //-------------------------------------------------------------------------------------------------
 void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 {
-	DX8Wrapper::Invalidate_Cached_Render_States();	///@todo: Figure out why rivers don't draw without reset of all states.
+	Renderer::Invalidate_Cached_Render_States();	///@todo: Figure out why rivers don't draw without reset of all states.
 
 	Int rectangleCount = pTrig->getNumPoints()/2;
 	rectangleCount--;
@@ -2893,10 +2893,10 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 
 	Matrix3D tm(1);
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);	//position the water surface
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);	//position the water surface
 	DX8Wrapper::Set_Index_Buffer(ib_access,0);
 	DX8Wrapper::Set_Vertex_Buffer(vb_access);
-	DX8Wrapper::Set_Texture(0,m_riverTexture);	//set to blue
+	Renderer::Set_Texture(0,m_riverTexture);	//set to blue
 
 	setupJbaWaterShader();
 
@@ -2934,20 +2934,20 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 void WaterRenderObjClass::setupFlatWaterShader()
 {
 
-	DX8Wrapper::Set_Texture(0,m_riverTexture);
+	Renderer::Set_Texture(0,m_riverTexture);
 	if (!TheWaterTransparency->m_additiveBlend)
-		DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaShader);
+		Renderer::Set_Shader(ShaderClass::_PresetAlphaShader);
 	else
-		DX8Wrapper::Set_Shader(ShaderClass::_PresetAdditiveShader);
+		Renderer::Set_Shader(ShaderClass::_PresetAdditiveShader);
 
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vmat);
+	Renderer::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);
 	m_riverTexture->Get_Filter().Set_Mag_Filter(TextureFilterClass::FILTER_TYPE_BEST);
 	m_riverTexture->Get_Filter().Set_Min_Filter(TextureFilterClass::FILTER_TYPE_BEST);
 	m_riverTexture->Get_Filter().Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_BEST);
 
-	DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
+	Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 
 	//Setup shroud to render in same pass as water
 	if (m_trapezoidWaterPixelShader)
@@ -3257,7 +3257,7 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 
 	Matrix3D tm(1);
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);	//position the water surface
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);	//position the water surface
 	DX8Wrapper::Set_Index_Buffer(ib_access,0);
 	DX8Wrapper::Set_Vertex_Buffer(vb_access);
 
@@ -3372,12 +3372,12 @@ void WaterRenderObjClass::renderSkyBody(Matrix3D *mat)
 	V3=-vRight-vUp;
 
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vmat);
+	Renderer::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);
-	DX8Wrapper::Set_Shader(ShaderClass::/*_PresetAdditiveShader*//*_PresetOpaqueShader*/_PresetAlphaShader);
+	Renderer::Set_Shader(ShaderClass::/*_PresetAdditiveShader*//*_PresetOpaqueShader*/_PresetAlphaShader);
 //	DX8Wrapper::Set_Texture(0,setting->skyBodyTexture);
 
-	DX8Wrapper::Set_Texture(0,m_alphaClippingTexture);
+	Renderer::Set_Texture(0,m_alphaClippingTexture);
 
 	//draw an infinite sky plane
 	DynamicVBAccessClass vb_access(BUFFER_TYPE_DYNAMIC_DX8,4);
@@ -3422,7 +3422,7 @@ void WaterRenderObjClass::renderSkyBody(Matrix3D *mat)
 	Matrix3D tm(1);
 	//set position of skybody in world
 //	tm.Set_Translation(Vector3(40,0,0));
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);
 
 	DX8Wrapper::Draw_Triangles(	0,2, 0,	4);	//draw a quad, 2 triangles, 4 verts
 }
