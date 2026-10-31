@@ -843,7 +843,7 @@ AsciiString GameState::getMapLeafName(const AsciiString& in) const
 	if (p)
 	{
 		//
-		// p points to the last '\' (if found), however, if a '\' was found there better
+		// p points to the last separator (if found), however, if one was found there better
 		// be another character beyond it, otherwise the map filename would actually
 		// be a *directory*  Just move to the first character beyond it so we are looking
 		// at the name only
@@ -859,13 +859,15 @@ AsciiString GameState::getMapLeafName(const AsciiString& in) const
 }
 
 // ------------------------------------------------------------------------------------------------
-static const char* findLastBackslashInRangeInclusive(const char* start, const char* end)
+static const char* findLastPathSeparatorInRange(const char* start, const char* end)
 {
-	while (end >= start)
+	while (end > start)
 	{
-		if (*end == '\\')
-			return end;
 		--end;
+		if (isPathSeparator(*end))
+		{
+			return end;
+		}
 	}
 	return nullptr;
 }
@@ -874,11 +876,11 @@ static const char* findLastBackslashInRangeInclusive(const char* start, const ch
 static AsciiString getMapLeafAndDirName(const AsciiString& in)
 {
 	const char* start = in.str();
-	const char* end = in.str() + in.getLength() - 1;
-	const char* p = findLastBackslashInRangeInclusive(start, end);
+	const char* end = in.str() + in.getLength();
+	const char* p = findLastPathSeparatorInRange(start, end);
 	if (p)
 	{
-		const char* p2 = findLastBackslashInRangeInclusive(start, p-1);
+		const char* p2 = findLastPathSeparatorInRange(start, p);
 		if (p2)
 		{
 			// we have something like:
@@ -895,7 +897,7 @@ static AsciiString getMapLeafAndDirName(const AsciiString& in)
 	}
 	else
 	{
-		DEBUG_CRASH(("Illegal map-dir-name... should have at least one backslash"));
+		DEBUG_CRASH(("Illegal map-dir-name... should have at least one path separator"));
 		return in;
 	}
 }
