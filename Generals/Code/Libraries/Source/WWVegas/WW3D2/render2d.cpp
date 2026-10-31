@@ -526,9 +526,19 @@ void	Render2DClass::Add_Outline( const RectClass & rect, float width, const Rect
 	Add_Line (Vector2 (rect.Right, rect.Bottom),	Vector2 (rect.Left + 1, rect.Bottom),	width, color);
 }
 
+bool Render2DClass::Can_Add( int vertex_count, int index_count ) const
+{
+	return Vertices.Count() + vertex_count <= DynamicVBAccessClass::MAX_VERTEX_COUNT
+		&& Indices.Count() + index_count <= DynamicIBAccessClass::MAX_INDEX_COUNT;
+}
+
 void Render2DClass::Render()
 {
 	if ( !Indices.Count() || IsHidden) {
+		return;
+	}
+
+	if ( !Can_Add( 0, 0 ) ) {
 		return;
 	}
 
