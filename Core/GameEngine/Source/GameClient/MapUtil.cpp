@@ -329,14 +329,20 @@ AsciiString MapCache::getMapExtension() const
 	return "map";
 }
 
+AsciiString MapCache::getCachePath( const AsciiString &mapDir )
+{
+	AsciiString path = mapDir;
+	FileSystem::appendPathSeparator(path);
+	path.concat(m_mapCacheName);
+	return path;
+}
+
 void MapCache::writeCacheINI( const AsciiString &mapDir )
 {
-	AsciiString filepath = mapDir;
-	filepath.concat('\\');
+	AsciiString filepath = getCachePath(mapDir);
 
 	TheFileSystem->createDirectory(mapDir);
 
-	filepath.concat(m_mapCacheName);
 	FILE *fp = fopen(filepath.str(), "w");
 	DEBUG_ASSERTCRASH(fp != nullptr, ("Failed to create %s", filepath.str()));
 	if (fp == nullptr) {
@@ -499,8 +505,7 @@ Bool MapCache::clearUnseenMaps( const AsciiString &mapDir )
 void MapCache::loadMapsFromMapCacheINI( const AsciiString &mapDir )
 {
 	INI ini;
-	AsciiString fname;
-	fname.format("%s\\%s", mapDir.str(), m_mapCacheName);
+	AsciiString fname = getCachePath(mapDir);
 
 	if (TheFileSystem->doesFileExist(fname.str()))
 	{
@@ -514,8 +519,8 @@ Bool MapCache::loadMapsFromDisk( const AsciiString &mapDir, Bool isOfficial, Boo
 
 	FilenameList filepathList;
 	FilenameListIter filepathIt;
-	AsciiString toplevelPattern;
-	toplevelPattern.format("%s\\", mapDir.str());
+	AsciiString toplevelPattern = mapDir;
+	FileSystem::appendPathSeparator(toplevelPattern);
 	Bool mapListChanged = FALSE;
 	AsciiString filenamepattern;
 	filenamepattern.format("*.%s", getMapExtension().str());
@@ -533,11 +538,10 @@ Bool MapCache::loadMapsFromDisk( const AsciiString &mapDir, Bool isOfficial, Boo
 		const char *szFilenameLower = getLastPathSeparator(filepathLower.str());
 		if (!szFilenameLower)
 		{
-			DEBUG_CRASH(("Couldn't find \\ in map name!"));
+			DEBUG_CRASH(("Couldn't find path separator in map name!"));
 			continue;
 		}
 
-		AsciiString endingStr;
 		AsciiString filenameLower = szFilenameLower+1;
 		filenameLower.truncateBy(strlen(mapExtension));
 
@@ -547,7 +551,9 @@ Bool MapCache::loadMapsFromDisk( const AsciiString &mapDir, Bool isOfficial, Boo
 			continue;
 		}
 
-		endingStr.format("%s\\%s%s", filenameLower.str(), filenameLower.str(), mapExtension);
+		// Match against the separator this listing actually used, which is not necessarily the platform one
+		AsciiString endingStr;
+		endingStr.format("%s%c%s%s", filenameLower.str(), *szFilenameLower, filenameLower.str(), mapExtension);
 
 		if (!filepathLower.endsWithNoCase(endingStr.str()))
 		{
