@@ -486,7 +486,7 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	}
 #endif
 
-	DX8Wrapper::Set_Light_Environment(rinfo.light_environment);
+	Renderer::Set_Light_Environment(rinfo.light_environment);
 
 	// Force shaders to update.
 	m_stageTwoTexture->restore();
@@ -494,7 +494,7 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	DX8Wrapper::Set_Texture(1,nullptr);
 	ShaderClass::Invalidate();
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,Transform);
 
 
 	DX8Wrapper::Set_Material(m_vertexMaterialClass);

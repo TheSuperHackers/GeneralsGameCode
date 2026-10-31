@@ -28,7 +28,10 @@
 // Forward declarations keep this header includable without pulling in the full
 // WW3D2 header graph. All W3D classes below are passed by pointer or reference.
 
+class LightClass;
 class LightEnvironmentClass;
+class Matrix3D;
+class Matrix4x4;
 class Vector3;
 
 struct RenderViewport
@@ -39,6 +42,13 @@ struct RenderViewport
     unsigned int height;
     float min_z;
     float max_z;
+};
+
+enum RenderBackendTransform
+{
+    RB_TRANSFORM_WORLD,
+    RB_TRANSFORM_VIEW,
+    RB_TRANSFORM_PROJECTION
 };
 
 // The interface holds only the methods that callers route through. The rest of
@@ -75,6 +85,16 @@ public:
     static void Set_Viewport(const RenderViewport & viewport);
     static void Invalidate_Cached_Render_States();
 
+    static void Set_Transform(RenderBackendTransform transform, const Matrix4x4 & m);
+    static void Set_Transform(RenderBackendTransform transform, const Matrix3D & m);
+    static void Get_Transform(RenderBackendTransform transform, Matrix4x4 & m);
+    static void Set_World_Identity();
+    static void Set_View_Identity();
+    static void Set_Projection_Transform_With_Z_Bias(const Matrix4x4 & matrix, float znear, float zfar);
+
     static void Set_Ambient(const Vector3 & color);
     static void Set_Light_Environment(LightEnvironmentClass * light_env);
+    static void Set_Light(unsigned index, const LightClass & light);
+    static void Clear_Light(unsigned index);
+    static void Set_Fog(bool enable, const Vector3 & color, float start, float end);
 };

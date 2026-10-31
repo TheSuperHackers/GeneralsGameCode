@@ -38,6 +38,7 @@
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
 #include "dx8wrapper.h"
+#include "Renderer.h"
 #include "sortingrenderer.h"
 #include "rinfo.h"
 #include "camera.h"
@@ -432,7 +433,7 @@ void DynamicMeshClass::Render(RenderInfoClass & rinfo)
 		const FrustumClass & frustum = rinfo.Camera.Get_Frustum();
 
 		if (CollisionMath::Overlap_Test(frustum, Get_Bounding_Box()) != CollisionMath::OUTSIDE) {
-			DX8Wrapper::Set_Transform(D3DTS_WORLD, Transform);
+			Renderer::Set_Transform(RB_TRANSFORM_WORLD, Transform);
 			Model->Render(rinfo);
 		}
 	}

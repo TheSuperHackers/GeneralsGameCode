@@ -972,7 +972,7 @@ void RTS3DScene::updatePlayerColorPasses()
 void RTS3DScene::Render(RenderInfoClass & rinfo)
 {
 	//USE_PERF_TIMER(NonTerrainRender)
-	DX8Wrapper::Set_Fog(FogEnabled, FogColor, FogStart, FogEnd);
+	Renderer::Set_Fog(FogEnabled, FogColor, FogStart, FogEnd);
 
 	//Override the behind building selection if it's not available on current hardware (needs stencil).
 	TheWritableGlobalData->m_enableBehindBuildingMarkers = TheWritableGlobalData->m_enableBehindBuildingMarkers && Renderer::Has_Stencil();
