@@ -149,7 +149,7 @@ BOOL CWdumpApp::InitInstance()
 
 	if(NoWindow) {
 		if(cmdInfo.m_nShellCommand == CWDumpCommandLineInfo::FileOpen) {
-			Filename = getFileName(cmdInfo.m_strFileName);
+			Filename = getFileName((LPCTSTR)cmdInfo.m_strFileName);
 
 
 

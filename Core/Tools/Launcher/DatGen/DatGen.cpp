@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include "BFISH.h"
 #include <Debug/DebugPrint.h>
-#include "Lib/PathUtil.h"
+#include <Lib/PathUtil.h>
 
 void __cdecl doIt();
 

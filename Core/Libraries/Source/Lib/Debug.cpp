@@ -53,8 +53,8 @@
 
 // USER INCLUDES
 #define DEBUG_THREADSAFE
-#include "Lib/Debug.h"
-#include "Lib/PathUtil.h"
+#include <Lib/Debug.h>
+#include <Lib/PathUtil.h>
 
 
 // ----------------------------------------------------------------------------

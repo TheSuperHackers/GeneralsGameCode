@@ -18,10 +18,6 @@
 
 #pragma once
 
-#if __cplusplus >= 201103L
-#include <type_traits>
-#endif
-
 #ifdef min
 #error min is defined
 #endif
@@ -86,38 +82,4 @@ inline NUM highestBit(NUM x)
 	y |= (y >> 32);
 
 	return static_cast<NUM>(y & ~(y >> 1));
-}
-
-template <typename PTR>
-inline PTR maxPtr(PTR x, PTR y) noexcept
-{
-	static_assert(std::is_pointer<PTR>::value, "maxPtr is for pointer types only!");
-
-	if (x == nullptr)
-		return y;
-
-	if (y == nullptr)
-		return x;
-
-	if (x > y)
-		return x;
-
-	return y;
-}
-
-template <typename PTR>
-inline PTR minPtr(PTR x, PTR y) noexcept
-{
-	static_assert(std::is_pointer<PTR>::value, "minPtr is for pointer types only!");
-
-	if (x == nullptr)
-		return y;
-
-	if (y == nullptr)
-		return x;
-
-	if (x < y)
-		return x;
-
-	return y;
 }
