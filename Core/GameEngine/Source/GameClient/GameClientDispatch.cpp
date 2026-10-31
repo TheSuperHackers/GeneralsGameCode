@@ -47,6 +47,10 @@ GameMessageDisposition GameClientMessageDispatcher::translateGameMessage(const G
 	switch (msg->getType())
 	{
 	case GameMessage::MSG_FRAME_TICK:
+		// TheSuperHackers @fix arcticdolphin 13/10/2026 One tick per command list is enough, more pile up while the logic is paused.
+		if (TheCommandList->containsMessageOfType(GameMessage::MSG_FRAME_TICK))
+			break;
+		FALLTHROUGH;
 	case GameMessage::MSG_CLEAR_GAME_DATA:
 	case GameMessage::MSG_NEW_GAME:
 	case GameMessage::MSG_LOGIC_CRC_PLAYBACK:
