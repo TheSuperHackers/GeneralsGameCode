@@ -468,6 +468,7 @@ void MilesAudioManager::update()
 	processRequestList();
 	processPlayingList();
 	processFadingList();
+	m_audioCache->releaseEvictedFiles();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1216,6 +1217,8 @@ void MilesAudioManager::stopAllAudioImmediately()
 	}
 
 	m_audioForcePlayed.clear();
+
+	m_audioCache->releaseEvictedFiles();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3076,14 +3079,17 @@ U32 AILCALLBACK streamingFileRead(void *file_handle, void *buffer, U32 bytes)
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AudioFileCache::AudioFileCache() : m_maxSize(0), m_currentlyUsedSize(0), m_mutexName("AudioFileCacheMutex")
+AudioFileCache::AudioFileCache() : m_maxSize(0), m_currentlyUsedSize(0), m_evictedSize(0), m_mutexName("AudioFileCacheMutex")
 {
 	m_mutex = CreateMutex(nullptr, FALSE, m_mutexName);
+	m_readMutex = CreateMutex(nullptr, FALSE, "AudioFileReadMutex");
 }
 
 //-------------------------------------------------------------------------------------------------
 AudioFileCache::~AudioFileCache()
 {
+	OpenAudioFileList filesToFree;
+	std::list<const void *> filesToStop;
 	{
 		ScopedMutex mut(m_mutex);
 
@@ -3092,23 +3098,32 @@ AudioFileCache::~AudioFileCache()
 		for ( it = m_openFiles.begin(); it != m_openFiles.end(); ++it ) {
 			if (it->second.m_openCount > 0) {
 				DEBUG_CRASH(("Sample '%s' is still playing, and we're trying to quit.", it->second.m_eventInfo->m_audioName.str()));
+				filesToStop.push_back(it->second.m_file);
 			}
 
-			releaseOpenAudioFile(&it->second);
-			// Don't erase it from the map, cause it makes this whole process way more complicated, and
-			// we're about to go away anyways.
+			filesToFree.push_back(it->second);
 		}
+		m_openFiles.clear();
+
+		OpenAudioFileList::iterator eit;
+		for ( eit = m_evictedFiles.begin(); eit != m_evictedFiles.end(); ++eit ) {
+			if (eit->m_openCount > 0) {
+				filesToStop.push_back(eit->m_file);
+			}
+		}
+		filesToFree.splice(filesToFree.end(), m_evictedFiles);
 	}
 
+	stopSamplesUsingFiles(filesToStop);
+	freeOpenAudioFiles(filesToFree);
+
 	CloseHandle(m_mutex);
+	CloseHandle(m_readMutex);
 }
 
 //-------------------------------------------------------------------------------------------------
 void *AudioFileCache::openFile( AudioEventRTS *eventToOpenFrom )
 {
-	// Protect the entire openFile function
-	ScopedMutex mut(m_mutex);
-
 	AsciiString strToFind;
 	switch (eventToOpenFrom->getNextPlayPortion())
 	{
@@ -3125,23 +3140,35 @@ void *AudioFileCache::openFile( AudioEventRTS *eventToOpenFrom )
 			return nullptr;
 	}
 
-	OpenFilesHash::iterator it;
-	it = m_openFiles.find(strToFind);
+	{
+		ScopedMutex mut(m_mutex);
 
-	if (it != m_openFiles.end()) {
-		++it->second.m_openCount;
-		return it->second.m_file;
+		OpenFilesHash::iterator it;
+		it = m_openFiles.find(strToFind);
+
+		if (it != m_openFiles.end()) {
+			++it->second.m_openCount;
+			return it->second.m_file;
+		}
 	}
 
 	// Couldn't find the file, so actually open it.
-	File *file = TheFileSystem->openFile(strToFind.str());
-	if (!file) {
-		DEBUG_ASSERTLOG(strToFind.isEmpty(), ("Missing Audio File: '%s'", strToFind.str()));
-		return nullptr;
-	}
+	// TheSuperHackers @bugfix arcticdolphin 28/10/2026 Reading and decoding happen without the mutex, Miles calls closeFile while holding its own lock.
+	UnsignedInt fileSize;
+	char* buffer;
+	{
+		// Files in the same archive share one handle, so seek and read must not interleave.
+		ScopedMutex readMut(m_readMutex);
 
-	UnsignedInt fileSize = file->size();
-	char* buffer = file->readEntireAndClose();
+		File *file = TheFileSystem->openFile(strToFind.str());
+		if (!file) {
+			DEBUG_ASSERTLOG(strToFind.isEmpty(), ("Missing Audio File: '%s'", strToFind.str()));
+			return nullptr;
+		}
+
+		fileSize = file->size();
+		buffer = file->readEntireAndClose();
+	}
 
 	OpenAudioFile openedAudioFile;
 	openedAudioFile.m_eventInfo = eventToOpenFrom->getAudioEventInfo();
@@ -3180,18 +3207,41 @@ void *AudioFileCache::openFile( AudioEventRTS *eventToOpenFrom )
 	}
 
 	openedAudioFile.m_fileSize = fileSize;
-	m_currentlyUsedSize += openedAudioFile.m_fileSize;
-	if (m_currentlyUsedSize > m_maxSize) {
-		// We need to free some samples, or we're not going to be able to play this sound.
-		if (!freeEnoughSpaceForSample(openedAudioFile)) {
-			m_currentlyUsedSize -= openedAudioFile.m_fileSize;
-			releaseOpenAudioFile(&openedAudioFile);
-			return nullptr;
+
+	void *result = openedAudioFile.m_file;
+	OpenAudioFileList filesToFree;
+	{
+		ScopedMutex mut(m_mutex);
+
+		OpenFilesHash::iterator it;
+		it = m_openFiles.find(strToFind);
+
+		if (it != m_openFiles.end()) {
+			// Another thread opened the file in the meantime, use that one.
+			++it->second.m_openCount;
+			result = it->second.m_file;
+			openedAudioFile.m_openCount = 0;
+			filesToFree.push_back(openedAudioFile);
+		} else {
+			m_currentlyUsedSize += openedAudioFile.m_fileSize;
+			if (m_currentlyUsedSize > m_maxSize) {
+				// We need to free some samples, or we're not going to be able to play this sound.
+				if (!freeEnoughSpaceForSample(openedAudioFile, filesToFree)) {
+					m_currentlyUsedSize -= openedAudioFile.m_fileSize;
+					openedAudioFile.m_openCount = 0;
+					filesToFree.push_back(openedAudioFile);
+					result = nullptr;
+				}
+			}
+
+			if (result) {
+				m_openFiles[strToFind] = openedAudioFile;
+			}
 		}
 	}
 
-	m_openFiles[strToFind] = openedAudioFile;
-	return openedAudioFile.m_file;
+	freeOpenAudioFiles(filesToFree);
+	return result;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3211,6 +3261,14 @@ void AudioFileCache::closeFile( void *fileToClose )
 			return;
 		}
 	}
+
+	OpenAudioFileList::iterator eit;
+	for ( eit = m_evictedFiles.begin(); eit != m_evictedFiles.end(); ++eit ) {
+		if ( eit->m_file == fileToClose ) {
+			--eit->m_openCount;
+			return;
+		}
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3223,28 +3281,79 @@ void AudioFileCache::setMaxSize( UnsignedInt size )
 }
 
 //-------------------------------------------------------------------------------------------------
-void AudioFileCache::releaseOpenAudioFile( OpenAudioFile *fileToRelease )
+void AudioFileCache::releaseEvictedFiles()
 {
-	if (fileToRelease->m_openCount > 0) {
-		// This thing needs to be terminated IMMEDIATELY.
-		TheAudio->closeAnySamplesUsingFile(fileToRelease->m_file);
+	std::list<const void *> filesToStop;
+	{
+		ScopedMutex mut(m_mutex);
+
+		OpenAudioFileList::iterator it;
+		for ( it = m_evictedFiles.begin(); it != m_evictedFiles.end(); ++it ) {
+			if (it->m_openCount > 0) {
+				filesToStop.push_back(it->m_file);
+			}
+		}
 	}
 
-	if (fileToRelease->m_file) {
-		if (fileToRelease->m_compressed) {
-			// Files read in via AIL_decompress_ADPCM must be freed with AIL_mem_free_lock.
-			AIL_mem_free_lock(fileToRelease->m_file);
-		} else {
-			// Otherwise, we read it, we own it, blow it away.
-			delete [] fileToRelease->m_file;
+	// These things need to be terminated IMMEDIATELY.
+	stopSamplesUsingFiles(filesToStop);
+
+	OpenAudioFileList filesToFree;
+	{
+		ScopedMutex mut(m_mutex);
+
+		OpenAudioFileList::iterator it = m_evictedFiles.begin();
+		while (it != m_evictedFiles.end()) {
+			if (it->m_openCount == 0) {
+				m_evictedSize -= it->m_fileSize;
+				filesToFree.push_back(*it);
+				it = m_evictedFiles.erase(it);
+			} else {
+				++it;
+			}
 		}
-		fileToRelease->m_file = nullptr;
-		fileToRelease->m_eventInfo = nullptr;
+	}
+
+	freeOpenAudioFiles(filesToFree);
+}
+
+//-------------------------------------------------------------------------------------------------
+void AudioFileCache::stopSamplesUsingFiles( const std::list<const void *>& filesToStop )
+{
+	std::list<const void *>::const_iterator it;
+	for ( it = filesToStop.begin(); it != filesToStop.end(); ++it ) {
+		TheAudio->closeAnySamplesUsingFile(*it);
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool AudioFileCache::freeEnoughSpaceForSample(const OpenAudioFile& sampleThatNeedsSpace)
+void AudioFileCache::freeOpenAudioFile( OpenAudioFile *fileToFree )
+{
+	if (fileToFree->m_file) {
+		if (fileToFree->m_compressed) {
+			// Files read in via AIL_decompress_ADPCM must be freed with AIL_mem_free_lock.
+			AIL_mem_free_lock(fileToFree->m_file);
+		} else {
+			// Otherwise, we read it, we own it, blow it away.
+			delete [] fileToFree->m_file;
+		}
+		fileToFree->m_file = nullptr;
+		fileToFree->m_eventInfo = nullptr;
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void AudioFileCache::freeOpenAudioFiles( OpenAudioFileList& filesToFree )
+{
+	OpenAudioFileList::iterator it;
+	for ( it = filesToFree.begin(); it != filesToFree.end(); ++it ) {
+		freeOpenAudioFile(&*it);
+	}
+	filesToFree.clear();
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool AudioFileCache::freeEnoughSpaceForSample(const OpenAudioFile& sampleThatNeedsSpace, OpenAudioFileList& filesToFree)
 {
 
 	Int spaceRequired = m_currentlyUsedSize - m_maxSize;
@@ -3295,7 +3404,12 @@ Bool AudioFileCache::freeEnoughSpaceForSample(const OpenAudioFile& sampleThatNee
 	for (ait = filesToClose.begin(); ait != filesToClose.end(); ++ait) {
 		OpenFilesHashIt itToErase = m_openFiles.find(*ait);
 		if (itToErase != m_openFiles.end()) {
-			releaseOpenAudioFile(&itToErase->second);
+			if (itToErase->second.m_openCount > 0) {
+				m_evictedFiles.push_back(itToErase->second);
+				m_evictedSize += itToErase->second.m_fileSize;
+			} else {
+				filesToFree.push_back(itToErase->second);
+			}
 			m_currentlyUsedSize -= itToErase->second.m_fileSize;
 			m_openFiles.erase(itToErase);
 		}
