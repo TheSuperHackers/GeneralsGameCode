@@ -38,7 +38,7 @@
  *   AABTreeBuilderClass::~AABTreeBuilderClass -- Destructor                                   *
  *   AABTreeBuilderClass::Reset -- reset the builder, delete all arrays                        *
  *   AABTreeBuilderClass::Build_AABTree -- Build an AABTree for the given mesh.                *
- *   AABTreeBuilderClass::Build_Tree -- recursivly builds the culling tree                     *
+ *   AABTreeBuilderClass::Build_Tree -- recursively builds the culling tree                    *
  *   AABTreeBuilderClass::Select_Splitting_Plane -- select a partition for the given polys     *
  *   AABTreeBuilderClass::Compute_Plane_Score -- evaluate the suitability of a partition plane *
  *   AABTreeBuilderClass::Which_Side -- which side of a plane is the given poly                *
@@ -196,9 +196,75 @@ void AABTreeBuilderClass::Build_AABTree(int polycount,TriIndex * polys,int vertc
 
 }
 
+/***********************************************************************************************
+ * AABTreeBuilderClass::Build_AABTree -- Build an AABTree for the given mesh.                  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   6/19/98    GTH : Created.                                                                 *
+ *	  6/28/02	 KJM : This version handles 32-bit indexes
+ *=============================================================================================*/
+void AABTreeBuilderClass::Build_AABTree(int polycount,Vector3i * polys,int vertcount,Vector3 * verts)
+{
+	WWASSERT(polycount > 0);
+	WWASSERT(vertcount > 0);
+	WWASSERT(polys != nullptr);
+	WWASSERT(verts != nullptr);
+
+	/*
+	** If we already have allocated data, release it
+	*/
+	Reset();
+
+	/*
+	** Copy the mesh data
+	*/
+	VertCount = vertcount;
+	PolyCount = polycount;
+	Verts = new Vector3[VertCount];
+	Polys = new TriIndex[PolyCount];
+
+	for (int vi=0; vi<VertCount; vi++) {
+		Verts[vi] = verts[vi];
+	}
+	for (int pi=0; pi<PolyCount; pi++) {
+		Polys[pi].I = polys[pi].I;
+		Polys[pi].J = polys[pi].J;
+		Polys[pi].K = polys[pi].K;
+	}
+
+	/*
+	** First, create a list of all of the poly indices
+	*/
+	int * polyindices = new int[PolyCount];
+	for (int i=0; i<PolyCount; i++) {
+		polyindices[i] = i;
+	}
+
+	/*
+	** Build the tree, note that the array of poly indices will be
+	** deleted by the Build_Tree function.
+	*/
+	Root = new CullNodeStruct;
+	Build_Tree(Root,PolyCount,polyindices);
+	polyindices = nullptr;
+
+	/*
+	** fill in the remaining information needed in the tree:
+	** for example: bounding boxes, index assignments
+	*/
+	Compute_Bounding_Box(Root);
+	Assign_Index(Root,0);
+
+}
 
 /***********************************************************************************************
- * AABTreeBuilderClass::Build_Tree -- recursivly builds the culling tree                       *
+ * AABTreeBuilderClass::Build_Tree -- recursively builds the culling tree                      *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -567,8 +633,9 @@ void AABTreeBuilderClass::Compute_Bounding_Box(CullNodeStruct * node)
 	/*
 	** compute bounding volume for the polys in this node
 	*/
-	node->Min.Set(100000.0f,100000.0f,100000.0f);
-	node->Max.Set(-100000.0f,-100000.0f,-100000.0f);
+	const float really_big=WWMATH_FLOAT_MAX;
+	node->Min.Set(really_big,really_big,really_big);
+	node->Max.Set(-really_big,-really_big,-really_big);
 
 	for (int poly_index = 0; poly_index < node->PolyCount; poly_index++) {
 		Update_Min_Max(node->PolyIndices[poly_index],node->Min,node->Max );
@@ -602,12 +669,12 @@ void AABTreeBuilderClass::Compute_Bounding_Box(CullNodeStruct * node)
 		if (node->Back->Max.Z > node->Max.Z) node->Max.Z = node->Back->Max.Z;
 	}
 
-	WWASSERT(node->Min.X != 100000.0f);
-	WWASSERT(node->Min.Y != 100000.0f);
-	WWASSERT(node->Min.Z != 100000.0f);
-	WWASSERT(node->Max.X != -100000.0f);
-	WWASSERT(node->Max.Y != -100000.0f);
-	WWASSERT(node->Max.Z != -100000.0f);
+	WWASSERT(node->Min.X != really_big);
+	WWASSERT(node->Min.Y != really_big);
+	WWASSERT(node->Min.Z != really_big);
+	WWASSERT(node->Max.X != -really_big);
+	WWASSERT(node->Max.Y != -really_big);
+	WWASSERT(node->Max.Z != -really_big);
 }
 
 

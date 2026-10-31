@@ -48,7 +48,7 @@
 // Hector Yee 1/29/01
 
 /**
-** MatrixMapperClass.  Does the chore of computing the u-v coorinates for
+** MatrixMapperClass.  Does the chore of computing the u-v coordinates for
 ** a projected texture.  Note that this VP must be "baby-sat" by something
 ** external to ensure that its ViewToTexture transform is up-to-date.  I
 ** use it in the TexProjectClass to implement projected textures.
@@ -97,6 +97,7 @@ public:
 	virtual TextureMapperClass*	Clone() const override { 	WWASSERT(0);	return nullptr; }
 
 	virtual void			Apply(int uv_array_index) override;
+	virtual void			Calculate_Texture_Matrix(Matrix4x4 &tex_matrix) override;
 
 protected:
 
@@ -108,6 +109,33 @@ protected:
 	Matrix4x4					ViewToPixel;
 	Vector3					ViewSpaceProjectionNormal;
 	float						GradientUCoord;
+};
+
+/*
+** CompositeMatrixMapperClass - this is a matrix mapper which contains a pointer to another mapper
+** inside it. When applied, it gets the texture matrix from the internal mapper and composites
+** it with it's own matrix, then applies that. It sets the texture source to camera space
+** position. The idea is to use some transformation of the camera space position (like a planar
+** projection) as the 'input coordinates' to some other mapper like a linear offset mapper
+** which usually uses actual texture coordinates as input. If the internal mapper is null, it
+** simply applies it's own matrix.
+*/
+class CompositeMatrixMapperClass : public MatrixMapperClass
+{
+public:
+
+	CompositeMatrixMapperClass(TextureMapperClass *internal_mapper, unsigned int stage);
+	CompositeMatrixMapperClass(const CompositeMatrixMapperClass & src);
+	virtual ~CompositeMatrixMapperClass() override;
+
+	virtual TextureMapperClass *Clone() const override { return NEW_REF( CompositeMatrixMapperClass, (*this)); }
+
+	virtual void Apply(int uv_array_index) override;
+	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix) override;
+
+protected:
+
+	TextureMapperClass *InternalMapper;
 };
 
 inline void MatrixMapperClass::Set_Flag(uint32 flag,bool onoff)

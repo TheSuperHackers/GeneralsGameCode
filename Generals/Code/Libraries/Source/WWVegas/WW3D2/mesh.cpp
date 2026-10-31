@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* $Header: /VSS_Sync/ww3d2/mesh.cpp 56    8/29/01 9:50p Vss_sync $ */
+/* $Header: /Commando/Code/ww3d2/mesh.cpp 69    1/19/02 1:01p Greg_h $ */
 /***********************************************************************************************
  ***                            Confidential - Westwood Studios                              ***
  ***********************************************************************************************
@@ -117,10 +117,13 @@
 #include "dx8renderer.h"
 #include "visrasterizer.h"
 #include "WWDebug/wwmemlog.h"
+#include "dx8rendererdebugger.h"
 #include <WWDebug/wwprofile.h>
 
+static unsigned MeshDebugIdCount;
 
 bool MeshClass::Legacy_Meshes_Fogged = true;
+static SimpleDynVecClass<uint32> temp_apt;
 
 /*
 ** This #define causes the collision code to always recompute the triangle normals rather
@@ -159,6 +162,8 @@ MeshClass::MeshClass() :
 	LightEnvironment(nullptr),
 	BaseVertexOffset(0),
 	NextVisibleSkin(nullptr),
+	IsDisabledByDebugger(false),
+	MeshDebugId(MeshDebugIdCount++),
 	m_alphaOverride(1.0f),
 	m_materialPassAlphaOverride(1.0f),
 	m_materialPassEmissiveOverride(1.0f)
@@ -186,6 +191,8 @@ MeshClass::MeshClass(const MeshClass & that) :
 	LightEnvironment(nullptr),
 	BaseVertexOffset(that.BaseVertexOffset),
 	NextVisibleSkin(nullptr),
+	IsDisabledByDebugger(false),
+	MeshDebugId(MeshDebugIdCount++),
 	m_alphaOverride(1.0f),
 	m_materialPassAlphaOverride(1.0f),
 	m_materialPassEmissiveOverride(1.0f)
@@ -516,16 +523,6 @@ void MeshClass::Get_Deformed_Vertices(Vector3 *dst_vert)
 	Model->get_deformed_vertices(dst_vert,Container->Get_HTree());
 }
 
-void MeshClass::Compose_Deformed_Vertex_Buffer(
-	VertexFormatXYZNDUV2* verts,
-	const Vector2* uv0,
-	const Vector2* uv1,
-	const unsigned* diffuse)
-{
-	WWASSERT(Model->Get_Flag(MeshGeometryClass::SKIN));
-	Model->compose_deformed_vertex_buffer(verts,uv0,uv1,diffuse,Container->Get_HTree());
-}
-
 /***********************************************************************************************
  * MeshClass::Create_Decal -- creates a decal on this mesh                                     *
  *                                                                                             *
@@ -560,7 +557,7 @@ void MeshClass::Create_Decal(DecalGeneratorClass * generator)
 		OBBoxClass::Transform(modeltm_inv, generator->Get_Bounding_Volume(), &localbox);
 
 		// generate apt, if it is not empty, add a decal.
-		SimpleDynVecClass<uint32> temp_apt;
+		temp_apt.Delete_All(false);	// reset contents
 		Model->Generate_Rigid_APT(localbox, temp_apt);
 
 		if (temp_apt.Count() > 0) {
@@ -583,7 +580,7 @@ void MeshClass::Create_Decal(DecalGeneratorClass * generator)
 		Get_Deformed_Vertices(dst_vert);
 
 		// generate apt, if it is not empty, add a decal.
-		SimpleDynVecClass<uint32> temp_apt;
+		temp_apt.Delete_All(false);
 
 		OBBoxClass worldbox = generator->Get_Bounding_Volume();
 
@@ -636,11 +633,15 @@ void MeshClass::Delete_Decal(uint32 decal_id)
 int MeshClass::Get_Num_Polys() const
 {
 	if (Model) {
-		return Model->Get_Polygon_Count();
+		int num_passes=Model->Get_Pass_Count();
+		WWASSERT(num_passes>0);
+		int poly_count=Model->Get_Polygon_Count();
+		return num_passes*poly_count;
 	} else {
 		return 0;
 	}
 }
+
 
 /***********************************************************************************************
  * MeshClass::Render -- renders this mesh                                                      *
@@ -677,6 +678,14 @@ void MeshClass::Render(RenderInfoClass & rinfo)
 
 	} else {
 
+		/* Commented out since we set lighting environment only on visible meshes below. -MW
+		** Plug in the lighting environment unless we arrived here as part of the static
+		** sorting system being flushed
+		*/
+//		if (WW3D::Are_Static_Sort_Lists_Enabled()) {
+//			Set_Lighting_Environment(rinfo.light_environment);
+//		}
+
 		const FrustumClass & frustum=rinfo.Camera.Get_Frustum();
 
 		if (	Model->Get_Flag(MeshGeometryClass::SKIN) ||
@@ -711,10 +720,26 @@ void MeshClass::Render(RenderInfoClass & rinfo)
 
 			/*
 			** Look up the FVF container that this mesh is in
-			** TODO: make this a little nicer?
 			*/
 			DX8FVFCategoryContainer * fvf_container = Model->PolygonRendererList.Peek_Head()->Get_Texture_Category()->Get_Container();
-			if ((rinfo.Current_Override_Flags() & RenderInfoClass::RINFO_OVERRIDE_ADDITIONAL_PASSES_ONLY) == 0) {
+
+			/*
+			** Check if we should render the base passes.  One special case here: if
+			** the mesh is translucent (alpha) and the base passes are disabled but we
+			** are rendering a shadow, we go ahead and render the base pass.  This is an ugly way
+			** to get our tree shadows and other alpha textured shadows to work.
+			*/
+			bool render_base_passes = ((rinfo.Current_Override_Flags() & RenderInfoClass::RINFO_OVERRIDE_ADDITIONAL_PASSES_ONLY) == 0);
+			bool is_alpha =	(Model->Get_Single_Shader().Get_Alpha_Test() == ShaderClass::ALPHATEST_ENABLE) ||
+									(Model->Get_Single_Shader().Get_Src_Blend_Func() == ShaderClass::SRCBLEND_SRC_ALPHA);
+
+			if (	(rinfo.Current_Override_Flags() & RenderInfoClass::RINFO_OVERRIDE_SHADOW_RENDERING) &&
+					(is_alpha == true))
+			{
+				render_base_passes = true;
+			}
+
+			if (render_base_passes) {
 
 				/*
 				** Link each polygon renderer for this mesh into the visible list
@@ -739,7 +764,16 @@ void MeshClass::Render(RenderInfoClass & rinfo)
 				MaterialPassClass * matpass = rinfo.Peek_Additional_Pass(i);
 
 				if ((!Is_Translucent()) || (matpass->Is_Enabled_On_Translucent_Meshes())) {
-					fvf_container->Add_Visible_Material_Pass(matpass,this);
+
+					/*
+					** If the base pass for this mesh has been disabled, we have to make sure
+					** the procedural material pass is rendered after everything else has rendered
+					*/
+					if (rinfo.Current_Override_Flags() & RenderInfoClass::RINFO_OVERRIDE_ADDITIONAL_PASSES_ONLY) {
+						fvf_container->Add_Delayed_Visible_Material_Pass(matpass, this);
+					} else {
+						fvf_container->Add_Visible_Material_Pass(matpass,this);
+					}
 					rendered_something = true;
 				}
 			}
@@ -756,7 +790,9 @@ void MeshClass::Render(RenderInfoClass & rinfo)
 			/*
 			** If we have a decal mesh, link it into the mesh rendering system
 			*/
-			if (DecalMesh != nullptr) {
+			if (	(DecalMesh != nullptr) &&
+					((rinfo.Current_Override_Flags() & RenderInfoClass::RINFO_OVERRIDE_ADDITIONAL_PASSES_ONLY) == 0))
+			{
 				const SphereClass & ws_sphere = Get_Bounding_Sphere();
 				Vector3 cam_space_sphere_center;
 				rinfo.Camera.Transform_To_View_Space(cam_space_sphere_center,ws_sphere.Center);
@@ -764,6 +800,8 @@ void MeshClass::Render(RenderInfoClass & rinfo)
 					TheDX8MeshRenderer.Add_To_Render_List(DecalMesh);
 				}
 			}
+
+			DX8RendererDebugger::Add_Mesh(this);
 		}
 	}
 }
@@ -846,7 +884,6 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 		/*
 		** Generate the APT
 		*/
-		static SimpleDynVecClass<uint32> temp_apt;
 		temp_apt.Delete_All(false);
 
 		Matrix3D modeltminv;
@@ -995,6 +1032,8 @@ void MeshClass::Special_Render(SpecialRenderInfoClass & rinfo)
 	if (rinfo.RenderType == SpecialRenderInfoClass::RENDER_VIS) {
 
 		WWASSERT(rinfo.VisRasterizer != nullptr);
+		rinfo.VisRasterizer->Enable_Two_Sided_Rendering(!!Model->Get_Flag(MeshGeometryClass::TWO_SIDED));
+
 		if (Model->Get_Flag(MeshModelClass::SKIN) == 0) {
 
 			rinfo.VisRasterizer->Set_Model_Transform(Transform);
@@ -1017,6 +1056,7 @@ void MeshClass::Special_Render(SpecialRenderInfoClass & rinfo)
 																Model->Get_Polygon_Count(),
 																Get_Bounding_Box() );
 		}
+		rinfo.VisRasterizer->Enable_Two_Sided_Rendering(false);
 	}
 
 	if (rinfo.RenderType == SpecialRenderInfoClass::RENDER_SHADOW) {
@@ -1182,6 +1222,8 @@ bool MeshClass::Cast_Ray(RayCollisionTestClass & raytest)
 	if (raytest.CheckTranslucent && Is_Alpha()!=0)
 		return false;
 	if (Is_Hidden() && !raytest.CheckHidden) return false;
+	if (Is_Animation_Hidden()) return false;
+	if (raytest.Result->StartBad) return false;
 
 	Matrix3D world_to_obj;
 	Matrix3D world=Get_Transform();
@@ -1232,6 +1274,7 @@ bool MeshClass::Cast_Ray(RayCollisionTestClass & raytest)
 bool MeshClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;
+	if (boxtest.Result->StartBad) return false;
 
 	WWASSERT(Model);
 
@@ -1261,6 +1304,7 @@ bool MeshClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 bool MeshClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;
+	if (boxtest.Result->StartBad) return false;
 
 	/*
 	** transform into the local coordinate system of the mesh.
@@ -1478,7 +1522,7 @@ void MeshClass::Update_Cached_Bounding_Volumes() const
 #endif
 
 	// If we are camera-aligned or -oriented, we don't know which way we are facing at this point,
-	// so the box we return needs to contain the sphere. Otherewise do the normal computation.
+	// so the box we return needs to contain the sphere. Otherwise do the normal computation.
 	if (Model->Get_Flag(MeshModelClass::ALIGNED) || Model->Get_Flag(MeshModelClass::ORIENTED)) {
 		CachedBoundingBox.Center = CachedBoundingSphere.Center;
 		CachedBoundingBox.Extent.Set(CachedBoundingSphere.Radius, CachedBoundingSphere.Radius, CachedBoundingSphere.Radius);

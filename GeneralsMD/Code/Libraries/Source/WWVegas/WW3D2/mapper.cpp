@@ -127,12 +127,12 @@ LinearOffsetTextureMapperClass::LinearOffsetTextureMapperClass(const INIClass &i
 	float v_offset_per_sec = ini.Get_Float(section, "VPerSec", 0.0f);
 	UVOffsetDeltaPerMS = Vector2(u_offset_per_sec, v_offset_per_sec) * -0.001f;
 
-	float u_start_offset = ini.Get_Float(section, "UOffset", 0.0f);
-	float v_start_offset = ini.Get_Float(section, "VOffset", 0.0f);
+	float u_start_offset = ini.Get_Float(section, "UOffset", 0.0f); // Added in Zero Hour
+	float v_start_offset = ini.Get_Float(section, "VOffset", 0.0f); // Added in Zero Hour
 	StartingUVOffset.Set(u_start_offset,	v_start_offset);
 	CurrentUVOffset = StartingUVOffset;
 
-	ClampFix = ini.Get_Bool(section, "ClampFix", false);
+	ClampFix = ini.Get_Bool(section, "ClampFix", false); // Added in Zero Hour
 }
 
 LinearOffsetTextureMapperClass::LinearOffsetTextureMapperClass(const LinearOffsetTextureMapperClass & src) :
@@ -204,7 +204,7 @@ GridTextureMapperClass::GridTextureMapperClass(const INIClass &ini, const char *
 	float fps = ini.Get_Float(section, "FPS", 1.0f);
 	unsigned int gridwidth_log2 = ini.Get_Int(section, "Log2Width", 1);
 	LastFrame = ini.Get_Int(section, "Last", 0);
-	Offset = ini.Get_Int(section, "Offset", 0);
+	Offset = ini.Get_Int(section, "Offset", 0); // Added in Zero Hour
 	initialize(fps, gridwidth_log2);
 }
 
@@ -468,7 +468,7 @@ StepLinearOffsetTextureMapperClass::StepLinearOffsetTextureMapperClass(const INI
 	Step.U = ini.Get_Float(section, "UStep", 0.0f);
 	Step.V = ini.Get_Float(section, "VStep", 0.0f);
 	StepsPerMilliSec = ini.Get_Float(section, "SPS", 0.0f)/1000.0f;
-	ClampFix = ini.Get_Bool(section, "ClampFix", false);
+	ClampFix = ini.Get_Bool(section, "ClampFix", false); // Added in Zero Hour
 }
 
 StepLinearOffsetTextureMapperClass::StepLinearOffsetTextureMapperClass(const StepLinearOffsetTextureMapperClass & src) :
@@ -744,7 +744,7 @@ WSEnvMapperClass::WSEnvMapperClass(const INIClass &ini, const char *section, uns
 	Axis(AXISTYPE_Z)
 {
 	char temp[2];
-	ini.Get_String(section, "Axis", "Z", &temp[0], 2);
+	ini.Get_String(section, "Axis", "Z", &temp[0], 2); // Added in Zero Hour
 	switch(temp[0]) {
 		case 'X':
 		case 'x':
@@ -1127,7 +1127,7 @@ GridWSEnvMapperClass::GridWSEnvMapperClass(const INIClass &ini, const char *sect
 	Axis(AXISTYPE_Z)
 {
 	char temp[2];
-	ini.Get_String(section, "Axis", "Z", &temp[0], 2);
+	ini.Get_String(section, "Axis", "Z", &temp[0], 2); // Added in Zero Hour
 	switch(temp[0]) {
 		case 'X':
 		case 'x':

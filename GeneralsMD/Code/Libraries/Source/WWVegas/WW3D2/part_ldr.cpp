@@ -379,7 +379,7 @@ ParticleEmitterDefClass::Load_W3D (ChunkLoadClass &chunk_load)
 				ret_val = Read_Blur_Time_Keyframes(chunk_load);
 				break;
 
-			case W3D_CHUNK_EMITTER_EXTRA_INFO:
+			case W3D_CHUNK_EMITTER_EXTRA_INFO: // Added in Zero Hour
 				ret_val = Read_Extra_Info(chunk_load);
 				break;
 
@@ -1148,11 +1148,13 @@ ParticleEmitterDefClass::Save_W3D (ChunkSaveClass &chunk_save)
 			 (Save_Info (chunk_save) == WW3D_ERROR_OK) &&
 			 (Save_InfoV2 (chunk_save) == WW3D_ERROR_OK) &&
 			 (Save_Props (chunk_save) == WW3D_ERROR_OK) &&
-			 (Save_Line_Properties (chunk_save) == WW3D_ERROR_OK) &&
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_DATA) // TheSuperHackers @info Retail Generals fails to load an emitter that has a line properties chunk.
+			 (Save_Line_Properties (chunk_save) == WW3D_ERROR_OK) && // Added in Zero Hour
+#endif
 			 (Save_Rotation_Keyframes (chunk_save) == WW3D_ERROR_OK) &&
 			 (Save_Frame_Keyframes (chunk_save) == WW3D_ERROR_OK) &&
 			 (Save_Blur_Time_Keyframes (chunk_save) == WW3D_ERROR_OK) &&
-			 (Save_Extra_Info (chunk_save) == WW3D_ERROR_OK)
+			 (Save_Extra_Info (chunk_save) == WW3D_ERROR_OK) // Added in Zero Hour
 			)
 		{
 			// Success!
