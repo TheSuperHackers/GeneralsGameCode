@@ -147,11 +147,8 @@ void SimpleFileFactoryClass::Prepend_Sub_Directory( const char * sub_directory )
 	// Ensure sub_directory ends with a slash, and append a semicolon
 	char temp_sub_dir[1024];
 	strlcpy(temp_sub_dir, sub_directory, ARRAY_SIZE(temp_sub_dir));
-	if (!isPathSeparator(temp_sub_dir[sub_len - 1])) {
-		temp_sub_dir[sub_len] = '\\';
-		temp_sub_dir[sub_len + 1] = 0;
-		sub_len++;
-	}
+	appendPathSeparator(temp_sub_dir, ARRAY_SIZE(temp_sub_dir));
+	sub_len = strlen(temp_sub_dir);
 	temp_sub_dir[sub_len] = ';';
 	temp_sub_dir[sub_len + 1] = 0;
 
@@ -182,11 +179,8 @@ void SimpleFileFactoryClass::Append_Sub_Directory( const char * sub_directory )
 	// Ensure sub_directory ends with a slash
 	char temp_sub_dir[1024];
 	strlcpy(temp_sub_dir, sub_directory, ARRAY_SIZE(temp_sub_dir));
-	if (!isPathSeparator(temp_sub_dir[sub_len - 1])) {
-		temp_sub_dir[sub_len] = '\\';
-		temp_sub_dir[sub_len + 1] = 0;
-		sub_len++;
-	}
+	appendPathSeparator(temp_sub_dir, ARRAY_SIZE(temp_sub_dir));
+	sub_len = strlen(temp_sub_dir);
 
 	// BEGIN SERIALIZATION
 

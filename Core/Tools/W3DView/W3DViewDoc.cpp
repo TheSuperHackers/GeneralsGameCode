@@ -1446,11 +1446,7 @@ CW3DViewDoc::SaveSettings
             TCHAR szPath[MAX_PATH] = { 0 };
             ::GetCurrentDirectory (sizeof (szPath), szPath);
 
-            if (!isPathSeparator (szPath[::lstrlen (szPath)-1]))
-            {
-                // Ensure the path is directory delimited
-                strlcat(szPath, "\\", ARRAY_SIZE(szPath));
-            }
+            appendPathSeparator (szPath, ARRAY_SIZE (szPath));
 
             // Prepend the filename with its new path
             stringCompleteFilename = CString (szPath) + stringCompleteFilename;
