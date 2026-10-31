@@ -91,6 +91,11 @@ BOOL ExportScriptsOptions::OnInitDialog()
 	pButton = (CButton*)GetDlgItem(IDC_SELECTED_SCRIPTS);
 	pButton->SetCheck(m_allScripts?0:1);
 	pButton = (CButton*)GetDlgItem(IDC_SIDES);
+#if RTS_GENERALS && RETAIL_COMPATIBLE_DATA
+	// Retail Generals script files do not store side dictionaries.
+	m_sides = false;
+	pButton->EnableWindow(FALSE);
+#endif
 	pButton->SetCheck(m_sides?1:0);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
