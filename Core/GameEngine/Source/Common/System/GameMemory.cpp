@@ -201,8 +201,11 @@ static Bool theMainInitFlag = false;
 // PRIVATE PROTOTYPES
 // ----------------------------------------------------------------------------
 
-/// @todo srj -- make this work for 8
-#define MEM_BOUND_ALIGNMENT 4
+#define MEM_BOUND_ALIGNMENT 8
+static_assert((MEM_BOUND_ALIGNMENT & (MEM_BOUND_ALIGNMENT-1)) == 0, "MEM_BOUND_ALIGNMENT must be a power of two");
+#ifdef MEMORYPOOL_BOUNDINGWALL
+static_assert(WALLSIZE % MEM_BOUND_ALIGNMENT == 0, "WALLSIZE must keep user data aligned");
+#endif
 
 static Int roundUpMemBound(Int i);
 static void *sysAllocateDoNotZero(Int numBytes);
@@ -243,6 +246,7 @@ static void* sysAllocateDoNotZero(Int numBytes)
 	void* p = ::GlobalAlloc(GMEM_FIXED, numBytes);
 	if (!p)
 		throw ERROR_OUT_OF_MEMORY;
+	DEBUG_ASSERTCRASH(((size_t)p & (MEM_BOUND_ALIGNMENT-1)) == 0, ("system allocation is not %d byte aligned", MEM_BOUND_ALIGNMENT));
 #ifdef MEMORYPOOL_DEBUG
 	{
 		USE_PERF_TIMER(MemoryPoolDebugging)
@@ -468,6 +472,14 @@ public:
 #endif
 
 };
+
+#ifdef MEMORYPOOL_BOUNDINGWALL
+static const Int SINGLEBLOCK_USERDATA_OFFSET = (sizeof(MemoryPoolSingleBlock) + WALLSIZE + MEM_BOUND_ALIGNMENT-1) & ~(MEM_BOUND_ALIGNMENT-1);
+#else
+static const Int SINGLEBLOCK_USERDATA_OFFSET = (sizeof(MemoryPoolSingleBlock) + MEM_BOUND_ALIGNMENT-1) & ~(MEM_BOUND_ALIGNMENT-1);
+#endif
+static_assert(SINGLEBLOCK_USERDATA_OFFSET % MEM_BOUND_ALIGNMENT == 0, "SINGLEBLOCK_USERDATA_OFFSET must keep user data aligned");
+
 // ----------------------------------------------------------------------------
 class MemoryPoolBlob
 {
@@ -538,11 +550,7 @@ inline void **BlockCheckpointInfo::getStacktraceInfo() { return m_stacktrace; }
 */
 inline void* MemoryPoolSingleBlock::getUserDataNoDbg()
 {
-	char* p = ((char*)this) + sizeof(MemoryPoolSingleBlock);
-	#ifdef MEMORYPOOL_BOUNDINGWALL
-	p += WALLSIZE;
-	#endif
-	return (void*)p;
+	return ((char*)this) + SINGLEBLOCK_USERDATA_OFFSET;
 }
 
 /**
@@ -554,6 +562,7 @@ inline void* MemoryPoolSingleBlock::getUserData()
 	// yes, verify the block in this case for plain debug mode (not intense-verify mode)
 	#ifdef MEMORYPOOL_DEBUG
 	debugVerifyBlock();
+	DEBUG_ASSERTCRASH(((size_t)getUserDataNoDbg() & (MEM_BOUND_ALIGNMENT-1)) == 0, ("user data is not %d byte aligned", MEM_BOUND_ALIGNMENT));
 	#endif
 	return getUserDataNoDbg();
 }
@@ -564,9 +573,9 @@ inline void* MemoryPoolSingleBlock::getUserData()
 */
 inline /*static*/ Int MemoryPoolSingleBlock::calcRawBlockSize(Int logicalSize)
 {
-	Int s = ::roundUpMemBound(logicalSize) + sizeof(MemoryPoolSingleBlock);
+	Int s = ::roundUpMemBound(logicalSize) + SINGLEBLOCK_USERDATA_OFFSET;
 	#ifdef MEMORYPOOL_BOUNDINGWALL
-	s += WALLSIZE*2;
+	s += WALLSIZE;
 	#endif
 	return s;
 }
@@ -910,11 +919,7 @@ void MemoryPoolSingleBlock::initBlock(Int logicalSize, MemoryPoolBlob *owningBlo
 	DEBUG_ASSERTCRASH(pUserData, ("null pUserData"));
 	if (!pUserData)
 		return nullptr;
-	char* p = ((char*)pUserData) - sizeof(MemoryPoolSingleBlock);
-	#ifdef MEMORYPOOL_BOUNDINGWALL
-	p -= WALLSIZE;
-	#endif
-	MemoryPoolSingleBlock *block = (MemoryPoolSingleBlock *)p;
+	MemoryPoolSingleBlock *block = (MemoryPoolSingleBlock *)(((char*)pUserData) - SINGLEBLOCK_USERDATA_OFFSET);
 // yes, verify the block in this case for plain debug mode (not intense-verify mode)
 #ifdef MEMORYPOOL_DEBUG
 	block->debugVerifyBlock();
@@ -1527,7 +1532,7 @@ void MemoryPool::init(MemoryPoolFactory *factory, const char *poolName, Int allo
 {
 	m_factory = factory;
 	m_poolName = poolName;
-	m_allocationSize = ::roundUpMemBound(allocationSize);	// round up to four-byte boundary
+	m_allocationSize = ::roundUpMemBound(allocationSize);
 	m_initialAllocationCount = initialAllocationCount;
 	m_overflowAllocationCount = overflowAllocationCount;
 	m_usedBlocksInPool = 0;
@@ -1563,7 +1568,7 @@ MemoryPool::~MemoryPool()
 */
 MemoryPoolBlob* MemoryPool::createBlob(Int allocationCount)
 {
-	DEBUG_ASSERTCRASH(allocationCount > 0 && allocationCount%MEM_BOUND_ALIGNMENT==0, ("bad allocationCount (must be >0 and evenly divisible by %d)",MEM_BOUND_ALIGNMENT));
+	DEBUG_ASSERTCRASH(allocationCount > 0 && allocationCount%4==0, ("bad allocationCount (must be >0 and evenly divisible by %d)",4));
 
 	MemoryPoolBlob* blob = new (::sysAllocateDoNotZero(sizeof(MemoryPoolBlob))) MemoryPoolBlob;	// will throw on failure
 
@@ -2255,7 +2260,7 @@ void *DynamicMemoryAllocator::allocateBytesDoNotZeroImplementation(Int numBytes 
 
 #if defined(RTS_DEBUG)
   // check alignment
-  if (unsigned(result)&3)
+  if ((size_t)result & (MEM_BOUND_ALIGNMENT-1))
     throw ERROR_OUT_OF_MEMORY;
 #endif
 
@@ -2658,7 +2663,7 @@ MemoryPool *MemoryPoolFactory::createMemoryPool(const char *poolName, Int alloca
 	MemoryPool *pool = findMemoryPool(poolName);
 	if (pool)
 	{
-		DEBUG_ASSERTCRASH(allocationSize == pool->getAllocationSize(), ("pool size mismatch"));
+		DEBUG_ASSERTCRASH(::roundUpMemBound(allocationSize) == pool->getAllocationSize(), ("pool size mismatch"));
 		return pool;
 	}
 
@@ -3596,7 +3601,7 @@ void* createW3DMemPool(const char *poolName, int allocationSize)
 	LINK_TESTER_INCREMENT();
 	preMainInitMemoryManager();
 	MemoryPool* pool = TheMemoryPoolFactory->createMemoryPool(poolName, allocationSize, 0, 0);
-	DEBUG_ASSERTCRASH(pool && pool->getAllocationSize() == allocationSize, ("bad w3d pool"));
+	DEBUG_ASSERTCRASH(pool && pool->getAllocationSize() == ::roundUpMemBound(allocationSize), ("bad w3d pool"));
 	return pool;
 }
 
@@ -3604,7 +3609,7 @@ void* createW3DMemPool(const char *poolName, int allocationSize)
 void* allocateFromW3DMemPool(void* pool, int allocationSize)
 {
 	DEBUG_ASSERTCRASH(pool, ("pool is null"));
-	DEBUG_ASSERTCRASH(pool && ((MemoryPool*)pool)->getAllocationSize() == allocationSize, ("bad w3d pool size %s",((MemoryPool*)pool)->getPoolName()));
+	DEBUG_ASSERTCRASH(pool && ((MemoryPool*)pool)->getAllocationSize() == ::roundUpMemBound(allocationSize), ("bad w3d pool size %s",((MemoryPool*)pool)->getPoolName()));
 	return ((MemoryPool*)pool)->allocateBlock("allocateFromW3DMemPool");
 }
 
@@ -3612,7 +3617,7 @@ void* allocateFromW3DMemPool(void* pool, int allocationSize)
 void* allocateFromW3DMemPool(void* pool, int allocationSize, const char* msg, int unused)
 {
 	DEBUG_ASSERTCRASH(pool, ("pool is null"));
-	DEBUG_ASSERTCRASH(pool && ((MemoryPool*)pool)->getAllocationSize() == allocationSize, ("bad w3d pool size %s",((MemoryPool*)pool)->getPoolName()));
+	DEBUG_ASSERTCRASH(pool && ((MemoryPool*)pool)->getAllocationSize() == ::roundUpMemBound(allocationSize), ("bad w3d pool size %s",((MemoryPool*)pool)->getPoolName()));
 	return ((MemoryPool*)pool)->allocateBlock(msg);
 }
 
