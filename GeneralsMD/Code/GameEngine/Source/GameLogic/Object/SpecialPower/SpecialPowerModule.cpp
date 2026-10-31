@@ -99,16 +99,14 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 									: BehaviorModule( thing, moduleData )
 {
 
-#if RETAIL_COMPATIBLE_CRC
 	m_availableOnFrame = 0;
-#else
-	m_availableOnFrame = 0xFFFFFFFF;
-#endif
 	m_pausedCount = 0;
 	m_pausedOnFrame = 0;
 	m_pausedPercent = 0.0f;
 
 	// we won't be able to use the power for X number of frames now
+
+	const SpecialPowerModuleData *md = (const SpecialPowerModuleData *)moduleData;
 
 	// if we're pre-built, start counting down
 	if( !getObject()->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
@@ -119,7 +117,8 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 		{
 			startPowerRecharge();
 
-			if (startsReady())
+			// TheSuperHackers @bugfix Stubbjax 29/10/2026 Paused powers become ready when unpaused instead.
+			if (startsReady() && !md->m_startsPaused)
 				m_availableOnFrame = TheGameLogic->getFrame();
 		}
 	}
@@ -127,7 +126,6 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 	// BUT NO MORE, NOW IT IS HANDLED IN PLAYER
 
 	// Some Special powers need to be activated by an Upgrade, so prevent the timer from going until then
-	const SpecialPowerModuleData *md = (const SpecialPowerModuleData *)moduleData;
 	if( md->m_startsPaused )
 		pauseCountdown( TRUE );
 
@@ -295,18 +293,25 @@ Bool SpecialPowerModule::isModuleForPower( const SpecialPowerTemplate *specialPo
 //-------------------------------------------------------------------------------------------------
 Bool SpecialPowerModule::isReady() const
 {
+	const Object* obj = getObject();
+
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix arcticdolphin 29/10/2026 Not ready while under construction.
+	if( obj && obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+		return FALSE;
+#endif
+
 #if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	// this is a cheat ... remove this for release!
 	if( TheGlobalData->m_specialPowerUsesDelay == FALSE )
 		return TRUE;
 #endif
 
-	const Object* obj = getObject();
 	const SpecialPowerModuleData *modData = getSpecialPowerModuleData();
 
 	if ( obj && modData )
 	{
-		Player *player = getObject()->getControllingPlayer();
+		Player *player = obj->getControllingPlayer();
 		if ( player )
 		{
 			if ( modData->m_specialPowerTemplate->isSharedNSync())
@@ -327,6 +332,14 @@ Bool SpecialPowerModule::isReady() const
 //-------------------------------------------------------------------------------------------------
 Real SpecialPowerModule::getPercentReady() const
 {
+	const Object* obj = getObject();
+
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix arcticdolphin 29/10/2026 Not ready while under construction.
+	if( obj && obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+		return 0.0f;
+#endif
+
 	if( m_pausedCount > 0 && m_pausedPercent == 1.0f )
 	{
 			//Don't consider it ready if paused.
@@ -357,10 +370,9 @@ Real SpecialPowerModule::getPercentReady() const
 	UnsignedInt readyFrame = m_availableOnFrame;
 
 	//unless
-	const Object* obj = getObject();
 	if ( obj )
 	{
-		Player *player = getObject()->getControllingPlayer();
+		Player *player = obj->getControllingPlayer();
 		if ( player )
 		{
 			if ( modData->m_specialPowerTemplate->isSharedNSync())
