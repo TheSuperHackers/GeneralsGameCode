@@ -98,6 +98,19 @@ public:
 	AsciiString searchHotKey( const AsciiString& label);
 	AsciiString searchHotKey( const UnicodeString& uStr );
 
+	// TheSuperHackers @feature True while a button press is being synthesized from a keyboard
+	// hotkey rather than an actual mouse click. Quick cast needs to tell the two apart.
+	static void setExecutingHotKey( Bool executing ) { s_executingHotKey = executing; }
+	static Bool isExecutingHotKey( void ) { return s_executingHotKey; }
+
+	// TheSuperHackers @feature True on the key down half of a hold to aim quick cast, when the
+	// command should arm and show its decal rather than fire.
+	static void setQuickCastAiming( Bool aiming ) { s_quickCastAiming = aiming; }
+	static Bool isQuickCastAiming( void ) { return s_quickCastAiming; }
+
+	static Bool s_executingHotKey;
+	static Bool s_quickCastAiming;
+
 private:
 	typedef std::map<AsciiString, HotKey> HotKeyMap;
 	HotKeyMap m_hotKeyMap;
