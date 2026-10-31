@@ -28,6 +28,21 @@
 #include "WW3D2/lightenvironment.h"
 #include "WWDebug/wwdebug.h"
 
+static D3DTRANSFORMSTATETYPE To_D3D_Transform(RenderBackendTransform transform)
+{
+    switch (transform)
+    {
+    case RB_TRANSFORM_WORLD:
+        return D3DTS_WORLD;
+    case RB_TRANSFORM_VIEW:
+        return D3DTS_VIEW;
+    case RB_TRANSFORM_PROJECTION:
+        return D3DTS_PROJECTION;
+    }
+    WWASSERT(0);
+    return D3DTS_WORLD;
+}
+
 static bool Initialized = false;
 static bool Lite = false;
 
@@ -162,6 +177,36 @@ void Renderer::Set_Viewport(const RenderViewport & viewport)
 void Renderer::Invalidate_Cached_Render_States()
 {
     DX8Wrapper::Invalidate_Cached_Render_States();
+}
+
+void Renderer::Set_Transform(RenderBackendTransform transform, const Matrix4x4 & m)
+{
+    DX8Wrapper::Set_Transform(To_D3D_Transform(transform), m);
+}
+
+void Renderer::Set_Transform(RenderBackendTransform transform, const Matrix3D & m)
+{
+    DX8Wrapper::Set_Transform(To_D3D_Transform(transform), m);
+}
+
+void Renderer::Get_Transform(RenderBackendTransform transform, Matrix4x4 & m)
+{
+    DX8Wrapper::Get_Transform(To_D3D_Transform(transform), m);
+}
+
+void Renderer::Set_World_Identity()
+{
+    DX8Wrapper::Set_World_Identity();
+}
+
+void Renderer::Set_View_Identity()
+{
+    DX8Wrapper::Set_View_Identity();
+}
+
+void Renderer::Set_Projection_Transform_With_Z_Bias(const Matrix4x4 & matrix, float znear, float zfar)
+{
+    DX8Wrapper::Set_Projection_Transform_With_Z_Bias(matrix, znear, zfar);
 }
 
 void Renderer::Set_Ambient(const Vector3 & color)
