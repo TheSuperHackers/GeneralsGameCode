@@ -56,7 +56,9 @@
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GadgetListBox.h"
 #include "GameClient/MapUtil.h"
+#include "GameClient/MessageBox.h"
 #include "GameLogic/GameLogic.h"
+#include "GameLogic/SidesList.h"
 #include "GameLogic/FPUControl.h"
 #include "GameNetwork/GameInfo.h"
 #include "GameNetwork/NetworkDefs.h"
@@ -870,8 +872,9 @@ static Bool addMapCollectionToMapListbox(
 
 		const AsciiString& asciiMapName = fileNameIt->second;
 
-#if RTS_ZEROHOUR
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
 		//Patch 1.03 -- Purposely filter out these broken maps that exist in Generals.
+		// TheSuperHackers @bugfix arcticdolphin 12/10/2026 SidesList adds the missing sides when not retail compatible.
 		if( !asciiMapName.compare( "maps\\armored fury\\armored fury.map" ) ||
 			!asciiMapName.compare( "maps\\scorched earth\\scorched earth.map" ) )
 		{
@@ -1119,6 +1122,138 @@ static Bool copyFromBigToDir( const AsciiString& infile, const AsciiString& outf
 	delete [] buffer;
 
 	return writeOk;
+}
+
+//-------------------------------------------------------------------------------------------------
+// TheSuperHackers @feature arcticdolphin 12/10/2026 Detects maps without the general skirmish sides.
+static std::vector<AsciiString> s_mapSideFactions;
+static std::vector<AsciiString> s_mapSideNames;
+static Int s_mapScriptListIndex;
+static Bool s_mapHasSkirmishScripts;
+static Int s_mapTriggersVersion;
+
+static Bool probeTriggersVersion( DataChunkInput &file, DataChunkInfo *info, void *userData )
+{
+	s_mapTriggersVersion = info->version;
+	return TRUE;
+}
+
+static Bool probeScriptFound( DataChunkInput &file, DataChunkInfo *info, void *userData )
+{
+	s_mapHasSkirmishScripts = TRUE;
+	return TRUE;
+}
+
+static Bool probeScriptList( DataChunkInput &file, DataChunkInfo *info, void *userData )
+{
+	Int side = s_mapScriptListIndex++;
+	if (side < (Int)s_mapSideFactions.size() && s_mapSideFactions[side] == "FactionCivilian")
+		return TRUE;
+	file.registerParser( "Script", info->label, probeScriptFound );
+	file.registerParser( "ScriptGroup", info->label, probeScriptFound );
+	return file.parse(nullptr);
+}
+
+static Bool probePlayerScripts( DataChunkInput &file, DataChunkInfo *info, void *userData )
+{
+	file.registerParser( "ScriptList", info->label, probeScriptList );
+	return file.parse(nullptr);
+}
+
+static Bool parseSidesListFactions( DataChunkInput &file, DataChunkInfo *info, void *userData )
+{
+	const Int K_SIDES_DATA_VERSION_3 = 3;
+
+	Int sideCount = file.readInt();
+	Int i, j;
+	for (i = 0; i < sideCount; i++)
+	{
+		Dict d = file.readDict();
+		Bool exists;
+		s_mapSideFactions.push_back( d.getAsciiString( TheKey_playerFaction, &exists ) );
+		s_mapSideNames.push_back( d.getAsciiString( TheKey_playerName, &exists ) );
+
+		// build list
+		Int buildCount = file.readInt();
+		for (j = 0; j < buildCount; j++)
+		{
+			file.readAsciiString();
+			file.readAsciiString();
+			file.readReal();
+			file.readReal();
+			file.readReal();
+			file.readReal();
+			file.readByte();
+			file.readInt();
+			if (info->version >= K_SIDES_DATA_VERSION_3)
+			{
+				file.readAsciiString();
+				file.readInt();
+				file.readByte();
+				file.readByte();
+				file.readByte();
+			}
+		}
+	}
+	if (info->version >= 2)
+	{
+		Int teamCount = file.readInt();
+		for (i = 0; i < teamCount; i++)
+		{
+			file.readDict();
+		}
+	}
+
+	file.registerParser( "PlayerScriptsList", info->label, probePlayerScripts );
+	return file.parse(nullptr);
+}
+
+Bool isGeneralsMapWithoutGeneralSides( const AsciiString& mapName, Bool *canAddSides )
+{
+	s_mapSideFactions.clear();
+	s_mapSideNames.clear();
+	s_mapScriptListIndex = 0;
+	s_mapHasSkirmishScripts = FALSE;
+	s_mapTriggersVersion = 0;
+
+	CachedFileInputStream fileStrm;
+	if( !fileStrm.open(mapName) )
+		return FALSE;
+
+	ChunkInputStream *pStrm = &fileStrm;
+	DataChunkInput file( pStrm );
+	file.registerParser( "SidesList", AsciiString::TheEmptyString, parseSidesListFactions );
+	file.registerParser( "PolygonTriggers", AsciiString::TheEmptyString, probeTriggersVersion );
+	if (!file.parse(nullptr))
+		return FALSE;
+
+	if (s_mapTriggersVersion >= K_TRIGGERS_VERSION_4 || !SidesList::isGeneralsSkirmishSideSet(s_mapSideFactions))
+		return FALSE;
+
+	if (canAddSides)
+		*canAddSides = !s_mapHasSkirmishScripts && SidesList::canAddGeneralSides(s_mapSideFactions, s_mapSideNames);
+	return TRUE;
+}
+
+void warnIfMapLacksSkirmishSides( const AsciiString& mapName )
+{
+#if RTS_ZEROHOUR
+	Bool canAddSides = FALSE;
+	if (!isGeneralsMapWithoutGeneralSides(mapName, &canAddSides))
+		return;
+
+	UnicodeString title = TheGameText->FETCH_OR_SUBSTITUTE("GUI:LegacySkirmishMapTitle", L"GENERALS MAP");
+	UnicodeString body;
+	if (!canAddSides)
+		body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:LegacySkirmishMapUnfixable", L"This map was made for Command & Conquer Generals and the Zero Hour generals cannot be added to it. AI generals will not build or attack on it.");
+	else
+#if RETAIL_COMPATIBLE_CRC
+		body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:LegacySkirmishMapRetail", L"This map was made for Command & Conquer Generals and does not include skirmish settings for the Zero Hour generals. AI generals will not build or attack on it. To fix the map, open it in the Zero Hour World Builder, use Add Skirmish Players and save it.");
+#else
+		body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:LegacySkirmishMap", L"This map was made for Command & Conquer Generals and does not include skirmish settings for the Zero Hour generals. The missing settings are added automatically so AI generals can play. Playing this map online with players whose game does not do this will cause a mismatch.");
+#endif
+	MessageBoxOk(title, body, nullptr);
+#endif
 }
 
 Image *getMapPreviewImage( AsciiString mapName )
