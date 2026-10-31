@@ -637,6 +637,7 @@ void MilesAudioManager::pauseAmbient( Bool shouldPause )
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::playAudioEvent( AudioRequest* req )
 {
+	// TheSuperHackers @bugfix Publish fully prepared playback before starting Miles so early completion finds its owner.
 	DEBUG_ASSERTCRASH(req->m_pendingEvent != nullptr, ("audio request was expected to contain a valid audio event"));
 
 	AudioEventRTS* event = req->m_pendingEvent.Peek();
@@ -703,10 +704,12 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 					setDisallowSpeech(TRUE);
 	 			}
 				AIL_set_stream_volume_pan(stream, getEffectiveVolume(event), 0.5f);
-				playStream(event, stream);
-
-				CriticalSectionClass::LockClass lock(m_playingStreamsCS);
-				m_playingStreams.push_back(newPlaying);
+				prepareStream(event, stream);
+				{
+					CriticalSectionClass::LockClass lock(m_playingStreamsCS);
+					m_playingStreams.push_back(newPlaying);
+				}
+				AIL_start_stream(stream);
 				newPlaying = nullptr;
 			}
 			break;
@@ -767,7 +770,7 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 				newPlaying->m_type = PAT_3DSample;
 
 				if (sample3D) {
-					newPlaying->m_file = playSample3D(event, sample3D);
+					newPlaying->m_file = prepareSample3D(event, sample3D);
 				}
 
 				if( !newPlaying->m_file )
@@ -778,8 +781,11 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 				}
 				else
 				{
-					CriticalSectionClass::LockClass lock(m_playing3DSoundsCS);
-					m_playing3DSounds.push_back(newPlaying);
+					{
+						CriticalSectionClass::LockClass lock(m_playing3DSoundsCS);
+						m_playing3DSounds.push_back(newPlaying);
+					}
+					AIL_start_3D_sample(sample3D);
 					newPlaying = nullptr;
 					#ifdef INTENSIVE_AUDIO_DEBUG
 						DEBUG_LOG((" Playing."));
@@ -833,7 +839,7 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 				newPlaying->m_type = PAT_Sample;
 
 				if (sample) {
-					newPlaying->m_file = playSample(event, sample);
+					newPlaying->m_file = prepareSample(event, sample);
 				}
 
 				if (!newPlaying->m_file) {
@@ -841,8 +847,11 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 						DEBUG_LOG((" Killed (no handles available)"));
 					#endif
 				} else {
-					CriticalSectionClass::LockClass lock(m_playingSoundsCS);
-					m_playingSounds.push_back(newPlaying);
+					{
+						CriticalSectionClass::LockClass lock(m_playingSoundsCS);
+						m_playingSounds.push_back(newPlaying);
+					}
+					AIL_start_sample(sample);
 					newPlaying = nullptr;
 					#ifdef INTENSIVE_AUDIO_DEBUG
 						DEBUG_LOG((" Playing."));
@@ -1562,11 +1571,7 @@ void MilesAudioManager::notifyOfAudioCompletion( UnsignedInt handle, UnsignedInt
 	{
 		if (playing->m_audioEventRTS->getNextPlayPortion() != PP_Done) {
 			closeFile(playing->m_file);	// close it so as not to leak it.
-			playing->m_file = playSample(playing->m_audioEventRTS.Peek(), playing->m_sample);
-
-			// If we don't have a file now, then we should drop to the stopped status so that
-			// We correctly close this handle.
-			if (playing->m_file) {
+			if (playSample(playing)) {
 				return;
 			}
 		}
@@ -1576,11 +1581,7 @@ void MilesAudioManager::notifyOfAudioCompletion( UnsignedInt handle, UnsignedInt
 	{
 		if (playing->m_audioEventRTS->getNextPlayPortion() != PP_Done) {
 			closeFile(playing->m_file);	// close it so as not to leak it.
-			playing->m_file = playSample3D(playing->m_audioEventRTS.Peek(), playing->m_3DSample);
-
-			// If we don't have a file now, then we should drop to the stopped status so that
-			// We correctly close this handle.
-			if (playing->m_file) {
+			if (playSample3D(playing)) {
 				return;
 			}
 		}
@@ -2745,18 +2746,15 @@ Bool MilesAudioManager::startNextLoop( PlayingAudio *playing )
 		}
 
 		if (playing->m_type == PAT_3DSample) {
-			playing->m_file = playSample3D(playing->m_audioEventRTS.Peek(), playing->m_3DSample);
-		} else {
-			playing->m_file = playSample(playing->m_audioEventRTS.Peek(), playing->m_sample);
+			return playSample3D(playing);
 		}
-
-		return playing->m_file != nullptr;
+		return playSample(playing);
 	}
 	return false;
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::playStream( AudioEventRTS *event, HSTREAM stream )
+void MilesAudioManager::prepareStream( AudioEventRTS *event, HSTREAM stream )
 {
 	// Force it to the beginning
 	if (event->getAudioEventInfo()->m_soundType == AT_Music) {
@@ -2764,14 +2762,17 @@ void MilesAudioManager::playStream( AudioEventRTS *event, HSTREAM stream )
 	}
 
 	AIL_register_stream_callback(stream, setStreamCompleted);
-	AIL_start_stream(stream);
-	if (event->getAudioEventInfo()->m_soundType == AT_Music) {
-		// Need to stop/fade out the old music here.
-	}
 }
 
 //-------------------------------------------------------------------------------------------------
-void *MilesAudioManager::playSample( AudioEventRTS *event, HSAMPLE sample )
+void MilesAudioManager::playStream( AudioEventRTS *event, HSTREAM stream )
+{
+	prepareStream(event, stream);
+	AIL_start_stream(stream);
+}
+
+//-------------------------------------------------------------------------------------------------
+void *MilesAudioManager::prepareSample( AudioEventRTS *event, HSAMPLE sample )
 {
 	AIL_init_sample(sample);
 
@@ -2784,16 +2785,13 @@ void *MilesAudioManager::playSample( AudioEventRTS *event, HSAMPLE sample )
 	fileBuffer = loadFileForRead(event);
 	if (fileBuffer) {
 		AIL_set_sample_file(sample, fileBuffer, 0);
-
-		// Start playback
-		AIL_start_sample(sample);
 	}
 
 	return fileBuffer;
 }
 
 //-------------------------------------------------------------------------------------------------
-void *MilesAudioManager::playSample3D( AudioEventRTS *event, H3DSAMPLE sample3D )
+void *MilesAudioManager::prepareSample3D( AudioEventRTS *event, H3DSAMPLE sample3D )
 {
 	const Coord3D *pos = getCurrentPositionFromEvent(event);
 	if (pos) {
@@ -2818,14 +2816,33 @@ void *MilesAudioManager::playSample3D( AudioEventRTS *event, H3DSAMPLE sample3D 
 			Real z = pos->z;
 			AIL_set_3D_position( sample3D, x, y, z );
 			initFilters3D(sample3D, event, pos);
-
-			// Start playback
-			AIL_start_3D_sample(sample3D);
 		}
 		return fileBuffer;
 	}
 
 	return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool MilesAudioManager::playSample( PlayingAudio *playing )
+{
+	playing->m_file = prepareSample(playing->m_audioEventRTS.Peek(), playing->m_sample);
+	if (!playing->m_file) {
+		return false;
+	}
+	AIL_start_sample(playing->m_sample);
+	return true;
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool MilesAudioManager::playSample3D( PlayingAudio *playing )
+{
+	playing->m_file = prepareSample3D(playing->m_audioEventRTS.Peek(), playing->m_3DSample);
+	if (!playing->m_file) {
+		return false;
+	}
+	AIL_start_3D_sample(playing->m_3DSample);
+	return true;
 }
 
 //-------------------------------------------------------------------------------------------------
