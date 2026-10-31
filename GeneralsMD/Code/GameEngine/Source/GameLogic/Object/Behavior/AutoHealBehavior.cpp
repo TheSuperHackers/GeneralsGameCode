@@ -296,7 +296,13 @@ void AutoHealBehavior::pulseHealObject( Object *obj )
 #endif
 		obj->attemptHealing(data->m_healingAmount, getObject());
 	else
-		obj->attemptHealingFromSoleBenefactor( data->m_healingAmount, getObject(), data->m_healingDelay );
+	{
+		Real healingRate = 0.0f;
+#if !RETAIL_COMPATIBLE_CRC
+		healingRate = (Real)data->m_healingAmount / max(1u, data->m_healingDelay);
+#endif
+		obj->attemptHealingFromSoleBenefactor( data->m_healingAmount, getObject(), data->m_healingDelay, healingRate );
+	}
 
 
 	ParticleSystem *system = TheParticleSystemManager->createParticleSystem( data->m_unitHealPulseParticleSystemTmpl );
