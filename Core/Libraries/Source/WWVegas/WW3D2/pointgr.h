@@ -86,6 +86,7 @@ public:
 									int active_point_count = -1,
 									float vpxmin = 0.0f, float vpymin = 0.0f,
 									float vpxmax = 0.0f, float vpymax = 0.0f);
+	void Set_Texture_UV_Rects(const Vector4* rects) { TextureUVRects = rects; }
 	void						Set_Point_Size(float size);
 	float						Get_Point_Size();
 	void						Set_Point_Color(Vector3 color);
@@ -158,6 +159,7 @@ protected:
 	ShareBufferClass<unsigned char> *	PointFrame; // (null if not used) frame indices
 	int											PointCount;	// Active (if APT) or total point count
 
+	const Vector4 *							TextureUVRects; // (null if not used) uv rectangle per point
 	// See comments for Get/Set_Frame_Row_Column_Count_Log2 above
 	unsigned char			FrameRowColumnCountLog2;		// MUST be equal or lesser than 4
 
