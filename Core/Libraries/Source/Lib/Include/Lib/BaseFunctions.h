@@ -101,10 +101,6 @@ __forceinline float fast_float_ceil(float f)
 #define REAL_TO_INT_FLOOR(x)			(fast_float2long_round(fast_float_floor(x)))
 #endif
 
-#define FAST_REAL_TRUNC(x)        fast_float_trunc(x)
-#define FAST_REAL_CEIL(x)         fast_float_ceil(x)
-#define FAST_REAL_FLOOR(x)        fast_float_floor(x)
-
 //-------------------------------------------------------------------------------------------------
 // Checking whether a size matches the bit flags count from an enum definition:
 // enum MyEnum
