@@ -16,230 +16,244 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 #include "ICU/utf8.h"
+#include "ICU/IcuLoader.h"
+
+#include <assert.h>
+#include <limits.h>
+#include <string.h>
+#include <vector>
+
+#if defined(RTS_HAS_ICU)
+#include <unicode/ustring.h>
+#elif defined(RTS_ICU_DYNAMIC)
+#include <windows.h>
+#endif
 
 // unichar is a 16-bit UTF-16 code unit on Windows and a 32-bit UTF-32 codepoint on most other
-// platforms. WCHAR_MAX lets us distinguish the two at compile time so the surrogate-pair paths
-// are excluded entirely (not just constant-folded) where unichar is wide enough to hold a codepoint.
+// platforms. ICU converts UTF-8 to and from UTF-16, so UTF-32 takes an extra step through UTF-16.
 #if defined(WCHAR_MAX) && (WCHAR_MAX <= 0xFFFF)
 #define UTF8_WCHAR_IS_UTF16 1
 #else
 #define UTF8_WCHAR_IS_UTF16 0
 #endif
 
-static const unsigned int UTF8_CODEPOINT_MAX = 0x10FFFF;
-static const unsigned int UTF8_SURROGATE_MIN = 0xD800;
-static const unsigned int UTF8_SURROGATE_MAX = 0xDFFF;
-static const unsigned int UTF8_REPLACEMENT_CHAR = 0xFFFD;
+#if !UTF8_WCHAR_IS_UTF16 && !defined(RTS_HAS_ICU)
+#error "A 32-bit unichar requires linked ICU"
+#endif
 
-// Number of UTF-8 bytes required to encode a codepoint.
-static size_t Utf8_Encoded_Length(unsigned int cp)
+static const int UTF8_REPLACEMENT_CHAR = 0xFFFD;
+
+static bool Fits_Int(size_t length)
 {
-	if (cp < 0x80)
-	{
-		return 1;
-	}
-	if (cp < 0x800)
-	{
-		return 2;
-	}
-	if (cp < 0x10000)
-	{
-		return 3;
-	}
-	return 4;
+	return length <= static_cast<size_t>(INT_MAX);
 }
 
-// Encode a codepoint to dest, which is assumed to have room. Returns the number of bytes written.
-static size_t Utf8_Encode(char* dest, unsigned int cp)
+// The converters below return the length the whole conversion needs, not counting a null
+// terminator. They do not null-terminate, and leave dest unspecified when it is too small.
+// Wide_To_Utf8_Convert returns 0 on failure. Utf8_To_Wide_Convert returns UTF8_INVALID for
+// malformed UTF-8.
+
+#if defined(RTS_HAS_ICU)
+
+// ICU still reports the needed length when the destination is too small.
+static bool Icu_Succeeded(UErrorCode error)
 {
-	if (cp < 0x80)
-	{
-		dest[0] = (char)cp;
-		return 1;
-	}
-	if (cp < 0x800)
-	{
-		dest[0] = (char)(0xC0 | (cp >> 6));
-		dest[1] = (char)(0x80 | (cp & 0x3F));
-		return 2;
-	}
-	if (cp < 0x10000)
-	{
-		dest[0] = (char)(0xE0 | (cp >> 12));
-		dest[1] = (char)(0x80 | ((cp >> 6) & 0x3F));
-		dest[2] = (char)(0x80 | (cp & 0x3F));
-		return 3;
-	}
-	dest[0] = (char)(0xF0 | (cp >> 18));
-	dest[1] = (char)(0x80 | ((cp >> 12) & 0x3F));
-	dest[2] = (char)(0x80 | ((cp >> 6) & 0x3F));
-	dest[3] = (char)(0x80 | (cp & 0x3F));
-	return 4;
+	return U_SUCCESS(error) || error == U_BUFFER_OVERFLOW_ERROR;
 }
 
-// Decode one UTF-8 sequence at src, with srcLen bytes remaining. On success returns the number of
-// bytes consumed (1-4) and sets cp. Returns 0 on any malformed, overlong, out-of-range or surrogate
-// encoding.
-static size_t Utf8_Decode(const char* src, size_t srcLen, unsigned int& cp)
-{
-	const unsigned char lead = (unsigned char)src[0];
-	if (lead < 0x80)
-	{
-		cp = lead;
-		return 1;
-	}
-
-	size_t count;
-	unsigned int lowerBound;
-	if ((lead & 0xE0) == 0xC0)
-	{
-		count = 2;
-		cp = lead & 0x1F;
-		lowerBound = 0x80;
-	}
-	else if ((lead & 0xF0) == 0xE0)
-	{
-		count = 3;
-		cp = lead & 0x0F;
-		lowerBound = 0x800;
-	}
-	else if ((lead & 0xF8) == 0xF0)
-	{
-		count = 4;
-		cp = lead & 0x07;
-		lowerBound = 0x10000;
-	}
-	else
-	{
-		return 0; // a continuation byte or a 5/6-byte form cannot start a sequence
-	}
-
-	if (srcLen < count)
-	{
-		return 0; // truncated sequence
-	}
-	for (size_t i = 1; i < count; ++i)
-	{
-		const unsigned char trail = (unsigned char)src[i];
-		if ((trail & 0xC0) != 0x80)
-		{
-			return 0; // not a continuation byte
-		}
-		cp = (cp << 6) | (trail & 0x3F);
-	}
-
-	if (cp < lowerBound || cp > UTF8_CODEPOINT_MAX || (cp >= UTF8_SURROGATE_MIN && cp <= UTF8_SURROGATE_MAX))
-	{
-		return 0; // overlong, out of range, or a surrogate codepoint
-	}
-	return count;
-}
-
-// Read one codepoint at src, with srcLen wide characters remaining. Returns the number of wide
-// characters consumed (1-2) and sets cp. Combines UTF-16 surrogate pairs where unichar is 16-bit;
-// treats each element as a whole codepoint where unichar is 32-bit. Wide data that has no UTF-8
-// representation is reported as U+FFFD, so the encoder never emits a sequence that the decoder
-// would reject.
-static size_t Wide_Read(const unichar* src, size_t srcLen, unsigned int& cp)
-{
-	size_t consumed = 1;
 #if UTF8_WCHAR_IS_UTF16
-	cp = (unsigned int)src[0] & 0xFFFF;
-	if (cp >= UTF8_SURROGATE_MIN && cp <= 0xDBFF && srcLen > 1)
+
+static size_t Wide_To_Utf8_Convert(char* dest, size_t destLen, const unichar* src, size_t srcLen)
+{
+	UErrorCode error = U_ZERO_ERROR;
+	int32_t length = 0;
+	u_strToUTF8WithSub(dest, static_cast<int32_t>(destLen), &length, reinterpret_cast<const UChar*>(src),
+		static_cast<int32_t>(srcLen), UTF8_REPLACEMENT_CHAR, nullptr, &error);
+	if (!Icu_Succeeded(error))
 	{
-		const unsigned int low = (unsigned int)src[1] & 0xFFFF;
-		if (low >= 0xDC00 && low <= UTF8_SURROGATE_MAX)
-		{
-			cp = 0x10000 + ((cp - UTF8_SURROGATE_MIN) << 10) + (low - 0xDC00);
-			consumed = 2;
-		}
+		assert(false);
+		return 0;
 	}
+	return static_cast<size_t>(length);
+}
+
+static size_t Utf8_To_Wide_Convert(unichar* dest, size_t destLen, const char* src, size_t srcLen)
+{
+	UErrorCode error = U_ZERO_ERROR;
+	int32_t length = 0;
+	u_strFromUTF8(reinterpret_cast<UChar*>(dest), static_cast<int32_t>(destLen), &length, src,
+		static_cast<int32_t>(srcLen), &error);
+	return Icu_Succeeded(error) ? static_cast<size_t>(length) : UTF8_INVALID;
+}
+
 #else
-	(void)srcLen;
-	cp = (unsigned int)src[0];
-#endif
-	if (cp > UTF8_CODEPOINT_MAX || (cp >= UTF8_SURROGATE_MIN && cp <= UTF8_SURROGATE_MAX))
+
+static size_t Wide_To_Utf8_Convert(char* dest, size_t destLen, const unichar* src, size_t srcLen)
+{
+	const UChar32* utf32 = reinterpret_cast<const UChar32*>(src);
+	UErrorCode error = U_ZERO_ERROR;
+	int32_t utf16Len = 0;
+	u_strFromUTF32WithSub(nullptr, 0, &utf16Len, utf32, static_cast<int32_t>(srcLen),
+		UTF8_REPLACEMENT_CHAR, nullptr, &error);
+	if (!Icu_Succeeded(error))
 	{
-		cp = UTF8_REPLACEMENT_CHAR;
+		assert(false);
+		return 0;
 	}
-	return consumed;
+
+	std::vector<UChar> utf16(static_cast<size_t>(utf16Len) + 1);
+	error = U_ZERO_ERROR;
+	u_strFromUTF32WithSub(&utf16[0], utf16Len + 1, &utf16Len, utf32, static_cast<int32_t>(srcLen),
+		UTF8_REPLACEMENT_CHAR, nullptr, &error);
+	int32_t length = 0;
+	if (U_SUCCESS(error))
+	{
+		u_strToUTF8WithSub(dest, static_cast<int32_t>(destLen), &length, &utf16[0], utf16Len,
+			UTF8_REPLACEMENT_CHAR, nullptr, &error);
+	}
+	if (!Icu_Succeeded(error))
+	{
+		assert(false);
+		return 0;
+	}
+	return static_cast<size_t>(length);
 }
 
-// Number of wide characters required to store a codepoint.
-static size_t Wide_Encoded_Length(unsigned int cp)
+static size_t Utf8_To_Wide_Convert(unichar* dest, size_t destLen, const char* src, size_t srcLen)
 {
-#if UTF8_WCHAR_IS_UTF16
-	return (cp >= 0x10000) ? 2 : 1;
-#else
-	(void)cp;
-	return 1;
-#endif
+	UErrorCode error = U_ZERO_ERROR;
+	int32_t utf16Len = 0;
+	u_strFromUTF8(nullptr, 0, &utf16Len, src, static_cast<int32_t>(srcLen), &error);
+	if (!Icu_Succeeded(error))
+	{
+		return UTF8_INVALID;
+	}
+
+	std::vector<UChar> utf16(static_cast<size_t>(utf16Len) + 1);
+	error = U_ZERO_ERROR;
+	u_strFromUTF8(&utf16[0], utf16Len + 1, &utf16Len, src, static_cast<int32_t>(srcLen), &error);
+	int32_t length = 0;
+	if (U_SUCCESS(error))
+	{
+		u_strToUTF32(reinterpret_cast<UChar32*>(dest), static_cast<int32_t>(destLen), &length,
+			&utf16[0], utf16Len, &error);
+	}
+	return Icu_Succeeded(error) ? static_cast<size_t>(length) : UTF8_INVALID;
 }
 
-// Write one codepoint to a wide buffer, which is assumed to have room. Returns wide characters written.
-static size_t Wide_Write(unichar* dest, unsigned int cp)
-{
-#if UTF8_WCHAR_IS_UTF16
-	if (cp >= 0x10000)
-	{
-		cp -= 0x10000;
-		dest[0] = (unichar)(0xD800 + (cp >> 10));
-		dest[1] = (unichar)(0xDC00 + (cp & 0x3FF));
-		return 2;
-	}
 #endif
-	dest[0] = (unichar)cp;
-	return 1;
+
+#elif defined(RTS_ICU_DYNAMIC)
+
+enum
+{
+	ICU_ZERO_ERROR = 0,
+	ICU_BUFFER_OVERFLOW_ERROR = 15
+};
+
+// ICU warnings are negative. ICU still reports the needed length when the destination is too small.
+static bool Icu_Succeeded(IcuLoader::ErrorCode error)
+{
+	return error <= ICU_ZERO_ERROR || error == ICU_BUFFER_OVERFLOW_ERROR;
 }
+
+// Win32 reports no length when the destination is too small, so measure again then.
+static size_t Win32_Wide_To_Utf8(char* dest, size_t destLen, const unichar* src, size_t srcLen)
+{
+	int length = WideCharToMultiByte(CP_UTF8, 0, src, static_cast<int>(srcLen), dest,
+		static_cast<int>(destLen), nullptr, nullptr);
+	if (length == 0 && destLen != 0 && GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+	{
+		length = WideCharToMultiByte(CP_UTF8, 0, src, static_cast<int>(srcLen), nullptr, 0, nullptr, nullptr);
+	}
+	if (length == 0 && srcLen != 0)
+	{
+		assert(false);
+		return 0;
+	}
+	return static_cast<size_t>(length);
+}
+
+static size_t Win32_Utf8_To_Wide(unichar* dest, size_t destLen, const char* src, size_t srcLen)
+{
+	int length = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, src, static_cast<int>(srcLen), dest,
+		static_cast<int>(destLen));
+	if (length == 0 && destLen != 0 && GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+	{
+		length = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, src, static_cast<int>(srcLen), nullptr, 0);
+	}
+	if (length == 0 && srcLen != 0)
+	{
+		return UTF8_INVALID;
+	}
+	return static_cast<size_t>(length);
+}
+
+// Fall back to Win32 when icu.dll or its exports are unavailable.
+static size_t Wide_To_Utf8_Convert(char* dest, size_t destLen, const unichar* src, size_t srcLen)
+{
+	IcuLoader::ErrorCode error = ICU_ZERO_ERROR;
+	int length = 0;
+	if (!IcuLoader::toUtf8WithSub(dest, static_cast<int>(destLen), &length,
+		reinterpret_cast<const IcuLoader::Char*>(src), static_cast<int>(srcLen), UTF8_REPLACEMENT_CHAR, nullptr, &error))
+	{
+		return Win32_Wide_To_Utf8(dest, destLen, src, srcLen);
+	}
+	if (!Icu_Succeeded(error))
+	{
+		assert(false);
+		return 0;
+	}
+	return static_cast<size_t>(length);
+}
+
+static size_t Utf8_To_Wide_Convert(unichar* dest, size_t destLen, const char* src, size_t srcLen)
+{
+	IcuLoader::ErrorCode error = ICU_ZERO_ERROR;
+	int length = 0;
+	if (!IcuLoader::fromUtf8(reinterpret_cast<IcuLoader::Char*>(dest), static_cast<int>(destLen), &length,
+		src, static_cast<int>(srcLen), &error))
+	{
+		return Win32_Utf8_To_Wide(dest, destLen, src, srcLen);
+	}
+	return Icu_Succeeded(error) ? static_cast<size_t>(length) : UTF8_INVALID;
+}
+
+#endif
 
 size_t Wide_To_Utf8_Len(const unichar* src, size_t srcLen)
 {
-	size_t needed = 0;
-	size_t i = 0;
-	while (i < srcLen)
-	{
-		unsigned int cp;
-		i += Wide_Read(src + i, srcLen - i, cp);
-		needed += Utf8_Encoded_Length(cp);
-	}
-	return needed;
+	return Wide_To_Utf8(nullptr, 0, src, srcLen);
 }
 
 size_t Utf8_To_Wide_Len(const char* src, size_t srcLen)
 {
-	size_t needed = 0;
-	size_t i = 0;
-	while (i < srcLen)
-	{
-		unsigned int cp;
-		const size_t consumed = Utf8_Decode(src + i, srcLen - i, cp);
-		if (consumed == 0)
-		{
-			return UTF8_INVALID;
-		}
-		i += consumed;
-		needed += Wide_Encoded_Length(cp);
-	}
-	return needed;
+	return Utf8_To_Wide(nullptr, 0, src, srcLen);
 }
 
 size_t Wide_To_Utf8(char* dest, size_t destLen, const unichar* src, size_t srcLen)
 {
-	size_t needed = 0;
-	size_t out = 0;
-	size_t i = 0;
-	while (i < srcLen)
+	if (!Fits_Int(destLen) || !Fits_Int(srcLen))
 	{
-		unsigned int cp;
-		i += Wide_Read(src + i, srcLen - i, cp);
-		const size_t need = Utf8_Encoded_Length(cp);
-		// Stop writing at the first codepoint that does not fit, but keep counting for the caller.
-		if (needed == out && out + need <= destLen)
+		assert(false);
+		return 0;
+	}
+
+	const size_t needed = Wide_To_Utf8_Convert(dest, destLen, src, srcLen);
+	size_t out = needed;
+	if (needed > destLen)
+	{
+		// The converters may split or drop the last codepoint that fits, so cut a full conversion instead.
+		out = 0;
+		if (destLen > 0)
 		{
-			out += Utf8_Encode(dest + out, cp);
+			std::vector<char> full(needed);
+			Wide_To_Utf8_Convert(&full[0], needed, src, srcLen);
+			out = Utf8_Truncate_Len(&full[0], needed, destLen);
+			memcpy(dest, &full[0], out);
 		}
-		needed += need;
 	}
 	if (out < destLen)
 	{
@@ -250,29 +264,38 @@ size_t Wide_To_Utf8(char* dest, size_t destLen, const unichar* src, size_t srcLe
 
 size_t Utf8_To_Wide(unichar* dest, size_t destLen, const char* src, size_t srcLen)
 {
-	size_t needed = 0;
-	size_t out = 0;
-	size_t i = 0;
-	while (i < srcLen)
+	size_t needed = UTF8_INVALID;
+	if (Fits_Int(destLen) && Fits_Int(srcLen))
 	{
-		unsigned int cp;
-		const size_t consumed = Utf8_Decode(src + i, srcLen - i, cp);
-		if (consumed == 0)
+		needed = Utf8_To_Wide_Convert(dest, destLen, src, srcLen);
+	}
+	if (needed == UTF8_INVALID)
+	{
+		if (destLen > 0)
 		{
-			if (destLen > 0)
+			dest[0] = L'\0';
+		}
+		return UTF8_INVALID;
+	}
+
+	size_t out = needed;
+	if (needed > destLen)
+	{
+		// The converters may split or drop the last codepoint that fits, so cut a full conversion instead.
+		out = 0;
+		if (destLen > 0)
+		{
+			std::vector<unichar> full(needed);
+			Utf8_To_Wide_Convert(&full[0], needed, src, srcLen);
+			out = destLen;
+#if UTF8_WCHAR_IS_UTF16
+			if (full[out - 1] >= 0xD800 && full[out - 1] <= 0xDBFF)
 			{
-				dest[0] = L'\0';
+				--out; // the low surrogate of this pair does not fit
 			}
-			return UTF8_INVALID;
+#endif
+			memcpy(dest, &full[0], out * sizeof(unichar));
 		}
-		i += consumed;
-		const size_t need = Wide_Encoded_Length(cp);
-		// Stop writing at the first codepoint that does not fit, but keep counting for the caller.
-		if (needed == out && out + need <= destLen)
-		{
-			out += Wide_Write(dest + out, cp);
-		}
-		needed += need;
 	}
 	if (out < destLen)
 	{
