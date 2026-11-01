@@ -16,8 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "always.h"
-#include "utf8.h"
+#include "ICU/utf8.h"
 
 // unichar is a 16-bit UTF-16 code unit on Windows and a 32-bit UTF-32 codepoint on most other
 // platforms. WCHAR_MAX lets us distinguish the two at compile time so the surrogate-pair paths
