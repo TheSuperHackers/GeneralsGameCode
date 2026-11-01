@@ -667,6 +667,7 @@ void pickAndPlayUnitVoiceResponse( const DrawableList *list, GameMessage::Type m
 					if( info && info->m_air )
 						soundToPlayPtr = templ->getVoiceAttackAir();
 
+					// TheSuperHackers @tweak Stubbjax 31/10/2026 Fall back to VoiceAttack if VoiceAttackAir is invalid.
 					if (!soundToPlayPtr || !TheAudio->isValidAudioEvent(soundToPlayPtr))
 						soundToPlayPtr = templ->getVoiceAttack();
 
@@ -742,6 +743,7 @@ void pickAndPlayUnitVoiceResponse( const DrawableList *list, GameMessage::Type m
 					if( info && info->m_air )
 						soundToPlayPtr = templ->getVoiceAttackAir();
 
+					// TheSuperHackers @tweak Stubbjax 31/10/2026 Fall back to VoiceAttack if VoiceAttackAir is invalid.
 					if (!soundToPlayPtr || !TheAudio->isValidAudioEvent(soundToPlayPtr))
 						soundToPlayPtr = templ->getVoiceAttack();
 
