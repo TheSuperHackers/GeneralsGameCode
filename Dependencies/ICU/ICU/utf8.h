@@ -21,7 +21,9 @@
 #include <stddef.h>
 #include <wchar.h>
 
-// UTF-8 <-> wide-character transcoding, hand-rolled per RFC 3629, using no platform text APIs.
+// UTF-8 <-> wide-character transcoding backed by ICU4C. Non-Windows builds link ICU. Windows builds,
+// including VC6, use IcuLoader to load the OS icu.dll on first use, and fall back to Win32 CP_UTF8
+// when the DLL or its exports are unavailable.
 // The wide side is unichar, whose width is platform-dependent: on Windows it is a 16-bit UTF-16
 // code unit (astral codepoints use surrogate pairs); on most other platforms it is a 32-bit
 // UTF-32 codepoint. Both are handled transparently based on the width of unichar.

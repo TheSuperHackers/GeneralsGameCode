@@ -313,6 +313,13 @@ void AsciiString::translate(const UnicodeString& stringSrc)
 	{
 		clear();
 	}
+	else if (dstLen >= static_cast<size_t>(MAX_LEN))
+	{
+		// UTF-8 can need up to three bytes per wide character, so the result can exceed MAX_LEN.
+		DEBUG_CRASH(("AsciiString::translate exceeds max string length %d with required UTF-8 length %u",
+			MAX_LEN, static_cast<UnsignedInt>(dstLen)));
+		clear();
+	}
 	else
 	{
 		ensureUniqueBufferOfSize((Int)dstLen + 1, false, nullptr, nullptr);

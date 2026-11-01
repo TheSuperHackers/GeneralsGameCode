@@ -19,3 +19,14 @@ target_link_libraries(depsi_googletest INTERFACE
     deps_icu
     deps_utility
 )
+
+# Runs the utf8 tests against linked ICU, while g_googletest and z_googletest run them against IcuLoader.
+if(TARGET deps_icu_linked)
+    add_executable(icu_linked_googletest ICU/utf8_test.cpp)
+    target_link_libraries(icu_linked_googletest PRIVATE
+        depsi_always
+        deps_icu_linked
+        GTest::gtest_main
+    )
+    add_test(NAME icu_linked_googletest COMMAND icu_linked_googletest)
+endif()
