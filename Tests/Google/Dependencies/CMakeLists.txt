@@ -1,5 +1,6 @@
 # g_googletest and z_googletest compile these sources together with the Core tests.
 set(DEPSI_GOOGLETEST_SRC
+    ICU/utf8_test.cpp
     Utility/atomic_x86interlocked_test.cpp
     Utility/interlocked_x86asm_common.h
     Utility/interlocked_x86asm_test.cpp
@@ -15,5 +16,6 @@ add_library(depsi_googletest INTERFACE)
 target_sources(depsi_googletest INTERFACE ${DEPSI_GOOGLETEST_SRC})
 
 target_link_libraries(depsi_googletest INTERFACE
+    deps_icu
     deps_utility
 )
