@@ -44,7 +44,7 @@
 #include "Lib/BaseDefines.h"
 
 #if USE_DETERMINISTIC_MATH
-#include "gmath.h"
+#include <gmath.h>
 #endif
 
 /*

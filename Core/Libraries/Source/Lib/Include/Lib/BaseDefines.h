@@ -27,7 +27,7 @@
 #endif
 
 #if defined(__has_include)
-#if __has_include("gmath.h")
+#if __has_include(<gmath.h>)
 #define HAS_GAMEMATH (1)
 #endif
 #endif
