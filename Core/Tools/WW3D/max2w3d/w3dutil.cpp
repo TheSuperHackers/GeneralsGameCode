@@ -38,7 +38,6 @@
 
 #include "w3dutil.h"
 #include "w3ddesc.h"
-#include "rcmenu.h"
 #include "util.h"
 #include "nodelist.h"
 #include "tchar.h"
@@ -361,13 +360,6 @@ void W3DUtilityClass::BeginEditParams(Interface *ip,IUtil *iu)
 		_w3d_utility_tools_dlg_proc,
 		Get_String(IDS_W3DUTILITY_TOOLS),
 		0);
-
-
-//	TheRCMenu.Bind(TheW3DUtility.InterfacePtr,&TheW3DUtility);
-//	RightClickMenuManager *rcm = ip->GetRightClickMenuManager();
-//	if (TheRCMenu.Installed!=TRUE) {
-//		rcm->Register(&TheRCMenu);
-//	}
 
 	SettingsFormClass::Update_All_Instances();
 }
