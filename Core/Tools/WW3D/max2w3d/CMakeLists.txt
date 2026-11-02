@@ -73,8 +73,6 @@ set(MAX2W3D_SRC
     "motion.h"
     "namedsel.cpp"
     "namedsel.h"
-    "nullsave.cpp"
-    "nullsave.h"
     "presetexportoptionsdialog.cpp"
     "presetexportoptionsdialog.h"
     "resource.h"

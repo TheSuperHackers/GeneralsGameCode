@@ -1015,27 +1015,6 @@ const char * W3dMaterialDescClass::Get_Vertex_Material_Name(int vmat_index)
 	return VertexMaterials[vmat_index].Name;
 }
 
-bool W3dMaterialDescClass::Stage_Needs_Texture_Coordinates(int pass,int stage)
-{
-	for (int mi=0; mi<MaterialRemaps.Count();mi++) {
-		W3dShaderStruct * shader = Get_Shader(mi,pass);
-
-		if (shader) {
-			if (stage == 0) {
-				if (W3d_Shader_Get_Texturing(shader) == W3DSHADER_TEXTURING_ENABLE) return true;
-			}
-
-			if (stage == 1) {
-				if ((W3d_Shader_Get_Detail_Color_Func(shader) != W3DSHADER_DETAILCOLORFUNC_DISABLE) ||
-					(W3d_Shader_Get_Detail_Alpha_Func(shader) != W3DSHADER_DETAILALPHAFUNC_DISABLE)) {
-					return true;
-				}
-			}
-		}
-	}
-	return false;
-}
-
 bool W3dMaterialDescClass::Pass_Uses_Vertex_Alpha(int pass)
 {
 	/*

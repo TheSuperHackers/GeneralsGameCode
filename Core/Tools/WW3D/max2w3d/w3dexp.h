@@ -103,8 +103,6 @@ private:
 	INodeListClass * get_damage_root_list();
 	HierarchySaveClass * get_hierarchy_tree();
 
-	bool get_base_object_tm(Matrix3 &tm);
-
 	bool Export_Hierarchy(char * name,ChunkSaveClass & csave,Progress_Meter_Class & meter,INode *root);
 	bool Export_Animation(char * name,ChunkSaveClass & csave,Progress_Meter_Class & meter,INode *root);
 	bool Export_Damage_Animations(char * name,ChunkSaveClass & csave,Progress_Meter_Class &meter,INode *damage_root);

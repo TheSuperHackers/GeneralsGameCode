@@ -116,7 +116,6 @@ class AlphaModifierClass : public Modifier
 		// Load and unload our UI
 		void BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev);
 		void EndEditParams(IObjParam *ip, ULONG flags,Animatable *next);
-		void InvalidateUI();
 
 		// Message saved from window messages.
 		int			Message;

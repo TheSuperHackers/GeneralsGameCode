@@ -1299,8 +1299,6 @@ void GameMtl::Reset()
 
 			Set_Texture_Enable(pass,stage,false);
 			Set_Texture_Publish(pass,stage,false);
-			Set_Texture_Resize(pass,stage,false);
-			Set_Texture_No_Mipmap(pass,stage,false);
 			Set_Texture_Clamp_U(pass,stage,false);
 			Set_Texture_Clamp_V(pass,stage,false);
 			Set_Texture_No_LOD(pass,stage,false);
@@ -2119,16 +2117,6 @@ int GameMtl::Get_Texture_Publish(int pass,int stage)
 	}
 	return val;
 }
-int GameMtl::Get_Texture_Resize(int pass,int stage)
-{
-	int val;
-	if (stage == 0) {
-		PassParameterBlock[pass]->GetValue(PB_STAGE0_TEXTURE_RESIZE,0,val,FOREVER);
-	} else {
-		PassParameterBlock[pass]->GetValue(PB_STAGE1_TEXTURE_RESIZE,0,val,FOREVER);
-	}
-	return val;
-}
 int GameMtl::Get_Texture_No_Mipmap(int pass,int stage)
 {
 	int val;
@@ -2415,26 +2403,6 @@ void GameMtl::Set_Texture_Publish(int pass,int stage,bool val)
 		PassParameterBlock[pass]->SetValue(PB_STAGE0_TEXTURE_PUBLISH, 0, val);
 	} else {
 		PassParameterBlock[pass]->SetValue(PB_STAGE1_TEXTURE_PUBLISH, 0, val);
-	}
-}
-void GameMtl::Set_Texture_Resize(int pass,int stage,bool val)
-{
-	assert((pass >=0) && (pass < W3dMaterialClass::MAX_PASSES));
-	assert(PassParameterBlock[pass]);
-	if (stage == 0) {
-		PassParameterBlock[pass]->SetValue(PB_STAGE0_TEXTURE_RESIZE, 0, val);
-	} else {
-		PassParameterBlock[pass]->SetValue(PB_STAGE1_TEXTURE_RESIZE, 0, val);
-	}
-}
-void GameMtl::Set_Texture_No_Mipmap(int pass,int stage,bool val)
-{
-	assert((pass >=0) && (pass < W3dMaterialClass::MAX_PASSES));
-	assert(PassParameterBlock[pass]);
-	if (stage == 0) {
-		PassParameterBlock[pass]->SetValue(PB_STAGE0_TEXTURE_NO_MIPMAP, 0, val);
-	} else {
-		PassParameterBlock[pass]->SetValue(PB_STAGE1_TEXTURE_NO_MIPMAP, 0, val);
 	}
 }
 void GameMtl::Set_Texture_Clamp_U(int pass,int stage,bool val)

@@ -344,17 +344,6 @@ AlphaModifierClass::AlphaModifierClass()
 
 
 /*===========================================================================*\
- |	Invalidate our UI (or the recently changed parameter)
-\*===========================================================================*/
-
-void AlphaModifierClass::InvalidateUI()
-{
-	alpha_param_blk.InvalidateUI(pblock->LastNotifyParamID());
-}
-
-
-
-/*===========================================================================*\
  |	Open and Close dialog UIs
  |	We ask the ClassDesc2 to handle Beginning and Ending EditParams for us
 \*===========================================================================*/

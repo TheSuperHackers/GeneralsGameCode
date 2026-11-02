@@ -35,7 +35,6 @@
  * Functions:                                                                                  *
  *   Cleanup_Orthogonal_Matrix -- removes very small numbers from the matrix                   *
  *   Set_W3D_Name -- set a W3D name                                                            *
- *   Split_Node_Name -- break a node name into the base and extension                          *
  *   Is_Max_Tri_Mesh -- Is this node a triangle mesh?                                          *
  *    -- checks if the node is the origin of a model                                           *
  *    -- Checks if the node is the origin for the base obect (non-LOD'd).                      *
@@ -125,63 +124,6 @@ void Set_W3D_Name(char * set_name,const char * src)
 			*dot = 0;
 	}
 	strupr(set_name);
-}
-
-/***********************************************************************************************
- * Split_Node_Name -- break a node name into the base and extension                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
-void Split_Node_Name(const char * name,char * set_base,char * set_exten,int * set_exten_index)
-{
-	// Nodes are assumed to be named in the following way:
-	// <name>.<exten character><exten digits>
-	// for example: mesh.d1
-
-	char buf[MAX_NODE_NAME_LEN];
-	char * ptr;
-
-	assert(strlen(name) < MAX_NODE_NAME_LEN);
-
-	// Initialize
-	if (set_base != nullptr) set_base[0] = 0;
-	if (set_exten != nullptr) set_exten[0] = 0;
-	if (set_exten_index != nullptr) *set_exten_index = 0;
-
-	// Get the base name
-	strncpy(buf,name,MAX_NODE_NAME_LEN);
-	ptr = buf;
-	while ((*ptr != 0) && (*ptr != '.')) {
-		ptr++;
-	}
-
-	if (*ptr == '.') {
-
-		// copy what we have so far into set_base
-		*ptr = 0;
-		if (set_base != nullptr) strncpy(set_base,buf,MAX_NODE_NAME_LEN);
-
-		// copy the rest back into the extension
-		ptr++;
-		if (set_exten != nullptr) strncpy(set_exten,ptr,MAX_NODE_NAME_LEN);
-
-		// now get the extension index
-		ptr++;
-		if (set_exten_index != nullptr) *set_exten_index = atoi(ptr);
-
-	} else {
-
-		// no extension, just copy the base name
-		if (set_base != nullptr) strncpy(set_base,buf,MAX_NODE_NAME_LEN);
-		return;
-	}
 }
 
 
@@ -405,24 +347,6 @@ void Create_Relative_Path(char *rel_path,	const char *curr, const char *full_pat
 end:
 	free(up_curr);
 	free(up_full);
-}
-
-bool Is_Full_Path(char * path)
-{
-	// first scan for a drive letter (scan for a colon)
-	if (strchr(path,':') != nullptr) {
-		return true;
-	}
-
-	// now scan for a "network" path (starts with "//")
-	if ((path[0] == '/') && (path[1] == '/')) {
-		return true;
-	}
-	if ((path[0] == '\\') && (path[1] == '\\')) {
-		return true;
-	}
-
-	return false;
 }
 
 
