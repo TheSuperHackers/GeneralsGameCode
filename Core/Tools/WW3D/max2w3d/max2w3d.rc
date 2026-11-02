@@ -923,16 +923,6 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,91,141,50,14
 END
 
-IDD_GRIDSNAP_PARAMS DIALOG DISCARDABLE  0, 0, 108, 24
-STYLE WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    CONTROL         "",IDC_GRIDDIM_EDIT,"CustEdit",WS_GROUP | WS_TABSTOP,57,
-                    7,33,10
-    CONTROL         "",IDC_GRIDDIM_SPIN,"SpinnerControl",0x0,91,7,10,10
-    LTEXT           "Grid Dimension",IDC_STATIC,7,8,48,8
-END
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1201,14 +1191,6 @@ BEGIN
         RIGHTMARGIN, 163
         TOPMARGIN, 7
         BOTTOMMARGIN, 155
-    END
-
-    IDD_GRIDSNAP_PARAMS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 101
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 17
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1700,9 +1682,6 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     IDS_W3DUTILITY_TOOLS    "W3D Tools"
-    IDS_GRIDSNAPMODIFIER    "Grid Snap Modifier"
-    IDS_GRIDSNAP_TITLE      "Grid Snap Settings"
-    IDS_GRID_DIMENSION      "Grid Dimension"
 END
 
 #endif    // English (U.S.) resources

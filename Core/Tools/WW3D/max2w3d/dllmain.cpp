@@ -52,7 +52,6 @@
 #include "gamemtl.h"
 #include "gamemaps.h"
 #include "AlphaModifier.h"
-#include "gridsnapmodifier.h"
 
 #include "resource.h"
 
