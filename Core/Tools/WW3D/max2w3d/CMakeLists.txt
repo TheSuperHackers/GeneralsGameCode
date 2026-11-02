@@ -52,8 +52,6 @@ set(MAX2W3D_SRC
     "geometryexportcontext.h"
     "geometryexporttask.cpp"
     "geometryexporttask.h"
-    "gridsnapmodifier.cpp"
-    "gridsnapmodifier.h"
     "hiersave.cpp"
     "hiersave.h"
     "hlodsave.cpp"

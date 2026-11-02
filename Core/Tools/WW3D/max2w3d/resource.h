@@ -99,7 +99,6 @@
 #define IDD_ANIMATION_COMPRESSION       156
 #define IDI_DISK                        157
 #define IDB_WW3D                        158
-#define IDD_GRIDSNAP_PARAMS             159
 #define IDC_TRANSLATION_ONLY_CHECK      1000
 #define IDC_TERRAIN_MODE_CHECK          1001
 #define IDC_SETPASSCOUNT                1014
@@ -322,8 +321,6 @@
 #define IDC_ENABLE_SORT_LEVEL           1220
 #define IDC_SORT_LEVEL                  1221
 #define IDC_SORT_LEVEL_SPIN             1222
-#define IDC_GRIDDIM_EDIT                1223
-#define IDC_GRIDDIM_SPIN                1224
 #define IDS_SKIN_CLASS_NAME             60011
 #define IDS_SKIN_OBJECT_NAME            60012
 #define IDS_SKIN                        60013
@@ -356,9 +353,6 @@
 #define IDS_NO_LOD                      60046
 #define IDS_W3DUTILITY_SETTINGS         60047
 #define IDS_W3DUTILITY_TOOLS            60048
-#define IDS_GRIDSNAPMODIFIER            60049
-#define IDS_GRIDSNAP_TITLE              60050
-#define IDS_GRID_DIMENSION              60051
 
 // Next default values for new objects
 //
