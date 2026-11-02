@@ -65,7 +65,6 @@
 #include "util.h"
 #include "w3ddesc.h"
 #include "colboxsave.h"
-#include "nullsave.h"
 #include "dazzlesave.h"
 #include "maxworldinfo.h"
 #include "exportlog.h"
@@ -1229,31 +1228,6 @@ static bool check_lod_extensions (INodeListClass &list, INode *origin)
 	return true;
 }
 
-
-bool W3dExportClass::get_base_object_tm (Matrix3 &tm)
-{
-	INodeListClass	*origin_list = get_origin_list();
-	if (!origin_list)
-		return false;
-
-	unsigned int	i, count = origin_list->Num_Nodes();
-	INode				*base_origin = nullptr;
-	for (i = 0; i < count; i++)
-	{
-		INode *node = (*origin_list)[i];
-		if (Is_Base_Origin(node))
-		{
-			// we found origin.00, fall through
-			base_origin = node;
-			break;
-		}
-	}
-	if (!base_origin)
-		return false;
-
-	tm = base_origin->GetNodeTM(CurTime);
-	return true;
-}
 
 static DWORD WINAPI progress_callback( LPVOID arg )
 {

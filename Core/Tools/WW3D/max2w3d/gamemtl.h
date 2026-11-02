@@ -220,7 +220,6 @@ public:
 
 		int					Get_Texture_Enable(int pass,int stage);
 		int					Get_Texture_Publish(int pass,int stage);
-		int					Get_Texture_Resize(int pass,int stage);		// NOTE: obsolete, replaced by Get_Texture_No_LOD
 		int					Get_Texture_No_Mipmap(int pass,int stage);	// NOTE: obsolete, replaced by Get_Texture_No_LOD
 		int					Get_Texture_Clamp_U(int pass,int stage);
 		int					Get_Texture_Clamp_V(int pass,int stage);
@@ -266,8 +265,6 @@ public:
 
 		void					Set_Texture_Enable(int pass,int stage,bool val);
 		void					Set_Texture_Publish(int pass,int stage,bool val);
-		void					Set_Texture_Resize(int pass,int stage,bool val);		// NOTE: obsolete: replaced by Set_Texture_No_LOD
-		void					Set_Texture_No_Mipmap(int pass,int stage,bool val);	// NOTE: obsolete: replaced by Set_Texture_No_LOD
 		void					Set_Texture_Clamp_U(int pass,int stage,bool val);
 		void					Set_Texture_Clamp_V(int pass,int stage,bool val);
 		void					Set_Texture_No_LOD(int pass,int stage,bool val);

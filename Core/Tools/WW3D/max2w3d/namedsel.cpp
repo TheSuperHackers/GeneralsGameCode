@@ -84,28 +84,6 @@ void NamedSelSetList::Reset()
 	}
 }
 
-void NamedSelSetList::Set_Size(int size)
-{
-	for (int i=0; i<Sets.Count(); i++) {
-		Sets[i]->SetSize(size,TRUE);
-	}
-}
-
-NamedSelSetList& NamedSelSetList::operator=(NamedSelSetList& from)
-{
-	for (int i=0; i<Sets.Count(); i++) {
-		Delete_Set(i);
-	}
-	Sets.SetCount(0);
-	Names.SetCount(0);
-
-	for (i=0; i<from.Count(); i++) {
-		Append_Set(from[i],*(from.Names[i]));
-	}
-
-	return *this;
-}
-
 
 int NamedSelSetList::Find_Set(TSTR &setname)
 {
@@ -118,29 +96,9 @@ int NamedSelSetList::Find_Set(TSTR &setname)
 }
 
 
-IOResult NamedSelSetList::Save(ISave *isave)
-{
-	assert(Sets.Count() == Names.Count());
-
-	for (int i=0; i<Sets.Count(); i++) {
-
-		isave->BeginChunk(NAMED_SEL_SET_CHUNK);
-
-			isave->BeginChunk(NAMED_SEL_NAME_CHUNK);
-			isave->WriteWString(*Names[i]);
-			isave->EndChunk();
-
-			isave->BeginChunk(NAMED_SEL_BITS_CHUNK);
-			Sets[i]->Save(isave);
-			isave->EndChunk();
-
-		isave->EndChunk();
-
-	}
-	return IO_OK;
-}
-
-
+// TheSuperHackers @info Legacy. Only scenes saved by older versions of the exporter contain named
+// selection sets. SkinModifierClass::Create_Named_Selection_Sets rebuilds them from the bones, so
+// they are not saved any more. Loading them keeps such scenes readable.
 IOResult NamedSelSetList::Load(ILoad *iload)
 {
 	IOResult res;
