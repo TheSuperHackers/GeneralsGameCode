@@ -74,11 +74,8 @@
 #define IDD_GAMEMTL_TEXTURES            121
 #define IDD_GAMEMTL_PASS_COUNT_DIALOG   122
 #define IDD_GENERATE_NAMES_DIALOG       126
-#define IDD_MESH_DEFORM_PANEL           127
 #define IDD_GAMEMTL_SURFACE_TYPE        128
 #define IDD_GAMEMTL_DISPLACEMENT_MAP    129
-#define IDB_NORM                        130
-#define IDB_DEFORM                      131
 #define IDD_GENERATE_MTL_NAMES_DIALOG   133
 #define IDD_GENERATE_LOD_EXTENSION_DIALOG 135
 #define IDD_EXPORT_ALL                  136
@@ -108,9 +105,7 @@
 #define IDC_SETPASSCOUNT                1014
 #define IDC_PASSCOUNT_SPIN              1016
 #define IDC_PASSCOUNT_EDIT              1017
-#define IDC_MAX_SETS_SPIN               1018
 #define IDC_GAMEMTL_PASSCOUNT_STATIC    1019
-#define IDC_MAX_SETS_EDIT               1019
 #define IDC_STAGE0_DISPLAY_BUTTON       1020
 #define IDC_STAGE0_PUBLISH_BUTTON       1021
 #define IDC_STAGE1_DISPLAY_BUTTON       1022
@@ -254,15 +249,9 @@
 #define IDC_MAPPING0_ARGS_EDIT          1140
 #define IDC_MAPPING1_ARGS_EDIT          1141
 #define IDC_SHADER_DEFAULTS_BUTTON      1143
-#define IDC_STATE_SLIDER                1145
-#define IDC_CURRENT_SET_SLIDER          1146
-#define IDC_CURRENT_SET_STATIC          1147
-#define IDC_VERTEX_COLOR                1149
 #define IDC_RESTORE_BUTTON              1150
-#define IDC_MANUALAPPLY                 1151
 #define IDC_SURFACE_TYPE_COMBO          1152
 #define IDC_EXPORT_MESH_SMOOTH_CHECK    1153
-#define IDC_LOCK_SETS                   1154
 #define IDC_EXPORT_MESH_AABTREES        1154
 #define IDC_TEXTURE_BUTTON              1155
 #define IDC_EXPORT_MESH_MAT_TO_TEXTURE  1155

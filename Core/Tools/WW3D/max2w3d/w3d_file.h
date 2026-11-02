@@ -375,6 +375,8 @@ enum {
 					W3D_CHUNK_PER_FACE_TEXCOORD_IDS	=0x0000004B,	// indices to W3D_CHUNK_STAGE_TEXCOORDS, (array of Vector3i)
 
 
+		// TheSuperHackers @info Legacy chunks. Only the original WWDeform modifier of max2w3d wrote
+		// them, WW3D2 skips them as obsolete, and retail data contains none.
 		W3D_CHUNK_DEFORM									=0x00000058,	// mesh deform or 'damage' information.
 			W3D_CHUNK_DEFORM_SET							=0x00000059,	// set of deform information
 				W3D_CHUNK_DEFORM_KEYFRAME				=0x0000005A,	// a keyframe of deform information in the set
@@ -1164,6 +1166,7 @@ struct W3dVertInfStruct
 //
 // Deform information.  Each mesh can have sets of keyframes of
 //	deform info associated with it.
+// TheSuperHackers @info Legacy, see W3D_CHUNK_DEFORM.
 //
 struct W3dMeshDeform
 {

@@ -51,7 +51,6 @@
 #include "skin.h"
 #include "gamemtl.h"
 #include "gamemaps.h"
-#include "MeshDeform.h"
 #include "AlphaModifier.h"
 #include "gridsnapmodifier.h"
 
@@ -157,7 +156,6 @@ DLLEXPORT ClassDesc * LibClassDesc(int i)
 		case 6:	return Get_PS2_Game_Material_Desc(); break;
 		case 7:	return Get_PS2_Material_Conversion(); break;
 		case 8:	return Get_Alpha_Desc(); break;
-		//case 6:	return Get_Mesh_Deform_Desc(); break;
 		//Moumine 7/24/2001    4:33:52 PM Removed #6 and shifted up instead of returning nullptr
 		// nullptr causes a crash in "File->Summary info->Plug-in ifo..."
 		default: return nullptr; break;

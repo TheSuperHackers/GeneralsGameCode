@@ -391,6 +391,8 @@ enum {
 				W3D_CHUNK_FX_SHADER_INFO		=0x00000052,	// information about the shader to be used (W3dFXShaderInfoStruct)
 				W3D_CHUNK_FX_SHADER_CONSTANT	=0x00000053,	// contains a constant name and value for the shader
 
+		// TheSuperHackers @info Legacy chunks. Only the original WWDeform modifier of max2w3d wrote
+		// them, WW3D2 skips them as obsolete, and retail data contains none.
 		W3D_CHUNK_DEFORM									=0x00000058,	// mesh deform or 'damage' information.
 			W3D_CHUNK_DEFORM_SET							=0x00000059,	// set of deform information
 				W3D_CHUNK_DEFORM_KEYFRAME				=0x0000005A,	// a keyframe of deform information in the set
@@ -1275,6 +1277,7 @@ struct W3dVertInfStruct
 //
 // Deform information.  Each mesh can have sets of keyframes of
 //	deform info associated with it.
+// TheSuperHackers @info Legacy, see W3D_CHUNK_DEFORM.
 //
 struct W3dMeshDeform
 {

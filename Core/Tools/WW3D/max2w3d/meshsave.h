@@ -47,7 +47,6 @@
 #include "util.h"
 #include "w3dmtl.h"
 #include "meshbuild.h"
-#include "MeshDeformSave.h"
 #include "w3dappdata.h"
 
 class HierarchySaveClass;
@@ -132,7 +131,6 @@ private:
 	W3dMeshHeader3Struct				Header;
 	W3dMaterialDescClass 			MaterialDesc;
 	MeshBuilderClass					Builder;
-	MeshDeformSaveClass				DeformSave;
 	TimeValue							CurTime;
 	Matrix3								ExportSpace;
 	Matrix3								MeshToExportSpace;

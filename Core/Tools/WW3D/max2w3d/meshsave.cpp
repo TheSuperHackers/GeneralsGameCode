@@ -355,25 +355,6 @@ MeshSaveClass::MeshSaveClass
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	// Create damage (deform) information for the mesh
-	//////////////////////////////////////////////////////////////////////
-	Object *ref_obj = MaxINode->GetObjectRef ();
-	DeformSave.Initialize(Builder, ref_obj, mesh, &MeshToExportSpace);
-
-	//////////////////////////////////////////////////////////////////////
-	// Determine if the deformer should use alpha or v-color info
-	//////////////////////////////////////////////////////////////////////
-	if (ExportOptions.Is_Vertex_Alpha_Enabled()) {
-		unsigned int alpha_passes = 0;
-		for (int pass=0; pass < MaterialDesc.Pass_Count(); pass++) {
-			if (MaterialDesc.Pass_Uses_Vertex_Alpha(pass)) {
-				alpha_passes |= (1 << pass);
-			}
-		}
-		DeformSave.Set_Alpha_Passes(alpha_passes);
-	}
-
-	//////////////////////////////////////////////////////////////////////
 	// Set the counts in the mesh header
 	//////////////////////////////////////////////////////////////////////
 	Header.NumTris = Builder.Get_Face_Count();
@@ -986,10 +967,6 @@ int MeshSaveClass::Write_To_File(ChunkSaveClass & csave,bool export_aabtree)
 		}
 	}
 
-	if (DeformSave.Export (csave) != true) {
-		return 1;
-	}
-
 	if (export_aabtree == true) {
 		if (write_aabtree(csave) != 0) {
 			return 1;
@@ -1582,7 +1559,7 @@ int MeshSaveClass::write_pass(ChunkSaveClass & csave,int pass)
 		write_shader_ids(csave,pass);
 	}
 
-	if (stats.HasDiffuseColor[pass] || DeformSave.Does_Deformer_Modify_DCG ()) {
+	if (stats.HasDiffuseColor[pass]) {
 		write_dcg(csave,pass);
 	}
 
