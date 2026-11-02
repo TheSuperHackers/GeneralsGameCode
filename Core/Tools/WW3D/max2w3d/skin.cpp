@@ -47,9 +47,7 @@
 #include "namedsel.h"
 #include "boneicon.h"
 
-#if defined W3D_MAX4		//defined as in the project (.dsp)
 static GenSubObjType _SubObjectTypeVertex(1);
-#endif
 
 /*
 ** Static functions
@@ -657,13 +655,7 @@ void SkinModifierClass::BeginEditParams(IObjParam * ip, ULONG flags,Animatable *
 	/*
 	** register the desired sub-object selection types.
 	*/
-#if defined W3D_MAX4		//defined as in the project (.dsp)
 	InterfacePtr->SetSubObjectLevel(1);
-#else
-	//---This call is obsolete from version 4.
-	const TCHAR * ptype[] = { "Vertices" };
-	InterfacePtr->RegisterSubObjectTypes( ptype, 1);
-#endif
 	/*
 	** Restore the selection level.
 	*/
@@ -1073,16 +1065,6 @@ void SkinModifierClass::SelectSubComponent(HitRecord *hitRec, BOOL selected, BOO
 
 				skindata = (SkinDataClass *)hitRec->modContext->localData;
 
-				/*
-				** Undo/Redo functionality
-				*/
-#if 0
-				if (theHold.Holding() && !SelData->held) {
-					theHold.Put(new SubSelRestore(this,SelData));
-				}
-				theHold.Accept(_T("Select Vertex"));
-#endif
-
 				BitArray * array = &(skindata->VertSel);
 
 				if (all & invert) {
@@ -1131,18 +1113,8 @@ void SkinModifierClass::ClearSelection(int selLevel)
 		TriObject * tobj = Get_Tri_Object(InterfacePtr->GetTime(),os,valid,needsdel);
 
 		switch (SubObjSelLevel) {
-#if 0
-			case OBJECT_SEL_LEVEL:
-				assert(0);
-				return;
-#endif
 
 			case VERTEX_SEL_LEVEL:
-#if 0 // undo/redo
-				if (theHold.Holding()) {
-					theHold.Put(new VertexSelRestore(meshData,this));
-				}
-#endif
 				tobj->mesh.vertSel.ClearAll();
 				skindata->VertSel.ClearAll();
 				break;
@@ -1193,11 +1165,6 @@ void SkinModifierClass::SelectAll(int selLevel)
 				return;
 
 			case VERTEX_SEL_LEVEL:
-#if 0 // undo/redo
-				if (theHold.Holding()) {
-					theHold.Put(new VertexSelRestore(meshData,this));
-				}
-#endif
 				tobj->mesh.vertSel.SetAll();
 				skindata->VertSel.SetAll();
 				break;
@@ -1247,11 +1214,6 @@ void SkinModifierClass::InvertSelection(int selLevel)
 				return;
 
 			case VERTEX_SEL_LEVEL:
-#if 0 // undo/redo
-				if (theHold.Holding()) {
-					theHold.Put(new VertexSelRestore(meshData,this));
-				}
-#endif
 				for (int j=0; j<tobj->mesh.vertSel.GetSize(); j++) {
 					if (tobj->mesh.vertSel[j]) tobj->mesh.vertSel.Clear(j);
 					else tobj->mesh.vertSel.Set(j);
@@ -1355,11 +1317,6 @@ void SkinModifierClass::ActivateSubSelSet(TSTR & setname)
 		Mesh * mesh = &(tobj->mesh);
 
 		// TODO: undo redo
-#if 0
-		if (theHold.Holding()) {
-			theHold.Put(new VertexSelRestore(meshData,this));
-		}
-#endif
 
 		if (skindata->VertSelSets[index].GetSize() != mesh->getNumVerts()) {
 			skindata->VertSelSets[index].SetSize(mesh->getNumVerts(),TRUE);
@@ -1887,7 +1844,6 @@ float Bone_Distance(INode * bone,TimeValue time,const Point3 & vertex)
 	return Length(icenter - vertex);
 }
 
-#if defined W3D_MAX4		//defined as in the project (.dsp)
 
 int SkinModifierClass::NumSubObjTypes()
 {
@@ -1909,4 +1865,3 @@ ISubObjType *SkinModifierClass::GetSubObjType(int i)
 	}
 	return &_SubObjectTypeVertex;
 }
-#endif

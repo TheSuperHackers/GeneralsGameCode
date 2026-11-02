@@ -231,9 +231,6 @@ public:
 		int					Get_Texture_Frame_Count(int pass,int stage);
 		int					Get_Texture_Anim_Type(int pass,int stage);
 		Texmap *				Get_Texture(int pass,int stage);
-		Texmap *				Get_Displacement_Map() const								{ return DisplacementMap; }
-		float					Get_Displacement_Amount() const							{ return DisplacementAmt; }
-		int					Get_Displacement_Map_Index() const;
 		int					Get_Map_Channel(int pass,int stage);
 
 		void					Set_Current_Page(int pass,int page)							{ CurPage[pass] = page; }
@@ -275,7 +272,6 @@ public:
 		void					Set_Texture_Frame_Count(int pass,int stage,int val);
 		void					Set_Texture_Anim_Type(int pass,int stage,int val);
 		void					Set_Texture(int pass,int stage,Texmap * tex);
-		void					Set_Displacement_Amount(float amount)					{ DisplacementAmt = amount; Notify_Changed (); }
 
 		void					Set_Map_Channel(int pass,int stage,int channel);
 

@@ -1155,24 +1155,6 @@ int GameMtl::NumSubTexmaps()
 
 
 /***********************************************************************************************
- * GameMtl::Get_Displacement_Map_Index -- returns the Sub-texmap index for the displacement map.
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/01/99   PDS : Created.                                                                 *
- *=============================================================================================*/
-int GameMtl::Get_Displacement_Map_Index() const
-{
-	return DISPLACEMENT_INDEX;
-}
-
-
-/***********************************************************************************************
  * GameMtl::SetSubTexmap -- set the i'th texture map                                           *
  *                                                                                             *
  * INPUT:                                                                                      *
@@ -1420,10 +1402,6 @@ ULONG GameMtl::Requirements(int subMtlNum)
 
 	req |= MTLREQ_BGCOL;
 	req |= MTLREQ_NOATMOS;
-
-	#ifdef WANT_DISPLACEMENT_MAPS
-		req |= MTLREQ_DISPLACEMAP;
-	#endif //WANT_DISPLACEMENT_MAPS
 
 	return req;
 }

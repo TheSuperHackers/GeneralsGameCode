@@ -219,10 +219,8 @@ public:
 
 	SkinModifierClass();
 	SkinModifierClass(INode * node,SkinWSMObjectClass * skin_obj);
-#if defined W3D_MAX4		//defined as in the project (.dsp)
 	ISubObjType *GetSubObjType(int i);
 	int NumSubObjTypes();
-#endif
 	void								Default_Init();
 
 	/*
