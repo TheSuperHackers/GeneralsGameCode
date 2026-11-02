@@ -52,74 +52,6 @@ END
 // Dialog
 //
 
-IDD_W3D_EXPORT_OPTIONS DIALOG DISCARDABLE  0, 0, 259, 282
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "W3D Export Options"
-FONT 8, "MS Sans Serif"
-BEGIN
-    GROUPBOX        "Hierarchy",IDC_STATIC,7,7,245,64
-    GROUPBOX        "Animation",IDC_STATIC,7,78,245,107
-    GROUPBOX        "Geometry",IDC_STATIC,7,188,245,67
-    CONTROL         "Export",IDC_WHT_EXPORT_RADIO,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,17,22,36,10
-    CONTROL         "Load from file:",IDC_WHT_LOAD_RADIO,"Button",
-                    BS_AUTORADIOBUTTON,17,37,60,10
-    CONTROL         "Don't Export",IDC_WHT_NO_EXPORT_RADIO,"Button",
-                    BS_AUTORADIOBUTTON,17,53,55,10
-    CONTROL         "Use Translation Only",IDC_TRANSLATION_ONLY_CHECK,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,83,54,81,10
-    PUSHBUTTON      "Browse",IDC_WHT_BROWSE_BUTTON,79,37,165,12,WS_GROUP
-    CONTROL         "Export",IDC_WHA_EXPORT_RADIO,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,17,93,36,10
-    CONTROL         "Don't Export",IDC_WHA_NO_EXPORT_RADIO,"Button",
-                    BS_AUTORADIOBUTTON,17,108,55,10
-    LTEXT           "Frames:",IDC_STATIC,84,94,26,10,NOT WS_GROUP
-    CONTROL         "",IDC_RANGE_LOW_EDIT,"CustEdit",WS_GROUP | WS_TABSTOP,
-                    128,93,28,10
-    CONTROL         "",IDC_RANGE_LOW_SPIN,"SpinnerControl",0x0,156,93,10,10
-    LTEXT           "To",IDC_STATIC,168,93,10,10
-    CONTROL         "",IDC_RANGE_HIGH_EDIT,"CustEdit",WS_TABSTOP,182,93,28,
-                    10
-    CONTROL         "",IDC_RANGE_HIGH_SPIN,"SpinnerControl",0x0,210,93,10,10
-    CONTROL         "Export",IDC_WTM_EXPORT_RADIO,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,202,36,10
-    CONTROL         "Don't Export",IDC_WTM_NO_EXPORT_RADIO,"Button",
-                    BS_AUTORADIOBUTTON,15,220,55,10
-    CONTROL         "&Smooth Vertex Normals Across Meshes",
-                    IDC_EXPORT_MESH_SMOOTH_CHECK,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,87,203,139,10
-    DEFPUSHBUTTON   "OK",IDOK,66,261,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,144,261,50,14
-    CONTROL         "&Compress",IDC_COMPRESS_ANIMATION_CHECK,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,17,131,47,10
-    LTEXT           "Max Translation Error:(unit)",IDC_STATIC,16,150,85,8
-    GROUPBOX        "Compression Settings",IDC_STATIC,13,120,233,61
-    LTEXT           "Max Rotational Error:(deg)",IDC_STATIC,16,166,83,8
-    CONTROL         "Force Key Reduction",IDC_REDUCE_ANIMATION_CHECK,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,156,148,83,10
-    COMBOBOX        IDC_REDUCE_ANIMATION_COMBO,213,163,29,81,
-                    CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    LTEXT           "Key Reduction %:",IDC_STATIC,153,165,57,8
-    LTEXT           "Current FPS:  %d",IDC_ANIMATION_FPS_STATIC,79,108,80,8
-    COMBOBOX        IDC_COMPRESS_ANIMATION_FLAVOR_COMBO,65,129,96,49,
-                    CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    EDITTEXT        IDC_MAX_TRANS_ERROR_EDIT,103,147,40,14,ES_AUTOHSCROLL | 
-                    WS_GROUP
-    EDITTEXT        IDC_MAX_ROT_ERROR_EDIT,103,163,40,14,ES_AUTOHSCROLL | 
-                    WS_GROUP
-    CONTROL         "Review Log",IDC_VIEWLOG_CHECK,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,188,108,54,10
-    CONTROL         "Optimize Collision Detection",IDC_EXPORT_MESH_AABTREES,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,87,220,
-                    103,10
-    CONTROL         "Optimize Mesh Data (mesh names will be lost)",
-                    IDC_EXPORT_MESH_OPTIMIZE,"Button",BS_AUTOCHECKBOX | 
-                    BS_MULTILINE | WS_GROUP | WS_TABSTOP,87,237,162,10
-    CONTROL         "Terrain Mode (all meshes exported in world space)",
-                    IDC_TERRAIN_MODE_CHECK,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,79,22,173,10
-END
-
 IDD_BONE_INFLUENCE_PARAMS DIALOG DISCARDABLE  0, 0, 108, 78
 STYLE WS_CHILD
 FONT 8, "MS Sans Serif"
@@ -932,14 +864,6 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO DISCARDABLE 
 BEGIN
-    IDD_W3D_EXPORT_OPTIONS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 252
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 275
-    END
-
     IDD_BONE_INFLUENCE_PARAMS, DIALOG
     BEGIN
         LEFTMARGIN, 7

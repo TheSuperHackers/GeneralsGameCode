@@ -103,8 +103,6 @@ set(MAX2W3D_SRC
     "w3dappdata.h"
     "w3ddesc.cpp"
     "w3ddesc.h"
-    "w3ddlg.cpp"
-    "w3ddlg.h"
     "w3dexp.cpp"
     "w3dexp.h"
     "w3dmtl.cpp"
