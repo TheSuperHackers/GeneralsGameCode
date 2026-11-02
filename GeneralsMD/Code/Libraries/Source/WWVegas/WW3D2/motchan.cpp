@@ -431,7 +431,7 @@ void	TimeCodedMotionChannelClass::Get_Vector(float32 frame,float * setvec)
 
   if (pidx == ((NumTimeCodes - 1) * PacketSize))  {
 
-     const uint32 *frm = &Data[pidx+1];
+     const uint32* frm = &Data[pidx+1];
 
 		for (int i=0; i < VectorLen; i++)  {
 
@@ -449,7 +449,7 @@ void	TimeCodedMotionChannelClass::Get_Vector(float32 frame,float * setvec)
   uint32 time = Data[p2idx];
 
    if (time & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) {
-		const uint32 *frm = &Data[pidx+1];
+		const uint32* frm = &Data[pidx+1];
 		for (int i=0; i < VectorLen; i++) {
 			setvec[i] = std::bit_cast<float32>(frm[i]);
 		}
@@ -461,8 +461,8 @@ void	TimeCodedMotionChannelClass::Get_Vector(float32 frame,float * setvec)
 
   float32 ratio = (frame - time1) / (time2 - time1);
 
-  const uint32 *frame1 = &Data[pidx+1];
-  const uint32 *frame2 = &Data[p2idx+1];
+  const uint32* frame1 = &Data[pidx+1];
+  const uint32* frame2 = &Data[p2idx+1];
 
   for (int i=0; i < VectorLen; i++)  {
 
@@ -472,6 +472,16 @@ void	TimeCodedMotionChannelClass::Get_Vector(float32 frame,float * setvec)
 
 }
 
+
+// Sets a quaternion from the four floats stored in a packet.
+static void Set_Quaternion_From_Packet(Quaternion& q, const uint32* packet)
+{
+	q.Set(
+		std::bit_cast<float32>(packet[0]),
+		std::bit_cast<float32>(packet[1]),
+		std::bit_cast<float32>(packet[2]),
+		std::bit_cast<float32>(packet[3]));
+}
 
 Quaternion TimeCodedMotionChannelClass::Get_QuatVector(float32 frame)
 {
@@ -489,9 +499,7 @@ Quaternion TimeCodedMotionChannelClass::Get_QuatVector(float32 frame)
 
 	if (pidx == ((NumTimeCodes - 1) * PacketSize))  {
 
-		const uint32 *vec = &Data[pidx+1];
-
-		q.Set(std::bit_cast<float32>(vec[0]), std::bit_cast<float32>(vec[1]), std::bit_cast<float32>(vec[2]), std::bit_cast<float32>(vec[3]));
+		Set_Quaternion_From_Packet(q, &Data[pidx+1]);
 
 		return( q );
 
@@ -504,9 +512,7 @@ Quaternion TimeCodedMotionChannelClass::Get_QuatVector(float32 frame)
 
 	if (time & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) {
 		// its a binary movement!
-		const uint32 *vec = &Data[pidx+1];
-
-		q.Set(std::bit_cast<float32>(vec[0]), std::bit_cast<float32>(vec[1]), std::bit_cast<float32>(vec[2]), std::bit_cast<float32>(vec[3]));
+		Set_Quaternion_From_Packet(q, &Data[pidx+1]);
 
 		return( q );
 	}
@@ -516,14 +522,11 @@ Quaternion TimeCodedMotionChannelClass::Get_QuatVector(float32 frame)
 
 	float32 ratio = (frame - time1) / (time2 - time1);
 
-	const uint32 *frame1 = &Data[pidx+1];
-	const uint32 *frame2 = &Data[p2idx+1];
-
 	Quaternion q1(1);
 	Quaternion q2(1);
 
-	q1.Set(std::bit_cast<float32>(frame1[0]), std::bit_cast<float32>(frame1[1]), std::bit_cast<float32>(frame1[2]), std::bit_cast<float32>(frame1[3]));
-	q2.Set(std::bit_cast<float32>(frame2[0]), std::bit_cast<float32>(frame2[1]), std::bit_cast<float32>(frame2[2]), std::bit_cast<float32>(frame2[3]));
+	Set_Quaternion_From_Packet(q1, &Data[pidx+1]);
+	Set_Quaternion_From_Packet(q2, &Data[p2idx+1]);
 
 	Fast_Slerp(q, q1, q2, ratio);
 
@@ -973,7 +976,7 @@ bool AdaptiveDeltaMotionChannelClass::Load_W3D(ChunkLoadClass & cload)
 void AdaptiveDeltaMotionChannelClass::decompress(uint32 frame_idx, float *outdata)
 {
 	// Start Over from the beginning
-	const uint32 *base	= &Data[0];	// pointer to our true know beginning values
+	const uint32* base	= &Data[0];	// pointer to our true know beginning values
 
 	bool done = false;
 
@@ -1049,7 +1052,7 @@ void AdaptiveDeltaMotionChannelClass::decompress(uint32 src_idx, float *srcdata,
    assert(src_idx < frame_idx);
    src_idx++;
 
-	const uint32 *base	= &Data[VectorLen];	// skip header information
+	const uint32* base	= &Data[VectorLen];	// skip header information
 
 	bool done = false;
 
