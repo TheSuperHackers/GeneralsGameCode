@@ -1253,53 +1253,25 @@ BEGIN
     IDS_COPYRIGHT_NOTICE    "Copyright 1997 Westwood Studios"
     IDS_AUTHOR_NAME         "Greg Hjelstrom"
     IDS_GAMEMTL             "W3D"
-    IDS_MAP_TEXTURE         "Texture"
-    IDS_ENVMAP              "Env-Map"
     IDS_SCENE_EXPORT        "Scene Export"
     IDS_LIB_DESCRIPTION     "Westwood 3D Export Plugins"
-    IDS_FILE_OPEN_ERROR     "Unable to open file"
-    IDS_DLL_NAME            "max2w3d.dle"
-    IDS_WTM_SHORT_DESCRIPTION "Westwood Textured Mesh"
-    IDS_WTM_LONG_DESCRIPTION "Westwood Textured Mesh"
-    IDS_WHT_SHORT_DESCRIPTION "Westwood Hierarchy Tree"
-    IDS_WHT_LONG_DESCRIPTION "Westwood Hierarchy Tree"
-    IDS_WHA_SHORT_DESCRIPTION "Westwood Hierarchy Animation"
-    IDS_WHA_LONG_DESCRIPTION "Westwood Hierarchy Animation"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_WTM_FILE_EXTEN      "wtm"
-    IDS_WHT_FILE_EXTEN      "wht"
-    IDS_WHA_FILE_EXTEN      "wha"
     IDS_W3D_FILE_EXTEN      "w3d"
     IDS_W3D_LONG_DESCRIPTION "Westwood 3D Assets"
     IDS_W3D_SHORT_DESCRIPTION "Westwood 3D Assets"
     IDS_W3D_UTILITY_CLASS_NAME "W3D Tools"
     IDS_W3DMENU_CATEGORY    "Westwood Tools"
-    IDS_W3DMENU_TITLE       "W3D Tools"
     IDS_SOT                 "Supports Objects of Type"
     IDS_DIFFUSE_COLOR       "Diffuse Color"
     IDS_PARAMETERS          "Parameters"
-    IDS_TEXTURE_MAP         "Texture Map"
-    IDS_ENVIRONMENT_MAP     "Environment Map"
-    IDS_TEXMAPS             "Texture Maps"
-    IDS_AM                  "Ambient"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_SKIN_CLASS_NAME     "Westwood Skin"
-    IDS_SKIN_OBJECT_NAME    "Westwood Skin"
-    IDS_SKIN                "Westwood Skin"
-    IDS_SKIN_PARAMETERS     "Skin Parameters"
-    IDS_SKIN_INFO           "Westwood Skin Info"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
     IDS_BONE_INFLUENCE_PARAMS "Bone Influence"
-    IDS_SOT2                "Supports Objects of Type"
     IDS_SKELETON_PARAMETERS "Skeleton Parameters"
     IDS_PICK_BONE_DIALOG_TITLE "Select bones"
     IDS_PICK_BONE_BUTTON_TEXT "Ok"
@@ -1312,27 +1284,14 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_DI                  "Diffuse"
-    IDS_SP                  "Specular"
-    IDS_SH                  "Shininess"
-    IDS_SS                  "Shininess Strength"
-    IDS_SI                  "Self-Illumination"
-    IDS_OP                  "Opacity"
-    IDS_FI                  "Blend"
-    IDS_BU                  "Bump"
-    IDS_RL                  "Reflection"
-    IDS_RR                  "Refraction"
     IDS_NONE                "None"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
     IDS_PASS_COUNT          "Material Pass Count"
-    IDS_PASS_SETTINGS       "Pass %d Settings"
     IDS_PUBLISH             "Publish"
     IDS_DISPLAY             "Display"
-    IDS_RESIZE              "Resize"
-    IDS_NO_MIPMAP           "No Mipmap"
     IDS_CLAMP_U             "Clamp U"
     IDS_CLAMP_V             "Clamp V"
     IDS_ALPHA_BITMAP        "Alpha Bitmap"
