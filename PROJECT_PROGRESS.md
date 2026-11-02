@@ -30,7 +30,18 @@ See [`MENTORING_GUIDELINES.md`](MENTORING_GUIDELINES.md) for how we collaborate.
 - Git subsequently reported `## main...origin/main`.
 - **Important:** Those results describe the state at synchronization time, not a fresh verification of today's working tree. Check `git status` before starting a new change.
 
-**Next practice:** Create a focused branch before making substantive project changes; review diffs, test, and commit in small increments.
+### Documentation workflow milestone — completed (2026-11-02)
+
+- Created `docs/project-documentation` from `main`.
+- Added `MENTORING_GUIDELINES.md` and `PROJECT_PROGRESS.md`.
+- Configured the local Git author identity globally.
+- Created documentation commit `911580ea` (`docs: add mentoring guidelines and project progress`).
+- Fast-forward merged the documentation branch into `main`.
+- Successfully pushed to `origin/main` and verified both documents on GitHub.
+- Deleted the completed local documentation branch.
+- Visual Studio subsequently showed 0 incoming and 0 outgoing commits.
+
+**Next practice:** Use focused feature branches for C++ development, review diffs, test changes, and make descriptive commits.
 
 ## 3. Development environment
 
@@ -131,6 +142,8 @@ See [`MENTORING_GUIDELINES.md`](MENTORING_GUIDELINES.md) for how we collaborate.
 - [x] Produce a working `z_generals` Zero Hour executable.
 - [x] Validate skirmish gameplay in a separate test directory.
 - [x] Create and synchronize a personal GitHub fork with clear `origin`/`upstream` roles.
+- [x] Establish permanent mentoring and project progress documentation.
+- [x] Practice creating, committing, merging, pushing, and deleting a documentation branch.
 - [ ] Trace the performance HUD counters from calculation to rendering.
 - [ ] Set and use a relevant breakpoint in Visual Studio, and inspect the call stack/variables.
 - [ ] Understand the relevant parts of the update/render/logic loop.
@@ -142,6 +155,7 @@ See [`MENTORING_GUIDELINES.md`](MENTORING_GUIDELINES.md) for how we collaborate.
 
 | Date | Milestone | Evidence / result | Next action |
 | --- | --- | --- | --- |
+| 2026-11-02 | Documentation and Git workflow completed | Commit `911580ea` fast-forward merged into `main`, pushed to `origin/main`; completed branch deleted locally | Resume FPS HUD investigation |
 | By 2026-11-02 | Fork and Git synchronization | `origin` and `upstream` configured; synchronized commit reported as `e2a1216b1` | Use feature branches for new work |
 | By 2026-11-02 | Debug build established | 1,224 build steps, final `generalszh.exe` link succeeded | Learn debugger workflow |
 | By 2026-11-02 | Debug executable game-tested | Game launched and skirmish worked in `ZeroHour-Test` | Investigate assertion separately |
