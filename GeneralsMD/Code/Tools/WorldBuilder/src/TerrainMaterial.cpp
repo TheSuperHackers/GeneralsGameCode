@@ -149,7 +149,7 @@ void TerrainMaterial::updateLabel()
 	}
 	const char *leaf = tName;
 	while (*tName) {
-		if ((tName[0] == '\\' || tName[0] == '/')&& tName[1]) {
+		if (isPathSeparator(tName[0]) && tName[1]) {
 			leaf = tName+1;
 		}
 		tName++;
@@ -316,7 +316,7 @@ void TerrainMaterial::addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent)
 			if (pPath[i] == 0) {
 				return;
 			}
-			if (pPath[i] == '\\' || pPath[i] == '/') {
+			if (isPathSeparator(pPath[i])) {
 				if (i>0 && (i>1 || buffer[0]!='.') ) {
 					// skip the "." directory.
 					buffer[i] = 0;

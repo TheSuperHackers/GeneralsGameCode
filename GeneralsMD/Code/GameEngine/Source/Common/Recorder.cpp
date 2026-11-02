@@ -49,7 +49,6 @@
 #include "Common/CRCDebug.h"
 #include "Common/OptionPreferences.h"
 #include "Common/version.h"
-#include "Lib/PathUtil.h"
 #include <Utility/bit_adapter.h>
 
 constexpr const char s_genrep[] = "GENREP";
@@ -1688,10 +1687,8 @@ AsciiString RecorderClass::getLastReplayFileName()
 			AsciiString players;
 			AsciiString full;
 			AsciiString fullPlusNum;
-			AsciiString mapName = game->getMap();
-			const char *fname = mapName.reverseFind('\\');
-			if (fname)
-				mapName = fname+1;
+			const AsciiString mapPath = game->getMap();
+			const char* mapName = getFileName(mapPath.str());
 			for (Int i=0; i<MAX_SLOTS; ++i)
 			{
 				GameSlot *slot = game->getSlot(i);
@@ -1702,7 +1699,7 @@ AsciiString RecorderClass::getLastReplayFileName()
 					players.concat(player);
 				}
 			}
-			full.format("%s%s_%d_%d", players.str(), mapName.str(), game->getSeed(), game->getLocalSlotNum());
+			full.format("%s%s_%d_%d", players.str(), mapName, game->getSeed(), game->getLocalSlotNum());
 			AsciiString testString;
 			testString.format("%s%s%s", getReplayDir().str(), full.str(), replayExtention);
 

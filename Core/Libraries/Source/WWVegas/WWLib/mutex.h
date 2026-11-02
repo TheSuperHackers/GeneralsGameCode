@@ -179,8 +179,8 @@ public:
 		    bts dword ptr [ebx], 0
 		    jc  The_Bit_Was_Previously_Set_So_Try_Again
 		  }
-      //_asm _emit 0x72
-      //_asm _emit 0xf1
+      //__asm _emit 0x72
+      //__asm _emit 0xf1
 
       BitSet:
         ;

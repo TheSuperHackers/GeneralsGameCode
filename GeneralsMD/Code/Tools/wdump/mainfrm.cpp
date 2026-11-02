@@ -23,6 +23,7 @@
 #include "wdump.h"
 #include "wdtview.h"
 #include "wdlview.h"
+#include "wdeview.h"
 
 #include "mainfrm.h"
 
@@ -107,7 +108,9 @@ BOOL CMainFrame::OnCreateClient( LPCREATESTRUCT /*lpcs*/,
 	// TODO: Add your specialized code here and/or call the base class
 	if (!m_SplitWnd.CreateStatic(this, 1,2) ||
 		!m_SplitWnd.CreateView(0, 0, RUNTIME_CLASS(CWDumpTreeView), CSize(300,0), pContext) ||
-		!m_SplitWnd.CreateView(0, 1, RUNTIME_CLASS(CWDumpListView), CSize(0,0), pContext)) {
+		!m_DataSplitWnd.CreateStatic(&m_SplitWnd, 2, 1, WS_CHILD | WS_VISIBLE, m_SplitWnd.IdFromRowCol(0, 1)) ||
+		!m_DataSplitWnd.CreateView(0, 0, RUNTIME_CLASS(CWDumpListView), CSize(0, r.Height() / 2), pContext) ||
+		!m_DataSplitWnd.CreateView(1, 0, RUNTIME_CLASS(CWDumpEditView), CSize(0,0), pContext)) {
 		return FALSE;
 	} else {
 		return TRUE;

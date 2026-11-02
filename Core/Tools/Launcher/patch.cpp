@@ -32,6 +32,7 @@ This is where all the code is for applying various types of patches.
 
 
 #include "patch.h"
+#include "Lib/PathUtil.h"
 #include <shellapi.h>
 #include <direct.h>
 
@@ -245,13 +246,7 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
     // Eg: 22456_patch.rtp  means version 22456 goes into the registry
 
     // The version# starts after the last '\' char
-    char   *cptr=patchfile;
-    char   *tempPtr;
-    DWORD   version;
-    while( (tempPtr=strchr(cptr,'\\')) !=nullptr)
-      cptr=tempPtr+1;
-    if (cptr)
-      version=atol(cptr);
+    DWORD   version=atol(getFileName(patchfile));
     DBGMSG("VERSION TO = "<<version);
 
 

@@ -99,7 +99,7 @@ CSaveSettingsDialog::OnBrowseButton ()
 {
 	 TCHAR szFileName[MAX_PATH];
 	 ::GetModuleFileName (nullptr, szFileName, sizeof (szFileName));
-	 LPTSTR pszPath = ::strrchr (szFileName, '\\');
+	 LPTSTR pszPath = getLastPathSeparator (szFileName);
 	 if (pszPath)
 	 {
 			::SetCurrentDirectory (pszPath);

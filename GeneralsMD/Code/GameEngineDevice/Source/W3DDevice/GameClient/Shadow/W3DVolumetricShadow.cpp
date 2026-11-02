@@ -1935,6 +1935,13 @@ void W3DVolumetricShadow::updateVolumes(Real zoffset)
 	}
 }
 
+// Returns the X, Y and Z components of a matrix row.
+static Vector3 getRowXYZ(const Matrix4x4& matrix, Int row)
+{
+	const Vector4& r = matrix[row];
+	return Vector3(r.X, r.Y, r.Z);
+}
+
 /*floorZ is the assumed ground height below the model.  The code will try to extrude shadows just long enough to hit this point in order
 to reduce fill rate usage.*/
 void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const Matrix3D *meshXform, const AABoxClass &meshBox, float floorZ )
@@ -2006,20 +2013,16 @@ void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const 
 #else
 	//When dealing with infinite light sources, we can assume that the shadow doesn't
 	//change much based on object position.  Only the orientation to light matters.
-	Real cosAngle = fabs (Vector3::Dot_Product((Vector3 &)(prevXForm->operator [](0)),(Vector3 &)(objectToWorld.operator [](0))));
-	if (cosAngle >= cosAngleToCare)
-	{	cosAngle = fabs (Vector3::Dot_Product((Vector3 &)(prevXForm->operator [](1)),(Vector3 &)(objectToWorld.operator [](1))));
-		if (cosAngle >= cosAngleToCare)
+	for (Int rowIndex = 0; rowIndex < 3; ++rowIndex)
+	{
+		const Vector3 prevRow = getRowXYZ(*prevXForm, rowIndex);
+		const Vector3 currRow = getRowXYZ(objectToWorld, rowIndex);
+		if (fabs(Vector3::Dot_Product(prevRow, currRow)) < cosAngleToCare)
 		{
-			cosAngle = fabs (Vector3::Dot_Product((Vector3 &)(prevXForm->operator [](2)),(Vector3 &)(objectToWorld.operator [](2))));
-			if (cosAngle < cosAngleToCare)
-				isMeshRotating=true;
+			isMeshRotating = true;
+			break;
 		}
-		else
-			isMeshRotating =true;
 	}
-	else
-		isMeshRotating =true;
 #endif	//near light source
 #endif // CNC3
 
@@ -2668,9 +2671,8 @@ void W3DVolumetricShadow::constructVolume( Vector3 *lightPosObject,Real shadowEx
 			if (silhouetteIndices[k]==currentEdgeEnd)
 			{
 				//swap the two edges
-				Int tempIndex=*(Int *)(&silhouetteIndices[i+2]);
-				*(Int *)&silhouetteIndices[i+2]=*(Int *)&silhouetteIndices[k];
-				*(Int *)&silhouetteIndices[k]=tempIndex;
+				std::swap(silhouetteIndices[i+2], silhouetteIndices[k]);
+				std::swap(silhouetteIndices[i+3], silhouetteIndices[k+1]);
 				break;
 			}
 
@@ -2902,9 +2904,8 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 				if (silhouetteIndices[k]==currentEdgeEnd)
 				{
 					//swap the two edges
-					Int tempIndex=*(Int *)(&silhouetteIndices[i+2]);
-					*(Int *)&silhouetteIndices[i+2]=*(Int *)&silhouetteIndices[k];
-					*(Int *)&silhouetteIndices[k]=tempIndex;
+					std::swap(silhouetteIndices[i+2], silhouetteIndices[k]);
+					std::swap(silhouetteIndices[i+3], silhouetteIndices[k+1]);
 					break;
 				}
 

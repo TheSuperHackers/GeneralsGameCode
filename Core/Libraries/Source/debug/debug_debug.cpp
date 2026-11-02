@@ -308,7 +308,7 @@ bool Debug::SkipNext()
   // a valid frame pointer here!
   unsigned help;
 #if defined(_MSC_VER)
-  _asm
+  __asm
   {
     mov eax,[ebp+4]   // return address
     mov help,eax
@@ -436,7 +436,7 @@ bool Debug::AssertDone()
           break;
         case IDRETRY:
 #if defined(_MSC_VER)
-          _asm
+          __asm
           {
             int 0x03
           }
@@ -713,7 +713,7 @@ bool Debug::CrashDone(bool die)
             break;
           case IDRETRY:
 #if defined(_MSC_VER)
-            _asm
+            __asm
             {
               int 0x03
             }
@@ -1235,7 +1235,7 @@ Debug::FrameHashEntry* Debug::AddFrameEntry(unsigned addr, unsigned type,
   else
   {
     // no, just add file name (without path though)
-    e->fileOrGroup=fileOrGroup?strrchr(fileOrGroup,'\\'):nullptr;
+    e->fileOrGroup=fileOrGroup?strrpbrk(fileOrGroup,"/\\"):nullptr;
     e->fileOrGroup=e->fileOrGroup?e->fileOrGroup+1:fileOrGroup;
   }
 
@@ -1272,7 +1272,7 @@ const char *Debug::AddLogGroup(const char *fileOrGroup, const char *descr)
   char help[200];
 
   // do we need to strip down fileOrGroup?
-  const char *p=strrchr(fileOrGroup,'\\');
+  const char *p=strrpbrk(fileOrGroup,"/\\");
   const char *q=strchr(p?p:fileOrGroup,'.');
   if (p||q)
   {

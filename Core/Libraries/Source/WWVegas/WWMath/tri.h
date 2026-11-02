@@ -285,7 +285,8 @@ inline bool Cast_Semi_Infinite_Axis_Aligned_Ray_To_Triangle(const Vector3 &tri_p
 					tri.V[0] = &tri_point0;
 					tri.V[1] = &tri_point1;
 					tri.V[2] = &tri_point2;
-					tri.N = (Vector3*)&tri_plane;
+					Vector3 normal(tri_plane.X,tri_plane.Y,tri_plane.Z);
+					tri.N = &normal;
 					if (tri.Contains_Point(ray_start)) {
 						flags |= TRI_RAYCAST_FLAG_START_IN_TRI;
 					}

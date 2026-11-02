@@ -137,55 +137,27 @@ static Bool doFileTransfer( AsciiString filename, MapTransferLoadScreen *ls, Int
 
 AsciiString GetBasePathFromPath( AsciiString path )
 {
-	const char *s = path.reverseFind('\\');
+	const char *s = getLastPathSeparator(path.str());
 	if (s)
 	{
-		Int len = s - path.str();
-
-		AsciiString base;
-		char *buf = base.getBufferForRead(len + 1);
-		memcpy(buf, path.str(), len);
-		buf[len] = 0;
-		return buf;
+		return AsciiString(path.str(), s - path.str());
 	}
 	return AsciiString::TheEmptyString;
 }
 
-AsciiString GetFileFromPath( AsciiString path )
-{
-	const char *s = path.reverseFind('\\');
-	if (s)
-		return s+1;
-	return path;
-}
-
-AsciiString GetExtensionFromFile( AsciiString fname )
-{
-	const char *s = fname.reverseFind('.');
-	if (s)
-		return s+1;
-	return fname;
-}
-
 AsciiString GetBaseFileFromFile( AsciiString fname )
 {
-	const char *s = fname.reverseFind('.');
+	const char *s = getExtension(fname.str());
 	if (s)
 	{
-		Int len = s - fname.str();
-
-		AsciiString base;
-		char *buf = base.getBufferForRead(len + 1);
-		memcpy(buf, fname.str(), len);
-		buf[len] = 0;
-		return buf;
+		return AsciiString(fname.str(), s - fname.str());
 	}
 	return AsciiString::TheEmptyString;
 }
 
 AsciiString GetPreviewFromMap( AsciiString path )
 {
-	AsciiString fname = GetBaseFileFromFile(GetFileFromPath(path));
+	AsciiString fname = GetBaseFileFromFile(getFileName(path.str()));
 	AsciiString base = GetBasePathFromPath(path);
 
 	AsciiString out;

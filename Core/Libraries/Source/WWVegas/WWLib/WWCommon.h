@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "Lib/PathUtil.h"
 #include "ref_ptr.h"
 #include "refcount.h"
 #include "Utility/STLUtils.h"

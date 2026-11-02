@@ -44,7 +44,35 @@
 #include "Utility/endian_compat.h"
 
 
-static const char *BIGFileIdentifier = "BIGF";
+static const char BIGFileIdentifier[] = { 'B', 'I', 'G', 'F' };
+
+struct BIGFileHeader {
+	char identifier[sizeof(BIGFileIdentifier)];
+	UnsignedInt archiveFileSize; // little endian, retail reads it as Int so 2 GB max
+	UnsignedInt numFiles; // big endian
+	UnsignedInt firstEntryOffset; // big endian
+};
+
+struct BIGFileEntryHeader {
+	UnsignedInt fileOffset; // big endian
+	UnsignedInt fileSize; // big endian
+};
+
+static_assert(sizeof(BIGFileHeader) == 16, "Incorrect BIG header size");
+static_assert(sizeof(BIGFileEntryHeader) == 8, "Incorrect BIG entry header size");
+
+// Returns the length of the string, or -1 if it is truncated or does not fit the buffer.
+static Int readNullTerminatedString(File *fp, char *buffer, Int bufferSize) {
+	for (Int i = 0; i < bufferSize; ++i) {
+		if (fp->read(buffer + i, 1) != 1) {
+			return -1;
+		}
+		if (buffer[i] == 0) {
+			return i;
+		}
+	}
+	return -1;
+}
 
 BIGFileSystem::BIGFileSystem() : ArchiveFileSystem() {
 }
@@ -85,8 +113,9 @@ ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
 	AsciiString archiveFileName;
 	archiveFileName = filename;
 	archiveFileName.toLower();
-	Int archiveFileSize = 0;
-	Int numLittleFiles = 0;
+	UnsignedInt archiveFileSize = 0;
+	UnsignedInt numLittleFiles = 0;
+	BIGFileHeader header;
 
 	DEBUG_LOG(("BIGFileSystem::openArchiveFile - opening BIG file %s", filename));
 
@@ -97,68 +126,55 @@ ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
 
 	AsciiString asciibuf;
 	char buffer[_MAX_PATH];
-	fp->read(buffer, 4); // read the "BIG" at the beginning of the file.
-	buffer[4] = 0;
-	if (strcmp(buffer, BIGFileIdentifier) != 0) {
-		DEBUG_CRASH(("Error reading BIG file identifier in file %s", filename));
+	if (fp->read(&header, sizeof(header)) != sizeof(header) || memcmp(header.identifier, BIGFileIdentifier, sizeof(BIGFileIdentifier)) != 0) {
+		DEBUG_CRASH(("Error reading BIG file header in file %s", filename));
 		fp->close();
 		fp = nullptr;
 		return nullptr;
 	}
 
-	// read in the file size.
-	fp->read(&archiveFileSize, 4);
+	archiveFileSize = letoh(header.archiveFileSize);
+	numLittleFiles = betoh(header.numFiles);
 
-	DEBUG_LOG(("BIGFileSystem::openArchiveFile - size of archive file is %d bytes", archiveFileSize));
+	DEBUG_LOG(("BIGFileSystem::openArchiveFile - size of archive file is %u bytes", archiveFileSize));
 
 //	char t;
 
-	// read in the number of files contained in this BIG file.
-	// change the order of the bytes cause the file size is in reverse byte order for some reason.
-	fp->read(&numLittleFiles, 4);
-	numLittleFiles = betoh(numLittleFiles);
-
-	DEBUG_LOG(("BIGFileSystem::openArchiveFile - %d are contained in archive", numLittleFiles));
+	DEBUG_LOG(("BIGFileSystem::openArchiveFile - %u are contained in archive", numLittleFiles));
 //	for (Int i = 0; i < 2; ++i) {
 //		t = buffer[i];
 //		buffer[i] = buffer[(4-i)-1];
 //		buffer[(4-i)-1] = t;
 //	}
 
-	// seek to the beginning of the directory listing.
-	fp->seek(0x10, File::START);
 	// read in each directory listing.
 	ArchivedFileInfo fileInfo;
 	ArchiveFile *archiveFile = NEW ArchiveFile(filename, AsciiString::TheEmptyString);
 
-	for (Int i = 0; i < numLittleFiles; ++i) {
-		Int filesize = 0;
-		Int fileOffset = 0;
-		fp->read(&fileOffset, 4);
-		fp->read(&filesize, 4);
-
-		filesize = betoh(filesize);
-		fileOffset = betoh(fileOffset);
-
-		fileInfo.m_archiveFilename = archiveFileName;
-		fileInfo.m_offset = fileOffset;
-		fileInfo.m_size = filesize;
-
-		// read in the path name of the file.
-		Int pathIndex = -1;
-		do {
-			++pathIndex;
-			fp->read(buffer + pathIndex, 1);
-		} while (buffer[pathIndex] != 0);
-
-		Int filenameIndex = pathIndex;
-		while ((filenameIndex >= 0) && (buffer[filenameIndex] != '\\') && (buffer[filenameIndex] != '/')) {
-			--filenameIndex;
+	Bool corrupt = FALSE;
+	for (UnsignedInt i = 0; i < numLittleFiles; ++i) {
+		BIGFileEntryHeader entry;
+		if (fp->read(&entry, sizeof(entry)) != sizeof(entry)) {
+			corrupt = TRUE;
+			break;
 		}
 
-		fileInfo.m_filename = (char *)(buffer + filenameIndex + 1);
+		fileInfo.m_archiveFilename = archiveFileName;
+		fileInfo.m_offset = betoh(entry.fileOffset);
+		fileInfo.m_size = betoh(entry.fileSize);
+
+		// read in the path name of the file.
+		const Int pathIndex = readNullTerminatedString(fp, buffer, sizeof(buffer));
+		if (pathIndex < 0) {
+			corrupt = TRUE;
+			break;
+		}
+
+		char *leafName = getFileName(buffer);
+
+		fileInfo.m_filename = leafName;
 		fileInfo.m_filename.toLower();
-		buffer[filenameIndex + 1] = 0;
+		*leafName = 0;
 
 		AsciiString path;
 		path = buffer;
@@ -169,6 +185,14 @@ ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
 //		DEBUG_LOG(("BIGFileSystem::openArchiveFile - adding file %s to archive file %s, file number %d", debugpath.str(), fileInfo.m_archiveFilename.str(), i));
 
 		archiveFile->addFile(path, &fileInfo);
+	}
+
+	if (corrupt) {
+		DEBUG_CRASH(("Truncated or corrupt directory in BIG file %s", filename));
+		delete archiveFile;
+		fp->close();
+		fp = nullptr;
+		return nullptr;
 	}
 
 	archiveFile->attachFile(fp);

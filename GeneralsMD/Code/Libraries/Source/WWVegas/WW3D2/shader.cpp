@@ -965,14 +965,12 @@ void ShaderClass::Apply()
 			}
 		} else {
 
-#pragma message("(gth) Generals added a feature here WW3D::Is_Coloring_Enabled() which needs to be merged properly")
-#if 0
 			if (WW3D::Is_Coloring_Enabled())
 			{
-				cArg2=aArg2=D3DTA_TFACTOR;
-				cOp=aOp=D3DTOP_SELECTARG2;
+				PricArg2=PriaArg2=D3DTA_TFACTOR;
+				PricOp=PriaOp=D3DTOP_SELECTARG2;
 			}
-#endif
+
 			DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLOROP,PricOp);
 			DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLORARG1,PricArg1);
 			DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLORARG2,PricArg2);

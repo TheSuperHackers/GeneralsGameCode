@@ -76,7 +76,7 @@ static void ConvertShortMapPathToLongMapPath(AsciiString &mapName)
 	AsciiString token;
 	AsciiString actualpath;
 
-	if ((path.find('\\') == nullptr) && (path.find('/') == nullptr))
+	if (getFirstPathSeparator(path.str()) == nullptr)
 	{
 		DEBUG_CRASH(("Invalid map name %s", mapName.str()));
 		return;

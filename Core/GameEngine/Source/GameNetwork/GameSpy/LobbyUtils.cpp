@@ -274,16 +274,7 @@ static void gameTooltip(GameWindow *window,
 	}
 	else
 	{
-		const char *start = room->getMap().reverseFind('\\');
-		if (start)
-		{
-			++start;
-		}
-		else
-		{
-			start = room->getMap().str();
-		}
-		mapName.translate( start );
+		mapName.translate( getFileName(room->getMap().str()) );
 	}
 	UnicodeString tmp;
 	tooltip.format(TheGameText->fetch("TOOLTIP:GameInfoGameName"), room->getGameName().str());
@@ -584,16 +575,7 @@ static Int insertGame( GameWindow *win, GameSpyStagingRoom *game, Bool showMap )
 		}
 		else
 		{
-			const char *start = game->getMap().reverseFind('\\');
-			if (start)
-			{
-				++start;
-			}
-			else
-			{
-				start = game->getMap().str();
-			}
-			mapName.translate( start );
+			mapName.translate( getFileName(game->getMap().str()) );
 		}
 		GadgetListBoxAddEntryText(win, mapName, gameColor, index, COLUMN_MAP);
 

@@ -10,7 +10,7 @@ on:
       game:
         required: true
         type: string
-        description: "Game to check (only GeneralsMD for now)"
+        description: "Game to check (Generals or GeneralsMD)"
       userdata:
         required: true
         type: string
@@ -29,6 +29,8 @@ jobs:
       GAME_PATH: C:\GameData
       GENERALS_PATH: C:\GameData\Generals
       GENERALSMD_PATH: C:\GameData\GeneralsMD
+      GAME_EXE: ${{ inputs.game == 'Generals' && 'generalsv.exe' || 'generalszh.exe' }}
+      USER_DATA_PATH: ${{ inputs.game == 'Generals' && 'Command and Conquer Generals Data' || 'Command and Conquer Generals Zero Hour Data' }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -46,7 +48,7 @@ jobs:
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: ${{ env.GAME_PATH }}
-          key: gamedata-permanent-cache-v4
+          key: gamedata-permanent-cache-v5
 
       - name: Download Game Data from Cloudflare R2
         if: ${{ steps.cache-gamedata.outputs.cache-hit != 'true' }}
@@ -54,7 +56,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           AWS_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
-          EXPECTED_HASH_GENERALS: "37A351AA430199D1F05DEB9E404857DCE7B461A6AC272C5D4A0B5652CDB06372"
+          EXPECTED_HASH_GENERALS: "269E13D4DA44712A55B936D750B295694EBFB5E1100D73875EC1D5BC8F68DD77"
           EXPECTED_HASH_GENERALSMD: "6837FE1E3009A4C239406C39B1598216C0943EE8ED46BB10626767029AC05E21"
         shell: pwsh
         run: |
@@ -83,10 +85,10 @@ jobs:
           # Data\Scripts\SkirmishScripts.scb
 
           Write-Host "Downloading Game Data for Generals" -ForegroundColor Cyan
-          aws s3 cp s3://github-ci/generals108_gamedata_trimmed.7z generals108_gamedata_trimmed.7z --endpoint-url $env:AWS_ENDPOINT_URL
+          aws s3 cp s3://github-ci/generals108_gamedata_trimmed_v2.7z generals108_gamedata_trimmed_v2.7z --endpoint-url $env:AWS_ENDPOINT_URL
 
           Write-Host "Verifying File Integrity" -ForegroundColor Cyan
-          $fileHash = (Get-FileHash -Path generals108_gamedata_trimmed.7z -Algorithm SHA256).Hash
+          $fileHash = (Get-FileHash -Path generals108_gamedata_trimmed_v2.7z -Algorithm SHA256).Hash
           Write-Host "Downloaded file SHA256: $fileHash"
           Write-Host "Expected file SHA256: $env:EXPECTED_HASH_GENERALS"
           if ($fileHash -ne $env:EXPECTED_HASH_GENERALS) {
@@ -96,8 +98,8 @@ jobs:
 
           Write-Host "Extracting Archive" -ForegroundColor Cyan
           $extractPath = $env:GENERALS_PATH
-          & 7z x generals108_gamedata_trimmed.7z -o"$extractPath"
-          Remove-Item generals108_gamedata_trimmed.7z -Verbose
+          & 7z x generals108_gamedata_trimmed_v2.7z -o"$extractPath"
+          Remove-Item generals108_gamedata_trimmed_v2.7z -Verbose
 
           # Download GeneralsMD (ZH) Game Files
           # The archive contains these files:
@@ -137,8 +139,8 @@ jobs:
       - name: Set Generals InstallPath in Registry
         shell: pwsh
         run: |
-          # Zero Hour loads some Generals files and needs this registry key to find the
-          # Generals data files.
+          # Generals reads its install path from this registry key. Zero Hour loads some
+          # Generals files and needs it to find the Generals data files too.
 
           $regPath = "HKCU:\SOFTWARE\Electronic Arts\EA Games\Generals"
           $installPath = "$env:GENERALS_PATH\"
@@ -158,13 +160,13 @@ jobs:
           # These files are expected in the user dir, so we move them here.
 
           $source = "${{ inputs.userdata }}\Replays"
-          $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Replays"
+          $destination = "$env:USERPROFILE\Documents\$env:USER_DATA_PATH\Replays"
           Write-Host "Move replays to $destination"
           New-Item -ItemType Directory -Path $destination -Force | Out-Null
           Move-Item -Path "$source\*" -Destination $destination -Force
 
           $source = "${{ inputs.userdata }}\Maps"
-          $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Maps"
+          $destination = "$env:USERPROFILE\Documents\$env:USER_DATA_PATH\Maps"
           Write-Host "Move maps to $destination"
           New-Item -ItemType Directory -Path $destination -Force | Out-Null
           Move-Item -Path "$source\*" -Destination $destination -Force
@@ -172,7 +174,7 @@ jobs:
       - name: Run Replay Compatibility Tests
         shell: pwsh
         run: |
-          $exePath = "build/generalszh.exe"
+          $exePath = "build/$env:GAME_EXE"
           $arguments = "-jobs 4 -headless -replay *.rep"
           $timeoutSeconds = 10*60
           $stdoutPath = "stdout.log"
@@ -236,7 +238,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
-          name: Replay-Debug-Log-${{ inputs.preset }}
+          name: Replay-Debug-Log-${{ inputs.game }}-${{ inputs.preset }}
           path: build/DebugLogFile*.txt
           retention-days: 30
           if-no-files-found: ignore

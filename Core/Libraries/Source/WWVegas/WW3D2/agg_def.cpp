@@ -347,7 +347,7 @@ AggregateDefClass::Load_Assets (const char *passet_name)
 		::GetCurrentDirectory (sizeof (path), path);
 
 		// Ensure the path is directory delimited
-		if (path[::lstrlen(path)-1] != '\\') {
+		if (!isPathSeparator(path[::lstrlen(path)-1])) {
 			::lstrcat (path, "\\");
 		}
 

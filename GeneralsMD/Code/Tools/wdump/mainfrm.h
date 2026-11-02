@@ -31,6 +31,7 @@ protected: // create from serialization only
 // Attributes
 protected:
 	CSplitterWnd m_SplitWnd;
+	CSplitterWnd m_DataSplitWnd;
 public:
 
 // Operations

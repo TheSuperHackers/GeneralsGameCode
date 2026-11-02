@@ -39,6 +39,8 @@ public:
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CWDumpEditView)
+	public:
+	virtual void OnInitialUpdate() override;
 	protected:
 	virtual void OnDraw(CDC* pDC) override;      // overridden to draw this view
 	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;

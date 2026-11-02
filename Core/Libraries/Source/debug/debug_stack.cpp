@@ -74,7 +74,7 @@ static void InitDbghelp()
 	char dbgHelpPath[256];
 	if (GetModuleFileName(nullptr,dbgHelpPath,sizeof(dbgHelpPath)))
 	{
-		char *slash=strrchr(dbgHelpPath,'\\');
+		char *slash=strrpbrk(dbgHelpPath,"/\\");
 		if (slash)
 		{
 			strcpy(slash+1,"DBGHELP.DLL");
@@ -170,7 +170,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr, char *buf, unsigned buf
   char symbolBuffer[512];
   GetModuleFileName((HMODULE)modBase,symbolBuffer,sizeof(symbolBuffer));
 
-  char *p=strrchr(symbolBuffer,'\\'); // use filename only, strip off path
+  const char *p=strrpbrk(symbolBuffer,"/\\"); // use filename only, strip off path
   p=p?p+1:symbolBuffer;
   *buf++=' ';
   strcpy(buf,p);
@@ -198,7 +198,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr, char *buf, unsigned buf
   if (!gDbg._SymGetLineFromAddr((HANDLE)GetCurrentProcessId(),addr,&displacement,&line))
     return;
 
-  p=strrchr(line.FileName,'\\'); // use filename only, strip off path
+  p=strrpbrk(line.FileName,"/\\"); // use filename only, strip off path
   p=p?p+1:line.FileName;
 
   if ((unsigned int)(bufEnd-buf)<strlen(p)+16)
@@ -252,7 +252,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr,
   {
     GetModuleFileName((HMODULE)modBase,symbolBuffer,sizeof(symbolBuffer));
 
-    char *p=strrchr(symbolBuffer,'\\'); // use filename only, strip off path
+    const char *p=strrpbrk(symbolBuffer,"/\\"); // use filename only, strip off path
     p=p?p+1:symbolBuffer;
     strlcpy(bufMod,p,sizeMod);
   }
@@ -288,7 +288,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr,
       strcpy(bufFile,"(unknown)");
     else
     {
-      char *p=strrchr(line.FileName,'\\'); // use filename only, strip off path
+      const char *p=strrpbrk(line.FileName,"/\\"); // use filename only, strip off path
       p=p?p+1:line.FileName;
       strlcpy(bufFile,p,sizeFile);
       if (linePtr)

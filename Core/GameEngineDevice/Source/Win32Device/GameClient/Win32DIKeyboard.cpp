@@ -322,7 +322,6 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 		if( kbdat.dwData & 0x0080 )
 		{
 			key->state = KEY_STATE_DOWN;
-			key->keyDownTimeMsec = kbdat.dwTimeStamp;
 		}
 		else
 		{

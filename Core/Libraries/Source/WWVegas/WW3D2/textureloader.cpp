@@ -1555,7 +1555,8 @@ bool TextureLoadTaskClass::Begin_Compressed_Load()
 #endif
 	);
 
-	return true;
+	// Texture creation can fail, e.g. when out of memory
+	return D3DTexture != nullptr;
 }
 
 bool TextureLoadTaskClass::Begin_Uncompressed_Load()
@@ -1624,7 +1625,7 @@ bool TextureLoadTaskClass::Begin_Uncompressed_Load()
 #endif
 	);
 
-	return true;
+	return D3DTexture != nullptr;
 }
 
 
@@ -2107,7 +2108,7 @@ bool CubeTextureLoadTaskClass::Begin_Compressed_Load()
 #endif
 	);
 
-	return true;
+	return D3DTexture != nullptr;
 }
 
 bool CubeTextureLoadTaskClass::Begin_Uncompressed_Load()
@@ -2176,7 +2177,7 @@ bool CubeTextureLoadTaskClass::Begin_Uncompressed_Load()
 #endif
 	);
 
-	return true;
+	return D3DTexture != nullptr;
 }
 
 bool CubeTextureLoadTaskClass::Load_Compressed_Mipmap()
@@ -2415,7 +2416,7 @@ bool VolumeTextureLoadTaskClass::Begin_Compressed_Load()
 #endif
 	);
 
-	return true;
+	return D3DTexture != nullptr;
 }
 
 bool VolumeTextureLoadTaskClass::Begin_Uncompressed_Load()
@@ -2487,7 +2488,7 @@ bool VolumeTextureLoadTaskClass::Begin_Uncompressed_Load()
 #endif
 	);
 
-	return true;
+	return D3DTexture != nullptr;
 }
 
 bool VolumeTextureLoadTaskClass::Load_Compressed_Mipmap()

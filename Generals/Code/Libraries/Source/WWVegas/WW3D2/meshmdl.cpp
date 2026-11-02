@@ -22,14 +22,17 @@
  *                                                                                             *
  *                 Project Name : WW3D                                                         *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/ww3d2/meshmdl.cpp                                 $*
+ *                     $Archive:: /Commando/Code/ww3d2/meshmdl.cpp                            $*
  *                                                                                             *
- *                       Author:: Greg Hjelstrom                                               *
+ *                    Org Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 8/29/01 7:29p                                               $*
+ *                      $Author:: Kenny Mitchell                                               *
  *                                                                                             *
- *                    $Revision:: 46                                                          $*
+ *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
+ *                    $Revision:: 48                                                          $*
+ *                                                                                             *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -87,7 +90,8 @@ MeshModelClass::MeshModelClass(const MeshModelClass & that) :
 	AlternateMatDesc(nullptr),
 	CurMatDesc(nullptr),
 	MatInfo(nullptr),
-	GapFiller(nullptr)
+	GapFiller(nullptr),
+	HasBeenInUse(false)
 {
 	DefMatDesc = W3DNEW MeshMatDescClass(*(that.DefMatDesc));
 	if (that.AlternateMatDesc != nullptr) {
@@ -130,8 +134,9 @@ MeshModelClass & MeshModelClass::operator = (const MeshModelClass & that)
 
 		clone_materials(that);
 
+		// DMS - using appropriate deallocation method
 		delete GapFiller;
-			GapFiller=nullptr;
+		GapFiller=nullptr;
 
 		if (that.GapFiller)
 			GapFiller=W3DNEW GapFillerClass(*that.GapFiller);
@@ -163,6 +168,7 @@ void MeshModelClass::Reset(int polycount,int vertcount,int passcount)
 
 void MeshModelClass::Register_For_Rendering()
 {
+	HasBeenInUse=true;
 //WW3D::Set_NPatches_Level(1);
 	if (WW3D::Get_NPatches_Level()>1) {
 		if (WW3D::Get_NPatches_Gap_Filling_Mode()!=WW3D::NPATCHES_GAP_FILLING_DISABLED) {
@@ -270,142 +276,6 @@ void MeshModelClass::Shadow_Render(SpecialRenderInfoClass & rinfo,const Matrix3D
 	}
 }
 
-// Destination pointers MUST point to arrays large enough to hold all vertices
-void MeshModelClass::get_deformed_vertices(Vector3 *dst_vert,const HTreeClass * htree)
-{
-	Vector3 * src_vert = Vertex->Get_Array();
-	uint16 * bonelink = VertexBoneLink->Get_Array();
-	for (int vi = 0; vi < Get_Vertex_Count(); vi++) {
-		const Matrix3D & tm = htree->Get_Transform(bonelink[vi]);
-		Matrix3D::Transform_Vector(tm, src_vert[vi], &(dst_vert[vi]));
-	}
-}
-
-
-// Destination pointers MUST point to arrays large enough to hold all vertices
-void MeshModelClass::get_deformed_vertices(Vector3 *dst_vert, Vector3 *dst_norm,const HTreeClass * htree)
-{
-	int vi;
-	int vertex_count=Get_Vertex_Count();
-	Vector3 * src_vert = Vertex->Get_Array();
-#if (OPTIMIZE_VNORMS)
-	Vector3 * src_norm = (Vector3 *)Get_Vertex_Normal_Array();
-#else
-	Vector3 * src_norm = VertexNorm->Get_Array();
-#endif
-	uint16 * bonelink = VertexBoneLink->Get_Array();
-
-	for (vi = 0; vi < vertex_count;) {
-		const Matrix3D & tm = htree->Get_Transform(bonelink[vi]);
-
-		// Make a copy so we can set the translation to zero
-		Matrix3D mytm=tm;
-
-		int idx=bonelink[vi];
-		int cnt;
-		for (cnt = vi; cnt < vertex_count; cnt++) {
-			if (idx!=bonelink[cnt]) {
-				break;
-			}
-		}
-
-		VectorProcessorClass::Transform(dst_vert+vi,src_vert+vi,mytm,cnt-vi);
-		mytm.Set_Translation(Vector3(0.0f,0.0f,0.0f));
-		VectorProcessorClass::Transform(dst_norm+vi,src_norm+vi,mytm,cnt-vi);
-		vi=cnt;
-	}
-}
-
-// Destination pointer MUST point to arrays large enough to hold all vertices
-void MeshModelClass::compose_deformed_vertex_buffer(
-	VertexFormatXYZNDUV2* verts,
-	const Vector2* uv0,
-	const Vector2* uv1,
-	const unsigned* diffuse,
-	const HTreeClass * htree)
-{
-	int vi;
-	int vertex_count=Get_Vertex_Count();
-	Vector3 * src_vert = Vertex->Get_Array();
-#if (OPTIMIZE_VNORMS)
-	Vector3 * src_norm = (Vector3 *)Get_Vertex_Normal_Array();
-#else
-	Vector3 * src_norm = VertexNorm->Get_Array();
-#endif
-	uint16 * bonelink = VertexBoneLink->Get_Array();
-
-	for (vi = 0; vi < vertex_count;) {
-		const Matrix3D & tm = htree->Get_Transform(bonelink[vi]);
-
-		int idx=bonelink[vi];
-		int cnt;
-		for (cnt = vi; cnt < vertex_count; cnt++) {
-			if (idx!=bonelink[cnt]) {
-				break;
-			}
-		}
-
-		for (int pidx=0;pidx<cnt-vi;++pidx) {
-			const Matrix3D& A=tm;
-			VertexFormatXYZNDUV2* out=verts+vi+pidx;
-			const Vector3& v=*(src_vert+vi+pidx);
-			out->x = (A[0][0] * v.X + A[0][1] * v.Y + A[0][2] * v.Z + A[0][3]);
-			out->y = (A[1][0] * v.X + A[1][1] * v.Y + A[1][2] * v.Z + A[1][3]);
-			out->z = (A[2][0] * v.X + A[2][1] * v.Y + A[2][2] * v.Z + A[2][3]);
-
-			const Vector3& n=*(src_norm+vi+pidx);
-			out->nx = (A[0][0] * n.X + A[0][1] * n.Y + A[0][2] * n.Z);
-			out->ny = (A[1][0] * n.X + A[1][1] * n.Y + A[1][2] * n.Z);
-			out->nz = (A[2][0] * n.X + A[2][1] * n.Y + A[2][2] * n.Z);
-
-			if (diffuse) out->diffuse=diffuse[vi+pidx];
-			else out->diffuse=0;
-			if (uv0) reinterpret_cast<Vector2&>(verts[vi+pidx].u1)=uv0[vi+pidx];
-			else reinterpret_cast<Vector2&>(verts[vi+pidx].u2)=Vector2(0.0f,0.0f);
-		}
-
-		vi=cnt;
-	}
-}
-
-
-// Destination pointers MUST point to arrays large enough to hold all vertices
-void MeshModelClass::get_deformed_screenspace_vertices(Vector4 *dst_vert,const RenderInfoClass & rinfo,const Matrix3D & mesh_transform,const HTreeClass * htree)
-{
-	Matrix4x4 prj = rinfo.Camera.Get_Projection_Matrix() * rinfo.Camera.Get_View_Matrix() * mesh_transform;
-
-	Vector3 * src_vert = Vertex->Get_Array();
-	int vertex_count=Get_Vertex_Count();
-
-	if (Get_Flag(SKIN) && VertexBoneLink && htree) {
-		uint16 * bonelink = VertexBoneLink->Get_Array();
-		for (int vi = 0; vi < vertex_count;) {
-			int idx=bonelink[vi];
-
-			Matrix4x4 tm = prj * htree->Get_Transform(idx);
-
-			// Count equal matrices (the vertices should be pre-sorted by matrices they use)
-			int cnt = vi;
-			for (; cnt < vertex_count; cnt++) if (idx!=bonelink[cnt]) break;
-
-			// Transform to screenspace (x,y,z,w)
-			VectorProcessorClass::Transform(
-				dst_vert+vi,
-				src_vert+vi,
-				tm,
-				cnt-vi);
-
-			vi=cnt;
-		}
-	} else {
-		VectorProcessorClass::Transform(
-			dst_vert,
-			src_vert,
-			prj,
-			vertex_count);
-	}
-}
-
 void MeshModelClass::Make_Geometry_Unique()
 {
 	WWASSERT(Vertex);
@@ -444,6 +314,9 @@ void MeshModelClass::Enable_Alternate_Material_Description(bool onoff)
 			if (Get_Flag(SORT) && WW3D::Is_Munge_Sort_On_Load_Enabled())
 				compute_static_sort_levels();
 
+			if (WW3D::Is_Overbright_Modify_On_Load_Enabled())
+				modify_for_overbright();
+
 			// TODO: Invalidate just this meshes DX8 data!!!
 			TheDX8MeshRenderer.Invalidate();
 		}
@@ -453,6 +326,9 @@ void MeshModelClass::Enable_Alternate_Material_Description(bool onoff)
 
 			if (Get_Flag(SORT) && WW3D::Is_Munge_Sort_On_Load_Enabled())
 				compute_static_sort_levels();
+
+			if (WW3D::Is_Overbright_Modify_On_Load_Enabled())
+				modify_for_overbright();
 
 			// TODO: Invalidate this meshes DX8 data!!!
 			TheDX8MeshRenderer.Invalidate();
@@ -477,16 +353,6 @@ bool MeshModelClass::Needs_Vertex_Normals()
 	}
 	return CurMatDesc->Do_Mappers_Need_Normals();
 }
-
-void Whatever(
-	TriIndex* added_polygon_indices,
-	unsigned& added_polygon_count,
-	const Vector3* locations,
-	unsigned vertex_count,
-	const TriIndex* polygon_indices,
-	unsigned polygon_count);
-
-
 
 struct TriangleSide
 {
@@ -572,7 +438,13 @@ HashTemplateClass<TriangleSide,SideIndexInfo> SideHash;
 
 GapFillerClass::GapFillerClass(MeshModelClass* mmc_) : mmc(nullptr), PolygonCount(0)
 {
-	REF_PTR_SET(mmc,mmc_);
+	//DMS - We cannot take a reference to the mesh model here!  This is because the mesh model
+	// class OWNS the GapFiller class (allocated via NEW).  If we take a reference here, there
+	// will be an extra reference on the parent object, which will result in the parent object
+	// not being destroyed.
+	//
+//	REF_PTR_SET(mmc,mmc_);
+	mmc = mmc_;
 
 	ArraySize=mmc->Get_Polygon_Count()*6;	// Each side of each triangle can have 2 polygons added, in the worst case
 	PolygonArray=W3DNEWARRAY TriIndex[ArraySize];
@@ -598,7 +470,13 @@ GapFillerClass::GapFillerClass(MeshModelClass* mmc_) : mmc(nullptr), PolygonCoun
 
 GapFillerClass::GapFillerClass(const GapFillerClass& that) : mmc(nullptr), PolygonCount(that.PolygonCount)
 {
-	REF_PTR_SET(mmc,that.mmc);
+	//DMS - We cannot take a reference to the mesh model here!  This is because the mesh model
+	// class OWNS the GapFiller class (allocated via NEW).  If we take a reference here, there
+	// will be an extra reference on the parent object, which will result in the parent object
+	// not being destroyed.
+	//
+//	REF_PTR_SET(mmc,that.mmc);
+	mmc = that.mmc;
 
 	ArraySize=that.ArraySize;
 	PolygonArray=W3DNEWARRAY TriIndex[ArraySize];
@@ -647,6 +525,7 @@ GapFillerClass::~GapFillerClass()
 	for (int pass=0;pass<mmc->Get_Pass_Count();++pass) {
 		for (int stage=0;stage<MeshMatDescClass::MAX_TEX_STAGES;++stage) {
 			if (TextureArray[pass][stage]) {
+
 				for (unsigned i=0;i<PolygonCount;++i) {
 					REF_PTR_RELEASE(TextureArray[pass][stage][i]);
 				}
@@ -664,7 +543,8 @@ GapFillerClass::~GapFillerClass()
 		delete[] ShaderArray[pass];
 	}
 
-	REF_PTR_RELEASE(mmc);
+	// DMS - Removed - See constructor for details.
+//	REF_PTR_RELEASE(mmc);
 }
 
 // ----------------------------------------------------------------------------
@@ -706,7 +586,7 @@ WWASSERT(loc1==loc2 || loc1==loc3 || loc2==loc3);
 
 // ----------------------------------------------------------------------------
 //
-// Resize buffers to match the polygon count exatly. After this call no more
+// Resize buffers to match the polygon count exactly. After this call no more
 // polygons can be added to the buffers.
 //
 // ----------------------------------------------------------------------------
@@ -760,6 +640,8 @@ void GapFillerClass::Shrink_Buffers()
 
 void MeshModelClass::Init_For_NPatch_Rendering()
 {
+	if (!DX8Wrapper::Get_Current_Caps()->Support_NPatches()) return;
+	if (!Get_Flag(MeshGeometryClass::ALLOW_NPATCHES)) return;
 	if (GapFiller) return;
 
 	const Vector3* locations=Get_Vertex_Array();

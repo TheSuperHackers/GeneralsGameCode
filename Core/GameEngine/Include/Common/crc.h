@@ -88,7 +88,7 @@ public:
 #else
     // ASM version, verified by comparing resulting data with C++ version data
     unsigned *crcPtr=&crc;
-    _asm
+    __asm
     {
       mov esi,[buf]
       mov ecx,[len]

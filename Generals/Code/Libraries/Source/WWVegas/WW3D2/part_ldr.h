@@ -137,6 +137,7 @@ class ParticleEmitterDefClass
 		unsigned int			Get_Burst_Size () const			{ return m_InfoV2.BurstSize; }
 		float						Get_Outward_Vel () const			{ return m_InfoV2.OutwardVel; }
 		float						Get_Vel_Inherit () const			{ return m_InfoV2.VelInherit; }
+		float						Get_Future_Start_Time () const	{ return m_ExtraInfo.FutureStartTime; }
 
 		virtual void			Set_Render_Mode (int mode)						{ m_InfoV2.RenderMode = mode; } // values in w3d_file.h
 		virtual void			Set_Frame_Mode (int mode)						{ m_InfoV2.FrameMode = mode; } // values in w3d_file.h
@@ -152,6 +153,7 @@ class ParticleEmitterDefClass
 		virtual void			Set_Burst_Size (unsigned int count)			{ m_InfoV2.BurstSize = count; }
 		virtual void			Set_Outward_Vel (float value)					{ m_InfoV2.OutwardVel = value; }
 		virtual void			Set_Vel_Inherit (float value)					{ m_InfoV2.VelInherit = value; }
+		virtual void			Set_Future_Start_Time (float value)			{ m_ExtraInfo.FutureStartTime = value; }
 
 		void						Get_Shader (ShaderClass &shader) const		{ W3dUtilityClass::Convert_Shader (m_InfoV2.Shader, &shader); }
 		virtual void			Set_Shader (const ShaderClass &shader)		{ W3dUtilityClass::Convert_Shader (shader, &m_InfoV2.Shader); }
@@ -237,6 +239,7 @@ class ParticleEmitterDefClass
 		virtual WW3DErrorType	Read_Rotation_Keyframes (ChunkLoadClass &chunk_load);
 		virtual WW3DErrorType	Read_Frame_Keyframes (ChunkLoadClass &chunk_load);
 		virtual WW3DErrorType	Read_Blur_Time_Keyframes (ChunkLoadClass &chunk_load);
+		virtual WW3DErrorType	Read_Extra_Info (ChunkLoadClass &chunk_load);
 
 		virtual bool				Read_Color_Keyframe (ChunkLoadClass &chunk_load, float *key_time, Vector3 *value);
 		virtual bool				Read_Opacity_Keyframe (ChunkLoadClass &chunk_load, float *key_time, float *value);
@@ -254,6 +257,7 @@ class ParticleEmitterDefClass
 		virtual WW3DErrorType	Save_Frame_Keyframes (ChunkSaveClass & chunk_save);
 		virtual WW3DErrorType	Save_Rotation_Keyframes (ChunkSaveClass & chunk_save);
 		virtual WW3DErrorType	Save_Blur_Time_Keyframes (ChunkSaveClass & chunk_save);
+		virtual WW3DErrorType	Save_Extra_Info (ChunkSaveClass & chunk_save);
 
 		virtual WW3DErrorType	Save_Color_Keyframes (ChunkSaveClass &chunk_save);
 		virtual WW3DErrorType	Save_Opacity_Keyframes (ChunkSaveClass &chunk_save);
@@ -288,6 +292,7 @@ class ParticleEmitterDefClass
 		ShaderClass								m_Shader;
 		W3dEmitterInfoStruct					m_Info;
 		W3dEmitterInfoStructV2				m_InfoV2;
+		W3dEmitterExtraInfoStruct			m_ExtraInfo;
 		W3dEmitterLinePropertiesStruct	m_LineProperties;
 		ParticlePropertyStruct<Vector3>	m_ColorKeyframes;
 		ParticlePropertyStruct<float>		m_OpacityKeyframes;

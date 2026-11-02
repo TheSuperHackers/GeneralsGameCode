@@ -826,18 +826,7 @@ void ImagePacker::addImage( char *path )
 	info->m_area = info->m_size.x * info->m_size.y;
 
 	// save the filename only without path
-	Int i;
-	char *c;
-	for( i = len - 1; i >= 0; i-- )
-	{
-
-		if( path[ i ] == '\\' )
-		{
-			c = &path[ i + 1 ];
-			break;
-		}
-
-	}
+	const char *c = getFileName( path );
 
 	Int nameLen = strlen( c );
 	info->m_filenameOnly = new char[ nameLen + 1 ];

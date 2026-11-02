@@ -20,6 +20,7 @@
 
 constexpr const Int MAX_WALL_PIECES = 128;
 constexpr const Int PATHFIND_QUEUE_LEN = 512;
+constexpr const Int MOVE_ALLIES_MAX_DEPTH = 2;
 
 // how close a unit has to be in z to interact with the layer.
 constexpr const Real LAYER_Z_CLOSE_ENOUGH_F = 10.0f;
