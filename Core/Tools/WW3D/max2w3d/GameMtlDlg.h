@@ -76,7 +76,6 @@ protected:
 
 	void					Build_Dialog();
 
-	BOOL					DisplacementMapProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 	BOOL					SurfaceTypeProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 	BOOL					PassCountProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 	void					Set_Pass_Count_Dialog();
@@ -89,7 +88,6 @@ protected:
 	HWND					HwndEdit;		// window handle of the materials editor dialog
 	HWND					HwndPassCount;	// Rollup pass count panel
 	HWND					HwndSurfaceType;	// Rollup surface type panel
-	HWND					HwndDisplacementMap;
 	HPALETTE				HpalOld;
 
 	GameMtlPassDlg *	PassDialog[MAX_PASSES];
@@ -106,7 +104,6 @@ protected:
 	TimeValue			CurTime;
 	int					IsActive;
 
-	friend BOOL CALLBACK DisplacementMapDlgProc(HWND, UINT, WPARAM,LPARAM);
 	friend BOOL CALLBACK SurfaceTypePanelDlgProc(HWND, UINT, WPARAM,LPARAM);
 	friend BOOL CALLBACK PassCountPanelDlgProc(HWND, UINT, WPARAM,LPARAM);
 	friend class GameMtl;

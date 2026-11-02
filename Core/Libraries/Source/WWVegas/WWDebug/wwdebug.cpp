@@ -329,36 +329,6 @@ void WWDebug_Assert_Fail(const char * expr,const char * file, int line)
 
 
 
-
-/***********************************************************************************************
- * _assert -- Catch all asserts by overriding lib function                                     *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Assert stuff                                                                      *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/11/2001 3:56PM ST : Created                                                            *
- *=============================================================================================*/
-#if 0 //(gth) this is giving me link errors for some reason...
-
-#ifndef W3D_MAX4
-#ifdef WWDEBUG
-void __cdecl _assert(void *expr, void *filename, unsigned lineno)
-{
-	WWDebug_Assert_Fail((const char*)expr, (const char*)filename, lineno);
-}
-#endif //WWDEBUG
-#endif
-
-#endif
-
-
-
 /***********************************************************************************************
  * WWDebug_Assert_Fail_Print -- Internal function, passes assert message to handler            *
  *                                                                                             *

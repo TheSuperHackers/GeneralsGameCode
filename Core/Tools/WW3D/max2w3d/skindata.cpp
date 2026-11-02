@@ -80,13 +80,6 @@ IOResult SkinDataClass::Save(ISave *isave)
 	/*
 	** Save the named selection sets of vertices
 	*/
-#if 0
-	if (VertSelSets.Count() > 0) {
-		isave->BeginChunk(INFLUENCE_DATA_CHUNK);
-		VertSelSets.Save(isave);
-		isave->EndChunk();
-	}
-#endif
 
 	/*
 	** Save the vertex influence data

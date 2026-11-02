@@ -74,7 +74,6 @@
 #define IDD_GAMEMTL_PASS_COUNT_DIALOG   122
 #define IDD_GENERATE_NAMES_DIALOG       126
 #define IDD_GAMEMTL_SURFACE_TYPE        128
-#define IDD_GAMEMTL_DISPLACEMENT_MAP    129
 #define IDD_GENERATE_MTL_NAMES_DIALOG   133
 #define IDD_GENERATE_LOD_EXTENSION_DIALOG 135
 #define IDD_EXPORT_ALL                  136
@@ -240,11 +239,8 @@
 #define IDC_SURFACE_TYPE_COMBO          1152
 #define IDC_EXPORT_MESH_SMOOTH_CHECK    1153
 #define IDC_EXPORT_MESH_AABTREES        1154
-#define IDC_TEXTURE_BUTTON              1155
 #define IDC_EXPORT_MESH_MAT_TO_TEXTURE  1155
-#define IDC_AMOUNT_EDIT                 1156
 #define IDC_EXPORT_MESH_OPTIMIZE        1156
-#define IDC_AMOUNT_SPIN                 1157
 #define IDC_DAMREG_INDEX_EDIT           1161
 #define IDC_DAMREG_INDEX_SPIN           1162
 #define IDC_DIRECTORY                   1163
@@ -326,7 +322,6 @@
 #define IDS_CLAMP_V                     60039
 #define IDS_ALPHA_BITMAP                60040
 #define IDS_SURFACE_TYPE                60041
-#define IDS_DISPLACEMENT_MAP            60042
 #define IDS_ALPHA_MODIFIER_CLASS        60043
 #define IDS_PS2_GAMEMTL                 60044
 #define IDS_NO_LOD                      60046

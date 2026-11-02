@@ -491,7 +491,6 @@ AnimatedSoundMgrClass::Trigger_Sound
 
 	float retval = old_frame;
 
-#ifndef W3D_MAX4
 	//
 	//	Lookup the sound list for this animation
 	//
@@ -547,7 +546,6 @@ AnimatedSoundMgrClass::Trigger_Sound
 
 		//retval = true;
 	}
-#endif
 
 	return retval;
 }

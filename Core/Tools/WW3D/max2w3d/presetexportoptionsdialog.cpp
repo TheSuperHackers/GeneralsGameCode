@@ -307,12 +307,6 @@ PresetExportOptionsDialogClass::Pane_Message_Proc
 					Options->DisableExportAABTrees = (SendMessage (control_wnd, BM_GETCHECK, 0, 0L) != 1);
 					break;
 
-#if 0
-				case IDC_EXPORT_MESH_OPTIMIZE:
-					Options->EnableOptimizeMeshData = (SendMessage (control_wnd, BM_GETCHECK, 0, 0L) == 1);
-					break;
-#endif
-
 				case IDC_USE_SKELETON_CHECK:
 					Options->LoadHierarchy = (SendMessage (control_wnd, BM_GETCHECK, 0, 0L) == 1);
 					break;
@@ -723,9 +717,6 @@ PresetExportOptionsDialogClass::Update_Controls ()
 		//
 		CheckDlgButton (pane_wnd, IDC_EXPORT_MESH_SMOOTH_CHECK,	Options->SmoothBetweenMeshes);
 		CheckDlgButton (pane_wnd, IDC_EXPORT_MESH_AABTREES,		!Options->DisableExportAABTrees);
-#if ENABLE_MESH_OPTIMIZING
-		CheckDlgButton (pane_wnd, IDC_EXPORT_MESH_OPTIMIZE,		Options->EnableOptimizeMeshData);
-#endif
 		CheckDlgButton (pane_wnd, IDC_USE_SKELETON_CHECK,			Options->LoadHierarchy);
 		CheckDlgButton (pane_wnd, IDC_COMPRESS_ANIMATION_CHECK,	Options->CompressAnimation);
 		CheckDlgButton (pane_wnd, IDC_EXPORT_MESH_MAT_TO_TEXTURE,	Options->EnableMaterialColorToTextureConversion);
