@@ -63,7 +63,6 @@
 #define IDS_RR                          41
 #define IDS_NONE                        42
 #define IDD_GAMEMTL_PASS_COUNT          101
-#define IDD_VOXEL_DEBUG_DIALOG          103
 #define IDD_W3D_EXPORT_OPTIONS          106
 #define IDD_W3D_UTILITY_DIALOG          107
 #define IDD_BONE_INFLUENCE_PARAMS       108
@@ -113,7 +112,6 @@
 #define IDC_GAMEMTL_PASSCOUNT_STATIC    1019
 #define IDC_MAX_SETS_EDIT               1019
 #define IDC_STAGE0_DISPLAY_BUTTON       1020
-#define IDC_VOXEL_VIEWPORT              1021
 #define IDC_STAGE0_PUBLISH_BUTTON       1021
 #define IDC_STAGE1_DISPLAY_BUTTON       1022
 #define IDC_WHT_EXPORT_RADIO            1023
@@ -134,7 +132,6 @@
 #define IDC_WHT_NO_EXPORT_RADIO         1031
 #define IDC_STAGE1_CLAMP_V_BUTTON       1031
 #define IDC_STAGE0_ALPHA_BITMAP_BUTTON  1032
-#define IDC_LAYER_EDIT                  1033
 #define IDC_RANGE_LOW_EDIT              1033
 #define IDC_STAGE1_ALPHA_BITMAP_BUTTON  1033
 #define IDC_RANGE_HIGH_EDIT             1034
@@ -175,7 +172,6 @@
 #define IDC_COLLISION_PHYSICAL          1050
 #define IDC_SELECT_VIS                  1051
 #define IDC_GEOMETRY_OBBOX              1052
-#define IDC_LAYER_SPIN                  1053
 #define IDC_RANGE_LOW_SPIN              1053
 #define IDC_OBJ_NAME                    1053
 #define IDC_RANGE_HIGH_SPIN             1054

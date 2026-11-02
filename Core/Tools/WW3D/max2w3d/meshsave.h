@@ -154,7 +154,6 @@ private:
 
 	// compute properties for the mesh
 	void compute_bounding_volumes();
-	void compute_physical_constants(INode * inode,Progress_Meter_Class & meter,bool voxelize);
 
 	// create the materials
 	int  scan_used_materials(Mesh & mesh, Mtl * nodemtl);

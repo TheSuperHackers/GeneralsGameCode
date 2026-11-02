@@ -36,7 +36,6 @@
 
 #include <max.h>
 #include <gport.h>
-#include <hsv.h>
 #include <bmmlib.h>
 
 #include "GameMtlDlg.h"

@@ -47,7 +47,6 @@
  *   MeshSaveClass::setup_material -- Gets the texture names and base colors for a material    *
  *   MeshSaveClass::compute_bounding_volumes -- computes a bounding box and bounding sphere for*
  *   MeshSaveClass::set_transform -- set the default transformation matrix for the mesh        *
- *   MeshSaveClass::compute_physical_properties -- computes the volume and moment of inertia   *
  *   MeshSaveClass::prep_mesh -- pre-transform the MAX mesh by a specified matrix              *
  *   MeshSaveClass::write_user_text -- write the user text chunk                               *
  *   MeshSaveClass::get_htree_bone_index_for_inode -- searches the htree for the given INode   *
@@ -64,8 +63,6 @@
 #include <modstack.h>
 #include "gamemtl.h"
 #include "errclass.h"
-#include "vxl.h"
-#include "vxldbg.h"
 #include "nodelist.h"
 #include "hiersave.h"
 #include "util.h"
@@ -79,9 +76,7 @@
 
 
 static char _string1[512];
-const int VOXEL_RESOLUTION = 64;		// resolution to use when computing I, V and CM
 
-#define DEBUG_VOXELS				0
 #define MIN_AABTREE_POLYGONS	8
 #define DIFFUSE_HOUSECOLOR_TEXTURE_PREFIX 0x4443485A		//'ZHCD' prefix put on all code generated textures
 #define DIFFUSE_COLOR_TEXTURE_PREFIX 0x44434d5A		//'ZMCD' prefix put on all code generated textures
@@ -389,14 +384,6 @@ MeshSaveClass::MeshSaveClass
 	// before we pre-deform the mesh (if its a skin).
 	//////////////////////////////////////////////////////////////////////
 	compute_bounding_volumes();
-
-	//////////////////////////////////////////////////////////////////////
-	// Voxelize the mesh and compute the Moment of Inertia and
-	// Center of Mass.  This must come after we compute the bounding
-	// volumes and before we pre-deform the mesh.
-	//////////////////////////////////////////////////////////////////////
-	Progress_Meter_Class voxelmeter(meter, 64.0f * meter.Increment);
-	compute_physical_constants(MaxINode,voxelmeter,false /*usevoxelizer*/);
 
 	//////////////////////////////////////////////////////////////////////
 	// If this is a skin, pre-deform the mesh.
@@ -2124,98 +2111,6 @@ void MeshSaveClass::compute_bounding_volumes()
 	Header.Max.X = max.X;
 	Header.Max.Y = max.Y;
 	Header.Max.Z = max.Z;
-}
-
-
-/***********************************************************************************************
- * MeshSaveClass::compute_physical_properties -- computes the volume and moment of inertia     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/01/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
-void MeshSaveClass::compute_physical_constants
-(
-	INode * inode,
-	Progress_Meter_Class & meter,
-	bool voxelize
-)
-{
-
-#if 0 // IF we need this again, move the data to a physics chunk (header doesn't have it anymore)
-
-	if (voxelize) {
-
-		// Create an INodeList object for this mesh
-		AnyINodeFilter nodefilt;
-		INodeListClass meshlist(CurTime,&nodefilt);
-		meshlist.Insert(inode);
-
-		// Create a Voxel object for this mesh
-		VoxelClass * voxel = new VoxelClass
- 		(
- 			meshlist,
- 			VOXEL_RESOLUTION,
- 			ExportSpace,
- 			CurTime,
- 			meter
- 		);
-
-#if DEBUG_VOXELS
-		VoxelDebugWindowClass dbgwin(voxel);
- 		dbgwin.Display_Window();
-#endif
-
-		double vol[1];
-		double cm[3];
-		double inertia[9];
-
-		voxel->Compute_Physical_Properties(vol,cm,inertia);
-
-		Header.Volume = (float)vol[0];
-
-		Header.MassCenter.X = (float)cm[0];
-		Header.MassCenter.Y = (float)cm[1];
-		Header.MassCenter.Z = (float)cm[2];
-
-		Header.Inertia[0] = (float)inertia[0];
-		Header.Inertia[1] = (float)inertia[1];
-		Header.Inertia[2] = (float)inertia[2];
-		Header.Inertia[3] = (float)inertia[3];
-		Header.Inertia[4] = (float)inertia[4];
-		Header.Inertia[5] = (float)inertia[5];
-		Header.Inertia[6] = (float)inertia[6];
-		Header.Inertia[7] = (float)inertia[7];
-		Header.Inertia[8] = (float)inertia[8];
-
-	} else {
-
-		// Set mass center to the center of the bounding box
-		Header.MassCenter.X = (Header.Max.X + Header.Min.X) / 2.0f;
-		Header.MassCenter.Y = (Header.Max.Y + Header.Min.Y) / 2.0f;
-		Header.MassCenter.Z = (Header.Max.Z + Header.Min.Z) / 2.0f;
-
-		// Set inertia tensor to inertia tensor of the bounding box
-		// (gth) !!!! DO THIS !!!!
-		Header.Inertia[0] = 1.0f;
-		Header.Inertia[1] = 0.0f;
-		Header.Inertia[2] = 0.0f;
-		Header.Inertia[3] = 0.0f;
-		Header.Inertia[4] = 1.0f;
-		Header.Inertia[5] = 0.0f;
-		Header.Inertia[6] = 0.0f;
-		Header.Inertia[7] = 0.0f;
-		Header.Inertia[8] = 1.0f;
-
-		Header.Volume = (Header.Max.X - Header.Min.X) * (Header.Max.Y - Header.Min.Y) * (Header.Max.Z - Header.Min.Z);
-	}
-
-#endif
 }
 
 
