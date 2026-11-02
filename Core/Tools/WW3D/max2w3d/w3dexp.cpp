@@ -58,7 +58,7 @@
 #include "hiersave.h"
 #include "hlodsave.h"
 #include "meshcon.h"
-#include "w3ddlg.h"
+#include "presetexportoptionsdialog.h"
 #include "PROGRESS.h"
 #include "errclass.h"
 #include "motion.h"
@@ -1103,8 +1103,9 @@ bool W3dExportClass::get_export_options(BOOL suppress_prompts)
 	bool retval = true;
 	if (suppress_prompts == FALSE)
 	{
-		W3dOptionsDialogClass dialog(MaxInterface,ExportInterface);
-		retval = dialog.Get_Export_Options(options);
+		PresetExportOptionsDialogClass dialog(MaxInterface, MaxInterface->GetMAXHWnd());
+		dialog.Set_Options(options);
+		retval = (dialog.Do_Modal() == IDOK);
 	}
 
 	if (suppress_prompts || retval) {
