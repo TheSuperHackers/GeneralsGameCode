@@ -396,37 +396,6 @@ BEGIN
                     IDC_STATIC,142,42,52,75
 END
 
-IDD_MESH_DEFORM_PANEL DIALOG DISCARDABLE  0, 0, 108, 168
-STYLE WS_CHILD | WS_CLIPSIBLINGS
-FONT 8, "MS Sans Serif"
-BEGIN
-    LTEXT           "Vertex &Color:",IDC_STATIC,7,7,41,8
-    CONTROL         "Vertex Color",IDC_VERTEX_COLOR,"ColorSwatch",0x0,53,3,
-                    48,15
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,4,24,98,1
-    LTEXT           "Deform &Progression",IDC_STATIC,7,21,62,8
-    CONTROL         "Slider1",IDC_STATE_SLIDER,"msctls_trackbar32",
-                    TBS_AUTOTICKS | WS_TABSTOP,7,33,94,12
-    CONTROL         130,IDC_STATIC,"Static",SS_BITMAP,9,50,11,10
-    CONTROL         131,IDC_STATIC,"Static",SS_BITMAP,89,50,11,10
-    CONTROL         "Link Set States",IDC_LOCK_SETS,"CustButton",WS_TABSTOP,
-                    7,66,70,13
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,4,86,99,1
-    LTEXT           "&Deform Sets",IDC_STATIC,7,82,40,8
-    LTEXT           "&Max Sets:",IDC_STATIC,11,95,32,8
-    CONTROL         "",IDC_MAX_SETS_EDIT,"CustEdit",WS_TABSTOP,55,95,22,10
-    CONTROL         "",IDC_MAX_SETS_SPIN,"SpinnerControl",WS_TABSTOP,79,95,
-                    10,10
-    LTEXT           "Current Set:",IDC_STATIC,11,111,38,8
-    LTEXT           "Static",IDC_CURRENT_SET_STATIC,55,110,30,11,SS_SUNKEN
-    CONTROL         "Slider1",IDC_CURRENT_SET_SLIDER,"msctls_trackbar32",
-                    TBS_AUTOTICKS | WS_TABSTOP,7,123,94,12
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,4,145,99,1
-    LTEXT           "&Runtime Options",IDC_STATIC,7,141,53,8
-    CONTROL         "&Manual Deform",IDC_MANUALAPPLY,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,11,153,64,10
-END
-
 IDD_GAMEMTL_SURFACE_TYPE DIALOG DISCARDABLE  0, 0, 217, 42
 STYLE WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif"
@@ -1061,14 +1030,6 @@ BEGIN
         BOTTOMMARGIN, 192
     END
 
-    IDD_MESH_DEFORM_PANEL, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 101
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 165
-    END
-
     IDD_GAMEMTL_SURFACE_TYPE, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -1632,8 +1593,6 @@ IDI_DISK                ICON    DISCARDABLE     "Res\\DISK12.ICO"
 // Bitmap
 //
 
-IDB_NORM                BITMAP  DISCARDABLE     "Res\\one.bmp"
-IDB_DEFORM              BITMAP  DISCARDABLE     "Res\\two.bmp"
 IDB_WW3D                BITMAP  DISCARDABLE     "Res\\ww3d.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
