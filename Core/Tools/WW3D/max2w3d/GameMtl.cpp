@@ -65,7 +65,6 @@
 #include "gamemtl.h"
 #include <max.h>
 #include <gport.h>
-#include <hsv.h>
 #include "GameMtlDlg.h"
 #include "dllmain.h"
 #include "resource.h"

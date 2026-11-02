@@ -37,7 +37,6 @@
 #include "gamemtl.h"
 #include <max.h>
 #include <gport.h>
-#include <hsv.h>
 #include "dllmain.h"
 #include "resource.h"
 #include "util.h"
