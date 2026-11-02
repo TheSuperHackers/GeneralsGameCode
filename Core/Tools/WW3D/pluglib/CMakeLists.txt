@@ -39,7 +39,6 @@ set(PLUGLIB_SRC
     "vector3i.h"
     "vector4.h"
     "visualc.h"
-    "w3d_file.h"
     "w3dquat.cpp"
     "w3dquat.h"
     "win.h"
