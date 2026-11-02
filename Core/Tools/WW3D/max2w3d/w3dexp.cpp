@@ -58,7 +58,6 @@
 #include "hiersave.h"
 #include "hlodsave.h"
 #include "meshcon.h"
-#include "SnapPoints.h"
 #include "w3ddlg.h"
 #include "PROGRESS.h"
 #include "errclass.h"

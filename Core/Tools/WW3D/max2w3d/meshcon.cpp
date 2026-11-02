@@ -42,7 +42,6 @@
 
 #include "meshcon.h"
 #include "util.h"
-#include "SnapPoints.h"
 #include "w3dappdata.h"
 #include "geometryexporttask.h"
 #include "geometryexportcontext.h"
