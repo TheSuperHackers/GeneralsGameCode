@@ -258,6 +258,8 @@ class FVFInfoClass
 public:
 	FVFInfoClass(unsigned FVF);
 
+	static unsigned Get_FVF_Vertex_Size(unsigned FVF);
+
 	unsigned Get_Location_Offset() const { return location_offset; }
 	unsigned Get_Normal_Offset() const { return normal_offset; }
 	unsigned Get_Tex_Offset(unsigned int n) const { WWASSERT(n<D3DDP_MAXTEXCOORD); return texcoord_offset[n]; }

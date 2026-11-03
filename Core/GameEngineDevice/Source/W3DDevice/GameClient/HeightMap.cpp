@@ -2053,7 +2053,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 					DX8Wrapper::_Get_D3D_Device8()->SetStreamSource(
 						0,
 						m_xformedVertexBuffer[j*m_numVBTilesX+i],
-						FVFInfoClass(D3DFVF_XYZRHW |D3DFVF_DIFFUSE|D3DFVF_TEX2).Get_FVF_Size());
+						FVFInfoClass::Get_FVF_Vertex_Size(D3DFVF_XYZRHW |D3DFVF_DIFFUSE|D3DFVF_TEX2));
 					DX8Wrapper::_Get_D3D_Device8()->SetVertexShader(D3DFVF_XYZRHW |D3DFVF_DIFFUSE|D3DFVF_TEX2);
 				}
 #endif
@@ -2171,7 +2171,7 @@ void HeightMapRenderObjClass::renderTerrainPass(CameraClass *pCamera)
 				DX8Wrapper::_Get_D3D_Device8()->SetStreamSource(
 					0,
 					m_xformedVertexBuffer[j*m_numVBTilesX+i],
-					FVFInfoClass(D3DFVF_XYZRHW |D3DFVF_DIFFUSE|D3DFVF_TEX2).Get_FVF_Size());
+					FVFInfoClass::Get_FVF_Vertex_Size(D3DFVF_XYZRHW |D3DFVF_DIFFUSE|D3DFVF_TEX2));
 				DX8Wrapper::_Get_D3D_Device8()->SetVertexShader(D3DFVF_XYZRHW |D3DFVF_DIFFUSE|D3DFVF_TEX2);
 			}
 #endif

@@ -42,7 +42,7 @@
 #include "dx8fvf.h"
 #include "WWLib/wwstring.h"
 
-static unsigned Get_FVF_Vertex_Size(unsigned FVF)
+unsigned FVFInfoClass::Get_FVF_Vertex_Size(unsigned FVF)
 {
 	unsigned size=0;
 
