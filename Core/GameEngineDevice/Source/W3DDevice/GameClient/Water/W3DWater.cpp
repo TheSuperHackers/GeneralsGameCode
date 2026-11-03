@@ -929,7 +929,7 @@ void WaterRenderObjClass::ReAcquireResources()
 			0x00000042, 0xb00f0003,                         // tex t3
 			0x00000005, 0x80070000, 0x90e40000, 0xb0e40000, // mul r0.rgb, v0, t0 ; blend vertex color into t0.
 			0x00000001, 0x80080000, 0xb0e40000,             // mov r0.a, t0 ; keep vertex alpha from fading the base water.
-			0x00000005, 0x800f0001, 0xb0e40001, 0xb0e40002, // mul r1, t1, t2 ; mul
+			0x00000005, 0x800f0001, 0xb0e40001, 0xb0e40002, // mul r1, t1, t2
 			0x00000002, 0x80070001, 0x80e40001, 0xb0e40003, // add r1.rgb, r1, t3
 			0x00000005, 0x80070001, 0x80e40001, 0x90ff0000, // mul r1.rgb, r1, v0.a
 			0x40000005, 0x80080000, 0x80e40000, 0xb0e40003, // +mul r0.a, r0, t3
