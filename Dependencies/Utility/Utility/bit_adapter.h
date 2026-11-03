@@ -16,7 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// This file provides std::bit_cast and std::bit_ceil. VC6 has no <bit> header and gets fallback functions.
+// This file provides std::bit_cast and std::bit_ceil. VC6 has no <bit> header and gets fallback functions: bit_cast
+// copies the bytes with memcpy, and bit_ceil doubles 1 until it reaches the value.
 //
 // Use std::bit_cast to reinterpret the bits of a float as an integer or the other way around, instead of reading
 // the value through a pointer of the other type, which violates the strict aliasing rule.
@@ -50,6 +51,7 @@ inline T bit_ceil(T x)
 	T result = 1;
 	while (result < x)
 		result <<= 1;
+
 	return result;
 }
 }

@@ -26,6 +26,7 @@ inline const void* memcchr(const void* data, int c, size_t n)
 	};
 
 	const unsigned char* p = static_cast<const unsigned char*>(data);
+	// Every mask passed to std::countr_zero has a set bit. For a zero mask it would return 32 and give a wrong pointer.
 	unsigned index;
 	if (n >= 16)
 	{
