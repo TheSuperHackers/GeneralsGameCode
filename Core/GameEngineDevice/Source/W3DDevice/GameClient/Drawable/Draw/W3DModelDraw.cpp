@@ -1696,19 +1696,6 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 }
 
 //-------------------------------------------------------------------------------------------------
-static Int countOnBits(UnsignedInt val)
-{
-	Int count = 0;
-	for (Int i = 0; i < 32; ++i)
-	{
-		if (val & 1)
-			++count;
-		val >>= 1;
-	}
-	return count;
-}
-
-//-------------------------------------------------------------------------------------------------
 const ModelConditionInfo* W3DModelDrawModuleData::findBestInfo(const ModelConditionFlags& c) const
 {
 	ModelConditionFlags bits = c;

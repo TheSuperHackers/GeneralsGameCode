@@ -25,18 +25,6 @@ inline const void* memcchr(const void* data, int c, size_t n)
 		return static_cast<unsigned>(_mm_movemask_epi8(_mm_cmpeq_epi8(v, needle))) ^ 0xffffu;
 	};
 
-	// The caller guarantees a nonzero mask.
-	const auto first_set_bit = [](unsigned mask)
-	{
-#if defined(_MSC_VER)
-		unsigned long index;
-		_BitScanForward(&index, mask);
-		return static_cast<unsigned>(index);
-#else
-		return static_cast<unsigned>(__builtin_ctz(mask));
-#endif
-	};
-
 	const unsigned char* p = static_cast<const unsigned char*>(data);
 	unsigned index;
 	if (n >= 16)
@@ -47,7 +35,7 @@ inline const void* memcchr(const void* data, int c, size_t n)
 			unsigned neq = mismatch_mask(p, needle);
 			if (neq)
 			{
-				index = first_set_bit(neq);
+				index = std::countr_zero(neq);
 				return p + index;
 			}
 			const unsigned char* const last = p + (n - 16);
@@ -72,7 +60,7 @@ inline const void* memcchr(const void* data, int c, size_t n)
 						neq = (neq3 << 16) | neq2;
 						p += 32;
 					}
-					index = first_set_bit(neq);
+					index = std::countr_zero(neq);
 					return p + index;
 				}
 				p += 64;
@@ -82,7 +70,7 @@ inline const void* memcchr(const void* data, int c, size_t n)
 				neq = mismatch_mask(p, needle);
 				if (neq)
 				{
-					index = first_set_bit(neq);
+					index = std::countr_zero(neq);
 					return p + index;
 				}
 				p += 16;
@@ -90,7 +78,7 @@ inline const void* memcchr(const void* data, int c, size_t n)
 			neq = mismatch_mask(last, needle);
 			if (neq)
 			{
-				index = first_set_bit(neq);
+				index = std::countr_zero(neq);
 				return last + index;
 			}
 			return nullptr;
@@ -99,7 +87,7 @@ inline const void* memcchr(const void* data, int c, size_t n)
 		const unsigned neq = mismatch_mask(p, needle) | (mismatch_mask(last, needle) << 16);
 		if (neq == 0)
 			return nullptr;
-		index = first_set_bit(neq);
+		index = std::countr_zero(neq);
 		return index < 16 ? p + index : last + (index - 16);
 	}
 	if (n >= 4)
@@ -113,7 +101,7 @@ inline const void* memcchr(const void* data, int c, size_t n)
 			const unsigned neq = static_cast<unsigned>(_mm_movemask_epi8(eq)) ^ 0xffffu;
 			if (neq == 0)
 				return nullptr;
-			index = first_set_bit(neq);
+			index = std::countr_zero(neq);
 			return index < 8 ? p + index : p + (n - 8) + (index - 8);
 		}
 		const uint32_t repeated32 = static_cast<unsigned char>(c) * 0x01010101u;
@@ -127,10 +115,10 @@ inline const void* memcchr(const void* data, int c, size_t n)
 			return nullptr;
 		if (head)
 		{
-			index = first_set_bit(head);
+			index = std::countr_zero(head);
 			return p + index / 8;
 		}
-		index = first_set_bit(tail);
+		index = std::countr_zero(tail);
 		return p + (n - 4) + index / 8;
 	}
 	while (n)
