@@ -89,20 +89,22 @@ static unsigned Get_FVF_Vertex_Size(unsigned FVF)
 	const unsigned tex_count=(FVF&D3DFVF_TEXCOUNT_MASK)>>D3DFVF_TEXCOUNT_SHIFT;
 	for (unsigned i=0; i<tex_count; ++i)
 	{
-		switch ((FVF>>(16+i*2))&0x3)
+		const unsigned format=FVF&D3DFVF_TEXCOORDSIZE1(i);
+		if (format==D3DFVF_TEXCOORDSIZE1(i))
 		{
-		case D3DFVF_TEXTUREFORMAT1:
 			size+=sizeof(float);
-			break;
-		case D3DFVF_TEXTUREFORMAT2:
-			size+=2*sizeof(float);
-			break;
-		case D3DFVF_TEXTUREFORMAT3:
+		}
+		else if (format==D3DFVF_TEXCOORDSIZE3(i))
+		{
 			size+=3*sizeof(float);
-			break;
-		case D3DFVF_TEXTUREFORMAT4:
+		}
+		else if (format==D3DFVF_TEXCOORDSIZE4(i))
+		{
 			size+=4*sizeof(float);
-			break;
+		}
+		else
+		{
+			size+=2*sizeof(float);
 		}
 	}
 
