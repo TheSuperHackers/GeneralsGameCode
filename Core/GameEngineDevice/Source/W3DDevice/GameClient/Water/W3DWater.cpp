@@ -922,7 +922,7 @@ void WaterRenderObjClass::ReAcquireResources()
 	{
 		static const DWORD riverWaterShader[] =
 		{
-			0xffff0101,                                     // ps.1.1
+			D3DPS_VERSION(1, 1),
 			0x00000042, 0xb00f0000,                         // tex t0
 			0x00000042, 0xb00f0001,                         // tex t1
 			0x00000042, 0xb00f0002,                         // tex t2
@@ -934,26 +934,26 @@ void WaterRenderObjClass::ReAcquireResources()
 			0x00000005, 0x80070001, 0x80e40001, 0x90ff0000, // mul r1.rgb, r1, v0.a
 			0x40000005, 0x80080000, 0x80e40000, 0xb0e40003, // +mul r0.a, r0, t3
 			0x00000002, 0x80070000, 0x80e40000, 0x80e40001, // add r0.rgb, r0, r1
-			0x0000ffff,                                     // end
+			D3DPS_END(),
 		};
 		hr = DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader(riverWaterShader, &m_riverWaterPixelShader);
 
 		static const DWORD waterShader[] =
 		{
-			0xffff0101,                                     // ps.1.1
+			D3DPS_VERSION(1, 1),
 			0x00000042, 0xb00f0000,                         // tex t0
 			0x00000042, 0xb00f0001,                         // tex t1
 			0x00000043, 0xb00f0002, 0xb0e40001,             // texbem t2, t1 ; use t1 as env map adjustment on t2.
 			0x00000005, 0x800f0000, 0x90e40000, 0xb0e40000, // mul r0, v0, t0 ; blend vertex color into t0.
 			0x00000005, 0x80070001, 0xb0e40002, 0xa0e40000, // mul r1.rgb, t2, c0 ; reduce t2 (environment mapped reflection) by constant
 			0x00000002, 0x80070000, 0x80e40000, 0x80e40001, // add r0.rgb, r0, r1
-			0x0000ffff,                                     // end
+			D3DPS_END(),
 		};
 		hr = DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader(waterShader, &m_waterPixelShader);
 
 		static const DWORD trapezoidWaterShader[] =
 		{
-			0xffff0101,                                                 // ps.1.1
+			D3DPS_VERSION(1, 1),
 			0x00000042, 0xb00f0000,                                     // tex t0 ; get water texture
 			0x00000042, 0xb00f0001,                                     // tex t1 ; get white highlights on black background
 			0x00000042, 0xb00f0002,                                     // tex t2 ; get white highlights with more tiling
@@ -961,7 +961,7 @@ void WaterRenderObjClass::ReAcquireResources()
 			0x00000005, 0x800f0000, 0x90e40000, 0xb0e40000,             // mul r0, v0, t0 ; blend vertex color and alpha into base texture.
 			0x00000004, 0x80070000, 0xb0e40001, 0xb0e40002, 0x80e40000, // mad r0.rgb, t1, t2, r0 ; blend sparkles and noise
 			0x00000005, 0x80070000, 0x80e40000, 0xb0e40003,             // mul r0.rgb, r0, t3 ; blend in black shroud
-			0x0000ffff,                                                 // end
+			D3DPS_END(),
 		};
 		hr = DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader(trapezoidWaterShader, &m_trapezoidWaterPixelShader);
 	}

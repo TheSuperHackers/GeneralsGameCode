@@ -67,7 +67,7 @@ void W3DProfilerFrameCapture::Capture(UnsignedInt displayWidth, UnsignedInt disp
 	{
 		static const DWORD swizzleShader[] =
 		{
-			0xffff0104,                                                 // ps.1.4
+			D3DPS_VERSION(1, 4),
 			0x00000042, 0x800f0000, 0xb0e40000,                         // texld r0, t0
 			0x00000001, 0x80080001, 0x80000000,                         // mov r1.a, r0.r
 			0x00000001, 0x80080002, 0x80550000,                         // mov r2.a, r0.g
@@ -75,7 +75,7 @@ void W3DProfilerFrameCapture::Capture(UnsignedInt displayWidth, UnsignedInt disp
 			0x00000005, 0x80070000, 0x80ff0003, 0xa0e40000,             // mul r0.rgb, r3.a, c0
 			0x00000004, 0x80070000, 0x80ff0002, 0xa0e40001, 0x80e40000, // mad r0.rgb, r2.a, c1, r0
 			0x00000004, 0x80070000, 0x80ff0001, 0xa0e40002, 0x80e40000, // mad r0.rgb, r1.a, c2, r0
-			0x0000ffff,                                                 // end
+			D3DPS_END(),
 		};
 		const HRESULT hr = DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader(swizzleShader, &m_swizzleShader);
 		if (FAILED(hr))
