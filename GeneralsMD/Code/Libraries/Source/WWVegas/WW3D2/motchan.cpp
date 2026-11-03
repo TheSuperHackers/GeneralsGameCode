@@ -431,13 +431,7 @@ void	TimeCodedMotionChannelClass::Get_Vector(float32 frame,float * setvec)
 
   if (pidx == ((NumTimeCodes - 1) * PacketSize))  {
 
-     const uint32* frm = &Data[pidx+1];
-
-		for (int i=0; i < VectorLen; i++)  {
-
-	   	setvec[i] = std::bit_cast<float32>(frm[i]);
-
-	  }
+     memcpy(setvec, &Data[pidx+1], VectorLen * sizeof(float32));
 
      return;
 
@@ -449,10 +443,7 @@ void	TimeCodedMotionChannelClass::Get_Vector(float32 frame,float * setvec)
   uint32 time = Data[p2idx];
 
    if (time & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) {
-		const uint32* frm = &Data[pidx+1];
-		for (int i=0; i < VectorLen; i++) {
-			setvec[i] = std::bit_cast<float32>(frm[i]);
-		}
+		memcpy(setvec, &Data[pidx+1], VectorLen * sizeof(float32));
 		return;
    }
 
