@@ -46,7 +46,7 @@
 #include "WWLib/win.h"
 #include <d3d8types.h>
 #include <d3dx8math.h>
-#include <Utility/bit_adapter.h>
+#include <string.h>
 
 /***********************************************************************************************
  * Matrix4x4::Multiply -- Multiply two Matrix4x4's together                                        *
@@ -184,14 +184,7 @@ void Matrix4x4::Multiply(const Matrix4x4 & a,const Matrix3D & b,Matrix4x4 * res)
 // Compares the bits of the elements, so 0.0f and -0.0f differ and identical NaNs are equal.
 int operator == (const Matrix4x4 & a, const Matrix4x4 & b)
 {
-	unsigned res=0;
-	for (int i=0;i<4;++i) {
-		res|=std::bit_cast<unsigned>(a[i][0])^std::bit_cast<unsigned>(b[i][0]);
-		res|=std::bit_cast<unsigned>(a[i][1])^std::bit_cast<unsigned>(b[i][1]);
-		res|=std::bit_cast<unsigned>(a[i][2])^std::bit_cast<unsigned>(b[i][2]);
-		res|=std::bit_cast<unsigned>(a[i][3])^std::bit_cast<unsigned>(b[i][3]);
-	}
-	return !res;
+	return memcmp(&a, &b, sizeof(Matrix4x4)) == 0;
 }
 
 int operator != (const Matrix4x4 & a, const Matrix4x4 & b)
