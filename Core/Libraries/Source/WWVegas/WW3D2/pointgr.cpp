@@ -1229,12 +1229,8 @@ void PointGroupClass::Update_Arrays(
 						// If we're not billboarding, then the coordinate we have is in screen space.
 						D3DXMATRIX d3dRotMat;
 						D3DXMatrixRotationZ(&d3dRotMat, ((float)point_orientation[i] / 255.0f * 2 * D3DX_PI));
-						// Same element order as the D3DX matrix, not transposed like To_Matrix4x4
-						const Matrix4x4 rotMat(
-							d3dRotMat._11, d3dRotMat._12, d3dRotMat._13, d3dRotMat._14,
-							d3dRotMat._21, d3dRotMat._22, d3dRotMat._23, d3dRotMat._24,
-							d3dRotMat._31, d3dRotMat._32, d3dRotMat._33, d3dRotMat._34,
-							d3dRotMat._41, d3dRotMat._42, d3dRotMat._43, d3dRotMat._44);
+						// Keep the D3DX element order, which rotates by the negative angle in Matrix4x4 math
+						const Matrix4x4 rotMat = To_Matrix4x4(d3dRotMat).Transpose();
 
 						Vector4 orientedVecX = rotMat * GroundMultiplierX;
 						Vector4 orientedVecY = rotMat * GroundMultiplierY;

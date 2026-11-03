@@ -46,6 +46,7 @@ set(WW3D2_SRC
     dllist.h
     dx8caps.cpp
     dx8caps.h
+    dx8convert.h
     dx8fvf.cpp
     dx8fvf.h
     dx8indexbuffer.cpp

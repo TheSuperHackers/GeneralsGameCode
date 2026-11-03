@@ -80,6 +80,7 @@
 #include "WWDebug/wwprofile.h"
 #include "WWLib/ffactory.h"
 #include "dx8caps.h"
+#include "dx8convert.h"
 #include "formconv.h"
 #include "dx8texman.h"
 #include "WWLib/bound.h"
@@ -3007,14 +3008,10 @@ void DX8Wrapper::Set_Light(unsigned index,const LightClass &light)
 	dlight.Ambient.a=1.0f;
 
 	temp=light.Get_Position();
-	dlight.Position.x=temp.X;
-	dlight.Position.y=temp.Y;
-	dlight.Position.z=temp.Z;
+	dlight.Position=To_D3DVECTOR(temp);
 
 	light.Get_Spot_Direction(temp);
-	dlight.Direction.x=temp.X;
-	dlight.Direction.y=temp.Y;
-	dlight.Direction.z=temp.Z;
+	dlight.Direction=To_D3DVECTOR(temp);
 
 	dlight.Range=light.Get_Attenuation_Range();
 	dlight.Falloff=light.Get_Spot_Exponent();
@@ -3066,14 +3063,8 @@ void DX8Wrapper::Set_Light_Environment(LightEnvironmentClass* light_env)
 			::ZeroMemory(&light, sizeof(D3DLIGHT8));
 
 			light.Type=D3DLIGHT_DIRECTIONAL;
-			const Vector3& diffuse=light_env->Get_Light_Diffuse(l);
-			light.Diffuse.r=diffuse.X;
-			light.Diffuse.g=diffuse.Y;
-			light.Diffuse.b=diffuse.Z;
-			Vector3 dir=-light_env->Get_Light_Direction(l);
-			light.Direction.x=dir.X;
-			light.Direction.y=dir.Y;
-			light.Direction.z=dir.Z;
+			light.Diffuse=To_D3DCOLORVALUE(light_env->Get_Light_Diffuse(l),0.0f);
+			light.Direction=To_D3DVECTOR(-light_env->Get_Light_Direction(l));
 
 			// (gth) TODO: put specular into LightEnvironment?  Much work to be done on lights :-)'
 			if (l==0) {
@@ -3082,18 +3073,9 @@ void DX8Wrapper::Set_Light_Environment(LightEnvironmentClass* light_env)
 
 			if (light_env->isPointLight(l)) {
 				light.Type = D3DLIGHT_POINT;
-				const Vector3& point_diffuse=light_env->getPointDiffuse(l);
-				light.Diffuse.r=point_diffuse.X;
-				light.Diffuse.g=point_diffuse.Y;
-				light.Diffuse.b=point_diffuse.Z;
-				const Vector3& point_ambient=light_env->getPointAmbient(l);
-				light.Ambient.r=point_ambient.X;
-				light.Ambient.g=point_ambient.Y;
-				light.Ambient.b=point_ambient.Z;
-				const Vector3& point_center=light_env->getPointCenter(l);
-				light.Position.x=point_center.X;
-				light.Position.y=point_center.Y;
-				light.Position.z=point_center.Z;
+				light.Diffuse=To_D3DCOLORVALUE(light_env->getPointDiffuse(l),0.0f);
+				light.Ambient=To_D3DCOLORVALUE(light_env->getPointAmbient(l),0.0f);
+				light.Position=To_D3DVECTOR(light_env->getPointCenter(l));
 				light.Range = light_env->getPointOrad(l);
 
 				// Inverse linear light 1/(1+D)
