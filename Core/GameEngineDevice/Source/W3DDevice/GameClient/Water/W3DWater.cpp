@@ -1732,6 +1732,15 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 }
 
 //-------------------------------------------------------------------------------------------------
+static Real getSeaPlaneOrigin()
+{
+	if (TheTerrainRenderObject == nullptr || TheTerrainRenderObject->getMap() == nullptr)
+		return 0.0f;
+
+	return -TheTerrainRenderObject->getMap()->getBorderSizeInline() * MAP_XY_FACTOR;
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Clips the water plane to the current camera frustum and returns a bounding
 	* box enclosing the clipped plane.  Returns false if water plane is not visible. */
 //-------------------------------------------------------------------------------------------------
@@ -1742,12 +1751,14 @@ Bool WaterRenderObjClass::getClippedWaterPlane(CameraClass *cam, AABoxClass *box
 	ClipPolyClass	ClippedPoly0;
 	ClipPolyClass	ClippedPoly1;
 
+	const Real origin = getSeaPlaneOrigin();
+
 	///@todo: generate proper sized polygon
 	ClippedPoly0.Reset();
-	ClippedPoly0.Add_Vertex(Vector3(0,0,m_level));
-	ClippedPoly0.Add_Vertex(Vector3(0,m_dy,m_level));
+	ClippedPoly0.Add_Vertex(Vector3(origin,origin,m_level));
+	ClippedPoly0.Add_Vertex(Vector3(origin,m_dy,m_level));
 	ClippedPoly0.Add_Vertex(Vector3(m_dx,m_dy,m_level));
-	ClippedPoly0.Add_Vertex(Vector3(m_dx,0,m_level));
+	ClippedPoly0.Add_Vertex(Vector3(m_dx,origin,m_level));
 
 	//clip against all 6 frustum planes
 	ClippedPoly0.Clip(frustum.Planes[0],ClippedPoly1);
@@ -1899,9 +1910,9 @@ void WaterRenderObjClass::drawSea(RenderInfoClass & rinfo)
 	m_pDev->SetStreamSource(0,m_vertexBufferD3D,sizeof(WaterRenderObjClass::SEA_PATCH_VERTEX));
 	m_pDev->SetIndices(m_indexBufferD3D,0);
 
-	for (startY=patchY=(seaBox.Center.Y-seaBox.Extent.Y)/(PATCH_WIDTH*PATCH_SCALE); (patchY*PATCH_WIDTH*PATCH_SCALE)<(seaBox.Center.Y+seaBox.Extent.Y); patchY++)
+	for (startY=patchY=REAL_TO_INT_FLOOR((seaBox.Center.Y-seaBox.Extent.Y)/(PATCH_WIDTH*PATCH_SCALE)); (patchY*PATCH_WIDTH*PATCH_SCALE)<(seaBox.Center.Y+seaBox.Extent.Y); patchY++)
 	{
-		for (startX=patchX=(seaBox.Center.X-seaBox.Extent.X)/(PATCH_WIDTH*PATCH_SCALE); (patchX*PATCH_WIDTH*PATCH_SCALE)<(seaBox.Center.X+seaBox.Extent.X); patchX++)
+		for (startX=patchX=REAL_TO_INT_FLOOR((seaBox.Center.X-seaBox.Extent.X)/(PATCH_WIDTH*PATCH_SCALE)); (patchX*PATCH_WIDTH*PATCH_SCALE)<(seaBox.Center.X+seaBox.Extent.X); patchX++)
 		{
 			D3DXMATRIX matWorldViewProj, matTemp, matTempWorld;
 			patchMatrix._41=(float)(patchX*PATCH_WIDTH*PATCH_SCALE );
@@ -1915,7 +1926,7 @@ void WaterRenderObjClass::drawSea(RenderInfoClass & rinfo)
 			D3DXMatrixTranspose(&matWorldViewProj, &matWorldViewProj);
 			m_pDev->SetVertexShaderConstant(CV_WORLDVIEWPROJ_0, &matWorldViewProj, 4);	//pass transform matrix into shader
 
-			m_pDev->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP,0,m_numVertices,0,m_numIndices);
+			m_pDev->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP,0,m_numVertices,0,m_numIndices-2);
 		}
 	}
 //	m_pDev->SetRenderState(D3DRS_FILLMODE,D3DFILL_SOLID);
@@ -1958,9 +1969,9 @@ void WaterRenderObjClass::drawSea(RenderInfoClass & rinfo)
 		W3DShaderManager::setShader(W3DShaderManager::ST_SHROUD_TEXTURE, 0);
 		m_pDev->SetStreamSource(0,m_vertexBufferD3D,sizeof(WaterRenderObjClass::SEA_PATCH_VERTEX));
 		m_pDev->SetIndices(m_indexBufferD3D,0);
-		for (startY=patchY=(seaBox.Center.Y-seaBox.Extent.Y)/(PATCH_WIDTH*PATCH_SCALE); (patchY*PATCH_WIDTH*PATCH_SCALE)<(seaBox.Center.Y+seaBox.Extent.Y); patchY++)
+		for (startY=patchY=REAL_TO_INT_FLOOR((seaBox.Center.Y-seaBox.Extent.Y)/(PATCH_WIDTH*PATCH_SCALE)); (patchY*PATCH_WIDTH*PATCH_SCALE)<(seaBox.Center.Y+seaBox.Extent.Y); patchY++)
 		{
-			for (startX=patchX=(seaBox.Center.X-seaBox.Extent.X)/(PATCH_WIDTH*PATCH_SCALE); (patchX*PATCH_WIDTH*PATCH_SCALE)<(seaBox.Center.X+seaBox.Extent.X); patchX++)
+			for (startX=patchX=REAL_TO_INT_FLOOR((seaBox.Center.X-seaBox.Extent.X)/(PATCH_WIDTH*PATCH_SCALE)); (patchX*PATCH_WIDTH*PATCH_SCALE)<(seaBox.Center.X+seaBox.Extent.X); patchX++)
 			{
 				D3DXMATRIX matTemp;
 				patchMatrix._41=(float)(patchX*PATCH_WIDTH*PATCH_SCALE);
@@ -1970,7 +1981,7 @@ void WaterRenderObjClass::drawSea(RenderInfoClass & rinfo)
 
 				DX8Wrapper::_Set_DX8_Transform(D3DTS_WORLD, matTemp);
 
-				m_pDev->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP,0,m_numVertices,0,m_numIndices);
+				m_pDev->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP,0,m_numVertices,0,m_numIndices-2);
 			}
 		}
 		W3DShaderManager::resetShader(W3DShaderManager::ST_SHROUD_TEXTURE);
