@@ -55,7 +55,7 @@ public:
 	virtual void xferSnapshot( Snapshot *snapshot ) override;		///< entry point for xfering a snapshot
 
 	// Xfer CRC methods
-	virtual UnsignedInt getCRC();										///< get computed CRC in network byte order
+	virtual UnsignedInt getCRC();										///< get computed CRC, in network byte order for retail compatible CRC
 
 protected:
 
