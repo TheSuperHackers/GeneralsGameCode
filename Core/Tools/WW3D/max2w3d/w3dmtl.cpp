@@ -338,15 +338,9 @@ int W3dMaterialClass::Get_Map_Channel(int pass,int stage) const
 
 void W3dMaterialClass::Init(Mtl * mtl, char *materialColorTexture)
 {
-	bool ps2_mat = false;
 	Reset();
 
-	if (mtl->ClassID() == PS2GameMaterialClassID)
-	{
-		ps2_mat = true;
-	}
-
-	if ((mtl->ClassID() == GameMaterialClassID) || ps2_mat) {
+	if (mtl->ClassID() == GameMaterialClassID) {
 		Init((GameMtl*)mtl, materialColorTexture);	///@todo: Fix this for substituted textures.
 		return;
 	}
@@ -426,14 +420,7 @@ void W3dMaterialClass::Init(Mtl * mtl, char *materialColorTexture)
 	if (PassCount == 2) {
 
 		W3d_Shader_Reset(&shader);
-		if (ps2_mat)
-		{
-			W3d_Shader_Set_Pri_Gradient(&shader,PSS_PRIGRADIENT_MODULATE);
-		}
-		else
-		{
-			W3d_Shader_Set_Pri_Gradient(&shader,W3DSHADER_PRIGRADIENT_MODULATE);
-		}
+		W3d_Shader_Set_Pri_Gradient(&shader,W3DSHADER_PRIGRADIENT_MODULATE);
 		W3d_Shader_Set_Sec_Gradient(&shader,W3DSHADER_SECGRADIENT_DISABLE);
 		W3d_Shader_Set_Depth_Mask(&shader,W3DSHADER_DEPTHMASK_WRITE_DISABLE);
 		W3d_Shader_Set_Dest_Blend_Func(&shader,W3DSHADER_DESTBLENDFUNC_ONE);
