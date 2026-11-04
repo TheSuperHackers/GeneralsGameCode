@@ -79,8 +79,6 @@
 #define IDD_GENERATE_LOD_EXTENSION_DIALOG 135
 #define IDD_EXPORT_ALL                  136
 #define IDD_SCENE_SETUP                 137
-#define IDD_GAMEMTL_PS2_SHADER          138
-#define IDD_GAMEMTL_PS2_TEXTURES        139
 #define IDD_ALPHA_MODIFIER              140
 #define IDD_W3D_LOG                     142
 #define IDD_INPUT_DIALOG                143
@@ -264,17 +262,11 @@
 #define IDC_DAMAGE_COUNT                1171
 #define IDC_DAMAGE_OFFSET               1172
 #define IDC_DAMAGE_AS_COPY              1173
-#define IDC_PS2_PRESET_COMBO            1173
 #define IDC_DAMAGE_AS_INSTANCE          1174
-#define IDC_COMPATIBLE                  1174
 #define IDC_DAMAGE_AS_REFERENCE         1175
 #define IDC_ALPHA_EDIT                  1175
-#define IDC_A_COMBO                     1176
-#define IDC_B_COMBO                     1177
 #define IDC_EXPORT_STANDARD_MATERIALS   1177
-#define IDC_C_COMBO                     1178
 #define IDC_EXPORT_UTILITIES_GROUP      1178
-#define IDC_D_COMBO                     1179
 #define IDC_COMPRESS_ANIMATION_CHECK    1179
 #define IDC_ALPHA_SPIN                  1180
 #define IDC_ALPHA_SPIN2                 1181
@@ -337,7 +329,6 @@
 #define IDS_DISPLACEMENT_MAP            60042
 #define IDS_ALPHA_MODIFIER_CLASS        60043
 #define IDS_PS2_GAMEMTL                 60044
-#define IDS_PC_TO_PS2_MAT_CONVERTER     60045
 #define IDS_NO_LOD                      60046
 #define IDS_W3DUTILITY_SETTINGS         60047
 #define IDS_W3DUTILITY_TOOLS            60048

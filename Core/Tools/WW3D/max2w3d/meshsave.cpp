@@ -53,7 +53,6 @@
  *   MeshSaveClass::get_skin_modifier_objects -- Searches for the WWSkin modifier for this mes *
  *   MeshSaveClass::inv_deform_mesh -- preprocess the mesh for skinning                        *
  *   MeshSaveClass::create_materials -- create the materials for this mesh                     *
- *   MeshSaveClass::write_ps2_shaders -- Write shaders specific to the PS2 in their own chunk. *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -254,23 +253,6 @@ MeshSaveClass::MeshSaveClass
 	Mesh			mesh = *input_mesh;		// copy the mesh so we can modify it
 	Mtl *		   nodemtl = inode->GetMtl();
 	DWORD		   wirecolor = inode->GetWireColor();
-
-	PS2Material = FALSE;
-
-	// Check to see if the mesh uses PS2 game materials.  If so, set a flag so
-	// that write_shaders will know to make a PS2 shader chunk.
-	if (nodemtl) {
-		if (nodemtl->ClassID() == PS2GameMaterialClassID) {
-			PS2Material = TRUE;
-		} else if (nodemtl->IsMultiMtl()) {
-			for (int i = 0; i < nodemtl->NumSubMtls(); i++) {
-				Mtl *sub = nodemtl->GetSubMtl(i);
-				if (sub->ClassID() == PS2GameMaterialClassID) {
-					PS2Material = TRUE;
-				}
-			}
-		}
-	}
 
 	//////////////////////////////////////////////////////////////////////
 	// Check if the mesh is being inverted by its transform.  If this
@@ -529,8 +511,7 @@ void MeshSaveClass::Build_Mesh(Mesh & mesh, Mtl *node_mtl, unsigned int *materia
 			mtl_to_use = node_mtl->GetSubMtl (maxface.getMatID() % node_mtl->NumSubMtls());
 		}
 
-		if ((mtl_to_use != nullptr) && ((mtl_to_use->ClassID() == GameMaterialClassID) ||
-			 (mtl_to_use->ClassID() == PS2GameMaterialClassID))) {
+		if ((mtl_to_use != nullptr) && (mtl_to_use->ClassID() == GameMaterialClassID)) {
 			face.SurfaceType = ((GameMtl *)mtl_to_use)->Get_Surface_Type ();
 		}
 
@@ -944,14 +925,6 @@ int MeshSaveClass::Write_To_File(ChunkSaveClass & csave,bool export_aabtree)
 		return 1;
 	}
 
-	if (PS2Material == TRUE) {
-
-		// The ps2 shaders must be written out first.
-		if (write_ps2_shaders(csave) != 0) {
-			return 1;
-		}
-	}
-
 	if (write_shaders(csave) != 0) {
 		return 1;
 	}
@@ -1351,13 +1324,6 @@ int MeshSaveClass::write_shaders(ChunkSaveClass & csave)
 {
 	assert(MaterialDesc.Shader_Count() > 0);
 
-	if (PS2Material == TRUE) {
-
-		// Make the PC shader as close to the PS2 shader as possible.
-		// This will allow for viewing in W3D View.
-		setup_PC_shaders_from_PS2_shaders();
-	}
-
 	if (!csave.Begin_Chunk(W3D_CHUNK_SHADERS)) {
 		return 1;
 	}
@@ -1375,133 +1341,6 @@ int MeshSaveClass::write_shaders(ChunkSaveClass & csave)
 		return 1;
 	}
 	return 0;
-}
-
-
-/***********************************************************************************************
- * MeshSaveClass::write_ps2_shaders -- Write shaders specific to the PS2 in their own chunk.   *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/20/1999MLL: Created.                                                                   *
- *=============================================================================================*/
-int MeshSaveClass::write_ps2_shaders(ChunkSaveClass & csave)
-{
-
-	if (!csave.Begin_Chunk(W3D_CHUNK_PS2_SHADERS)) {
-		return 1;
-	}
-
-	W3dShaderStruct *shader;
-	W3dPS2ShaderStruct ps2shader;
-
-	for (int i=0; i<MaterialDesc.Shader_Count(); i++) {
-		shader = MaterialDesc.Get_Shader(i);
-
-		ps2shader.AlphaTest = W3d_Shader_Get_Alpha_Test(shader);
-		ps2shader.AParam = W3d_Shader_Get_PS2_Param_A(shader);
-		ps2shader.BParam = W3d_Shader_Get_PS2_Param_B(shader);
-		ps2shader.CParam = W3d_Shader_Get_PS2_Param_C(shader);
-		ps2shader.DParam = W3d_Shader_Get_PS2_Param_D(shader);
-
-		// Write out the PS2 native form.
-		switch (W3d_Shader_Get_Depth_Compare(shader))
-		{
-			case PSS_DEPTHCOMPARE_PASS_NEVER:
-				ps2shader.DepthCompare = 0;
-				break;
-			case PSS_DEPTHCOMPARE_PASS_LESS:
-				ps2shader.DepthCompare = 3;
-				break;
-			case PSS_DEPTHCOMPARE_PASS_ALWAYS:
-				ps2shader.DepthCompare = 1;
-				break;
-			case PSS_DEPTHCOMPARE_PASS_LEQUAL:
-				ps2shader.DepthCompare = 2;
-				break;
-		}
-
-		ps2shader.DepthMask = !W3d_Shader_Get_Depth_Mask(shader);
-
-		switch (W3d_Shader_Get_Pri_Gradient(shader))
-		{
-			case PSS_PRIGRADIENT_MODULATE:
-				ps2shader.PriGradient = PSS_PS2_PRIGRADIENT_MODULATE;
-				break;
-
-			case PSS_PRIGRADIENT_HIGHLIGHT:
-				ps2shader.PriGradient = PSS_PS2_PRIGRADIENT_HIGHLIGHT;
-				break;
-
-			case PSS_PRIGRADIENT_HIGHLIGHT2:
-				ps2shader.PriGradient = PSS_PS2_PRIGRADIENT_HIGHLIGHT2;
-				break;
-
-			case PSS_PRIGRADIENT_DECAL:
-				ps2shader.PriGradient = PSS_PS2_PRIGRADIENT_DECAL;
-				break;
-
-		}
-
-		ps2shader.Texturing = W3d_Shader_Get_Texturing(shader);
-
-		if (csave.Write(&ps2shader,sizeof(W3dPS2ShaderStruct)) != sizeof(W3dPS2ShaderStruct)) {
-			return 1;
-		}
-	}
-
-	if (!csave.End_Chunk()) {
-		return 1;
-	}
-
-	return (0);
-}
-
-void MeshSaveClass::setup_PC_shaders_from_PS2_shaders()
-{
-
-	W3dShaderStruct *shader;
-
-	for (int i=0; i<MaterialDesc.Shader_Count(); i++) {
-		shader = MaterialDesc.Get_Shader(i);
-
-		// DepthCompare on the PS2 doesn't have as many options as on the PC.
-		switch (W3d_Shader_Get_Depth_Compare(shader))
-		{
-			case PSS_DEPTHCOMPARE_PASS_NEVER:
-				W3d_Shader_Set_Depth_Compare(shader, W3DSHADER_DEPTHCOMPARE_PASS_NEVER);
-				break;
-			case PSS_DEPTHCOMPARE_PASS_LESS:
-				W3d_Shader_Set_Depth_Compare(shader, W3DSHADER_DEPTHCOMPARE_PASS_LESS);
-				break;
-			case PSS_DEPTHCOMPARE_PASS_LEQUAL:
-				W3d_Shader_Set_Depth_Compare(shader, W3DSHADER_DEPTHCOMPARE_PASS_LEQUAL);
-				break;
-			case PSS_DEPTHCOMPARE_PASS_ALWAYS:
-				W3d_Shader_Set_Depth_Compare(shader, W3DSHADER_DEPTHCOMPARE_PASS_ALWAYS);
-				break;
-		}
-
-		// The PS2 has more gradient functions than the PC.
-		switch (W3d_Shader_Get_Pri_Gradient(shader))
-		{
-			case PSS_PRIGRADIENT_MODULATE:
-				W3d_Shader_Set_Pri_Gradient(shader, W3DSHADER_PRIGRADIENT_MODULATE);
-				break;
-
-			// No PC equivalent.  Set to default: modulate.
-			case PSS_PRIGRADIENT_HIGHLIGHT:
-			case PSS_PRIGRADIENT_HIGHLIGHT2:
-			case PSS_PRIGRADIENT_DECAL:
-				W3d_Shader_Set_Pri_Gradient(shader, W3DSHADER_PRIGRADIENT_MODULATE);
-				break;
-		}
-
-
-	}
-
 }
 
 int MeshSaveClass::write_textures(ChunkSaveClass & csave)

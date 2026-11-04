@@ -177,7 +177,7 @@ void GameMtlDlg::SetThing(ReferenceTarget *m)
 {
 	assert (m);
 	assert (m->SuperClassID()==MATERIAL_CLASS_ID);
-	assert ((m->ClassID()==GameMaterialClassID) || (m->ClassID()==PS2GameMaterialClassID));
+	assert (m->ClassID()==GameMaterialClassID);
 	assert (TheMtl);
 
 	int pass;

@@ -126,7 +126,7 @@ DLLEXPORT const TCHAR * LibDescription()
  *=============================================================================================*/
 DLLEXPORT int LibNumberClasses()
 {
-	return 9; //Moumine 7/24/2001    4:38:27 PM was 10. Removed Mesh_Deformation(#6)
+	return 8;
 }
 
 
@@ -153,8 +153,7 @@ DLLEXPORT ClassDesc * LibClassDesc(int i)
 		case 4:	return Get_Game_Material_Desc(); break;
 		case 5:	return Get_Game_Maps_Desc(); break;
 		case 6:	return Get_PS2_Game_Material_Desc(); break;
-		case 7:	return Get_PS2_Material_Conversion(); break;
-		case 8:	return Get_Alpha_Desc(); break;
+		case 7:	return Get_Alpha_Desc(); break;
 		//Moumine 7/24/2001    4:33:52 PM Removed #6 and shifted up instead of returning nullptr
 		// nullptr causes a crash in "File->Summary info->Plug-in ifo..."
 		default: return nullptr; break;

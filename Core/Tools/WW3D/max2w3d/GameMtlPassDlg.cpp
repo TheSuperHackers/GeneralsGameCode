@@ -51,7 +51,6 @@
 #include "gamemtl.h"
 #include "GameMtlDlg.h"
 #include "GameMtlShaderDlg.h"
-#include "PS2GameMtlShaderDlg.h"
 #include "GameMtlTextureDlg.h"
 #include "GameMtlVertexMaterialDlg.h"
 #include "w3d_file.h"
@@ -170,12 +169,7 @@ BOOL GameMtlPassDlg::DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		case WM_INITDIALOG:
 		{
 			Page[0] = new GameMtlVertexMaterialDlg(HwndPanel,IParams,TheMtl,PassIndex);
-			if (TheMtl->Get_Shader_Type() == GameMtl::STE_PC_SHADER)	{
-				Page[1] = new GameMtlShaderDlg(HwndPanel,IParams,TheMtl,PassIndex);
-			} else {
-				// The PS2 shader is different.
-				Page[1] = new PS2GameMtlShaderDlg(HwndPanel,IParams,TheMtl,PassIndex);
-			}
+			Page[1] = new GameMtlShaderDlg(HwndPanel,IParams,TheMtl,PassIndex);
 
 			Page[2] = new GameMtlTextureDlg(HwndPanel,IParams,TheMtl,PassIndex);
 
