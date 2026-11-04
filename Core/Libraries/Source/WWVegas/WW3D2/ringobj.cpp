@@ -1221,7 +1221,7 @@ RingPrototypeClass::RingPrototypeClass(RingRenderObjClass *ring)
 	//
 	if (ring->RingTexture != nullptr) {
 		StringClass name = ring->RingTexture->Get_Full_Path();
-		const char *filename = getFileName (name);
+		const char *filename = getFileName (name.str());
 
 		strlcpy(Definition.TextureName, filename, ARRAY_SIZE(Definition.TextureName));
 	}

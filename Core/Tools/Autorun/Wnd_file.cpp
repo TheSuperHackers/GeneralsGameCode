@@ -46,7 +46,7 @@
 #include <sys/stat.h>
 #include "Wnd_File.h"
 #include "WinFix.h"
-#include "Lib/PathUtil.h"
+#include <Lib/PathUtil.h>
 //#include "autorun.h"
 
 

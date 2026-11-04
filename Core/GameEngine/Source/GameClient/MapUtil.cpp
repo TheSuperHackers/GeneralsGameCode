@@ -515,7 +515,7 @@ Bool MapCache::loadMapsFromDisk( const AsciiString &mapDir, Bool isOfficial, Boo
 	FilenameList filepathList;
 	FilenameListIter filepathIt;
 	AsciiString toplevelPattern;
-	toplevelPattern.format("%s\\", mapDir.str());
+	toplevelPattern.format("%s%c", mapDir.str(), getNativePathSeparator());
 	Bool mapListChanged = FALSE;
 	AsciiString filenamepattern;
 	filenamepattern.format("*.%s", getMapExtension().str());
@@ -533,11 +533,10 @@ Bool MapCache::loadMapsFromDisk( const AsciiString &mapDir, Bool isOfficial, Boo
 		const char *szFilenameLower = getLastPathSeparator(filepathLower.str());
 		if (!szFilenameLower)
 		{
-			DEBUG_CRASH(("Couldn't find \\ in map name!"));
+			DEBUG_CRASH(("Couldn't find / or \\ in map name!"));
 			continue;
 		}
 
-		AsciiString endingStr;
 		AsciiString filenameLower = szFilenameLower+1;
 		filenameLower.truncateBy(strlen(mapExtension));
 
@@ -547,9 +546,11 @@ Bool MapCache::loadMapsFromDisk( const AsciiString &mapDir, Bool isOfficial, Boo
 			continue;
 		}
 
-		endingStr.format("%s\\%s%s", filenameLower.str(), filenameLower.str(), mapExtension);
+		// The map must sit in a folder of the same name
+		const AsciiString fullMapFolderLower(filepathLower.str(), szFilenameLower - filepathLower.str());
+		const char* lastMapFolderLower = getFileName(fullMapFolderLower.str());
 
-		if (!filepathLower.endsWithNoCase(endingStr.str()))
+		if (strcmp(lastMapFolderLower, filenameLower.str()) != 0)
 		{
 			DEBUG_CRASH(("Found map '%s' in wrong spot (%s)", filenameLower.str(), filepathLower.str()));
 			continue;

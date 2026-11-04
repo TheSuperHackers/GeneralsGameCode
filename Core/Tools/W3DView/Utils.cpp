@@ -750,7 +750,7 @@ Load_RC_Texture (LPCTSTR resource_name)
 void
 Resolve_Path (CString &filename)
 {
-	if (getLastPathSeparator (filename) == nullptr) {
+	if (getLastPathSeparator ((LPCTSTR)filename) == nullptr) {
 		char path[MAX_PATH];
 		::GetCurrentDirectory (MAX_PATH, path);
 		::Delimit_Path (path);

@@ -17,7 +17,7 @@
 */
 
 #include "findpatch.h"
-#include "Lib/PathUtil.h"
+#include <Lib/PathUtil.h>
 
 //
 // Locate a patch file
@@ -141,7 +141,7 @@ bit8 Get_App_Dir(OUT char *filename,int maxlen, ConfigFile &config,int index)
     return(FALSE);
   }
 
-  // Find the last '\\' in a string and put a 0 after it
+  // Null the file name.
   //  If you only put a directory in the InstallPath key instead of a full
   //  path to a file, you better end the directory with a trailing '\\'!!!
   *getFileName(gamePath)=0;

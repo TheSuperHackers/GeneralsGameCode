@@ -60,7 +60,7 @@
 #include "monod.h"
 #include "filed.h"
 #include "configfile.h"
-#include "Lib/PathUtil.h"
+#include <Lib/PathUtil.h>
 #include <windows.h>
 
 #include <Debug/DebugPrint.h>
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
 	char debugFile[MAX_PATH + 3];
 	strcpy(debugFile, configName);
 	strcat(debugFile, ".txt");
-	strcpy(debugLogName, getLastPathSeparator(configName));
+	strcpy(debugLogName, getFileName(configName));
 	strcat(debugLogName, "Log");
 	FileD outputDevice(debugFile, true);
 	MsgManager::setAllStreams(&outputDevice);
