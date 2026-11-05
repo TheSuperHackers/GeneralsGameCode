@@ -156,6 +156,7 @@ PointGroupClass::PointGroupClass() :
 	PointOrientation(nullptr),
 	PointFrame(nullptr),
 	PointCount(0),
+	TextureUVRects(nullptr),
 	FrameRowColumnCountLog2(0),
 	Texture(nullptr),
 	Flags(0),
@@ -914,6 +915,17 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 
 	Update_Arrays(current_loc, current_diffuse, current_size, current_orient, current_frame,
 		PointCount, PointLoc->Get_Count(), vnum, pnum);
+
+	// Map each point's frame UVs into its rectangle; Update_Arrays refills VertexUV every render.
+	if (TextureUVRects) {
+		const int verts_per_point = (PointMode == QUADS) ? 4 : 3;
+		for (int point = 0, vert = 0; point < PointCount; ++point) {
+			const Vector4& rect = TextureUVRects[point];
+			for (const int end = vert + verts_per_point; vert < end; ++vert) {
+				VertexUV[vert].Set(rect.X + VertexUV[vert].X * (rect.Z - rect.X), rect.Y + VertexUV[vert].Y * (rect.W - rect.Y));
+			}
+		}
+	}
 
 	// the locations are now in view space
 	// so set world and view matrices to identity and render
