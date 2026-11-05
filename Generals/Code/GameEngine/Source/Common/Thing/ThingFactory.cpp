@@ -262,7 +262,14 @@ const ThingTemplate *ThingFactory::findByTemplateID( UnsignedShort id )
 	for (ThingTemplate *tmpl = m_firstTemplate; tmpl; tmpl = tmpl->friend_getNextTemplate())
 	{
 		if (tmpl->getTemplateID() == id)
+		{
+#if RETAIL_COMPATIBLE_SCRIPTING
 			return tmpl;
+#else
+			// TheSuperHackers @bugfix DrGoldFish 08/10/2026 Return the final override of the ThingTemplate.
+			return (ThingTemplate*)tmpl->getFinalOverride();
+#endif
+		}
 	}
 	DEBUG_CRASH(("template %d not found",(Int)id));
 	return nullptr;
@@ -276,7 +283,12 @@ ThingTemplate *ThingFactory::findTemplateInternal( const AsciiString& name, Bool
 	ThingTemplateHashMapIt tIt = m_templateHashMap.find(name);
 
 	if (tIt != m_templateHashMap.end()) {
+#if RETAIL_COMPATIBLE_SCRIPTING
 		return tIt->second;
+#else
+		// TheSuperHackers @bugfix DrGoldFish 08/10/2026 Return the final override of the ThingTemplate.
+		return (ThingTemplate*)tIt->second->getFinalOverride();
+#endif
 	}
 
 #ifdef LOAD_TEST_ASSETS
