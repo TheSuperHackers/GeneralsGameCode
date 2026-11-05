@@ -492,7 +492,8 @@ Bool SpecialPowerModule::initiateIntentToDoSpecialPower( const Object *targetObj
 	}
 
 #if RETAIL_COMPATIBLE_CRC
-	// TheSuperHackers @info we need to leave early if we are in the MissileLauncherBuildingUpdate crash fix codepath
+	// TheSuperHackers @info Leave early when an update module refused the launch
+	// and marked this power with an invalid ready frame.
 	if (m_availableOnFrame == 0xFFFFFFFF)
 	{
 		DEBUG_ASSERTCRASH(!valid, ("Using MissileLauncherBuildingUpdate escape path when valid is set to true"));
@@ -726,7 +727,13 @@ Bool SpecialPowerModule::canDoSpecialPower() const
 //-------------------------------------------------------------------------------------------------
 void SpecialPowerModule::doSpecialPower( UnsignedInt commandOptions )
 {
-	if (m_pausedCount > 0 || getObject()->isDisabled()) {
+#if RETAIL_COMPATIBLE_CRC
+	if (m_pausedCount > 0) {
+		return;
+	}
+#endif
+
+	if (!canDoSpecialPower()) {
 		return;
 	}
 
@@ -748,7 +755,13 @@ void SpecialPowerModule::doSpecialPower( UnsignedInt commandOptions )
 //-------------------------------------------------------------------------------------------------
 void SpecialPowerModule::doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions )
 {
-	if (m_pausedCount > 0 || getObject()->isDisabled()) {
+#if RETAIL_COMPATIBLE_CRC
+	if (m_pausedCount > 0) {
+		return;
+	}
+#endif
+
+	if (!canDoSpecialPower()) {
 		return;
 	}
 
@@ -770,7 +783,13 @@ void SpecialPowerModule::doSpecialPowerAtObject( Object *obj, UnsignedInt comman
 //-------------------------------------------------------------------------------------------------
 void SpecialPowerModule::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
 {
-	if (m_pausedCount > 0 || getObject()->isDisabled()) {
+#if RETAIL_COMPATIBLE_CRC
+	if (m_pausedCount > 0) {
+		return;
+	}
+#endif
+
+	if (!canDoSpecialPower()) {
 		return;
 	}
 
@@ -779,7 +798,8 @@ void SpecialPowerModule::doSpecialPowerAtLocation( const Coord3D *loc, Real angl
 	initiateIntentToDoSpecialPower( nullptr, loc, nullptr, commandOptions );
 
 #if RETAIL_COMPATIBLE_CRC
-	// TheSuperHackers @info we need to leave early if we are in the MissileLauncherBuildingUpdate crash fix codepath
+	// TheSuperHackers @info Leave early when an update module refused the launch
+	// and marked this power with an invalid ready frame.
 	if (m_availableOnFrame == 0xFFFFFFFF)
 		return;
 #endif
@@ -798,7 +818,13 @@ void SpecialPowerModule::doSpecialPowerAtLocation( const Coord3D *loc, Real angl
 //-------------------------------------------------------------------------------------------------
 void SpecialPowerModule::doSpecialPowerUsingWaypoints( const Waypoint *way, UnsignedInt commandOptions )
 {
-	if (m_pausedCount > 0 || getObject()->isDisabled()) {
+#if RETAIL_COMPATIBLE_CRC
+	if (m_pausedCount > 0) {
+		return;
+	}
+#endif
+
+	if (!canDoSpecialPower()) {
 		return;
 	}
 

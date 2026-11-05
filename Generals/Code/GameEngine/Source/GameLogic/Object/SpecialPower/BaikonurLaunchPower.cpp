@@ -88,7 +88,7 @@ BaikonurLaunchPower::~BaikonurLaunchPower()
 // ------------------------------------------------------------------------------------------------
 void BaikonurLaunchPower::doSpecialPower( UnsignedInt commandOptions )
 {
-	if (getObject()->isDisabled())
+	if (!canDoSpecialPower())
 		return;
 
 	// call the base class action cause we are *EXTENDING* functionality
@@ -100,7 +100,7 @@ void BaikonurLaunchPower::doSpecialPower( UnsignedInt commandOptions )
 // ------------------------------------------------------------------------------------------------
 void BaikonurLaunchPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
 {
-	if (getObject()->isDisabled())
+	if (!canDoSpecialPower())
 		return;
 
 	const BaikonurLaunchPowerModuleData *data = getBaikonurLaunchPowerModuleData();
