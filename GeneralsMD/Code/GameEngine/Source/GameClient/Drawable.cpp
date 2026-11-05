@@ -4746,6 +4746,12 @@ void Drawable::xferDrawableModules( Xfer *xfer )
 	// xfer number of module types
 	UnsignedShort moduleTypes = NUM_DRAWABLE_MODULE_TYPES;
 	xfer->xferUnsignedShort( &moduleTypes );
+	// TheSuperHackers @bugfix CryoTheRenegade 05/11/2026 Reject module type counts beyond the module array.
+	if( moduleTypes > NUM_DRAWABLE_MODULE_TYPES )
+	{
+		DEBUG_LOG(( "Drawable::xferDrawableModules - Invalid module type count %d", moduleTypes ));
+		throw SC_INVALID_DATA;
+	}
 
 	// xfer each set of modules for each type
 	AsciiString moduleIdentifier;
@@ -5228,6 +5234,12 @@ void Drawable::xfer( Xfer *xfer )
 			// icon index name
 			xfer->xferAsciiString( &iconIndexName );
 			iconIndex = drawableIconNameToIndex( iconIndexName.str() );
+			// TheSuperHackers @bugfix CryoTheRenegade 05/11/2026 Reject unknown icon names before indexing the icon arrays.
+			if( iconIndex == ICON_INVALID )
+			{
+				DEBUG_LOG(( "Drawable::xfer - Unknown icon '%s'", iconIndexName.str() ));
+				throw SC_INVALID_DATA;
+			}
 
 			// keep till frame
 			xfer->xferUnsignedInt( &iconKeepFrame );
