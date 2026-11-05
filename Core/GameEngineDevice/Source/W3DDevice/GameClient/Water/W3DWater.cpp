@@ -164,21 +164,462 @@ static ShaderClass blendStagesShader(SC_DETAIL_BLEND);
 
 WaterRenderObjClass *TheWaterRenderObj=nullptr; ///<global water rendering object
 
+// TheSuperHackers @bugfix arcticdolphin 24/10/2026 Subdivide rivers for per-cell shroud sampling.
+struct RiverMeshVertex
+{
+	Real x, y;
+	Real weightB, weightC;
+	UnsignedShort sources[3];
+};
+
+struct RiverPolygon
+{
+	RiverMeshVertex vertices[12];
+	Int count;
+};
+
+struct RiverShroudGrid
+{
+	Real cellWidth, cellHeight;
+	Int cellsX, cellsY;
+
+	RiverShroudGrid(W3DShroud *shroud) : cellWidth(1), cellHeight(1), cellsX(0), cellsY(0)
+	{
+		if (shroud && shroud->getCellWidth() > 0 && shroud->getCellHeight() > 0 &&
+			shroud->getNumShroudCellsX() > 0 && shroud->getNumShroudCellsY() > 0)
+		{
+			cellWidth = shroud->getCellWidth();
+			cellHeight = shroud->getCellHeight();
+			cellsX = shroud->getNumShroudCellsX();
+			cellsY = shroud->getNumShroudCellsY();
+		}
+	}
+
+	Bool operator==(const RiverShroudGrid &other) const
+	{
+		return cellWidth == other.cellWidth && cellHeight == other.cellHeight &&
+			cellsX == other.cellsX && cellsY == other.cellsY;
+	}
+};
+
+struct RiverTileKey
+{
+	RiverShroudGrid grid;
+	Real x[3], y[3];
+	UnsignedShort sources[3];
+	Int column, row;
+
+	RiverTileKey(const RiverPolygon &triangle, const RiverShroudGrid &shroudGrid, Int tileColumn, Int tileRow) :
+		grid(shroudGrid), column(tileColumn), row(tileRow)
+	{
+		for (Int i = 0; i < 3; ++i)
+		{
+			x[i] = triangle.vertices[i].x;
+			y[i] = triangle.vertices[i].y;
+			sources[i] = triangle.vertices[0].sources[i];
+		}
+	}
+
+	Bool operator==(const RiverTileKey &other) const
+	{
+		if (!(grid == other.grid) || column != other.column || row != other.row)
+			return false;
+		for (Int i = 0; i < 3; ++i)
+		{
+			if (x[i] != other.x[i] || y[i] != other.y[i] || sources[i] != other.sources[i])
+				return false;
+		}
+		return true;
+	}
+
+	UnsignedInt hash() const
+	{
+		UnsignedInt result = column * 73856093u ^ row * 19349663u;
+		for (Int i = 0; i < 3; ++i)
+		{
+			UnsignedInt bitsX = 0, bitsY = 0;
+			if (x[i] != 0)
+				memcpy(&bitsX, &x[i], sizeof(bitsX));
+			if (y[i] != 0)
+				memcpy(&bitsY, &y[i], sizeof(bitsY));
+			result = (result ^ bitsX) * 16777619u;
+			result = (result ^ bitsY ^ sources[i]) * 16777619u;
+		}
+		return result;
+	}
+};
+
+class RiverGeometryCache
+{
+public:
+	struct Tile
+	{
+		RiverTileKey key;
+		SimpleVecClass<RiverMeshVertex> vertices;
+		Tile *next;
+		Int age;
+		Tile(const RiverTileKey &tileKey, const RiverMeshVertex *data, Int count) :
+			key(tileKey), vertices(count), next(nullptr), age(0)
+		{
+			if (count)
+				memcpy(&vertices[0], data, count * sizeof(*data));
+		}
+		Int bytes() const { return sizeof(Tile) + vertices.Length() * sizeof(RiverMeshVertex); }
+	};
+
+	RiverGeometryCache(Int budget = 8 * 1024 * 1024) : m_bytes(sizeof(*this)), m_budget(budget)
+	{
+		memset(m_tiles, 0, sizeof(m_tiles));
+	}
+	~RiverGeometryCache() { clear(); }
+
+	void clear()
+	{
+		for (Int bucket = 0; bucket < BUCKETS; ++bucket)
+		{
+			while (m_tiles[bucket])
+			{
+				Tile *tile = m_tiles[bucket];
+				m_tiles[bucket] = tile->next;
+				delete tile;
+			}
+		}
+		m_bytes = sizeof(*this);
+	}
+
+	void beginTraversal()
+	{
+		for (Int bucket = 0; bucket < BUCKETS; ++bucket)
+		{
+			Tile **link = &m_tiles[bucket];
+			while (*link)
+			{
+				Tile *tile = *link;
+				// Retain tiles across main and reflection passes.
+				if (++tile->age > 2)
+				{
+					*link = tile->next;
+					m_bytes -= tile->bytes();
+					delete tile;
+				}
+				else
+					link = &tile->next;
+			}
+		}
+	}
+
+	const Tile *find(const RiverTileKey &key)
+	{
+		for (Tile *tile = m_tiles[key.hash() % BUCKETS]; tile; tile = tile->next)
+		{
+			if (tile->key == key)
+			{
+				tile->age = 0;
+				return tile;
+			}
+		}
+		return nullptr;
+	}
+
+	void insert(const RiverTileKey &key, const RiverMeshVertex *vertices, Int count)
+	{
+		const Int bytes = sizeof(Tile) + count * sizeof(RiverMeshVertex);
+		// Stream misses rather than evict active tiles.
+		if (bytes > m_budget - m_bytes)
+			return;
+		Tile *tile = new Tile(key, vertices, count);
+		const Int bucket = key.hash() % BUCKETS;
+		tile->next = m_tiles[bucket];
+		m_tiles[bucket] = tile;
+		m_bytes += bytes;
+	}
+
+private:
+	enum { BUCKETS = 1024 };
+	Tile *m_tiles[BUCKETS];
+	Int m_bytes, m_budget;
+};
+
 static Int getRiverVertexDiffuse(W3DShroud *shroud, Real x, Real y, Real shadeR, Real shadeG, Real shadeB, Int diffuse)
 {
 	if (!shroud)
 		return diffuse;
 
-	Int cellX = (Int)(x / shroud->getCellWidth());
-	Int cellY = (Int)(y / shroud->getCellHeight());
-	W3DShroudLevel level = shroud->getShroudLevel(cellX, cellY);
-	Real shroudScale = (Real)level / 255.0f;
+	const Real shroudScale = shroud->sampleShroudLevel(x, y) / 255.0f;
 	return GameMakeColor(
 		(Int)(shadeR * shroudScale),
 		(Int)(shadeG * shroudScale),
 		(Int)(shadeB * shroudScale),
 		((diffuse >> 24) & 0xff) * shroudScale);
 }
+
+static Real getRiverCoordinate(const RiverMeshVertex &vertex, Int axis)
+{
+	if (axis == 0)
+		return vertex.x;
+	return vertex.y;
+}
+
+static void clipRiverPolygon(const RiverPolygon &input, RiverPolygon &output, Int axis, Real boundary, Bool keepGreater)
+{
+	output.count = 0;
+	if (input.count == 0)
+		return;
+
+	RiverMeshVertex previous = input.vertices[input.count - 1];
+	double previousDistance = (double)getRiverCoordinate(previous, axis) - boundary;
+	if (!keepGreater)
+		previousDistance = -previousDistance;
+	for (Int i = 0; i < input.count; ++i)
+	{
+		const RiverMeshVertex &current = input.vertices[i];
+		double distance = (double)getRiverCoordinate(current, axis) - boundary;
+		if (!keepGreater)
+			distance = -distance;
+		if ((distance < 0 && previousDistance > 0) || (distance > 0 && previousDistance < 0))
+		{
+			const double fraction = previousDistance / (previousDistance - distance);
+			RiverMeshVertex vertex = previous;
+			vertex.x += ((double)current.x - previous.x) * fraction;
+			vertex.y += ((double)current.y - previous.y) * fraction;
+			vertex.weightB += ((double)current.weightB - previous.weightB) * fraction;
+			vertex.weightC += ((double)current.weightC - previous.weightC) * fraction;
+			if (axis == 0)
+				vertex.x = boundary;
+			else
+				vertex.y = boundary;
+			output.vertices[output.count++] = vertex;
+		}
+		if (distance >= 0)
+			output.vertices[output.count++] = current;
+		previous = current;
+		previousDistance = distance;
+	}
+}
+
+struct RiverRenderScratch
+{
+	enum { BATCH_VERTICES = 4095 };
+	SimpleVecClass<VertexFormatXYZNDUV2> sources;
+	SimpleVecClass<VertexFormatXYZNDUV2> batch;
+
+	RiverRenderScratch() : batch(BATCH_VERTICES) {}
+};
+
+class RiverTriangleBatch
+{
+public:
+	RiverTriangleBatch(RiverRenderScratch &scratch, W3DShroud *shroud, Real shadeR, Real shadeG, Real shadeB, Int diffuse) :
+		m_vertices(scratch.batch), m_count(0), m_sources(&scratch.sources[0]), m_shroud(shroud),
+		m_shadeR(shadeR), m_shadeG(shadeG), m_shadeB(shadeB), m_diffuse(diffuse) {}
+
+	void addVertex(const RiverMeshVertex &meshVertex)
+	{
+		if (m_count == RiverRenderScratch::BATCH_VERTICES)
+			flush();
+		const VertexFormatXYZNDUV2 &a = m_sources[meshVertex.sources[0]];
+		const VertexFormatXYZNDUV2 &b = m_sources[meshVertex.sources[1]];
+		const VertexFormatXYZNDUV2 &c = m_sources[meshVertex.sources[2]];
+		VertexFormatXYZNDUV2 vertex = a;
+		vertex.x = meshVertex.x;
+		vertex.y = meshVertex.y;
+		vertex.z = a.z + (b.z - a.z) * meshVertex.weightB + (c.z - a.z) * meshVertex.weightC;
+		vertex.u1 = a.u1 + (b.u1 - a.u1) * meshVertex.weightB + (c.u1 - a.u1) * meshVertex.weightC;
+		vertex.v1 = a.v1 + (b.v1 - a.v1) * meshVertex.weightB + (c.v1 - a.v1) * meshVertex.weightC;
+		vertex.u2 = a.u2 + (b.u2 - a.u2) * meshVertex.weightB + (c.u2 - a.u2) * meshVertex.weightC;
+		vertex.v2 = a.v2 + (b.v2 - a.v2) * meshVertex.weightB + (c.v2 - a.v2) * meshVertex.weightC;
+		// TheSuperHackers @bugfix afc-afc0 14/04/2026 Apply shroud per-vertex to avoid double-darkening
+		// at river borders.
+		vertex.diffuse = getRiverVertexDiffuse(m_shroud, vertex.x, vertex.y, m_shadeR, m_shadeG, m_shadeB, m_diffuse);
+		m_vertices[m_count++] = vertex;
+	}
+
+	void flush()
+	{
+		if (m_count == 0)
+			return;
+		DynamicIBAccessClass ibAccess(BUFFER_TYPE_DYNAMIC_DX8, m_count);
+		{
+			DynamicIBAccessClass::WriteLockClass lock(&ibAccess);
+			UnsignedShort *indices = lock.Get_Index_Array();
+			for (Int i = 0; i < m_count; ++i)
+				indices[i] = i;
+		}
+		DynamicVBAccessClass vbAccess(BUFFER_TYPE_DYNAMIC_DX8, dynamic_fvf_type, m_count);
+		{
+			DynamicVBAccessClass::WriteLockClass lock(&vbAccess);
+			memcpy(lock.Get_Formatted_Vertex_Array(), &m_vertices[0], m_count * sizeof(m_vertices[0]));
+		}
+		DX8Wrapper::Set_Index_Buffer(ibAccess, 0);
+		DX8Wrapper::Set_Vertex_Buffer(vbAccess);
+		DX8Wrapper::Draw_Triangles(0, m_count / 3, 0, m_count);
+		m_count = 0;
+	}
+
+private:
+	SimpleVecClass<VertexFormatXYZNDUV2> &m_vertices;
+	Int m_count;
+	const VertexFormatXYZNDUV2 *m_sources;
+	W3DShroud *m_shroud;
+	Real m_shadeR, m_shadeG, m_shadeB;
+	Int m_diffuse;
+};
+
+class RiverMeshBuilder
+{
+public:
+	RiverMeshBuilder(const VertexFormatXYZNDUV2 *sources, const RiverShroudGrid &grid,
+		RiverGeometryCache &cache, RiverTriangleBatch &batch, CameraClass *camera) :
+		m_sources(sources), m_grid(grid), m_cache(cache), m_batch(batch), m_camera(camera), m_tileCount(0), m_recording(false) {}
+
+	void addTriangle(Int a, Int b, Int c)
+	{
+		RiverPolygon polygon;
+		polygon.count = 3;
+		const Int indices[] = { a, b, c };
+		for (Int source = 0; source < 3; ++source)
+		{
+			RiverMeshVertex &vertex = polygon.vertices[source];
+			vertex.x = m_sources[indices[source]].x;
+			vertex.y = m_sources[indices[source]].y;
+			vertex.weightB = 0;
+			vertex.weightC = 0;
+			vertex.sources[0] = a;
+			vertex.sources[1] = b;
+			vertex.sources[2] = c;
+		}
+		polygon.vertices[1].weightB = 1;
+		polygon.vertices[2].weightC = 1;
+		const RiverPolygon triangle = polygon;
+		if (m_grid.cellsX == 0 || m_grid.cellsY == 0)
+		{
+			addPolygon(polygon);
+			return;
+		}
+
+		// No subdivision beyond the uniform shroud border.
+		const Real boundaries[] =
+		{
+			-0.5f * m_grid.cellWidth, (m_grid.cellsX + 0.5f) * m_grid.cellWidth,
+			-0.5f * m_grid.cellHeight, (m_grid.cellsY + 0.5f) * m_grid.cellHeight
+		};
+		for (Int plane = 0; plane < 4; ++plane)
+		{
+			RiverPolygon inside, outside;
+			clipRiverPolygon(polygon, inside, plane / 2, boundaries[plane], plane % 2 == 0);
+			clipRiverPolygon(polygon, outside, plane / 2, boundaries[plane], plane % 2 != 0);
+			addPolygon(outside);
+			polygon = inside;
+		}
+		if (polygon.count < 3)
+			return;
+
+		Real minX = polygon.vertices[0].x, maxX = minX;
+		Real minY = polygon.vertices[0].y, maxY = minY;
+		Real minZ = m_sources[a].z, maxZ = minZ;
+		for (Int i = 1; i < polygon.count; ++i)
+		{
+			minX = min(minX, polygon.vertices[i].x);
+			maxX = max(maxX, polygon.vertices[i].x);
+			minY = min(minY, polygon.vertices[i].y);
+			maxY = max(maxY, polygon.vertices[i].y);
+		}
+		for (Int sourceIndex = 1; sourceIndex < 3; ++sourceIndex)
+		{
+			minZ = min(minZ, m_sources[indices[sourceIndex]].z);
+			maxZ = max(maxZ, m_sources[indices[sourceIndex]].z);
+		}
+		const Int firstColumn = max(0, (Int)floor((minX / m_grid.cellWidth + 0.5f) / TILE_CELLS));
+		const Int lastColumn = min(m_grid.cellsX / TILE_CELLS, (Int)floor((maxX / m_grid.cellWidth + 0.5f) / TILE_CELLS));
+		const Int firstRow = max(0, (Int)floor((minY / m_grid.cellHeight + 0.5f) / TILE_CELLS));
+		const Int lastRow = min(m_grid.cellsY / TILE_CELLS, (Int)floor((maxY / m_grid.cellHeight + 0.5f) / TILE_CELLS));
+		for (Int row = firstRow; row <= lastRow; ++row)
+		{
+			for (Int column = firstColumn; column <= lastColumn; ++column)
+			{
+				const Int startX = column * TILE_CELLS - 1;
+				const Int startY = row * TILE_CELLS - 1;
+				const Int endX = min(startX + TILE_CELLS, m_grid.cellsX);
+				const Int endY = min(startY + TILE_CELLS, m_grid.cellsY);
+				const Real left = (startX + 0.5f) * m_grid.cellWidth;
+				const Real right = (endX + 0.5f) * m_grid.cellWidth;
+				const Real bottom = (startY + 0.5f) * m_grid.cellHeight;
+				const Real top = (endY + 0.5f) * m_grid.cellHeight;
+				if (m_camera)
+				{
+					MinMaxAABoxClass bounds;
+					bounds.Init_Empty();
+					bounds.Add_Point(Vector3(left, bottom, minZ));
+					bounds.Add_Point(Vector3(right, top, maxZ));
+					if (m_camera->Cull_Box(AABoxClass(bounds)))
+						continue;
+				}
+				const RiverTileKey key(triangle, m_grid, column, row);
+				const RiverGeometryCache::Tile *tile = m_cache.find(key);
+				if (tile)
+				{
+					for (Int vertex = 0; vertex < tile->vertices.Length(); ++vertex)
+						m_batch.addVertex(tile->vertices[vertex]);
+					continue;
+				}
+				m_tileCount = 0;
+				m_recording = true;
+				buildTile(polygon, startX, endX, startY, endY);
+				m_recording = false;
+				m_cache.insert(key, m_tileVertices, m_tileCount);
+			}
+		}
+	}
+
+private:
+	void buildTile(const RiverPolygon &polygon, Int startX, Int endX, Int startY, Int endY)
+	{
+		for (Int row = startY; row < endY; ++row)
+		{
+			RiverPolygon lower, strip;
+			clipRiverPolygon(polygon, lower, 1, (row + 0.5f) * m_grid.cellHeight, true);
+			clipRiverPolygon(lower, strip, 1, (row + 1.5f) * m_grid.cellHeight, false);
+			if (strip.count < 3)
+				continue;
+			for (Int column = startX; column < endX; ++column)
+			{
+				RiverPolygon left, cell;
+				clipRiverPolygon(strip, left, 0, (column + 0.5f) * m_grid.cellWidth, true);
+				clipRiverPolygon(left, cell, 0, (column + 1.5f) * m_grid.cellWidth, false);
+				addPolygon(cell);
+			}
+		}
+	}
+
+	void addPolygon(const RiverPolygon &polygon)
+	{
+		for (Int i = 1; i + 1 < polygon.count; ++i)
+		{
+			const Int indices[] = { 0, i, i + 1 };
+			for (Int j = 0; j < 3; ++j)
+			{
+				RiverMeshVertex vertex = polygon.vertices[indices[j]];
+				if (m_recording)
+				{
+					DEBUG_ASSERTCRASH(m_tileCount < MAX_TILE_VERTICES, ("River tile overflow"));
+					m_tileVertices[m_tileCount++] = vertex;
+				}
+				m_batch.addVertex(vertex);
+			}
+		}
+	}
+
+	const VertexFormatXYZNDUV2 *m_sources;
+	RiverShroudGrid m_grid;
+	RiverGeometryCache &m_cache;
+	RiverTriangleBatch &m_batch;
+	CameraClass *m_camera;
+	// Clipping a triangle to a cell yields at most five triangles.
+	enum { TILE_CELLS = 8, MAX_TILE_VERTICES = TILE_CELLS * TILE_CELLS * 15 };
+	RiverMeshVertex m_tileVertices[MAX_TILE_VERTICES];
+	Int m_tileCount;
+	Bool m_recording;
+};
 
 void doSkyBoxSet(Bool startDraw)
 {
@@ -326,6 +767,8 @@ WaterRenderObjClass::~WaterRenderObjClass()
 	ReleaseResources();
 
 	delete m_waterTrackSystem;
+	delete m_riverGeometryCache;
+	delete m_riverRenderScratch;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -371,6 +814,8 @@ WaterRenderObjClass::WaterRenderObjClass()
 	while (i--)
 		m_pBumpTexture[i]=nullptr;
 
+	m_riverGeometryCache = nullptr;
+	m_riverRenderScratch = nullptr;
 	m_riverVOrigin=0;
 	m_riverTexture=nullptr;
 	m_whiteTexture=nullptr;
@@ -993,6 +1438,10 @@ void WaterRenderObjClass::ReAcquireResources()
 
 void WaterRenderObjClass::load()
 {
+	if (m_riverGeometryCache)
+		m_riverGeometryCache->clear();
+	delete m_riverRenderScratch;
+	m_riverRenderScratch = nullptr;
 	if (m_waterTrackSystem)
 		m_waterTrackSystem->loadTracks();
 }
@@ -1005,6 +1454,10 @@ void WaterRenderObjClass::load()
 //-------------------------------------------------------------------------------------------------
 Int WaterRenderObjClass::init(Real waterLevel, Real dx, Real dy, SceneClass *parentScene, WaterType type)
 {
+	if (m_riverGeometryCache)
+		m_riverGeometryCache->clear();
+	delete m_riverRenderScratch;
+	m_riverRenderScratch = nullptr;
 
 	m_fBumpFrame=0;
 	m_fBumpScale=SEA_BUMP_SCALE;
@@ -1164,6 +1617,10 @@ void WaterRenderObjClass::updateMapOverrides()
 // ------------------------------------------------------------------------------------------------
 void WaterRenderObjClass::reset()
 {
+	if (m_riverGeometryCache)
+		m_riverGeometryCache->clear();
+	delete m_riverRenderScratch;
+	m_riverRenderScratch = nullptr;
 
 	// for vertex animated water mesh reset the values
 	if( m_meshData)
@@ -1565,7 +2022,7 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 		case WATER_TYPE_0_TRANSLUCENT:
 		case WATER_TYPE_3_GRIDMESH:
 			//Draw the water surface as a bunch of alpha blended tiles covering areas where water is visible
-			renderWater();
+			renderWater(&rinfo.Camera);
 			if (!m_drawingRiver || m_disableRiver) {
 				renderWaterMesh();	//Draw water surface as 3D deforming mesh if it's enabled on this map.
 			}
@@ -1702,7 +2159,7 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 
 				ShaderClass::Invalidate();	//reset shading system so it forces full state set.
 
-				renderWater();
+				renderWater(&rinfo.Camera);
 			}
 			break;
 
@@ -1985,13 +2442,15 @@ void WaterRenderObjClass::drawSea(RenderInfoClass & rinfo)
 //-------------------------------------------------------------------------------------------------
 /** Renders (draws) the water surface.*/
 //-------------------------------------------------------------------------------------------------
-void WaterRenderObjClass::renderWater()
+void WaterRenderObjClass::renderWater(CameraClass *camera)
 {
+	if (m_riverGeometryCache)
+		m_riverGeometryCache->beginTraversal();
 	for (PolygonTrigger *pTrig=PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
 		if (pTrig->isWaterArea()) {
 			if (pTrig->getNumPoints()>2) {
 				if (pTrig->isRiver()) {
-					drawRiverWater(pTrig);
+					drawRiverWater(pTrig, camera);
 					continue;
 				}
 				Int k;
@@ -2700,47 +3159,38 @@ Real WaterRenderObjClass::getWaterHeight(Real x, Real y)
 //-------------------------------------------------------------------------------------------------
 //Draw a many sided river polygon.
 //-------------------------------------------------------------------------------------------------
-void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
+void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig, CameraClass *camera)
 {
-	DX8Wrapper::Invalidate_Cached_Render_States();	///@todo: Figure out why rivers don't draw without reset of all states.
+	if (m_disableRiver)
+		return;
 
-	Int rectangleCount = pTrig->getNumPoints()/2;
-	rectangleCount--;
+	const Int pointCount = pTrig->getNumPoints();
+	const Int maxRiverPoints = (DynamicIBAccessClass::MAX_INDEX_COUNT / 6) * 2 + 1;
+	// TheSuperHackers @bugfix arcticdolphin 12/10/2026 Preserve the original 16 bit dynamic-buffer source-point limit.
+	DEBUG_ASSERTCRASH(pointCount <= maxRiverPoints, ("River has too many points to draw"));
+	if (pointCount < 4 || pointCount > maxRiverPoints)
+		return;
+	const Int rectangleCount = pointCount / 2 - 1;
 
 	Real bumpFactor = 5;
 	static Bool doWobble = true;
 
-	if (m_disableRiver) return;
-
-	//allocate 2 triangles per side with 3 indices per triangle
-	const Int indexCount = (rectangleCount+1)*2*3;
-	// TheSuperHackers @bugfix arcticdolphin 12/10/2026 Skip rivers that do not fit the 16 bit dynamic buffers.
-	DEBUG_ASSERTCRASH(indexCount <= DynamicIBAccessClass::MAX_INDEX_COUNT, ("River has too many points to draw"));
-	if (indexCount > DynamicIBAccessClass::MAX_INDEX_COUNT)
-		return;
-
 	m_drawingRiver = true;
 
-	DynamicIBAccessClass ib_access(BUFFER_TYPE_DYNAMIC_DX8,indexCount);
+	if (camera)
 	{
-		DynamicIBAccessClass::WriteLockClass lockib(&ib_access);
- 		UnsignedShort *curIb = lockib.Get_Index_Array();
-		for (Int i=0; i<rectangleCount; i++)
+		MinMaxAABoxClass bounds;
+		bounds.Init_Empty();
+		for (Int point = 0; point < pTrig->getNumPoints(); ++point)
 		{
-			//triangle 1
-			curIb[0] = i*2;
-			curIb[1] = i*2+1;
-			curIb[2] = i*2+3;
-
-			//triangle 2
-			curIb[3] = i*2;
-			curIb[4] = i*2+3;
-			curIb[5] = i*2+2;
-
-			curIb += 6;	//skip the 6 indices we just added.
+			const ICoord3D *position = pTrig->getPoint(point);
+			bounds.Add_Point(Vector3(position->x, position->y, position->z));
 		}
+		if (camera->Cull_Box(AABoxClass(bounds)))
+			return;
 	}
 
+	DX8Wrapper::Invalidate_Cached_Render_States();	///@todo: Figure out why rivers don't draw without reset of all states.
 
 	Real shadeR=TheWaterTransparency->m_standingWaterColor.red;
 	Real shadeG=TheWaterTransparency->m_standingWaterColor.green;
@@ -2818,17 +3268,17 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 
 #define HEIGHT_TO_USE (0.5f)
 	if (innerNdx >= pTrig->getNumPoints()-1) return;
-	//allocate 2 vertices per side
-	DynamicVBAccessClass vb_access(BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,(rectangleCount+1)*2);
+	W3DShroud *shroud = nullptr;
+	if (TheTerrainRenderObject)
+		shroud = TheTerrainRenderObject->getShroud();
+	if (!m_riverRenderScratch)
+		m_riverRenderScratch = new RiverRenderScratch;
+	SimpleVecClass<VertexFormatXYZNDUV2> &vertices = m_riverRenderScratch->sources;
+	vertices.Uninitialised_Grow((rectangleCount+1)*2);
 	{
-		DynamicVBAccessClass::WriteLockClass lock(&vb_access);
-		VertexFormatXYZNDUV2* vb=lock.Get_Formatted_Vertex_Array();
+		VertexFormatXYZNDUV2* vb = &vertices[0];
 
 		Real constA=3*m_riverVOrigin;
-
-		// TheSuperHackers @bugfix afc-afc0 14/04/2026 Apply shroud per-vertex to avoid double-darkening
-		// at river borders.
-		W3DShroud *shroud = TheTerrainRenderObject ? TheTerrainRenderObject->getShroud() : nullptr;
 
 		for (i=0; i<(pTrig->getNumPoints()/2); i++)
 		{
@@ -2851,7 +3301,7 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 
 			vb->z=innerPt.z;
 
-			vb->diffuse = getRiverVertexDiffuse(shroud, x, y, shadeR, shadeG, shadeB, diffuse);
+			vb->diffuse = diffuse;
 
 			Real wobbleConst=-m_riverVOrigin+vScale*(Real)i + WWMath::Fast_Sin(2*PI*(vScale*(Real)i) - constA)/22.0f;
  			//old slower version
@@ -2874,7 +3324,7 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 			vb->y=y;
 			vb->z=outerPt.z;
 
-			vb->diffuse = getRiverVertexDiffuse(shroud, x, y, shadeR, shadeG, shadeB, diffuse);
+			vb->diffuse = diffuse;
  			//old slower version
 			//vb->v1=-m_riverVOrigin+vScale*(Real)i + wobble(vScale*i, m_riverVOrigin, doWobble);
 			vb->v1=wobbleConst;
@@ -2894,8 +3344,6 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 	Matrix3D tm(1);
 
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);	//position the water surface
-	DX8Wrapper::Set_Index_Buffer(ib_access,0);
-	DX8Wrapper::Set_Vertex_Buffer(vb_access);
 	DX8Wrapper::Set_Texture(0,m_riverTexture);	//set to blue
 
 	setupJbaWaterShader();
@@ -2915,7 +3363,18 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 	if (wireframeForDebug) {
 		DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
 	}
-	DX8Wrapper::Draw_Triangles(	0,rectangleCount*2, 0,	(rectangleCount+1)*2);
+	if (!m_riverGeometryCache)
+		m_riverGeometryCache = new RiverGeometryCache;
+	const RiverShroudGrid grid(shroud);
+	RiverTriangleBatch batch(*m_riverRenderScratch, shroud, shadeR, shadeG, shadeB, diffuse);
+	RiverMeshBuilder builder(&vertices[0], grid, *m_riverGeometryCache, batch, camera);
+	for (i = 0; i < rectangleCount; ++i)
+	{
+		const Int first = i * 2;
+		builder.addTriangle(first, first+1, first+3);
+		builder.addTriangle(first, first+3, first+2);
+	}
+	batch.flush();
 	if (wireframeForDebug) {
 		DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_FILLMODE,D3DFILL_SOLID);
 	}

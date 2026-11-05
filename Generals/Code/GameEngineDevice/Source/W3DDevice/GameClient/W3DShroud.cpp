@@ -27,6 +27,7 @@
 // Desc:      Code to support rendering of shrouded units/terrain.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include <float.h>
 #include "Lib/BaseType.h"
 #include "WW3D2/camera.h"
 #include "WWLib/simplevec.h"
@@ -238,6 +239,55 @@ Bool W3DShroud::ReAcquireResources()
 }
 
 //-----------------------------------------------------------------------------
+static W3DShroudLevel getShroudPixelLevel(UnsignedShort pixel)
+{
+#if defined(RTS_DEBUG)
+	if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
+		//in this mode, alpha channel holds intensity
+		return (W3DShroudLevel)((1.0f-((Real)(pixel >> 12)/15.0f))*255.0f);
+	else
+#endif
+		//in this mode, green has the best precision at 6 bits.
+		return (W3DShroudLevel)((Real)((pixel >> 5)&0x3f)/63.0f*255.0f);
+}
+
+static UnsignedShort getBorderShroudPixel(W3DShroudLevel level)
+{
+	UnsignedShort pixel;
+	if (level < TheGlobalData->m_shroudAlpha)
+		level = TheGlobalData->m_shroudAlpha;
+
+#if defined(RTS_DEBUG)
+	//convert value to pixel format
+	if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
+	{
+		Int redVal = TheGlobalData->m_shroudColor.red;
+		Int greenVal = TheGlobalData->m_shroudColor.green;
+		Int blueVal = TheGlobalData->m_shroudColor.blue;
+		Int alphaVal = 255 - level;
+
+		pixel=((blueVal>>4)&0xf) | (((greenVal>>4)&0xf)<<4) | (((redVal>>4)&0xf)<<8) | (((alphaVal>>4)&0xf)<<12);
+	}
+	else
+#endif
+	{
+		UnsignedInt bluepixel = (UnsignedInt)((Real)level*((Real)(TheGlobalData->m_shroudColor.getAsInt()&0xff)/255.0f));
+		UnsignedInt greenpixel = (UnsignedInt)((Real)level*((Real)((TheGlobalData->m_shroudColor.getAsInt()&0xff00)>>8)/255.0f));
+		UnsignedInt redpixel = (UnsignedInt)((Real)level*((Real)((TheGlobalData->m_shroudColor.getAsInt()&0xff0000)>>16)/255.0f));
+
+		if (level == 255)
+		{
+			//unshrouded pixels should be fully lit
+			redpixel = 255;
+			greenpixel = 255;
+			bluepixel = 255;
+		}
+		pixel=( ((bluepixel&0xf8) >> 3) | ((greenpixel&0xfc)<<3) | ((redpixel&0xf8)<<8));
+	}
+
+	return pixel;
+}
+
 W3DShroudLevel W3DShroud::getShroudLevel(Int x, Int y)
 {
 	DEBUG_ASSERTCRASH( m_shroudData != nullptr, ("Reading empty shroud"));
@@ -246,16 +296,45 @@ W3DShroudLevel W3DShroud::getShroudLevel(Int x, Int y)
 	{
 		UnsignedShort pixel=m_shroudData[x + y*m_numCellsX];
 
-#if defined(RTS_DEBUG)
-		if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
-			//in this mode, alpha channel holds intensity
-			return (W3DShroudLevel)((1.0f-((Real)(pixel >> 12)/15.0f))*255.0f);
-		else
-#endif
-			//in this mode, green has the best precision at 6 bits.
-			return (W3DShroudLevel)((Real)((pixel >> 5)&0x3f)/63.0f*255.0f);
+		return getShroudPixelLevel(pixel);
 	}
 	return 0;
+}
+
+Real W3DShroud::sampleShroudLevel(Real worldX, Real worldY)
+{
+	if (!m_shroudData || m_cellWidth <= 0 || m_cellHeight <= 0 || m_numCellsX <= 0 || m_numCellsY <= 0)
+		return 0;
+	if (!(worldX >= -FLT_MAX && worldX <= FLT_MAX && worldY >= -FLT_MAX && worldY <= FLT_MAX))
+		return 0;
+
+	// Match shroud texel centers.
+	const Real gridX = worldX / m_cellWidth - 0.5f;
+	const Real gridY = worldY / m_cellHeight - 0.5f;
+	if (!(gridX >= -1 && gridX < m_numCellsX && gridY >= -1 && gridY < m_numCellsY))
+		return getShroudPixelLevel(getBorderShroudPixel(m_boderShroudLevel));
+	const Int cellX = (Int)floor(gridX);
+	const Int cellY = (Int)floor(gridY);
+	const Real fractionX = gridX - cellX;
+	const Real fractionY = gridY - cellY;
+	Real border = 0;
+	if (cellX < 0 || cellY < 0 || cellX + 1 >= m_numCellsX || cellY + 1 >= m_numCellsY)
+		border = getShroudPixelLevel(getBorderShroudPixel(m_boderShroudLevel));
+	Real lowerLeft = border;
+	Real lowerRight = border;
+	Real upperLeft = border;
+	Real upperRight = border;
+	if (cellX >= 0 && cellY >= 0)
+		lowerLeft = getShroudLevel(cellX, cellY);
+	if (cellX + 1 < m_numCellsX && cellY >= 0)
+		lowerRight = getShroudLevel(cellX + 1, cellY);
+	if (cellX >= 0 && cellY + 1 < m_numCellsY)
+		upperLeft = getShroudLevel(cellX, cellY + 1);
+	if (cellX + 1 < m_numCellsX && cellY + 1 < m_numCellsY)
+		upperRight = getShroudLevel(cellX + 1, cellY + 1);
+	const Real lower = lowerLeft + (lowerRight - lowerLeft) * fractionX;
+	const Real upper = upperLeft + (upperRight - upperLeft) * fractionX;
+	return lower + (upper - lower) * fractionY;
 }
 
 //-----------------------------------------------------------------------------
@@ -391,38 +470,7 @@ void W3DShroud::fillShroudData(W3DShroudLevel level)
 void W3DShroud::fillBorderShroudData(W3DShroudLevel level, SurfaceClass* pDestSurface)
 {
 	Int x,y;
-	UnsignedShort pixel;
-
-	if (level < TheGlobalData->m_shroudAlpha)
-		level = TheGlobalData->m_shroudAlpha;
-
-#if defined(RTS_DEBUG)
-	//convert value to pixel format
-	if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
-	{
-		Int redVal = TheGlobalData->m_shroudColor.red;
-		Int greenVal = TheGlobalData->m_shroudColor.green;
-		Int blueVal = TheGlobalData->m_shroudColor.blue;
-		Int alphaVal = 255 - level;
-
-		pixel=((blueVal>>4)&0xf) | (((greenVal>>4)&0xf)<<4) | (((redVal>>4)&0xf)<<8) | (((alphaVal>>4)&0xf)<<12);
-	}
-	else
-#endif
-	{
-		UnsignedInt bluepixel = (UnsignedInt)((Real)level*((Real)(TheGlobalData->m_shroudColor.getAsInt()&0xff)/255.0f));
-		UnsignedInt greenpixel = (UnsignedInt)((Real)level*((Real)((TheGlobalData->m_shroudColor.getAsInt()&0xff00)>>8)/255.0f));
-		UnsignedInt redpixel = (UnsignedInt)((Real)level*((Real)((TheGlobalData->m_shroudColor.getAsInt()&0xff0000)>>16)/255.0f));
-
-		if (level == 255)
-		{
-			//unshrouded pixels should be fully lit
-			redpixel = 255;
-			greenpixel = 255;
-			bluepixel = 255;
-		}
-		pixel=( ((bluepixel&0xf8) >> 3) | ((greenpixel&0xfc)<<3) | ((redpixel&0xf8)<<8));
-	}
+	const UnsignedShort pixel = getBorderShroudPixel(level);
 
 	//Fill destination texture with border color
 	Int dstPitch = 0;
