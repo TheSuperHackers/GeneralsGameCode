@@ -2018,7 +2018,9 @@ void GarrisonContain::loadStationGarrisonPoints()
 		for( ; t < MAX_GARRISON_POINTS; ++t )
 		  tempBuffer[ t ] = *(structure->getPosition());
 
-		count = structure->getMultiLogicalBonePosition("STATION", modData->m_containMax, tempBuffer, nullptr);
+		// TheSuperHackers @bugfix CryoTheRenegade 05/11/2026 Never collect more station bones than tempBuffer holds.
+		const Int maxStations = modData->m_containMax < MAX_GARRISON_POINTS ? modData->m_containMax : MAX_GARRISON_POINTS;
+		count = structure->getMultiLogicalBonePosition("STATION", maxStations, tempBuffer, nullptr);
 		if ( count > 0) stationBonesFound = TRUE;
 
 
