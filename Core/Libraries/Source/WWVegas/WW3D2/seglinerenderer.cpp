@@ -219,11 +219,11 @@ void SegLineRendererClass::Render
 )
 {
 	Matrix4x4 view;
-	Renderer::Get_Transform(RB_TRANSFORM_VIEW,view);
+	Renderer::Get_Transform(RenderTransform_View,view);
 
 	Matrix4x4 identity(true);
-	Renderer::Set_Transform(RB_TRANSFORM_WORLD,identity);
-	Renderer::Set_Transform(RB_TRANSFORM_VIEW,identity);
+	Renderer::Set_Transform(RenderTransform_World,identity);
+	Renderer::Set_Transform(RenderTransform_View,identity);
 
 	/*
 	** Handle texture UV offset animation (done once for entire line).
@@ -1192,7 +1192,7 @@ void SegLineRendererClass::Render
 
 	}
 
-	Renderer::Set_Transform(RB_TRANSFORM_VIEW,view);
+	Renderer::Set_Transform(RenderTransform_View,view);
 
 }
 

@@ -330,7 +330,7 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 
 		tm.Set_Translation(vec);
 
-		Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);
+		Renderer::Set_Transform(RenderTransform_World,tm);
 		DX8Wrapper::Draw_Triangles(	0,NUM_TRI, 0,	(m_numTriangles*3));
 	}
 
@@ -351,7 +351,7 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 	Int clr = 255*intensity;
 	Int diffuse = (0xff<<24)|(clr<<16)|(clr<<8)|clr;	 // b g<<8 r<<16 a<<24.
 	updateScreenVB(diffuse);
-	Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);
+	Renderer::Set_Transform(RenderTransform_World,tm);
 	DX8Wrapper::Set_Shader(ShaderClass(SC_ADD));
 	DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferScreen);
 	DX8Wrapper::Apply_Render_State_Changes();

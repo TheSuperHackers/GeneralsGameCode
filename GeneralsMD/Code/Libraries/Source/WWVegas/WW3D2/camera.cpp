@@ -750,7 +750,7 @@ void CameraClass::Apply()
 	Matrix4x4 d3dprojection;
 	Get_D3D_Projection_Matrix(&d3dprojection);
 	Renderer::Set_Projection_Transform_With_Z_Bias(d3dprojection,ZNear,ZFar);
-	Renderer::Set_Transform(RB_TRANSFORM_VIEW,CameraInvTransform);
+	Renderer::Set_Transform(RenderTransform_View,CameraInvTransform);
 }
 
 void CameraClass::Set_Clip_Planes(float znear,float zfar)

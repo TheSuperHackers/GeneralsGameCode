@@ -604,8 +604,8 @@ void SortingRendererClass::Flush()
 	WWPROFILE("SortingRenderer::Flush");
 	Matrix4x4 old_view;
 	Matrix4x4 old_world;
-	Renderer::Get_Transform(RB_TRANSFORM_VIEW,old_view);
-	Renderer::Get_Transform(RB_TRANSFORM_WORLD,old_world);
+	Renderer::Get_Transform(RenderTransform_View,old_view);
+	Renderer::Get_Transform(RenderTransform_World,old_world);
 
 	// TheSuperHackers @perf stephanmeesters 04/07/2026
 	// Splice nodes that have no bounding information (Z=0.0) at the correct location into the sorted list.
@@ -645,8 +645,8 @@ void SortingRendererClass::Flush()
 	DynamicVBAccessClass::_Reset(false);
 
 
-	Renderer::Set_Transform(RB_TRANSFORM_VIEW,old_view);
-	Renderer::Set_Transform(RB_TRANSFORM_WORLD,old_world);
+	Renderer::Set_Transform(RenderTransform_View,old_view);
+	Renderer::Set_Transform(RenderTransform_World,old_world);
 
 }
 

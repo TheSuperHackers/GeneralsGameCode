@@ -28,15 +28,15 @@
 #include "WW3D2/lightenvironment.h"
 #include "WWDebug/wwdebug.h"
 
-static D3DTRANSFORMSTATETYPE To_D3D_Transform(RenderBackendTransform transform)
+static D3DTRANSFORMSTATETYPE To_D3D_Transform(RenderTransform transform)
 {
     switch (transform)
     {
-    case RB_TRANSFORM_WORLD:
+    case RenderTransform_World:
         return D3DTS_WORLD;
-    case RB_TRANSFORM_VIEW:
+    case RenderTransform_View:
         return D3DTS_VIEW;
-    case RB_TRANSFORM_PROJECTION:
+    case RenderTransform_Projection:
         return D3DTS_PROJECTION;
     }
     WWASSERT(0);
@@ -179,17 +179,17 @@ void Renderer::Invalidate_Cached_Render_States()
     DX8Wrapper::Invalidate_Cached_Render_States();
 }
 
-void Renderer::Set_Transform(RenderBackendTransform transform, const Matrix4x4 & m)
+void Renderer::Set_Transform(RenderTransform transform, const Matrix4x4 & m)
 {
     DX8Wrapper::Set_Transform(To_D3D_Transform(transform), m);
 }
 
-void Renderer::Set_Transform(RenderBackendTransform transform, const Matrix3D & m)
+void Renderer::Set_Transform(RenderTransform transform, const Matrix3D & m)
 {
     DX8Wrapper::Set_Transform(To_D3D_Transform(transform), m);
 }
 
-void Renderer::Get_Transform(RenderBackendTransform transform, Matrix4x4 & m)
+void Renderer::Get_Transform(RenderTransform transform, Matrix4x4 & m)
 {
     DX8Wrapper::Get_Transform(To_D3D_Transform(transform), m);
 }

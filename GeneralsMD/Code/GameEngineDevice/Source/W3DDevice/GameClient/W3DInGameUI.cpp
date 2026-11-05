@@ -250,7 +250,7 @@ void DebugHintObject::Render(RenderInfoClass & rinfo)
 		Matrix3D tm = Transform;
 		Vector3 vec(m_myLoc.x, m_myLoc.y, m_myLoc.z);
 		tm.Set_Translation(vec);
-		Renderer::Set_Transform(RB_TRANSFORM_WORLD, tm);
+		Renderer::Set_Transform(RenderTransform_World, tm);
 
 		DX8Wrapper::Draw_Triangles(	0, 1, 0, 3);
 	}

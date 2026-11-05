@@ -660,7 +660,7 @@ void SphereRenderObjClass::Render(RenderInfoClass & rinfo)
 		// Camera Align
 		if (Flags & USE_CAMERA_ALIGN) {
 			Matrix4x4 view,ident(true);
-			Renderer::Get_Transform(RB_TRANSFORM_VIEW,view);
+			Renderer::Get_Transform(RenderTransform_View,view);
 
 			Vector4 wpos(Transform[0][3],Transform[1][3],Transform[2][3],1);
 			Vector4 cpos;
@@ -671,12 +671,12 @@ void SphereRenderObjClass::Render(RenderInfoClass & rinfo)
 							1.0f, 0.0f, 0.0f, cpos.Z);
 
 			tm.Scale(real_scale);
-			Renderer::Set_Transform(RB_TRANSFORM_WORLD,ident);
-			Renderer::Set_Transform(RB_TRANSFORM_VIEW,tm);
+			Renderer::Set_Transform(RenderTransform_World,ident);
+			Renderer::Set_Transform(RenderTransform_View,tm);
 			render_sphere();
-			Renderer::Set_Transform(RB_TRANSFORM_VIEW,view);
+			Renderer::Set_Transform(RenderTransform_View,view);
 		} else {
-			Renderer::Set_Transform(RB_TRANSFORM_WORLD,temp);
+			Renderer::Set_Transform(RenderTransform_World,temp);
 			render_sphere();
 		}
 	}

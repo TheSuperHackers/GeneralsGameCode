@@ -447,8 +447,8 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 	REF_PTR_RELEASE(backBuffer);
 
 	Matrix4x4 identity(true);
-	Renderer::Set_Transform(RB_TRANSFORM_WORLD,identity);
-	Renderer::Set_Transform(RB_TRANSFORM_VIEW,identity);
+	Renderer::Set_Transform(RenderTransform_World,identity);
+	Renderer::Set_Transform(RenderTransform_View,identity);
 
 	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
 	//DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaqueSpriteShader);

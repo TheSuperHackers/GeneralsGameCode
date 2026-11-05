@@ -721,9 +721,9 @@ void RingRenderObjClass::Render(RenderInfoClass & rinfo)
 
 			Matrix3D temp;
 			temp.Look_At(obj_position, obj_position + camera_z_vector, 0.0f);
-			Renderer::Set_Transform(RB_TRANSFORM_WORLD, temp);
+			Renderer::Set_Transform(RenderTransform_World, temp);
 		} else {
-			Renderer::Set_Transform(RB_TRANSFORM_WORLD, Transform);
+			Renderer::Set_Transform(RenderTransform_World, Transform);
 		}
 
 		//

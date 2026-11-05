@@ -274,7 +274,7 @@ void Line3DClass::Render(RenderInfoClass & rinfo)
 	DX8Wrapper::Set_Material(vm);
 	REF_PTR_RELEASE(vm);
 
-	Renderer::Set_Transform(RB_TRANSFORM_WORLD,Transform);
+	Renderer::Set_Transform(RenderTransform_World,Transform);
 
 	DynamicVBAccessClass vb(BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,8);
 	{

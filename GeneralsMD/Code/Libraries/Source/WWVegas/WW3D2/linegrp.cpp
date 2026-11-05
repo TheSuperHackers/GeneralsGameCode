@@ -282,10 +282,10 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 
 	// Save off the view matrix
 	Matrix4x4 view;
-	Renderer::Get_Transform(RB_TRANSFORM_VIEW, view);
+	Renderer::Get_Transform(RenderTransform_View, view);
 
 	Matrix4x4 identity(true);
-	Renderer::Set_Transform(RB_TRANSFORM_WORLD, identity);
+	Renderer::Set_Transform(RenderTransform_World, identity);
 
 	// if the points are in world space, transform the offsets
 	if (Get_Flag(TRANSFORM)) {
@@ -297,7 +297,7 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 			Matrix3D::Transform_Vector(xform_mat, offset[i], &offset[i]);
 		}
 	} else {
-		Renderer::Set_Transform(RB_TRANSFORM_VIEW, identity);
+		Renderer::Set_Transform(RenderTransform_View, identity);
 	}
 
 	int num_tris=0;
@@ -476,7 +476,7 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 	}
 
 	// restore the matrices
-	Renderer::Set_Transform(RB_TRANSFORM_VIEW, view);
+	Renderer::Set_Transform(RenderTransform_View, view);
 }
 
 int LineGroupClass::Get_Polygon_Count()

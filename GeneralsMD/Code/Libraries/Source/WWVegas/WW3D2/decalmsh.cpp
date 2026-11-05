@@ -299,7 +299,7 @@ void RigidDecalMeshClass::Render()
 	** transform between the time that the mesh is rendered and the time that the decal
 	** mesh is rendered...  It shouldn't happen though.
 	*/
-	Renderer::Set_Transform(RB_TRANSFORM_WORLD,Parent->Get_Transform());
+	Renderer::Set_Transform(RenderTransform_World,Parent->Get_Transform());
 
 	/*
 	** Copy the vertices into the dynamic vb
@@ -789,7 +789,7 @@ void SkinDecalMeshClass::Render()
 	/*
 	** Skin decals coordinates are in world space
 	*/
-	Renderer::Set_Transform(RB_TRANSFORM_WORLD,Matrix3D::Identity);
+	Renderer::Set_Transform(RenderTransform_World,Matrix3D::Identity);
 
 	/*
 	** Skin decals have to get the deformed vertices of their parent meshes.  For this
