@@ -45,7 +45,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/CriticalSection.h"
-#include "WWLib/utf8.h"
+#include "ICU/utf8.h"
 
 
 // -----------------------------------------------------
@@ -311,6 +311,13 @@ void AsciiString::translate(const UnicodeString& stringSrc)
 	const size_t dstLen = Wide_To_Utf8_Len(src, srcLen);
 	if (dstLen == 0)
 	{
+		clear();
+	}
+	else if (dstLen >= static_cast<size_t>(MAX_LEN))
+	{
+		// UTF-8 can need up to three bytes per wide character, so the result can exceed MAX_LEN.
+		DEBUG_CRASH(("AsciiString::translate exceeds max string length %d with required UTF-8 length %u",
+			MAX_LEN, static_cast<UnsignedInt>(dstLen)));
 		clear();
 	}
 	else
