@@ -89,24 +89,34 @@ static long TGA_PaletteBufferSize(const TGAHeader& header)
 	if ((header.CMapDepth != 16) && (header.CMapDepth != 24) && (header.CMapDepth != 32)) {
 		return 0;
 	}
-	const long depth = (header.CMapDepth >> 3);
-	return ((long)header.CMapStart + (long)header.CMapLength) * depth;
+	const long depth_bytes = (header.CMapDepth >> 3);
+	return ((long)header.CMapStart + (long)header.CMapLength) * depth_bytes;
 }
 
-static long TGA_ImageBufferSize(const TGAHeader& header)
+static long TGA_ImagePixelCount(const TGAHeader& header)
 {
 	if ((header.Width <= 0) || (header.Height <= 0)) {
 		return 0;
 	}
+	return (long)header.Width * (long)header.Height;
+}
+
+static long TGA_ImageBytesPerPixel(const TGAHeader& header)
+{
 	if ((header.PixelDepth != 8) && (header.PixelDepth != 16) && (header.PixelDepth != 24) && (header.PixelDepth != 32)) {
 		return 0;
 	}
-	const long depth = TGA_BytesPerPixel(header.PixelDepth);
-	const long pixels = (long)header.Width * (long)header.Height;
-	if (pixels > (LONG_MAX / depth)) {
+	return TGA_BytesPerPixel(header.PixelDepth);
+}
+
+static long TGA_ImageBufferSize(const TGAHeader& header)
+{
+	const long pixel_count = TGA_ImagePixelCount(header);
+	const long depth_bytes = TGA_ImageBytesPerPixel(header);
+	if ((depth_bytes == 0) || (pixel_count > (LONG_MAX / depth_bytes))) {
 		return 0;
 	}
-	return pixels * depth;
+	return pixel_count * depth_bytes;
 }
 
 /****************************************************************************
@@ -404,16 +414,15 @@ long Targa::LoadBuffers(const char* name, bool invert_image)
 			 */
 			if ((mPalette != nullptr) && (Header.CMapLength > 0)) {
 
-				// TheSuperHackers @fix bobtista 22/10/2026 Validate the color map range against the palette buffer.
 				const long bufferSize = TGA_PaletteBufferSize(Header);
-				if ((bufferSize <= 0) || (bufferSize > mPaletteSize)) {
-					error = TGAERR_NOTSUPPORTED;
-				} else {
+				if ((bufferSize > 0) && (bufferSize <= mPaletteSize)) {
 
 					/* Read in the palette, starting at its first color entry. */
 					if (File_Read(mPalette + (Header.CMapStart * depth), size) != size) {
 						error = TGAERR_READ;
 					}
+				} else {
+					error = TGAERR_NOTSUPPORTED;
 				}
 
 			} else {
@@ -428,11 +437,8 @@ long Targa::LoadBuffers(const char* name, bool invert_image)
 		 */
 		if (!error && (mImage != nullptr)) {
 
-			// TheSuperHackers @fix bobtista 22/10/2026 Validate the image size against the image buffer.
 			size = TGA_ImageBufferSize(Header);
-			if ((size <= 0) || (size > mImageSize)) {
-				error = TGAERR_NOTSUPPORTED;
-			} else {
+			if ((size > 0) && (size <= mImageSize)) {
 				switch (Header.ImageType) {
 					case TGA_CMAPPED:
 						if (File_Read(mImage, size) != size) {
@@ -468,6 +474,8 @@ long Targa::LoadBuffers(const char* name, bool invert_image)
 						error = TGAERR_NOTSUPPORTED;
 						break;
 				}
+			} else {
+				error = TGAERR_NOTSUPPORTED;
 			}
 
 			/* Arrange the image so that the origin position (coordinate 0,0)
@@ -578,9 +586,7 @@ long Targa::Load(const char* name, long flags, bool invert_image)
 
 				/* Compute the size of the image data from the targa header. */
 				size = TGA_ImageBufferSize(Header);
-				if (size <= 0) {
-					error = TGAERR_NOTSUPPORTED;
-				} else {
+				if (size > 0) {
 					/* Allocate memory for the image. */
 					if ((mImage = (char *)malloc(size)) != nullptr) {
 						mImageSize = size;
@@ -588,6 +594,8 @@ long Targa::Load(const char* name, long flags, bool invert_image)
 					} else {
 						error = TGAERR_NOMEM;
 					}
+				} else {
+					error = TGAERR_NOTSUPPORTED;
 				}
 			}
 		}
@@ -1112,9 +1120,9 @@ long Targa::DecodeImage()
 	{
 	char          *image;
 	char          *color;
-	unsigned char count;
-	unsigned char depth;
-	unsigned long pixel_count;
+	unsigned char packet_header;
+	unsigned char depth_bytes;
+	unsigned long remaining_pixels;
 	unsigned long size;
 	unsigned long c,i;
 	long          error = 0;
@@ -1123,53 +1131,56 @@ long Targa::DecodeImage()
 	image = mImage;
 
 	/* Compute pixel depth in bytes. */
-	depth = TGA_BytesPerPixel(Header.PixelDepth);
+	depth_bytes = (unsigned char)TGA_ImageBytesPerPixel(Header);
 
-	// TheSuperHackers @fix bobtista 22/10/2026 Validate the image size and the packet counts against the image buffer.
-	const long image_size = TGA_ImageBufferSize(Header);
-	if ((image_size <= 0) || (image_size > mImageSize))
+	const long pixel_count = TGA_ImagePixelCount(Header);
+	if ((pixel_count <= 0) || (depth_bytes == 0) || (pixel_count > (mImageSize / depth_bytes)))
 		{
 		return (TGAERR_NOTSUPPORTED);
 		}
 
 	/* Total number of pixels compressed in this image. */
-	pixel_count = (unsigned long)(image_size / depth);
+	remaining_pixels = (unsigned long)pixel_count;
 
-	while ((pixel_count > 0) && !error)
+	while ((remaining_pixels > 0) && !error)
 		{
  		/* Read count. */
-		if (File_Read(&count, 1) == 1)
+		if (File_Read(&packet_header, 1) == 1)
 			{
 			/* If bit 8 of the count is set then we have a run of pixels,
 			 * otherwise the data is raw pixels.
 			 */
-			const bool is_run = ((count & 0x80) != 0);
-			count &= 0x7F;
-			count++;
+			const bool is_run_packet = ((packet_header & 0x80) != 0);
+			const unsigned long packet_pixel_count = (packet_header & 0x7F) + 1;
 
-			if ((unsigned long)count > pixel_count)
+			// TheSuperHackers @fix bobtista 22/10/2026 Reject packets with more pixels than the image has left.
+			if (packet_pixel_count > remaining_pixels)
 				{
 				error = TGAERR_READ;
 				}
-			else if (is_run)
+			else if (is_run_packet)
 				{
 				/* Read in run pixel. */
-				if (File_Read(image, depth) == depth)
+				if (File_Read(image, depth_bytes) == depth_bytes)
 					{
 					color = image;
-					image += depth;
+					image += depth_bytes;
 
 					/* Repeat the pixel for the run count in the image buffer. */
-					for (c = 1; c < count; c++)
-						for (i = 0; i < depth; i++)
+					for (c = 1; c < packet_pixel_count; c++)
+						{
+						for (i = 0; i < depth_bytes; i++)
+							{
 							*image++ = *(color + i);
+							}
+						}
 					}
 				else
 					error = TGAERR_READ;
 				}
 			else
 				{
-				size = (count * depth);
+				size = (packet_pixel_count * depth_bytes);
 
 				/* Read in raw pixels. */
 				if ((unsigned)File_Read(image, size) == size)
@@ -1179,7 +1190,7 @@ long Targa::DecodeImage()
 				}
 
 			/* Adjust the pixel count. */
-			pixel_count -= count;
+			remaining_pixels -= packet_pixel_count;
 			}
 		else
 			error = TGAERR_READ;
