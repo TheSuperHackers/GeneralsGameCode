@@ -286,7 +286,7 @@ static void Init_Shaders()
 /*
 ** Reads four comma separated floats from an INI entry
 */
-static const Vector4 Get_INI_Vector4(const INIClass & ini, char const *section, char const *entry, const Vector4 & defvalue)
+static Vector4 Get_INI_Vector4(const INIClass& ini, const char* section, const char* entry, const Vector4& defvalue)
 {
 	if (section != nullptr && entry != nullptr) {
 		INIEntry * entryptr = ini.Find_Entry(section, entry);
