@@ -122,6 +122,12 @@ D3DFORMAT					DX8Wrapper::DisplayFormat	= D3DFMT_UNKNOWN;
 D3DMULTISAMPLE_TYPE DX8Wrapper::MultiSampleAntiAliasing	= DEFAULT_MSAA;
 bool								DX8Wrapper::FullscreenBackBufferUsesDisplayFormat	= false;
 unsigned							DX8Wrapper::FullscreenResetsWithoutPresent			= 0;
+bool								DX8Wrapper::UseSceneAlphaTarget								= false;
+D3DMULTISAMPLE_TYPE				DX8Wrapper::SceneAlphaMultiSampleType					= D3DMULTISAMPLE_NONE;
+IDirect3DTexture8 *				DX8Wrapper::SceneAlphaTexture							= nullptr;
+IDirect3DSurface8 *				DX8Wrapper::SceneAlphaTextureSurface					= nullptr;
+IDirect3DSurface8 *				DX8Wrapper::SceneAlphaMultisampleSurface				= nullptr;
+IDirect3DSurface8 *				DX8Wrapper::SceneAlphaDepthSurface						= nullptr;
 
 // shader system additions KJM v
 DWORD								DX8Wrapper::Vertex_Shader								= 0;
@@ -624,6 +630,7 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 		DynamicIBAccessClass::_Deinit();
 		DX8TextureManagerClass::Release_Textures();
 		SHD_SHUTDOWN_SHADERS;
+		Release_Scene_Alpha_Target();
 
 		// Reset frame count to reflect the flipping chain being reset by Reset()
 		FrameCount = 0;
@@ -645,12 +652,16 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 				Use_Display_Format_For_Fullscreen_Back_Buffer();
 			}
 
+			Prepare_Scene_Alpha_Target();
+
 			DX8CALL_HRES(Reset(&_PresentParameters),hr)
 			if (hr != D3D_OK)
 				return false;	//reset failed.
 
 			if (!IsWindowed)
 				++FullscreenResetsWithoutPresent;
+
+			Create_Scene_Alpha_Target();
 		}
 		else
 			return false;	//device is lost and can't be reset.
@@ -675,6 +686,7 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 void DX8Wrapper::Release_Device()
 {
 	if (D3DDevice) {
+		Release_Scene_Alpha_Target();
 
 		for (int a=0;a<MAX_TEXTURE_STAGES;++a)
 		{
@@ -1671,6 +1683,204 @@ void DX8Wrapper::Use_Display_Format_For_Fullscreen_Back_Buffer()
 	}
 }
 
+// TheSuperHackers @bugfix coconutbird 05/11/2026 When the fullscreen back buffer uses the display format, it has no
+// destination alpha, and effects that need it, such as the soft shoreline of standing water, would be lost. Render the
+// scene into an A8R8G8B8 target instead and copy it onto the back buffer in End_Scene. With multisampling, the scene
+// target is multisampled instead of the back buffer: the scene renders into a multisampled surface with its own depth
+// buffer, which is resolved into the texture before the copy. The device keeps this target as its render target, so
+// code that restores the previous render target returns to it.
+// The back buffer multisampling depends on whether the scene target is used, so this is decided before Reset().
+void DX8Wrapper::Prepare_Scene_Alpha_Target()
+{
+	UseSceneAlphaTarget = false;
+
+	if (IsWindowed || !FullscreenBackBufferUsesDisplayFormat || BitDepth != 32 || _PresentParameters.BackBufferFormat != D3DFMT_X8R8G8B8)
+		return;
+
+	const D3DMULTISAMPLE_TYPE multiSampleType = MultiSampleAntiAliasing;
+
+	if (FAILED(D3DInterface->CheckDeviceFormat(CurRenderDevice, D3DDEVTYPE_HAL, DisplayFormat,
+			D3DUSAGE_RENDERTARGET, D3DRTYPE_TEXTURE, D3DFMT_A8R8G8B8))
+		|| FAILED(D3DInterface->CheckDepthStencilMatch(CurRenderDevice, D3DDEVTYPE_HAL, DisplayFormat,
+			D3DFMT_A8R8G8B8, _PresentParameters.AutoDepthStencilFormat))
+		|| (multiSampleType != D3DMULTISAMPLE_NONE
+			&& (FAILED(D3DInterface->CheckDeviceMultiSampleType(CurRenderDevice, D3DDEVTYPE_HAL,
+					D3DFMT_A8R8G8B8, FALSE, multiSampleType))
+				|| FAILED(D3DInterface->CheckDeviceMultiSampleType(CurRenderDevice, D3DDEVTYPE_HAL,
+					_PresentParameters.AutoDepthStencilFormat, FALSE, multiSampleType)))))
+	{
+		WWDEBUG_SAY(("DX8Wrapper::Prepare_Scene_Alpha_Target: A8R8G8B8 scene target is not supported."));
+		return;
+	}
+
+	UseSceneAlphaTarget = true;
+	SceneAlphaMultiSampleType = multiSampleType;
+	_PresentParameters.MultiSampleType = D3DMULTISAMPLE_NONE;
+}
+
+void DX8Wrapper::Create_Scene_Alpha_Target()
+{
+	WWASSERT(SceneAlphaTexture == nullptr);
+
+	if (!UseSceneAlphaTarget)
+		return;
+
+	const UINT width = _PresentParameters.BackBufferWidth;
+	const UINT height = _PresentParameters.BackBufferHeight;
+
+	HRESULT hr = D3DDevice->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &SceneAlphaTexture);
+	if (SUCCEEDED(hr))
+		hr = SceneAlphaTexture->GetSurfaceLevel(0, &SceneAlphaTextureSurface);
+	if (SUCCEEDED(hr) && SceneAlphaMultiSampleType != D3DMULTISAMPLE_NONE)
+	{
+		hr = D3DDevice->CreateRenderTarget(width, height, D3DFMT_A8R8G8B8, SceneAlphaMultiSampleType, FALSE, &SceneAlphaMultisampleSurface);
+		if (SUCCEEDED(hr))
+			hr = D3DDevice->CreateDepthStencilSurface(width, height, _PresentParameters.AutoDepthStencilFormat, SceneAlphaMultiSampleType, &SceneAlphaDepthSurface);
+	}
+
+	IDirect3DSurface8 *depthBuffer = nullptr;
+	if (SUCCEEDED(hr))
+		hr = D3DDevice->GetDepthStencilSurface(&depthBuffer);
+	if (SUCCEEDED(hr))
+		hr = D3DDevice->SetRenderTarget(Get_Scene_Alpha_Render_Surface(), SceneAlphaDepthSurface ? SceneAlphaDepthSurface : depthBuffer);
+	if (depthBuffer)
+		depthBuffer->Release();
+
+	if (FAILED(hr))
+	{
+		WWDEBUG_SAY(("DX8Wrapper::Create_Scene_Alpha_Target: failed with 0x%08X.", (unsigned)hr));
+		Release_Scene_Alpha_Target();
+		return;
+	}
+
+	WWDEBUG_SAY(("DX8Wrapper::Create_Scene_Alpha_Target: rendering the scene into a %ux%u A8R8G8B8 target, multisample type %d.",
+		width, height, (int)SceneAlphaMultiSampleType));
+}
+
+void DX8Wrapper::Release_Scene_Alpha_Target()
+{
+	if (SceneAlphaTexture == nullptr)
+		return;
+
+	// The device holds references to its render target and depth buffer, so give it the back buffer back first.
+	// The back buffer cannot use the multisampled depth buffer of the scene target, so in that case no depth buffer
+	// is set until Reset() restores the automatic one.
+	IDirect3DSurface8 *backBuffer = nullptr;
+	IDirect3DSurface8 *depthBuffer = nullptr;
+	D3DDevice->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
+	if (SceneAlphaDepthSurface == nullptr)
+		D3DDevice->GetDepthStencilSurface(&depthBuffer);
+	if (backBuffer)
+	{
+		D3DDevice->SetRenderTarget(backBuffer, depthBuffer);
+		backBuffer->Release();
+	}
+	if (depthBuffer)
+		depthBuffer->Release();
+
+	if (SceneAlphaDepthSurface)
+	{
+		SceneAlphaDepthSurface->Release();
+		SceneAlphaDepthSurface = nullptr;
+	}
+
+	if (SceneAlphaMultisampleSurface)
+	{
+		SceneAlphaMultisampleSurface->Release();
+		SceneAlphaMultisampleSurface = nullptr;
+	}
+	if (SceneAlphaTextureSurface)
+	{
+		SceneAlphaTextureSurface->Release();
+		SceneAlphaTextureSurface = nullptr;
+	}
+	SceneAlphaTexture->Release();
+	SceneAlphaTexture = nullptr;
+}
+
+void DX8Wrapper::Copy_Scene_Alpha_Target_To_Back_Buffer()
+{
+	WWPROFILE("DX8Wrapper::Copy_Scene_Alpha_Target_To_Back_Buffer");
+
+	if (SceneAlphaMultisampleSurface)
+	{
+		DX8CALL(CopyRects(SceneAlphaMultisampleSurface, nullptr, 0, SceneAlphaTextureSurface, nullptr));
+	}
+
+	IDirect3DSurface8 *backBuffer = nullptr;
+	DX8CALL(GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &backBuffer));
+	if (backBuffer == nullptr)
+		return;
+
+	IDirect3DSurface8 *depthBuffer = nullptr;
+	DX8CALL(GetDepthStencilSurface(&depthBuffer));
+
+	// Restore every device state after the copy, so the render state cache stays valid.
+	DWORD stateBlock = 0;
+	const bool restoreStates = SUCCEEDED(D3DDevice->CreateStateBlock(D3DSBT_ALL, &stateBlock));
+
+	// The copy needs no depth buffer, and the back buffer cannot use the multisampled depth buffer of the scene target.
+	DX8CALL(SetRenderTarget(backBuffer, nullptr));
+	DX8CALL(BeginScene());
+
+	DX8CALL(SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE));
+	DX8CALL(SetRenderState(D3DRS_ZWRITEENABLE, FALSE));
+	DX8CALL(SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE));
+	DX8CALL(SetRenderState(D3DRS_ALPHATESTENABLE, FALSE));
+	DX8CALL(SetRenderState(D3DRS_STENCILENABLE, FALSE));
+	DX8CALL(SetRenderState(D3DRS_FOGENABLE, FALSE));
+	DX8CALL(SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE));
+	DX8CALL(SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID));
+	DX8CALL(SetRenderState(D3DRS_DITHERENABLE, FALSE));
+	DX8CALL(SetRenderState(D3DRS_LIGHTING, FALSE));
+	DX8CALL(SetRenderState(D3DRS_SPECULARENABLE, FALSE));
+	DX8CALL(SetRenderState(D3DRS_WRAP0, 0));
+	DX8CALL(SetRenderState(D3DRS_COLORWRITEENABLE, D3DCOLORWRITEENABLE_RED | D3DCOLORWRITEENABLE_GREEN | D3DCOLORWRITEENABLE_BLUE | D3DCOLORWRITEENABLE_ALPHA));
+
+	DX8CALL(SetPixelShader(0));
+	DX8CALL(SetVertexShader(D3DFVF_XYZRHW | D3DFVF_TEX1));
+	DX8CALL(SetTexture(0, SceneAlphaTexture));
+	DX8CALL(SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1));
+	DX8CALL(SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE));
+	DX8CALL(SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1));
+	DX8CALL(SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE));
+	DX8CALL(SetTextureStageState(0, D3DTSS_TEXCOORDINDEX, 0));
+	DX8CALL(SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE));
+	DX8CALL(SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP));
+	DX8CALL(SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP));
+	DX8CALL(SetTextureStageState(0, D3DTSS_MAGFILTER, D3DTEXF_POINT));
+	DX8CALL(SetTextureStageState(0, D3DTSS_MINFILTER, D3DTEXF_POINT));
+	DX8CALL(SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTEXF_NONE));
+	DX8CALL(SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_DISABLE));
+	DX8CALL(SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_DISABLE));
+
+	// Offset by half a pixel so that each texel maps onto exactly one pixel.
+	struct QuadVertex { float x, y, z, rhw, u, v; };
+	const float right = (float)_PresentParameters.BackBufferWidth - 0.5f;
+	const float bottom = (float)_PresentParameters.BackBufferHeight - 0.5f;
+	const QuadVertex quad[4] =
+	{
+		{ -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f },
+		{ right, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f },
+		{ -0.5f, bottom, 0.0f, 1.0f, 0.0f, 1.0f },
+		{ right, bottom, 0.0f, 1.0f, 1.0f, 1.0f },
+	};
+	DX8CALL(DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, quad, sizeof(QuadVertex)));
+
+	DX8CALL(EndScene());
+	DX8CALL(SetRenderTarget(Get_Scene_Alpha_Render_Surface(), depthBuffer));
+
+	if (restoreStates)
+	{
+		D3DDevice->ApplyStateBlock(stateBlock);
+		D3DDevice->DeleteStateBlock(stateBlock);
+	}
+
+	backBuffer->Release();
+	if (depthBuffer)
+		depthBuffer->Release();
+}
+
 
 void DX8Wrapper::Reset_Statistics()
 {
@@ -1718,6 +1928,9 @@ void DX8Wrapper::End_Scene(bool flip_frames)
 {
 	DX8_THREAD_ASSERT();
 	DX8CALL(EndScene());
+
+	if (flip_frames && SceneAlphaTexture)
+		Copy_Scene_Alpha_Target_To_Back_Buffer();
 
 	DX8WebBrowser::Render(0);
 
@@ -3195,6 +3408,17 @@ SurfaceClass * DX8Wrapper::_Get_DX8_Back_Buffer(unsigned int num)
 	return surf;
 }
 
+SurfaceClass * DX8Wrapper::_Get_DX8_Scene_Surface()
+{
+	DX8_THREAD_ASSERT();
+
+	IDirect3DSurface8 * surface = Get_Scene_Alpha_Render_Surface();
+	if (surface == nullptr)
+		return _Get_DX8_Back_Buffer();
+
+	return NEW_REF(SurfaceClass,(surface));
+}
+
 
 TextureClass *
 DX8Wrapper::Create_Render_Target (int width, int height, WW3DFormat format)
@@ -4490,5 +4714,8 @@ const char* DX8Wrapper::Get_DX8_Blend_Op_Name(unsigned value)
 
 WW3DFormat	DX8Wrapper::getBackBufferFormat()
 {
+	if (SceneAlphaTexture)
+		return WW3D_FORMAT_A8R8G8B8;
+
 	return D3DFormat_To_WW3DFormat( _PresentParameters.BackBufferFormat );
 }
