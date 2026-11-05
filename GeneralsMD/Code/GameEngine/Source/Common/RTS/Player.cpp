@@ -2702,8 +2702,7 @@ void Player::resetRank()
 	m_rankLevel = 1;
 	m_skillPoints = 0;
 	const RankInfo* nextRank = TheRankInfoStore->getRankInfo(m_rankLevel+1);
-	m_levelUp = nextRank ? nextRank->m_skillPointsNeeded : INT_MAX;
-	m_levelDown = 0;
+	setSafeLevels(nextRank ? nextRank->m_skillPointsNeeded : INT_MAX, 0);
 	m_sciences.clear();
 	m_sciencePurchasePoints = getPlayerTemplate() ? getPlayerTemplate()->getIntrinsicSciencePurchasePoints() : 0;
 	const RankInfo* curRank = TheRankInfoStore->getRankInfo(m_rankLevel);
@@ -2762,7 +2761,8 @@ Bool Player::setRankLevel(Int newLevel)
 	}
 
 	const RankInfo* nextRank = TheRankInfoStore->getRankInfo(newLevel + 1);
-	m_levelUp = nextRank ? nextRank->m_skillPointsNeeded : INT_MAX;
+	setSafeLevels(nextRank ? nextRank->m_skillPointsNeeded : INT_MAX, m_levelDown);
+
 	m_rankLevel = newLevel;
 
 	DEBUG_ASSERTCRASH(m_skillPoints >= m_levelDown && m_skillPoints < m_levelUp, ("hmm, wrong"));
@@ -2786,6 +2786,22 @@ Bool Player::setRankLevel(Int newLevel)
 	}
 
 	return true;
+}
+
+//=============================================================================
+void Player::setSafeLevels(Int levelUp, Int levelDown)
+{
+	if (levelUp == levelDown)
+	{
+		// TheSuperHackers @bugfix Prevent possible division by zero in the control bar code.
+		m_levelUp = INT_MAX;
+		m_levelDown = 0;
+	}
+	else
+	{
+		m_levelUp = levelUp;
+		m_levelDown = levelDown;
+	}
 }
 
 //=============================================================================
@@ -4588,6 +4604,5 @@ void Player::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void Player::loadPostProcess()
 {
-
+	setSafeLevels(m_levelUp, m_levelDown);
 }
-
