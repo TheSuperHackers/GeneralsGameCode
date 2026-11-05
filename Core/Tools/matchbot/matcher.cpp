@@ -26,6 +26,16 @@
 #define usleep(x) Sleep((x)/100000)
 #endif
 
+// TheSuperHackers @build The GameSpy peer library calls this in place of chatConnectSecureA().
+extern "C" CHAT GameSpyChatConnectSecure(const char *serverAddress, int port, const char *nick, const char *name,
+	const char *gamename, const char *secretKey, chatGlobalCallbacks *callbacks,
+	chatNickErrorCallback nickErrorCallback, chatFillInUserCallback fillInUserCallback,
+	chatConnectCallback connectCallback, void *param, CHATBool blocking)
+{
+	return chatConnectSecureA(serverAddress, port, nick, name, gamename, secretKey, callbacks,
+		nickErrorCallback, fillInUserCallback, connectCallback, param, blocking);
+}
+
 MatcherClass::MatcherClass()
 {
 	m_lastRotation = 0;

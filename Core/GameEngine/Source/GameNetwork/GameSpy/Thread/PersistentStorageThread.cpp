@@ -33,6 +33,7 @@
 
 #include "Common/UserPreferences.h"
 #include "Common/PlayerTemplate.h"
+#include "GameNetwork/networkutil.h"
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"
 
@@ -845,7 +846,15 @@ void PSThreadClass::Thread_Function()
 #endif
 	/**/
 
-	//strcpy(StatsServerHostname, "sdkdev.gamespy.com");
+	// gstats puts the game name in front of a host name, so it gets the resolved address.
+	const UnsignedInt statsServerIP = ResolveIP(StatsServerHostname);
+	if (statsServerIP != 0)
+	{
+		AsciiString address;
+		address.format("%d.%d.%d.%d", PRINTF_IP_AS_4_INTS(statsServerIP));
+		strlcpy(StatsServerHostname, address.str(), ARRAY_SIZE(StatsServerHostname));
+	}
+	DEBUG_LOG(("GameSpy stats server is %s", StatsServerHostname));
 
 	PSRequest req;
 	while ( running )
