@@ -87,7 +87,7 @@ const FieldParse MapMetaDataReader::m_mapFieldParseTable[] =
 	{ "isMultiplayer",					INI::parseBool,			nullptr,	offsetof( MapMetaDataReader, m_isMultiplayer ) },
 	{ "extentMin",							INI::parseCoord3D,	nullptr, offsetof( MapMetaDataReader, m_extent.lo ) },
 	{ "extentMax",							INI::parseCoord3D,	nullptr, offsetof( MapMetaDataReader, m_extent.hi ) },
-	{ "numPlayers",							INI::parseInt,			nullptr,	offsetof( MapMetaDataReader, m_numPlayers ) },
+	{ "numPlayers",							INI::parseIntClamped,	(const void*)MAX_SLOTS,	offsetof( MapMetaDataReader, m_numPlayers ) },
 	{ "fileSize",								INI::parseUnsignedInt,	nullptr,	offsetof( MapMetaDataReader, m_filesize ) },
 	{ "fileCRC",								INI::parseUnsignedInt,	nullptr,	offsetof( MapMetaDataReader, m_CRC ) },
 	{ "timestampLo",						INI::parseInt,			nullptr,	offsetof( MapMetaDataReader, m_timestamp.m_lowTimeStamp ) },

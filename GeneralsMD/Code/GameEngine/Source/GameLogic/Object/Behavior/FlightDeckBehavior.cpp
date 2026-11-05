@@ -89,7 +89,7 @@ void FlightDeckBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "NumRunways",							INI::parseInt,										nullptr, offsetof( FlightDeckBehaviorModuleData, m_numCols ) },
+		{ "NumRunways",							INI::parseIntClamped,							(const void*)MAX_RUNWAYS, offsetof( FlightDeckBehaviorModuleData, m_numCols ) },
 		{ "NumSpacesPerRunway",			INI::parseInt,										nullptr, offsetof( FlightDeckBehaviorModuleData, m_numRows ) },
 
 		{ "Runway1Spaces",					INI::parseAsciiStringVector,			nullptr, offsetof( FlightDeckBehaviorModuleData, m_runwayInfo[ 0 ].m_spacesBoneNames ) },
