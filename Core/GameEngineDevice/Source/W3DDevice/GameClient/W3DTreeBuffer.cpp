@@ -1631,7 +1631,7 @@ void W3DTreeBuffer::drawTrees(CameraClass * camera, RefRenderObjListIterator *pD
 	DX8Wrapper::Set_Vertex_Buffer(vb_access);
 
 	Matrix3D tm(1);
-	Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);
+	Renderer::Set_Transform(RenderTransform_World,tm);
 
 	DX8Wrapper::Draw_Triangles(	0,2, 0,	4);	//draw a quad, 2 triangles, 4 verts
 #endif

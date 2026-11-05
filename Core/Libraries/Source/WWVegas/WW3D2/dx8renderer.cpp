@@ -1857,7 +1857,7 @@ void DX8TextureCategoryClass::Render()
 		}
 		else {
 			SNAPSHOT_SAY(("Set_World_Transform"));
-			Renderer::Set_Transform(RB_TRANSFORM_WORLD,*world_transform);
+			Renderer::Set_Transform(RenderTransform_World,*world_transform);
 		}
 
 

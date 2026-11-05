@@ -660,7 +660,7 @@ void TestBlendRender(RenderInfoClass & rinfo)
 	DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaqueShader);
 
 	Matrix3D tm(1);	//identity
-	Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);
+	Renderer::Set_Transform(RenderTransform_World,tm);
 
 	//grass
 	RenderVBTile(grass,580.0f,480.0f,0.0f,0.0f);	RenderVBTile(grass,590.0f,480.0f,0.25f,0.0f);

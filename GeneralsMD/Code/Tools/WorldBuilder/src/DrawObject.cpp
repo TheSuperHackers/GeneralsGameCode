@@ -2216,7 +2216,7 @@ if (pMapObj->isSelected()) {
 				polyCount -= NUM_ARROW_TRI+NUM_SELECT_TRI;
 			}
 
-			Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);
+			Renderer::Set_Transform(RenderTransform_World,tm);
 			if (isTree) {
 				DX8Wrapper::Draw_Triangles(	NUM_TRI*3,polyCount, 0,	(m_numTriangles*3));
 			} else {
@@ -2274,10 +2274,10 @@ if (pMapObj->isSelected()) {
 					}
 
 					DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-					Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);
+					Renderer::Set_Transform(RenderTransform_World,tm);
 					DX8Wrapper::Draw_Triangles(	0,polyCount, 0,	(m_numTriangles*3));
 				}
-				Renderer::Set_Transform(RB_TRANSFORM_WORLD,Transform);
+				Renderer::Set_Transform(RenderTransform_World,Transform);
 				DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile1);
 				updatePolygonVB(pTrig, polySelected, polySelected && PolygonTool::isSelectedOpen());
  				DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
@@ -2326,7 +2326,7 @@ if (pMapObj->isSelected()) {
 			}
 
 #if 1
-			Renderer::Set_Transform(RB_TRANSFORM_WORLD,tmXX);
+			Renderer::Set_Transform(RenderTransform_World,tmXX);
 			DX8Wrapper::Draw_Triangles(	0,polyCountA, 0,	(m_numTriangles*3));
 #endif
 
@@ -2335,7 +2335,7 @@ if (pMapObj->isSelected()) {
 
 	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
  	DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferWater);
-	Renderer::Set_Transform(RB_TRANSFORM_WORLD,Transform);
+	Renderer::Set_Transform(RenderTransform_World,Transform);
 
 	if (m_drawWaypoints) {
 		updateWaypointVB();

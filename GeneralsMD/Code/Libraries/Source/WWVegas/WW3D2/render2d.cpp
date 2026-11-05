@@ -609,8 +609,8 @@ void Render2DClass::Render()
 	Matrix4x4 view,proj;
 	Matrix4x4 identity(true);
 
-	Renderer::Get_Transform(RB_TRANSFORM_VIEW,view);
-	Renderer::Get_Transform(RB_TRANSFORM_PROJECTION,proj);
+	Renderer::Get_Transform(RenderTransform_View,view);
+	Renderer::Get_Transform(RenderTransform_Projection,proj);
 
 	//
 	//	Configure the viewport for entire screen
@@ -634,7 +634,7 @@ void Render2DClass::Render()
 
 	Renderer::Set_World_Identity();
 	Renderer::Set_View_Identity();
-	Renderer::Set_Transform(RB_TRANSFORM_PROJECTION,identity);
+	Renderer::Set_Transform(RenderTransform_Projection,identity);
 
 	DynamicVBAccessClass vb(BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,Vertices.Count());
 	{
@@ -698,8 +698,8 @@ void Render2DClass::Render()
 		DX8Wrapper::Set_Shader(Shader);
 	DX8Wrapper::Draw_Triangles(0,Indices.Count()/3,0,Vertices.Count());
 
-	Renderer::Set_Transform(RB_TRANSFORM_VIEW,view);
-	Renderer::Set_Transform(RB_TRANSFORM_PROJECTION,proj);
+	Renderer::Set_Transform(RenderTransform_View,view);
+	Renderer::Set_Transform(RenderTransform_Projection,proj);
 	if (IsGrayScale)
 		ShaderClass::Invalidate();	//force both stages to be reset.
 

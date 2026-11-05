@@ -395,7 +395,7 @@ void W3DSnowManager::render(RenderInfoClass &rinfo)
 	m_heightTraveled=m_time*m_velocity+cameraOffset;	//height that snow flake traveled this frame.
 
 	Matrix4x4 identity(true);
-	Renderer::Set_Transform(RB_TRANSFORM_WORLD,identity);
+	Renderer::Set_Transform(RenderTransform_World,identity);
 
 	DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaShader);
 
@@ -486,7 +486,7 @@ void W3DSnowManager::renderAsQuads(RenderInfoClass &rinfo, Int cubeOriginX, Int 
 	}
 
 	Matrix4x4 identity(true);
-	Renderer::Set_Transform(RB_TRANSFORM_VIEW,identity);
+	Renderer::Set_Transform(RenderTransform_View,identity);
 
 	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
 

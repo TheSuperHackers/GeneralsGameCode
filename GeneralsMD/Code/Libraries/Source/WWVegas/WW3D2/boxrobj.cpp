@@ -702,7 +702,7 @@ void AABoxRenderObjClass::Render(RenderInfoClass & rinfo)
 {
 	Matrix3D temp(1);
 	temp.Translate(Transform.Get_Translation());
-	Renderer::Set_Transform(RB_TRANSFORM_WORLD,temp);
+	Renderer::Set_Transform(RenderTransform_World,temp);
 	render_box(rinfo,ObjSpaceCenter,ObjSpaceExtent);
 }
 
@@ -1086,7 +1086,7 @@ int OBBoxRenderObjClass::Class_ID() const
  *=============================================================================================*/
 void OBBoxRenderObjClass::Render(RenderInfoClass & rinfo)
 {
-	Renderer::Set_Transform(RB_TRANSFORM_WORLD,Transform);
+	Renderer::Set_Transform(RenderTransform_World,Transform);
 	render_box(rinfo,ObjSpaceCenter,ObjSpaceExtent);
 }
 

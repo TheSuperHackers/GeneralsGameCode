@@ -43,11 +43,11 @@ struct RenderViewport
     float max_z;
 };
 
-enum RenderBackendTransform
+enum RenderTransform
 {
-    RB_TRANSFORM_WORLD,
-    RB_TRANSFORM_VIEW,
-    RB_TRANSFORM_PROJECTION
+    RenderTransform_World,
+    RenderTransform_View,
+    RenderTransform_Projection
 };
 
 // The interface holds only the methods that callers route through. The rest of
@@ -84,9 +84,9 @@ public:
     static void Set_Viewport(const RenderViewport & viewport);
     static void Invalidate_Cached_Render_States();
 
-    static void Set_Transform(RenderBackendTransform transform, const Matrix4x4 & m);
-    static void Set_Transform(RenderBackendTransform transform, const Matrix3D & m);
-    static void Get_Transform(RenderBackendTransform transform, Matrix4x4 & m);
+    static void Set_Transform(RenderTransform transform, const Matrix4x4 & m);
+    static void Set_Transform(RenderTransform transform, const Matrix3D & m);
+    static void Get_Transform(RenderTransform transform, Matrix4x4 & m);
     static void Set_World_Identity();
     static void Set_View_Identity();
     static void Set_Projection_Transform_With_Z_Bias(const Matrix4x4 & matrix, float znear, float zfar);
