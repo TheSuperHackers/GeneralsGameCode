@@ -667,6 +667,7 @@ protected:
 	static IDirect3DSurface8 *			SceneAlphaTextureSurface;
 	static IDirect3DSurface8 *			SceneAlphaMultisampleSurface;
 	static IDirect3DSurface8 *			SceneAlphaDepthSurface;
+	static DWORD								SceneAlphaStateBlock;
 
 
 	// shader system updates KJM v

@@ -128,6 +128,7 @@ IDirect3DTexture8 *				DX8Wrapper::SceneAlphaTexture							= nullptr;
 IDirect3DSurface8 *				DX8Wrapper::SceneAlphaTextureSurface					= nullptr;
 IDirect3DSurface8 *				DX8Wrapper::SceneAlphaMultisampleSurface				= nullptr;
 IDirect3DSurface8 *				DX8Wrapper::SceneAlphaDepthSurface						= nullptr;
+DWORD									DX8Wrapper::SceneAlphaStateBlock							= 0;
 
 // shader system additions KJM v
 DWORD								DX8Wrapper::Vertex_Shader								= 0;
@@ -1738,6 +1739,9 @@ void DX8Wrapper::Create_Scene_Alpha_Target()
 			hr = D3DDevice->CreateDepthStencilSurface(width, height, _PresentParameters.AutoDepthStencilFormat, SceneAlphaMultiSampleType, &SceneAlphaDepthSurface);
 	}
 
+	if (SUCCEEDED(hr))
+		hr = D3DDevice->CreateStateBlock(D3DSBT_ALL, &SceneAlphaStateBlock);
+
 	IDirect3DSurface8 *depthBuffer = nullptr;
 	if (SUCCEEDED(hr))
 		hr = D3DDevice->GetDepthStencilSurface(&depthBuffer);
@@ -1750,6 +1754,9 @@ void DX8Wrapper::Create_Scene_Alpha_Target()
 	{
 		WWDEBUG_SAY(("DX8Wrapper::Create_Scene_Alpha_Target: failed with 0x%08X.", (unsigned)hr));
 		Release_Scene_Alpha_Target();
+		UseSceneAlphaTarget = false;
+		// The back buffer was reset without multisampling for the scene target, so report what the device has now.
+		MultiSampleAntiAliasing = _PresentParameters.MultiSampleType;
 		return;
 	}
 
@@ -1763,13 +1770,17 @@ void DX8Wrapper::Release_Scene_Alpha_Target()
 		return;
 
 	// The device holds references to its render target and depth buffer, so give it the back buffer back first.
-	// The back buffer cannot use the multisampled depth buffer of the scene target, so in that case no depth buffer
-	// is set until Reset() restores the automatic one.
+	// The back buffer cannot use the multisampled depth buffer of the scene target, so when that one is set, no
+	// depth buffer is set until Reset() restores the automatic one.
 	IDirect3DSurface8 *backBuffer = nullptr;
 	IDirect3DSurface8 *depthBuffer = nullptr;
 	D3DDevice->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
-	if (SceneAlphaDepthSurface == nullptr)
-		D3DDevice->GetDepthStencilSurface(&depthBuffer);
+	D3DDevice->GetDepthStencilSurface(&depthBuffer);
+	if (depthBuffer != nullptr && depthBuffer == SceneAlphaDepthSurface)
+	{
+		depthBuffer->Release();
+		depthBuffer = nullptr;
+	}
 	if (backBuffer)
 	{
 		D3DDevice->SetRenderTarget(backBuffer, depthBuffer);
@@ -1777,6 +1788,12 @@ void DX8Wrapper::Release_Scene_Alpha_Target()
 	}
 	if (depthBuffer)
 		depthBuffer->Release();
+
+	if (SceneAlphaStateBlock)
+	{
+		D3DDevice->DeleteStateBlock(SceneAlphaStateBlock);
+		SceneAlphaStateBlock = 0;
+	}
 
 	if (SceneAlphaDepthSurface)
 	{
@@ -1816,8 +1833,7 @@ void DX8Wrapper::Copy_Scene_Alpha_Target_To_Back_Buffer()
 	DX8CALL(GetDepthStencilSurface(&depthBuffer));
 
 	// Restore every device state after the copy, so the render state cache stays valid.
-	DWORD stateBlock = 0;
-	const bool restoreStates = SUCCEEDED(D3DDevice->CreateStateBlock(D3DSBT_ALL, &stateBlock));
+	DX8CALL(CaptureStateBlock(SceneAlphaStateBlock));
 
 	// The copy needs no depth buffer, and the back buffer cannot use the multisampled depth buffer of the scene target.
 	DX8CALL(SetRenderTarget(backBuffer, nullptr));
@@ -1870,11 +1886,7 @@ void DX8Wrapper::Copy_Scene_Alpha_Target_To_Back_Buffer()
 	DX8CALL(EndScene());
 	DX8CALL(SetRenderTarget(Get_Scene_Alpha_Render_Surface(), depthBuffer));
 
-	if (restoreStates)
-	{
-		D3DDevice->ApplyStateBlock(stateBlock);
-		D3DDevice->DeleteStateBlock(stateBlock);
-	}
+	DX8CALL(ApplyStateBlock(SceneAlphaStateBlock));
 
 	backBuffer->Release();
 	if (depthBuffer)
