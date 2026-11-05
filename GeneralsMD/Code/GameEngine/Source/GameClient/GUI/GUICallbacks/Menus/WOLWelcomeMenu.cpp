@@ -509,11 +509,6 @@ void WOLWelcomeMenuInit( WindowLayout *layout, void *userData )
 	if (TheFirewallHelper == nullptr) {
 		TheFirewallHelper = createFirewallHelper();
 	}
-	if (TheFirewallHelper->detectFirewall() == TRUE) {
-		// don't need to detect firewall, already been done.
-		delete TheFirewallHelper;
-		TheFirewallHelper = nullptr;
-	}
 	/*
 
 	if (TheGameSpyChat && TheGameSpyChat->isConnected())
@@ -570,9 +565,6 @@ void WOLWelcomeMenuShutdown( WindowLayout *layout, void *userData )
 {
 	listboxInfo = nullptr;
 
-	delete TheFirewallHelper;
-	TheFirewallHelper = nullptr;
-
 	isShuttingDown = TRUE;
 
 	// if we are shutting down for an immediate pop, skip the animations
@@ -610,18 +602,7 @@ void WOLWelcomeMenuUpdate( WindowLayout * layout, void *userData)
 
 	if (TheFirewallHelper != nullptr)
 	{
-		if (TheFirewallHelper->behaviorDetectionUpdate())
-		{
-			TheWritableGlobalData->m_firewallBehavior = TheFirewallHelper->getFirewallBehavior();
-
-			TheFirewallHelper->writeFirewallBehavior();
-
-			TheFirewallHelper->flagNeedToRefresh(FALSE); // 2/19/03 BGC, we're done, so we don't need to refresh the NAT anymore.
-
-			// we are now done with the firewall helper
-			delete TheFirewallHelper;
-			TheFirewallHelper = nullptr;
-		}
+		TheFirewallHelper->behaviorDetectionUpdate();
 	}
 
 	if (TheShell->isAnimFinished() && !buttonPushed && TheGameSpyPeerMessageQueue)
