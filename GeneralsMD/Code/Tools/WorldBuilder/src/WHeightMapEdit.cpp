@@ -556,6 +556,21 @@ void WorldHeightMapEdit::getTexClassNeighbors(Int xIndex, Int yIndex, Int textur
 
 
 
+Bool WorldHeightMapEdit::canSaveCliffState() const
+{
+#if RTS_GENERALS && RETAIL_COMPATIBLE_DATA
+	const Int byteWidth = (m_width + 1) / 8;
+	if (byteWidth < m_flipStateWidth) {
+		for (Int j = 0; j < m_height; j++) {
+			if (m_cellCliffState[j * m_flipStateWidth + byteWidth] != 0) {
+				return false;
+			}
+		}
+	}
+#endif
+	return true;
+}
+
 //
 /// SaveToFile - saves a height map to a file.
 // Format is
@@ -572,6 +587,10 @@ void WorldHeightMapEdit::getTexClassNeighbors(Int xIndex, Int yIndex, Int textur
 //
 void WorldHeightMapEdit::saveToFile(DataChunkOutput &chunkWriter)
 {
+	if (!canSaveCliffState()) {
+		throw(ERROR_CORRUPT_FILE_FORMAT);
+	}
+
 	// This is the chunk writer stuff.
 	int i;
 
