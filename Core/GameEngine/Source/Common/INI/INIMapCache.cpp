@@ -119,6 +119,8 @@ void INI::parseMapCacheDefinition( INI* ini )
 	AsciiString name;
 	MapMetaDataReader mdr;
 	MapMetaData md;
+	// TheSuperHackers @bugfix CryoTheRenegade 05/11/2026 An entry may omit numPlayers, and the waypoint loop below is bounded by it.
+	mdr.m_numPlayers = 0;
 
 	// read the name
 	c = ini->getNextToken(" \n\r\t");
