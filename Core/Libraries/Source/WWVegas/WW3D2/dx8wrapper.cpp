@@ -120,6 +120,8 @@ int								DX8Wrapper::TextureBitDepth							= DEFAULT_TEXTURE_BIT_DEPTH;
 bool								DX8Wrapper::IsWindowed									= false;
 D3DFORMAT					DX8Wrapper::DisplayFormat	= D3DFMT_UNKNOWN;
 D3DMULTISAMPLE_TYPE DX8Wrapper::MultiSampleAntiAliasing	= DEFAULT_MSAA;
+bool								DX8Wrapper::FullscreenBackBufferUsesDisplayFormat	= false;
+unsigned							DX8Wrapper::FullscreenResetsWithoutPresent			= 0;
 
 // shader system additions KJM v
 DWORD								DX8Wrapper::Vertex_Shader								= 0;
@@ -631,9 +633,24 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 
 		HRESULT hr=_Get_D3D_Device8()->TestCooperativeLevel();
 		if (hr != D3DERR_DEVICELOST )
-		{	DX8CALL_HRES(Reset(&_PresentParameters),hr)
+		{
+			// TheSuperHackers @bugfix coconutbird 05/11/2026 A fullscreen back buffer with destination alpha does not
+			// match the display format, so every Reset() sets the display mode again. On systems where a display mode
+			// change loses the device, the device is lost again by its own Reset() before it presents a single frame,
+			// and the game resets forever while the screen keeps switching modes. When the previous Reset() did not
+			// last until a frame was presented, use the display format for the back buffer, so that Reset() can
+			// restore the device without changing the display mode.
+			if (!IsWindowed && FullscreenResetsWithoutPresent != 0 && _PresentParameters.BackBufferFormat != DisplayFormat)
+			{
+				Use_Display_Format_For_Fullscreen_Back_Buffer();
+			}
+
+			DX8CALL_HRES(Reset(&_PresentParameters),hr)
 			if (hr != D3D_OK)
 				return false;	//reset failed.
+
+			if (!IsWindowed)
+				++FullscreenResetsWithoutPresent;
 		}
 		else
 			return false;	//device is lost and can't be reset.
@@ -1485,7 +1502,9 @@ bool DX8Wrapper::Find_Color_And_Z_Mode(int resx,int resy,int bitdepth,D3DFORMAT 
 		*set_backbuffer=*set_colorbuffer = format_table[format_index];
 	}
 
-	if (bitdepth==32 && *set_colorbuffer == D3DFMT_X8R8G8B8 && D3DInterface->CheckDeviceType(0,D3DDEVTYPE_HAL,*set_colorbuffer,D3DFMT_A8R8G8B8, TRUE) == D3D_OK)
+	// TheSuperHackers @bugfix coconutbird 05/11/2026 Keep the display format once Reset_Device found that a back buffer
+	// with destination alpha cannot be kept in fullscreen.
+	if (bitdepth==32 && *set_colorbuffer == D3DFMT_X8R8G8B8 && !FullscreenBackBufferUsesDisplayFormat && D3DInterface->CheckDeviceType(0,D3DDEVTYPE_HAL,*set_colorbuffer,D3DFMT_A8R8G8B8, TRUE) == D3D_OK)
 	{
 		//promote 32-bit modes to include destination alpha when supported
 		*set_backbuffer = D3DFMT_A8R8G8B8;
@@ -1624,6 +1643,34 @@ bool DX8Wrapper::Test_Z_Mode(D3DFORMAT colorbuffer,D3DFORMAT backbuffer, D3DFORM
 	return true;
 }
 
+void DX8Wrapper::Use_Display_Format_For_Fullscreen_Back_Buffer()
+{
+	WWDEBUG_SAY(("DX8Wrapper::Reset_Device did not last until a frame was presented. Using the display format for the fullscreen back buffer."));
+	FullscreenBackBufferUsesDisplayFormat = true;
+	_PresentParameters.BackBufferFormat = DisplayFormat;
+
+	D3DFORMAT zmode;
+	if (Find_Z_Mode(DisplayFormat, DisplayFormat, &zmode))
+	{
+		_PresentParameters.AutoDepthStencilFormat = zmode;
+	}
+
+	if (_PresentParameters.MultiSampleType != D3DMULTISAMPLE_NONE)
+	{
+		const HRESULT hrBack = D3DInterface->CheckDeviceMultiSampleType(CurRenderDevice, D3DDEVTYPE_HAL,
+			_PresentParameters.BackBufferFormat, FALSE, _PresentParameters.MultiSampleType);
+		const HRESULT hrDepth = D3DInterface->CheckDeviceMultiSampleType(CurRenderDevice, D3DDEVTYPE_HAL,
+			_PresentParameters.AutoDepthStencilFormat, FALSE, _PresentParameters.MultiSampleType);
+
+		if (FAILED(hrBack) || FAILED(hrDepth))
+		{
+			WWDEBUG_SAY(("Requested MSAA Mode Not Supported"));
+			MultiSampleAntiAliasing = D3DMULTISAMPLE_NONE;
+			_PresentParameters.MultiSampleType = D3DMULTISAMPLE_NONE;
+		}
+	}
+}
+
 
 void DX8Wrapper::Reset_Statistics()
 {
@@ -1692,6 +1739,7 @@ void DX8Wrapper::End_Scene(bool flip_frames)
 #endif
 			IsDeviceLost=false;
 			FrameCount++;
+			FullscreenResetsWithoutPresent = 0;
 		}
 		else {
 			IsDeviceLost=true;
@@ -1760,6 +1808,7 @@ void DX8Wrapper::Flip_To_Primary()
 				if (SUCCEEDED(hr)) {
 					IsDeviceLost=false;
 					FrameCount++;
+					FullscreenResetsWithoutPresent = 0;
 					WWDEBUG_SAY(("Flip to primary succeeded %ld", FrameCount));
 				}
 				else {
