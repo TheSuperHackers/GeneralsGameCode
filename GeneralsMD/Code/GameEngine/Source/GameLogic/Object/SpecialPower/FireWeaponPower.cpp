@@ -95,20 +95,19 @@ FireWeaponPower::~FireWeaponPower()
 // ------------------------------------------------------------------------------------------------
 void FireWeaponPower::doSpecialPower( UnsignedInt commandOptions )
 {
-	Object *self = getObject();
-	const FireWeaponPowerModuleData *data = getFireWeaponPowerModuleData();
-
-	if( self->isDisabled() )
+	if (!canDoSpecialPower())
 		return;
 
 	// call the base class action cause we are *EXTENDING* functionality
 	SpecialPowerModule::doSpecialPower( commandOptions );
 
+	Object *self = getObject();
 	self->reloadAllAmmo( TRUE );
 
 	AIUpdateInterface *ai = self->getAI();
 	if( ai )
 	{
+		const FireWeaponPowerModuleData *data = getFireWeaponPowerModuleData();
 		// TheSuperHackers @bugfix Caball009 09/08/2025 Position should be irrelevant, but aiAttackPosition requires a valid position pointer to avoid a crash.
 		ai->aiAttackPosition( self->getPosition(), data->m_maxShotsToFire, CMD_FROM_AI );
 
@@ -123,20 +122,19 @@ void FireWeaponPower::doSpecialPower( UnsignedInt commandOptions )
 // ------------------------------------------------------------------------------------------------
 void FireWeaponPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
 {
-	Object *self = getObject();
-	const FireWeaponPowerModuleData *data = getFireWeaponPowerModuleData();
-
-	if( self->isDisabled() )
+	if (!canDoSpecialPower())
 		return;
 
 	// call the base class action cause we are *EXTENDING* functionality
 	SpecialPowerModule::doSpecialPowerAtLocation( loc, angle, commandOptions );
 
+	Object *self = getObject();
 	self->reloadAllAmmo( TRUE );
 
 	AIUpdateInterface *ai = self->getAI();
 	if( ai )
 	{
+		const FireWeaponPowerModuleData *data = getFireWeaponPowerModuleData();
 		ai->aiAttackPosition( loc, data->m_maxShotsToFire, CMD_FROM_AI );
 
 		//Order any turrets to attack as well.
@@ -151,20 +149,19 @@ void FireWeaponPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, 
 // ------------------------------------------------------------------------------------------------
 void FireWeaponPower::doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions )
 {
-	Object *self = getObject();
-	const FireWeaponPowerModuleData *data = getFireWeaponPowerModuleData();
-
-	if( self->isDisabled() )
+	if (!canDoSpecialPower())
 		return;
 
 	// call the base class action cause we are *EXTENDING* functionality
 	SpecialPowerModule::doSpecialPowerAtObject( obj, commandOptions );
 
+	Object *self = getObject();
 	self->reloadAllAmmo( TRUE );
 
 	AIUpdateInterface *ai = self->getAI();
 	if( ai )
 	{
+		const FireWeaponPowerModuleData *data = getFireWeaponPowerModuleData();
 		ai->aiAttackObject( obj, data->m_maxShotsToFire, CMD_FROM_AI );
 
 		//Order any turrets to attack as well.
