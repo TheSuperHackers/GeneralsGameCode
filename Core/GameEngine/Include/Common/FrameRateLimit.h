@@ -50,11 +50,12 @@ public:
 		UncappedFpsValue = 1000000,
 	};
 
-	static UnsignedInt getNextFpsValue(UnsignedInt value);
-	static UnsignedInt getPrevFpsValue(UnsignedInt value);
 	static UnsignedInt changeFpsValue(UnsignedInt value, FpsValueChange change);
 
 private:
+	static UnsignedInt getNextFpsValue(UnsignedInt value);
+	static UnsignedInt getPrevFpsValue(UnsignedInt value);
+
 	static const UnsignedInt s_fpsValues[];
 };
 
@@ -62,18 +63,13 @@ private:
 class LogicTimeScaleFpsPreset
 {
 public:
-	enum CPP_11(: UnsignedInt)
-	{
-#if RTS_DEBUG
-		MinFpsValue = 5,
-#else
-		MinFpsValue = LOGICFRAMES_PER_SECOND,
-#endif
-		StepFpsValue = 5,
-	};
 
-	static UnsignedInt getNextFpsValue(UnsignedInt value);
-	static UnsignedInt getPrevFpsValue(UnsignedInt value);
-	static UnsignedInt changeFpsValue(UnsignedInt value, FpsValueChange change);
+	static UnsignedInt changeFpsValue(UnsignedInt value, FpsValueChange change, UnsignedInt snapValue = 0);
+
+private:
+	static UnsignedInt getNextFpsValue(UnsignedInt value, UnsignedInt snapValue = 0);
+	static UnsignedInt getPrevFpsValue(UnsignedInt value, UnsignedInt snapValue = 0);
+
+	static const UnsignedInt s_fpsValues[];
 };
 
