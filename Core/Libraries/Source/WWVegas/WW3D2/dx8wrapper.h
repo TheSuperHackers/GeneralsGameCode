@@ -458,10 +458,6 @@ public:
 	static unsigned int Convert_Color(const Vector3& color, const float alpha);
 	static void Clamp_Color(Vector4& color);
 	static unsigned int Convert_Color_Clamp(const Vector4& color);
-#if defined(_MSC_VER) && _MSC_VER < 1300
-	// Converts the red, green and blue floats that rgb points to, plus alpha. Only the inline assembly reads through rgb.
-	static unsigned int Convert_Color_RGB(const float* rgb, float alpha);
-#endif
 
 	static void			  Set_Alpha (const float alpha, unsigned int &color);
 
@@ -991,9 +987,9 @@ WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector4& color)
 //
 // ----------------------------------------------------------------------------
 
-#if defined(_MSC_VER) && _MSC_VER < 1300
-WWINLINE unsigned int DX8Wrapper::Convert_Color_RGB(const float* rgb,float alpha)
+WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector3& color,float alpha)
 {
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	const float scale = 255.0;
 	unsigned int col;
 
@@ -1019,7 +1015,7 @@ skip:
 
 		// Convert the color
 
-		mov	esi,dword ptr rgb
+		mov	esi,dword ptr color
 		fld	dword ptr[scale]
 
 		fld	dword ptr[esi]			// r
@@ -1060,13 +1056,6 @@ not_changed:
 		mov	col,eax
 	}
 	return col;
-}
-#endif // defined(_MSC_VER) && _MSC_VER < 1300
-
-WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector3& color,float alpha)
-{
-#if defined(_MSC_VER) && _MSC_VER < 1300
-	return Convert_Color_RGB(&color.X,alpha);
 #else
 	return color.Convert_To_ARGB(alpha);
 #endif // defined(_MSC_VER) && _MSC_VER < 1300
@@ -1142,11 +1131,7 @@ WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
 
 WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector4& color)
 {
-#if defined(_MSC_VER) && _MSC_VER < 1300
-	return Convert_Color_RGB(&color.X,color.W);
-#else
 	return Convert_Color(Vector3(color.X,color.Y,color.Z),color.W);
-#endif // defined(_MSC_VER) && _MSC_VER < 1300
 }
 
 WWINLINE unsigned int DX8Wrapper::Convert_Color_Clamp(const Vector4& color)
