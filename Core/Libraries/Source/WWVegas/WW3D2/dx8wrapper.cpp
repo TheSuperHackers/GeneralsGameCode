@@ -1645,15 +1645,17 @@ bool DX8Wrapper::Test_Z_Mode(D3DFORMAT colorbuffer,D3DFORMAT backbuffer, D3DFORM
 
 void DX8Wrapper::Use_Display_Format_For_Fullscreen_Back_Buffer()
 {
+	D3DFORMAT zmode;
+	if (!Find_Z_Mode(DisplayFormat, DisplayFormat, &zmode))
+	{
+		WWDEBUG_SAY(("DX8Wrapper::Reset_Device did not last until a frame was presented, but no depth buffer format matches the display format. Keeping the fullscreen back buffer format."));
+		return;
+	}
+
 	WWDEBUG_SAY(("DX8Wrapper::Reset_Device did not last until a frame was presented. Using the display format for the fullscreen back buffer."));
 	FullscreenBackBufferUsesDisplayFormat = true;
 	_PresentParameters.BackBufferFormat = DisplayFormat;
-
-	D3DFORMAT zmode;
-	if (Find_Z_Mode(DisplayFormat, DisplayFormat, &zmode))
-	{
-		_PresentParameters.AutoDepthStencilFormat = zmode;
-	}
+	_PresentParameters.AutoDepthStencilFormat = zmode;
 
 	if (_PresentParameters.MultiSampleType != D3DMULTISAMPLE_NONE)
 	{
