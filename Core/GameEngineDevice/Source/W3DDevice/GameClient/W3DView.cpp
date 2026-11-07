@@ -3700,37 +3700,107 @@ void W3DView::Add_Camera_Shake (const Coord3D & position,float radius,float dura
 	CameraShakerSystem.Add_Camera_Shake(vpos,radius,duration,power);
 }
 
-bool W3DView::getDesiredTerrainDrawSize(ICoord2D &dimensions) const
+bool W3DView::getDesiredTerrainDrawSize(ICoord2D &dimensions, Vector2 &drawCenter, bool &useDrawCenter) const
 {
-	if (TheGlobalData && TheGlobalData->m_drawEntireTerrain)
-	{
-		DEBUG_ASSERTCRASH(TheTerrainRenderObject != nullptr, ("TheTerrainRenderObject is null"));
+	useDrawCenter = false;
+	const WorldHeightMap *map = TheTerrainRenderObject->getMap();
+	if (!map)
+		return false;
 
-		if (const WorldHeightMap *heightMap = TheTerrainRenderObject->getMap())
+	// Keep the map-sized fallback for invalid camera data and footprints larger than the map.
+	dimensions.x = map->getXExtent();
+	dimensions.y = map->getYExtent();
+	if (TheGlobalData && TheGlobalData->m_drawEntireTerrain)
+		return true;
+
+	// TheSuperHackers @bugfix sailro 06/09/2026 Cover the visible terrain without yaw-dependent buffer
+	// reallocations. The two cached terrain height limits also cover valleys and nearby higher ground.
+	const Matrix3D &cameraTransform = m_3DCamera->Get_Transform();
+	const Vector3 cameraLocation = cameraTransform.Get_Translation();
+	const Real cameraPitch = asin(fabs(cameraTransform[2][2]));
+	ICoord2D minimumSize;
+	if (cameraPitch > ViewDefaultLowPitchRadians || !m_isUserControlled)
+	{
+		minimumSize.x = WorldHeightMap::NORMAL_DRAW_WIDTH;
+		minimumSize.y = WorldHeightMap::NORMAL_DRAW_HEIGHT;
+	}
+	else
+	{
+		// TheSuperHackers @tweak xezon 31/12/2025 Increases visible terrain area when lowering the camera pitch.
+		// Note: The default camera pitch in Generals was 37.5, which we prefer to keep the normal draw size for.
+		minimumSize.x = WorldHeightMap::LOW_ANGLE_DRAW_WIDTH;
+		minimumSize.y = WorldHeightMap::LOW_ANGLE_DRAW_HEIGHT;
+	}
+
+	const Real groundZ[2] = {
+		TheTerrainRenderObject->getMinHeight(),
+		std::min(TheTerrainRenderObject->getMaxHeight(), cameraLocation.Z)
+	};
+	if (!cameraLocation.Is_Valid() || cameraLocation.Z <= groundZ[0])
+		return true;
+
+	Vector2 viewPlaneMin, viewPlaneMax;
+	m_3DCamera->Get_View_Plane(viewPlaneMin, viewPlaneMax);
+	const Int planeCount = groundZ[0] < groundZ[1] ? 2 : 1;
+	Vector3 corners[8];
+	Vector2 footprintMin, footprintMax;
+	for (Int i = 0; i < 4; ++i)
+	{
+		const Vector3 ray((i & 1) ? viewPlaneMax.X : viewPlaneMin.X,
+			(i & 2) ? viewPlaneMax.Y : viewPlaneMin.Y, -1.0f);
+		const Real rayZ = cameraTransform[2][0]*ray.X + cameraTransform[2][1]*ray.Y - cameraTransform[2][2];
+		if (!(rayZ < 0.0f))
 		{
-			dimensions.x = heightMap->getXExtent();
-			dimensions.y = heightMap->getYExtent();
 			return true;
 		}
 
-		return false;
+		const Real inverseRayZ = 1.0f/rayZ;
+		for (Int plane = 0; plane < planeCount; ++plane)
+		{
+			Vector3 &corner = corners[plane*4 + i];
+			corner = ray * ((groundZ[plane] - cameraLocation.Z)*inverseRayZ);
+			if (!corner.Is_Valid())
+				return true;
+			const Vector2 offset(
+				cameraTransform[0][0]*corner.X + cameraTransform[0][1]*corner.Y + cameraTransform[0][2]*corner.Z,
+				cameraTransform[1][0]*corner.X + cameraTransform[1][1]*corner.Y + cameraTransform[1][2]*corner.Z);
+			if (i == 0 && plane == 0)
+				footprintMin = footprintMax = offset;
+			footprintMin.Update_Min(offset);
+			footprintMax.Update_Max(offset);
+		}
 	}
 
-	const Real cameraPitch = asin(fabs(m_3DCamera->Get_Forward_Dir().Z));
-
-	if (cameraPitch > ViewDefaultLowPitchRadians || !m_isUserControlled)
+	// The maximum pairwise XY distance bounds every rotated span. Compute it in camera space to avoid
+	// yaw-dependent rounding at allocation thresholds; remove the height difference between planes.
+	Real diameterSquared = 0.0f;
+	const Real worldBound = std::max(map->getXExtent(), map->getYExtent())*MAP_XY_FACTOR;
+	for (Int i = 0; i < planeCount*4; ++i)
 	{
-		// TheSuperHackers @info The scripted camera always uses the regular draw sizes
-		// and uses terrain oversize if it needs to enlarge.
-		dimensions.x = WorldHeightMap::NORMAL_DRAW_WIDTH;
-		dimensions.y = WorldHeightMap::NORMAL_DRAW_HEIGHT;
-		return true;
+		for (Int j = 0; j < i; ++j)
+		{
+			const Vector3 delta = corners[i] - corners[j];
+			const Real deltaZ = groundZ[i/4] - groundZ[j/4];
+			const Real distanceSquared = delta.Length2() - deltaZ*deltaZ;
+			if (!(distanceSquared < worldBound*worldBound))
+				return true;
+			diameterSquared = std::max(diameterSquared, distanceSquared);
+		}
 	}
 
-	// TheSuperHackers @tweak xezon 31/12/2025 Increases visible terrain area when lowering the camera pitch.
-	// Note: The default camera pitch in Generals was 37.5, which we prefer to keep the normal draw size for.
-	dimensions.x = WorldHeightMap::LOW_ANGLE_DRAW_WIDTH;
-	dimensions.y = WorldHeightMap::LOW_ANGLE_DRAW_HEIGHT;
+	// CENTER_LIMIT permits two cells of origin drift per axis; nearest-cell centering adds half a cell.
+	const Int footprintTiles = (Int)ceil(WWMath::Sqrt(diameterSquared)/MAP_XY_FACTOR) + 5;
+	const Int blocks = (footprintTiles + VERTEX_BUFFER_TILE_LENGTH - 1)/VERTEX_BUFFER_TILE_LENGTH;
+	const Int drawSize = 1 + blocks*VERTEX_BUFFER_TILE_LENGTH;
+	dimensions.x = std::min(map->getXExtent(), std::max(minimumSize.x, drawSize));
+	dimensions.y = std::min(map->getYExtent(), std::max(minimumSize.y, drawSize));
+	if (dimensions.x > std::min(map->getXExtent(), minimumSize.x)
+		|| dimensions.y > std::min(map->getYExtent(), minimumSize.y))
+	{
+		drawCenter.Set(cameraLocation.X + (footprintMin.X + footprintMax.X)*0.5f,
+			cameraLocation.Y + (footprintMin.Y + footprintMax.Y)*0.5f);
+		useDrawCenter = true;
+	}
 	return true;
 }
 
@@ -3739,8 +3809,9 @@ void W3DView::updateTerrain()
 	DEBUG_ASSERTCRASH(TheTerrainRenderObject != nullptr, ("TheTerrainRenderObject is null"));
 
 	ICoord2D drawSize;
-
-	if (getDesiredTerrainDrawSize(drawSize))
+	Vector2 drawCenter;
+	bool useDrawCenter;
+	if (getDesiredTerrainDrawSize(drawSize, drawCenter, useDrawCenter))
 	{
 		TheTerrainRenderObject->setTerrainDrawSize(drawSize.x, drawSize.y);
 	}
@@ -3748,7 +3819,7 @@ void W3DView::updateTerrain()
 	RefRenderObjListIterator *it = W3DDisplay::m_3DScene->createLightsIterator();
 
 	const Vector3 cameraPivot(m_pos.x, m_pos.y, m_pos.z);
-	TheTerrainRenderObject->updateCenter(m_3DCamera, &cameraPivot, it);
+	TheTerrainRenderObject->updateCenter(m_3DCamera, &cameraPivot, it, useDrawCenter ? &drawCenter : nullptr);
 
 	if (it)
 	{
