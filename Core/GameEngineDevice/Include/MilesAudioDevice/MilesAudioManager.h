@@ -118,6 +118,7 @@ struct OpenAudioFile
 
 typedef std::hash_map< AsciiString, OpenAudioFile, rts::hash<AsciiString>, rts::equal_to<AsciiString>/**/> OpenFilesHash;
 typedef OpenFilesHash::iterator OpenFilesHashIt;
+typedef std::list<OpenAudioFile> OpenAudioFileList;
 
 class AudioFileCache
 {
@@ -131,23 +132,31 @@ class AudioFileCache
 		void setMaxSize( UnsignedInt size );
 		// End Protected by mutex
 
+		// Main thread only. Stops the samples that still play evicted files and frees the ones no longer in use.
+		void releaseEvictedFiles();
+
 		// Note: These functions should be used for informational purposes only. For speed reasons,
 		// they are not protected by the mutex, so they are not guaranteed to be valid if called from
 		// outside the audio cache. They should be used as a rough estimate only.
-		UnsignedInt getCurrentlyUsedSize() const { return m_currentlyUsedSize; }
+		UnsignedInt getCurrentlyUsedSize() const { return m_currentlyUsedSize + m_evictedSize; }
 		UnsignedInt getMaxSize() const { return m_maxSize; }
 
 	protected:
-		void releaseOpenAudioFile( OpenAudioFile *fileToRelease );
+		void stopSamplesUsingFiles( const std::list<const void *>& filesToStop );
+		void freeOpenAudioFile( OpenAudioFile *fileToFree );
+		void freeOpenAudioFiles( OpenAudioFileList& filesToFree );
 
 		// This function will return TRUE if it was able to free enough space, and FALSE otherwise.
-		Bool freeEnoughSpaceForSample(const OpenAudioFile& sampleThatNeedsSpace);
+		Bool freeEnoughSpaceForSample(const OpenAudioFile& sampleThatNeedsSpace, OpenAudioFileList& filesToFree);
 
 		OpenFilesHash m_openFiles;
-		UnsignedInt m_currentlyUsedSize;
+		OpenAudioFileList m_evictedFiles; ///< Evicted files that are still in use, freed on the main thread once their samples stop.
+		UnsignedInt m_currentlyUsedSize; ///< Size of the files in m_openFiles, new files are admitted against this.
+		UnsignedInt m_evictedSize; ///< Size of the files in m_evictedFiles, still allocated until released.
 		UnsignedInt m_maxSize;
 		HANDLE m_mutex;
 		const char *m_mutexName;
+		HANDLE m_readMutex;
 };
 
 class MilesAudioManager : public AudioManager
