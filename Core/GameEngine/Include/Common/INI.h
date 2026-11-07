@@ -277,6 +277,8 @@ public:
 	static void parseUnsignedShort( INI *ini, void *instance, void *store, const void* userData );
 	static void parseInt( INI *ini, void *instance, void *store, const void* userData );
 	static void parseUnsignedInt( INI *ini, void *instance, void *store, const void* userData );
+	static void parseIntClamped( INI* ini, void* instance, void* store, const void* userData );
+	static void parseUnsignedIntClamped( INI* ini, void* instance, void* store, const void* userData );
 	static void parseReal( INI *ini, void *instance, void *store, const void* userData );
 	static void parsePositiveNonZeroReal( INI *ini, void *instance, void *store, const void* userData );
 	static void parseBool( INI *ini, void *instance, void *store, const void* userData );
