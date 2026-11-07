@@ -81,38 +81,35 @@
 #include <utility>
 
 // TheSuperHackers @fix bobtista 22/10/2026 Compute the buffer sizes from the header, or 0 when the header is invalid.
-static long TGA_PaletteBufferSize(const TGAHeader& header)
+long TGAHeader::PaletteBufferSize() const
 {
-	if ((header.CMapStart < 0) || (header.CMapLength <= 0)) {
+	if ((CMapStart < 0) || (CMapLength <= 0)) {
 		return 0;
 	}
-	if ((header.CMapDepth != 16) && (header.CMapDepth != 24) && (header.CMapDepth != 32)) {
+	if ((CMapDepth != 16) && (CMapDepth != 24) && (CMapDepth != 32)) {
 		return 0;
 	}
-	const long depth_bytes = (header.CMapDepth >> 3);
-	return ((long)header.CMapStart + (long)header.CMapLength) * depth_bytes;
+	const long depth_bytes = (CMapDepth >> 3);
+	return ((long)CMapStart + (long)CMapLength) * depth_bytes;
 }
 
-static long TGA_ImagePixelCount(const TGAHeader& header)
+long TGAHeader::ImagePixelCount() const
 {
-	if ((header.Width <= 0) || (header.Height <= 0)) {
-		return 0;
-	}
-	return (long)header.Width * (long)header.Height;
+	return std::max<long>(Width, 0) * std::max<long>(Height, 0);
 }
 
-static long TGA_ImageBytesPerPixel(const TGAHeader& header)
+long TGAHeader::ImageBytesPerPixel() const
 {
-	if ((header.PixelDepth != 8) && (header.PixelDepth != 16) && (header.PixelDepth != 24) && (header.PixelDepth != 32)) {
+	if ((PixelDepth != 8) && (PixelDepth != 16) && (PixelDepth != 24) && (PixelDepth != 32)) {
 		return 0;
 	}
-	return TGA_BytesPerPixel(header.PixelDepth);
+	return TGA_BytesPerPixel(PixelDepth);
 }
 
-static long TGA_ImageBufferSize(const TGAHeader& header)
+long TGAHeader::ImageBufferSize() const
 {
-	const long pixel_count = TGA_ImagePixelCount(header);
-	const long depth_bytes = TGA_ImageBytesPerPixel(header);
+	const long pixel_count = ImagePixelCount();
+	const long depth_bytes = ImageBytesPerPixel();
 	if ((depth_bytes == 0) || (pixel_count > (LONG_MAX / depth_bytes))) {
 		return 0;
 	}
@@ -414,7 +411,7 @@ long Targa::LoadBuffers(const char* name, bool invert_image)
 			 */
 			if ((mPalette != nullptr) && (Header.CMapLength > 0)) {
 
-				const long bufferSize = TGA_PaletteBufferSize(Header);
+				const long bufferSize = Header.PaletteBufferSize();
 				if ((bufferSize > 0) && (bufferSize <= mPaletteSize)) {
 
 					/* Read in the palette, starting at its first color entry. */
@@ -437,7 +434,7 @@ long Targa::LoadBuffers(const char* name, bool invert_image)
 		 */
 		if (!error && (mImage != nullptr)) {
 
-			size = TGA_ImageBufferSize(Header);
+			size = Header.ImageBufferSize();
 			if ((size > 0) && (size <= mImageSize)) {
 				switch (Header.ImageType) {
 					case TGA_CMAPPED:
@@ -555,7 +552,7 @@ long Targa::Load(const char* name, long flags, bool invert_image)
 			if ((mPalette == nullptr) && !(mFlags & TGAF_PAL)) {
 
 				/* Compute the size of the palette from the targa header. */
-				size = TGA_PaletteBufferSize(Header);
+				size = Header.PaletteBufferSize();
 
 				if (size > 0) {
 					/* Allocate memory for the palette. */
@@ -585,7 +582,7 @@ long Targa::Load(const char* name, long flags, bool invert_image)
 			if ((mImage == nullptr) && !(mFlags & TGAF_IMAGE)) {
 
 				/* Compute the size of the image data from the targa header. */
-				size = TGA_ImageBufferSize(Header);
+				size = Header.ImageBufferSize();
 				if (size > 0) {
 					/* Allocate memory for the image. */
 					if ((mImage = (char *)malloc(size)) != nullptr) {
@@ -1131,9 +1128,9 @@ long Targa::DecodeImage()
 	image = mImage;
 
 	/* Compute pixel depth in bytes. */
-	depth_bytes = (unsigned char)TGA_ImageBytesPerPixel(Header);
+	depth_bytes = (unsigned char)Header.ImageBytesPerPixel();
 
-	const long pixel_count = TGA_ImagePixelCount(Header);
+	const long pixel_count = Header.ImagePixelCount();
 	if ((pixel_count <= 0) || (depth_bytes == 0) || (pixel_count > (mImageSize / depth_bytes)))
 		{
 		return (TGAERR_NOTSUPPORTED);

@@ -1252,7 +1252,7 @@ Bool TexturePage::generateTexture()
 	}
 
 	// set this data into the targa structure
-	m_targa->SetImage( m_packedImage );
+	m_targa->SetImage( m_packedImage, bufferSize );
 
 	return TRUE;  // success
 

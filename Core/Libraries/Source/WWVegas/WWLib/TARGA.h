@@ -79,6 +79,11 @@ typedef struct _TGAHeader
 	short Height;
 	char  PixelDepth;
 	char  ImageDescriptor;
+
+	long PaletteBufferSize() const;
+	long ImagePixelCount() const;
+	long ImageBytesPerPixel() const;
+	long ImageBufferSize() const;
 	} TGAHeader;
 
 /* ImageType definiton */
@@ -273,7 +278,7 @@ class Targa
 		void XFlip();
 		void YFlip();
 
-		char* SetImage(char* buffer, long size = 0);
+		char* SetImage(char* buffer, long size);
 		char* GetImage() const {return (mImage);}
 
 		char* SetPalette(char* buffer, long size);
