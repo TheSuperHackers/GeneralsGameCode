@@ -198,6 +198,17 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 	}
 }
 
+#if !RETAIL_COMPATIBLE_CRC
+//-------------------------------------------------------------------------------------------------
+void MissileLauncherBuildingUpdate::onObjectCreated()
+{
+	// TheSuperHackers @bugfix Look up the special power module before the first update,
+	// so that a launch on the frame of creation or after loading a save finds it.
+	m_specialPowerModule = getObject()->getSpecialPowerModule(getMissileLauncherBuildingUpdateModuleData()->m_specialPowerTemplate);
+	DEBUG_ASSERTCRASH(m_specialPowerModule, ("Missing special power"));
+}
+#endif
+
 //-------------------------------------------------------------------------------------------------
 Bool MissileLauncherBuildingUpdate::initiateIntentToDoSpecialPower( const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions )
 {
@@ -245,11 +256,13 @@ UpdateSleepTime MissileLauncherBuildingUpdate::update()
 	if( getObject()->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION) )
 		return UPDATE_SLEEP_NONE;
 
+#if RETAIL_COMPATIBLE_CRC
 	if (!m_specialPowerModule)
 	{
 		m_specialPowerModule = getObject()->getSpecialPowerModule(d->m_specialPowerTemplate);
 		DEBUG_ASSERTCRASH(m_specialPowerModule, ("Missing special power"));
 	}
+#endif
 
 	if (m_specialPowerModule)
 	{
