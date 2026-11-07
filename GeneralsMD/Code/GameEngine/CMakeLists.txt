@@ -1153,6 +1153,12 @@ target_link_libraries(z_gameengine PUBLIC
     z_wwvegas
 )
 
+# The engine calls functions that are implemented in the engine device, such as OSDisplaySetBusyState.
+# Declaring this circular dependency lets linkers that read static libraries in order resolve them.
+target_link_libraries(z_gameengine INTERFACE
+    z_gameenginedevice
+)
+
 target_precompile_headers(z_gameengine PRIVATE
     [["Precompiled/BasePrecomp.h"]] # Must be first
 )
