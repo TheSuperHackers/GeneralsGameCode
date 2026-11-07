@@ -1227,8 +1227,10 @@ void PointGroupClass::Update_Arrays(
 				for (i = 0; i < active_points; i++) {
 					if (!Billboard) {
 						// If we're not billboarding, then the coordinate we have is in screen space.
-						Matrix4x4 rotMat;
-						D3DXMatrixRotationZ(&(D3DXMATRIX&) rotMat, ((float)point_orientation[i] / 255.0f * 2 * D3DX_PI));
+						D3DXMATRIX d3dRotMat;
+						D3DXMatrixRotationZ(&d3dRotMat, ((float)point_orientation[i] / 255.0f * 2 * D3DX_PI));
+						// Keep the D3DX element order, which rotates by the negative angle in Matrix4x4 math
+						const Matrix4x4 rotMat = To_Matrix4x4(d3dRotMat).Transpose();
 
 						Vector4 orientedVecX = rotMat * GroundMultiplierX;
 						Vector4 orientedVecY = rotMat * GroundMultiplierY;
