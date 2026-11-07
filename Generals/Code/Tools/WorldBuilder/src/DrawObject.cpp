@@ -35,6 +35,8 @@
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/W3DWater.h"
 #include "WW3D2/dx8wrapper.h"
+#include "WW3D2/ww3d.h"
+#include "WW3D2/Renderer.h"
 #include "WW3D2/mesh.h"
 #include "WW3D2/meshmdl.h"
 #include "WW3D2/shader.h"
@@ -1695,7 +1697,7 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 				polyCount -= NUM_ARROW_TRI+NUM_SELECT_TRI;
 			}
 
-			DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+			Renderer::Set_Transform(RenderTransform_World,tm);
 			DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
 
 			if (isTree) {
@@ -1755,10 +1757,10 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 					}
 
 					DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-					DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+					Renderer::Set_Transform(RenderTransform_World,tm);
 					DX8Wrapper::Draw_Triangles(	0,polyCount, 0,	(m_numTriangles*3));
 				}
-				DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);
+				Renderer::Set_Transform(RenderTransform_World,Transform);
 				DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile1);
 				updatePolygonVB(pTrig, polySelected, polySelected && PolygonTool::isSelectedOpen());
  				DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
@@ -1810,7 +1812,7 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 
 #if 1
 			DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-			DX8Wrapper::Set_Transform(D3DTS_WORLD,tmXX);
+			Renderer::Set_Transform(RenderTransform_World,tmXX);
 			DX8Wrapper::Draw_Triangles(	0,polyCountA, 0,	(m_numTriangles*3));
 #endif
 		}
@@ -1819,7 +1821,7 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 	DX8Wrapper::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
 	DX8Wrapper::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);
+	Renderer::Set_Transform(RenderTransform_World,Transform);
 
 	if (m_drawWaypoints) {
 		updateWaypointVB();
