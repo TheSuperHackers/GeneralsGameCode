@@ -83,6 +83,19 @@ void FlightDeckBehaviorModuleData::parseRunwayStrip( INI* ini, void *instance, v
 }
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @bugfix CryoTheRenegade 06/11/2026 A negative space count makes buildInfo reserve a huge vector.
+static void parseNumSpacesPerRunway( INI* ini, void* /*instance*/, void* store, const void* /*userData*/ )
+{
+	const Int value = INI::scanInt( ini->getNextToken() );
+	if( value < 0 )
+	{
+		DEBUG_LOG(( "FlightDeckBehavior - NumSpacesPerRunway %d is negative, using 0", value ));
+	}
+
+	*(Int*)store = value < 0 ? 0 : value;
+}
+
+//-------------------------------------------------------------------------------------------------
 void FlightDeckBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 	AIUpdateModuleData::buildFieldParse(p);
@@ -90,7 +103,7 @@ void FlightDeckBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 	static const FieldParse dataFieldParse[] =
 	{
 		{ "NumRunways",							INI::parseInt,										nullptr, offsetof( FlightDeckBehaviorModuleData, m_numCols ) },
-		{ "NumSpacesPerRunway",			INI::parseInt,										nullptr, offsetof( FlightDeckBehaviorModuleData, m_numRows ) },
+		{ "NumSpacesPerRunway",			parseNumSpacesPerRunway,									nullptr, offsetof( FlightDeckBehaviorModuleData, m_numRows ) },
 
 		{ "Runway1Spaces",					INI::parseAsciiStringVector,			nullptr, offsetof( FlightDeckBehaviorModuleData, m_runwayInfo[ 0 ].m_spacesBoneNames ) },
 		{ "Runway1Takeoff",					parseRunwayStrip,									nullptr, offsetof( FlightDeckBehaviorModuleData, m_runwayInfo[ 0 ].m_takeoffBoneNames ) },
@@ -184,7 +197,7 @@ void FlightDeckBehavior::buildInfo(Bool createUnits)
 	//ProductionUpdateInterface* pu = getObject()->getProductionUpdateInterface();
 
 	// TheSuperHackers @bugfix CryoTheRenegade 05/11/2026 Never build more rows than every runway has space bones for.
-	Int numRows = data->m_numRows < 0 ? 0 : data->m_numRows;
+	Int numRows = data->m_numRows;
 	for( Int runway = 0; runway < data->m_numCols; runway++ )
 	{
 		const Int numSpaceBones = (Int)data->m_runwayInfo[ runway ].m_spacesBoneNames.size();
