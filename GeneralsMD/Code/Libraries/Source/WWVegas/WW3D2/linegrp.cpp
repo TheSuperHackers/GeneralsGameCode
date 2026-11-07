@@ -42,6 +42,7 @@
 #include "texture.h"
 #include "vertmaterial.h"
 #include "dx8wrapper.h"
+#include "Renderer.h"
 #include "WWMath/wwmath.h"
 #include "rinfo.h"
 #include "camera.h"
@@ -257,9 +258,9 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 	}
 
 	VertexMaterialClass * linemat = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(linemat);
-	DX8Wrapper::Set_Shader(Shader);
-	DX8Wrapper::Set_Texture(0, Texture);
+	Renderer::Set_Material(linemat);
+	Renderer::Set_Shader(Shader);
+	Renderer::Set_Texture(0, Texture);
 	REF_PTR_RELEASE(linemat);
 
 	WWASSERT(StartLineLoc && StartLineLoc->Get_Array());
@@ -281,10 +282,10 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 
 	// Save off the view matrix
 	Matrix4x4 view;
-	DX8Wrapper::Get_Transform(D3DTS_VIEW, view);
+	Renderer::Get_Transform(RB_TRANSFORM_VIEW, view);
 
 	Matrix4x4 identity(true);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD, identity);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD, identity);
 
 	// if the points are in world space, transform the offsets
 	if (Get_Flag(TRANSFORM)) {
@@ -296,7 +297,7 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 			Matrix3D::Transform_Vector(xform_mat, offset[i], &offset[i]);
 		}
 	} else {
-		DX8Wrapper::Set_Transform(D3DTS_VIEW, identity);
+		Renderer::Set_Transform(RB_TRANSFORM_VIEW, identity);
 	}
 
 	int num_tris=0;
@@ -465,17 +466,17 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 		}
 	}
 
-	DX8Wrapper::Set_Index_Buffer(iba, 0);
-	DX8Wrapper::Set_Vertex_Buffer(vba);
+	Renderer::Set_Index_Buffer(iba, 0);
+	Renderer::Set_Vertex_Buffer(vba);
 
 	if (sort) {
 		SortingRendererClass::Insert_Triangles(0, num_tris, 0, num_vertices);
 	} else {
-		DX8Wrapper::Draw_Triangles(0, num_tris, 0, num_vertices);
+		Renderer::Draw_Triangles(0, num_tris, 0, num_vertices);
 	}
 
 	// restore the matrices
-	DX8Wrapper::Set_Transform(D3DTS_VIEW, view);
+	Renderer::Set_Transform(RB_TRANSFORM_VIEW, view);
 }
 
 int LineGroupClass::Get_Polygon_Count()
