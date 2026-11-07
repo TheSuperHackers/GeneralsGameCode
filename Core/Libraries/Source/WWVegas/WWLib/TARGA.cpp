@@ -1147,10 +1147,11 @@ long Targa::DecodeImage()
  		/* Read count. */
 		if (File_Read(&packet_header, 1) == 1)
 			{
-			/* If bit 8 of the count is set then we have a run of pixels,
-			 * otherwise the data is raw pixels.
+			/* The low 7 bits of the header hold the pixel count minus one.
+			 * If the high bit is set, one pixel follows and is repeated that many times.
+			 * Otherwise that many different pixels follow.
 			 */
-			const bool is_run_packet = ((packet_header & 0x80) != 0);
+			const bool is_repeated_pixel = ((packet_header & 0x80) != 0);
 			const unsigned long packet_pixel_count = (packet_header & 0x7F) + 1;
 
 			// TheSuperHackers @fix bobtista 22/10/2026 Reject packets with more pixels than the image has left.
@@ -1158,15 +1159,15 @@ long Targa::DecodeImage()
 				{
 				error = TGAERR_READ;
 				}
-			else if (is_run_packet)
+			else if (is_repeated_pixel)
 				{
-				/* Read in run pixel. */
+				/* Read the pixel to repeat. */
 				if (File_Read(image, depth_bytes) == depth_bytes)
 					{
 					color = image;
 					image += depth_bytes;
 
-					/* Repeat the pixel for the run count in the image buffer. */
+					/* Copy it into the remaining pixels of the packet. */
 					for (c = 1; c < packet_pixel_count; c++)
 						{
 						for (i = 0; i < depth_bytes; i++)
@@ -1182,7 +1183,7 @@ long Targa::DecodeImage()
 				{
 				size = (packet_pixel_count * depth_bytes);
 
-				/* Read in raw pixels. */
+				/* Read the different pixels. */
 				if ((unsigned)File_Read(image, size) == size)
 					image += size;
 				else
