@@ -391,6 +391,8 @@ enum {
 				W3D_CHUNK_FX_SHADER_INFO		=0x00000052,	// information about the shader to be used (W3dFXShaderInfoStruct)
 				W3D_CHUNK_FX_SHADER_CONSTANT	=0x00000053,	// contains a constant name and value for the shader
 
+		// TheSuperHackers @info Legacy chunks. Only the original WWDeform modifier of max2w3d wrote
+		// them, WW3D2 skips them as obsolete, and retail data contains none.
 		W3D_CHUNK_DEFORM									=0x00000058,	// mesh deform or 'damage' information.
 			W3D_CHUNK_DEFORM_SET							=0x00000059,	// set of deform information
 				W3D_CHUNK_DEFORM_KEYFRAME				=0x0000005A,	// a keyframe of deform information in the set
@@ -399,6 +401,8 @@ enum {
 		W3D_CHUNK_VERTEX_TANGENTS = 0x00000060,         // array of tangents (array of W3dVectorStruct's)
 		W3D_CHUNK_VERTEX_BINORMALS = 0x00000061,         // array of binormals (array of W3dVectorStruct's)
 
+		// TheSuperHackers @info Legacy chunk. Only the original PS2 material of max2w3d wrote it,
+		// WW3D2 ignores it, and a few retail meshes (CBTHotel02) still contain it.
 		W3D_CHUNK_PS2_SHADERS							=0x00000080,	// Shader info specific to the Playstation 2.
 
 		W3D_CHUNK_AABTREE									=0x00000090,	// Axis-Aligned Box Tree for hierarchical polygon culling
@@ -847,6 +851,7 @@ enum
 	W3DSHADER_DETAILALPHAFUNC_DEFAULT = W3DSHADER_DETAILALPHAFUNC_DISABLE,
 };
 
+// TheSuperHackers @info Legacy, see W3D_CHUNK_PS2_SHADERS.
 enum PS2_SHADER_SETTINGS {
 	PSS_SRC = 0,
 	PSS_DEST,
@@ -921,6 +926,7 @@ struct W3dShaderStruct
 	}
 };
 
+// TheSuperHackers @info Legacy, see W3D_CHUNK_PS2_SHADERS.
 struct W3dPS2ShaderStruct
 {
 	uint8						DepthCompare;
@@ -1275,6 +1281,7 @@ struct W3dVertInfStruct
 //
 // Deform information.  Each mesh can have sets of keyframes of
 //	deform info associated with it.
+// TheSuperHackers @info Legacy, see W3D_CHUNK_DEFORM.
 //
 struct W3dMeshDeform
 {

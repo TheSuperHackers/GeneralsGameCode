@@ -57,15 +57,11 @@
  *   GameMtl::Load -- loading from a MAX file                                                  *
  *   GameMtl::Save -- Saving into a MAX file                                                   *
  *   GameMtl::Shade -- evaluate the material for the renderer.                                 *
- *   GameMtl::ps2_shade -- Emulate the PS2 shader.                                             *
- *   GameMtl::Compute_PC_Shader_From_PS2_Shader -- Determine if a PC shader can be created.    *
- *   GameMtl::Compute_PS2_Shader_From_PC_Shader -- Change a W3D material to a PS2 W3D material.*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "gamemtl.h"
 #include <max.h>
 #include <gport.h>
-#include <hsv.h>
 #include "GameMtlDlg.h"
 #include "dllmain.h"
 #include "resource.h"
@@ -95,6 +91,34 @@ public:
 static GameMaterialClassDesc _GameMaterialCD;
 
 ClassDesc * Get_Game_Material_Desc() { return &_GameMaterialCD;  }
+
+
+/*****************************************************************
+*
+*		PS2 GameMtl Class Descriptor
+*
+*****************************************************************/
+static Class_ID PS2GameMaterialClassID(0x2ed62ad7, 0x50571dfd);
+
+class PS2GameMaterialClassDesc:public ClassDesc {
+
+public:
+	int				IsPublic()					{ return 0; }
+	void *			Create(BOOL loading)
+	{
+		GameMtl *mtl = new GameMtl(loading);
+		mtl->IsPS2GameMaterial = true;
+		return mtl;
+	}
+	const TCHAR *	ClassName()					{ return Get_String(IDS_PS2_GAMEMTL); }
+	SClass_ID		SuperClassID()				{ return MATERIAL_CLASS_ID; }
+	Class_ID 		ClassID()					{ return PS2GameMaterialClassID; }
+	const TCHAR* 	Category()					{ return _T("");  }
+};
+
+static PS2GameMaterialClassDesc _PS2GameMaterialCD;
+
+ClassDesc * Get_PS2_Game_Material_Desc() { return &_PS2GameMaterialCD;  }
 
 
 /******************************************************************************
@@ -763,8 +787,8 @@ GameMtl::GameMtl(BOOL loading)
 		CurPage[pass] = 0;
 	}
 
-	ShaderType = STE_PC_SHADER;
 	SubstituteMaterial = nullptr;
+	IsPS2GameMaterial = false;
 
 	if (!loading) {
 		Reset();
@@ -811,11 +835,7 @@ GameMtl::~GameMtl()
  *=============================================================================================*/
 Class_ID GameMtl::ClassID()
 {
-	if (ShaderType == STE_PC_SHADER) {
-		return GameMaterialClassID;
-	} else {
-		return PS2GameMaterialClassID;
-	}
+	return GameMaterialClassID;
 }
 
 
@@ -851,12 +871,7 @@ SClass_ID GameMtl::SuperClassID()
  *=============================================================================================*/
 void GameMtl::GetClassName(TSTR& s)
 {
-	if (ShaderType == STE_PC_SHADER) {
-		s = Get_String(IDS_GAMEMTL);
-	}
-	else {
-		s = Get_String(IDS_PS2_GAMEMTL);
-	}
+	s = Get_String(IDS_GAMEMTL);
 }
 
 
@@ -939,9 +954,6 @@ RefTargetHandle GameMtl::Clone(RemapDir &remap)
 	// Clone the displacment map's settings
 	mnew->ReplaceReference (REF_TEXTURE + DISPLACEMENT_INDEX, DisplacementMap);
 	mnew->DisplacementAmt = DisplacementAmt;
-
-	// Maintain the shader type.
-	mnew->Set_Shader_Type(ShaderType);
 
 	// replace each pass's parameter block and the textures
 	for (int pass=0; pass < W3dMaterialClass::MAX_PASSES; pass++) {
@@ -1143,24 +1155,6 @@ int GameMtl::NumSubTexmaps()
 
 
 /***********************************************************************************************
- * GameMtl::Get_Displacement_Map_Index -- returns the Sub-texmap index for the displacement map.
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/01/99   PDS : Created.                                                                 *
- *=============================================================================================*/
-int GameMtl::Get_Displacement_Map_Index() const
-{
-	return DISPLACEMENT_INDEX;
-}
-
-
-/***********************************************************************************************
  * GameMtl::SetSubTexmap -- set the i'th texture map                                           *
  *                                                                                             *
  * INPUT:                                                                                      *
@@ -1287,8 +1281,6 @@ void GameMtl::Reset()
 
 			Set_Texture_Enable(pass,stage,false);
 			Set_Texture_Publish(pass,stage,false);
-			Set_Texture_Resize(pass,stage,false);
-			Set_Texture_No_Mipmap(pass,stage,false);
 			Set_Texture_Clamp_U(pass,stage,false);
 			Set_Texture_Clamp_V(pass,stage,false);
 			Set_Texture_No_LOD(pass,stage,false);
@@ -1410,10 +1402,6 @@ ULONG GameMtl::Requirements(int subMtlNum)
 
 	req |= MTLREQ_BGCOL;
 	req |= MTLREQ_NOATMOS;
-
-	#ifdef WANT_DISPLACEMENT_MAPS
-		req |= MTLREQ_DISPLACEMAP;
-	#endif //WANT_DISPLACEMENT_MAPS
 
 	return req;
 }
@@ -1751,11 +1739,6 @@ IOResult GameMtl::Save(ISave *isave)
  *=============================================================================================*/
 void GameMtl::Shade(ShadeContext& sc)
 {
-	if (ShaderType == STE_PS2_SHADER) {
-		ps2_shade(sc);
-		return;
-	}
-
 	if (gbufID) sc.SetGBufferID(gbufID);
 
 	/*
@@ -1954,572 +1937,6 @@ void GameMtl::Shade(ShadeContext& sc)
 
 }
 
-
-/***********************************************************************************************
- * GameMtl::ps2_shade -- Emulate the PS2 shader.                                               *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/12/1999MLL: Created.                                                                   *
- *=============================================================================================*/
-void GameMtl::ps2_shade(ShadeContext& sc)
-{
-	if (gbufID) sc.SetGBufferID(gbufID);
-
-	/*
-	** Shadowing, return black
-	*/
-	if (sc.mode == SCMODE_SHADOW) {
-		sc.out.t = Color(0,0,0);
-		return;
-	}
-
-	/*
-	** Render each pass, initialize dest with the current background
-	*/
-
-	// Background transparency. ???
-	Color back_t;
-	Color back_c;
-
-	AColor dest;
-	AColor src(1,1,1,1);
-
-	sc.GetBGColor(back_c, back_t, FALSE);
-
-	dest.r = back_c.r;
-	dest.g = back_c.g;
-	dest.b = back_c.b;
-	dest.a = 0.0f;
-
-	for (int pass=0; pass < Get_Pass_Count(); pass++) {
-
-		// Compute the gradients.
-		Color ambient = sc.ambientLight;
-		Color diffuse(0,0,0);
-		Color specular(0,0,0);
-
-		for (int light_index = 0; light_index < sc.nLights; light_index++) {
-
-			Color light_color;
-			Point3 light_dir;
-			float dot_nl;
-			float diffuse_coef;
-
-			LightDesc * light = sc.Light(light_index);
-
-			assert(light);
-			if(light->Illuminate(sc, sc.Normal(), light_color, light_dir, dot_nl, diffuse_coef)) {
-
-				if (dot_nl > 0.0f) diffuse += dot_nl * light_color;
-
-				float c = DotProd(light_dir, sc.ReflectVector());
-				if (c > 0.f) {
-					specular += (float)pow(c, Get_Shininess(pass, sc.CurTime())) * light_color;
-				}
-			}
-		}
-
-		ambient = ambient * Get_Ambient(pass,sc.CurTime());
-		diffuse = diffuse * Get_Diffuse(pass,sc.CurTime());
-		specular = specular * Get_Specular(pass,sc.CurTime());
-
-		Color gradient = ambient + diffuse + Get_Emissive(pass,sc.CurTime());
-		AColor pri_gradient;
-		pri_gradient.r = gradient.r;
-		pri_gradient.g = gradient.g;
-		pri_gradient.b = gradient.b;
-		pri_gradient.a = 1.0f;
-		if (pri_gradient.r > 1.0f) pri_gradient.r = 1.0f;
-		if (pri_gradient.g > 1.0f) pri_gradient.g = 1.0f;
-		if (pri_gradient.b > 1.0f) pri_gradient.b = 1.0f;
-
-		/*
-		** Sampling the Texture(s)
-		*/
-		if (Get_Texture_Enable(pass,0) && Texture[pass][0]) {
-			src = Texture[pass][0]->EvalColor(sc);
-		}
-
-
-		/*
-		** Shader parameters define combination...
-		*/
-		src.a *= Get_Opacity(pass,sc.CurTime());
-
-		switch (Get_Pri_Gradient(pass))
-		{
-			case PSS_PRIGRADIENT_MODULATE:
-				src = src * pri_gradient;
-				break;
-			case PSS_PRIGRADIENT_HIGHLIGHT:
-				src = src * pri_gradient;
-				src += back_t; // ???
-				break;
-			case PSS_PRIGRADIENT_HIGHLIGHT2:
-				src = src * pri_gradient;
-				src += back_t; // ???
-				break;
-		}
-
-		if (src.r > 1.0f) src.r = 1.0f;
-		if (src.g > 1.0f) src.g = 1.0f;
-		if (src.b > 1.0f) src.b = 1.0f;
-		if (src.b > 1.0f) src.a = 1.0f;
-
-		if (src.r < 0.0f) src.r = 0.0f;
-		if (src.g < 0.0f) src.g = 0.0f;
-		if (src.b < 0.0f) src.b = 0.0f;
-		if (src.a < 0.0f) src.a = 0.0f;
-
-		AColor param_a;
-		AColor param_b;
-		AColor param_c;
-		AColor param_d;
-		int a_value = Get_PS2_Shader_Param_A(pass);
-		int b_value = Get_PS2_Shader_Param_B(pass);
-		int c_value = Get_PS2_Shader_Param_C(pass);
-		int d_value = Get_PS2_Shader_Param_D(pass);
-
-		switch (a_value)
-		{
-			case PSS_SRC:
-				param_a = src;
-				break;
-			case PSS_DEST:
-				param_a = dest;
-				break;
-			case PSS_ZERO:
-				param_a = AColor(0, 0, 0, 0);
-				break;
-		}
-
-		switch (b_value)
-		{
-			case PSS_SRC:
-				param_b = src;
-				break;
-			case PSS_DEST:
-				param_b = dest;
-				break;
-			case PSS_ZERO:
-				param_b = AColor(0, 0, 0, 0);
-				break;
-		}
-
-		switch (c_value)
-		{
-			case PSS_SRC_ALPHA:
-				param_c = AColor(src.a, src.a, src.a, src.a);
-				break;
-			case PSS_DEST_ALPHA:
-				param_c = back_t; // ???
-				break;
-			case PSS_ONE:
-				param_c = AColor(1, 1, 1, 1);
-				break;
-		}
-
-		switch (d_value)
-		{
-			case PSS_SRC:
-				param_d = src;
-				break;
-			case PSS_DEST:
-				param_d = dest;
-				break;
-			case PSS_ZERO:
-				param_d = AColor(0, 0, 0);
-				break;
-		}
-
-		src = scale((param_a - param_b), param_c) + param_d;
-
-		if (src.r > 1.0f) src.r = 1.0f;
-		if (src.g > 1.0f) src.g = 1.0f;
-		if (src.b > 1.0f) src.b = 1.0f;
-		if (src.b > 1.0f) src.a = 1.0f;
-
-		if (src.r < 0.0f) src.r = 0.0f;
-		if (src.g < 0.0f) src.g = 0.0f;
-		if (src.b < 0.0f) src.b = 0.0f;
-		if (src.a < 0.0f) src.a = 0.0f;
-
-		/*
-		** Dest becomes Src and we repeat!
-		*/
-		dest = src;
-	}
-
-	sc.out.t = Color(0.0f, 0.0f, 0.0f);
-	sc.out.c.r = dest.r;
-	sc.out.c.g = dest.g;
-	sc.out.c.b = dest.b;
-
-
-}
-
-// PS2 equation paramaters.
-// They are set to primes to avoid multiple equation solutions.
-enum Shader_Translation {
-	ST_ZERO,
-	ST_ONE,
-	ST_SRC = 7,
-	ST_DEST = 31,
-	ST_SRC_ALPHA = 101,
-	ST_DEST_ALPHA = 2999,
-};
-
-/***********************************************************************************************
- * GameMtl::Compute_PC_Shader_From_PS2_Shader -- Determine if a PC shader can be created.      *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/13/1999MLL: Created.                                                                   *
- *=============================================================================================*/
-int GameMtl::Compute_PC_Shader_From_PS2_Shader(int pass)
-{
-	int param_value[4];
-
-	// These match the PC equation paramaters.
-	static const int src_blend[4] = {
-		ST_ZERO,
-		ST_ONE,
-		ST_SRC_ALPHA,
-		1 - ST_SRC_ALPHA
-	};
-	static const int dest_blend[6] = {
-		ST_ZERO,
-		ST_ONE,
-		ST_SRC,
-		1 - ST_SRC,
-		ST_SRC_ALPHA,
-		1 - ST_SRC_ALPHA
-	};
-
-	int i = 0;
-	int j = 0;
-	int equation_value = 0;
-
-	// Get the PS2 shader values.
-	param_value[0] = Get_PS2_Shader_Param_A(pass);
-	param_value[1] = Get_PS2_Shader_Param_B(pass);
-	param_value[2] = Get_PS2_Shader_Param_D(pass);
-	param_value[3] = Get_PS2_Shader_Param_C(pass);
-
-	// Convert them to the enumeration.
-	for (i = 0; i < 3; i++)	{
-		switch(param_value[i])
-		{
-			case PSS_SRC:
-				param_value[i] = ST_SRC;
-				break;
-			case PSS_DEST:
-				param_value[i] = ST_DEST;
-				break;
-			case PSS_ZERO:
-				param_value[i] = ST_ZERO;
-				break;
-		}
-	}
-
-	// The alpha parameter.
-	switch(param_value[3])
-	{
-			case PSS_SRC_ALPHA:
-				param_value[3] = ST_SRC_ALPHA;
-				break;
-			case PSS_DEST_ALPHA:
-				param_value[3] = ST_DEST_ALPHA;
-				break;
-			case PSS_ONE:
-				param_value[3] = ST_ONE;
-				break;
-	}
-
-	// Calculate the PS2 shader.
-	equation_value = ((param_value[0] - param_value[1]) * param_value[3]) + param_value[2];
-
-	for (i = 0; i < 4; i++)	{
-		for (j = 0; j < 6; j++)	{
-			// Calculate the PC shader.  If equal, we have found a conversion.
-			if (((src_blend[i] * ST_SRC) + (dest_blend[j] * ST_DEST)) == equation_value) {
-				break;
-			}
-		}
-
-		if (j != 6)	{
-			break;
-		}
-	}
-
-	if ((j == 6) && (i == 4)) {
-		// Set the W3D shader to opaque.
-		Set_Dest_Blend(pass, W3DSHADER_DESTBLENDFUNC_ZERO);
-		Set_Src_Blend(pass, W3DSHADER_SRCBLENDFUNC_ONE);
-
-		// No matches.
-		return (FALSE);
-	}
-
-	// Set the PC shader to an equivalant of the PS2 shader.
-	switch (dest_blend[j])
-	{
-		case ST_ZERO:
-			Set_Dest_Blend(pass, W3DSHADER_DESTBLENDFUNC_ZERO);
-			break;
-		case ST_ONE:
-			Set_Dest_Blend(pass, W3DSHADER_DESTBLENDFUNC_ONE);
-			break;
-		case ST_SRC:
-			Set_Dest_Blend(pass, W3DSHADER_DESTBLENDFUNC_SRC_COLOR);
-			break;
-		case (1 - ST_SRC):
-			Set_Dest_Blend(pass, W3DSHADER_DESTBLENDFUNC_ONE_MINUS_SRC_COLOR);
-			break;
-		case ST_SRC_ALPHA:
-			Set_Dest_Blend(pass, W3DSHADER_DESTBLENDFUNC_SRC_ALPHA);
-			break;
-		case (1 - ST_SRC_ALPHA):
-			Set_Dest_Blend(pass, W3DSHADER_DESTBLENDFUNC_ONE_MINUS_SRC_ALPHA);
-			break;
-	}
-
-	switch (src_blend[i])
-	{
-		case ST_ZERO:
-			Set_Src_Blend(pass, W3DSHADER_SRCBLENDFUNC_ZERO);
-			break;
-		case ST_ONE:
-			Set_Src_Blend(pass, W3DSHADER_SRCBLENDFUNC_ONE);
-			break;
-		case ST_SRC_ALPHA:
-			Set_Src_Blend(pass, W3DSHADER_SRCBLENDFUNC_SRC_ALPHA);
-			break;
-		case (1 - ST_SRC_ALPHA):
-			Set_Src_Blend(pass, W3DSHADER_SRCBLENDFUNC_ONE_MINUS_SRC_ALPHA);
-			break;
-	}
-
-	// A match was made.
-	return (TRUE);
-}
-
-
-/***********************************************************************************************
- * GameMtl::Compute_PS2_Shader_From_PC_Shader -- Change a W3D material to a PS2 W3D material.  *
-W3DSHADER_PRIGRADIENT_ *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/26/1999MLL: Created.                                                                   *
- *=============================================================================================*/
-int GameMtl::Compute_PS2_Shader_From_PC_Shader(int pass)
-{
-
-	// These match the PC equation paramaters.
-	static const int a_blend[3] = {
-		ST_ZERO,
-		ST_SRC,
-		ST_DEST,
-	};
-
-	static const int b_blend[3] = {
-		ST_ZERO,
-		ST_SRC,
-		ST_DEST,
-	};
-
-	static const int d_blend[3] = {
-		ST_ZERO,
-		ST_SRC,
-		ST_DEST,
-	};
-
-	static const int c_blend[6] = {
-		ST_ONE,
-		ST_SRC_ALPHA,
-		ST_DEST_ALPHA,
-	};
-
-	int i = 0;
-	int j = 0;
-	int k = 0;
-	int l = 0;
-	int equation_value = 0;
-	int param_value[2];
-
-	// Get the PC shader values.
-	param_value[0] = Get_Src_Blend(pass);
-	param_value[1] = Get_Dest_Blend(pass);
-
-	switch (param_value[0])
-	{
-		case W3DSHADER_SRCBLENDFUNC_ZERO:
-			param_value[0] = ST_ZERO;
-			break;
-		case W3DSHADER_SRCBLENDFUNC_ONE:
-			param_value[0] = ST_ONE;
-			break;
-		case W3DSHADER_SRCBLENDFUNC_SRC_ALPHA:
-			param_value[0] = ST_SRC_ALPHA;
-			break;
-		case W3DSHADER_SRCBLENDFUNC_ONE_MINUS_SRC_ALPHA:
-			param_value[0] = 1 - ST_SRC_ALPHA;
-			break;
-	}
-
-	// Convert them to the enumeration.
-	switch (param_value[1])
-	{
-		case W3DSHADER_DESTBLENDFUNC_ZERO:
-			param_value[1] = ST_ZERO;
-			break;
-		case W3DSHADER_DESTBLENDFUNC_ONE:
-			param_value[1] = ST_ONE;
-			break;
-		case W3DSHADER_DESTBLENDFUNC_SRC_COLOR:
-			param_value[1] = ST_SRC;
-			break;
-		case W3DSHADER_DESTBLENDFUNC_ONE_MINUS_SRC_COLOR:
-			param_value[1] = 1 - ST_SRC;
-			break;
-		case W3DSHADER_DESTBLENDFUNC_SRC_ALPHA:
-			param_value[1] = ST_SRC_ALPHA;
-			break;
-		case W3DSHADER_DESTBLENDFUNC_ONE_MINUS_SRC_ALPHA:
-			param_value[1] = 1 - ST_SRC_ALPHA;
-			break;
-		case W3DSHADER_DESTBLENDFUNC_SRC_COLOR_PREFOG:
-			assert(true);
-			break;
-	}
-
-
-	// Calculate the PC shader.
-	equation_value = param_value[0] * ST_SRC + param_value[1] * ST_DEST;
-
-	// Set the shader to be a PS2 Shader.
-	ShaderType = STE_PS2_SHADER;
-
-	// Find a match for the depth compare test.
-	switch (Get_Depth_Compare(pass))
-	{
-		case W3DSHADER_DEPTHCOMPARE_PASS_NEVER:
-			Set_Depth_Compare(pass, PSS_DEPTHCOMPARE_PASS_NEVER);
-			break;
-		case W3DSHADER_DEPTHCOMPARE_PASS_LESS:
-			Set_Depth_Compare(pass, PSS_DEPTHCOMPARE_PASS_LESS);
-			break;
-		case W3DSHADER_DEPTHCOMPARE_PASS_LEQUAL:
-			Set_Depth_Compare(pass, PSS_DEPTHCOMPARE_PASS_LEQUAL);
-			break;
-		case W3DSHADER_DEPTHCOMPARE_PASS_ALWAYS:
-			Set_Depth_Compare(pass, PSS_DEPTHCOMPARE_PASS_ALWAYS);
-			break;
-		default:
-			Set_Depth_Compare(pass, PSS_DEPTHCOMPARE_PASS_LEQUAL);
-			break;
-	}
-
-	// Only 1 gradient matches between the PC and PS2.
-	switch (Get_Pri_Gradient(pass))
-	{
-		case W3DSHADER_PRIGRADIENT_MODULATE:
-			Set_Pri_Gradient(pass, PSS_PRIGRADIENT_MODULATE);
-			break;
-		default:
-			Set_Pri_Gradient(pass, PSS_PRIGRADIENT_MODULATE);
-			break;
-	}
-
-	for (i = 0; i < 3; i++)	{
-		for (j = 0; j < 3; j++)	{
-			for (k = 0; k < 3; k++)	{
-				for (l = 0; l < 3; l++)	{
-					// Calculate the PS2 shader.  If equal, we have found a conversion.
-					if (equation_value == ((a_blend[i] - b_blend[j]) * c_blend[k]) + d_blend[l]) {
-						goto finished;
-					}
-				}
-			}
-		}
-	}
-
- 	// Set the PS2 W3D shader to opaque.
-	Set_PS2_Shader_Param_A(pass, PSS_SRC);
-	Set_PS2_Shader_Param_B(pass, PSS_ZERO);
-	Set_PS2_Shader_Param_C(pass, PSS_ONE);
-	Set_PS2_Shader_Param_D(pass, PSS_ZERO);
-	Set_Depth_Mask(pass,W3DSHADER_DEPTHMASK_DEFAULT);
-
-	// No matches.
-	return (FALSE);
-
-finished:
-	// Set the PS2 shader to an equivalant of the PC shader.
-	switch (a_blend[i])
-	{
-		case ST_ZERO:
-			Set_PS2_Shader_Param_A(pass, PSS_ZERO);
-			break;
-		case ST_SRC:
-			Set_PS2_Shader_Param_A(pass, PSS_SRC);
-			break;
-		case ST_DEST:
-			Set_PS2_Shader_Param_A(pass, PSS_DEST);
-			break;
-	}
-
-	switch (b_blend[j])
-	{
-		case ST_ZERO:
-			Set_PS2_Shader_Param_B(pass, PSS_ZERO);
-			break;
-		case ST_SRC:
-			Set_PS2_Shader_Param_B(pass, PSS_SRC);
-			break;
-		case ST_DEST:
-			Set_PS2_Shader_Param_B(pass, PSS_DEST);
-			break;
-	}
-
-
-	switch (d_blend[l])
-	{
-		case ST_ZERO:
-			Set_PS2_Shader_Param_D(pass, PSS_ZERO);
-			break;
-		case ST_SRC:
-			Set_PS2_Shader_Param_D(pass, PSS_SRC);
-			break;
-		case ST_DEST:
-			Set_PS2_Shader_Param_D(pass, PSS_DEST);
-			break;
-	}
-
-	switch (c_blend[k])
-	{
-		case ST_ONE:
-			Set_PS2_Shader_Param_C(pass, PSS_ONE);
-			break;
-		case ST_SRC_ALPHA:
-			Set_PS2_Shader_Param_C(pass, PSS_SRC_ALPHA);
-			break;
-		case ST_DEST_ALPHA:
-			Set_PS2_Shader_Param_C(pass, PSS_DEST_ALPHA);
-			break;
-	}
-
-	// A match was made.
-	return (TRUE);
-}
-
 void GameMtl::Set_Pass_Count(int passcount)
 {
 	assert(MainParameterBlock);
@@ -2675,16 +2092,6 @@ int GameMtl::Get_Texture_Publish(int pass,int stage)
 		PassParameterBlock[pass]->GetValue(PB_STAGE0_TEXTURE_PUBLISH,0,val,FOREVER);
 	} else {
 		PassParameterBlock[pass]->GetValue(PB_STAGE1_TEXTURE_PUBLISH,0,val,FOREVER);
-	}
-	return val;
-}
-int GameMtl::Get_Texture_Resize(int pass,int stage)
-{
-	int val;
-	if (stage == 0) {
-		PassParameterBlock[pass]->GetValue(PB_STAGE0_TEXTURE_RESIZE,0,val,FOREVER);
-	} else {
-		PassParameterBlock[pass]->GetValue(PB_STAGE1_TEXTURE_RESIZE,0,val,FOREVER);
 	}
 	return val;
 }
@@ -2974,26 +2381,6 @@ void GameMtl::Set_Texture_Publish(int pass,int stage,bool val)
 		PassParameterBlock[pass]->SetValue(PB_STAGE0_TEXTURE_PUBLISH, 0, val);
 	} else {
 		PassParameterBlock[pass]->SetValue(PB_STAGE1_TEXTURE_PUBLISH, 0, val);
-	}
-}
-void GameMtl::Set_Texture_Resize(int pass,int stage,bool val)
-{
-	assert((pass >=0) && (pass < W3dMaterialClass::MAX_PASSES));
-	assert(PassParameterBlock[pass]);
-	if (stage == 0) {
-		PassParameterBlock[pass]->SetValue(PB_STAGE0_TEXTURE_RESIZE, 0, val);
-	} else {
-		PassParameterBlock[pass]->SetValue(PB_STAGE1_TEXTURE_RESIZE, 0, val);
-	}
-}
-void GameMtl::Set_Texture_No_Mipmap(int pass,int stage,bool val)
-{
-	assert((pass >=0) && (pass < W3dMaterialClass::MAX_PASSES));
-	assert(PassParameterBlock[pass]);
-	if (stage == 0) {
-		PassParameterBlock[pass]->SetValue(PB_STAGE0_TEXTURE_NO_MIPMAP, 0, val);
-	} else {
-		PassParameterBlock[pass]->SetValue(PB_STAGE1_TEXTURE_NO_MIPMAP, 0, val);
 	}
 }
 void GameMtl::Set_Texture_Clamp_U(int pass,int stage,bool val)
@@ -3294,6 +2681,23 @@ void GameMtlPostLoad::proc(ILoad *iload)
 			}
 		}
 		m->Set_Flag(GAMEMTL_CONVERTED_TO_NOLOD,true);
+	}
+
+	// TheSuperHackers @tweak Legacy PS2 materials are now migrated to standard materials.
+	// The PS2 material is a GameMtl that scenes save under its own class ID. The hidden
+	// PS2GameMaterialClassDesc loads it as a GameMtl, so the next save stores it as one.
+	// It stores the depth compare and the primary gradient in the PS2 encoding, which are
+	// converted here to the PC values that its exporter wrote. Of the PS2 depth compare
+	// values, only PASS_ALWAYS differs from the PC value. Like the former exporter, all PS2
+	// gradients become MODULATE.
+	if (m->IsPS2GameMaterial) {
+		for (int pass = 0; pass < W3dMaterialClass::MAX_PASSES; pass++) {
+			if (m->Get_Depth_Compare(pass) == PSS_DEPTHCOMPARE_PASS_ALWAYS) {
+				m->Set_Depth_Compare(pass,W3DSHADER_DEPTHCOMPARE_PASS_ALWAYS);
+			}
+			m->Set_Pri_Gradient(pass,W3DSHADER_PRIGRADIENT_MODULATE);
+		}
+		m->IsPS2GameMaterial = false;
 	}
 
 	delete this;

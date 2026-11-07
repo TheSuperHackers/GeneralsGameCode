@@ -64,11 +64,7 @@ public:
 	void Append_Set(BitArray & nset,TSTR & setname);
 
 	IOResult Load(ILoad * iload);
-	IOResult Save(ISave * isave);
 	IOResult Load_Set(ILoad * iload);
-
-	void Set_Size(int size);
-	NamedSelSetList & operator=(NamedSelSetList & from);
 
 	enum {
 		NAMED_SEL_SET_CHUNK =   0x0021,

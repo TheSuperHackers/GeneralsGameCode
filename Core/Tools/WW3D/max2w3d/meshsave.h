@@ -47,7 +47,6 @@
 #include "util.h"
 #include "w3dmtl.h"
 #include "meshbuild.h"
-#include "MeshDeformSave.h"
 #include "w3dappdata.h"
 
 class HierarchySaveClass;
@@ -132,7 +131,6 @@ private:
 	W3dMeshHeader3Struct				Header;
 	W3dMaterialDescClass 			MaterialDesc;
 	MeshBuilderClass					Builder;
-	MeshDeformSaveClass				DeformSave;
 	TimeValue							CurTime;
 	Matrix3								ExportSpace;
 	Matrix3								MeshToExportSpace;
@@ -144,9 +142,6 @@ private:
 
 	int *									MaterialRemapTable;		// reindexes mtl_idx after un-used mtls are removed
 
-	// Flag set if the mesh uses a PS2 material.
-	int									PS2Material;
-
 private:
 
 	// Use a MeshBuilderClass to process the mesh
@@ -154,7 +149,6 @@ private:
 
 	// compute properties for the mesh
 	void compute_bounding_volumes();
-	void compute_physical_constants(INode * inode,Progress_Meter_Class & meter,bool voxelize);
 
 	// create the materials
 	int  scan_used_materials(Mesh & mesh, Mtl * nodemtl);
@@ -204,12 +198,6 @@ private:
 
 	// get rendering settings for the materials
 	void customize_materials();
-
-	// Write the ps2 shaders and approximate them as close as possible in the W3D shaders.
-	int write_ps2_shaders(ChunkSaveClass & csave);
-
-	// Make the PC shader emulate the PS2 shader.
-	void setup_PC_shaders_from_PS2_shaders();
 
 	friend class DamageClass;
 };

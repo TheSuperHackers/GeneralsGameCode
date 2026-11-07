@@ -52,87 +52,6 @@ END
 // Dialog
 //
 
-IDD_VOXEL_DEBUG_DIALOG DIALOG DISCARDABLE  0, 0, 171, 114
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Voxelization Debugging"
-FONT 8, "MS Sans Serif"
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,114,7,50,14
-    CTEXT           "Voxel Viewport",IDC_VOXEL_VIEWPORT,7,7,100,100,
-                    SS_CENTERIMAGE
-    CONTROL         "",IDC_LAYER_EDIT,"CustEdit",WS_TABSTOP,120,50,28,10
-    CONTROL         "",IDC_LAYER_SPIN,"SpinnerControl",0x0,148,50,10,10
-    LTEXT           "Current Layer",IDC_STATIC,115,36,43,8
-END
-
-IDD_W3D_EXPORT_OPTIONS DIALOG DISCARDABLE  0, 0, 259, 282
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "W3D Export Options"
-FONT 8, "MS Sans Serif"
-BEGIN
-    GROUPBOX        "Hierarchy",IDC_STATIC,7,7,245,64
-    GROUPBOX        "Animation",IDC_STATIC,7,78,245,107
-    GROUPBOX        "Geometry",IDC_STATIC,7,188,245,67
-    CONTROL         "Export",IDC_WHT_EXPORT_RADIO,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,17,22,36,10
-    CONTROL         "Load from file:",IDC_WHT_LOAD_RADIO,"Button",
-                    BS_AUTORADIOBUTTON,17,37,60,10
-    CONTROL         "Don't Export",IDC_WHT_NO_EXPORT_RADIO,"Button",
-                    BS_AUTORADIOBUTTON,17,53,55,10
-    CONTROL         "Use Translation Only",IDC_TRANSLATION_ONLY_CHECK,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,83,54,81,10
-    PUSHBUTTON      "Browse",IDC_WHT_BROWSE_BUTTON,79,37,165,12,WS_GROUP
-    CONTROL         "Export",IDC_WHA_EXPORT_RADIO,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,17,93,36,10
-    CONTROL         "Don't Export",IDC_WHA_NO_EXPORT_RADIO,"Button",
-                    BS_AUTORADIOBUTTON,17,108,55,10
-    LTEXT           "Frames:",IDC_STATIC,84,94,26,10,NOT WS_GROUP
-    CONTROL         "",IDC_RANGE_LOW_EDIT,"CustEdit",WS_GROUP | WS_TABSTOP,
-                    128,93,28,10
-    CONTROL         "",IDC_RANGE_LOW_SPIN,"SpinnerControl",0x0,156,93,10,10
-    LTEXT           "To",IDC_STATIC,168,93,10,10
-    CONTROL         "",IDC_RANGE_HIGH_EDIT,"CustEdit",WS_TABSTOP,182,93,28,
-                    10
-    CONTROL         "",IDC_RANGE_HIGH_SPIN,"SpinnerControl",0x0,210,93,10,10
-    CONTROL         "Export",IDC_WTM_EXPORT_RADIO,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,202,36,10
-    CONTROL         "Don't Export",IDC_WTM_NO_EXPORT_RADIO,"Button",
-                    BS_AUTORADIOBUTTON,15,220,55,10
-    CONTROL         "&Smooth Vertex Normals Across Meshes",
-                    IDC_EXPORT_MESH_SMOOTH_CHECK,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,87,203,139,10
-    DEFPUSHBUTTON   "OK",IDOK,66,261,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,144,261,50,14
-    CONTROL         "&Compress",IDC_COMPRESS_ANIMATION_CHECK,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,17,131,47,10
-    LTEXT           "Max Translation Error:(unit)",IDC_STATIC,16,150,85,8
-    GROUPBOX        "Compression Settings",IDC_STATIC,13,120,233,61
-    LTEXT           "Max Rotational Error:(deg)",IDC_STATIC,16,166,83,8
-    CONTROL         "Force Key Reduction",IDC_REDUCE_ANIMATION_CHECK,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,156,148,83,10
-    COMBOBOX        IDC_REDUCE_ANIMATION_COMBO,213,163,29,81,
-                    CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    LTEXT           "Key Reduction %:",IDC_STATIC,153,165,57,8
-    LTEXT           "Current FPS:  %d",IDC_ANIMATION_FPS_STATIC,79,108,80,8
-    COMBOBOX        IDC_COMPRESS_ANIMATION_FLAVOR_COMBO,65,129,96,49,
-                    CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    EDITTEXT        IDC_MAX_TRANS_ERROR_EDIT,103,147,40,14,ES_AUTOHSCROLL | 
-                    WS_GROUP
-    EDITTEXT        IDC_MAX_ROT_ERROR_EDIT,103,163,40,14,ES_AUTOHSCROLL | 
-                    WS_GROUP
-    CONTROL         "Review Log",IDC_VIEWLOG_CHECK,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,188,108,54,10
-    CONTROL         "Optimize Collision Detection",IDC_EXPORT_MESH_AABTREES,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,87,220,
-                    103,10
-    CONTROL         "Optimize Mesh Data (mesh names will be lost)",
-                    IDC_EXPORT_MESH_OPTIMIZE,"Button",BS_AUTOCHECKBOX | 
-                    BS_MULTILINE | WS_GROUP | WS_TABSTOP,87,237,162,10
-    CONTROL         "Terrain Mode (all meshes exported in world space)",
-                    IDC_TERRAIN_MODE_CHECK,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,79,22,173,10
-END
-
 IDD_BONE_INFLUENCE_PARAMS DIALOG DISCARDABLE  0, 0, 108, 78
 STYLE WS_CHILD
 FONT 8, "MS Sans Serif"
@@ -168,156 +87,6 @@ STYLE WS_CHILD
 FONT 8, "MS Sans Serif"
 BEGIN
     LTEXT           "- All Geometric Objects",IDC_STATIC,7,7,94,8
-END
-
-IDD_GAMEMTL_PANEL DIALOG DISCARDABLE  0, 0, 217, 286
-STYLE DS_3DLOOK | WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    CONTROL         "User1",IDC_DIFFUSE_COLOR,"ColorSwatch",0x0,65,9,34,12
-    LTEXT           "Diffuse Color:",IDC_STATIC,13,13,43,8
-    GROUPBOX        "Maps",IDC_STATIC,7,73,203,154
-    GROUPBOX        "Lighting Coefficients",IDC_STATIC,7,231,203,47
-    CONTROL         "Diffuse Color:",IDC_MAPON_DCT,"Button",BS_AUTOCHECKBOX,
-                    11,87,64,10
-    PUSHBUTTON      "None",IDC_DCT_BUTTON,75,86,132,11
-    CONTROL         "",IDC_DCT_FRAMES_EDIT,"CustEdit",WS_TABSTOP,37,103,19,
-                    10
-    CONTROL         "",IDC_DCT_FRAMES_SPIN,"SpinnerControl",0x0,57,103,7,10
-    LTEXT           "Frames:",IDC_STATIC,11,104,26,8
-    CONTROL         "Specular Color:",IDC_MAPON_SCT,"Button",BS_AUTOCHECKBOX,
-                    11,159,64,10
-    PUSHBUTTON      "None",IDC_SCT_BUTTON,75,158,132,11
-    CONTROL         "Diffuse Light:",IDC_MAPON_DIT,"Button",BS_AUTOCHECKBOX,
-                    11,123,64,10
-    PUSHBUTTON      "None",IDC_DIT_BUTTON,75,122,132,11
-    CONTROL         "Specular Light:",IDC_MAPON_SIT,"Button",BS_AUTOCHECKBOX,
-                    11,193,64,10
-    PUSHBUTTON      "None",IDC_SIT_BUTTON,75,192,132,11
-    CONTROL         "User1",IDC_SPECULAR_COLOR,"ColorSwatch",0x0,65,25,34,12
-    LTEXT           "Specular Color:",IDC_STATIC,14,29,49,8
-    LTEXT           "Opacity:",IDC_STATIC,110,11,27,8
-    LTEXT           "Emissive:",IDC_STATIC,87,260,30,8
-    CONTROL         "",IDC_OPACITY_EDIT,"CustEdit",WS_TABSTOP,160,9,37,10
-    CONTROL         "",IDC_OPACITY_SPIN,"SpinnerControl",0x0,198,9,7,10
-    LTEXT           "Shininess:",IDC_STATIC,110,37,33,8
-    LTEXT           "Translucency:",IDC_STATIC,110,24,46,8
-    CONTROL         "",IDC_TRANSULCENCY_EDIT,"CustEdit",WS_TABSTOP,160,22,37,
-                    10
-    CONTROL         "",IDC_TRANSLUCENCY_SPIN,"SpinnerControl",0x0,198,22,7,
-                    10
-    CONTROL         "Ambient Coefficients",IDC_AMBIENT_COEFF,"ColorSwatch",
-                    0x0,44,244,34,12
-    CONTROL         "Diffuse Coefficients",IDC_DIFFUSE_COEFF,"ColorSwatch",
-                    0x0,44,258,34,12
-    LTEXT           "Ambient:",IDC_STATIC,13,245,28,8
-    LTEXT           "Diffuse:",IDC_STATIC,16,260,25,8
-    CONTROL         "Emissive Coefficients",IDC_EMISSIVE_COEFF,"ColorSwatch",
-                    0x0,119,258,34,12
-    CONTROL         "Specular Coefficients",IDC_SPECULAR_COEFF,"ColorSwatch",
-                    0x0,119,243,34,12
-    LTEXT           "Mapping:",IDC_STATIC,117,104,30,8
-    LTEXT           "Specular:",IDC_STATIC,86,245,31,8
-    COMBOBOX        IDC_DCT_MAPPING_COMBO,151,101,56,87,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
-    CONTROL         "Use Alpha",IDC_USE_ALPHA_CHECK,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,14,44,49,10
-    CONTROL         "Use Sorting",IDC_USE_SORTING_CHECK,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,14,58,53,10
-    LTEXT           "Rate:",IDC_STATIC,68,104,18,8
-    CONTROL         "",IDC_DCT_RATE_EDIT,"CustEdit",WS_TABSTOP,88,103,19,10
-    CONTROL         "",IDC_DCT_RATE_SPIN,"SpinnerControl",0x0,108,103,7,10
-    CONTROL         "",IDC_DIT_FRAMES_EDIT,"CustEdit",WS_TABSTOP,38,139,19,
-                    10
-    CONTROL         "",IDC_DIT_FRAMES_SPIN,"SpinnerControl",0x0,58,139,7,10
-    LTEXT           "Frames:",IDC_STATIC,12,141,26,8
-    LTEXT           "Mapping:",IDC_STATIC,118,141,30,8
-    COMBOBOX        IDC_DIT_MAPPING_COMBO,152,138,56,87,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Rate:",IDC_STATIC,68,141,18,8
-    CONTROL         "",IDC_DIT_RATE_EDIT,"CustEdit",WS_TABSTOP,88,139,19,10
-    CONTROL         "",IDC_DIT_RATE_SPIN,"SpinnerControl",0x0,108,139,7,10
-    CONTROL         "",IDC_SCT_FRAMES_EDIT,"CustEdit",WS_TABSTOP,37,176,19,
-                    10
-    CONTROL         "",IDC_SCT_FRAMES_SPIN,"SpinnerControl",0x0,57,176,7,10
-    LTEXT           "Frames:",IDC_STATIC,11,177,26,8
-    LTEXT           "Mapping:",IDC_STATIC,117,177,30,8
-    COMBOBOX        IDC_SCT_MAPPING_COMBO,151,174,56,87,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Rate:",IDC_STATIC,68,177,18,8
-    CONTROL         "",IDC_SCT_RATE_EDIT,"CustEdit",WS_TABSTOP,88,176,19,10
-    CONTROL         "",IDC_SCT_RATE_SPIN,"SpinnerControl",0x0,108,176,7,10
-    CONTROL         "",IDC_SIT_FRAMES_EDIT,"CustEdit",WS_TABSTOP,38,210,19,
-                    10
-    CONTROL         "",IDC_SIT_FRAMES_SPIN,"SpinnerControl",0x0,58,210,7,10
-    LTEXT           "Frames:",IDC_STATIC,12,211,26,8
-    LTEXT           "Mapping:",IDC_STATIC,118,211,30,8
-    COMBOBOX        IDC_SIT_MAPPING_COMBO,152,208,56,87,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Rate:",IDC_STATIC,69,211,18,8
-    CONTROL         "",IDC_SIT_RATE_EDIT,"CustEdit",WS_TABSTOP,89,210,19,10
-    CONTROL         "",IDC_SIT_RATE_SPIN,"SpinnerControl",0x0,109,210,7,10
-    CONTROL         "",IDC_FOG_EDIT,"CustEdit",WS_TABSTOP,177,245,19,10
-    CONTROL         "",IDC_FOG_SPIN,"SpinnerControl",0x0,197,245,7,10
-    LTEXT           "Fog:",IDC_STATIC,160,245,15,8
-    CONTROL         "",IDC_SHININESS_EDIT,"CustEdit",WS_TABSTOP,160,35,37,10
-    CONTROL         "",IDC_SHININESS_SPIN,"SpinnerControl",0x0,198,35,7,10
-    CONTROL         "Display in Viewport",IDC_VIEWPORT_DISPLAY_CHECK,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,110,58,75,10
-END
-
-IDD_GAMEMTL_NOTES_PANEL DIALOG DISCARDABLE  0, 0, 217, 58
-STYLE WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    LTEXT           "Texture Maps are subject to the following limitations:",
-                    IDC_STATIC,8,19,164,8
-    LTEXT           "Width and height must be a power of 2",IDC_STATIC,16,30,
-                    123,8
-    LTEXT           "Maximum width and height is 256",IDC_STATIC,16,41,105,8
-    LTEXT           "All maps must be Bitmap Textures which use Targa files",
-                    IDC_STATIC,7,8,175,8
-END
-
-IDD_GAMEMTL_HINTS_PANEL DIALOG DISCARDABLE  0, 0, 217, 79
-STYLE WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    CONTROL         "Favor diffuse light texture over diffuse color texture",
-                    IDC_DIT_OVER_DCT_CHECK,"Button",BS_AUTOCHECKBOX | 
-                    BS_CENTER | BS_PUSHLIKE | WS_TABSTOP,8,9,204,10
-    CONTROL         "Favor specular light texture over specular color texture",
-                    IDC_SIT_OVER_SCT_CHECK,"Button",BS_AUTOCHECKBOX | 
-                    BS_CENTER | BS_PUSHLIKE | WS_TABSTOP,8,22,204,10
-    CONTROL         "Favor diffuse light texture over calculated diffuse lighting",
-                    IDC_DIT_OVER_DIG_CHECK,"Button",BS_AUTOCHECKBOX | 
-                    BS_CENTER | BS_PUSHLIKE | WS_TABSTOP,8,35,204,10
-    CONTROL         "Favor specular light texture over calculated specular lighting",
-                    IDC_SIT_OVER_SIG_CHECK,"Button",BS_AUTOCHECKBOX | 
-                    BS_CENTER | BS_PUSHLIKE | WS_TABSTOP,8,48,204,10
-    CONTROL         "Allow fast specular after alpha",
-                    IDC_FAST_SPECULAR_AFTER_ALPHA_CHECK,"Button",
-                    BS_AUTOCHECKBOX | BS_CENTER | BS_PUSHLIKE | WS_TABSTOP,8,
-                    61,204,10
-END
-
-IDD_GAMEMTL_PSX_PANEL DIALOG DISCARDABLE  0, 0, 217, 66
-STYLE WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    CONTROL         "None",IDC_NO_TRANS,"Button",BS_AUTORADIOBUTTON,17,32,33,
-                    10
-    GROUPBOX        "Translucency",IDC_STATIC,7,21,203,38
-    CONTROL         "100%",IDC_100_TRANS,"Button",BS_AUTORADIOBUTTON,17,45,
-                    33,10
-    CONTROL         "50%",IDC_50_TRANS,"Button",BS_AUTORADIOBUTTON,91,33,29,
-                    10
-    CONTROL         "25%",IDC_25_TRANS,"Button",BS_AUTORADIOBUTTON,91,45,29,
-                    10
-    CONTROL         "-100%",IDC_MINUS_100_TRANS,"Button",BS_AUTORADIOBUTTON,
-                    161,33,35,10
-    CONTROL         "Disable real-time lighting",IDC_NO_RT_LIGHTING,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,17,9,91,10
 END
 
 IDD_GAMEMTL_PASS DIALOG DISCARDABLE  0, 0, 217, 184
@@ -559,37 +328,6 @@ BEGIN
                     IDC_STATIC,142,42,52,75
 END
 
-IDD_MESH_DEFORM_PANEL DIALOG DISCARDABLE  0, 0, 108, 168
-STYLE WS_CHILD | WS_CLIPSIBLINGS
-FONT 8, "MS Sans Serif"
-BEGIN
-    LTEXT           "Vertex &Color:",IDC_STATIC,7,7,41,8
-    CONTROL         "Vertex Color",IDC_VERTEX_COLOR,"ColorSwatch",0x0,53,3,
-                    48,15
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,4,24,98,1
-    LTEXT           "Deform &Progression",IDC_STATIC,7,21,62,8
-    CONTROL         "Slider1",IDC_STATE_SLIDER,"msctls_trackbar32",
-                    TBS_AUTOTICKS | WS_TABSTOP,7,33,94,12
-    CONTROL         130,IDC_STATIC,"Static",SS_BITMAP,9,50,11,10
-    CONTROL         131,IDC_STATIC,"Static",SS_BITMAP,89,50,11,10
-    CONTROL         "Link Set States",IDC_LOCK_SETS,"CustButton",WS_TABSTOP,
-                    7,66,70,13
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,4,86,99,1
-    LTEXT           "&Deform Sets",IDC_STATIC,7,82,40,8
-    LTEXT           "&Max Sets:",IDC_STATIC,11,95,32,8
-    CONTROL         "",IDC_MAX_SETS_EDIT,"CustEdit",WS_TABSTOP,55,95,22,10
-    CONTROL         "",IDC_MAX_SETS_SPIN,"SpinnerControl",WS_TABSTOP,79,95,
-                    10,10
-    LTEXT           "Current Set:",IDC_STATIC,11,111,38,8
-    LTEXT           "Static",IDC_CURRENT_SET_STATIC,55,110,30,11,SS_SUNKEN
-    CONTROL         "Slider1",IDC_CURRENT_SET_SLIDER,"msctls_trackbar32",
-                    TBS_AUTOTICKS | WS_TABSTOP,7,123,94,12
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,4,145,99,1
-    LTEXT           "&Runtime Options",IDC_STATIC,7,141,53,8
-    CONTROL         "&Manual Deform",IDC_MANUALAPPLY,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,11,153,64,10
-END
-
 IDD_GAMEMTL_SURFACE_TYPE DIALOG DISCARDABLE  0, 0, 217, 42
 STYLE WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif"
@@ -602,16 +340,6 @@ BEGIN
                     WS_TABSTOP,77,25,42,10
     CONTROL         "",IDC_SORT_LEVEL,"CustEdit",WS_TABSTOP,123,25,19,10
     CONTROL         "",IDC_SORT_LEVEL_SPIN,"SpinnerControl",0x0,143,25,7,10
-END
-
-IDD_GAMEMTL_DISPLACEMENT_MAP DIALOG DISCARDABLE  0, 0, 217, 25
-STYLE WS_CHILD | WS_VISIBLE
-FONT 8, "MS Sans Serif"
-BEGIN
-    PUSHBUTTON      "None",IDC_TEXTURE_BUTTON,106,7,104,11
-    RTEXT           "Amount:",IDC_STATIC,7,8,55,8
-    CONTROL         "",IDC_AMOUNT_EDIT,"CustEdit",WS_TABSTOP,67,8,19,10
-    CONTROL         "",IDC_AMOUNT_SPIN,"SpinnerControl",0x0,87,8,7,10
 END
 
 IDD_GENERATE_MTL_NAMES_DIALOG DIALOG DISCARDABLE  0, 0, 204, 70
@@ -694,120 +422,6 @@ BEGIN
                     BS_AUTORADIOBUTTON,35,200,47,10
     CONTROL         "References",IDC_DAMAGE_AS_REFERENCE,"Button",
                     BS_AUTORADIOBUTTON,35,214,53,10
-END
-
-IDD_GAMEMTL_PS2_SHADER DIALOGEX 0, 0, 198, 134
-STYLE WS_CHILD | WS_CAPTION
-CAPTION "Playstation 2 Shader"
-FONT 8, "MS Sans Serif", 0, 0, 0x1
-BEGIN
-    GROUPBOX        "Blend",IDC_STATIC,7,0,184,73
-    LTEXT           "Blend Mode:",IDC_STATIC,31,9,41,8
-    COMBOBOX        IDC_PS2_PRESET_COMBO,75,7,94,131,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Custom",IDC_STATIC,13,30,172,40
-    LTEXT           "A:",IDC_STATIC,15,38,15,11
-    COMBOBOX        IDC_A_COMBO,32,38,62,157,CBS_DROPDOWNLIST | WS_VSCROLL | 
-                    WS_TABSTOP
-    LTEXT           "B:",IDC_STATIC,98,38,16,11
-    COMBOBOX        IDC_B_COMBO,118,38,62,157,CBS_DROPDOWNLIST | WS_VSCROLL | 
-                    WS_TABSTOP
-    CONTROL         "ZBuffer",IDC_DEPTHMASK_CHECK,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,132,83,39,10
-    CONTROL         "Alpha Test",IDC_ALPHATEST_CHECK,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,132,95,50,10
-    GROUPBOX        "Advanced",IDC_STATIC,7,74,184,57
-    PUSHBUTTON      "Defaults",IDC_SHADER_DEFAULTS_BUTTON,18,87,34,12
-    LTEXT           "Pri Gradient:",IDC_STATIC,71,80,40,8
-    COMBOBOX        IDC_PRIGRADIENT_COMBO,71,90,57,157,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Depth Cmp:",IDC_STATIC,11,104,38,8
-    COMBOBOX        IDC_DEPTHCOMPARE_COMBO,11,114,57,157,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Detail Color:",IDC_STATIC,71,104,39,8,WS_DISABLED
-    COMBOBOX        IDC_DETAILCOLOR_COMBO,71,114,57,157,CBS_DROPDOWNLIST | 
-                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Detail Alpha:",IDC_STATIC,131,104,41,8,WS_DISABLED
-    COMBOBOX        IDC_DETAILALPHA_COMBO,131,114,57,157,CBS_DROPDOWNLIST | 
-                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "(A - B) * C + D",IDC_STATIC,15,20,60,10
-    LTEXT           "D:",IDC_STATIC,98,52,15,11
-    COMBOBOX        IDC_D_COMBO,118,52,62,157,CBS_DROPDOWNLIST | WS_VSCROLL | 
-                    WS_TABSTOP
-    LTEXT           "C:",IDC_STATIC,15,52,15,11
-    COMBOBOX        IDC_C_COMBO,32,52,62,157,CBS_DROPDOWNLIST | WS_VSCROLL | 
-                    WS_TABSTOP
-    CONTROL         "",IDC_COMPATIBLE,"RICHEDIT",ES_READONLY | ES_NUMBER | 
-                    WS_BORDER | WS_TABSTOP,100,20,79,14,WS_EX_DLGMODALFRAME
-END
-
-IDD_GAMEMTL_PS2_TEXTURES DIALOG DISCARDABLE  0, 0, 198, 135
-STYLE WS_CHILD | WS_CAPTION
-CAPTION "Textures"
-FONT 8, "MS Sans Serif"
-BEGIN
-    GROUPBOX        "",IDC_STATIC,7,0,184,65
-    PUSHBUTTON      "None",IDC_STAGE0_BUTTON,14,11,104,11
-    CONTROL         "Publish",IDC_STAGE0_PUBLISH_BUTTON,"CustButton",
-                    WS_TABSTOP,121,11,29,11
-    CONTROL         "Display",IDC_STAGE0_DISPLAY_BUTTON,"CustButton",
-                    WS_TABSTOP,154,11,29,11
-    CONTROL         "Clamp U",IDC_STAGE0_CLAMP_U_BUTTON,"CustButton",
-                    WS_TABSTOP,14,24,40,11
-    CONTROL         "Clamp V",IDC_STAGE0_CLAMP_V_BUTTON,"CustButton",
-                    WS_TABSTOP,60,24,40,11
-    LTEXT           "Frames:",IDC_STATIC,15,37,26,8,WS_DISABLED
-    CONTROL         "",IDC_STAGE0_FRAMES_EDIT,"CustEdit",WS_DISABLED | 
-                    WS_TABSTOP,41,37,19,10
-    CONTROL         "",IDC_STAGE0_FRAMES_SPIN,"SpinnerControl",WS_DISABLED,
-                    61,37,7,10
-    LTEXT           "Rate:",IDC_STATIC,79,37,18,8,WS_DISABLED
-    CONTROL         "",IDC_STAGE0_RATE_EDIT,"CustEdit",WS_DISABLED | 
-                    WS_TABSTOP,98,37,19,10
-    CONTROL         "",IDC_STAGE0_RATE_SPIN,"SpinnerControl",WS_DISABLED,118,
-                    37,7,10
-    COMBOBOX        IDC_STAGE0_ANIM_COMBO,135,37,48,63,CBS_DROPDOWNLIST | 
-                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Pass Hint:",IDC_STATIC,15,49,33,8
-    COMBOBOX        IDC_STAGE0_HINT_COMBO,50,48,75,157,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
-    CONTROL         "Alpha Button",IDC_STAGE0_ALPHA_BITMAP_BUTTON,"CustButton",
-                    WS_TABSTOP,135,51,47,11
-    CONTROL         "Stage 1 Texture (Detail Texture)",IDC_STAGE1_ENABLE,
-                    "Button",BS_AUTOCHECKBOX,13,65,117,10
-    PUSHBUTTON      "None",IDC_STAGE1_BUTTON,14,76,104,11
-    CONTROL         "hoax",IDC_STAGE1_PUBLISH_BUTTON,"CustButton",WS_TABSTOP,
-                    121,76,29,11
-    CONTROL         "hoax",IDC_STAGE1_DISPLAY_BUTTON,"CustButton",WS_TABSTOP,
-                    154,76,29,11
-    CONTROL         "Clamp U",IDC_STAGE1_CLAMP_U_BUTTON,"CustButton",
-                    WS_TABSTOP,14,89,40,11
-    CONTROL         "Clamp V",IDC_STAGE1_CLAMP_V_BUTTON,"CustButton",
-                    WS_TABSTOP,60,89,40,11
-    LTEXT           "Frames:",IDC_STATIC,15,102,26,8,WS_DISABLED
-    CONTROL         "",IDC_STAGE1_FRAMES_EDIT,"CustEdit",WS_DISABLED | 
-                    WS_TABSTOP,41,102,19,10
-    CONTROL         "",IDC_STAGE1_FRAMES_SPIN,"SpinnerControl",WS_DISABLED,
-                    61,102,7,10
-    LTEXT           "Rate:",IDC_STATIC,79,102,18,8,WS_DISABLED
-    CONTROL         "",IDC_STAGE1_RATE_EDIT,"CustEdit",WS_DISABLED | 
-                    WS_TABSTOP,100,102,19,10
-    CONTROL         "",IDC_STAGE1_RATE_SPIN,"SpinnerControl",WS_DISABLED,120,
-                    102,7,10
-    COMBOBOX        IDC_STAGE1_ANIM_COMBO,135,102,48,63,CBS_DROPDOWNLIST | 
-                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Pass Hint:",IDC_STATIC,15,113,33,8
-    COMBOBOX        IDC_STAGE1_HINT_COMBO,50,113,75,157,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
-    CONTROL         "Alpha Button",IDC_STAGE1_ALPHA_BITMAP_BUTTON,"CustButton",
-                    WS_TABSTOP,135,117,47,11
-    CONTROL         "Stage 0 Texture ",IDC_STAGE0_ENABLE,"Button",
-                    BS_AUTOCHECKBOX,13,0,68,10
-    GROUPBOX        "",IDC_STATIC,7,65,184,66
-    CONTROL         "NoLOD",IDC_STAGE0_NOLOD_BUTTON,"CustButton",WS_TABSTOP,
-                    105,24,34,11
-    CONTROL         "NoLOD",IDC_STAGE1_NOLOD_BUTTON,"CustButton",WS_TABSTOP,
-                    105,89,34,11
 END
 
 IDD_ALPHA_MODIFIER DIALOG DISCARDABLE  0, 0, 100, 38
@@ -1117,16 +731,6 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,91,141,50,14
 END
 
-IDD_GRIDSNAP_PARAMS DIALOG DISCARDABLE  0, 0, 108, 24
-STYLE WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    CONTROL         "",IDC_GRIDDIM_EDIT,"CustEdit",WS_GROUP | WS_TABSTOP,57,
-                    7,33,10
-    CONTROL         "",IDC_GRIDDIM_SPIN,"SpinnerControl",0x0,91,7,10,10
-    LTEXT           "Grid Dimension",IDC_STATIC,7,8,48,8
-END
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1136,22 +740,6 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO DISCARDABLE 
 BEGIN
-    IDD_VOXEL_DEBUG_DIALOG, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 164
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 107
-    END
-
-    IDD_W3D_EXPORT_OPTIONS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 252
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 275
-    END
-
     IDD_BONE_INFLUENCE_PARAMS, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -1174,38 +762,6 @@ BEGIN
         RIGHTMARGIN, 101
         TOPMARGIN, 7
         BOTTOMMARGIN, 15
-    END
-
-    IDD_GAMEMTL_PANEL, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 210
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 279
-    END
-
-    IDD_GAMEMTL_NOTES_PANEL, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 210
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 51
-    END
-
-    IDD_GAMEMTL_HINTS_PANEL, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 210
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 72
-    END
-
-    IDD_GAMEMTL_PSX_PANEL, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 210
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 59
     END
 
     IDD_GAMEMTL_PASS, DIALOG
@@ -1264,28 +820,12 @@ BEGIN
         BOTTOMMARGIN, 192
     END
 
-    IDD_MESH_DEFORM_PANEL, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 101
-        TOPMARGIN, 3
-        BOTTOMMARGIN, 165
-    END
-
     IDD_GAMEMTL_SURFACE_TYPE, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 210
         TOPMARGIN, 7
         BOTTOMMARGIN, 35
-    END
-
-    IDD_GAMEMTL_DISPLACEMENT_MAP, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 210
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 18
     END
 
     IDD_GENERATE_MTL_NAMES_DIALOG, DIALOG
@@ -1318,22 +858,6 @@ BEGIN
         RIGHTMARGIN, 215
         TOPMARGIN, 7
         BOTTOMMARGIN, 238
-    END
-
-    IDD_GAMEMTL_PS2_SHADER, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 191
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 127
-    END
-
-    IDD_GAMEMTL_PS2_TEXTURES, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 191
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 128
     END
 
     IDD_ALPHA_MODIFIER, DIALOG
@@ -1444,14 +968,6 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 155
     END
-
-    IDD_GRIDSNAP_PARAMS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 101
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 17
-    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -1460,27 +976,6 @@ END
 //
 // Dialog Info
 //
-
-IDD_GAMEMTL_PANEL DLGINIT
-BEGIN
-    IDC_DCT_MAPPING_COMBO, 0x403, 3, 0
-0x5655, "\000" 
-    IDC_DCT_MAPPING_COMBO, 0x403, 5, 0
-0x6e45, 0x6f76, "\000" 
-    IDC_DIT_MAPPING_COMBO, 0x403, 3, 0
-0x5655, "\000" 
-    IDC_DIT_MAPPING_COMBO, 0x403, 5, 0
-0x6e45, 0x6f76, "\000" 
-    IDC_SCT_MAPPING_COMBO, 0x403, 3, 0
-0x5655, "\000" 
-    IDC_SCT_MAPPING_COMBO, 0x403, 5, 0
-0x6e45, 0x6f76, "\000" 
-    IDC_SIT_MAPPING_COMBO, 0x403, 3, 0
-0x5655, "\000" 
-    IDC_SIT_MAPPING_COMBO, 0x403, 5, 0
-0x6e45, 0x6f76, "\000" 
-    0
-END
 
 IDD_GAMEMTL_SHADER DLGINIT
 BEGIN
@@ -1685,116 +1180,6 @@ BEGIN
     0
 END
 
-IDD_GAMEMTL_PS2_SHADER DLGINIT
-BEGIN
-    IDC_A_COMBO, 0x403, 7, 0
-0x6f53, 0x7275, 0x6563, "\000" 
-    IDC_A_COMBO, 0x403, 12, 0
-0x6544, 0x7473, 0x6e69, 0x7461, 0x6f69, 0x006e, 
-    IDC_A_COMBO, 0x403, 5, 0
-0x655a, 0x6f72, "\000" 
-    IDC_B_COMBO, 0x403, 7, 0
-0x6f53, 0x7275, 0x6563, "\000" 
-    IDC_B_COMBO, 0x403, 12, 0
-0x6544, 0x7473, 0x6e69, 0x7461, 0x6f69, 0x006e, 
-    IDC_B_COMBO, 0x403, 5, 0
-0x655a, 0x6f72, "\000" 
-    IDC_PRIGRADIENT_COMBO, 0x403, 6, 0
-0x6544, 0x6163, 0x006c, 
-    IDC_PRIGRADIENT_COMBO, 0x403, 9, 0
-0x6f4d, 0x7564, 0x616c, 0x6574, "\000" 
-    IDC_PRIGRADIENT_COMBO, 0x403, 10, 0
-0x6948, 0x6867, 0x696c, 0x6867, 0x0074, 
-    IDC_PRIGRADIENT_COMBO, 0x403, 12, 0
-0x6948, 0x6867, 0x696c, 0x6867, 0x2074, 0x0032, 
-    IDC_DEPTHCOMPARE_COMBO, 0x403, 11, 0
-0x6150, 0x7373, 0x4e20, 0x7665, 0x7265, "\000" 
-    IDC_DEPTHCOMPARE_COMBO, 0x403, 10, 0
-0x6150, 0x7373, 0x4c20, 0x7365, 0x0073, 
-    IDC_DEPTHCOMPARE_COMBO, 0x403, 12, 0
-0x6150, 0x7373, 0x4120, 0x776c, 0x7961, 0x0073, 
-    IDC_DEPTHCOMPARE_COMBO, 0x403, 12, 0
-0x6150, 0x7373, 0x4c20, 0x7145, 0x6175, 0x006c, 
-    IDC_DETAILCOLOR_COMBO, 0x403, 8, 0
-0x6944, 0x6173, 0x6c62, 0x0065, 
-    IDC_DETAILCOLOR_COMBO, 0x403, 7, 0
-0x6544, 0x6174, 0x6c69, "\000" 
-    IDC_DETAILCOLOR_COMBO, 0x403, 6, 0
-0x6353, 0x6c61, 0x0065, 
-    IDC_DETAILCOLOR_COMBO, 0x403, 9, 0
-0x6e49, 0x5376, 0x6163, 0x656c, "\000" 
-    IDC_DETAILCOLOR_COMBO, 0x403, 4, 0
-0x6441, 0x0064, 
-    IDC_DETAILCOLOR_COMBO, 0x403, 4, 0
-0x7553, 0x0062, 
-    IDC_DETAILCOLOR_COMBO, 0x403, 5, 0
-0x7553, 0x5262, "\000" 
-    IDC_DETAILCOLOR_COMBO, 0x403, 6, 0
-0x6c42, 0x6e65, 0x0064, 
-    IDC_DETAILCOLOR_COMBO, 0x403, 12, 0
-0x6544, 0x6174, 0x6c69, 0x6c42, 0x6e65, 0x0064, 
-    IDC_DETAILALPHA_COMBO, 0x403, 8, 0
-0x6944, 0x6173, 0x6c62, 0x0065, 
-    IDC_DETAILALPHA_COMBO, 0x403, 7, 0
-0x6544, 0x6174, 0x6c69, "\000" 
-    IDC_DETAILALPHA_COMBO, 0x403, 6, 0
-0x6353, 0x6c61, 0x0065, 
-    IDC_DETAILALPHA_COMBO, 0x403, 9, 0
-0x6e49, 0x5376, 0x6163, 0x656c, "\000" 
-    IDC_D_COMBO, 0x403, 7, 0
-0x6f53, 0x7275, 0x6563, "\000" 
-    IDC_D_COMBO, 0x403, 12, 0
-0x6544, 0x7473, 0x6e69, 0x7461, 0x6f69, 0x006e, 
-    IDC_D_COMBO, 0x403, 5, 0
-0x655a, 0x6f72, "\000" 
-    IDC_C_COMBO, 0x403, 10, 0
-0x7253, 0x2063, 0x6c41, 0x6870, 0x0061, 
-    IDC_C_COMBO, 0x403, 11, 0
-0x6544, 0x7473, 0x4120, 0x706c, 0x6168, "\000" 
-    IDC_C_COMBO, 0x403, 4, 0
-0x6e4f, 0x0065, 
-    0
-END
-
-IDD_GAMEMTL_PS2_TEXTURES DLGINIT
-BEGIN
-    IDC_STAGE0_ANIM_COMBO, 0x403, 5, 0
-0x6f4c, 0x706f, "\000" 
-    IDC_STAGE0_ANIM_COMBO, 0x403, 10, 0
-0x6950, 0x676e, 0x502d, 0x6e6f, 0x0067, 
-    IDC_STAGE0_ANIM_COMBO, 0x403, 5, 0
-0x6e4f, 0x6563, "\000" 
-    IDC_STAGE0_ANIM_COMBO, 0x403, 7, 0
-0x614d, 0x756e, 0x6c61, "\000" 
-    IDC_STAGE0_HINT_COMBO, 0x403, 13, 0
-0x6142, 0x6573, 0x5420, 0x7865, 0x7574, 0x6572, "\000" 
-    IDC_STAGE0_HINT_COMBO, 0x403, 18, 0
-0x6d45, 0x7369, 0x6973, 0x6576, 0x4c20, 0x6769, 0x7468, 0x616d, 0x0070, 
-
-    IDC_STAGE0_HINT_COMBO, 0x403, 16, 0
-0x6e45, 0x6976, 0x6f72, 0x6d6e, 0x6e65, 0x2074, 0x614d, 0x0070, 
-    IDC_STAGE0_HINT_COMBO, 0x403, 15, 0
-0x6853, 0x6e69, 0x6e79, 0x7365, 0x2073, 0x614d, 0x6b73, "\000" 
-    IDC_STAGE1_ANIM_COMBO, 0x403, 5, 0
-0x6f4c, 0x706f, "\000" 
-    IDC_STAGE1_ANIM_COMBO, 0x403, 10, 0
-0x6950, 0x676e, 0x502d, 0x6e6f, 0x0067, 
-    IDC_STAGE1_ANIM_COMBO, 0x403, 5, 0
-0x6e4f, 0x6563, "\000" 
-    IDC_STAGE1_ANIM_COMBO, 0x403, 7, 0
-0x614d, 0x756e, 0x6c61, "\000" 
-    IDC_STAGE1_HINT_COMBO, 0x403, 13, 0
-0x6142, 0x6573, 0x5420, 0x7865, 0x7574, 0x6572, "\000" 
-    IDC_STAGE1_HINT_COMBO, 0x403, 18, 0
-0x6d45, 0x7369, 0x6973, 0x6576, 0x4c20, 0x6769, 0x7468, 0x616d, 0x0070, 
-
-    IDC_STAGE1_HINT_COMBO, 0x403, 16, 0
-0x6e45, 0x6976, 0x6f72, 0x6d6e, 0x6e65, 0x2074, 0x614d, 0x0070, 
-    IDC_STAGE1_HINT_COMBO, 0x403, 15, 0
-0x6853, 0x6e69, 0x6e79, 0x7365, 0x2073, 0x614d, 0x6b73, "\000" 
-    0
-END
-
 
 #ifndef _MAC
 /////////////////////////////////////////////////////////////////////////////
@@ -1849,8 +1234,6 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ORIG                ICON    DISCARDABLE     "Res\\orig.ico"
-IDI_DEFORMED            ICON    DISCARDABLE     "res\\orig1.ico"
 IDI_DISK                ICON    DISCARDABLE     "Res\\DISK12.ICO"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1858,8 +1241,6 @@ IDI_DISK                ICON    DISCARDABLE     "Res\\DISK12.ICO"
 // Bitmap
 //
 
-IDB_NORM                BITMAP  DISCARDABLE     "Res\\one.bmp"
-IDB_DEFORM              BITMAP  DISCARDABLE     "Res\\two.bmp"
 IDB_WW3D                BITMAP  DISCARDABLE     "Res\\ww3d.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1872,53 +1253,25 @@ BEGIN
     IDS_COPYRIGHT_NOTICE    "Copyright 1997 Westwood Studios"
     IDS_AUTHOR_NAME         "Greg Hjelstrom"
     IDS_GAMEMTL             "W3D"
-    IDS_MAP_TEXTURE         "Texture"
-    IDS_ENVMAP              "Env-Map"
     IDS_SCENE_EXPORT        "Scene Export"
     IDS_LIB_DESCRIPTION     "Westwood 3D Export Plugins"
-    IDS_FILE_OPEN_ERROR     "Unable to open file"
-    IDS_DLL_NAME            "max2w3d.dle"
-    IDS_WTM_SHORT_DESCRIPTION "Westwood Textured Mesh"
-    IDS_WTM_LONG_DESCRIPTION "Westwood Textured Mesh"
-    IDS_WHT_SHORT_DESCRIPTION "Westwood Hierarchy Tree"
-    IDS_WHT_LONG_DESCRIPTION "Westwood Hierarchy Tree"
-    IDS_WHA_SHORT_DESCRIPTION "Westwood Hierarchy Animation"
-    IDS_WHA_LONG_DESCRIPTION "Westwood Hierarchy Animation"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_WTM_FILE_EXTEN      "wtm"
-    IDS_WHT_FILE_EXTEN      "wht"
-    IDS_WHA_FILE_EXTEN      "wha"
     IDS_W3D_FILE_EXTEN      "w3d"
     IDS_W3D_LONG_DESCRIPTION "Westwood 3D Assets"
     IDS_W3D_SHORT_DESCRIPTION "Westwood 3D Assets"
     IDS_W3D_UTILITY_CLASS_NAME "W3D Tools"
     IDS_W3DMENU_CATEGORY    "Westwood Tools"
-    IDS_W3DMENU_TITLE       "W3D Tools"
     IDS_SOT                 "Supports Objects of Type"
     IDS_DIFFUSE_COLOR       "Diffuse Color"
     IDS_PARAMETERS          "Parameters"
-    IDS_TEXTURE_MAP         "Texture Map"
-    IDS_ENVIRONMENT_MAP     "Environment Map"
-    IDS_TEXMAPS             "Texture Maps"
-    IDS_AM                  "Ambient"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_SKIN_CLASS_NAME     "Westwood Skin"
-    IDS_SKIN_OBJECT_NAME    "Westwood Skin"
-    IDS_SKIN                "Westwood Skin"
-    IDS_SKIN_PARAMETERS     "Skin Parameters"
-    IDS_SKIN_INFO           "Westwood Skin Info"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
     IDS_BONE_INFLUENCE_PARAMS "Bone Influence"
-    IDS_SOT2                "Supports Objects of Type"
     IDS_SKELETON_PARAMETERS "Skeleton Parameters"
     IDS_PICK_BONE_DIALOG_TITLE "Select bones"
     IDS_PICK_BONE_BUTTON_TEXT "Ok"
@@ -1927,44 +1280,24 @@ BEGIN
     IDS_SPECULAR_COLOR      "Specular Color"
     IDS_AMBIENT_COLOR       "Ambient Color"
     IDS_EMISSIVE_COLOR      "Emissive"
-    IDS_MATERIAL_HINTS      "Material Hints"
-    IDS_PSX_OPTIONS         "Playstation Options"
-    IDS_UV_MAPPING          "UV"
-    IDS_ENVIRONMENT_MAPPING "Environment"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_DI                  "Diffuse"
-    IDS_SP                  "Specular"
-    IDS_SH                  "Shininess"
-    IDS_SS                  "Shininess Strength"
-    IDS_SI                  "Self-Illumination"
-    IDS_OP                  "Opacity"
-    IDS_FI                  "Blend"
-    IDS_BU                  "Bump"
-    IDS_RL                  "Reflection"
-    IDS_RR                  "Refraction"
     IDS_NONE                "None"
-    IDS_NOTES               "Important Info"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
     IDS_PASS_COUNT          "Material Pass Count"
-    IDS_PASS_SETTINGS       "Pass %d Settings"
     IDS_PUBLISH             "Publish"
     IDS_DISPLAY             "Display"
-    IDS_RESIZE              "Resize"
-    IDS_NO_MIPMAP           "No Mipmap"
     IDS_CLAMP_U             "Clamp U"
     IDS_CLAMP_V             "Clamp V"
     IDS_ALPHA_BITMAP        "Alpha Bitmap"
     IDS_SURFACE_TYPE        "Material Surface Type"
-    IDS_DISPLACEMENT_MAP    "Displacement Map"
     IDS_ALPHA_MODIFIER_CLASS "Alpha Modifier"
     IDS_PS2_GAMEMTL         "W3D PS2"
-    IDS_PC_TO_PS2_MAT_CONVERTER "PC to PS2 Material Converter"
     IDS_NO_LOD              "No LOD"
     IDS_W3DUTILITY_SETTINGS "W3D Export Settings"
 END
@@ -1972,9 +1305,6 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     IDS_W3DUTILITY_TOOLS    "W3D Tools"
-    IDS_GRIDSNAPMODIFIER    "Grid Snap Modifier"
-    IDS_GRIDSNAP_TITLE      "Grid Snap Settings"
-    IDS_GRID_DIMENSION      "Grid Dimension"
 END
 
 #endif    // English (U.S.) resources

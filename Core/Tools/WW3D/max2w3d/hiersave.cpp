@@ -454,17 +454,6 @@ void HierarchySaveClass::Get_Export_Coordinate_System
 			pbone = pbone->GetParentNode();
 			assert(pbone != nullptr);
 
-#if 0
-			if (pbone == nullptr) {
-
-				/*
-				** mesh isn't connected to a bone, use the root
-				*/
-				boneidx = 0;
-				pbone = node;
-				done = true;
-			}
-#endif
 		}
 	}
 

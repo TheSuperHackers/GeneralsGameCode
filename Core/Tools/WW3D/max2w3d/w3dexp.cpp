@@ -58,15 +58,13 @@
 #include "hiersave.h"
 #include "hlodsave.h"
 #include "meshcon.h"
-#include "SnapPoints.h"
-#include "w3ddlg.h"
+#include "presetexportoptionsdialog.h"
 #include "PROGRESS.h"
 #include "errclass.h"
 #include "motion.h"
 #include "util.h"
 #include "w3ddesc.h"
 #include "colboxsave.h"
-#include "nullsave.h"
 #include "dazzlesave.h"
 #include "maxworldinfo.h"
 #include "exportlog.h"
@@ -1104,8 +1102,9 @@ bool W3dExportClass::get_export_options(BOOL suppress_prompts)
 	bool retval = true;
 	if (suppress_prompts == FALSE)
 	{
-		W3dOptionsDialogClass dialog(MaxInterface,ExportInterface);
-		retval = dialog.Get_Export_Options(options);
+		PresetExportOptionsDialogClass dialog(MaxInterface, MaxInterface->GetMAXHWnd());
+		dialog.Set_Options(options);
+		retval = (dialog.Do_Modal() == IDOK);
 	}
 
 	if (suppress_prompts || retval) {
@@ -1229,31 +1228,6 @@ static bool check_lod_extensions (INodeListClass &list, INode *origin)
 	return true;
 }
 
-
-bool W3dExportClass::get_base_object_tm (Matrix3 &tm)
-{
-	INodeListClass	*origin_list = get_origin_list();
-	if (!origin_list)
-		return false;
-
-	unsigned int	i, count = origin_list->Num_Nodes();
-	INode				*base_origin = nullptr;
-	for (i = 0; i < count; i++)
-	{
-		INode *node = (*origin_list)[i];
-		if (Is_Base_Origin(node))
-		{
-			// we found origin.00, fall through
-			base_origin = node;
-			break;
-		}
-	}
-	if (!base_origin)
-		return false;
-
-	tm = base_origin->GetNodeTM(CurTime);
-	return true;
-}
 
 static DWORD WINAPI progress_callback( LPVOID arg )
 {

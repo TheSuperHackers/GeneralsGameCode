@@ -247,13 +247,6 @@ void AABTreeBuilderClass::Build_Tree(CullNodeStruct * node,int polycount,int * p
 	** will not gain us anything, just install the polys in this node and terminate
 	** the tree.
 	*/
-#if 0
-	if (sc.Cost == MAX_COST) {
-		node->PolyCount = polycount;
-		node->PolyIndices = polyindices;
-		return;
-	}
-#endif
 
 	/*
 	** Ok, split the polys

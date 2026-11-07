@@ -36,7 +36,6 @@
 
 #include <max.h>
 #include <gport.h>
-#include <hsv.h>
 #include <bmmlib.h>
 
 #include "GameMtlDlg.h"
@@ -46,7 +45,6 @@
 #include "resource.h"
 #include "w3d_file.h"
 
-static BOOL CALLBACK DisplacementMapDlgProc(HWND hwndDlg, UINT msg, WPARAM wPara,LPARAM lParam);
 static BOOL CALLBACK SurfaceTypePanelDlgProc(HWND hwndDlg, UINT msg, WPARAM wPara,LPARAM lParam);
 static BOOL CALLBACK PassCountPanelDlgProc(HWND hwndDlg, UINT msg, WPARAM wPara,LPARAM lParam);
 static BOOL CALLBACK PassCountDialogDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam,LPARAM lParam);
@@ -79,7 +77,6 @@ GameMtlDlg::GameMtlDlg(HWND hwMtlEdit, IMtlParams *imp, GameMtl *m)
 	HwndEdit = hwMtlEdit;
 	HwndPassCount = nullptr;
 	HwndSurfaceType = nullptr;
-	HwndDisplacementMap = nullptr;
 	HpalOld = nullptr;
 
 	for (int i=0; i<MAX_PASSES; i++) {
@@ -114,10 +111,6 @@ GameMtlDlg::~GameMtlDlg()
 		ReleaseDC(HwndPassCount,hdc);
 	}
 
-	#ifdef WANT_DISPLACEMENT_MAPS
-		TheMtl->Set_Flag(GAMEMTL_DISPLACEMENT_ROLLUP_OPEN,IParams->IsRollupPanelOpen(HwndDisplacementMap));
-	#endif //WANT_DISPLACEMENT_MAPS
-
 	TheMtl->Set_Flag(GAMEMTL_SURFACE_ROLLUP_OPEN,IParams->IsRollupPanelOpen(HwndSurfaceType));
 	TheMtl->Set_Flag(GAMEMTL_PASSCOUNT_ROLLUP_OPEN,IParams->IsRollupPanelOpen(HwndPassCount));
 	TheMtl->RollScroll = IParams->GetRollupScrollPos();
@@ -125,12 +118,6 @@ GameMtlDlg::~GameMtlDlg()
 	IParams->UnRegisterDlgWnd(HwndSurfaceType);
 	IParams->DeleteRollupPage(HwndSurfaceType);
 	HwndSurfaceType = nullptr;
-
-	#ifdef WANT_DISPLACEMENT_MAPS
-		IParams->UnRegisterDlgWnd(HwndDisplacementMap);
-		IParams->DeleteRollupPage(HwndDisplacementMap);
-		HwndDisplacementMap = nullptr;
-	#endif //#ifdef WANT_DISPLACEMENT_MAPS
 
 	IParams->UnRegisterDlgWnd(HwndPassCount);
 	IParams->DeleteRollupPage(HwndPassCount);
@@ -178,7 +165,7 @@ void GameMtlDlg::SetThing(ReferenceTarget *m)
 {
 	assert (m);
 	assert (m->SuperClassID()==MATERIAL_CLASS_ID);
-	assert ((m->ClassID()==GameMaterialClassID) || (m->ClassID()==PS2GameMaterialClassID));
+	assert (m->ClassID()==GameMaterialClassID);
 	assert (TheMtl);
 
 	int pass;
@@ -248,10 +235,6 @@ void GameMtlDlg::ReloadDialog()
 	*/
 	::SendMessage (HwndSurfaceType, WM_USER+101, 0, 0L);
 
-	#ifdef WANT_DISPLACEMENT_MAPS
-		::SendMessage (HwndDisplacementMap, WM_USER+101, 0, 0L);
-	#endif //WANT_DISPLACEMENT_MAPS
-
 	/*
 	** Init the pass count panel
 	*/
@@ -305,54 +288,7 @@ void GameMtlDlg::Invalidate()
 {
 	InvalidateRect(HwndSurfaceType,nullptr,0);
 
-	#ifdef WANT_DISPLACEMENT_MAPS
-		InvalidateRect(HwndDisplacementMap,nullptr,0);
-	#endif //WANT_DISPLACEMENT_MAPS
-
 	InvalidateRect(HwndPassCount,nullptr,0);
-}
-
-BOOL	GameMtlDlg::DisplacementMapProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	switch (message)
-	{
-
-		case WM_INITDIALOG:
-			//SetupIntSpinner(hDlg, IDC_AMOUNT_SPIN, IDC_AMOUNT_EDIT, -999, 999, 0);
-			/* no break */
-
-		case WM_USER + 101:
-		{
-			SetDlgItemInt (hDlg, IDC_AMOUNT_EDIT, TheMtl->Get_Displacement_Amount () * 100, TRUE);
-			SetupIntSpinner(hDlg, IDC_AMOUNT_SPIN, IDC_AMOUNT_EDIT, -999, 999, TheMtl->Get_Displacement_Amount () * 100);
-
-			Texmap *map = TheMtl->Get_Displacement_Map ();
-			if (map != nullptr) {
-				SetDlgItemText (hDlg, IDC_TEXTURE_BUTTON, map->GetFullName ());
-			}
-		}
-		break;
-
-		case CC_SPINNER_CHANGE:
-			{
-				ISpinnerControl *control = (ISpinnerControl *)lParam;
-				TheMtl->Set_Displacement_Amount (((float)control->GetIVal ()) / 100.0F);
-			}
-			break;
-
-		case WM_COMMAND:
-			switch(LOWORD(wParam))
-			{
-			case IDC_TEXTURE_BUTTON:
-				if(HIWORD(wParam) == BN_CLICKED)
-				{
-					PostMessage(HwndEdit, WM_TEXMAP_BUTTON, TheMtl->Get_Displacement_Map_Index (), (LPARAM)TheMtl);
-				}
-			}
-			break;
-	}
-
-	return FALSE;
 }
 
 BOOL	GameMtlDlg::SurfaceTypeProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
@@ -486,26 +422,6 @@ BOOL	GameMtlDlg::PassCountProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 	}
 
 	return FALSE;
-}
-
-static BOOL CALLBACK DisplacementMapDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam,LPARAM lParam)
-{
-	GameMtlDlg * theDlg;
-	if (msg == WM_INITDIALOG) {
-		theDlg = (GameMtlDlg*)lParam;
-		theDlg->HwndDisplacementMap = hwndDlg;
-		SetWindowLong(hwndDlg, GWL_USERDATA,lParam);
-	} else {
-		if ((theDlg = (GameMtlDlg *)GetWindowLong(hwndDlg, GWL_USERDATA) ) == nullptr) {
-			return FALSE;
-		}
-	}
-
-	theDlg->IsActive = 1;
-	BOOL res = theDlg->DisplacementMapProc(hwndDlg,msg,wParam,lParam);
-	theDlg->IsActive = 0;
-
-	return res;
 }
 
 static BOOL CALLBACK SurfaceTypePanelDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam,LPARAM lParam)
@@ -651,17 +567,6 @@ void GameMtlDlg::Build_Dialog()
 		(LPARAM)this,
 		TheMtl->Get_Flag(GAMEMTL_SURFACE_ROLLUP_OPEN) ? 0:APPENDROLL_CLOSED
 	);
-
-	#ifdef WANT_DISPLACEMENT_MAPS
-		HwndDisplacementMap = IParams->AddRollupPage(
-			AppInstance,
-			MAKEINTRESOURCE(IDD_GAMEMTL_DISPLACEMENT_MAP),
-			DisplacementMapDlgProc,
-			Get_String(IDS_DISPLACEMENT_MAP),
-			(LPARAM)this,
-			TheMtl->Get_Flag(GAMEMTL_DISPLACEMENT_ROLLUP_OPEN) ? 0:APPENDROLL_CLOSED
-		);
-	#endif //WANT_DISPLACEMENT_MAPS
 
 	HwndPassCount = IParams->AddRollupPage(
 		AppInstance,

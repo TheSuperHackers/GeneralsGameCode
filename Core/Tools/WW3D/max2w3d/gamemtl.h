@@ -106,14 +106,7 @@ class GameMapsClass;
 
 extern Class_ID GameMaterialClassID;
 extern ClassDesc * Get_Game_Material_Desc();
-
-// MLL
-// For Playstation 2 materials.
-extern Class_ID PS2GameMaterialClassID;
 extern ClassDesc * Get_PS2_Game_Material_Desc();
-
-extern Class_ID PCToPS2MaterialClassID;
-extern ClassDesc * Get_PS2_Material_Conversion();
 
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -128,12 +121,6 @@ class GameMtl: public Mtl
 {
 
 public:
-
-		enum ShaderTypeEnum
-		{
-			STE_PC_SHADER,
-			STE_PS2_SHADER,
-		};
 
 		GameMtl(BOOL loading = FALSE);
 		~GameMtl();
@@ -233,7 +220,6 @@ public:
 
 		int					Get_Texture_Enable(int pass,int stage);
 		int					Get_Texture_Publish(int pass,int stage);
-		int					Get_Texture_Resize(int pass,int stage);		// NOTE: obsolete, replaced by Get_Texture_No_LOD
 		int					Get_Texture_No_Mipmap(int pass,int stage);	// NOTE: obsolete, replaced by Get_Texture_No_LOD
 		int					Get_Texture_Clamp_U(int pass,int stage);
 		int					Get_Texture_Clamp_V(int pass,int stage);
@@ -245,9 +231,6 @@ public:
 		int					Get_Texture_Frame_Count(int pass,int stage);
 		int					Get_Texture_Anim_Type(int pass,int stage);
 		Texmap *				Get_Texture(int pass,int stage);
-		Texmap *				Get_Displacement_Map() const								{ return DisplacementMap; }
-		float					Get_Displacement_Amount() const							{ return DisplacementAmt; }
-		int					Get_Displacement_Map_Index() const;
 		int					Get_Map_Channel(int pass,int stage);
 
 		void					Set_Current_Page(int pass,int page)							{ CurPage[pass] = page; }
@@ -279,8 +262,6 @@ public:
 
 		void					Set_Texture_Enable(int pass,int stage,bool val);
 		void					Set_Texture_Publish(int pass,int stage,bool val);
-		void					Set_Texture_Resize(int pass,int stage,bool val);		// NOTE: obsolete: replaced by Set_Texture_No_LOD
-		void					Set_Texture_No_Mipmap(int pass,int stage,bool val);	// NOTE: obsolete: replaced by Set_Texture_No_LOD
 		void					Set_Texture_Clamp_U(int pass,int stage,bool val);
 		void					Set_Texture_Clamp_V(int pass,int stage,bool val);
 		void					Set_Texture_No_LOD(int pass,int stage,bool val);
@@ -291,7 +272,6 @@ public:
 		void					Set_Texture_Frame_Count(int pass,int stage,int val);
 		void					Set_Texture_Anim_Type(int pass,int stage,int val);
 		void					Set_Texture(int pass,int stage,Texmap * tex);
-		void					Set_Displacement_Amount(float amount)					{ DisplacementAmt = amount; Notify_Changed (); }
 
 		void					Set_Map_Channel(int pass,int stage,int channel);
 
@@ -304,15 +284,6 @@ public:
 		int					pass_stage_to_texmap_index(int pass,int stage);
 		void					texmap_index_to_pass_stage(int index,int * set_pass,int * set_stage);
 
-		// Set and get the type of shader, PC or PS2.
-		// MLL
-		int					Get_Shader_Type()						{return (ShaderType);}
-		void					Set_Shader_Type(int shadertype)	{ShaderType = shadertype;}
-
-		// Approximate the PS2 shader on the PC.
-		int					Compute_PC_Shader_From_PS2_Shader(int pass);
-		int					Compute_PS2_Shader_From_PC_Shader(int pass);
-
 		// IML: Get/set substitute material.
 		Mtl*					Substitute_Material()				{return (SubstituteMaterial);}
 		void					Set_Substitute_Material (Mtl *m) {SubstituteMaterial = m;}
@@ -323,9 +294,6 @@ private:
 		int					pass_ref_index(int pass)							{ return REF_PASS_PARAMETERS + pass; }
 
 		void					update_viewport_display();
-
-		// Do the shade functions specific to the Playstation 2.
-		void					ps2_shade(ShadeContext& sc);
 
 
 		unsigned int		SurfaceType;
@@ -346,8 +314,6 @@ private:
 		Texmap *				DisplacementMap;
 		float					DisplacementAmt;
 
-		// MLL
-		int					ShaderType;
 		enum
 		{
 			REF_MAPS = 0,					// obsolete, gamemaps object
@@ -359,8 +325,11 @@ private:
 
 		Mtl *SubstituteMaterial;		// IML: Temporary material used during game to standard material conversion and vice-versa.
 
+		bool IsPS2GameMaterial;				// Created by PS2GameMaterialClassDesc and not yet converted by GameMtlPostLoad.
+
 		friend class GameMtlDlg;
 		friend class GameMtlPostLoad;
+		friend class PS2GameMaterialClassDesc;
 };
 
 Mtl * CreateGameMtl();
