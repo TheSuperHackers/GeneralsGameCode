@@ -992,6 +992,19 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 		//	playbackCRC, newCRC, TheGameLogic->getFrame()-m_crcInfo.GetQueueSize()-1, playerIndex));
 		if (TheGameLogic->getFrame() > 0 && newCRC != playbackCRC && !m_crcInfo.sawCRCMismatch())
 		{
+			// TheSuperHackers @info helmutbuhler 03/04/2025
+			// Note: We subtract the queue size from the frame number. This way we calculate the correct frame
+			// the mismatch first happened in case the NetCRCInterval is set to 1 during the game.
+			const UnsignedInt mismatchFrame = TheGameLogic->getFrame() - m_crcInfo.GetQueueSize() - 1;
+
+			if (TheDebugIgnoreReplaySyncErrors)
+			{
+				DEBUG_LOG(("Replay CRC mismatch ignored\nInGame:%8.8X Replay:%8.8X\nFrame:%d",
+					playbackCRC, newCRC, mismatchFrame));
+				printf("CRC Mismatch in Frame %d (ignored) InGame:%8.8X Replay:%8.8X\n", mismatchFrame, playbackCRC, newCRC);
+				return;
+			}
+
 			//Kris: Patch 1.01 November 10, 2003 (integrated changes from Matt Campbell)
 			// Since we don't seem to have any *visible* desyncs when replaying games, but get this warning
 			// virtually every replay, the assumption is our CRC checking is faulty.  Since we're at the
@@ -1001,11 +1014,6 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 			// TheSuperHackers @tweak helmutbuhler 03/04/2025
 			// More than 20 years later, but finally fixed and re-enabled!
 			TheInGameUI->message("GUI:CRCMismatch");
-
-			// TheSuperHackers @info helmutbuhler 03/04/2025
-			// Note: We subtract the queue size from the frame number. This way we calculate the correct frame
-			// the mismatch first happened in case the NetCRCInterval is set to 1 during the game.
-			const UnsignedInt mismatchFrame = TheGameLogic->getFrame() - m_crcInfo.GetQueueSize() - 1;
 
 			// Now also prints a UI message for it.
 			const UnicodeString mismatchDetailsStr = TheGameText->FETCH_OR_SUBSTITUTE("GUI:CRCMismatchDetails", L"InGame:%8.8X Replay:%8.8X Frame:%d");
