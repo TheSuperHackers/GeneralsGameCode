@@ -461,6 +461,16 @@ Bool Particle::update()
 		return true;
 	}
 
+#if PRESERVE_RETAIL_PARTICLES
+	// The original implementation integrated a particle in the logic update of its system. A slave system updates
+	// before its master, so the particles that the master creates for it began their course with their first logic
+	// update one frame after their creation. That logic update is skipped like the one on the creation frame.
+	if (m_system->getMaster() != nullptr && frameCount == 1)
+	{
+		return true;
+	}
+#endif
+
 #if PARTICLE_USE_XY_ROTATION
 	m_angularRateX *= m_angularDamping;
 	m_angularRateY *= m_angularDamping;
@@ -531,6 +541,12 @@ Bool Particle::update()
 // ------------------------------------------------------------------------------------------------
 void Particle::draw(Real timeScale)
 {
+#if PRESERVE_RETAIL_PARTICLES
+	// A slave particle is not integrated before its first logic update, one frame after its creation.
+	if (m_system->getMaster() != nullptr && getElapsedFrames() == 0)
+		return;
+#endif
+
 	// integrate velocity into position
 	const Coord3D *driftVel = m_system->getDriftVelocity();
 	m_pos.x += (m_vel.x + driftVel->x) * timeScale;
