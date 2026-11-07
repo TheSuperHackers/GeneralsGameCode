@@ -41,6 +41,7 @@
 #include "ww3d.h"
 #include "rinfo.h"
 #include "dx8wrapper.h"
+#include "Renderer.h"
 #include "sortingrenderer.h"
 #include "WWMath/vp.h"
 #include "WWMath/Vector3i.h"
@@ -218,11 +219,11 @@ void SegLineRendererClass::Render
 )
 {
 	Matrix4x4 view;
-	DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
+	Renderer::Get_Transform(RB_TRANSFORM_VIEW,view);
 
 	Matrix4x4 identity(true);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,identity);
-	DX8Wrapper::Set_Transform(D3DTS_VIEW,identity);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,identity);
+	Renderer::Set_Transform(RB_TRANSFORM_VIEW,identity);
 
 	/*
 	** Handle texture UV offset animation (done once for entire line).
@@ -1191,7 +1192,7 @@ void SegLineRendererClass::Render
 
 	}
 
-	DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
+	Renderer::Set_Transform(RB_TRANSFORM_VIEW,view);
 
 }
 

@@ -42,6 +42,7 @@
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
 #include "dx8wrapper.h"
+#include "Renderer.h"
 #include "vertmaterial.h"
 #include "texture.h"
 #include "d3d8.h"
@@ -603,8 +604,8 @@ void SortingRendererClass::Flush()
 	WWPROFILE("SortingRenderer::Flush");
 	Matrix4x4 old_view;
 	Matrix4x4 old_world;
-	DX8Wrapper::Get_Transform(D3DTS_VIEW,old_view);
-	DX8Wrapper::Get_Transform(D3DTS_WORLD,old_world);
+	Renderer::Get_Transform(RB_TRANSFORM_VIEW,old_view);
+	Renderer::Get_Transform(RB_TRANSFORM_WORLD,old_world);
 
 	// TheSuperHackers @perf stephanmeesters 04/07/2026
 	// Splice nodes that have no bounding information (Z=0.0) at the correct location into the sorted list.
@@ -644,8 +645,8 @@ void SortingRendererClass::Flush()
 	DynamicVBAccessClass::_Reset(false);
 
 
-	DX8Wrapper::Set_Transform(D3DTS_VIEW,old_view);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,old_world);
+	Renderer::Set_Transform(RB_TRANSFORM_VIEW,old_view);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,old_world);
 
 }
 

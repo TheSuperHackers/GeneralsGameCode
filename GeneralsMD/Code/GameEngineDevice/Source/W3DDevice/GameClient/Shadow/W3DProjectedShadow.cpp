@@ -37,6 +37,7 @@
 #include "WW3D2/camera.h"
 #include "WW3D2/light.h"
 #include "WW3D2/dx8wrapper.h"
+#include "WW3D2/Renderer.h"
 #include "WW3D2/hlod.h"
 #include "WW3D2/mesh.h"
 #include "WW3D2/meshmdl.h"
@@ -659,7 +660,7 @@ void TestBlendRender(RenderInfoClass & rinfo)
 	DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaqueShader);
 
 	Matrix3D tm(1);	//identity
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);
 
 	//grass
 	RenderVBTile(grass,580.0f,480.0f,0.0f,0.0f);	RenderVBTile(grass,590.0f,480.0f,0.25f,0.0f);
