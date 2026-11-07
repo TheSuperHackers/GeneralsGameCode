@@ -208,6 +208,9 @@ Bool MissileLauncherBuildingUpdate::initiateIntentToDoSpecialPower( const Specia
 		us->getSpecialPowerModule(specialPowerTemplate)->setReadyFrame(0xFFFFFFFF);
 		return FALSE;
 	}
+#else
+	if (!m_specialPowerModule)
+		return FALSE;
 #endif
 
 	if( m_specialPowerModule->getSpecialPowerTemplate() != specialPowerTemplate )
