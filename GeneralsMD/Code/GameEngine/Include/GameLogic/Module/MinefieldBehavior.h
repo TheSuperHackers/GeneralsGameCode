@@ -110,6 +110,9 @@ public:
 	// Minefield specific methods
 	virtual void setScootParms(const Coord3D& start, const Coord3D& end) override;
 	virtual void disarm() override;
+	virtual void setCovered(Bool covered) override;
+	virtual Bool isCovered() const override { return m_covered; }
+	virtual Bool isUnderStructure(const Object* ignore) const override;
 
 private:
 
@@ -137,8 +140,12 @@ private:
 	Bool					m_ignoreDamage;
 	Bool					m_regenerates;
 	Bool					m_draining;
+	Bool					m_covered;
+	Bool					m_coverSetIndestructible;
+	Bool					m_recheckCover;
 
 	void detonateOnce(const Coord3D& position);
 	UpdateSleepTime calcSleepTime();
+	void spendMines();
 
 };
