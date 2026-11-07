@@ -83,6 +83,19 @@ void FlightDeckBehaviorModuleData::parseRunwayStrip( INI* ini, void *instance, v
 }
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @bugfix CryoTheRenegade 06/11/2026 A negative space count makes buildInfo reserve a huge vector.
+static void parseNumSpacesPerRunway( INI* ini, void* /*instance*/, void* store, const void* /*userData*/ )
+{
+	const Int value = INI::scanInt( ini->getNextToken() );
+	if( value < 0 )
+	{
+		DEBUG_LOG(( "FlightDeckBehavior - NumSpacesPerRunway %d is negative, using 0", value ));
+	}
+
+	*(Int*)store = value < 0 ? 0 : value;
+}
+
+//-------------------------------------------------------------------------------------------------
 void FlightDeckBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 	AIUpdateModuleData::buildFieldParse(p);
@@ -90,7 +103,7 @@ void FlightDeckBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 	static const FieldParse dataFieldParse[] =
 	{
 		{ "NumRunways",							INI::parseInt,										nullptr, offsetof( FlightDeckBehaviorModuleData, m_numCols ) },
-		{ "NumSpacesPerRunway",			INI::parseInt,										nullptr, offsetof( FlightDeckBehaviorModuleData, m_numRows ) },
+		{ "NumSpacesPerRunway",			parseNumSpacesPerRunway,									nullptr, offsetof( FlightDeckBehaviorModuleData, m_numRows ) },
 
 		{ "Runway1Spaces",					INI::parseAsciiStringVector,			nullptr, offsetof( FlightDeckBehaviorModuleData, m_runwayInfo[ 0 ].m_spacesBoneNames ) },
 		{ "Runway1Takeoff",					parseRunwayStrip,									nullptr, offsetof( FlightDeckBehaviorModuleData, m_runwayInfo[ 0 ].m_takeoffBoneNames ) },
@@ -160,6 +173,13 @@ FlightDeckBehavior::~FlightDeckBehavior()
 }
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @bugfix CryoTheRenegade 05/11/2026 The front row has one space per runway only when every runway has spaces.
+static Int getFrontSpaceCount( const FlightDeckBehaviorModuleData* data, size_t spaceCount )
+{
+	return data->m_numCols < (Int)spaceCount ? data->m_numCols : (Int)spaceCount;
+}
+
+//-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void FlightDeckBehavior::buildInfo(Bool createUnits)
 {
@@ -176,13 +196,25 @@ void FlightDeckBehavior::buildInfo(Bool createUnits)
 
 	//ProductionUpdateInterface* pu = getObject()->getProductionUpdateInterface();
 
-	m_spaces.reserve( data->m_numRows * data->m_numCols );
+	// TheSuperHackers @bugfix CryoTheRenegade 05/11/2026 Never build more rows than every runway has space bones for.
+	Int numRows = data->m_numRows;
+	for( Int runway = 0; runway < data->m_numCols; runway++ )
+	{
+		const Int numSpaceBones = (Int)data->m_runwayInfo[ runway ].m_spacesBoneNames.size();
+		if( numRows > numSpaceBones )
+		{
+			DEBUG_LOG(( "FlightDeckBehavior - Runway %d has %d spaces, fewer than NumSpacesPerRunway %d", runway + 1, numSpaceBones, data->m_numRows ));
+			numRows = numSpaceBones;
+		}
+	}
+
+	m_spaces.reserve( numRows * data->m_numCols );
 
 	//Initialize the spaces that planes will eventually be assigned to for parking purposes
 	FlightDeckInfo flightDeckInfo;
 
 	//We want to sort the spaces so that we have runway 1 space 1, runway 2 space 1, R1S2, R2S2, R1S3...
-	for( Int row = 0; row < data->m_numRows; row++ )
+	for( Int row = 0; row < numRows; row++ )
 	{
 		for( Int col = 0; col < data->m_numCols; col++ )
 		{
@@ -648,7 +680,7 @@ Bool FlightDeckBehavior::reserveRunway(ObjectID id, Bool forLanding)
 	{
 		//Only look at the front spaces for takeoff. You can't take off from the back!
 		const FlightDeckBehaviorModuleData *data = getFlightDeckBehaviorModuleData();
-		for( Int i = 0; i < data->m_numCols; i++ )
+		for( Int i = 0; i < getFrontSpaceCount( data, m_spaces.size() ); i++ )
 		{
 			if( m_spaces[ i ].m_objectInSpace == id )
 			{
@@ -814,7 +846,7 @@ Bool FlightDeckBehavior::isInPositionToTakeoff( const Object &jet ) const
 	const FlightDeckBehaviorModuleData *data = getFlightDeckBehaviorModuleData();
 	if( ai )
 	{
-		for( int i = 0; i < data->m_numCols; i++ )
+		for( int i = 0; i < getFrontSpaceCount( data, m_spaces.size() ); i++ )
 		{
 			if( m_spaces[ i ].m_objectInSpace == jet.getID() )
 			{
@@ -1248,7 +1280,7 @@ UpdateSleepTime FlightDeckBehavior::update()
 	Drawable *draw = getObject()->getDrawable();
 
 	//Check for timer expiry -- are we allowed to launch the next wave yet?
-	for( int i = 0; i < data->m_numCols; i++ )
+	for( int i = 0; i < getFrontSpaceCount( data, m_spaces.size() ); i++ )
 	{
 		Object *jet = TheGameLogic->findObjectByID( m_spaces[ i ].m_objectInSpace );
 		if( jet && !isAbleToGiveUpParkingSpace( jet ) && isInPositionToTakeoff( *jet ) && hasTakeoffOrders() )
