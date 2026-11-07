@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <string.h>
+
 inline Char getNativePathSeparator()
 {
 #ifdef _WIN32
@@ -100,6 +102,22 @@ template <typename T> T* getFileName(T* path)
 {
 	T* lastSeparator = getLastPathSeparator(path);
 	return lastSeparator ? lastSeparator + 1 : path;
+}
+
+inline bool appendPathSeparator(char* path, size_t size)
+{
+	const size_t len = strlen(path);
+	if (len == 0 || isPathSeparator(path[len - 1]))
+	{
+		return true;
+	}
+	if (len + 1 >= size)
+	{
+		return false;
+	}
+	path[len] = getNativePathSeparator();
+	path[len + 1] = '\0';
+	return true;
 }
 
 // Returns null when the file name has no extension, ignoring dots in directory names.
