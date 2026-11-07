@@ -363,6 +363,9 @@ public:
 
 	virtual void setFullyObscuredByShroud(Bool fullyObscured) override;
 	virtual void setTerrainDecal(TerrainDecalType type) override;
+	// TheSuperHackers @feature Selection ring, kept in its own slot so it does not evict the
+	// horde or chem suit decal while a unit is selected.
+	virtual void setSelectionDecal(Bool enable, Real radius) override;
 
 	virtual Bool isVisible() const override;
 	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) override;
@@ -501,6 +504,12 @@ private:
 	RenderObjClass*								m_renderObject;										///< W3D Render object for this drawable
 	Shadow*												m_shadow;													///< Updates/Renders shadows of this object
 	Shadow*												m_terrainDecal;
+	// TheSuperHackers @feature Selection ring decal, independent of m_terrainDecal. The wanted
+	// state is remembered separately so the ring survives render object rebuilds - a damage
+	// state or upgrade swaps the model while the object stays selected.
+	Shadow*												m_selectionDecal;
+	Bool													m_selectionDecalWanted;
+	Real													m_selectionDecalRadius;
 	TerrainTracksRenderObjClass*	m_trackRenderObject;							///< This is rendered under object
 	ParticleSystemIDVec						m_particleSystemIDs;							///< The ID numbers of the particle systems currently running.
 	std::vector<ModelConditionInfo::HideShowSubObjInfo>		m_subObjectVec;

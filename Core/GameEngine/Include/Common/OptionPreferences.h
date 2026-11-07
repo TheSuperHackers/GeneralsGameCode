@@ -76,6 +76,7 @@ public:
 	Real getScrollFactor();
 	Bool getDrawScrollAnchor();
 	Bool getMoveScrollAnchor();
+	Bool getSelectionCircleEnabled() const;
 	Bool getCursorCaptureEnabledInWindowedGame() const;
 	Bool getCursorCaptureEnabledInWindowedMenu() const;
 	Bool getCursorCaptureEnabledInFullscreenGame() const;
