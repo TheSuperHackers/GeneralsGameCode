@@ -33,7 +33,7 @@
 #include "Lib/trig.h"
 
 #if USE_DETERMINISTIC_MATH
-#include "gmath.h"
+#include <gmath.h>
 #endif
 
 Real Sin(Real x)

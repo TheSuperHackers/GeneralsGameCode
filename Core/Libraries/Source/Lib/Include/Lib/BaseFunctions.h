@@ -21,6 +21,10 @@
 #include <Utility/bit_adapter.h>
 #include "BaseDefines.h"
 
+#if USE_DETERMINISTIC_MATH
+#include <gmath.h>
+#endif
+
 //-----------------------------------------------------------------------------
 inline Real rad2deg(Real rad) { return rad * (180/PI); }
 inline Real deg2rad(Real rad) { return rad * (PI/180); }
@@ -46,8 +50,11 @@ __forceinline long fast_float2long_round(float f)
 	return i;
 }
 
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
 // super fast float trunc routine, works always (independent of any FPU modes)
 // code courtesy of Martin Hoffesommer (grin)
+// TheSuperHackers @info The shift count wraps at 32, so magnitudes of 2^32 and larger lose
+// bits that are not fractional, and NaN becomes infinity. Retail Zero Hour depends on these results.
 __forceinline float fast_float_trunc(float f)
 {
 #if defined(_MSC_VER) && _MSC_VER < 1300
@@ -75,6 +82,10 @@ __forceinline float fast_float_trunc(float f)
 }
 
 // same here, fast floor function
+// TheSuperHackers @info Subtracting almost 1 only floors correctly if the FPU rounds toward zero, but the game
+// rounds to nearest (see setFPMode). So negative whole numbers above -2^24 return n-1, for example -2 returns -3.
+// Negative values closer to zero than about 3e-8 also return 0 instead of -1.
+// Retail Zero Hour depends on these results.
 __forceinline float fast_float_floor(float f)
 {
   static unsigned almost1=(126<<23)|0x7fffff;
@@ -84,6 +95,10 @@ __forceinline float fast_float_floor(float f)
 }
 
 // same here, fast ceil function
+// TheSuperHackers @info Adding almost 1 only ceils correctly if the FPU rounds toward zero, but the game
+// rounds to nearest (see setFPMode). So positive whole numbers below 2^24 return n+1, for example 2 returns 3.
+// Positive values closer to zero than about 3e-8 also return 0 instead of 1.
+// Retail Zero Hour depends on these results.
 __forceinline float fast_float_ceil(float f)
 {
   static unsigned almost1=(126<<23)|0x7fffff;
@@ -91,19 +106,21 @@ __forceinline float fast_float_ceil(float f)
     f+=std::bit_cast<float>(almost1);
   return fast_float_trunc(f);
 }
+#endif // RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
 
-// once we've ceiled/floored, trunc and round are identical, and currently, round is faster... (srj)
-#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
-#define REAL_TO_INT_CEIL(x)				(fast_float2long_round(ceilf(x)))
-#define REAL_TO_INT_FLOOR(x)			(fast_float2long_round(floorf(x)))
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
+	// once we've ceiled/floored, trunc and round are identical, and currently, round is faster... (srj)
+	#define REAL_TO_INT_CEIL(x) (fast_float2long_round(fast_float_ceil(x)))
+	#define REAL_TO_INT_FLOOR(x) (fast_float2long_round(fast_float_floor(x)))
 #else
-#define REAL_TO_INT_CEIL(x)				(fast_float2long_round(fast_float_ceil(x)))
-#define REAL_TO_INT_FLOOR(x)			(fast_float2long_round(fast_float_floor(x)))
+	#if USE_DETERMINISTIC_MATH
+		#define REAL_TO_INT_CEIL(x) (fast_float2long_round(gm_ceilf(x)))
+		#define REAL_TO_INT_FLOOR(x) (fast_float2long_round(gm_floorf(x)))
+	#else
+		#define REAL_TO_INT_CEIL(x) (fast_float2long_round(ceilf(x)))
+		#define REAL_TO_INT_FLOOR(x) (fast_float2long_round(floorf(x)))
+	#endif
 #endif
-
-#define FAST_REAL_TRUNC(x)        fast_float_trunc(x)
-#define FAST_REAL_CEIL(x)         fast_float_ceil(x)
-#define FAST_REAL_FLOOR(x)        fast_float_floor(x)
 
 //-------------------------------------------------------------------------------------------------
 // Checking whether a size matches the bit flags count from an enum definition:
