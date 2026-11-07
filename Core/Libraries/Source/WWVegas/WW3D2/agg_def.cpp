@@ -346,7 +346,7 @@ AggregateDefClass::Load_Assets (const char *passet_name)
 		char path[MAX_PATH];
 		::GetCurrentDirectory (sizeof (path), path);
 
-		if (!appendPathSeparator (path, ARRAY_SIZE (path))) {
+		if (!ensureTrailingSeparatorInPath (path, ARRAY_SIZE (path)).ok) {
 			return false;
 		}
 

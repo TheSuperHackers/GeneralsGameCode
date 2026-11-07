@@ -129,7 +129,7 @@ void SaveMap::populateMapListbox( Bool systemMaps )
 		strcpy(dirBuf, ".\\Maps\\");
 	else
 		snprintf(dirBuf, ARRAY_SIZE(dirBuf), "%sMaps\\", TheGlobalData->getPath_UserData().str());
-	if (!appendPathSeparator(dirBuf, ARRAY_SIZE(dirBuf))) {
+	if (!ensureTrailingSeparatorInPath(dirBuf, ARRAY_SIZE(dirBuf)).ok) {
 		return;
 	}
 	CListBox *pList = (CListBox *)this->GetDlgItem(IDC_SAVE_LIST);

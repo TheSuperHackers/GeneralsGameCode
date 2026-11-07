@@ -418,7 +418,7 @@ void WorldHeightMapEdit::loadDirectoryOfImages(const char *pFilePath)
 	char				fileBuf[_MAX_PATH];
 
 	strlcpy(dirBuf, pFilePath, ARRAY_SIZE(dirBuf));
-	if (!appendPathSeparator(dirBuf, ARRAY_SIZE(dirBuf))) {
+	if (!ensureTrailingSeparatorInPath(dirBuf, ARRAY_SIZE(dirBuf)).ok) {
 		return;
 	}
 

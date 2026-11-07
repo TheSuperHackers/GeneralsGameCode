@@ -20,8 +20,6 @@
 
 #pragma once
 
-#include <string.h>
-
 inline Char getNativePathSeparator()
 {
 #ifdef _WIN32
@@ -104,22 +102,6 @@ template <typename T> T* getFileName(T* path)
 	return lastSeparator ? lastSeparator + 1 : path;
 }
 
-inline bool appendPathSeparator(char* path, size_t size)
-{
-	const size_t len = strlen(path);
-	if (len == 0 || isPathSeparator(path[len - 1]))
-	{
-		return true;
-	}
-	if (len + 1 >= size)
-	{
-		return false;
-	}
-	path[len] = getNativePathSeparator();
-	path[len + 1] = '\0';
-	return true;
-}
-
 // Returns null when the file name has no extension, ignoring dots in directory names.
 template <typename T> T* getExtension(T* path)
 {
@@ -132,4 +114,36 @@ template <typename T> T* getExtension(T* path)
 			lastDot = nullptr;
 	}
 	return lastDot;
+}
+
+struct EnsureTrailingSeparatorInPathResult
+{
+	bool ok;
+	size_t length;
+};
+
+// Appends the native path separator unless the path is empty or already ends with a separator.
+// Fails when the buffer has no room for the separator. Returns the resulting path length.
+template <typename T> EnsureTrailingSeparatorInPathResult ensureTrailingSeparatorInPath(T* path, size_t size)
+{
+	EnsureTrailingSeparatorInPathResult result;
+	result.ok = true;
+	result.length = 0;
+	while (path[result.length] != 0)
+	{
+		++result.length;
+	}
+	if (result.length == 0 || isPathSeparator(path[result.length - 1]))
+	{
+		return result;
+	}
+	if (result.length + 1 >= size)
+	{
+		result.ok = false;
+		return result;
+	}
+	path[result.length] = getNativePathSeparator();
+	path[result.length + 1] = 0;
+	++result.length;
+	return result;
 }

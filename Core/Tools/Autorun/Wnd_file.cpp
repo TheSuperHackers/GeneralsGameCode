@@ -274,7 +274,7 @@ void Delete_Msg_File ()
 	//----------------------------------------------------------------------
 //	strcat( strcpy( DebugFile, ".\\" ), DEBUG_FILE );
 	GetWindowsDirectory( DebugFile, MAX_PATH );
-	if ( !appendPathSeparator( DebugFile, ARRAY_SIZE( DebugFile ) ) ) {
+	if ( !ensureTrailingSeparatorInPath( DebugFile, ARRAY_SIZE( DebugFile ) ).ok ) {
 		return;
 	}
 	strcat( DebugFile, DEBUG_FILE );
