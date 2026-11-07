@@ -886,6 +886,19 @@ Bool OptionPreferences::getShowMoneyPerMinute() const
 	return FALSE;
 }
 
+Bool OptionPreferences::getShroudInterpolation() const
+{
+	OptionPreferences::const_iterator it = find("ShroudInterpolation");
+	if (it == end())
+		return TheGlobalData->m_shroudInterpolation;
+
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
+		return TRUE;
+	}
+	return FALSE;
+}
+
 Real OptionPreferences::getGameWindowTransitionSpeedMultiplier() const
 {
 	OptionPreferences::const_iterator it = find("GameWindowTransitionSpeedMultiplier");

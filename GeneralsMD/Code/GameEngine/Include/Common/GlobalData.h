@@ -430,6 +430,9 @@ public:
 	Bool m_showMoneyPerMinute;
 	Bool m_allowMoneyPerMinuteForPlayer;
 
+	// TheSuperHackers @feature arcticdolphin 15/10/2026 Shroud interpolation
+	Bool m_shroudInterpolation;
+
 	// TheSuperHackers @feature bobtista 28/06/2026 user-configurable speed multiplier for game window transitions
 	Real m_gameWindowTransitionSpeedMultiplier;
 

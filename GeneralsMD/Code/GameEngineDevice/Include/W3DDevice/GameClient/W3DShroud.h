@@ -97,6 +97,8 @@ public:
 	void setBorderShroudLevel(W3DShroudLevel level);	///<color that will appear in unused border terrain.
 	Real	getDrawOriginX()	{return m_drawOriginX;}	///<returns ws origin of first pixel in shroud texture.
 	Real	getDrawOriginY()	{return m_drawOriginY;}	///<returns ws origin of first pixel in shroud texture.
+	void requestFogSnap()	{m_fogSnapRequested = TRUE;}	///<skip fading on the next update
+	Bool isClearAt(Real worldX, Real worldY, Real radius) const;	///<every cell within radius of this position is fully clear
 
 protected:
 	Int m_numCellsX;						///<number of cells covering entire map
@@ -117,6 +119,12 @@ protected:
 	W3DShroudLevel m_boderShroudLevel;			///<color used to clear the shroud border
 	W3DShroudLevel *m_finalFogData;			///<copy of logical shroud in an easier to access array.
 	W3DShroudLevel *m_currentFogData;		///<copy of intermediate logical shroud while it's interpolated.
-	void interpolateFogLevels(RECT *rect);		///<fade current fog levels to actual logic side levels.
+	Bool m_shroudDirty;						///<m_shroudData changed since the last upload
+	Bool m_fogSnapRequested;				///<next update skips fading
+	Bool m_fogFading;						///<some cell is still fading
+	UnsignedInt m_fogPrevTime;				///<time of the last fade step
+	Real m_fogRemainder;					///<fractional fade step carried over
+	void interpolateFogLevels();				///<fade current fog levels to actual logic side levels.
+	void applyFogSnap();						///<move current fog levels to the final levels
 	void fillBorderShroudData(W3DShroudLevel level, SurfaceClass* pDestSurface);	///<fill the destination texture with a known value
 };
