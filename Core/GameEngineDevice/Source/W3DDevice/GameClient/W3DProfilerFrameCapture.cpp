@@ -97,8 +97,8 @@ void W3DProfilerFrameCapture::Capture(UnsignedInt displayWidth, UnsignedInt disp
 		return;
 	}
 
-	// get the backbuffer
-	SurfaceClass *backBuffer = DX8Wrapper::_Get_DX8_Back_Buffer();
+	// get the surface the scene is rendered into
+	SurfaceClass *backBuffer = DX8Wrapper::_Get_DX8_Scene_Surface();
 	if (!backBuffer)
 	{
 		REF_PTR_RELEASE(surfaceClass);
