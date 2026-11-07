@@ -300,4 +300,13 @@ namespace rts
 		}
 	};
 
+	struct string_key_less
+	{
+		template <typename String>
+		bool operator()(const string_key<String>& a, const string_key<String>& b) const
+		{
+			return strcmp(a.c_str(), b.c_str()) < 0;
+		}
+	};
+
 } // namespace rts

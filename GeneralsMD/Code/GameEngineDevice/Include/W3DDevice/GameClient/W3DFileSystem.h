@@ -92,7 +92,6 @@ public:
 private:
 
 	static void reprioritizeTexturesBySize();
-	static void reprioritizeTexturesBySize(ArchivedDirectoryInfo& dirInfo);
 };
 
 extern W3DFileSystem *TheW3DFileSystem;
