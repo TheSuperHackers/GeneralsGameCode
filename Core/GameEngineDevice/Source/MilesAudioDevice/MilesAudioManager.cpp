@@ -1076,7 +1076,7 @@ void MilesAudioManager::releasePlayingAudio( PlayingAudio *playing )
 
 //-------------------------------------------------------------------------------------------------
 // Sets the status to 'to' if it is 'from', in one atomic step, and returns the status it had before.
-static PlayingStatus advancePlayingStatus( PlayingAudio *playing, PlayingStatus from, PlayingStatus to )
+static PlayingStatus advancePlayingStatus( PlayingAudio* playing, PlayingStatus from, PlayingStatus to )
 {
 	playing->m_status.compare_exchange_strong(from, to);
 	return from;
