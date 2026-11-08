@@ -7,18 +7,24 @@ on:
   push:
     branches:
       - main
+  # Pull requests run only while they carry the CI label, which maintainers add.
+  # The label name 'CI' is repeated below, because no context can hold it for all uses.
   pull_request:
     branches:
       - main
+    types: [opened, synchronize, reopened, labeled]
   workflow_dispatch:
 
+# Adding any other label gets its own group, so it cannot cancel a running build.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}${{ (github.event.action == 'labeled' && github.event.label.name != 'CI') && format('-{0}', github.run_id) || '' }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   detect-changes:
     name: Detect File Changes
+    # The build and replay jobs need this job and are skipped with it.
+    if: ${{ github.event_name != 'pull_request' || (contains(github.event.pull_request.labels.*.name, 'CI') && !(github.event.action == 'labeled' && github.event.label.name != 'CI')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
@@ -267,3 +273,31 @@ jobs:
       userdata: "GeneralsReplays/GeneralsZH/1.04"
       preset: ${{ matrix.preset }}
     secrets: inherit
+
+  # The one check branch protection requires. Skipped jobs count as passed there, so this job
+  # fails a pull request without the CI label, and any run in which a job failed. Adding any
+  # other label reports under another name, so it leaves the result of the last build alone.
+  ci-done:
+    name: ${{ (github.event.action == 'labeled' && github.event.label.name != 'CI') && 'GenCI Ignored Label' || 'GenCI Done' }}
+    needs: [detect-changes, build-generals-vc6, build-generals-win32, build-generalsmd-vc6, build-generalsmd-win32, replaycheck-generals, replaycheck-generalsmd]
+    # Also runs when the jobs of a game without changes were skipped.
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-slim
+    timeout-minutes: 3
+    permissions: {}
+    steps:
+      - name: Check Job Results
+        env:
+          OTHER_LABEL: ${{ github.event.action == 'labeled' && github.event.label.name != 'CI' }}
+          MISSING_LABEL: ${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'CI') }}
+          FAILED: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        run: |
+          if [ "$OTHER_LABEL" = "true" ]; then
+            echo "Another label was added, so nothing was built."
+          elif [ "$MISSING_LABEL" = "true" ]; then
+            echo "::error::Add the CI label to run GenCI on this pull request."
+            exit 1
+          elif [ "$FAILED" = "true" ]; then
+            echo "::error::At least one GenCI job failed or was cancelled."
+            exit 1
+          fi
