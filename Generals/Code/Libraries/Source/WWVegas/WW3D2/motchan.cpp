@@ -465,7 +465,7 @@ void	TimeCodedMotionChannelClass::Get_Vector(float32 frame,float * setvec)
 
 
 // Sets a quaternion from the four floats stored in a packet.
-static void Set_Quaternion_From_Packet(Quaternion& q, const uint32* packet)
+static void Set_Quaternion_From_Packet(Quaternion& q, const uint32 packet[4])
 {
 	q.Set(
 		std::bit_cast<float32>(packet[0]),
@@ -502,7 +502,6 @@ Quaternion TimeCodedMotionChannelClass::Get_QuatVector(float32 frame)
 	uint32 time = Data[p2idx];
 
 	if (time & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) {
-		// its a binary movement!
 		Set_Quaternion_From_Packet(q, &Data[pidx+1]);
 
 		return( q );
@@ -513,8 +512,8 @@ Quaternion TimeCodedMotionChannelClass::Get_QuatVector(float32 frame)
 
 	float32 ratio = (frame - time1) / (time2 - time1);
 
-	Quaternion q1(1);
-	Quaternion q2(1);
+	Quaternion q1;
+	Quaternion q2;
 
 	Set_Quaternion_From_Packet(q1, &Data[pidx+1]);
 	Set_Quaternion_From_Packet(q2, &Data[p2idx+1]);
