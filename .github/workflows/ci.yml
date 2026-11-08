@@ -282,12 +282,21 @@ jobs:
   ci-done:
     name: ${{ ((github.event.action == 'labeled' || github.event.action == 'unlabeled') && github.event.label.name != 'CI') && 'GenCI Ignored Label' || 'GenCI Done' }}
     needs: [detect-changes, build-generals-vc6, build-generals-win32, build-generalsmd-vc6, build-generalsmd-win32, replaycheck-generals, replaycheck-generalsmd]
-    # Also runs when the jobs of a game without changes were skipped.
-    if: ${{ !cancelled() }}
+    # Also runs when the jobs of a game without changes were skipped, and when the run was
+    # cancelled, so that a cancelled run cannot leave a skipped check behind that passes.
+    if: ${{ always() }}
     runs-on: ubuntu-slim
     timeout-minutes: 3
     permissions: {}
     steps:
+      # Jobs that had not started yet may report as skipped, so the cancellation is checked
+      # directly.
+      - name: Fail Cancelled Run
+        if: ${{ cancelled() }}
+        run: |
+          echo "::error::GenCI was cancelled."
+          exit 1
+
       - name: Check Job Results
         env:
           OTHER_LABEL: ${{ (github.event.action == 'labeled' || github.event.action == 'unlabeled') && github.event.label.name != 'CI' }}
