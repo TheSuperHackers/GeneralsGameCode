@@ -40,7 +40,7 @@
 
 #include "WWMath/vector3.h"
 #include "w3d_file.h"
-#include "meshbuild.h"
+#include "WW3D2/meshbuild.h"
 #include "WW3D2/w3derr.h"
 #include "mapper.h"
 #include "WWLib/wwstring.h"

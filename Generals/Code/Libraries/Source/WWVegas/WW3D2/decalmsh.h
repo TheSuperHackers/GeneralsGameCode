@@ -46,9 +46,9 @@
 #include "WWMath/vector3.h"
 #include "WWMath/Vector3i.h"
 #include "WWMath/vector4.h"
-#include "shader.h"
-#include "vertmaterial.h"
-#include "meshgeometry.h"
+#include "WW3D2/shader.h"
+#include "WW3D2/vertmaterial.h"
+#include "WW3D2/meshgeometry.h"
 
 class MeshClass;
 class RenderInfoClass;

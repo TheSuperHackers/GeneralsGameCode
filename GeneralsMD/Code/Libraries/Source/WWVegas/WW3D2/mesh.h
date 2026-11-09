@@ -41,7 +41,7 @@
 #include "WW3D2/rendobj.h"
 #include "WWLib/bittype.h"
 #include "WW3D2/w3derr.h"
-#include "lightenvironment.h"	//added for 'Generals'
+#include "WW3D2/lightenvironment.h"	//added for 'Generals'
 
 class MeshBuilderClass;
 class HModelClass;

@@ -48,9 +48,9 @@
 #include "WWMath/colmath.h"
 #include "WWLib/simplevec.h"
 #include "WWLib/wwstring.h"
-#include "rinfo.h"
+#include "WW3D2/rinfo.h"
 #include "meshgeometry.h"
-#include "meshmatdesc.h"
+#include "WW3D2/meshmatdesc.h"
 #include "WW3D2/dx8list.h"
 
 class TextureClass;
