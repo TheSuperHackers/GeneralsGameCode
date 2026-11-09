@@ -21,8 +21,6 @@
 #include "WWMath/vector3.h"
 #include <d3d8types.h>
 
-// Conversions between WWMath and Direct3D 8 types.
-
 inline D3DVECTOR To_D3DVECTOR(const Vector3& v)
 {
 	D3DVECTOR dxv;

@@ -1226,9 +1226,10 @@ void PointGroupClass::Update_Arrays(
 						const float c = WWMath::Cos(angle);
 						const float s = WWMath::Sin(angle);
 
-						// The X and Y axes rotated by the negative angle
-						const Vector2 orientedVecX(c, -s);
-						const Vector2 orientedVecY(s, c);
+						Vector2 orientedVecX(1.0f, 0.0f);
+						Vector2 orientedVecY(0.0f, 1.0f);
+						orientedVecX.Rotate(-s, c);
+						orientedVecY.Rotate(-s, c);
 
 						vertex_loc[vert + 0].X = point_loc[i].X +	(orientedVecX.X + orientedVecY.X) * point_size[i];
 						vertex_loc[vert + 0].Y = point_loc[i].Y +	(orientedVecX.Y + orientedVecY.Y) * point_size[i];
