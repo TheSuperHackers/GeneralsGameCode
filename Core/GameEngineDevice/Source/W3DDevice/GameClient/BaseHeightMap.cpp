@@ -908,8 +908,13 @@ Real BaseHeightMapRenderObjClass::getHeightMapHeight(Real x, Real y, Coord3D* no
 	float xdiv = x * MAP_XY_FACTOR_INV;
 	float ydiv = y * MAP_XY_FACTOR_INV;
 
-	float ixf = FAST_REAL_FLOOR(xdiv);
-	float iyf = FAST_REAL_FLOOR(ydiv);
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
+	float ixf = fast_float_floor(xdiv);
+	float iyf = fast_float_floor(ydiv);
+#else
+	float ixf = WWMath::Floorf(xdiv);
+	float iyf = WWMath::Floorf(ydiv);
+#endif
 
 	float fx = xdiv - ixf; //get fraction
 	float fy = ydiv - iyf; //get fraction
