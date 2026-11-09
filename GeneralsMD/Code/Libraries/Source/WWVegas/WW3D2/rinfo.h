@@ -43,7 +43,7 @@
 #include "WWLib/bittype.h"
 #include "WW3D2/ww3d.h"
 #include "WWDebug/wwdebug.h"
-#include "shader.h"
+#include "WW3D2/shader.h"
 #include "WWLib/Vector.h"
 #include "WWMath/matrix3d.h"
 #include "WWMath/matrix4.h"
