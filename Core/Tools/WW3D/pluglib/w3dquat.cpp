@@ -291,7 +291,7 @@ Quaternion Slerp(const Quaternion & p,const Quaternion & q,float alpha)
 		qflip = false;
 	}
 
-	if (1.0 - cos_t < SLERP_EPSILON) {
+	if (1.0 - cos_t < WWMATH_EPSILON * WWMATH_EPSILON) {
 
 		// if q is very close to p, just linearly interpolate
 		// between the two.
