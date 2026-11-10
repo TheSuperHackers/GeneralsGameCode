@@ -56,6 +56,7 @@
 #include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/version.h"
+#include "WWLib/utf8.h"
 
 
 
@@ -164,6 +165,7 @@ class GameTextManager : public GameTextInterface
 		Char						m_buffer2[MAX_UITEXT_LENGTH];
 		Char						m_buffer3[MAX_UITEXT_LENGTH];
 		WideChar				m_tbuffer[MAX_UITEXT_LENGTH*2];
+		Char						m_translateBuffer[MAX_UITEXT_LENGTH*2];
 
 		StringInfo			*m_stringInfo;
 		StringLookUp		*m_stringLUT;
@@ -265,6 +267,11 @@ GameTextManager::GameTextManager()
 		m_buffer[i] = 0;
 		m_buffer2[i] = 0;
 		m_buffer3[i] = 0;
+	}
+
+	for(Int i=0; i < MAX_UITEXT_LENGTH*2; i++)
+	{
+		m_translateBuffer[i] = 0;
 	}
 }
 
@@ -738,6 +745,9 @@ void GameTextManager::translateCopy( WideChar *outbuf, Char *inbuf )
 	}
 #endif
 
+	// Unescape first: every escape sequence is ASCII, so the result still holds the original
+	// text encoding and can be converted to wide characters in one pass below.
+	Char *out = m_translateBuffer;
 	while( *inbuf != '\0' )
 	{
 		if( slash == TRUE )
@@ -752,44 +762,61 @@ void GameTextManager::translateCopy( WideChar *outbuf, Char *inbuf )
 					return;
 
 				case '\\':
-					*outbuf++ = '\\';
+					*out++ = '\\';
 					break;
 
 				case '\'':
-					*outbuf++ = '\'';
+					*out++ = '\'';
 					break;
 
 				case '\"':
-					*outbuf++ = '\"';
+					*out++ = '\"';
 					break;
 
 				case '\?':
-					*outbuf++ = '\?';
+					*out++ = '\?';
 					break;
 
 				case 't':
-					*outbuf++ = '\t';
+					*out++ = '\t';
 					break;
 
 				case 'n':
-					*outbuf++ = '\n';
+					*out++ = '\n';
 					break;
 
 				default:
-					*outbuf++ = *inbuf & 0x00FF;
+					*out++ = *inbuf;
 					break;
 			}
 		}
 		else if( *inbuf != '\\' )
 		{
-			*outbuf++ = *inbuf & 0x00FF;
+			*out++ = *inbuf;
 		}
 		else
 			slash = TRUE;
 
 		inbuf++;
 	}
-	*outbuf= 0;
+	*out = 0;
+
+	const size_t len = (size_t)( out - m_translateBuffer );
+	const size_t wideLen = Utf8_To_Wide_Len( m_translateBuffer, len );
+	if ( wideLen != UTF8_INVALID )
+	{
+		Utf8_To_Wide( outbuf, MAX_UITEXT_LENGTH * 2, m_translateBuffer, len );
+	}
+	else
+	{
+		// Not valid UTF-8 (e.g. legacy CP1252): keep the original 1:1 byte cast, matching
+		// UnicodeString::translate. This preserves text that was never UTF-8 encoded.
+		for ( size_t i = 0; i < len; ++i )
+		{
+			outbuf[i] = (WideChar)(UnsignedByte)m_translateBuffer[i];
+		}
+		outbuf[len] = 0;
+	}
 }
 
 //============================================================================
