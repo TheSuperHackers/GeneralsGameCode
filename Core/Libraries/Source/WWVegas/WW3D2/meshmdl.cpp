@@ -44,7 +44,6 @@
 #include "WWMath/vp.h"
 #include "visrasterizer.h"
 #include "dx8polygonrenderer.h"
-#include "bwrender.h"
 #include "camera.h"
 #include "dx8renderer.h"
 #include "WWLib/hashtemplate.h"
@@ -58,7 +57,6 @@
 */
 static DynamicVectorClass<Vector3>	_TempVertexBuffer;
 static DynamicVectorClass<Vector3>	_TempNormalBuffer;
-static DynamicVectorClass<Vector4>	_TempTransformedVertexBuffer;
 static DynamicVectorClass<unsigned long> _TempClipFlagBuffer;
 
 
@@ -257,23 +255,6 @@ DX8FVFCategoryContainer* MeshModelClass::Peek_FVF_Category_Container()
 	DX8FVFCategoryContainer* fvf_category=texture_category->Get_Container();
 	WWASSERT(fvf_category);
 	return fvf_category;
-}
-
-void MeshModelClass::Shadow_Render(SpecialRenderInfoClass & rinfo,const Matrix3D & tm,const HTreeClass * htree)
-{
-	if (rinfo.BWRenderer != nullptr) {
-		if (_TempTransformedVertexBuffer.Length() < VertexCount) _TempTransformedVertexBuffer.Resize(VertexCount);
-		Vector4* transf_ptr=&(_TempTransformedVertexBuffer[0]);
-		get_deformed_screenspace_vertices(transf_ptr,rinfo,tm,htree);
-
-		Vector2* tptr = reinterpret_cast<Vector2 *>(transf_ptr);
-		Vector4* optr = transf_ptr;
-		for (int a=0;a<VertexCount;++a,++optr) *tptr++=Vector2((*optr)[0],-(*optr)[1]);
-
-		rinfo.BWRenderer->Set_Vertex_Locations(reinterpret_cast<Vector2*>(transf_ptr),VertexCount);
-		rinfo.BWRenderer->Render_Triangles(reinterpret_cast<const unsigned long*>(Poly->Get_Array()),PolyCount*3);
-		return;
-	}
 }
 
 void MeshModelClass::Make_Geometry_Unique()

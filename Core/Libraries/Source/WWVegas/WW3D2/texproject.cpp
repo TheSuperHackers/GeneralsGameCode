@@ -82,7 +82,6 @@
 #include "rinfo.h"
 #include "camera.h"
 #include "matpass.h"
-#include "bwrender.h"
 #include "assetmgr.h"
 #include "dx8wrapper.h"
 
@@ -1168,17 +1167,6 @@ bool TexProjectClass::Compute_Texture
 		return renderResult == WW3D_ERROR_OK;
 	}
 
-#if 0
-
-	/*
-	** Render the object with the BW Renderer into our color surface
-	*/
-	BWRenderClass bwr((unsigned char*)shadow_surface->getDataPtr(),tex_size);
-	bwr.Fill(0xff);
-	context->BWRenderer = &bwr;
-	model->Special_Render(*context);
-	context->BWRenderer = nullptr;
-#endif
 	return true;
 }
 
