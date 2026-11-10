@@ -73,7 +73,7 @@ static HMODULE st_DebugDLL;
 #define DEFINE_PARTICLE_SYSTEM_NAMES 1
 #include "GameClient/ParticleSys.h"
 #include "Common/MapObject.h"
-#include "../../GameEngineDevice/Include/W3DDevice/GameClient/W3DAssetManagerExposed.h"
+#include "WW3D2/assetmgr.h"
 
 static void _addUpdatedParticleSystem( AsciiString particleSystemName );
 static void _appendAllParticleSystems();
@@ -9655,7 +9655,7 @@ static void _updateCurrentParticleCount()
 static void _reloadTextures()
 {
 	// Need no interaction with the particle editor now.
-	ReloadAllTextures();
+	WW3DAssetManager::Get_Instance()->Release_All_Textures();
 }
 
 #ifdef DO_VTUNE_STUFF
