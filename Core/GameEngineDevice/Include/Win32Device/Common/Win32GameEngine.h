@@ -65,6 +65,7 @@ public:
 	virtual void reset() override;															///< reset engine
 	virtual void update() override;														///< update the game engine
 	virtual void serviceWindowsOS() override;									///< allow windows maintenance in background
+	virtual void setBusyState(Bool busyDisplay, Bool busySystem) override;
 
 protected:
 

@@ -72,6 +72,9 @@ public:
 
 	virtual Bool isMultiplayerSession();
 	virtual void serviceWindowsOS() {};		///< service the native OS
+	// TheSuperHackers @feature Tell the Operating System that the game is considered busy
+	// and we would not like the display screen and/or system to shut off.
+	virtual void setBusyState(Bool busyDisplay, Bool busySystem) {}
 	virtual Bool isActive() {return m_isActive;}	///< returns whether app has OS focus.
 	virtual void setIsActive(Bool isActive) { m_isActive = isActive; };
 

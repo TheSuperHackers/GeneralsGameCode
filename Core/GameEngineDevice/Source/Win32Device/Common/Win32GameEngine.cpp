@@ -168,3 +168,12 @@ void Win32GameEngine::serviceWindowsOS()
 
 }
 
+//-------------------------------------------------------------------------------------------------
+void Win32GameEngine::setBusyState(Bool busyDisplay, Bool busySystem)
+{
+	EXECUTION_STATE state = ES_CONTINUOUS;
+	state |= busyDisplay ? ES_DISPLAY_REQUIRED : 0;
+	state |= busySystem ? ES_SYSTEM_REQUIRED : 0;
+
+	::SetThreadExecutionState(state);
+}
