@@ -30,26 +30,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y mingw-w64 cmake
 
-      - name: Install Wine and widl
+      - name: Install widl
         run: |
-          # Add Wine repository
-          sudo dpkg --add-architecture i386
-          sudo mkdir -pm755 /etc/apt/keyrings
-          sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
-
-          # Determine Ubuntu codename
-          CODENAME=$(lsb_release -cs)
-
-          # Download appropriate sources file
-          sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/${CODENAME}/winehq-${CODENAME}.sources || {
-            sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources
-          }
-
-          # Update and install Wine
-          sudo apt-get update
-          sudo apt-get install -y --install-recommends winehq-stable wine-stable-dev || {
-            sudo apt-get install -y wine-stable-dev
-          }
+          # widl compiles the IDL files. wine64-tools has widl and depends on libwine-dev, which has the system IDL files.
+          sudo apt-get install -y --no-install-recommends wine64-tools
 
       - name: Cache CMake Dependencies
         id: cache-cmake-deps
