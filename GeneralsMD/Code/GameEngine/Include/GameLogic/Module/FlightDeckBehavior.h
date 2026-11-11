@@ -69,7 +69,7 @@ public:
 	Real					m_healAmount;
 	Real					m_approachHeight;
 	Real					m_landingDeckHeightOffset;
-	Int						m_numRows;
+	UnsignedInt		m_numRows;
 	Int						m_numCols;
 	UnsignedInt		m_cleanupFrames;
 	UnsignedInt		m_humanFollowFrames;
