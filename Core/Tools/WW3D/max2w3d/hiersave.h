@@ -37,7 +37,7 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 
 #include "max_sdk.h"
 #include <stdio.h>
@@ -51,7 +51,7 @@
 #endif
 
 #ifndef CHUNKIO_H
-#include "chunkio.h"
+#include "WWLib/chunkio.h"
 #endif
 
 #ifndef NODELIST_H
@@ -59,7 +59,7 @@
 #endif
 
 #ifndef VECTOR_H
-#include "Vector.h"
+#include "WWLib/Vector.h"
 #endif
 
 

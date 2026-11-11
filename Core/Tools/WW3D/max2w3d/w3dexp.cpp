@@ -49,8 +49,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "rawfile.h"
-#include "chunkio.h"
+#include "WWLib/RAWFILE.h"
+#include "WWLib/chunkio.h"
 #include "w3dexp.h"
 #include "w3dutil.h"
 #include "nodelist.h"

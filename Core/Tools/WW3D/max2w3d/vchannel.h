@@ -38,15 +38,15 @@
 #pragma once
 
 #ifndef ALWAYS_H
-#include "always.h"
+#include "WWLib/always.h"
 #endif
 
 #ifndef BITTYPE_H
-#include "BITTYPE.h"
+#include "WWLib/bittype.h"
 #endif
 
 #ifndef CHUNKIO_H
-#include "chunkio.h"
+#include "WWLib/chunkio.h"
 #endif
 
 #ifndef W3D_FILE_H
