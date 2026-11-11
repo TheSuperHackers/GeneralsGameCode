@@ -38,7 +38,7 @@
 #pragma once
 
 #include "rawfile.h"	// have to include this before Max.h
-#include <max.h>
+#include "max_sdk.h"
 #include "BITTYPE.h"
 #include "w3d_file.h"
 #include "chunkio.h"

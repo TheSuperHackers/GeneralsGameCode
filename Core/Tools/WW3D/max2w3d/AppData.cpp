@@ -40,7 +40,7 @@
 ** extensions to the MAXScript language.
 */
 
-#include <maxscrpt.h>	// Main MAXScript header
+#include "maxscrpt_sdk.h"	// Main MAXScript header
 #include <maxobj.h>		// MAX* Wrapper objects
 #include <strings.h>		// MAX String class
 #include <definsfn.h>	// def_* functions to create static function headers

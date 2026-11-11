@@ -47,7 +47,7 @@
 #include "SceneSetupDlg.h"
 
 #undef STRICT
-#include <maxscrpt.h>
+#include "maxscrpt_sdk.h"
 #include <numbers.h>
 #include <arrays.h>
 #include <definsfn.h>
