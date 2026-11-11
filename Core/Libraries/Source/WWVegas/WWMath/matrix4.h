@@ -155,12 +155,6 @@ public:
 	WWINLINE friend Matrix4x4 operator * (const Matrix3D & a, const Matrix4x4 & b);
 
 	/*
-	** Comparison operators
-	*/
-	friend int operator == (const Matrix4x4 & a, const Matrix4x4 & b);
-	friend int operator != (const Matrix4x4 & a, const Matrix4x4 & b);
-
-	/*
 	** Swap two matrices in place
 	*/
 	WWINLINE friend void Swap(Matrix4x4 & a,Matrix4x4 & b);

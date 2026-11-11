@@ -46,7 +46,6 @@
 #include "WWLib/win.h"
 #include <d3d8types.h>
 #include <d3dx8math.h>
-#include <string.h>
 
 /***********************************************************************************************
  * Matrix4x4::Multiply -- Multiply two Matrix4x4's together                                        *
@@ -180,18 +179,6 @@ void Matrix4x4::Multiply(const Matrix4x4 & a,const Matrix3D & b,Matrix4x4 * res)
 	#undef ROWCOL
 	#undef ROWCOL4
 }
-
-// Compares the bits of the elements, so 0.0f and -0.0f differ and identical NaNs are equal.
-int operator == (const Matrix4x4 & a, const Matrix4x4 & b)
-{
-	return memcmp(&a, &b, sizeof(Matrix4x4)) == 0;
-}
-
-int operator != (const Matrix4x4 & a, const Matrix4x4 & b)
-{
-	return (!(a == b));
-}
-
 
 void To_D3DMATRIX(_D3DMATRIX& dxm, const Matrix4x4& m)
 {
