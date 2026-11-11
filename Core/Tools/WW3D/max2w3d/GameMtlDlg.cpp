@@ -43,7 +43,7 @@
 #include "GameMtlPassDlg.h"
 #include "dllmain.h"
 #include "resource.h"
-#include "w3d_file.h"
+#include "WW3D2/w3d_file.h"
 
 static BOOL CALLBACK SurfaceTypePanelDlgProc(HWND hwndDlg, UINT msg, WPARAM wPara,LPARAM lParam);
 static BOOL CALLBACK PassCountPanelDlgProc(HWND hwndDlg, UINT msg, WPARAM wPara,LPARAM lParam);

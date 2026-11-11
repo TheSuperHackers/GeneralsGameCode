@@ -43,7 +43,7 @@
 #include <stdio.h>
 
 #ifndef W3D_FILE_H
-#include "w3d_file.h"
+#include "WW3D2/w3d_file.h"
 #endif
 
 #ifndef PROGRESS_H

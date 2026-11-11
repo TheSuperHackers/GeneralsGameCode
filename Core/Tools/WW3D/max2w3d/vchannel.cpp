@@ -40,7 +40,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
-#include "w3d_file.h"
+#include "WW3D2/w3d_file.h"
 #include "WWMath/quat.h"
 #include "bchannel.h"
 #include "exportlog.h"
