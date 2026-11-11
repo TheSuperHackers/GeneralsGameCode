@@ -64,18 +64,7 @@ void ResourceGatheringManager::removeSupplyCenter( Object *oldCenter )
 	if( oldCenter == nullptr )
 		return;
 
-	ObjectID targetID = oldCenter->getID();
-
-	objectIDListIterator iterator = m_supplyCenters.begin();
-	while( iterator != m_supplyCenters.end() )
-	{
-		if( targetID == *iterator )
-		{
-			iterator = m_supplyCenters.erase( iterator );
-		}
-		else
-			iterator++;
-	}
+	std::erase( m_supplyCenters, oldCenter->getID() );
 }
 
 void ResourceGatheringManager::addSupplyWarehouse( Object *newWarehouse )
@@ -91,18 +80,7 @@ void ResourceGatheringManager::removeSupplyWarehouse( Object *oldWarehouse )
 	if( oldWarehouse == nullptr )
 		return;
 
-	ObjectID targetID = oldWarehouse->getID();
-
-	objectIDListIterator iterator = m_supplyWarehouses.begin();
-	while( iterator != m_supplyWarehouses.end() )
-	{
-		if( targetID == *iterator )
-		{
-			iterator = m_supplyWarehouses.erase( iterator );
-		}
-		else
-			iterator++;
-	}
+	std::erase( m_supplyWarehouses, oldWarehouse->getID() );
 }
 
 static Real computeRelativeCost( Object *queryObject, Object *destObject, Real *pureDistanceSquared )

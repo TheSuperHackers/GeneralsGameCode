@@ -192,10 +192,7 @@ void Eva::reset()
 	m_previousBuildingCount = 0;
 
 	// remove all pending counters, etc, here.
-	EvaCheckVecIt it;
-	for (it = m_checks.begin(); it != m_checks.end(); /* empty */) {
-		it = m_checks.erase(it);
-	}
+	m_checks.clear();
 
 	// remove all things flagged as "need to play"
 	for (Int i = 0; i < EVA_COUNT; ++i) {
@@ -383,25 +380,30 @@ void Eva::playMessage(EvaMessage messageToTest, UnsignedInt currentFrame)
 }
 
 //-------------------------------------------------------------------------------------------------
-void Eva::processPlayingMessages(UnsignedInt currentFrame)
+struct EvaCheckIsFinished
 {
-	// First pass, remove all the objects that can check after this frame.
-	EvaCheckVecIt it;
-	for (it = m_checks.begin(); it != m_checks.end(); /* empty */) {
+	explicit EvaCheckIsFinished(UnsignedInt currentFrame) : m_currentFrame(currentFrame) {}
+
+	Bool operator()(const EvaCheck& check) const
+	{
 		// These are requests that will be available next frame because they've played.
-		if (it->m_timeForNextCheck <= currentFrame + 1 && it->m_alreadyPlayed) {
-			it = m_checks.erase(it);
-			continue;
+		if (check.m_timeForNextCheck <= m_currentFrame + 1 && check.m_alreadyPlayed)
+		{
+			return true;
 		}
 
 		// These are requests that never got a chance to play and have since expired.
-		if (it->m_triggeredOnFrame + it->m_evaInfo->m_framesToExpire <= currentFrame && !it->m_alreadyPlayed) {
-			it = m_checks.erase(it);
-			continue;
-		}
-
-		++it;
+		return check.m_triggeredOnFrame + check.m_evaInfo->m_framesToExpire <= m_currentFrame && !check.m_alreadyPlayed;
 	}
+
+	UnsignedInt m_currentFrame;
+};
+
+//-------------------------------------------------------------------------------------------------
+void Eva::processPlayingMessages(UnsignedInt currentFrame)
+{
+	// First pass, remove all the objects that can check after this frame.
+	std::erase_if(m_checks, EvaCheckIsFinished(currentFrame));
 
 	// It's possible, although unlikely, that we removed everything in the list.
 	if (m_checks.begin() == m_checks.end()) {
@@ -417,7 +419,7 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 	EvaCheckVecIt storedIt = m_checks.end();
 
 	UnsignedInt highestPriority = 0;
-	for (it = m_checks.begin(); it != m_checks.end(); ++it) {
+	for (EvaCheckVecIt it = m_checks.begin(); it != m_checks.end(); ++it) {
 		if (it->m_evaInfo->m_priority > highestPriority && !it->m_alreadyPlayed) {
 			storedIt = it;
 			highestPriority = it->m_evaInfo->m_priority;
