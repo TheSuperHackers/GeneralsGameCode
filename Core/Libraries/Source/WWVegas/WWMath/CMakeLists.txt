@@ -54,8 +54,6 @@ set(WWMATH_SRC
     ode.cpp
     ode.h
     plane.h
-    pot.cpp
-    pot.h
     quat.cpp
     quat.h
     rect.h

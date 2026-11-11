@@ -19,10 +19,8 @@
 #include "stringex_memcchr_common.h"
 
 #if defined(__SSE2__) || defined(_M_X64) || (defined(_MSC_VER) && defined(_M_IX86))
+#include <bit>
 #include <emmintrin.h>
-#if defined(_MSC_VER)
-#include <intrin.h>
-#endif
 
 // Internal linkage keeps this memcchr distinct from the other implementations linked into the test.
 namespace

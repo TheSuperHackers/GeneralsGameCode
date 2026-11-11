@@ -76,7 +76,6 @@
 #include "missingtexture.h"
 #include "WWLib/thread.h"
 #include <d3dx8core.h>
-#include "WWMath/pot.h"
 #include "WWDebug/wwprofile.h"
 #include "WWLib/ffactory.h"
 #include "dx8caps.h"
@@ -3155,7 +3154,7 @@ DX8Wrapper::Create_Render_Target (int width, int height, WW3DFormat format)
 	if (height > 0 && height < width) {
 		poweroftwosize = height;
 	}
-	poweroftwosize = ::Find_POT (poweroftwosize);
+	poweroftwosize = std::bit_ceil(static_cast<unsigned int>(poweroftwosize));
 
 	if (poweroftwosize>dx8caps.MaxTextureWidth) {
 		poweroftwosize=dx8caps.MaxTextureWidth;
@@ -3226,7 +3225,7 @@ void DX8Wrapper::Create_Render_Target
 	{
 		poweroftwosize = height;
 	}
-	poweroftwosize = ::Find_POT (poweroftwosize);
+	poweroftwosize = std::bit_ceil(static_cast<unsigned int>(poweroftwosize));
 
 	if (poweroftwosize>dx8caps.MaxTextureWidth)
 	{
