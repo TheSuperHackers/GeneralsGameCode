@@ -17,15 +17,10 @@
 */
 
 // Force included after Precompiled/BasePrecomp.h into every target that uses the Max SDK,
-// to undo macros from it that clash with identifiers in the Max SDK headers.
+// to undo macros from it that must already be undone when the first header includes Windows.h.
+// The macros that clash with identifiers in the Max SDK headers are handled by max_sdk.h.
 
 #pragma once
-
-// The Max SDK predates C++11 and uses 'override' as a function name.
-#undef override
-
-// The Max SDK defines its own PI
-#undef PI
 
 // The Max SDK expects Windows.h in full glory
 #undef WIN32_LEAN_AND_MEAN

@@ -45,7 +45,7 @@
 #include "genlodextensiondialog.h"
 #include "dllmain.h"
 #include "resource.h"
-#include <max.h>
+#include "max_sdk.h"
 
 
 /**********************************************************************************************

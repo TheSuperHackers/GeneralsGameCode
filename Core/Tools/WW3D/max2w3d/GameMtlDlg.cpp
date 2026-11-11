@@ -34,7 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <max.h>
+#include "max_sdk.h"
 #include <gport.h>
 #include <bmmlib.h>
 

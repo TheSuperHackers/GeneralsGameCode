@@ -37,7 +37,7 @@
 
 #include "skin.h"
 #include "dllmain.h"
-#include "max.h"
+#include "max_sdk.h"
 #include "simpmod.h"
 #include "simpobj.h"
 #include "resource.h"

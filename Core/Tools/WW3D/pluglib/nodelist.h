@@ -38,7 +38,7 @@
 #pragma once
 
 #include "always.h"
-#include <max.h>
+#include "max_sdk.h"
 
 #ifndef NODEFILT_H
 #include "nodefilt.h"

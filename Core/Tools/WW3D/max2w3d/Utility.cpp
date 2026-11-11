@@ -43,7 +43,7 @@
 */
 
 
-#include <maxscrpt.h>
+#include "maxscrpt_sdk.h"
 #include <arrays.h>
 #include <strings.h>
 #include <definsfn.h>

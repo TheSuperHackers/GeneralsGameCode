@@ -39,7 +39,7 @@
 #pragma once
 
 #include <string.h>
-#include <max.h>
+#include "max_sdk.h"
 #include "w3d_file.h"
 #include "Vector.h"
 
