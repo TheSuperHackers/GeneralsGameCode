@@ -38,7 +38,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "bmp2d.h"
-#include "WWMath/pot.h"
+#include <Utility/bit_adapter.h>
 #include "ww3d.h"
 #include "texture.h"
 #include "surfaceclass.h"
@@ -105,7 +105,7 @@ Bitmap2DObjClass::Bitmap2DObjClass
 	// support textures larger than that.
 	int surf_w = usable_width;
 	int surf_h = usable_height;
-	int piece = Find_POT(MIN(surf_w, surf_h));
+	int piece = std::bit_ceil(static_cast<unsigned int>(MIN(surf_w, surf_h)));
 	piece = MIN(piece, 256);
 
 	// now take the image in question and break it down into
@@ -163,7 +163,7 @@ Bitmap2DObjClass::Bitmap2DObjClass
 			// figure the desired width and height of the texture (max "piece")
 			int iw				= MIN(piece, usable_width - (tlpx));
 			int ih				= MIN(piece, usable_height - (tlpy));
-			int pot				= MAX(Find_POT(iw), Find_POT(ih));
+			int pot				= std::bit_ceil(static_cast<unsigned int>(MAX(iw, ih)));
 
 			// create the texture and turn MIP-mapping off.
 			SurfaceClass *piece_surface=NEW_REF(SurfaceClass,(pot,pot,sd.Format));

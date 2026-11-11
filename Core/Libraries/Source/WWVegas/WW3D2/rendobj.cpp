@@ -75,7 +75,6 @@
 #include "rendobj.h"
 #include "assetmgr.h"
 #include "WWLib/win.h"
-#include "WWMath/pot.h"
 #include "scene.h"
 #include "WWMath/colmath.h"
 #include "coltest.h"
