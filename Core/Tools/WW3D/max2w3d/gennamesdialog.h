@@ -37,7 +37,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include <max.h>
+#include "max_sdk.h"
 #include "w3d_file.h"
 
 

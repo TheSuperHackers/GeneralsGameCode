@@ -41,7 +41,7 @@
 #include "always.h"
 #endif
 
-#include <max.h>
+#include "max_sdk.h"
 
 #ifndef HIERSAVE_H
 #include "hiersave.h"

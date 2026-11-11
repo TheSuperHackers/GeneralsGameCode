@@ -38,7 +38,7 @@
 
 #pragma once
 
-#include <max.h>
+#include "max_sdk.h"
 #include "meshbuild.h"
 #include "nodelist.h"
 #include "Vector.h"

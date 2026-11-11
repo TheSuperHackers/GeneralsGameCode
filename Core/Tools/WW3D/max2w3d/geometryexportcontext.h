@@ -38,7 +38,7 @@
 
 #pragma once
 
-#include <max.h>
+#include "max_sdk.h"
 
 class ChunkSaveClass;
 class MaxWorldInfoClass;

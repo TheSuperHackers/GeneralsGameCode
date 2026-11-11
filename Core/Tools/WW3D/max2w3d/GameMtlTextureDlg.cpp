@@ -49,7 +49,7 @@
 #include "gamemtl.h"
 #include "dllmain.h"
 #include "resource.h"
-#include <max.h>
+#include "max_sdk.h"
 #include <bmmlib.h>
 #include <stdmat.h>
 

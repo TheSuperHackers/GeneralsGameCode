@@ -43,7 +43,7 @@
 
 
 #include <stdio.h>
-#include <max.h>
+#include "max_sdk.h"
 #include "dllmain.h"
 #include "w3ddesc.h"
 #include "w3dexp.h"

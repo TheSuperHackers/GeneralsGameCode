@@ -60,7 +60,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "gamemtl.h"
-#include <max.h>
+#include "max_sdk.h"
 #include <gport.h>
 #include "GameMtlDlg.h"
 #include "dllmain.h"

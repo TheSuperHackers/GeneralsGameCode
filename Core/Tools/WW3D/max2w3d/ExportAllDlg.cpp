@@ -40,7 +40,7 @@
 //
 
 #include "ExportAllDlg.h"
-#include <max.h>
+#include "max_sdk.h"
 #include <assert.h>
 #include <shlobj.h>	// SHBrowseForFolder
 
