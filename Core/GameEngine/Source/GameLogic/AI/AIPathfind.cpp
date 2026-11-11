@@ -225,7 +225,7 @@ void Pathfinder::reset()
 	s_forceCleanCells = false;
 #endif
 
-#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_PATHFINDING
 	m_classifyFenceZeroInit = false;
 #endif
 }
@@ -364,7 +364,7 @@ void Pathfinder::classifyFence( Object *obj, Bool insert )
 	cellBounds.lo.x = REAL_TO_INT_FLOOR((pos->x + 0.5f)/PATHFIND_CELL_SIZE_F);
 	cellBounds.lo.y = REAL_TO_INT_FLOOR((pos->y + 0.5f)/PATHFIND_CELL_SIZE_F);
 	// TheSuperHackers @fix Mauller 16/06/2025 Fixes uninitialized variables.
-#if RETAIL_COMPATIBLE_CRC
+#if RETAIL_COMPATIBLE_PATHFINDING
 	//CRCDEBUG_LOG(("Pathfinder::classifyFence - (%d,%d)", cellBounds.hi.x, cellBounds.hi.y));
 
 	// For retail the values on the stack are often either 0 or larger than the map size.
