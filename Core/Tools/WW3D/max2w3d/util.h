@@ -46,12 +46,19 @@
 #include "skin.h"
 #include "nodelist.h"
 
+class Matrix3D;
 
 /*
 ** Gets rid of very small numbers in the matrix
 ** (sets them to zero).
 */
 Matrix3	Cleanup_Orthogonal_Matrix(Matrix3 & mat);
+
+/*
+** Converts a Max matrix, which transforms row vectors, into a Matrix3D, which transforms
+** column vectors.
+*/
+Matrix3D Convert_Max_Matrix(const Matrix3 & tm);
 
 /*
 ** Naming utility functions

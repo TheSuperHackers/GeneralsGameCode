@@ -45,6 +45,7 @@
 #include "skin.h"
 #include "skindata.h"
 #include "modstack.h"
+#include "WWMath/matrix3d.h"
 
 
 #define MAX_NODE_NAME_LEN 256		// max name size we can handle
@@ -92,6 +93,17 @@ Matrix3	Cleanup_Orthogonal_Matrix(Matrix3 & mat)
 	}
 
 	return newmat;
+}
+
+Matrix3D Convert_Max_Matrix(const Matrix3 & tm)
+{
+	const Point3 x = tm.GetRow(0);
+	const Point3 y = tm.GetRow(1);
+	const Point3 z = tm.GetRow(2);
+	const Point3 t = tm.GetRow(3);
+
+	return Matrix3D(Vector3(x.x, x.y, x.z), Vector3(y.x, y.y, y.z), Vector3(z.x, z.y, z.z),
+		Vector3(t.x, t.y, t.z));
 }
 
 /***********************************************************************************************
