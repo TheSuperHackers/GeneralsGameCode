@@ -180,6 +180,17 @@ void Matrix4x4::Multiply(const Matrix4x4 & a,const Matrix3D & b,Matrix4x4 * res)
 	#undef ROWCOL4
 }
 
+int operator == (const Matrix4x4 & a, const Matrix4x4 & b)
+{
+	return ((a[0] == b[0]) && (a[1] == b[1]) && (a[2] == b[2]) && (a[3] == b[3]));
+}
+
+int operator != (const Matrix4x4 & a, const Matrix4x4 & b)
+{
+	return (!(a == b));
+}
+
+
 void To_D3DMATRIX(_D3DMATRIX& dxm, const Matrix4x4& m)
 {
 	dxm.m[0][0] = m[0][0];
