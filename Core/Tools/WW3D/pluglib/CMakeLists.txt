@@ -1,7 +1,5 @@
 set(PLUGLIB_SRC
     "errclass.h"
-    "EULER.cpp"
-    "EULER.h"
     "nodefilt.cpp"
     "nodefilt.h"
     "nodelist.cpp"

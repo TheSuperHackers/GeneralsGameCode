@@ -62,7 +62,7 @@
 #include "hiersave.h"
 #include "w3d_file.h"
 #include "nodefilt.h"
-#include "EULER.h"
+#include "WWMath/euler.h"
 #include "util.h"
 #include "w3dappdata.h"
 #include "errclass.h"
@@ -733,7 +733,7 @@ int HierarchySaveClass::add_node(INode * node,int pidx)
 	*/
 	Matrix3 rotmat;
 	rot.MakeMatrix(rotmat);
-	EulerAnglesClass eangs(rotmat,EulerOrderXYZr);
+	EulerAnglesClass eangs(Convert_Max_Matrix(rotmat),EulerOrderXYZr);
 
 	Node[CurNode].Pivot.EulerAngles.X = eangs.Get_Angle(0);
 	Node[CurNode].Pivot.EulerAngles.Y = eangs.Get_Angle(1);
