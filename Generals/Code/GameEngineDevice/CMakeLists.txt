@@ -108,7 +108,6 @@ set(GAMEENGINEDEVICE_SRC
 #    Source/W3DDevice/GameClient/GUI/Gadget/W3DVerticalSlider.cpp
 #    Source/W3DDevice/GameClient/GUI/GUICallbacks/W3DControlBar.cpp
 #    Source/W3DDevice/GameClient/GUI/GUICallbacks/W3DMainMenu.cpp
-#    Source/W3DDevice/GameClient/GUI/GUICallbacks/W3DMOTD.cpp
 #    Source/W3DDevice/GameClient/GUI/W3DGameFont.cpp
 #    Source/W3DDevice/GameClient/GUI/W3DGameWindow.cpp
 #    Source/W3DDevice/GameClient/GUI/W3DGameWindowManager.cpp
