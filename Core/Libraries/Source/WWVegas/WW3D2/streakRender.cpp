@@ -1340,7 +1340,7 @@ void StreakRendererClass::RenderStreak
 			for (i=0; i<vnum; i++)
 			{
 				DEBUG_ASSERTCRASH(vertexArray[i].x != (float)0xdeadbeef && vertexArray[i].y != (float)0xdeadbeef && vertexArray[i].z != (float)0xdeadbeef && vertexArray[i].u1 != (float)0xdeadbeeef && vertexArray[i].v1 != (float)0xdeadbeef, ("Uninitialized vertexArray[%d]", i));
-				DEBUG_ASSERTCRASH((! _isnan(vertexArray[i].x) && _finite(vertexArray[i].x) && ! _isnan(vertexArray[i].y) && _finite(vertexArray[i].y) && ! _isnan(vertexArray[i].z) && _finite(vertexArray[i].z)) , ("Bad vertexArray[%d]", i));
+				DEBUG_ASSERTCRASH((! std::isnan(vertexArray[i].x) && std::isfinite(vertexArray[i].x) && ! std::isnan(vertexArray[i].y) && std::isfinite(vertexArray[i].y) && ! std::isnan(vertexArray[i].z) && std::isfinite(vertexArray[i].z)) , ("Bad vertexArray[%d]", i));
 				Vector3 *vertex = reinterpret_cast<Vector3 *>(vb + verticesOffset);
 				vertex->X = vertexArray[i].x;
 				vertex->Y = vertexArray[i].y;
