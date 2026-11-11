@@ -41,7 +41,7 @@
 #include "max_sdk.h"
 #include "meshbuild.h"
 #include "nodelist.h"
-#include "Vector.h"
+#include "WWLib/Vector.h"
 
 
 class GeometryExportTaskClass;

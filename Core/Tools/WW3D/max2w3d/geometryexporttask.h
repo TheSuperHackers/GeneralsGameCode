@@ -41,7 +41,7 @@
 #include <string.h>
 #include "max_sdk.h"
 #include "w3d_file.h"
-#include "Vector.h"
+#include "WWLib/Vector.h"
 
 
 class GeometryExportContextClass;

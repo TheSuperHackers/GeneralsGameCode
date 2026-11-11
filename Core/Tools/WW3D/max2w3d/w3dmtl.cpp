@@ -39,7 +39,7 @@
 #include "max_sdk.h"
 #include <stdmat.h>
 #include "gamemtl.h"
-#include "realcrc.h"
+#include "WWLib/realcrc.h"
 
 static W3dRGBStruct Color_To_W3d(Color & c)
 {

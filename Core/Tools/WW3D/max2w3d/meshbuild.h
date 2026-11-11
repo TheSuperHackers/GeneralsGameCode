@@ -36,10 +36,10 @@
 
 #pragma once
 
-#include	"always.h"
-#include "vector2.h"
-#include "vector3.h"
-#include "BITTYPE.h"
+#include	"WWLib/always.h"
+#include "WWMath/vector2.h"
+#include "WWMath/vector3.h"
+#include "WWLib/bittype.h"
 
 #include <assert.h>
 
