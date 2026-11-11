@@ -37,7 +37,7 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 #include "max_sdk.h"
 #include "dllmain.h"
 #include "hiersave.h"

@@ -117,6 +117,7 @@ target_sources(core_max2w3d PRIVATE ${MAX2W3D_SRC})
 target_link_libraries(core_max2w3d PRIVATE
     Comctl32
     core_pluglib
+    core_wwstub
     # d3d8lib is only linked to have its basetsd.h used instead of the vs6's basetsd.h
     # The headers typedef INT_PTR to different types, but deps_maxsdk expects it
     # typedef'ed to int, otherwise throws linker errors.

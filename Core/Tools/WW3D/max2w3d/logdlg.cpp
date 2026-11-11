@@ -40,7 +40,7 @@
 #include "dllmain.h"
 #include "w3dexp.h"
 #include "util.h"
-#include "rawfile.h"
+#include "WWLib/RAWFILE.h"
 #include "units.h"
 
 

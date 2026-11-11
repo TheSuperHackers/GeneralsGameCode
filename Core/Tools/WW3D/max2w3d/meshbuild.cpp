@@ -59,7 +59,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "meshbuild.h"
-#include "uarray.h"
+#include "WWLib/uarray.h"
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -469,7 +469,7 @@ void MeshBuilderClass::FaceClass::Reset()
  *=============================================================================================*/
 void MeshBuilderClass::FaceClass::Compute_Plane()
 {
-	Normal = Vector3::Cross_Product((Verts[1].Position - Verts[0].Position),(Verts[2].Position - Verts[0].Position));
+	Vector3::Cross_Product((Verts[1].Position - Verts[0].Position),(Verts[2].Position - Verts[0].Position),&Normal);
 	Normal.Normalize();
 	Dist = Vector3::Dot_Product(Normal,Verts[0].Position);
 }
@@ -772,7 +772,8 @@ bool MeshBuilderClass::Verify_Face_Normals()
 		VertClass & v0 = Verts[Faces[faceidx].VertIdx[0]];
 		VertClass & v1 = Verts[Faces[faceidx].VertIdx[1]];
 		VertClass & v2 = Verts[Faces[faceidx].VertIdx[2]];
-		Vector3 normal = Vector3::Cross_Product((v1.Position - v0.Position),(v2.Position - v0.Position));
+		Vector3 normal;
+		Vector3::Cross_Product((v1.Position - v0.Position),(v2.Position - v0.Position),&normal);
 		normal.Normalize();
 
 		float dn = (Faces[faceidx].Normal - normal).Length();
