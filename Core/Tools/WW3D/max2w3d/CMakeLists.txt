@@ -84,8 +84,6 @@ set(MAX2W3D_SRC
     "SkinCopy.cpp"
     "skindata.cpp"
     "skindata.h"
-    "TARGA.cpp"
-    "TARGA.h"
     "util.cpp"
     "util.h"
     "Utility.cpp"
