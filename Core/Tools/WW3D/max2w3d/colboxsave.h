@@ -37,7 +37,7 @@
 #pragma once
 
 #include "max_sdk.h"
-#include "w3d_file.h"
+#include "WW3D2/w3d_file.h"
 #include "WWLib/chunkio.h"
 #include "PROGRESS.h"
 

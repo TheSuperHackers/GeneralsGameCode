@@ -40,7 +40,7 @@
 #include "WWLib/RAWFILE.h"	// have to include this before Max.h
 #include "max_sdk.h"
 #include "WWLib/bittype.h"
-#include "w3d_file.h"
+#include "WW3D2/w3d_file.h"
 #include "WWLib/chunkio.h"
 #include "PROGRESS.h"
 #include "nodelist.h"
