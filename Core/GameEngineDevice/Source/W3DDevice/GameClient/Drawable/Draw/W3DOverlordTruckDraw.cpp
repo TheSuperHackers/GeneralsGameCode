@@ -86,7 +86,8 @@ void W3DOverlordTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 		)
 	{
 		Drawable *riderDraw = me->getContain()->friend_getRider()->getDrawable();
-		riderDraw->setColorTintEnvelope( *getDrawable()->getColorTintEnvelope() );
+		if (const TintEnvelope* tint = getDrawable()->getColorTintEnvelope())
+			riderDraw->setColorTintEnvelope(*tint);
 
 		riderDraw->notifyDrawableDependencyCleared();
 		riderDraw->draw();
