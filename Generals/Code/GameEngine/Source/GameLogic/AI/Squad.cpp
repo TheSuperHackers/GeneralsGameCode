@@ -99,19 +99,21 @@ const VecObjectPtr& Squad::getAllObjects() // Not a const function cause we clea
 	return m_objectsCached;
 }
 
+struct ObjectIsNotSelectable
+{
+	Bool operator()(const Object* obj) const
+	{
+		return !obj->isSelectable();
+	}
+};
+
 // getLiveObjects /////////////////////////////////////////////////////////////////////////////////
 const VecObjectPtr& Squad::getLiveObjects()
 {
 	// first get all the objects.
 	// cheat, since we are a member function, and just use m_objectsCached
 	getAllObjects();
-	for (VecObjectPtrIt it = m_objectsCached.begin(); it != m_objectsCached.end(); ) {
-		if (!(*it)->isSelectable()) {
-			it = m_objectsCached.erase(it);
-		} else {
-			++it;
-		}
-	}
+	std::erase_if(m_objectsCached, ObjectIsNotSelectable());
 
 	return m_objectsCached;
 }

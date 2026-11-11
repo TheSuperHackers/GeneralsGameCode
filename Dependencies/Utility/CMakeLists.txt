@@ -9,6 +9,7 @@ set(UTILITY_SRC
     Utility/compat.h
     Utility/comsupp_compat.h
     Utility/endian_compat.h
+    Utility/erase_adapter.h
     Utility/fstream_adapter.h
     Utility/hash_map_adapter.h
     Utility/interlocked_adapter.h
