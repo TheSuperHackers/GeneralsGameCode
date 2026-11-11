@@ -53,9 +53,9 @@ static_assert(ARRAY_SIZE(TheRelationshipNames) == RELATIONSHIP_COUNT + 1, "Incor
 // TheSuperHackers @todo DO NOT USE THIS FUNCTION! Use WWMath::Normalize_Angle instead. Delete this.
 Real normalizeAngle(Real angle)
 {
-	DEBUG_ASSERTCRASH(!_isnan(angle), ("Angle is NAN in normalizeAngle!"));
+	DEBUG_ASSERTCRASH(!std::isnan(angle), ("Angle is NAN in normalizeAngle!"));
 
-	if( _isnan(angle) )
+	if( std::isnan(angle) )
 		return 0;// ARGH!!!! Don't assert and then not handle it!  Error bad!  Fix error!
 
 	while (angle > PI)

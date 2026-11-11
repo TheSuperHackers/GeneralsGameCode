@@ -297,9 +297,9 @@ void PhysicsBehavior::applyForce( const Coord3D *force )
 {
 // TheSuperHackers @info helmutbuhler 06/05/2025 This debug mutates the code to become CRC incompatible
 #if defined(RTS_DEBUG) || !RETAIL_COMPATIBLE_CRC
-	DEBUG_ASSERTCRASH(!(_isnan(force->x) || _isnan(force->y) || _isnan(force->z)), ("PhysicsBehavior::applyForce force NAN!"));
+	DEBUG_ASSERTCRASH(!(std::isnan(force->x) || std::isnan(force->y) || std::isnan(force->z)), ("PhysicsBehavior::applyForce force NAN!"));
 #endif
-	if (_isnan(force->x) || _isnan(force->y) || _isnan(force->z)) {
+	if (std::isnan(force->x) || std::isnan(force->y) || std::isnan(force->z)) {
 		return;
 	}
 	// F = ma  -->  a = F/m  (divide force by mass)
@@ -319,8 +319,8 @@ void PhysicsBehavior::applyForce( const Coord3D *force )
 	m_accel.y += modForce.y * massInv;
 	m_accel.z += modForce.z * massInv;
 
-	//DEBUG_ASSERTCRASH(!(_isnan(m_accel.x) || _isnan(m_accel.y) || _isnan(m_accel.z)), ("PhysicsBehavior::applyForce accel NAN!"));
-	//DEBUG_ASSERTCRASH(!(_isnan(m_vel.x) || _isnan(m_vel.y) || _isnan(m_vel.z)), ("PhysicsBehavior::applyForce vel NAN!"));
+	//DEBUG_ASSERTCRASH(!(std::isnan(m_accel.x) || std::isnan(m_accel.y) || std::isnan(m_accel.z)), ("PhysicsBehavior::applyForce accel NAN!"));
+	//DEBUG_ASSERTCRASH(!(std::isnan(m_vel.x) || std::isnan(m_vel.y) || std::isnan(m_vel.z)), ("PhysicsBehavior::applyForce vel NAN!"));
 	//DEBUG_ASSERTCRASH(fabs(force->z) < 3, ("unlikely z-force"));
 #ifdef SLEEPY_PHYSICS
 	if (getFlag(IS_IN_UPDATE))
@@ -593,8 +593,8 @@ UpdateSleepTime PhysicsBehavior::update()
 			mtx.Adjust_Z_Translation(m_vel.z);
 		}
 
-		if (_isnan(mtx.Get_X_Translation()) || _isnan(mtx.Get_Y_Translation()) ||
-			_isnan(mtx.Get_Z_Translation())) {
+		if (std::isnan(mtx.Get_X_Translation()) || std::isnan(mtx.Get_Y_Translation()) ||
+			std::isnan(mtx.Get_Z_Translation())) {
 			DEBUG_CRASH(("Object position is NAN, deleting."));
 			TheGameLogic->destroyObject(obj);
 		}
@@ -1339,7 +1339,7 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 		force.x = factor * delta.x / dist;
 		force.y = factor * delta.y / dist;
 		force.z = factor * delta.z / dist;	// will be zero for 2d case.
-		DEBUG_ASSERTCRASH(!(_isnan(force.x) || _isnan(force.y) || _isnan(force.z)), ("PhysicsBehavior::onCollide force NAN!"));
+		DEBUG_ASSERTCRASH(!(std::isnan(force.x) || std::isnan(force.y) || std::isnan(force.z)), ("PhysicsBehavior::onCollide force NAN!"));
 
 		applyForce( &force );
 	}
