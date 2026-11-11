@@ -435,6 +435,14 @@ Bool Bridge::isPointOnBridge(const Coord3D *pLoc)
 	if (pLoc->y < m_bounds.lo.y) return(false);
 	if (pLoc->y > m_bounds.hi.y) return(false);
 
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_PATHFINDING
+	Pathfinder& pathfinder = *TheAI->pathfinder();
+	if (pathfinder.m_tightenPathInitMode)
+	{
+		return isPointOnBridge2(*pLoc, pathfinder.m_tightenPathInitMode == 2, pathfinder.m_tightenPathCoords);
+	}
+#endif
+
 	Vector3 testPt(pLoc->x, pLoc->y, pLoc->z);
 	Vector3 left1(m_bridgeInfo.fromLeft.x, m_bridgeInfo.fromLeft.y, m_bridgeInfo.fromLeft.z);
 	Vector3 right1(m_bridgeInfo.fromRight.x, m_bridgeInfo.fromRight.y, m_bridgeInfo.fromRight.z);
@@ -451,6 +459,68 @@ Bool Bridge::isPointOnBridge(const Coord3D *pLoc)
 	}
 	return(false);
 }
+
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_PATHFINDING
+// TheSuperHackers @info Caball009 11/11/2026 Special version of function Bridge::isPointOnBridge for retail compatibility.
+// The purpose of this function is to get the values for the originally uninitialized variable in Pathfinder::tightenPathCallback.
+Bool Bridge::isPointOnBridge2(const Coord3D& pos, Bool specialInit, Coord3D& out) const
+{
+	const Vector3 testPt(pos.x, pos.y, pos.z);
+	const Vector3  left1(m_bridgeInfo.fromLeft.x,  m_bridgeInfo.fromLeft.y,  m_bridgeInfo.fromLeft.z);
+	const Vector3 right1(m_bridgeInfo.fromRight.x, m_bridgeInfo.fromRight.y, m_bridgeInfo.fromRight.z);
+	const Vector3  left2(m_bridgeInfo.toLeft.x,    m_bridgeInfo.toLeft.y,    m_bridgeInfo.toLeft.z);
+	const Vector3 right2(m_bridgeInfo.toRight.x,   m_bridgeInfo.toRight.y,   m_bridgeInfo.toRight.z);
+
+	unsigned char flags;
+
+	if (Point_In_Triangle_2D(left1, right1, left2, testPt, 0, 1, flags))
+	{
+		if (specialInit)
+		{
+			const Vector3& tri_point0 = left1;
+			const Vector3& tri_point1 = right1;
+
+			const Vector2 p0p1(tri_point1[0] - tri_point0[0], tri_point1[1] - tri_point0[1]);
+			const Vector2 p0pT(testPt[0] - tri_point0[0], testPt[1] - tri_point0[1]);
+			const float z = Vector2::Perp_Dot_Product(p0p1, p0pT);
+
+			out.set(p0p1.X, p0p1.Y, z);
+		}
+		else
+		{
+			out.set(0.0f, 1000000000.0f, 0.0f);
+		}
+
+		return true;
+	}
+	else
+	{
+		const bool inTriangle = Point_In_Triangle_2D(right1, left2, right2, testPt, 0, 1, flags);
+
+		if (specialInit)
+		{
+			const Vector3& tri_point0 = right1;
+			const Vector3& tri_point1 = left2;
+
+			const Vector2 p0p1(tri_point1[0] - tri_point0[0], tri_point1[1] - tri_point0[1]);
+			const Vector2 p0pT(testPt[0] - tri_point0[0], testPt[1] - tri_point0[1]);
+			const float z = Vector2::Perp_Dot_Product(p0p1, p0pT);
+
+			out.set(p0p1.X, p0p1.Y, z);
+		}
+		else if (inTriangle)
+		{
+			out.set(0.0f, 1000000000.0f, 0.0f);
+		}
+		else
+		{
+			out.set(0.0f, 0.0f, 0.0f);
+		}
+
+		return inTriangle;
+	}
+}
+#endif // RTS_ZEROHOUR && RETAIL_COMPATIBLE_PATHFINDING
 
 /*-------------------------------------------------------------------------------------------------
 /** Clip a floating point line to the region provided.  The source line runs from p1 to p2, and is clipped

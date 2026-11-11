@@ -227,6 +227,8 @@ void Pathfinder::reset()
 
 #if RTS_ZEROHOUR && RETAIL_COMPATIBLE_PATHFINDING
 	m_classifyFenceZeroInit = false;
+	m_tightenPathInitMode = 0;
+	m_tightenPathCoords.zero();
 #endif
 }
 
@@ -1496,12 +1498,20 @@ Bool Pathfinder::checkForAdjust(Object *obj, const LocomotorSet& locomotorSet, B
 		if (obj->isKindOf(KINDOF_AIRCRAFT)) {
 			adjustedPathExists = true;
 		}	else {
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_PATHFINDING
+			m_tightenPathInitMode = groupDest != nullptr;
+#endif
+
 			Bool pathExists = clientSafeQuickDoesPathExist( locomotorSet, obj->getPosition(), dest);
 			if (!pathExists && clientSafeQuickDoesPathExist( locomotorSet, dest, &adjustDest)) {
 				adjustedPathExists = true;
 			} else {
 				adjustedPathExists = clientSafeQuickDoesPathExist( locomotorSet, obj->getPosition(), &adjustDest);
 			}
+
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_PATHFINDING
+			m_tightenPathInitMode = 0;
+#endif
 		}
 		if ( adjustedPathExists	) {
 			if (groupDest) {
@@ -1646,6 +1656,10 @@ Bool Pathfinder::adjustDestination(Object *obj, const LocomotorSet& locomotorSet
 	if (groupDest) {
 		layer = TheTerrainLogic->getLayerForDestination(groupDest);
 	}
+
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_PATHFINDING
+	m_tightenPathCoords.zero();
+#endif
 
 	Int i = cell.x;
 	Int j = cell.y;
@@ -4543,7 +4557,7 @@ struct TightenPathStruct
 		return 0; // failure
 	}
 
-#if RETAIL_COMPATIBLE_CRC
+#if RETAIL_COMPATIBLE_PATHFINDING
 	// TheSuperHackers @bugfix Caball009 27/02/2026 This was originally uninitialized.
 	// The uninitialized values that retail uses here are usually close to zero as long as foundNewDest == false, otherwise it uses the new values of newDestPos.
 	// newDestPos is zero initialized by the caller, so there is no need to check foundNewDest here.
@@ -4569,13 +4583,25 @@ void Pathfinder::tightenPath(Object *obj, const LocomotorSet& locomotorSet, Coor
 	TightenPathStruct info;
 
 	getRadiusAndCenter(obj, info.radius, info.center);
-	info.layer = TheTerrainLogic->getLayerForDestination(from);
 	info.obj = obj;
 	info.locomotorSet = &locomotorSet;
 	info.foundNewDest = false;
 	info.orgDestPos = *to;
-#if RETAIL_COMPATIBLE_CRC
+#if RETAIL_COMPATIBLE_PATHFINDING
+
+#if RTS_ZEROHOUR
+	m_tightenPathInitMode = 2;
+	info.layer = TheTerrainLogic->getLayerForDestination(from);
+	m_tightenPathInitMode = 0;
+
+	info.newDestPos = m_tightenPathCoords;
+#else
+	info.layer = TheTerrainLogic->getLayerForDestination(from);
 	info.newDestPos.zero();
+#endif
+
+#else
+	info.layer = TheTerrainLogic->getLayerForDestination(from);
 #endif
 	iterateCellsAlongLine(*from, *to, info.layer, tightenPathCallback, &info);
 	if (info.foundNewDest) {
