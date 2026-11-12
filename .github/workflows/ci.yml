@@ -203,7 +203,7 @@ jobs:
   # Runs separately so the build jobs, which also run for pull requests, do not need actions: write.
   cleanup-ccache:
     name: Delete Superseded Compiler Caches
-    needs: [build-generals-vc6, build-generals-win32, build-generalsmd-vc6, build-generalsmd-win32]
+    needs: [build-generals-vc6, build-generals-win32, build-generalsmd-vc6, build-generalsmd-win32, build-mingw-generals, build-mingw-generalsmd]
     if: ${{ !cancelled() && github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5

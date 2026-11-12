@@ -28,7 +28,7 @@ jobs:
       - name: Install MinGW-w64 Toolchain
         run: |
           sudo apt-get update
-          sudo apt-get install -y mingw-w64 cmake
+          sudo apt-get install -y mingw-w64 cmake ccache
 
       - name: Install Wine and widl
         run: |
@@ -58,9 +58,32 @@ jobs:
           path: build/${{ inputs.preset }}/_deps
           key: cmake-deps-mingw-${{ inputs.preset }}-${{ hashFiles('CMakePresets.json','cmake/**/*.cmake','**/CMakeLists.txt') }}
 
+      - name: Set Up ccache
+        id: ccache
+        run: |
+          echo "CCACHE_DIR=$RUNNER_TEMP/ccache-cache" >> "$GITHUB_ENV"
+          # Runner image updates can change timestamps without changing the compiler.
+          echo "CCACHE_COMPILERCHECK=content" >> "$GITHUB_ENV"
+          # GCC precompiled headers bypass ccache without this sloppiness.
+          echo "CCACHE_SLOPPINESS=pch_defines,time_macros" >> "$GITHUB_ENV"
+          # Bound each game/preset cache to limit storage across the build matrix.
+          echo "CCACHE_MAXSIZE=500M" >> "$GITHUB_ENV"
+          echo "toolchain=$(i686-w64-mingw32-g++ -dumpfullversion)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore MinGW-w64 Compilation Cache
+        id: ccache-restore
+        uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ccache-v1-${{ runner.os }}-${{ runner.arch }}-${{ inputs.game }}-${{ inputs.preset }}-${{ steps.ccache.outputs.toolchain }}-${{ github.sha }}
+          restore-keys: |
+            ccache-v1-${{ runner.os }}-${{ runner.arch }}-${{ inputs.game }}-${{ inputs.preset }}-${{ steps.ccache.outputs.toolchain }}-
+
       - name: Configure ${{ inputs.game }} with CMake (${{ inputs.preset }})
         run: |
           cmake --preset ${{ inputs.preset }} \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DRTS_BUILD_ZEROHOUR=${{ inputs.game == 'GeneralsMD' && 'ON' || 'OFF' }} \
             -DRTS_BUILD_GENERALS=${{ inputs.game == 'Generals' && 'ON' || 'OFF' }} \
             -DRTS_BUILD_CORE_TOOLS=OFF \
@@ -70,8 +93,23 @@ jobs:
             -DRTS_BUILD_GENERALS_EXTRAS=OFF \
             -DRTS_BUILD_ZEROHOUR_EXTRAS=OFF
 
+      - name: Reset ccache Statistics
+        run: ccache --zero-stats
+
       - name: Build ${{ inputs.game }} (${{ inputs.preset }})
         run: cmake --build build/${{ inputs.preset }} --target ${{ inputs.game == 'Generals' && 'g_generals' || 'z_generals' }} -j$(nproc)
+
+      - name: Show ccache Statistics
+        if: ${{ always() }}
+        run: ccache --show-stats --verbose
+
+      # Pull requests only restore, so caches change only after changes reach main.
+      - name: Save MinGW-w64 Compilation Cache
+        if: ${{ github.event_name != 'pull_request' && steps.ccache-restore.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
 
       - name: Collect ${{ inputs.game }} Artifacts
         run: |
