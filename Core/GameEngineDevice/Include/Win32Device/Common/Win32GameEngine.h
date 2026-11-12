@@ -66,6 +66,7 @@ public:
 	virtual void update() override;														///< update the game engine
 	virtual void serviceWindowsOS() override;									///< allow windows maintenance in background
 	virtual void setBusyState(Bool busyDisplay, Bool busySystem) override;
+	virtual OSDisplayButtonType displayWarningBox(AsciiString p, AsciiString m, UnsignedInt buttonFlags, UnsignedInt otherFlags) override;
 
 protected:
 

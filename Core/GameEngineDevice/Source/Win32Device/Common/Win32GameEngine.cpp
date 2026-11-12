@@ -33,6 +33,7 @@
 
 #include "Win32Device/Common/Win32GameEngine.h"
 #include "Common/PerfTimer.h"
+#include "GameClient/GameText.h"
 
 #include "GameNetwork/LANAPICallbacks.h"
 
@@ -176,4 +177,71 @@ void Win32GameEngine::setBusyState(Bool busyDisplay, Bool busySystem)
 	state |= busySystem ? ES_SYSTEM_REQUIRED : 0;
 
 	::SetThreadExecutionState(state);
+}
+
+//-------------------------------------------------------------------------------------------------
+static void RTSFlagsToOSFlags(UnsignedInt buttonFlags, UnsignedInt otherFlags, UnsignedInt& outWindowsFlags)
+{
+	outWindowsFlags = 0;
+
+	if (BitIsSet(buttonFlags, OSDBT_OK)) {
+		outWindowsFlags |= MB_OK;
+	}
+
+	if (BitIsSet(buttonFlags, OSDBT_CANCEL)) {
+		outWindowsFlags |= MB_OKCANCEL;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	if (BitIsSet(otherFlags, OSDOF_SYSTEMMODAL)) {
+		outWindowsFlags |= MB_SYSTEMMODAL;
+	}
+
+	if (BitIsSet(otherFlags, OSDOF_APPLICATIONMODAL)) {
+		outWindowsFlags |= MB_APPLMODAL;
+	}
+
+	if (BitIsSet(otherFlags, OSDOF_TASKMODAL)) {
+		outWindowsFlags |= MB_TASKMODAL;
+	}
+
+	if (BitIsSet(otherFlags, OSDOF_EXCLAMATIONICON)) {
+		outWindowsFlags |= MB_ICONEXCLAMATION;
+	}
+
+	if (BitIsSet(otherFlags, OSDOF_INFORMATIONICON)) {
+		outWindowsFlags |= MB_ICONINFORMATION;
+	}
+
+	if (BitIsSet(otherFlags, OSDOF_ERRORICON)) {
+		outWindowsFlags |= MB_ICONERROR;
+	}
+
+	if (BitIsSet(otherFlags, OSDOF_STOPICON)) {
+		outWindowsFlags |= MB_ICONSTOP;
+	}
+
+}
+
+//-------------------------------------------------------------------------------------------------
+OSDisplayButtonType Win32GameEngine::displayWarningBox(AsciiString p, AsciiString m, UnsignedInt buttonFlags, UnsignedInt otherFlags)
+{
+	if (!TheGameText) {
+		return OSDBT_ERROR;
+	}
+
+	UnicodeString promptStr = TheGameText->fetch(p);
+	UnicodeString mesgStr = TheGameText->fetch(m);
+
+	UnsignedInt windowsOptionsFlags = 0;
+	RTSFlagsToOSFlags(buttonFlags, otherFlags, windowsOptionsFlags);
+
+	// @todo Make this return more than just ok/cancel - jkmcd
+	// (we need a function to translate back the other way.)
+	const Int returnResult = ::MessageBoxW(nullptr, mesgStr.str(), promptStr.str(), windowsOptionsFlags);
+	if (returnResult == IDOK) {
+		return OSDBT_OK;
+	}
+
+	return OSDBT_CANCEL;
 }

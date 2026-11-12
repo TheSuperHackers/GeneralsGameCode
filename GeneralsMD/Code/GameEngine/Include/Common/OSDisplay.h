@@ -28,8 +28,6 @@
 
 #pragma once
 
-class AsciiString;
-
 enum OSDisplayButtonType CPP_11(: UnsignedInt)
 {
 	OSDBT_OK										= 0x00000001,
@@ -52,8 +50,3 @@ enum OSDisplayOtherFlags CPP_11(: UnsignedInt)
 
 	ODDOF_ERROR									= 0x80000000
 };
-
-// Display a warning box to the user with the specified localized prompt, message, and
-// buttons. (Feel free to add buttons as appropriate to the enum above).
-// This function will return the button pressed to close the dialog.
-OSDisplayButtonType OSDisplayWarningBox(AsciiString p, AsciiString m, UnsignedInt buttonFlags, UnsignedInt otherFlags);
