@@ -182,16 +182,7 @@ void Matrix4x4::Multiply(const Matrix4x4 & a,const Matrix3D & b,Matrix4x4 * res)
 
 int operator == (const Matrix4x4 & a, const Matrix4x4 & b)
 {
-	unsigned* m1=(unsigned*)&a;
-	unsigned* m2=(unsigned*)&b;
-	unsigned res=0;
-	for (int i=0;i<4;++i) {
-		res|=*m1++^*m2++;
-		res|=*m1++^*m2++;
-		res|=*m1++^*m2++;
-		res|=*m1++^*m2++;
-	}
-	return !res;
+	return ((a[0] == b[0]) && (a[1] == b[1]) && (a[2] == b[2]) && (a[3] == b[3]));
 }
 
 int operator != (const Matrix4x4 & a, const Matrix4x4 & b)
