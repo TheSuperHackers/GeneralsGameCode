@@ -1,6 +1,6 @@
 /*
 **	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 Electronic Arts Inc.
+**	Copyright 2026 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ void ActionsPerMinute::reset()
 {
 	std::fill(m_buckets, m_buckets + ARRAY_SIZE(m_buckets), 0u);
 	m_currentSecond = 0u;
+	m_lastActionFrame = ~0u;
 	m_actionsPerMinute = 0u;
 	m_totalActions = 0u;
 }
@@ -68,6 +69,11 @@ void ActionsPerMinute::recordMessage(const GameMessage *msg, UnsignedInt frame)
 {
 	if (!isPlayerAction(msg))
 		return;
+
+	if (frame == m_lastActionFrame)
+		return;
+
+	m_lastActionFrame = frame;
 
 	update(frame);
 
