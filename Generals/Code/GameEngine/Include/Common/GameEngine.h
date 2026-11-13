@@ -73,9 +73,7 @@ public:
 
 	virtual Bool isMultiplayerSession();
 	virtual void serviceWindowsOS() {};		///< service the native OS
-	// TheSuperHackers @feature Tell the Operating System that the game is considered busy
-	// and we would not like the display screen and/or system to shut off.
-	virtual void setBusyState(Bool busyDisplay, Bool busySystem) {}
+	virtual void setBusyState(Bool busyDisplay, Bool busySystem) {}	///< tell the OS to keep the display and/or system awake
 	// Display a warning box to the user with the specified localized prompt, message, and
 	// buttons. (Feel free to add buttons as appropriate to the OSDisplayButtonType enum).
 	// This function will return the button pressed to close the dialog.
