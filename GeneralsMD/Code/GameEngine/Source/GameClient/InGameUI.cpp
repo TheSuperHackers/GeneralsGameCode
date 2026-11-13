@@ -991,6 +991,7 @@ void InGameUI::PlayerInfoList::init(const AsciiString &fontName, Int pointSize, 
 	labels[LabelType_MoneyPerMinute]->setText(TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:PlayerInfoListLabelMoneyPerMinute", L"+"));
 	labels[LabelType_Rank]->setText(TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:PlayerInfoListLabelRank", L"*"));
 	labels[LabelType_Xp]->setText(TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:PlayerInfoListLabelXp", L"XP"));
+	labels[LabelType_ActionsPerMinute]->setText(TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:PlayerInfoListLabelActionsPerMinute", L"APM"));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -6382,6 +6383,7 @@ void InGameUI::drawPlayerInfoList()
 		const UnsignedInt moneyPerMinuteValue = money->getCashPerMinute();
 		const UnsignedInt rankValue = static_cast<UnsignedInt>(player->getRankLevel());
 		const UnsignedInt xpValue = static_cast<UnsignedInt>(player->getSkillPoints());
+		const UnsignedInt actionsPerMinuteValue = player->getActionsPerMinute()->getActionsPerMinute();
 		const UnicodeString nameValue = player->getPlayerDisplayName();
 
 		const UnsignedInt currentValues[] = {
@@ -6389,7 +6391,8 @@ void InGameUI::drawPlayerInfoList()
 			moneyValue,
 			moneyPerMinuteValue,
 			rankValue,
-			xpValue
+			xpValue,
+			actionsPerMinuteValue
 		};
 		static_assert(ARRAY_SIZE(currentValues) == PlayerInfoList::LabelType_Count, "Incorrect array size");
 		for (column = 0; column < ARRAY_SIZE(currentValues); ++column)

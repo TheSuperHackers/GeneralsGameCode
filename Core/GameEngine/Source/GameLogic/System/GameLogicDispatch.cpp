@@ -401,6 +401,8 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 				if(TheStatsCollector)
 					TheStatsCollector->collectMsgStats(msg);
+
+				msgPlayer->getActionsPerMinute()->recordMessage(msg, getFrame());
 			}
 		}
 	}
