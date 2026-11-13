@@ -23,8 +23,8 @@
 class GameMessage;
 
 // TheSuperHackers @feature aibrahim- 13/11/2026 Counts the actions issued by a player over the last 60 seconds
-// of logic time. A single player input can produce several messages in the same frame (for example, selecting a
-// unit sends both a deselect and a select message), so at most one action is counted per player per logic frame.
+// of logic time. Selecting units often sends a deselect message directly followed by a select message for
+// the same player input, so such a pair is counted as one action.
 // It is purely informational: it is not saved and not part of the CRC, so it never affects sync.
 class ActionsPerMinute
 {
@@ -37,7 +37,7 @@ public:
 	/// Advance the rolling window to the given logic frame.
 	void update(UnsignedInt frame);
 
-	/// Count the message as an action if it was issued by the player and no action was counted yet this frame.
+	/// Count the message as an action if it was issued by the player and does not complete a deselect and select pair.
 	void recordMessage(const GameMessage *msg, UnsignedInt frame);
 
 	/// Actions issued over the last 60 seconds.
@@ -47,6 +47,7 @@ public:
 	UnsignedInt getTotalActions() const { return m_totalActions; }
 
 	static Bool isPlayerAction(const GameMessage *msg);
+	static Bool isSelectMessage(const GameMessage *msg);
 
 private:
 
@@ -55,6 +56,7 @@ private:
 	UnsignedInt m_buckets[BucketCount]; ///< circular buffer of actions per second
 	UnsignedInt m_currentSecond;
 	UnsignedInt m_lastActionFrame;
+	Bool m_lastActionWasDeselect;
 	UnsignedInt m_actionsPerMinute;
 	UnsignedInt m_totalActions;
 };

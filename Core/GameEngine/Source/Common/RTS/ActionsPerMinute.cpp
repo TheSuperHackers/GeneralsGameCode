@@ -34,6 +34,7 @@ void ActionsPerMinute::reset()
 	std::fill(m_buckets, m_buckets + ARRAY_SIZE(m_buckets), 0u);
 	m_currentSecond = 0u;
 	m_lastActionFrame = ~0u;
+	m_lastActionWasDeselect = FALSE;
 	m_actionsPerMinute = 0u;
 	m_totalActions = 0u;
 }
@@ -70,10 +71,15 @@ void ActionsPerMinute::recordMessage(const GameMessage *msg, UnsignedInt frame)
 	if (!isPlayerAction(msg))
 		return;
 
-	if (frame == m_lastActionFrame)
+	// The select message that directly follows a deselect message belongs to the same player input.
+	if (m_lastActionWasDeselect && frame == m_lastActionFrame && isSelectMessage(msg))
+	{
+		m_lastActionWasDeselect = FALSE;
 		return;
+	}
 
 	m_lastActionFrame = frame;
+	m_lastActionWasDeselect = (msg->getType() == GameMessage::MSG_DESTROY_SELECTED_GROUP);
 
 	update(frame);
 
@@ -103,4 +109,21 @@ Bool ActionsPerMinute::isPlayerAction(const GameMessage *msg)
 		default:
 			return TRUE;
 	}
+}
+
+// ------------------------------------------------------------------------------------------------
+Bool ActionsPerMinute::isSelectMessage(const GameMessage *msg)
+{
+	const GameMessage::Type type = msg->getType();
+
+	if (type == GameMessage::MSG_CREATE_SELECTED_GROUP || type == GameMessage::MSG_CREATE_SELECTED_GROUP_NO_SOUND)
+		return TRUE;
+
+	if (type >= GameMessage::MSG_SELECT_TEAM0 && type <= GameMessage::MSG_SELECT_TEAM9)
+		return TRUE;
+
+	if (type >= GameMessage::MSG_ADD_TEAM0 && type <= GameMessage::MSG_ADD_TEAM9)
+		return TRUE;
+
+	return FALSE;
 }
