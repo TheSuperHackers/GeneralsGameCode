@@ -71,6 +71,9 @@ public:
 	virtual void setQuitting( Bool quitting );				///< set quitting status
 	virtual Bool getQuitting();						///< is app getting ready to quit.
 
+	Int getExitCode() const { return m_exitCode; }
+	void setExitCode(Int exitCode) { m_exitCode = exitCode; }
+
 	virtual Bool isMultiplayerSession();
 	virtual void serviceWindowsOS() {};		///< service the native OS
 	virtual void setBusyState(Bool busyDisplay, Bool busySystem) {}	///< tell the OS to keep the display and/or system awake
@@ -106,6 +109,7 @@ protected:
 
 	Real m_logicTimeAccumulator; ///< Frame time accumulated towards submitting a new logic frame
 
+	Int m_exitCode; ///< process exit status after engine shutdown
 	Bool m_quitting; ///< true when we need to quit the game
 	Bool m_isActive; ///< app has OS focus.
 };
