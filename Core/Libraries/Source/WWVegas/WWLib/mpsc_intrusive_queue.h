@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include "Utility/interlocked_adapter.h"
+#include "Utility/atomic_adapter.h"
 
 // Lock-free intrusive queue for multiple producer threads and a single consumer thread,
 // using the same algorithm as the Win32 InterlockedPushEntrySList/InterlockedFlushSList
@@ -38,14 +38,12 @@ public:
 	// head, so its next pointer is never visible while stale.
 	void Push(T* node)
 	{
-		T* head;
+		T* head = m_head.load();
 		do
 		{
-			head = m_head;
 			node->next = head;
 		}
-		while (InterlockedCompareExchangePointer(
-			reinterpret_cast<void* volatile*>(&m_head), node, head) != head);
+		while (!m_head.compare_exchange_weak(head, node));
 	}
 
 	// Detaches all nodes and returns them linked in push order, or null if the queue is
@@ -54,8 +52,7 @@ public:
 	// suffer ABA.
 	T* Flush()
 	{
-		T* list = static_cast<T*>(InterlockedExchangePointer(
-			reinterpret_cast<void* volatile*>(&m_head), nullptr));
+		T* list = m_head.exchange(nullptr);
 
 		// The detached chain is in last-in-first-out order, so reverse it.
 		T* reversed = nullptr;
@@ -73,5 +70,5 @@ private:
 	MPSCIntrusiveQueue(const MPSCIntrusiveQueue&) CPP_11(= delete);
 	MPSCIntrusiveQueue& operator=(const MPSCIntrusiveQueue&) CPP_11(= delete);
 
-	T* volatile m_head;
+	std::atomic<T*> m_head;
 };
