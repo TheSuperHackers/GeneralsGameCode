@@ -358,13 +358,13 @@ void SortingRendererClass::Insert_To_Sorting_Pool(SortingNodeStruct* state)
 
 static void Apply_Render_State(RenderStateStruct& render_state)
 {
-	DX8Wrapper::Set_Shader(render_state.shader);
+	Renderer::Set_Shader(render_state.shader);
 
-	DX8Wrapper::Set_Material(render_state.material);
+	Renderer::Set_Material(render_state.material);
 
 	for (int i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i)
 	{
-		DX8Wrapper::Set_Texture(i,render_state.Textures[i]);
+		Renderer::Set_Texture(i,render_state.Textures[i]);
 	}
 
 	DX8Wrapper::_Set_DX8_Transform(D3DTS_WORLD,render_state.world);
@@ -537,7 +537,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 		DX8Wrapper::Set_Index_Buffer(dyn_ib_access,0); // Override with this buffer (do something to prevent need for this!)
 		DX8Wrapper::Set_Vertex_Buffer(dyn_vb_access); // Override with this buffer (do something to prevent need for this!)
 
-		DX8Wrapper::Apply_Render_State_Changes();
+		Renderer::Apply_Render_State_Changes();
 
 		unsigned count_to_render=1;
 		unsigned start_index=0;

@@ -179,6 +179,26 @@ void Renderer::Invalidate_Cached_Render_States()
     DX8Wrapper::Invalidate_Cached_Render_States();
 }
 
+void Renderer::Set_Shader(const ShaderClass & shader)
+{
+    DX8Wrapper::Set_Shader(shader);
+}
+
+void Renderer::Set_Material(const VertexMaterialClass * material)
+{
+    DX8Wrapper::Set_Material(material);
+}
+
+void Renderer::Set_Texture(unsigned stage, TextureBaseClass * texture)
+{
+    DX8Wrapper::Set_Texture(stage, texture);
+}
+
+void Renderer::Apply_Render_State_Changes()
+{
+    DX8Wrapper::Apply_Render_State_Changes();
+}
+
 void Renderer::Set_Transform(RenderTransform transform, const Matrix4x4 & m)
 {
     DX8Wrapper::Set_Transform(To_D3D_Transform(transform), m);
@@ -217,4 +237,19 @@ void Renderer::Set_Ambient(const Vector3 & color)
 void Renderer::Set_Light_Environment(LightEnvironmentClass * light_env)
 {
     DX8Wrapper::Set_Light_Environment(light_env);
+}
+
+void Renderer::Set_Light(unsigned index, const LightClass & light)
+{
+    DX8Wrapper::Set_Light(index, light);
+}
+
+void Renderer::Clear_Light(unsigned index)
+{
+    DX8Wrapper::Set_Light(index, nullptr);
+}
+
+void Renderer::Set_Fog(bool enable, const Vector3 & color, float start, float end)
+{
+    DX8Wrapper::Set_Fog(enable, color, start, end);
 }

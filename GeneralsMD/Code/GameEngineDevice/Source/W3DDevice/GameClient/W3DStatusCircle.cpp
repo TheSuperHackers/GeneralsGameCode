@@ -318,9 +318,9 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 			updateCircleVB();
 		}
 		//Apply the shader and material
-		DX8Wrapper::Set_Material(m_vertexMaterialClass);
-		DX8Wrapper::Set_Shader(m_shaderClass);
-		DX8Wrapper::Set_Texture(0, nullptr);
+		Renderer::Set_Material(m_vertexMaterialClass);
+		Renderer::Set_Shader(m_shaderClass);
+		Renderer::Set_Texture(0, nullptr);
 		DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
 		DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferCircle);
 		setIndex = true;
@@ -341,9 +341,9 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 	}
 
 	if (!setIndex) {
-		DX8Wrapper::Set_Material(m_vertexMaterialClass);
+		Renderer::Set_Material(m_vertexMaterialClass);
 		DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-		DX8Wrapper::Set_Texture(0, nullptr);
+		Renderer::Set_Texture(0, nullptr);
 	}
 
 	tm.Make_Identity();
@@ -352,9 +352,9 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 	Int diffuse = (0xff<<24)|(clr<<16)|(clr<<8)|clr;	 // b g<<8 r<<16 a<<24.
 	updateScreenVB(diffuse);
 	Renderer::Set_Transform(RenderTransform_World,tm);
-	DX8Wrapper::Set_Shader(ShaderClass(SC_ADD));
+	Renderer::Set_Shader(ShaderClass(SC_ADD));
 	DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferScreen);
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Apply_Render_State_Changes();
 	switch (fade) {
 		default:
 		case ScriptEngine::FADE_ADD:
