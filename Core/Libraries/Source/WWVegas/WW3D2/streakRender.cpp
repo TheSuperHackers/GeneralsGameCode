@@ -1305,7 +1305,7 @@ void StreakRendererClass::RenderStreak
 
 		VertexMaterialClass *mat;
 		mat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-		DX8Wrapper::Set_Material(mat);
+		Renderer::Set_Material(mat);
 		REF_PTR_RELEASE(mat);
 
 		// If Texture is non-null enable texturing in shader - otherwise disable.
@@ -1368,10 +1368,10 @@ void StreakRendererClass::RenderStreak
 		}
 
 
-		DX8Wrapper::Set_Index_Buffer(ib_access,0);
-		DX8Wrapper::Set_Vertex_Buffer(Verts);
-		DX8Wrapper::Set_Texture(0,Texture);
-		DX8Wrapper::Set_Shader(shader);
+		Renderer::Set_Index_Buffer(ib_access,0);
+		Renderer::Set_Vertex_Buffer(Verts);
+		Renderer::Set_Texture(0,Texture);
+		Renderer::Set_Shader(shader);
 
 		if (sorting)
 		{
@@ -1379,7 +1379,7 @@ void StreakRendererClass::RenderStreak
 		}
 		else
 		{
-			DX8Wrapper::Draw_Triangles(0,triangleIndex,0,vnum);
+			Renderer::Draw_Triangles(0,triangleIndex,0,vnum);
 		}
 
 	}
