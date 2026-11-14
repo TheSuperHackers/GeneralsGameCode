@@ -18,4 +18,5 @@ target_sources(corei_wwdownload INTERFACE ${WWDOWNLOAD_SRC})
 
 target_link_libraries(corei_wwdownload INTERFACE
     core_wwcommon
+    ws2_32
 )
