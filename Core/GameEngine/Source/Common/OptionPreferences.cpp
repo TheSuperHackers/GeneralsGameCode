@@ -216,6 +216,21 @@ Bool OptionPreferences::getRightMouseScrollWithAlternateMouseEnabled() const
 	return FALSE;
 }
 
+// TheSuperHackers @feature Options.ini: EasyMilitaryDrag = Yes leaves builders out of a drag
+// selection, so boxing over a base picks up the army without dragging them along. Covers
+// KINDOF_DOZER and KINDOF_IGNORES_SELECT_ALL, the same kinds Select All already disqualifies.
+Bool OptionPreferences::getEasyMilitaryDragEnabled() const
+{
+	OptionPreferences::const_iterator it = find("EasyMilitaryDrag");
+	if (it == end())
+		return FALSE;
+
+	if (stricmp(it->second.str(), "yes") == 0) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
 Bool OptionPreferences::getRetaliationModeEnabled()
 {
 	OptionPreferences::const_iterator it = find("Retaliation");

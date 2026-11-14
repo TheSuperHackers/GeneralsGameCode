@@ -28,6 +28,8 @@
 #include "GameLogic/Module/ContainModule.h"
 
 #include "Common/ActionManager.h"
+// TheSuperHackers @feature for the EasyMilitaryDrag option
+#include "Common/GlobalData.h"
 #include "Common/ThingTemplate.h"
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
@@ -38,6 +40,8 @@
 #include "GameClient/Drawable.h"
 #include "GameClient/GameClient.h"
 #include "GameClient/KeyDefs.h"
+// TheSuperHackers @feature for the EasyMilitaryDrag ctrl override
+#include "GameClient/Keyboard.h"
 
 
 //-------------------------------------------------------------------------------------------------
@@ -63,9 +67,51 @@ SelectionInfo::SelectionInfo() :
 { }
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @feature See SelectionInfo.h. A point selection is never an inverted drag, so
+// plain Ctrl clicking still force attacks exactly as it always did.
+Bool isEasyMilitaryDragInvertedActive( Bool selectionIsPoint )
+{
+	if (selectionIsPoint)
+		return FALSE;
+
+	if (!TheKeyboard || !TheKeyboard->isCtrl())
+		return FALSE;
+
+	// Read from the cached GlobalData copy: constructing OptionPreferences reparses
+	// Options.ini from disk, far too heavy for the input path.
+	return TheGlobalData && TheGlobalData->m_easyMilitaryDrag;
+}
+
+//-------------------------------------------------------------------------------------------------
 PickDrawableStruct::PickDrawableStruct() : drawableListToFill(nullptr), isPointSelection(FALSE)
 {
 	forceAttackMode = TheInGameUI->isInForceAttackMode();
+
+	// TheSuperHackers @feature Read once per selection, not once per drawable. Holding Ctrl
+	// inverts the filter for this one drag, so the builders it normally skips are exactly what
+	// gets boxed -- the escape hatch for grabbing them deliberately.
+	//
+	// Ctrl is also what puts the game into force attack mode, so an inverted drag has to cancel
+	// that for this selection. Otherwise the click is treated as attack targeting and nothing is
+	// selected at all. Force attack has nothing to act on here anyway: this only engages while
+	// dragging a box, and what it selects is your own builders.
+	easyMilitaryDrag = FALSE;
+	easyMilitaryDragInverted = FALSE;
+	easyMilitaryDragDisabled = FALSE;
+	if (TheGlobalData && TheGlobalData->m_easyMilitaryDrag)
+	{
+		if (TheKeyboard && TheKeyboard->isCtrl())
+			easyMilitaryDragInverted = TRUE;
+		else
+			easyMilitaryDrag = TRUE;
+	}
+
+	// isPointSelection is set by the caller after construction, so this uses the flag resolved
+	// above rather than isEasyMilitaryDragInvertedActive. The two agree for drags, which is the
+	// only case that reaches the filter.
+	if (easyMilitaryDragInverted)
+		forceAttackMode = FALSE;
+
 	UnsignedInt pickType = getPickTypesForContext(forceAttackMode);
 	translatePickTypesToKindof(pickType, kindofsToMatch);
 	if (!forceAttackMode)
@@ -89,6 +135,11 @@ extern Bool contextCommandForNewSelection(const DrawableList *currentlySelectedD
 
 	Bool forceFire = TheInGameUI->isInForceAttackMode();
 	Bool forceMove = TheInGameUI->isInForceMoveToMode();
+
+	// TheSuperHackers @feature An inverted EasyMilitaryDrag is a selection, not force attack
+	// targeting, even though Ctrl is what triggers both.
+	if (isEasyMilitaryDragInvertedActive(selectionIsPoint))
+		forceFire = FALSE;
 
 	if (forceFire || forceMove) {
 		return FALSE;
@@ -359,6 +410,27 @@ Bool addDrawableToList( Drawable *draw, void *userData )
 
 	if (!draw->getTemplate()->isAnyKindOf(pds->kindofsToMatch))
 		return FALSE;
+
+	// TheSuperHackers @feature EasyMilitaryDrag leaves builders out of a drag selection, so boxing
+	// over your own base picks up the army without dragging them off their work. Only drags are
+	// affected -- a point selection still picks them normally, as do double click, control groups
+	// and the select-matching hotkeys.
+	//
+	// The two kinds mirror what Select All already disqualifies: KINDOF_DOZER, and the explicit
+	// KINDOF_IGNORES_SELECT_ALL marker a mod can put on anything else it wants left alone. Note
+	// KINDOF_DOZER also catches GLA Workers, which carry it alongside KINDOF_INFANTRY and
+	// KINDOF_HARVESTER.
+	if (!pds->easyMilitaryDragDisabled &&
+			!pds->isPointSelection && (pds->easyMilitaryDrag || pds->easyMilitaryDragInverted))
+	{
+		const Bool isBuilder =
+				draw->isKindOf(KINDOF_DOZER) || draw->isKindOf(KINDOF_IGNORES_SELECT_ALL);
+
+		// normally drop the builders; with Ctrl held, drop everything else instead
+		const Bool wantBuilders = pds->easyMilitaryDragInverted;
+		if (isBuilder != wantBuilders)
+			return FALSE;
+	}
 
 	if (!draw->isSelectable())
   {
