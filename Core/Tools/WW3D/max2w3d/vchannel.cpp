@@ -40,8 +40,8 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
-#include "w3d_file.h"
-#include "w3dquat.h"
+#include "WW3D2/w3d_file.h"
+#include "WWMath/quat.h"
 #include "bchannel.h"
 #include "exportlog.h"
 
@@ -1124,7 +1124,8 @@ uint32 VectorChannelClass::find_useless_packetQ(W3dTimeCodedAnimChannelStruct * 
 			Quaternion qDst(1);
 			qDst.Set(pVecDst[0],pVecDst[1],pVecDst[2],pVecDst[3]);
 
-			Quaternion q = Slerp( qSrc, qDst, tRatio );
+			Quaternion q;
+			Slerp( q, qSrc, qDst, tRatio );
 
 			Quaternion Delta(1);
 			Delta =  Inverse(qOrg) * q;
@@ -1356,7 +1357,8 @@ uint32 VectorChannelClass::find_least_useful_packetQ(W3dTimeCodedAnimChannelStru
 			Quaternion qDst(1);
 			qDst.Set(pVecDst[0],pVecDst[1],pVecDst[2],pVecDst[3]);
 
-			Quaternion q = Slerp( qSrc, qDst, tRatio );
+			Quaternion q;
+			Slerp( q, qSrc, qDst, tRatio );
 
 			Quaternion Delta(1);
 			Delta =  Inverse(qOrg) * q;

@@ -50,10 +50,10 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "motion.h"
-#include "w3d_file.h"
+#include "WW3D2/w3d_file.h"
 #include "vchannel.h"
 #include "bchannel.h"
-#include "EULER.h"
+#include "WWMath/euler.h"
 #include "util.h"
 #include "errclass.h"
 #include "w3dutil.h"
@@ -400,7 +400,7 @@ void MotionClass::compute_frame_motion(int frame)
 			/*
 			** Also, store the Euler angles for this node
 			*/
-			EulerAnglesClass my_eulers(motion,EulerOrderXYZr);
+			EulerAnglesClass my_eulers(Convert_Max_Matrix(motion),EulerOrderXYZr);
 			float ex = my_eulers.Get_Angle(0);
 			float ey = my_eulers.Get_Angle(1);
 			float ez = my_eulers.Get_Angle(2);

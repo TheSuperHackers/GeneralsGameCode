@@ -37,23 +37,23 @@
 #pragma once
 
 #ifndef ALWAYS_H
-#include "always.h"
+#include "WWLib/always.h"
 #endif
 
 #ifndef BITTYPE_H
-#include "BITTYPE.h"
+#include "WWLib/bittype.h"
 #endif
 
 #ifndef CHUNKIO_H
-#include "chunkio.h"
+#include "WWLib/chunkio.h"
 #endif
 
 #ifndef VECTOR_H
-#include "Vector.h"
+#include "WWLib/Vector.h"
 #endif
 
 #ifndef W3D_FILE_H
-#include "w3d_file.h"
+#include "WW3D2/w3d_file.h"
 #endif
 
 class LogDataDialogClass;

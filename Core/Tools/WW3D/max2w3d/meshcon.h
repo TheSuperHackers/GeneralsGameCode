@@ -38,11 +38,11 @@
 #pragma once
 
 #ifndef ALWAYS_H
-#include "always.h"
+#include "WWLib/always.h"
 #endif
 
 #ifndef CHUNKIO_H
-#include "chunkio.h"
+#include "WWLib/chunkio.h"
 #endif
 
 #ifndef NODELIST_H
@@ -54,11 +54,11 @@
 #endif
 
 #ifndef W3D_FILE
-#include "w3d_file.h"
+#include "WW3D2/w3d_file.h"
 #endif
 
 #ifndef VECTOR_H
-#include "Vector.h"
+#include "WWLib/Vector.h"
 #endif
 
 

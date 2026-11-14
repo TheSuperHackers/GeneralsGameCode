@@ -37,13 +37,13 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 
-#include <max.h>
+#include "max_sdk.h"
 #include <stdio.h>
 
 #ifndef W3D_FILE_H
-#include "w3d_file.h"
+#include "WW3D2/w3d_file.h"
 #endif
 
 #ifndef PROGRESS_H
@@ -51,7 +51,7 @@
 #endif
 
 #ifndef CHUNKIO_H
-#include "chunkio.h"
+#include "WWLib/chunkio.h"
 #endif
 
 #ifndef NODELIST_H
@@ -59,7 +59,7 @@
 #endif
 
 #ifndef VECTOR_H
-#include "Vector.h"
+#include "WWLib/Vector.h"
 #endif
 
 

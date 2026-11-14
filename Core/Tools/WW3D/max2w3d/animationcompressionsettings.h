@@ -39,7 +39,7 @@
 #pragma once
 
 #include <windows.h>
-#include <max.h>
+#include "max_sdk.h"
 #include "w3dutil.h"
 
 

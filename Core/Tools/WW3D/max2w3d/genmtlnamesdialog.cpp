@@ -45,8 +45,8 @@
 #include "genmtlnamesdialog.h"
 #include "dllmain.h"
 #include "resource.h"
-#include "w3d_file.h"
-#include <max.h>
+#include "WW3D2/w3d_file.h"
+#include "max_sdk.h"
 
 static BOOL CALLBACK _gen_mtl_names_dialog_proc(HWND Hwnd,UINT message,WPARAM wParam,LPARAM lParam);
 

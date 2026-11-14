@@ -1,6 +1,6 @@
 /*
 **	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 Electronic Arts Inc.
+**	Copyright 2026 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -16,27 +16,16 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*****************************************************************
-*
-*	Project:		3DTEST1 (3d Test Program)
-*
-*	File:			bittype.h
-*
-*	Start Date:		Dec 18, 1996
-*
-*	Programmer:		Greg Hjelstrom
-*
-*****************************************************************/
+// Include this instead of <maxscrpt.h>. maxscrpt.h includes max.h, so it hides and restores
+// the same macros as max_sdk.h, and like max_sdk.h it has no include guard.
 
-#pragma once
+#pragma push_macro("override")
+#undef override
 
-typedef unsigned char	uint8;
-typedef unsigned short	uint16;
-typedef unsigned long	uint32;
+#pragma push_macro("PI")
+#undef PI
 
-typedef signed char		sint8;
-typedef signed short	sint16;
-typedef signed long		sint32;
+#include <maxscrpt.h>
 
-typedef float			float32;
-typedef double			float64;
+#pragma pop_macro("PI")
+#pragma pop_macro("override")

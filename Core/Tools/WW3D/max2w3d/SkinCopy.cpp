@@ -45,16 +45,16 @@
 new_wsm = wwCopySkinInfo source_root target_root new_wsm
 */
 
-#include <maxscrpt.h>	// Main MAXScript header
+#include "maxscrpt_sdk.h"	// Main MAXScript header
 #include <maxobj.h>		// MAX* Wrapper objects
 #include <definsfn.h>	// def_* functions to create static function headers
 
-#include <max.h>
+#include "max_sdk.h"
 #include <modstack.h>
 
 #include "skin.h"
 #include "util.h"
-#include "w3d_file.h"
+#include "WW3D2/w3d_file.h"
 
 
 /*

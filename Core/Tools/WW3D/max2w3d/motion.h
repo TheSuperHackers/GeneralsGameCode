@@ -38,10 +38,10 @@
 #pragma once
 
 #ifndef ALWAYS_H
-#include "always.h"
+#include "WWLib/always.h"
 #endif
 
-#include <max.h>
+#include "max_sdk.h"
 
 #ifndef HIERSAVE_H
 #include "hiersave.h"
@@ -52,11 +52,11 @@
 #endif
 
 #ifndef CHUNKIO_H
-#include "chunkio.h"
+#include "WWLib/chunkio.h"
 #endif
 
 #ifndef VECTOR_H
-#include "Vector.h"
+#include "WWLib/Vector.h"
 #endif
 
 #ifndef LOGDLG_H

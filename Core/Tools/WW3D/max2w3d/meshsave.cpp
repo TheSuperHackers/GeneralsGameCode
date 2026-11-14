@@ -57,7 +57,7 @@
 
 
 #include "meshsave.h"
-#include <max.h>
+#include "max_sdk.h"
 #include <stdmat.h>
 #include <modstack.h>
 #include "gamemtl.h"

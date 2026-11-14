@@ -37,8 +37,8 @@
 
 #pragma once
 
-#include "always.h"
-#include <max.h>
+#include "WWLib/always.h"
+#include "max_sdk.h"
 
 /***************************************************************
 *

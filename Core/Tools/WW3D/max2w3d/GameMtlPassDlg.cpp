@@ -53,7 +53,7 @@
 #include "GameMtlShaderDlg.h"
 #include "GameMtlTextureDlg.h"
 #include "GameMtlVertexMaterialDlg.h"
-#include "w3d_file.h"
+#include "WW3D2/w3d_file.h"
 
 
 static int _Pass_Index_To_Flag[] =

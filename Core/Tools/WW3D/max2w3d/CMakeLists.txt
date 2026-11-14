@@ -18,6 +18,7 @@ set(MAX2W3D_SRC
     "dazzlesave.h"
     "dllmain.cpp"
     "dllmain.h"
+    "errclass.h"
     "ExportAll.cpp"
     "ExportAllDlg.cpp"
     "ExportAllDlg.h"
@@ -73,8 +74,13 @@ set(MAX2W3D_SRC
     "motion.h"
     "namedsel.cpp"
     "namedsel.h"
+    "nodefilt.cpp"
+    "nodefilt.h"
+    "nodelist.cpp"
+    "nodelist.h"
     "presetexportoptionsdialog.cpp"
     "presetexportoptionsdialog.h"
+    "PROGRESS.h"
     "resource.h"
     "SceneSetup.cpp"
     "SceneSetupDlg.cpp"
@@ -84,15 +90,11 @@ set(MAX2W3D_SRC
     "SkinCopy.cpp"
     "skindata.cpp"
     "skindata.h"
-    "TARGA.cpp"
-    "TARGA.h"
     "util.cpp"
     "util.h"
     "Utility.cpp"
     "vchannel.cpp"
     "vchannel.h"
-    "w3d_file.h"
-    "w3d_obsolete.h"
     "w3dappdata.cpp"
     "w3dappdata.h"
     "w3ddesc.cpp"
@@ -108,19 +110,18 @@ set(MAX2W3D_SRC
 add_library(core_max2w3d SHARED)
 set_target_properties(core_max2w3d PROPERTIES OUTPUT_NAME max2w3d SUFFIX ".dle")
 
-target_include_directories(core_max2w3d PRIVATE
-    "../pluglib"
-)
-
 target_sources(core_max2w3d PRIVATE ${MAX2W3D_SRC})
 
 target_link_libraries(core_max2w3d PRIVATE
     Comctl32
-    core_pluglib
+    corei_always
+    core_wwstub
+    core_wwvegas
     # d3d8lib is only linked to have its basetsd.h used instead of the vs6's basetsd.h
     # The headers typedef INT_PTR to different types, but deps_maxsdk expects it
     # typedef'ed to int, otherwise throws linker errors.
     d3d8lib
+    deps_maxsdk # Must stay below corei_always so that max_undef.h is force included after Precompiled/BasePrecomp.h
     winmm
 )
 
