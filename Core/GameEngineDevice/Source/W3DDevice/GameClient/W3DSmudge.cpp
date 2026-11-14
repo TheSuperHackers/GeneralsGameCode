@@ -223,15 +223,15 @@ Bool W3DSmudgeManager::testHardwareSupport()
 		}
 
 		VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-		DX8Wrapper::Set_Material(vmat);
+		Renderer::Set_Material(vmat);
 		REF_PTR_RELEASE(vmat);	//no need to keep a reference since it's a preset.
 
 		ShaderClass shader=ShaderClass::_PresetOpaqueShader;
 		shader.Set_Depth_Compare(ShaderClass::PASS_ALWAYS);
 		shader.Set_Depth_Mask(ShaderClass::DEPTH_WRITE_DISABLE);
-		DX8Wrapper::Set_Shader(shader);
+		Renderer::Set_Shader(shader);
 		DX8Wrapper::Set_Texture(0,nullptr);
-		DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
+		Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 
 		struct _TRANS_LIT_TEX_VERTEX {
 			Vector4 p;
@@ -453,7 +453,7 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
 	//DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaqueSpriteShader);
 
-	DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaShader);
+	Renderer::Set_Shader(ShaderClass::_PresetAlphaShader);
 
 	DX8Wrapper::Set_Texture(0,m_backgroundTexture);
 	//Need these states in case texture is non-power-of-2
@@ -464,9 +464,9 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_MIPFILTER, D3DTEXF_NONE);
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vmat);
+	Renderer::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Apply_Render_State_Changes();
 
 	//Disable reading texture alpha since it's undefined.
 	//DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLOROP,D3DTOP_SELECTARG1);

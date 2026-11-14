@@ -258,8 +258,8 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 	}
 
 	VertexMaterialClass * linemat = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(linemat);
-	DX8Wrapper::Set_Shader(Shader);
+	Renderer::Set_Material(linemat);
+	Renderer::Set_Shader(Shader);
 	DX8Wrapper::Set_Texture(0, Texture);
 	REF_PTR_RELEASE(linemat);
 

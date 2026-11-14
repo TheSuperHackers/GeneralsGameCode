@@ -28,10 +28,13 @@
 // Forward declarations keep this header includable without pulling in the full
 // WW3D2 header graph. All W3D classes below are passed by pointer or reference.
 
+class LightClass;
 class LightEnvironmentClass;
 class Matrix3D;
 class Matrix4x4;
+class ShaderClass;
 class Vector3;
+class VertexMaterialClass;
 
 struct RenderViewport
 {
@@ -84,6 +87,10 @@ public:
     static void Set_Viewport(const RenderViewport & viewport);
     static void Invalidate_Cached_Render_States();
 
+    static void Set_Shader(const ShaderClass & shader);
+    static void Set_Material(const VertexMaterialClass * material);
+    static void Apply_Render_State_Changes();
+
     static void Set_Transform(RenderTransform transform, const Matrix4x4 & m);
     static void Set_Transform(RenderTransform transform, const Matrix3D & m);
     static void Get_Transform(RenderTransform transform, Matrix4x4 & m);
@@ -93,4 +100,7 @@ public:
 
     static void Set_Ambient(const Vector3 & color);
     static void Set_Light_Environment(LightEnvironmentClass * light_env);
+    static void Set_Light(unsigned index, const LightClass & light);
+    static void Clear_Light(unsigned index);
+    static void Set_Fog(bool enable, const Vector3 & color, float start, float end);
 };
