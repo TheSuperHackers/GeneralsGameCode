@@ -475,6 +475,7 @@ void Player::init(const PlayerTemplate* pt)
 	}
 	// reset each player
 	m_scoreKeeper.reset(m_playerIndex);
+	m_actionsPerMinute.reset();
 	m_playerTemplate = pt;
 
 	// reset rank info
@@ -725,6 +726,7 @@ void Player::update()
 #endif
 
 	m_money.updateIncomeBucket();
+	m_actionsPerMinute.update(TheGameLogic->getFrame());
 }
 
 //=============================================================================
