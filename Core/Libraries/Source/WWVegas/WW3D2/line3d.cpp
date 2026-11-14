@@ -268,10 +268,10 @@ void Line3DClass::Render(RenderInfoClass & rinfo)
 		return;
 	}
 
-	DX8Wrapper::Set_Shader(Shader);
-	DX8Wrapper::Set_Texture(0,nullptr);
+	Renderer::Set_Shader(Shader);
+	Renderer::Set_Texture(0,nullptr);
 	VertexMaterialClass *vm=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vm);
+	Renderer::Set_Material(vm);
 	REF_PTR_RELEASE(vm);
 
 	Renderer::Set_Transform(RenderTransform_World,Transform);
@@ -300,9 +300,9 @@ void Line3DClass::Render(RenderInfoClass & rinfo)
 			mem[i]=Indices[i];
 	}
 
-	DX8Wrapper::Set_Vertex_Buffer(vb);
-	DX8Wrapper::Set_Index_Buffer(ib,0);
-	DX8Wrapper::Draw_Triangles(0,36/3,0,8);
+	Renderer::Set_Vertex_Buffer(vb);
+	Renderer::Set_Index_Buffer(ib,0);
+	Renderer::Draw_Triangles(0,36/3,0,8);
 }
 
 /**************************************************************************
