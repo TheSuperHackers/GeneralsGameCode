@@ -588,7 +588,11 @@ private:
 	// this is private, since we read the info from Windows and cache it for
 	// future use. No one is allowed to change it, ever. (srj)
 	AsciiString m_userDataDir;
-	AsciiString BuildUserDataPathFromRegistry();
+
+	// just the "leaf name", read from INI. private because no one is ever allowed
+	// to look at it directly; they must go thru getPath_UserData().
+	AsciiString m_userDataLeafName;
+	AsciiString BuildUserDataPath();
 
 	static GlobalData *m_theOriginal;		///< the original global data instance (no overrides)
 	GlobalData *m_next;									///< next instance (for overrides)
