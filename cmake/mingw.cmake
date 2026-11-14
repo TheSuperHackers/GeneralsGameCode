@@ -21,6 +21,7 @@ if(MINGW)
     # Compatibility flags for legacy code
     add_compile_options(
         -fno-strict-aliasing        # Avoid type-punning issues with DX8/COM
+        -msse2                      # GameMath uses SSE intrinsics; some i686 toolchains default to no SSE
     )
 
     # MSVC compatibility macros for MinGW

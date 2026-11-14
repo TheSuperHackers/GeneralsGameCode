@@ -1,0 +1,72 @@
+name: Build MinGW-w64
+
+# WARNING: Do not declare permissions in this reusable workflow.
+# Declare the required permissions in each calling job:
+#   contents: read - required for all builds.
+
+on:
+  workflow_call:
+    inputs:
+      game:
+        required: true
+        type: string
+        description: "Game to build (Generals or GeneralsMD)"
+      preset:
+        required: true
+        type: string
+        description: "CMake preset"
+
+jobs:
+  build:
+    name: ${{ inputs.preset }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install MinGW-w64 Toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mingw-w64 cmake
+
+      - name: Install widl
+        run: |
+          # widl compiles the IDL files. wine64-tools has widl and depends on libwine-dev, which has the system IDL files.
+          sudo apt-get install -y --no-install-recommends wine64-tools
+
+      - name: Cache CMake Dependencies
+        id: cache-cmake-deps
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        with:
+          path: build/${{ inputs.preset }}/_deps
+          key: cmake-deps-mingw-${{ inputs.preset }}-${{ hashFiles('CMakePresets.json','cmake/**/*.cmake','**/CMakeLists.txt') }}
+
+      - name: Configure ${{ inputs.game }} with CMake (${{ inputs.preset }})
+        run: |
+          cmake --preset ${{ inputs.preset }} \
+            -DRTS_BUILD_ZEROHOUR=${{ inputs.game == 'GeneralsMD' && 'ON' || 'OFF' }} \
+            -DRTS_BUILD_GENERALS=${{ inputs.game == 'Generals' && 'ON' || 'OFF' }} \
+            -DRTS_BUILD_CORE_TOOLS=OFF \
+            -DRTS_BUILD_GENERALS_TOOLS=OFF \
+            -DRTS_BUILD_ZEROHOUR_TOOLS=OFF \
+            -DRTS_BUILD_CORE_EXTRAS=OFF \
+            -DRTS_BUILD_GENERALS_EXTRAS=OFF \
+            -DRTS_BUILD_ZEROHOUR_EXTRAS=OFF
+
+      - name: Build ${{ inputs.game }} (${{ inputs.preset }})
+        run: cmake --build build/${{ inputs.preset }} --target ${{ inputs.game == 'Generals' && 'g_generals' || 'z_generals' }} -j$(nproc)
+
+      - name: Collect ${{ inputs.game }} Artifacts
+        run: |
+          ARTIFACTS_DIR="build/${{ inputs.preset }}/${{ inputs.game }}/artifacts"
+          mkdir -p "$ARTIFACTS_DIR"
+          find build/${{ inputs.preset }}/Core build/${{ inputs.preset }}/${{ inputs.game }} -path "$ARTIFACTS_DIR" -prune -o -type f \( -name "*.exe" -o -name "*.dll" -o -name "*.exe.debug" \) -exec cp -t "$ARTIFACTS_DIR" {} +
+
+      - name: Upload ${{ inputs.game }} ${{ inputs.preset }} Artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: ${{ inputs.game }}-${{ inputs.preset }}
+          path: build/${{ inputs.preset }}/${{ inputs.game }}/artifacts
+          retention-days: 30
+          if-no-files-found: error

@@ -267,3 +267,26 @@ jobs:
       userdata: "GeneralsReplays/GeneralsZH/1.04"
       preset: ${{ matrix.preset }}
     secrets: inherit
+
+  # Release preset only. mingw-w64-i686-profile is excluded because profiling uses MSVC inline assembly, which GCC does not compile.
+  build-mingw-generals:
+    name: Build Generals MinGW-w64
+    needs: detect-changes
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generals == 'true' || needs.detect-changes.outputs.shared == 'true' }}
+    permissions:
+      contents: read
+    uses: ./.github/workflows/reusable-build-mingw.yml
+    with:
+      game: "Generals"
+      preset: "mingw-w64-i686"
+
+  build-mingw-generalsmd:
+    name: Build GeneralsMD MinGW-w64
+    needs: detect-changes
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
+    permissions:
+      contents: read
+    uses: ./.github/workflows/reusable-build-mingw.yml
+    with:
+      game: "GeneralsMD"
+      preset: "mingw-w64-i686"
