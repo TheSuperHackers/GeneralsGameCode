@@ -27,12 +27,11 @@
 
 namespace TextureAtlas
 {
-constexpr const int PAGE_SIZE = 2304;    // Size takes into account padding for more efficient packing.
-                                         // Optimized for the commonly seen texture size 256^2.
-                                         // PAGE_SIZE = 2048 + (2048 / 256) * 2 * PADDING = 2304.
 constexpr const int MIP_LEVEL_COUNT = 5;
-constexpr const int PADDING = 1 << (MIP_LEVEL_COUNT - 1); // Pad the largest mip with a power-of-two value such that the smallest mip gets a 1 px pad.
-                                                          // For example, with 5 mips the padding per level is 16, 8, 4, 2, 1 px.
+constexpr const int PADDING = 1 << (MIP_LEVEL_COUNT - 1);    // Pad the largest mip with a power-of-two value such that the smallest mip gets a 1 px pad.
+                                                             // For example, with 5 mips the padding per level is 16, 8, 4, 2, 1 px.
+constexpr const int PAGE_SIZE = 2048 + (2048 / 256) * 2 * PADDING;    // Size takes into account padding for more efficient packing.
+                                                                      // Optimized for the commonly seen texture size 256^2.
 constexpr const int MAX_PAGES = 4;
 constexpr const int DEFAULT_MAX_PACKS_PER_FRAME = 2;    // Spreads a burst of new textures over several frames.
 static_assert(PAGE_SIZE % PADDING == 0, "Page must be sized to a multiple of padding");
@@ -104,9 +103,9 @@ private:
 
 	std::vector<Page> Pages;
 	TextureLocationMap TextureLocations[2];    // Two keys for premultiply alpha off/on.
-	bool OutOfSpace;
 	int PacksThisFrame;
 	int MaxPacksPerFrame;
 	unsigned OutOfSpaceFrame;
 	unsigned PackFrame;
+	bool OutOfSpace;
 };
