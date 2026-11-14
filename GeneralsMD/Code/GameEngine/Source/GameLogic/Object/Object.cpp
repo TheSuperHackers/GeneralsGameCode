@@ -306,7 +306,7 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 
 	// allocate the publicModule arrays
 // pool[]ify
-	m_behaviors = MSGNEW("ModulePtrs") BehaviorModule*[totalModules + 1];
+	m_behaviors = MSGNEW("ModulePtrs") BehaviorModule*[totalModules + 1]();
 	BehaviorModule** curB = m_behaviors;
 	const ModuleInfo& mi = tt->getBehaviorModuleInfo();
 
@@ -625,6 +625,15 @@ Object::~Object()
 
 	// empty the team
 	setTeam( nullptr );
+
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @info Clear DISABLED_UNDERPOWERED here for performance,
+	// rather than needing to rely on Energy::objectLeavingInfluence.
+	if (isKindOf(KINDOF_POWERED))
+	{
+		clearDisabled(DISABLED_UNDERPOWERED);
+	}
+#endif
 
 	// Object's set of these persist for the life of the object.
 	deleteInstance(m_partitionLastLook);
