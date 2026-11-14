@@ -166,6 +166,13 @@ TransitionWindow::~TransitionWindow()
 
 Bool TransitionWindow::init()
 {
+	// TheSuperHackers @fix ChipsterX Unlink from the window we were linked to before.
+	if (m_win)
+	{
+		m_win->unlinkTransitionWindow(this);
+		m_win = nullptr;
+	}
+
 	m_winID = TheNameKeyGenerator->nameToKey(m_winName);
 	m_win		= TheWindowManager->winGetWindowFromId(nullptr, m_winID);
 	m_currentFrameDelay = m_frameDelay;
