@@ -958,6 +958,7 @@ ControlBar::ControlBar()
 	m_generalsScreenAnimate = nullptr;
 	m_animateWindowManagerForGenShortcuts = nullptr;
 	m_flash = FALSE;
+	m_commandFlashTimeAccumulator = 0.0f;
 	m_toggleButtonUpIn = nullptr;
 	m_toggleButtonUpOn = nullptr;
 	m_toggleButtonUpPushed = nullptr;
@@ -1486,6 +1487,15 @@ void ControlBar::update()
 	// check flashing
 	if( m_flash )
 	{
+		// TheSuperHackers @tweak bobtista 12/11/2026 Flash on a wall-clock cycle so the rate is independent of render frame rate.
+		const Real flashIntervalSeconds = 10.0f / LOGICFRAMES_PER_SECONDS_REAL;
+		m_commandFlashTimeAccumulator += TheFramePacer->getUpdateTime();
+		const Bool flashStep = m_commandFlashTimeAccumulator >= flashIntervalSeconds;
+		while( m_commandFlashTimeAccumulator >= flashIntervalSeconds )
+		{
+			m_commandFlashTimeAccumulator -= flashIntervalSeconds;
+		}
+
 		// go through all the command buttons to see which one needs to flash
 		for( Int i = 0; i < MAX_COMMANDS_PER_SET; ++i )
 		{
@@ -1495,7 +1505,7 @@ void ControlBar::update()
 				const CommandButton *commandButton = (const CommandButton *)GadgetButtonGetData(button);
 				if( commandButton != nullptr )
 				{
-					if( commandButton->getFlashCount() > 0 && TheGameClient->getFrame() % 10 == 0 )
+					if( commandButton->getFlashCount() > 0 && flashStep )
 					{
 						if( commandButton->getFlashCount() % 2 == 0 )
 						{
