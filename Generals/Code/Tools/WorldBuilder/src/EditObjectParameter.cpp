@@ -101,7 +101,7 @@ BOOL EditObjectParameter::OnInitDialog()
 void EditObjectParameter::addObject( const ThingTemplate *thingTemplate  )
 {
 	HTREEITEM parent = TVI_ROOT;
-	const char *leafName;
+	const char *leafName = nullptr;
 	//
 	// if we have an thing template in mapObject, we've read it from the new INI database,
 	// we will sort those items into the tree based on properties of the template that
