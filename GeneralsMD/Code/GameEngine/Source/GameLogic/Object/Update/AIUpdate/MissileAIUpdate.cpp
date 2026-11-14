@@ -495,9 +495,9 @@ void MissileAIUpdate::doIgnitionState()
 //-------------------------------------------------------------------------------------------------
 void MissileAIUpdate::doAttackState(Bool turnOK)
 {
+	const MissileAIUpdateModuleData* d = getMissileAIUpdateModuleData();
 	Locomotor* curLoco = getCurLocomotor();
 
-	const MissileAIUpdateModuleData* d = getMissileAIUpdateModuleData();
 	if (TheGameLogic->getFrame() >= m_fuelExpirationDate)
 	{
 		if( d->m_detonateOnNoFuel )
@@ -508,10 +508,17 @@ void MissileAIUpdate::doAttackState(Bool turnOK)
 
 		if (curLoco)
 		{
-			curLoco->setMaxAcceleration(0);
-			curLoco->setMaxTurnRate(0);
+			curLoco->setMaxAcceleration(0.0f);
+			curLoco->setMaxTurnRate(0.0f);
+#if !RETAIL_COMPATIBLE_CRC
+			curLoco->setMaxBraking(0.0f);
+#endif
 		}
+
 		tossExhaust();
+#if !RETAIL_COMPATIBLE_CRC
+		return;
+#endif
 	}
 	else
 	{
@@ -579,33 +586,51 @@ void MissileAIUpdate::doAttackState(Bool turnOK)
 		switchToState(ATTACK);
 	}
 
+#if RETAIL_COMPATIBLE_CRC
 	// If I was fired at a flyer and have lost target (most likely they died), then I need to do something better
 	// than cloverleaf around their last spot.
 	if( m_isTrackingTarget && (getGoalObject() == nullptr) )
 		airborneTargetGone();
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
 void MissileAIUpdate::doKillState()
 {
+	const MissileAIUpdateModuleData* d = getMissileAIUpdateModuleData();
+	Locomotor* curLoco = getCurLocomotor();
+	Object* obj = getObject();
+
 	if (TheGameLogic->getFrame() >= m_fuelExpirationDate)
 	{
-		if( getMissileAIUpdateModuleData()->m_detonateOnNoFuel )
+		if( d->m_detonateOnNoFuel )
 		{
 			detonate();
 			return;
 		}
 
+#if RETAIL_COMPATIBLE_CRC
 		// srj sez: killstate missiles should not be allowed to live forever.
 		airborneTargetGone();
+#else
+		// TheSuperHackers @bugfix Stubbjax 01/10/2026 Stop missiles ungracefully deleting if their target
+		// dies or if fuel exhausts within locking distance of a tracked target.
+		if (curLoco)
+		{
+			curLoco->setMaxAcceleration(0.0f);
+			curLoco->setMaxTurnRate(0.0f);
+			curLoco->setMaxBraking(0.0f);
+		}
+
+		tossExhaust();
+		obj->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_BRAKING), false);
+#endif
 		return;
 	}
 
 	/* Kill state uses the OBJECT_STATUS_BRAKING, which is a flag to the locomotor to
 		"Cheat" and move directly towards the target.  This ensures that the missile will hit.
 		jba. */
-	Locomotor* curLoco = getCurLocomotor();
-	Object *obj = getObject();
 	// Objects that are braking don't follow the normal physics, so they end up at their destination exactly.
 	obj->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_BRAKING ) );
 
@@ -636,10 +661,12 @@ void MissileAIUpdate::doKillState()
 			detonate();
 		}
 	}
+#if RETAIL_COMPATIBLE_CRC
 	// If I was fired at a flyer and have lost target (most likely they died), then I need to do something better
 	// than cloverleaf around their last spot.
 	if( m_isTrackingTarget && (getGoalObject() == nullptr) )
 		airborneTargetGone();
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -648,8 +675,11 @@ void MissileAIUpdate::doDeadState()
 	Locomotor* curLoco = getCurLocomotor();
 	if (curLoco)
 	{
-		curLoco->setMaxAcceleration(0);
-		curLoco->setMaxTurnRate(0);
+		curLoco->setMaxAcceleration(0.0f);
+		curLoco->setMaxTurnRate(0.0f);
+#if !RETAIL_COMPATIBLE_CRC
+		curLoco->setMaxBraking(0.0f);
+#endif
 	}
 }
 
@@ -789,6 +819,7 @@ Also determines whether objects are blocked, and if so, if they are stuck.  jba.
 	return false;
 }
 
+#if RETAIL_COMPATIBLE_CRC
 //-------------------------------------------------------------------------------------------------
 void MissileAIUpdate::airborneTargetGone()
 {
@@ -797,6 +828,7 @@ void MissileAIUpdate::airborneTargetGone()
 	m_fuelExpirationDate = TheGameLogic->getFrame();
 	switchToState(KILL_SELF);
 }
+#endif
 
 //-------------------------------------------------------------------------------------------------
 // Set number of frames till missile diverts to countermeasures.
