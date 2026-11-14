@@ -81,7 +81,8 @@ void W3DSmudgeManager::ReAcquireResources()
 {
 	ReleaseResources();
 
-	SurfaceClass *surface=DX8Wrapper::_Get_DX8_Back_Buffer();
+	// TheSuperHackers @bugfix coconutbird 05/11/2026 Match the surface the scene is rendered into, which is not always the back buffer.
+	SurfaceClass *surface=DX8Wrapper::_Get_DX8_Scene_Surface();
 	SurfaceClass::SurfaceDescription surface_desc;
 
 	surface->Get_Description(surface_desc);
@@ -324,7 +325,8 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 		return;
 	}
 
-	SurfaceClass *backBuffer = DX8Wrapper::_Get_DX8_Back_Buffer();
+	// TheSuperHackers @bugfix coconutbird 05/11/2026 Copy from the surface the scene is rendered into, which is not always the back buffer.
+	SurfaceClass *backBuffer = DX8Wrapper::_Get_DX8_Scene_Surface();
 
 	if (!backBuffer)
 		return;
