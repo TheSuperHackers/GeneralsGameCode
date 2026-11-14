@@ -52,7 +52,6 @@
 class MaterialPassClass;
 class LightEnvironmentClass;
 class VisRasterizerClass;
-class BWRenderClass;
 class TexProjectClass;
 
 const unsigned MAX_ADDITIONAL_MATERIAL_PASSES=32;
@@ -144,10 +143,6 @@ public:
 
 	// RENDER_VIS variables and methods:
 	VisRasterizerClass *			VisRasterizer;
-
-	// RENDER_SHADOW variables and methods:
-	// NOTE: this is somewhat obsolete now that we have hardware render-to-texture.
-	BWRenderClass *				BWRenderer;					// Black & white non-textured renderer
 
 private:
 

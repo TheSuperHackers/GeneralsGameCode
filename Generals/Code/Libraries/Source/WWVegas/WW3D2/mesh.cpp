@@ -1059,14 +1059,6 @@ void MeshClass::Special_Render(SpecialRenderInfoClass & rinfo)
 		}
 		rinfo.VisRasterizer->Enable_Two_Sided_Rendering(false);
 	}
-
-	if (rinfo.RenderType == SpecialRenderInfoClass::RENDER_SHADOW) {
-		const HTreeClass * htree = nullptr;
-		if (Container!=nullptr) {
-			htree = Container->Get_HTree();
-		}
-		Model->Shadow_Render(rinfo,Transform,htree);
-	}
 }
 
 void MeshClass::Replace_Texture(TextureClass* texture,TextureClass* new_texture)

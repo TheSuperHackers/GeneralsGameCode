@@ -19,8 +19,6 @@ set(WW3D2_SRC
     #bmp2d.h
     boxrobj.cpp
     boxrobj.h
-    #bwrender.cpp
-    #bwrender.h
     camera.cpp
     camera.h
     #classid.h
