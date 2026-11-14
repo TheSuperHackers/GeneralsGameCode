@@ -329,14 +329,20 @@ AsciiString MapCache::getMapExtension() const
 	return "map";
 }
 
+AsciiString MapCache::getCachePath( const AsciiString &mapDir )
+{
+	AsciiString path = mapDir;
+	FileSystem::appendPathSeparator(path);
+	path.concat(m_mapCacheName);
+	return path;
+}
+
 void MapCache::writeCacheINI( const AsciiString &mapDir )
 {
-	AsciiString filepath = mapDir;
-	filepath.concat('\\');
+	AsciiString filepath = getCachePath(mapDir);
 
 	TheFileSystem->createDirectory(mapDir);
 
-	filepath.concat(m_mapCacheName);
 	FILE *fp = fopen(filepath.str(), "w");
 	DEBUG_ASSERTCRASH(fp != nullptr, ("Failed to create %s", filepath.str()));
 	if (fp == nullptr) {
@@ -499,8 +505,7 @@ Bool MapCache::clearUnseenMaps( const AsciiString &mapDir )
 void MapCache::loadMapsFromMapCacheINI( const AsciiString &mapDir )
 {
 	INI ini;
-	AsciiString fname;
-	fname.format("%s\\%s", mapDir.str(), m_mapCacheName);
+	AsciiString fname = getCachePath(mapDir);
 
 	if (TheFileSystem->doesFileExist(fname.str()))
 	{
