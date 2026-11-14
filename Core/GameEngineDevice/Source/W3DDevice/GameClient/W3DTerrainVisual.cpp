@@ -442,6 +442,14 @@ void W3DTerrainVisual::handleSeismicSimulations()
 
 }
 
+struct SeismicSimulationNodeIsClean
+{
+	Bool operator()(const SeismicSimulationNode& node) const
+	{
+		return node.m_clean;
+	}
+};
+
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -484,18 +492,7 @@ void W3DTerrainVisual::updateSeismicSimulations()
 
 	  }
     // Then we check to see if these need to get erased from the list
-    it = m_seismicSimulationList.begin();
-	  while ( it != m_seismicSimulationList.end() )
-	  {
-      SeismicSimulationNode *hur = &*it;
-      if ( hur->m_clean )
-      {
-		    it = m_seismicSimulationList.erase( it );
-      }
-      else
-        ++it;
-
-	  }
+    std::erase_if(m_seismicSimulationList, SeismicSimulationNodeIsClean());
 
 	if (TheTacticalView) {
 		TheTacticalView->onHeightMapChanged();
