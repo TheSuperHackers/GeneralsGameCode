@@ -186,6 +186,7 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	m_physics(nullptr),
 	m_geometryInfo(tt->getTemplateGeometryInfo()),
 	m_containedBy(nullptr),
+	m_containedByID(INVALID_ID),
 	m_xferContainedByID(INVALID_ID),
 	m_containedByFrame(0),
 	m_behaviors(nullptr),
@@ -693,6 +694,7 @@ void Object::onContainedBy( Object *containedBy )
 	else
 		clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_MASKED ) );
 	m_containedBy = containedBy;
+	m_containedByID = containedBy ? containedBy->getID() : INVALID_ID;
 	m_containedByFrame = TheGameLogic->getFrame();
 
 	DEBUG_ASSERTCRASH(containedBy == nullptr || !containedBy->isDestroyed(),
@@ -709,6 +711,7 @@ void Object::onRemovedFrom( Object *removedFrom )
 {
 	clearStatus( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_MASKED, OBJECT_STATUS_UNSELECTABLE ) );
 	m_containedBy = nullptr;
+	m_containedByID = INVALID_ID;
 	m_containedByFrame = 0;
 
   handlePartitionCellMaintenance(); // get a clean look, now that I am outdoors, again
@@ -756,6 +759,7 @@ Int Object::getTransportSlotCount() const
 void Object::friend_setContainedBy(Object* containedBy)
 {
 	m_containedBy = containedBy;
+	m_containedByID = containedBy ? containedBy->getID() : INVALID_ID;
 
 #if !RETAIL_COMPATIBLE_CRC
 	m_containedByFrame = containedBy ? TheGameLogic->getFrame() : 0;
@@ -4581,6 +4585,13 @@ void Object::loadPostProcess()
 		m_containedBy = TheGameLogic->findObjectByID(m_xferContainedByID);
 	else
 		m_containedBy = nullptr;
+	m_containedByID = m_containedBy ? m_containedBy->getID() : INVALID_ID;
+
+	// TheSuperHackers @bugfix arcticdolphin 26/10/2026 Recount our container's heroes, tunnels load their passengers first.
+	if( m_containedBy != nullptr && m_containedBy->getContain() != nullptr )
+	{
+		m_containedBy->getContain()->updateHeroUnitsContained();
+	}
 
 }
 

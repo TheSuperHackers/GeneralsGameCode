@@ -250,6 +250,15 @@ UnsignedInt TunnelContain::getHeroUnitsContained() const
 	return 0;
 }
 
+void TunnelContain::updateHeroUnitsContained()
+{
+	Player *owningPlayer = getObject()->getControllingPlayer();
+	if( owningPlayer && owningPlayer->getTunnelSystem() )
+	{
+		owningPlayer->getTunnelSystem()->updateHeroUnitsContained();
+	}
+}
+
 Int TunnelContain::getContainMax() const
 {
 	Player *owningPlayer = getObject()->getControllingPlayer();

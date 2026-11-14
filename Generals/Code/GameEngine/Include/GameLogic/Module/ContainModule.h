@@ -157,6 +157,7 @@ public:
 	virtual Real getContainedItemsMass() const = 0;
 	virtual UnsignedInt getStealthUnitsContained() const = 0;
 	virtual UnsignedInt getHeroUnitsContained() const = 0;
+	virtual void updateHeroUnitsContained() = 0;
 
 	virtual Bool calcBestGarrisonPosition( Coord3D *sourcePos, const Coord3D *targetPos ) = 0;
 	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, Object *victim ) = 0;
