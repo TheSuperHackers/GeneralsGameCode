@@ -25,7 +25,7 @@
 #include "WWLib/wwstring.h"
 #include "WW3D2/proto.h"
 #include "WW3D2/w3derr.h"
-#include "shader.h"
+#include "WW3D2/shader.h"
 #include "WWMath/matrix4.h"
 
 class CameraClass;

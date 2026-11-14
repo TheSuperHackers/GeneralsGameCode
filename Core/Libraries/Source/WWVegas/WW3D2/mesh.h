@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -41,7 +41,7 @@
 #include "WW3D2/rendobj.h"
 #include "WWLib/bittype.h"
 #include "WW3D2/w3derr.h"
-#include "lightenvironment.h"	//added for 'Generals'
+#include "WW3D2/lightenvironment.h"	//added for 'Generals'
 
 class MeshBuilderClass;
 class HModelClass;

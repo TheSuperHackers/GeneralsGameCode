@@ -41,7 +41,7 @@
 #include "scene.h"
 #include "camera.h"
 #include "predlod.h"
-#include "WWMath/pot.h"
+#include <Utility/bit_adapter.h>
 #include "WWLib/bound.h"
 #include "WWLib/simplevec.h"
 #include "WWMath/sphere.h"
@@ -1546,7 +1546,7 @@ void ParticleBufferClass::Reset_Colors(ParticlePropertyStruct<Vector3> &new_prop
 		} else {
 
 			// Default size of randomizer tables (tables for non-zero randomizers will be this size)
-			unsigned int pot_num = Find_POT(MaxNum);
+			unsigned int pot_num = std::bit_ceil(MaxNum);
 			unsigned int default_randomizer_entries = MIN(pot_num, MAX_RANDOM_ENTRIES);
 
 			if (RandomColorEntries) {
@@ -1692,7 +1692,7 @@ void ParticleBufferClass::Reset_Opacity(ParticlePropertyStruct<float> &new_props
 		} else {
 
 			// Default size of randomizer tables (tables for non-zero randomizers will be this size)
-			unsigned int pot_num = Find_POT(MaxNum);
+			unsigned int pot_num = std::bit_ceil(MaxNum);
 			unsigned int default_randomizer_entries = MIN(pot_num, MAX_RANDOM_ENTRIES);
 
 			if (RandomAlphaEntries) {
@@ -1848,7 +1848,7 @@ void ParticleBufferClass::Reset_Size(ParticlePropertyStruct<float> &new_props)
 		} else {
 
 			// Default size of randomizer tables (tables for non-zero randomizers will be this size)
-			unsigned int pot_num = Find_POT(MaxNum);
+			unsigned int pot_num = std::bit_ceil(MaxNum);
 			unsigned int default_randomizer_entries = MIN(pot_num, MAX_RANDOM_ENTRIES);
 
 			if (RandomSizeEntries) {
@@ -2001,7 +2001,7 @@ void ParticleBufferClass::Reset_Rotations(ParticlePropertyStruct<float> &new_pro
 		} else {
 
 			// Default size of randomizer tables (tables for non-zero randomizers will be this size)
-			unsigned int pot_num = Find_POT(MaxNum);
+			unsigned int pot_num = std::bit_ceil(MaxNum);
 			unsigned int default_randomizer_entries = MIN(pot_num, MAX_RANDOM_ENTRIES);
 
 			if (RandomRotationEntries) {
@@ -2040,7 +2040,7 @@ void ParticleBufferClass::Reset_Rotations(ParticlePropertyStruct<float> &new_pro
 		} else {
 
 			// Default size of randomizer tables (tables for non-zero randomizers will be this size)
-			unsigned int pot_num = Find_POT(MaxNum);
+			unsigned int pot_num = std::bit_ceil(MaxNum);
 			unsigned int default_randomizer_entries = MIN(pot_num, MAX_RANDOM_ENTRIES);
 
 			if (RandomOrientationEntries) {
@@ -2191,7 +2191,7 @@ void ParticleBufferClass::Reset_Frames(ParticlePropertyStruct<float> &new_props)
 		} else {
 
 			// Default size of randomizer tables (tables for non-zero randomizers will be this size)
-			unsigned int pot_num = Find_POT(MaxNum);
+			unsigned int pot_num = std::bit_ceil(MaxNum);
 			unsigned int default_randomizer_entries = MIN(pot_num, MAX_RANDOM_ENTRIES);
 
 			if (RandomFrameEntries) {
@@ -2327,7 +2327,7 @@ void ParticleBufferClass::Reset_Blur_Times(ParticlePropertyStruct<float> &new_bl
 		} else {
 
 			// Default size of randomizer tables (tables for non-zero randomizers will be this size)
-			unsigned int pot_num = Find_POT(MaxNum);
+			unsigned int pot_num = std::bit_ceil(MaxNum);
 			unsigned int default_randomizer_entries = MIN(pot_num, MAX_RANDOM_ENTRIES);
 
 			if (RandomBlurTimeEntries) {

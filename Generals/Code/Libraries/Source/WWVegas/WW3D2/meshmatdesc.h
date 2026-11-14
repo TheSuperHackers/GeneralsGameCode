@@ -44,8 +44,8 @@
 #include "WWMath/Vector3i.h"
 #include "WWMath/vector4.h"
 #include "WWLib/sharebuf.h"
-#include "shader.h"
-#include "vertmaterial.h"
+#include "WW3D2/shader.h"
+#include "WW3D2/vertmaterial.h"
 
 class MatBufferClass;
 class TexBufferClass;

@@ -1,6 +1,6 @@
 /*
-**	Command & Conquer Generals(tm)
-**	Copyright 2025 Electronic Arts Inc.
+**	Command & Conquer Generals Zero Hour(tm)
+**	Copyright 2026 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -16,19 +16,26 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-////////////////////////////////////////////////////////////////////////////////
-//																																						//
-//  (c) 2001-2003 Electronic Arts Inc.																				//
-//																																						//
-////////////////////////////////////////////////////////////////////////////////
+#pragma once
 
+#include "WWMath/vector3.h"
+#include <d3d8types.h>
 
-#include "W3DDevice/GameClient/W3DAssetManagerExposed.h"
-#include "W3DDevice/GameClient/W3DAssetManager.h"
-
-void ReloadAllTextures()
+inline D3DVECTOR To_D3DVECTOR(const Vector3& v)
 {
-	W3DAssetManager::Get_Instance()->Release_All_Textures();
+	D3DVECTOR dxv;
+	dxv.x = v.X;
+	dxv.y = v.Y;
+	dxv.z = v.Z;
+	return dxv;
 }
 
-
+inline D3DCOLORVALUE To_D3DCOLORVALUE(const Vector3& rgb, float a)
+{
+	D3DCOLORVALUE dxc;
+	dxc.r = rgb.X;
+	dxc.g = rgb.Y;
+	dxc.b = rgb.Z;
+	dxc.a = a;
+	return dxc;
+}

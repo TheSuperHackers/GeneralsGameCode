@@ -38,7 +38,7 @@
 
 #include "WW3D2/rendobj.h"
 #include "WWLib/RANDOM.h"
-#include "part_buf.h"
+#include "WW3D2/part_buf.h"
 #include "WWMath/quat.h"
 #include "w3d_file.h"
 #include "WW3D2/w3derr.h"

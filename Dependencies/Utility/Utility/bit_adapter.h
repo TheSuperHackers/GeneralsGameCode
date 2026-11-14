@@ -16,14 +16,17 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// This file provides std::bit_cast. VC6 has no <bit> header and gets a function that copies the bytes with memcpy.
-// Use it to reinterpret the bits of a float as an integer or the other way around, instead of reading the value
-// through a pointer of the other type, which violates the strict aliasing rule.
+// This file provides std::bit_cast and std::bit_ceil. VC6 has no <bit> header and gets fallback functions: bit_cast
+// copies the bytes with memcpy, and bit_ceil doubles 1 until it reaches the value.
 //
-// The VC6 function differs from the standard function in these points:
-// - It is not constexpr.
-// - It does not check that the types are trivially copyable.
-// - The destination type must be default constructible.
+// Use std::bit_cast to reinterpret the bits of a float as an integer or the other way around, instead of reading
+// the value through a pointer of the other type, which violates the strict aliasing rule.
+//
+// The VC6 functions differ from the standard functions in these points:
+// - They are not constexpr.
+// - bit_cast does not check that the types are trivially copyable.
+// - bit_cast requires the destination type to be default constructible.
+// - bit_ceil does not check that the type is an unsigned integer.
 
 #pragma once
 
@@ -40,6 +43,16 @@ inline To bit_cast(const From& from)
 	To to;
 	::memcpy(&to, &from, sizeof(To));
 	return to;
+}
+
+template <class T>
+inline T bit_ceil(T x)
+{
+	T result = 1;
+	while (result < x)
+		result <<= 1;
+
+	return result;
 }
 }
 

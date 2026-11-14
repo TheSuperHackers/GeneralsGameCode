@@ -287,48 +287,12 @@ static void Init_Shaders()
 }
 
 /*
-** Derived INI to support Vector4
+** Reads four comma separated floats from an INI entry
 */
-class DazzleINIClass : public INIClass {
-public:
-	DazzleINIClass(FileClass & file) : INIClass(file) {}
-	const Vector2	Get_Vector2(char const *section, char const *entry, const Vector2 & defvalue = Vector2(0,0) );
-	const Vector3	Get_Vector3(char const *section, char const *entry, const Vector3 & defvalue = Vector3(0,0,0) );
-	const Vector4	Get_Vector4(char const *section, char const *entry, const Vector4 & defvalue = Vector4(0,0,0,0) ) const;
-};
-
-const Vector2 DazzleINIClass::Get_Vector2(char const *section, char const *entry, const Vector2 & defvalue)
+static Vector4 Get_INI_Vector4(const INIClass& ini, const char* section, const char* entry, const Vector4& defvalue)
 {
 	if (section != nullptr && entry != nullptr) {
-		INIEntry * entryptr = Find_Entry(section, entry);
-		if (entryptr && entryptr->Value != nullptr) {
-			Vector2	ret;
-			if ( sscanf( entryptr->Value, "%f,%f", &ret[0], &ret[1] ) == 2 ) {
-				return ret;
-			}
-		}
-	}
-	return defvalue;
-}
-
-const Vector3 DazzleINIClass::Get_Vector3(char const *section, char const * entry, const Vector3 & defvalue )
-{
-	if (section != nullptr && entry != nullptr) {
-		INIEntry * entryptr = Find_Entry(section, entry);
-		if (entryptr && entryptr->Value != nullptr) {
-			Vector3	ret;
-			if ( sscanf( entryptr->Value, "%f,%f,%f", &ret[0], &ret[1], &ret[2] ) == 3 ) {
-				return ret;
-			}
-		}
-	}
-	return defvalue;
-}
-
-const Vector4 DazzleINIClass::Get_Vector4(char const *section, char const *entry, const Vector4 & defvalue) const
-{
-	if (section != nullptr && entry != nullptr) {
-		INIEntry * entryptr = Find_Entry(section, entry);
+		INIEntry * entryptr = ini.Find_Entry(section, entry);
 		if (entryptr && entryptr->Value != nullptr) {
 			Vector4	ret;
 			if ( sscanf( entryptr->Value, "%f,%f,%f,%f", &ret[0], &ret[1], &ret[2], &ret[3] ) == 4 ) {
@@ -605,9 +569,8 @@ void DazzleRenderObjClass::Init_From_INI(const INIClass* ini)
 			TPoint3D<float> tp=ini->Get_Point(section_name,tmp_name,TPoint3D<float>(1.0f,1.0f,1.0f));
 			lic.flare_colors[flare]=Vector3(tp.X,tp.Y,tp.Z);
 			// Flare uv
-			const DazzleINIClass* dini=reinterpret_cast<const DazzleINIClass*>(ini);
 			tmp_name.Format("%s%d",FLARE_UV_STRING,flare+1);
-			lic.flare_uv[flare]=dini->Get_Vector4(section_name,tmp_name,Vector4(0.0f,0.0f,1.0f,1.0f));
+			lic.flare_uv[flare]=Get_INI_Vector4(*ini,section_name,tmp_name,Vector4(0.0f,0.0f,1.0f,1.0f));
 		}
 		lic.type=entry;
 
