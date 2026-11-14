@@ -172,6 +172,7 @@ protected:
 	void createViewObject( const Coord3D *location );
 	void resolveSpecialPower();
 	void aboutToDoSpecialPower( const Coord3D *location );
+	Bool canDoSpecialPower() const; ///< TheSuperHackers @info Similar to isReady, but ignores the timer.
 
 	UnsignedInt m_availableOnFrame;			///< on this frame, this special power is available
 	Int m_pausedCount;									///< Reference count of sources pausing me

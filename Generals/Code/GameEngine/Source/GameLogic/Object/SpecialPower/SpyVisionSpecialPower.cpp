@@ -87,7 +87,7 @@ SpyVisionSpecialPower::~SpyVisionSpecialPower()
 // ------------------------------------------------------------------------------------------------
 void SpyVisionSpecialPower::doSpecialPower( UnsignedInt commandOptions )
 {
-	if (getObject()->isDisabled())
+	if (!canDoSpecialPower())
 		return;
 
 	// call the base class action cause we are *EXTENDING* functionality
