@@ -112,7 +112,7 @@ ParticleUplinkCannonUpdateModuleData::ParticleUplinkCannonUpdateModuleData()
 		{ "RevealRange",													INI::parseReal,									nullptr, offsetof( ParticleUplinkCannonUpdateModuleData, m_revealRange ) },
 
 		{ "OuterEffectBoneName",									INI::parseAsciiString,					nullptr, offsetof( ParticleUplinkCannonUpdateModuleData, m_outerEffectBaseBoneName ) },
-		{ "OuterEffectNumBones",									INI::parseUnsignedInt,					nullptr, offsetof( ParticleUplinkCannonUpdateModuleData, m_outerEffectNumBones ) },
+		{ "OuterEffectNumBones",									INI::parseUnsignedIntClamped,	(const void*)MAX_OUTER_NODES, offsetof( ParticleUplinkCannonUpdateModuleData, m_outerEffectNumBones ) },
 		{ "OuterNodesLightFlareParticleSystem",		INI::parseAsciiString,					nullptr, offsetof( ParticleUplinkCannonUpdateModuleData, m_outerNodesLightFlareParticleSystemName ) },
 		{ "OuterNodesMediumFlareParticleSystem",	INI::parseAsciiString,					nullptr, offsetof( ParticleUplinkCannonUpdateModuleData, m_outerNodesMediumFlareParticleSystemName ) },
 		{ "OuterNodesIntenseFlareParticleSystem",	INI::parseAsciiString,					nullptr, offsetof( ParticleUplinkCannonUpdateModuleData, m_outerNodesIntenseFlareParticleSystemName ) },

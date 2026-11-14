@@ -1232,6 +1232,7 @@ void AISkirmishPlayer::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AISkirmishPlayer::loadPostProcess()
 {
-
+	// TheSuperHackers @bugfix CryoTheRenegade 27/09/2026 Apply the base player savegame validation to skirmish players.
+	AIPlayer::loadPostProcess();
 }
 
