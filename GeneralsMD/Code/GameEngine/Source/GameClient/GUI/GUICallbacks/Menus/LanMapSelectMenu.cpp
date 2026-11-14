@@ -376,6 +376,7 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 					else
 						asciiMap.translate( map );
 					TheLAN->GetMyGame()->setMap( asciiMap );
+					warnIfMapLacksSkirmishSides( asciiMap );
 					asciiMap.toLower();
 					std::map<AsciiString, MapMetaData>::iterator it = TheMapCache->find(asciiMap);
 					if (it != TheMapCache->end())

@@ -177,6 +177,9 @@ public:
 	Bool validateSides();
 
 	void addPlayerByTemplate(AsciiString playerTemplateName);
+	void addMissingSkirmishSides();
+	static Bool isGeneralsSkirmishSideSet(const std::vector<AsciiString>& factions); ///< Original factions present, no generals
+	static Bool canAddGeneralSides(const std::vector<AsciiString>& factions, const std::vector<AsciiString>& sideNames);
 
 	enum
 	{
