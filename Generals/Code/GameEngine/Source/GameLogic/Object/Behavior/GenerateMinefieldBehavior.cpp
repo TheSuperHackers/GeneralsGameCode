@@ -198,10 +198,23 @@ Object* GenerateMinefieldBehavior::placeMineAt(const Coord3D& pt, const ThingTem
 	geom.expandFootprint(mineRadius * -(1.0f - d->m_skipIfThisMuchUnderStructure));
 	ObjectIterator *iter = ThePartitionManager->iteratePotentialCollisions( &pt, geom, orient );
 	MemoryPoolObjectHolder hold(iter);
+#if !RETAIL_COMPATIBLE_CRC && !RETAIL_COMPATIBLE_XFER_SAVE
+	Bool covered = FALSE;
+#endif
 	for (Object* them = iter->first(); them; them = iter->next())
 	{
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
 		if (them->isKindOf(KINDOF_STRUCTURE))
 			return nullptr;
+#else
+		// TheSuperHackers @bugfix arcticdolphin 23/10/2026 A mine under another structure is created covered instead of skipped.
+		if (them->isKindOf(KINDOF_STRUCTURE))
+		{
+			if (them == producer || them->isKindOf(KINDOF_REBUILD_HOLE))
+				return nullptr;
+			covered = TRUE;
+		}
+#endif
 	}
 
 	Object* mine = TheThingFactory->newObject(mineTemplate, team);
@@ -214,6 +227,14 @@ Object* GenerateMinefieldBehavior::placeMineAt(const Coord3D& pt, const ThingTem
 		LandMineInterface* lmi = (*bmi)->getLandMineInterface();
 		if (lmi)
 		{
+#if !RETAIL_COMPATIBLE_CRC && !RETAIL_COMPATIBLE_XFER_SAVE
+			if (covered)
+			{
+				lmi->setCovered(TRUE);
+				if (mine->isDestroyed())
+					return nullptr;
+			}
+#endif
 			lmi->setScootParms(*producer->getPosition(), pt);
 			break;
 		}
