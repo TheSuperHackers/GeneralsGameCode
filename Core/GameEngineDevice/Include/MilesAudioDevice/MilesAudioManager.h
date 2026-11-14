@@ -251,10 +251,12 @@ class MilesAudioManager : public AudioManager
 		// Looping functions
 		Bool startNextLoop( PlayingAudio *playing );
 
+		void prepareStream( AudioEventRTS *event, HSTREAM stream );
 		void playStream( AudioEventRTS *event, HSTREAM stream );
-		// Returns the file handle for attachment to the PlayingAudio structure
-		void *playSample( AudioEventRTS *event, HSAMPLE sample );
-		void *playSample3D( AudioEventRTS *event, H3DSAMPLE sample3D );
+		void *prepareSample( AudioEventRTS *event, HSAMPLE sample );
+		void *prepareSample3D( AudioEventRTS *event, H3DSAMPLE sample3D );
+		Bool playSample( PlayingAudio *playing );
+		Bool playSample3D( PlayingAudio *playing );
 
 		void buildProviderList();
 		void createListener();
