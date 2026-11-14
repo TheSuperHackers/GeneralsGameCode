@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <Utility/stringex.h>
+
 inline Char getNativePathSeparator()
 {
 #ifdef _WIN32
@@ -128,11 +130,7 @@ template <typename T> EnsureTrailingSeparatorInPathResult ensureTrailingSeparato
 {
 	EnsureTrailingSeparatorInPathResult result;
 	result.ok = true;
-	result.length = 0;
-	while (path[result.length] != 0)
-	{
-		++result.length;
-	}
+	result.length = strlen_t(path);
 	if (result.length == 0 || isPathSeparator(path[result.length - 1]))
 	{
 		return result;
