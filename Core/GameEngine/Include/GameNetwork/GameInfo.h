@@ -303,6 +303,8 @@ public:
 			setSlotPointer(i, &m_skirmishSlot[i]);
 	}
 	virtual ~SkirmishGameInfo() override {}
+
+	void handleOriginalSetups();
 };
 
 extern SkirmishGameInfo *TheSkirmishGameInfo;
