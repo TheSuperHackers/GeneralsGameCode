@@ -1423,7 +1423,7 @@ void WW3D::Make_Screen_Shot( const char * filename_base , const float gamma, con
 				targ.Header.Height=height;
 				targ.Header.PixelDepth=24;
 				targ.Header.ImageType=TGA_TRUECOLOR;
-				targ.SetImage((char *) image);
+				targ.SetImage((char *) image, 3*width*height);
 				targ.YFlip();
 
 				FileClass*file=_TheWritingFileFactory->Get_File( filename );

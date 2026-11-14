@@ -206,7 +206,7 @@ ThumbnailClass::ThumbnailClass(ThumbnailManagerClass* manager, const StringClass
 
 		// NOTE: We load the palette but we do not yet support paletted textures!
 		char palette[256*4];
-		targa.SetPalette(palette);
+		targa.SetPalette(palette, sizeof(palette));
 		if (TARGA_ERROR_HANDLER(targa.Load(filename, TGAF_IMAGE, false),filename)) return;
 
 		// Get time stamp from the tga file
