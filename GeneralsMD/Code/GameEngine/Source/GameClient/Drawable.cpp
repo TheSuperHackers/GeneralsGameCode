@@ -2486,7 +2486,7 @@ const AudioEventRTS& Drawable::getAmbientSoundByDamage(BodyDamageType dt)
 void Drawable::validatePos() const
 {
 	const Coord3D* ourPos = getPosition();
-	if (_isnan(ourPos->x) || _isnan(ourPos->y) || _isnan(ourPos->z))
+	if (std::isnan(ourPos->x) || std::isnan(ourPos->y) || std::isnan(ourPos->z))
 	{
 		DEBUG_CRASH(("Drawable/Object position NAN! '%s'", getTemplate()->getName().str()));
 	}

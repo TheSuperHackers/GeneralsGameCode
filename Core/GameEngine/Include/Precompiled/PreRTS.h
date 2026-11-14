@@ -48,6 +48,7 @@ class STLSpecialAlloc;
 #include <windows.h>
 
 #include <assert.h>
+#include <Utility/cmath_adapter.h>
 #include <ctype.h>
 #include <direct.h>
 #include <excpt.h>
