@@ -126,7 +126,13 @@ void AICommandParmsStorage::reconstitute(AICommandParms& parms) const
 void AICommandParmsStorage::doXfer(Xfer *xfer)
 {
 	xfer->xferUser(&m_cmd, sizeof(m_cmd));
-	xfer->xferUser(&m_cmd, sizeof(m_cmdSource));
+	// TheSuperHackers @bugfix Transfer the command source instead of the command twice.
+	xfer->xferUser(&m_cmdSource, sizeof(m_cmdSource));
+	if (xfer->getXferMode() == XFER_LOAD && (m_cmdSource < CMD_FROM_PLAYER || m_cmdSource >= COMMAND_SOURCE_TYPE_COUNT))
+	{
+		// TheSuperHackers @info Saves from before this fix contain a copy of the command in the command source slot.
+		m_cmdSource = CMD_FROM_AI;
+	}
 	xfer->xferCoord3D(&m_pos);
 	xfer->xferObjectID(&m_obj);
 	xfer->xferObjectID(&m_otherObj);
