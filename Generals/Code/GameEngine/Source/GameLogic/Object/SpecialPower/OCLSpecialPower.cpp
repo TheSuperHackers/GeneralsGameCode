@@ -146,6 +146,11 @@ void OCLSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, 
 	if (getObject()->isDisabled())
 		return;
 
+#if !RETAIL_COMPATIBLE_CRC
+	if (getObject()->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
+		return;
+#endif
+
 	// sanity
 	if( loc == nullptr )
 		return;
@@ -211,6 +216,11 @@ void OCLSpecialPower::doSpecialPower( UnsignedInt commandOptions )
 {
 	if (getObject()->isDisabled())
 		return;
+
+#if !RETAIL_COMPATIBLE_CRC
+	if (getObject()->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
+		return;
+#endif
 
 	Coord3D creationCoord;
 	creationCoord.set( *getObject()->getPosition() );
