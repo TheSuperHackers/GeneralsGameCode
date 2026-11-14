@@ -500,6 +500,11 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 
 	m_soleHealingBenefactorID = INVALID_ID; ///< who is the only other object that can give me this non-stacking heal benefit?
 	m_soleHealingBenefactorExpirationFrame = 0; ///< on what frame can I accept healing (thus to switch) from a new benefactor
+#if !RETAIL_COMPATIBLE_CRC
+	m_soleHealingRate = 0.0f;
+	m_soleHealingCredit = 0.0f;
+	m_soleHealingCreditFrame = 0;
+#endif
 
 	// TheSuperHackers @bugfix Mauller/xezon 02/08/2025 sendObjectCreated needs calling before CreateModule's are initialized to prevent drawable related crashes
 	// This predominantly occurs with the veterancy create module when the chemical suits upgrade is unlocked as it tries to set the terrain decal.
@@ -1999,7 +2004,7 @@ ObjectID Object::getSoleHealingBenefactor() const
 
 }
 
-Bool Object::attemptHealingFromSoleBenefactor ( Real amount, const Object* source, UnsignedInt duration )
+Bool Object::attemptHealingFromSoleBenefactor ( Real amount, const Object* source, UnsignedInt duration, Real healingRate )
 {
 	///< for the non-stacking healers like ambulance and propaganda
 
@@ -2010,27 +2015,50 @@ Bool Object::attemptHealingFromSoleBenefactor ( Real amount, const Object* sourc
 	ObjectID id = source->getID();
 
 // Either it is ok to accept healing from any who offer or this is my guy, calling again
-	if( now > m_soleHealingBenefactorExpirationFrame || m_soleHealingBenefactorID == id )
+#if RETAIL_COMPATIBLE_CRC
+	if( now <= m_soleHealingBenefactorExpirationFrame && m_soleHealingBenefactorID != id )
+		return FALSE;
+#else
+	// TheSuperHackers @bugfix arcticdolphin 25/10/2026 Prefer the strongest continuous aura.
+	const Bool expired = now > m_soleHealingBenefactorExpirationFrame || m_soleHealingBenefactorID == INVALID_ID;
+	const Bool stronger = healingRate > m_soleHealingRate && m_soleHealingRate > 0.0f;
+	if( !expired && m_soleHealingBenefactorID != id && !stronger )
+		return FALSE;
+
+	if( expired || healingRate <= 0.0f )
+		m_soleHealingCredit = 0.0f;
+	else
+		m_soleHealingCredit = max(0.0f, m_soleHealingCredit - m_soleHealingRate * (now - m_soleHealingCreditFrame));
+
+	if( healingRate > 0.0f )
 	{
-		m_soleHealingBenefactorID = id;
-		m_soleHealingBenefactorExpirationFrame = now + duration;
+		amount = max(0.0f, amount - m_soleHealingCredit);
+	}
+	m_soleHealingRate = healingRate;
+	m_soleHealingCreditFrame = now;
+#endif
+	m_soleHealingBenefactorID = id;
+	m_soleHealingBenefactorExpirationFrame = now + duration;
 
-		BodyModuleInterface* body = getBodyModule();
-		if (body)
-		{
-			DamageInfo damageInfo;
-			damageInfo.in.m_damageType = DAMAGE_HEALING;
-			damageInfo.in.m_deathType = DEATH_NONE;
-			damageInfo.in.m_sourceID = source ? source->getID() : INVALID_ID;
-			damageInfo.in.m_amount = amount;
-			body->attemptHealing( &damageInfo );
-		}
-
-		return TRUE;
+	BodyModuleInterface* body = getBodyModule();
+	if( body )
+	{
+		DamageInfo damageInfo;
+		damageInfo.in.m_damageType = DAMAGE_HEALING;
+		damageInfo.in.m_deathType = DEATH_NONE;
+		damageInfo.in.m_sourceID = id;
+		damageInfo.in.m_amount = amount;
+#if RETAIL_COMPATIBLE_CRC
+		body->attemptHealing( &damageInfo );
+#else
+		const Real healthBefore = body->getHealth();
+		body->attemptHealing( &damageInfo );
+		if( healingRate > 0.0f )
+			m_soleHealingCredit += body->getHealth() - healthBefore;
+#endif
 	}
 
-	return FALSE;
-
+	return TRUE;
 }
 
 
@@ -4091,6 +4119,14 @@ void Object::crc( Xfer *xfer )
 		}
 	}
 
+#if !RETAIL_COMPATIBLE_CRC
+	xfer->xferObjectID(&m_soleHealingBenefactorID);
+	xfer->xferUnsignedInt(&m_soleHealingBenefactorExpirationFrame);
+	xfer->xferReal(&m_soleHealingRate);
+	xfer->xferReal(&m_soleHealingCredit);
+	xfer->xferUnsignedInt(&m_soleHealingCreditFrame);
+#endif
+
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4105,22 +4141,21 @@ void Object::crc( Xfer *xfer )
 	* 7: save full mtx, not pos+orient.
 	* 8: Kris: Conversion of object status bits from UnsignedInt to BitFlags<>
 	* 9: Extra sighting for reveal to all with different range units
+	* 10: TheSuperHackers @bugfix Serialize the healing aura rate and pulse credit
 	*/
 //-------------------------------------------------------------------------------------------------
 void Object::xfer( Xfer *xfer )
 {
 
 	// version
-#if RTS_GENERALS
-
-#if RETAIL_COMPATIBLE_XFER_SAVE
+#if !RETAIL_COMPATIBLE_CRC && !RETAIL_COMPATIBLE_XFER_SAVE
+	const XferVersion currentVersion = 10;
+#elif !RTS_GENERALS
+	const XferVersion currentVersion = 9;
+#elif RETAIL_COMPATIBLE_XFER_SAVE
 	const XferVersion currentVersion = 7;
 #else
 	const XferVersion currentVersion = 8;
-#endif
-
-#else
-	const XferVersion currentVersion = 9;
 #endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
@@ -4525,6 +4560,24 @@ void Object::xfer( Xfer *xfer )
 		m_soleHealingBenefactorID = INVALID_ID;
 		m_soleHealingBenefactorExpirationFrame = 0;
 	}
+
+#if !RETAIL_COMPATIBLE_CRC
+#if !RETAIL_COMPATIBLE_XFER_SAVE
+	if( version >= 10 )
+	{
+		xfer->xferReal(&m_soleHealingRate);
+		xfer->xferReal(&m_soleHealingCredit);
+		xfer->xferUnsignedInt(&m_soleHealingCreditFrame);
+	}
+	else
+#endif
+	if( xfer->getXferMode() == XFER_LOAD )
+	{
+		m_soleHealingRate = 0.0f;
+		m_soleHealingCredit = 0.0f;
+		m_soleHealingCreditFrame = 0;
+	}
+#endif
 
 	// Doesn't need to be saved.  These are created as needed.  jba.
 	//m_group;
