@@ -7,29 +7,59 @@ on:
   push:
     branches:
       - main
+  # Pull requests run only while they carry the CI label, which maintainers add. Removing
+  # it cancels a running build and fails GenCI Done.
+  # The label name 'CI' is repeated below, because no context can hold it for all uses.
   pull_request:
     branches:
       - main
+    types: [opened, synchronize, reopened, labeled, unlabeled]
   workflow_dispatch:
 
+# Adding or removing any other label gets its own group, so it cannot cancel a running build.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}${{ ((github.event.action == 'labeled' || github.event.action == 'unlabeled') && github.event.label.name != 'CI') && format('-{0}', github.run_id) || '' }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   detect-changes:
     name: Detect File Changes
+    # The build and replay jobs need this job. They are skipped with it, and on a pull request
+    # without the CI label, because the paths are then not filtered.
+    if: ${{ !((github.event.action == 'labeled' || github.event.action == 'unlabeled') && github.event.label.name != 'CI') }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
     outputs:
+      ci: ${{ steps.label.outputs.ci }}
       generals: ${{ steps.filter.outputs.generals }}
       generalsmd: ${{ steps.filter.outputs.generalsmd }}
       shared: ${{ steps.filter.outputs.shared }}
     steps:
+      # A re-run keeps the labels of the event that started the run, so the current labels
+      # are read instead.
+      - name: Check CI Label
+        id: label
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          if [ -z "$PR_NUMBER" ]; then
+            ci=true
+          else
+            ci=$(gh api "repos/$REPO/issues/$PR_NUMBER/labels?per_page=100" --jq 'any(.[]; .name | ascii_downcase == "ci")')
+          fi
+          echo "ci=$ci" >> "$GITHUB_OUTPUT"
+
       - name: Checkout Code
+        if: steps.label.outputs.ci == 'true'
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Filter Changed Paths
+        if: steps.label.outputs.ci == 'true'
         uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
         id: filter
         with:
@@ -52,6 +82,7 @@ jobs:
               - 'vcpkg.json'
 
       - name: Changes Summary
+        if: steps.label.outputs.ci == 'true'
         run: |
           echo "### 🔍 File Changes Summary" >> $GITHUB_STEP_SUMMARY
           echo "- Generals: ${{ steps.filter.outputs.generals == 'true' && '✅' || '❌' }}" >> $GITHUB_STEP_SUMMARY
@@ -267,3 +298,56 @@ jobs:
       userdata: "GeneralsReplays/GeneralsZH/1.04"
       preset: ${{ matrix.preset }}
     secrets: inherit
+
+  # The one check branch protection requires. Skipped jobs count as passed there, so this job
+  # fails a pull request without the CI label, any run in which a job failed, and any run that
+  # filtered no paths, also when it is re-run. Adding or removing any other label reports
+  # under another name, so it leaves the result of the last build alone.
+  ci-done:
+    name: ${{ ((github.event.action == 'labeled' || github.event.action == 'unlabeled') && github.event.label.name != 'CI') && 'GenCI Ignored Label' || 'GenCI Done' }}
+    needs: [detect-changes, build-generals-vc6, build-generals-win32, build-generalsmd-vc6, build-generalsmd-win32, replaycheck-generals, replaycheck-generalsmd]
+    # Also runs when the jobs of a game without changes were skipped, and when the run was
+    # cancelled, so that a cancelled run cannot leave a skipped check behind that passes.
+    if: ${{ always() }}
+    runs-on: ubuntu-slim
+    timeout-minutes: 3
+    permissions:
+      pull-requests: read
+    steps:
+      # Jobs that had not started yet may report as skipped, so the cancellation is checked
+      # directly.
+      - name: Fail Cancelled Run
+        if: ${{ cancelled() }}
+        run: |
+          echo "::error::GenCI was cancelled."
+          exit 1
+
+      # The labels are read again, because a single job can be re-run after they changed.
+      - name: Check Job Results
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          OTHER_LABEL: ${{ (github.event.action == 'labeled' || github.event.action == 'unlabeled') && github.event.label.name != 'CI' }}
+          FILTERED: ${{ needs.detect-changes.result == 'success' && needs.detect-changes.outputs.ci == 'true' }}
+          FAILED: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        run: |
+          if [ "$OTHER_LABEL" = "true" ]; then
+            echo "Another label was added or removed, so nothing was built."
+            exit 0
+          fi
+          if [ -n "$PR_NUMBER" ]; then
+            ci=$(gh api "repos/$REPO/issues/$PR_NUMBER/labels?per_page=100" --jq 'any(.[]; .name | ascii_downcase == "ci")')
+            if [ "$ci" != "true" ]; then
+              echo "::error::Add the CI label to run GenCI on this pull request."
+              exit 1
+            fi
+          fi
+          if [ "$FAILED" = "true" ]; then
+            echo "::error::At least one GenCI job failed or was cancelled."
+            exit 1
+          fi
+          if [ "$FILTERED" != "true" ]; then
+            echo "::error::This run started without the CI label, so nothing was built. Re-run all jobs."
+            exit 1
+          fi
