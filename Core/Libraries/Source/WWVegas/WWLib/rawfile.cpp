@@ -1109,7 +1109,11 @@ int RawFileClass::Raw_Seek(int pos, int dir)
 		Error(EBADF, false, Filename);
 	}
 
-	pos=fseek(Handle, pos, dir);
+	if (fseek(Handle, pos, dir) == 0) {
+		pos = ftell(Handle);
+	} else {
+		pos = -1;
+	}
 
 	/*
 	**	If there was an error in the seek, then bail with an error condition.
