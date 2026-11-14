@@ -28,7 +28,7 @@
 const long BOUNDARY_PICK_DISTANCE = 5.0f;
 
 BorderTool::BorderTool() : Tool(ID_BORDERTOOL, IDC_POINTER),
-													 m_mouseDown(false),
+													 m_newBorderCreated(false),
 													 m_addingNewBorder(false),
 													 m_modifyBorderNdx(-1)
 
@@ -63,23 +63,20 @@ void BorderTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 	}
 
 	if (m_addingNewBorder) {
-		Int count = pDoc->getNumBoundaries();
-		ICoord2D current;
-		pDoc->getBoundary(count - 1, &current);
+		if (!m_newBorderCreated && viewPt == m_mouseDownPoint) {
+			return;
+		}
 		Coord3D new3DPoint;
 		pView->viewToDocCoords(viewPt, &new3DPoint, false);
-
-		if (current.x < 0) {
-			current.x = 0;
+		ICoord2D current;
+		current.x = max(0, REAL_TO_INT((new3DPoint.x / MAP_XY_FACTOR) + 0.5f));
+		current.y = max(0, REAL_TO_INT((new3DPoint.y / MAP_XY_FACTOR) + 0.5f));
+		if (m_newBorderCreated) {
+			pDoc->changeBoundary(pDoc->getNumBoundaries() - 1, &current);
+		} else {
+			pDoc->addBoundary(&current);
+			m_newBorderCreated = true;
 		}
-
-		if (current.y < 0) {
-			current.y = 0;
-		}
-
-		current.x = REAL_TO_INT((new3DPoint.x / MAP_XY_FACTOR) + 0.5f);
-		current.y = REAL_TO_INT((new3DPoint.y / MAP_XY_FACTOR) + 0.5f);
-		pDoc->changeBoundary(count - 1, &current);
 		return;
 	}
 
@@ -124,15 +121,15 @@ void BorderTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 		return;
 	}
 
+	m_newBorderCreated = false;
+	m_mouseDownPoint = viewPt;
+
 	//static Coord3D zero = {0.0f, 0.0f, 0.0f};
 
 	Coord3D groundPt;
 	pView->viewToDocCoords(viewPt, &groundPt);
 	if (groundPt.length() < BOUNDARY_PICK_DISTANCE) {
 		m_addingNewBorder = true;
-
-		ICoord2D initialBoundary = { 1, 1 };
-		pDoc->addBoundary(&initialBoundary);
 		return;
 	}
 
@@ -150,9 +147,6 @@ void BorderTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 	{
 		// add a boundary
 		m_addingNewBorder = true;
-
-		ICoord2D initialBoundary = { 1, 1 };
-		pDoc->addBoundary(&initialBoundary);
 	}
 	else
 	{
@@ -168,6 +162,6 @@ void BorderTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 
 	if (m_addingNewBorder) {
 		m_addingNewBorder = false;
-		// Do the undoable on the last border
+		m_newBorderCreated = false;
 	}
 }
