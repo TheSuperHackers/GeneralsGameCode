@@ -111,16 +111,21 @@ FileSystem	*TheFileSystem = nullptr;
 //         Private Functions
 //----------------------------------------------------------------------------
 
+static UnsignedByte toLowerAscii(Char ch)
+{
+	if (ch >= 'A' && ch <= 'Z')
+		return (UnsignedByte)(ch + ('a' - 'A'));
+
+	return (UnsignedByte)ch;
+}
+
 // The character as it is written in a path key.
 static UnsignedByte toPathKeyChar(Char ch)
 {
 	if (isPathSeparator(ch))
 		return '\\';
 
-	if (ch >= 'A' && ch <= 'Z')
-		return (UnsignedByte)(ch + ('a' - 'A'));
-
-	return (UnsignedByte)ch;
+	return toLowerAscii(ch);
 }
 
 // Returns the end of the separator pair that starts a UNC or device path, such as \\server\share.

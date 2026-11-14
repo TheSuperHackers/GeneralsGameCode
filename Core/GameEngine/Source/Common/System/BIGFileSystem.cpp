@@ -108,26 +108,27 @@ void BIGFileSystem::update() {
 void BIGFileSystem::postProcessLoad() {
 }
 
-ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
-	File *fp = TheLocalFileSystem->openFile(filename, File::READ | File::BINARY);
-	AsciiString archiveFileName;
-	archiveFileName = filename;
-	archiveFileName.toLower();
+ArchiveFile * BIGFileSystem::openArchiveFile(const AsciiString &filename, Bool overwrite) {
+	if (m_archiveFileMap.find(filename) != m_archiveFileMap.end()) {
+		DEBUG_CRASH(("Cannot open archive file %s more than once", filename.str()));
+		return nullptr;
+	}
+
+	File *fp = TheLocalFileSystem->openFile(filename.str(), File::READ | File::BINARY);
 	UnsignedInt archiveFileSize = 0;
 	UnsignedInt numLittleFiles = 0;
 	BIGFileHeader header;
 
-	DEBUG_LOG(("BIGFileSystem::openArchiveFile - opening BIG file %s", filename));
+	DEBUG_LOG(("BIGFileSystem::openArchiveFile - opening BIG file %s", filename.str()));
 
 	if (fp == nullptr) {
-		DEBUG_CRASH(("Could not open archive file %s for parsing", filename));
+		DEBUG_CRASH(("Could not open archive file %s for parsing", filename.str()));
 		return nullptr;
 	}
 
-	AsciiString asciibuf;
 	char buffer[_MAX_PATH];
 	if (fp->read(&header, sizeof(header)) != sizeof(header) || memcmp(header.identifier, BIGFileIdentifier, sizeof(BIGFileIdentifier)) != 0) {
-		DEBUG_CRASH(("Error reading BIG file header in file %s", filename));
+		DEBUG_CRASH(("Error reading BIG file header in file %s", filename.str()));
 		fp->close();
 		fp = nullptr;
 		return nullptr;
@@ -138,14 +139,7 @@ ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
 
 	DEBUG_LOG(("BIGFileSystem::openArchiveFile - size of archive file is %u bytes", archiveFileSize));
 
-//	char t;
-
 	DEBUG_LOG(("BIGFileSystem::openArchiveFile - %u are contained in archive", numLittleFiles));
-//	for (Int i = 0; i < 2; ++i) {
-//		t = buffer[i];
-//		buffer[i] = buffer[(4-i)-1];
-//		buffer[(4-i)-1] = t;
-//	}
 
 	// read in each directory listing.
 	ArchivedFileInfo fileInfo;
@@ -159,7 +153,6 @@ ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
 			break;
 		}
 
-		fileInfo.m_archiveFilename = archiveFileName;
 		fileInfo.m_offset = betoh(entry.fileOffset);
 		fileInfo.m_size = betoh(entry.fileSize);
 
@@ -178,17 +171,14 @@ ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
 
 		AsciiString path;
 		path = buffer;
+		path.concat(fileInfo.m_filename);
 
-		AsciiString debugpath;
-		debugpath = path;
-		debugpath.concat(fileInfo.m_filename);
-//		DEBUG_LOG(("BIGFileSystem::openArchiveFile - adding file %s to archive file %s, file number %d", debugpath.str(), fileInfo.m_archiveFilename.str(), i));
-
-		archiveFile->addFile(path, &fileInfo);
+		addFile(archiveFile, path, fileInfo, overwrite);
 	}
 
 	if (corrupt) {
-		DEBUG_CRASH(("Truncated or corrupt directory in BIG file %s", filename));
+		DEBUG_CRASH(("Truncated or corrupt directory in BIG file %s", filename.str()));
+		removeFiles(archiveFile);
 		delete archiveFile;
 		fp->close();
 		fp = nullptr;
@@ -197,28 +187,33 @@ ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
 
 	archiveFile->attachFile(fp);
 
+	m_archiveFileMap[filename] = archiveFile;
+
 	// leave fp open as the archive file will be using it.
 
 	return archiveFile;
 }
 
-void BIGFileSystem::closeArchiveFile(const Char *filename) {
+void BIGFileSystem::closeArchiveFile(const AsciiString &filename) {
 	// Need to close the specified big file
 	ArchiveFileMap::iterator it =  m_archiveFileMap.find(filename);
 	if (it == m_archiveFileMap.end()) {
 		return;
 	}
 
-	if (stricmp(filename, MUSIC_BIG) == 0) {
+	if (filename.compareNoCase(MUSIC_BIG) == 0) {
 		// Stop the current audio
 		TheAudio->stopAudio(AudioAffect_Music);
 
 		// No need to turn off other audio, as the lookups will just fail.
 	}
-	DEBUG_ASSERTCRASH(stricmp(filename, MUSIC_BIG) == 0, ("Attempting to close Archive file '%s', need to add code to handle its shutdown correctly.", filename));
+	else {
+		DEBUG_CRASH(("Attempting to close Archive file '%s', need to add code to handle its shutdown correctly.", filename.str()));
+	}
 
 	// may need to do some other processing here first.
 
+	removeFiles(it->second);
 	delete (it->second);
 	m_archiveFileMap.erase(it);
 }
@@ -247,12 +242,9 @@ Bool BIGFileSystem::loadArchiveFilesFromDirectory(AsciiString dir, AsciiString f
 		}
 #endif
 
-		ArchiveFile *archiveFile = openArchiveFile((*it).str());
+		ArchiveFile *archiveFile = openArchiveFile(*it, overwrite);
 
 		if (archiveFile != nullptr) {
-			DEBUG_LOG(("BIGFileSystem::loadArchiveFilesFromDirectory - loading %s into the directory tree.", (*it).str()));
-			loadIntoDirectoryTree(archiveFile, overwrite);
-			m_archiveFileMap[(*it)] = archiveFile;
 			DEBUG_LOG(("BIGFileSystem::loadArchiveFilesFromDirectory - %s inserted into the archive file map.", (*it).str()));
 			actuallyAdded = TRUE;
 		}
@@ -267,12 +259,9 @@ void BIGFileSystem::loadMods()
 {
 	if (TheGlobalData->m_modBIG.isNotEmpty())
 	{
-		ArchiveFile *archiveFile = openArchiveFile(TheGlobalData->m_modBIG.str());
+		ArchiveFile *archiveFile = openArchiveFile(TheGlobalData->m_modBIG, TRUE);
 
 		if (archiveFile != nullptr) {
-			DEBUG_LOG(("BIGFileSystem::loadMods - loading %s into the directory tree.", TheGlobalData->m_modBIG.str()));
-			loadIntoDirectoryTree(archiveFile, TRUE);
-			m_archiveFileMap[TheGlobalData->m_modBIG] = archiveFile;
 			DEBUG_LOG(("BIGFileSystem::loadMods - %s inserted into the archive file map.", TheGlobalData->m_modBIG.str()));
 		}
 		else
