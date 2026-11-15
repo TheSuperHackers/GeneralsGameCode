@@ -324,7 +324,7 @@ void W3DTerrainParticles::updateSettings()
 	material.Assign_No_Add_Ref(VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE));
 	Renderer::Set_Material(material.Peek());
 	Renderer::Set_Shader(m_shader);
-	DX8Wrapper::Set_Texture(0, m_texture.Peek());
+	Renderer::Set_Texture(0, m_texture.Peek());
 
 	// To prevent visual glitches on overdraw, we clamp the texture to a transparent black pixel.
 	if (m_texture)
