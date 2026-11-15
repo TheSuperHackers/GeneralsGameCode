@@ -18,7 +18,7 @@ on:
 
 # Adding or removing any other label gets its own group, so it cannot cancel a running build.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}${{ ((github.event.action == 'labeled' || github.event.action == 'unlabeled') && github.event.label.name != 'CI') && format('-{0}', github.run_id) || '' }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}${{ (github.event.label.name && github.event.label.name != 'CI') && format('-{0}', github.run_id) || '' }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
     name: Detect File Changes
     # The build and replay jobs need this job. They are skipped with it, and on a pull request
     # without the CI label, because the paths are then not filtered.
-    if: ${{ !((github.event.action == 'labeled' || github.event.action == 'unlabeled') && github.event.label.name != 'CI') }}
+    if: ${{ !(github.event.label.name && github.event.label.name != 'CI') }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -328,7 +328,7 @@ jobs:
   # Adding or removing any other label reports under another name, so it leaves the result of
   # the last build alone.
   ci-done:
-    name: ${{ ((github.event.action == 'labeled' || github.event.action == 'unlabeled') && github.event.label.name != 'CI') && 'GenCI Ignored Label' || 'GenCI Done' }}
+    name: ${{ (github.event.label.name && github.event.label.name != 'CI') && 'GenCI Ignored Label' || 'GenCI Done' }}
     needs: [detect-changes, build-generals-vc6, build-generals-win32, build-generalsmd-vc6, build-generalsmd-win32, build-mingw-generals, build-mingw-generalsmd, replaycheck-generals, replaycheck-generalsmd]
     # Also runs when the jobs of a game without changes were skipped, and when the run was
     # cancelled, so that a cancelled run cannot leave a skipped check behind that passes.
@@ -352,7 +352,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          OTHER_LABEL: ${{ (github.event.action == 'labeled' || github.event.action == 'unlabeled') && github.event.label.name != 'CI' }}
+          OTHER_LABEL: ${{ github.event.label.name && github.event.label.name != 'CI' }}
           FILTERED: ${{ needs.detect-changes.result == 'success' && needs.detect-changes.outputs.ci == 'true' }}
           FAILED: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
         run: |
