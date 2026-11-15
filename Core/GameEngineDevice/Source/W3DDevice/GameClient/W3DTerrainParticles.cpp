@@ -256,13 +256,13 @@ void W3DTerrainParticles::flushBatch()
 			       m_numIndices * sizeof(UnsignedShort));
 		}
 
-		DX8Wrapper::Set_Index_Buffer(indexAccess, 0);
-		DX8Wrapper::Set_Vertex_Buffer(vertexAccess);
+		Renderer::Set_Index_Buffer(indexAccess, 0);
+		Renderer::Set_Vertex_Buffer(vertexAccess);
 		DX8_RECORD_TERRAIN_PARTICLE_BATCH(m_numIndices / 3);
-		DX8Wrapper::Draw_Triangles(0,
-		                           m_numIndices / 3,
-		                           0,
-		                           m_numVertices);
+		Renderer::Draw_Triangles(0,
+		                         m_numIndices / 3,
+		                         0,
+		                         m_numVertices);
 	}
 
 	m_numVertices = 0;
