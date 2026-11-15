@@ -1122,7 +1122,6 @@ long Targa::DecodeImage()
 	unsigned long remaining_pixels;
 	unsigned long size;
 	unsigned long c,i;
-	long          error = 0;
 
 	/* Initialize */
 	image = mImage;
@@ -1139,7 +1138,7 @@ long Targa::DecodeImage()
 	/* Total number of pixels compressed in this image. */
 	remaining_pixels = (unsigned long)pixel_count;
 
-	while ((remaining_pixels > 0) && !error)
+	while (remaining_pixels > 0)
 		{
  		/* Read count. */
 		if (File_Read(&packet_header, 1) == 1)
@@ -1154,7 +1153,7 @@ long Targa::DecodeImage()
 			// TheSuperHackers @fix bobtista 22/10/2026 Reject packets with more pixels than the image has left.
 			if (packet_pixel_count > remaining_pixels)
 				{
-				error = TGAERR_READ;
+				return (TGAERR_READ);
 				}
 			else if (is_repeated_pixel)
 				{
@@ -1174,7 +1173,9 @@ long Targa::DecodeImage()
 						}
 					}
 				else
-					error = TGAERR_READ;
+					{
+					return (TGAERR_READ);
+					}
 				}
 			else
 				{
@@ -1182,19 +1183,25 @@ long Targa::DecodeImage()
 
 				/* Read the different pixels. */
 				if ((unsigned)File_Read(image, size) == size)
+					{
 					image += size;
+					}
 				else
-					error = TGAERR_READ;
+					{
+					return (TGAERR_READ);
+					}
 				}
 
 			/* Adjust the pixel count. */
 			remaining_pixels -= packet_pixel_count;
 			}
 		else
-			error = TGAERR_READ;
+			{
+			return (TGAERR_READ);
+			}
 		}
 
-	return (error);
+	return (0);
 	}
 
 
