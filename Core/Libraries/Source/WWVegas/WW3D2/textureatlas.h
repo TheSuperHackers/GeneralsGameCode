@@ -71,7 +71,7 @@ public:
 		}
 	};
 
-	TextureLocation Find_Or_Insert(TextureClass* source, bool premultiplyAlpha);    // Gets the page holding the texture and its uv rectangle, or a nullptr page if not found.
+	TextureLocation Find_Or_Insert(TextureClass& source, bool premultiplyAlpha);    // Gets the page holding the texture and its uv rectangle, or a nullptr page if not found.
 	void Reset();    // Release all pages.
 
 	static int Wrap_Or_Clamp(int coordinate, int size, bool wrap);
@@ -96,10 +96,10 @@ private:
 
 	void Evict_If_Out_Of_Space();
 	bool Has_Pack_Budget();
-	TextureLocation Pack_Texture(const TextureClass* source, bool premultiplyAlpha);
+	TextureLocation Pack_Texture(const TextureClass& source, bool premultiplyAlpha);
 	bool Allocate_Cell(int width, int height, int& pageIndex, int& x, int& y);
 	bool Create_Page();
-	static bool Copy_To_Cell(const TextureClass* source, TextureClass* page, bool premultiplyAlpha, int left, int top);
+	static bool Copy_To_Cell(const TextureClass& source, const TextureClass* page, bool premultiplyAlpha, int left, int top);
 
 	std::vector<Page> Pages;
 	TextureLocationMap TextureLocations[2];    // Two keys for premultiply alpha off/on.
