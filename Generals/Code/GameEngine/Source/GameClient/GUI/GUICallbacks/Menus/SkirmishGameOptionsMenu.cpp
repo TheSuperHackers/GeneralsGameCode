@@ -1233,13 +1233,6 @@ void SkirmishGameOptionsMenuInit( WindowLayout *layout, void *userData )
 	ParseAsciiStringToGameInfo(TheSkirmishGameInfo, prefs.getSlotList());
 	TheSkirmishGameInfo->setSeed(GetTickCount());
 
-	UnsignedInt isPreorder = 0;
-	GetUnsignedIntFromRegistry("", "Preorder", isPreorder);
-	if (isPreorder != 0)
-	{
-		TheSkirmishGameInfo->markPlayerAsPreorder(0);
-	}
-
   TheSkirmishGameInfo->setMap(prefs.getPreferredMap());
 	const MapMetaData *md = TheMapCache->findMap(TheSkirmishGameInfo->getMap());
 	if (!md)
@@ -1848,12 +1841,4 @@ void populateSkirmishBattleHonors()
 			BATTLE_HONOR_CHALLENGE, row, column);
 	}
 	*/
-
-	UnsignedInt isPreorder = 0;
-	GetUnsignedIntFromRegistry("", "Preorder", isPreorder);
-	if (isPreorder != 0)
-	{
-		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("OfficersClub"), TRUE,
-			BATTLE_HONOR_OFFICERSCLUB, row, column);
-	}
 }

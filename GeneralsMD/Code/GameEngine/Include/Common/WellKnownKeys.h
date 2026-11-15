@@ -883,13 +883,6 @@ DEFINE_KEY(skirmishDifficulty)
 */
 DEFINE_KEY(multiplayerIsLocal)
 
-/**
-	Which: Player Properties
-	Type: Bool
-	Usage: (optional) if present, signifies if the player has preordered
-*/
-DEFINE_KEY(playerIsPreorder)
-
 // ---------------------------------------------------------------------------------------
 // well-known keys in the World dict.
 // ---------------------------------------------------------------------------------------

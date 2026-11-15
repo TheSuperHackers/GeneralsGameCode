@@ -165,7 +165,6 @@ public:
 			Int losses;
 			Int rankPoints;
 			Int side;
-			Bool preorder;
 		} statsToPush;
 
 	};
@@ -317,7 +316,6 @@ public:
 			UnsignedInt IP;
 			Int rankPoints;
 			Int side;
-			Int preorder;
 			UnsignedInt internalIP; // for us, on connection
 			UnsignedInt externalIP; // for us, on connection
 		} player;

@@ -201,7 +201,9 @@
 #include "GameLogic/Module/SupplyCenterCreate.h"
 #include "GameLogic/Module/SupplyWarehouseCreate.h"
 #include "GameLogic/Module/GrantUpgradeCreate.h"
+#if RETAIL_COMPATIBLE_DATA
 #include "GameLogic/Module/PreorderCreate.h"
+#endif
 #include "GameLogic/Module/SpecialPowerCreate.h"
 #include "GameLogic/Module/VeterancyGainCreate.h"
 
@@ -448,7 +450,9 @@ void ModuleFactory::init()
 	addModule( MaxHealthUpgrade );
 
 	// create modules
+#if RETAIL_COMPATIBLE_DATA
 	addModule( PreorderCreate );
+#endif
 	addModule( SupplyCenterCreate );
 	addModule( SupplyWarehouseCreate );
 	addModule( SpecialPowerCreate );

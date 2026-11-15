@@ -125,9 +125,6 @@ public:
 	virtual Bool isDisconnectedAfterGameStart(Int *reason) const override { if (reason) *reason = m_disconReason; return m_isDisconAfterGameStart; }
 	virtual void markAsDisconnectedAfterGameStart(Int reason) override { m_isDisconAfterGameStart = TRUE; m_disconReason = reason; }
 
-	virtual Bool didPlayerPreorder( Int profileID ) const override;
-	virtual void markPlayerAsPreorder( Int profileID ) override;
-
 	virtual void setMaxMessagesPerUpdate( Int num ) override;
 	virtual Int getMaxMessagesPerUpdate() override;
 
@@ -172,6 +169,5 @@ private:
 
 	std::set<GameWindow *> m_textWindows;
 
-	std::set<Int> m_preorderPlayers;
 	Int m_additionalDisconnects;
 };

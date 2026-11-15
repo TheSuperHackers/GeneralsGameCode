@@ -227,14 +227,10 @@ public:
 	Bool isMultiPlayer(); // TRUE if 2+ human are present
 	Bool isSandbox(); // TRUE if everybody is on the same team
 
-	Bool isPlayerPreorder(Int index);
-	void markPlayerAsPreorder(Int index);
-
   inline Bool oldFactionsOnly() const;
   inline void setOldFactionsOnly( Bool oldFactionsOnly );
 
 protected:
-	Int m_preorderMask;
 	Int m_crcInterval;
 	Bool m_inGame;
 	Bool m_inProgress;

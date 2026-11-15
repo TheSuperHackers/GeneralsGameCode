@@ -249,14 +249,7 @@ static void playerTooltip(GameWindow *window,
 
 	if (col == 0)
 	{
-		if (info->m_preorder)
-		{
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:LobbyOfficersClub") );
-		}
-		else
-		{
-			TheMouse->setCursorTooltip( UnicodeString::TheEmptyString);
-		}
+		TheMouse->setCursorTooltip( UnicodeString::TheEmptyString);
 		return;
 	}
 
@@ -460,26 +453,17 @@ static Int insertPlayerInListbox(const PlayerInfo& info, Color color)
 	}
 	*/
 
-	Bool isPreorder = TheGameSpyInfo->didPlayerPreorder(info.m_profileID);
-
-	const Image *preorderImg = TheMappedImageCollection->findImageByName("OfficersClubsmall");
-	Int w = (preorderImg)?preorderImg->getImageWidth():10;
-	//Int h = (preorderImg)?preorderImg->getImageHeight():10;
+	// TheSuperHackers @info The Officer's Club image is only used to size the list box images.
+	const Image *sizeImg = TheMappedImageCollection->findImageByName("OfficersClubsmall");
+	Int w = (sizeImg)?sizeImg->getImageWidth():10;
+	//Int h = (sizeImg)?sizeImg->getImageHeight():10;
 	w = min(GadgetListBoxGetColumnWidth(listboxLobbyPlayers, 0), w);
 	Int h = w;
-	if (!isPreorder)
-		preorderImg = nullptr;
 
 	const Image *rankImg = LookupSmallRankImage(currentSide, currentRank);
 
-#if 0  //Officer's Club (preorder image) no longer used in Zero Hour
-	Int index = GadgetListBoxAddEntryImage(listboxLobbyPlayers, preorderImg, -1, 0, w, h);
-	GadgetListBoxAddEntryImage(listboxLobbyPlayers, rankImg, index, 1, w, h);
-	GadgetListBoxAddEntryText(listboxLobbyPlayers, uStr, color, index, 2);
-#else
 	Int index = GadgetListBoxAddEntryImage(listboxLobbyPlayers, rankImg, -1, 0, w, h);
 	GadgetListBoxAddEntryText(listboxLobbyPlayers, uStr, color, index, 1);
-#endif
 	return index;
 }
 
@@ -811,7 +795,6 @@ static void fillPlayerInfo(const PeerResponse *resp, PlayerInfo *info)
 	info->m_locale		= resp->locale.c_str();
 	info->m_rankPoints= resp->player.rankPoints;
 	info->m_side			= resp->player.side;
-	info->m_preorder	= resp->player.preorder;
 }
 
 #ifdef PERF_TEST
