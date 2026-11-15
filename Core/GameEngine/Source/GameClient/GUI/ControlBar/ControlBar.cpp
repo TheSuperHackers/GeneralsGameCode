@@ -1488,7 +1488,7 @@ void ControlBar::update()
 	if( m_flash )
 	{
 		// TheSuperHackers @tweak bobtista 12/11/2026 Flash on a wall-clock cycle so the rate is independent of render frame rate.
-		const Real flashIntervalSeconds = 10.0f / LOGICFRAMES_PER_SECONDS_REAL;
+		const Real flashIntervalSeconds = 1.0f / 3.0f;
 		m_commandFlashTimeAccumulator += TheFramePacer->getUpdateTime();
 		const Bool flashStep = m_commandFlashTimeAccumulator >= flashIntervalSeconds;
 		while( m_commandFlashTimeAccumulator >= flashIntervalSeconds )
