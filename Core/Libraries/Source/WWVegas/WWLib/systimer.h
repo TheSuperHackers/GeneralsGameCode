@@ -30,8 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -106,20 +104,7 @@ class SysTimeClass
 extern SysTimeClass SystemTime;
 
 
-/***********************************************************************************************
- * SysTimeClass::Get -- Wrapper around system timeGetTime() api call                           *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Current system time in ms                                                         *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/25/2001 1:38PM ST : Created                                                            *
- *=============================================================================================*/
+// Wrapper around system timeGetTime() api call. Returns the current system time in ms.
 WWINLINE unsigned long SysTimeClass::Get()
 {
 	/*
