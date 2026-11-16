@@ -49,7 +49,6 @@ include(FetchContent)
 if(MINGW)
     include(cmake/mingw.cmake)
     include(cmake/reactos-atl.cmake)
-    include(cmake/widl.cmake)
 endif()
 
 # Find/Add build dependencies and stubs shared by all projects

@@ -98,7 +98,6 @@ static void drawFramerateBar();
 #include "WW3D2/render2dsentence.h"
 #include "WW3D2/sortingrenderer.h"
 #include "WW3D2/textureloader.h"
-#include "WW3D2/dx8webbrowser.h"
 #include "WW3D2/mesh.h"
 #include "WW3D2/hlod.h"
 #include "WW3D2/meshmatdesc.h"
@@ -488,8 +487,6 @@ W3DDisplay::~W3DDisplay()
 	if (!TheGlobalData->m_headless)
 		WW3D::Shutdown();
 	WWMath::Shutdown();
-	if (!TheGlobalData->m_headless)
-		DX8WebBrowser::Shutdown();
 	delete TheW3DFileSystem;
 	TheW3DFileSystem = nullptr;
 
@@ -983,8 +980,6 @@ void W3DDisplay::init()
 			m_nativeDebugDisplay->setFontHeight( 13 );
 			m_nativeDebugDisplay->setFontWidth( 9 );
 		}
-
-		DX8WebBrowser::Initialize();
 	}
 
 	// we're now online

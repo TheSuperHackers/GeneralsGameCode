@@ -102,7 +102,6 @@
 #include "GameClient/GUICallbacks.h"
 
 #include "GameNetwork/NetworkInterface.h"
-#include "GameNetwork/WOLBrowser/WebBrowser.h"
 #include "GameNetwork/LANAPI.h"
 #include "GameNetwork/GameSpy/GameResultsThread.h"
 
@@ -166,10 +165,6 @@ void initSubsystem(
 	sysref = sys;
 	TheSubsystemList->initSubsystem(sys, path1, path2, pXfer, name);
 }
-
-//-------------------------------------------------------------------------------------------------
-extern HINSTANCE ApplicationHInstance;  ///< our application instance
-extern CComModule _Module;
 
 //-------------------------------------------------------------------------------------------------
 static void updateTGAtoDDS();
@@ -249,8 +244,6 @@ GameEngine::GameEngine()
 	m_logicTimeAccumulator = 0.0f;
 	m_quitting = FALSE;
 	m_isActive = FALSE;
-
-	_Module.Init(nullptr, ApplicationHInstance, nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -297,8 +290,6 @@ GameEngine::~GameEngine()
 	TheGameLODManager = nullptr;
 
 	Drawable::killStaticImages();
-
-	_Module.Term();
 
 #ifdef PERF_TIMERS
 	PerfGather::termPerfDump();
@@ -628,7 +619,6 @@ void GameEngine::init()
 
 
 		initSubsystem(TheActionManager,"TheActionManager", MSGNEW("GameEngineSubsystem") ActionManager(), nullptr);
-		//initSubsystem((CComObject<WebBrowser> *)TheWebBrowser,"(CComObject<WebBrowser> *)TheWebBrowser", (CComObject<WebBrowser> *)createWebBrowser(), nullptr);
 		initSubsystem(TheGameStateMap,"TheGameStateMap", MSGNEW("GameEngineSubsystem") GameStateMap, nullptr );
 		initSubsystem(TheGameState,"TheGameState", MSGNEW("GameEngineSubsystem") GameState, nullptr );
 

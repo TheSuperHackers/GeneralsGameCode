@@ -13,6 +13,4 @@ add_subdirectory(Source/debug)
 # crash dump library
 add_subdirectory(Source/MiniDumper)
 
-add_subdirectory(Source/EABrowserDispatch)
-add_subdirectory(Source/EABrowserEngine)
 add_subdirectory(Source/Compression)

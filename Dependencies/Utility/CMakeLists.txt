@@ -7,7 +7,6 @@ set(UTILITY_SRC
     Utility/atomic_x86interlocked.inl
     Utility/bit_adapter.h
     Utility/compat.h
-    Utility/comsupp_compat.h
     Utility/endian_compat.h
     Utility/fstream_adapter.h
     Utility/hash_map_adapter.h
