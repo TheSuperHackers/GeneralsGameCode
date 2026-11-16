@@ -50,11 +50,11 @@ class TextureAtlasClass
 {
 public:
 	explicit TextureAtlasClass(int maxPacksPerFrame = TextureAtlas::DEFAULT_MAX_PACKS_PER_FRAME)
-	  : OutOfSpace(false)
-	  , PacksThisFrame(0)
+	  : PacksThisFrame(0)
 	  , MaxPacksPerFrame(maxPacksPerFrame)
 	  , OutOfSpaceFrame(0)
 	  , PackFrame(0)
+	  , OutOfSpace(false)
 	{}
 
 	struct TextureLocation
