@@ -70,7 +70,7 @@ public:
 	Real					m_approachHeight;
 	Real					m_landingDeckHeightOffset;
 	UnsignedInt		m_numRows;
-	Int						m_numCols;
+	UnsignedInt		m_numCols;
 	UnsignedInt		m_cleanupFrames;
 	UnsignedInt		m_humanFollowFrames;
 	UnsignedInt		m_replacementFrames;
@@ -200,6 +200,8 @@ private:
 	};
 
 	void buildInfo( Bool createUnits = TRUE);
+	UnsignedInt getNumRows() const;
+	UnsignedInt getFrontSpaceCount() const;
 	void purgeDead();
 	void resetWakeFrame();
 	FlightDeckInfo* findPPI(ObjectID id);
