@@ -1119,6 +1119,10 @@ void W3DTreeBuffer::unitMoved(Object *unit)
 					treeNdx = m_trees[treeNdx].nextInPartition;
 					continue;	//  Tree is deleted. [7/11/2003]
 				}
+				if (m_trees[treeNdx].treeType>=m_numTreeTypes) {
+					treeNdx = m_trees[treeNdx].nextInPartition;
+					continue;
+				}
 				Coord3D delta;
 				delta.set(m_trees[treeNdx].location.X, m_trees[treeNdx].location.Y, m_trees[treeNdx].location.Z );
 				delta.sub(pos);
