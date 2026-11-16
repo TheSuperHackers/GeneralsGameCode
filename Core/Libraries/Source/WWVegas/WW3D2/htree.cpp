@@ -31,23 +31,6 @@
  *                                                                                             *
  *                    $Revision:: 14                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   HTreeClass::HTreeClass -- constructor                                                     *
- *   HTreeClass::~HTreeClass -- destructor                                                     *
- *   HTreeClass::Load -- loads a hierarchy tree from a file                                    *
- *   HTreeClass::read_pivots -- reads the pivots out of a file                                 *
- *   HTreeClass::Free -- de-allocate all memory in use                                         *
- *   HTreeClass::Base_Update -- Computes the base pose transform for each pivot                *
- *   HTreeClass::Anim_Update -- Computes the transform for each pivot with motion              *
- *   HTreeClass::Blend_Update -- computes each pivot as a blend of two anims                   *
- *   HTreeClass::Combo_Update -- compute each pivot's transform using an anim combo            *
- *   HTreeClass::Get_Transform -- returns the transformation for the desired pivot             *
- *   HTreeClass::Find_Bone -- Find a bone by name                                              *
- *   HTreeClass::Get_Bone_Name -- get the name of a bone from its index                        *
- *   HTreeClass::Update_Parent_Need_Bits -- all "needed" children force their parents to be nee*
- *   HTreeClass::HTreeClass -- copy constructor                                                *
- *   HTreeClass::Get_Parent_Index -- returns index of the parent of the given bone             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -63,18 +46,6 @@
 #include "motchan.h"
 #include "ww3d.h"
 
-/***********************************************************************************************
- * HTreeClass::HTreeClass -- constructor                                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 HTreeClass::HTreeClass() :
 	NumPivots(0),
 	Pivot(nullptr),
@@ -102,18 +73,6 @@ void HTreeClass::Init_Default()
 
 }
 
-/***********************************************************************************************
- * HTreeClass::~HTreeClass -- destructor                                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 HTreeClass::~HTreeClass()
 {
 	Free();
@@ -123,18 +82,6 @@ HTreeClass::~HTreeClass()
 }
 
 
-/***********************************************************************************************
- * HTreeClass::HTreeClass -- copy constructor                                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/4/98     GTH : Created.                                                                 *
- *=============================================================================================*/
 HTreeClass::HTreeClass(const HTreeClass & src) :
 	NumPivots(0),
 	Pivot(nullptr),
@@ -160,18 +107,6 @@ HTreeClass::HTreeClass(const HTreeClass & src) :
 	ScaleFactor = src.ScaleFactor;
 }
 
-/***********************************************************************************************
- * HTreeClass::Load -- loads a hierarchy tree from a file                                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 int HTreeClass::Load_W3D(ChunkLoadClass & cload)
 {
 	Free();
@@ -244,18 +179,6 @@ Error:
 }
 
 
-/***********************************************************************************************
- * HTreeClass::read_pivots -- reads the pivots out of a file                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 bool HTreeClass::read_pivots(ChunkLoadClass & cload,bool pre30)
 {
 	W3dPivotStruct piv;
@@ -343,18 +266,7 @@ bool HTreeClass::read_pivots(ChunkLoadClass & cload,bool pre30)
 }
 
 
-/***********************************************************************************************
- * HTreeClass::Free -- de-allocate all memory in use                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// De-allocate all memory in use.
 void HTreeClass::Free()
 {
 	delete[] Pivot;
@@ -366,18 +278,7 @@ void HTreeClass::Free()
 }
 
 
-/***********************************************************************************************
- * HTreeClass::Simple_Evaluate_Pivot -- Returns the transform of a pivot at the given frame.	  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   04/13/2000 PDS  : Created.                                                                *
- *=============================================================================================*/
+// Returns the transform of a pivot at the given frame.
 bool HTreeClass::Simple_Evaluate_Pivot
 (
 	HAnimClass *		motion,
@@ -452,18 +353,7 @@ bool HTreeClass::Simple_Evaluate_Pivot
 
 
 
-/***********************************************************************************************
- * HTreeClass::Simple_Evaluate_Pivot -- Returns the transform of a pivot at the given frame.	  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   04/13/2000 PDS  : Created.                                                                *
- *=============================================================================================*/
+// Returns the transform of a pivot at the given frame.
 bool HTreeClass::Simple_Evaluate_Pivot
 (
 	int					pivot_index,
@@ -514,18 +404,7 @@ bool HTreeClass::Simple_Evaluate_Pivot
 }
 
 
-/***********************************************************************************************
- * HTreeClass::Base_Update -- Computes the base pose transform for each pivot                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Computes the base pose transform for each pivot.
 void HTreeClass::Base_Update(const Matrix3D & root)
 {
 	PivotClass *pivot;
@@ -545,18 +424,7 @@ void HTreeClass::Base_Update(const Matrix3D & root)
 	}
 }
 
-/***********************************************************************************************
- * HTreeClass::Anim_Update -- Computes the transform for each pivot with motion                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Computes the transform for each pivot with motion.
 void HTreeClass::Anim_Update(const Matrix3D & root,HAnimClass * motion,float frame)
 {
 	PivotClass *pivot;
@@ -690,18 +558,7 @@ void HTreeClass::Anim_Update_Without_Interpolation(const Matrix3D & root,HRawAni
 }
 
 
-/***********************************************************************************************
- * HTreeClass::Blend_Update -- computes each pivot as a blend of two anims                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/4/98     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Computes each pivot as a blend of two anims.
 void HTreeClass::Blend_Update
 (
 	const Matrix3D &					root,
@@ -762,18 +619,7 @@ void HTreeClass::Blend_Update
 
 
 
-/***********************************************************************************************
- * HTreeClass::Combo_Update -- compute each pivot's transform using an anim combo              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/4/98     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Compute each pivot's transform using an anim combo.
 void HTreeClass::Combo_Update
 (
 	const Matrix3D & root,
@@ -913,18 +759,6 @@ void HTreeClass::Combo_Update
 }
 
 
-/***********************************************************************************************
- * HTreeClass::Find_Bone -- Find a bone by name                                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/4/97    GTH : Created.                                                                 *
- *=============================================================================================*/
 int HTreeClass::Get_Bone_Index(const char * name) const
 {
 	for (int i=0; i < NumPivots; i++) {
@@ -936,18 +770,6 @@ int HTreeClass::Get_Bone_Index(const char * name) const
 }
 
 
-/***********************************************************************************************
- * HTreeClass::Get_Bone_Name -- get the name of a bone from its index                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/4/97    GTH : Created.                                                                 *
- *=============================================================================================*/
 const char * HTreeClass::Get_Bone_Name(int boneidx) const
 {
 	assert(boneidx >= 0);
@@ -957,20 +779,6 @@ const char * HTreeClass::Get_Bone_Name(int boneidx) const
 }
 
 
-/***********************************************************************************************
- * HTreeClass::Get_Parent_Index -- returns index of the parent of the given bone               *
- *                                                                                             *
- * INPUT:                                                                                      *
- * boneidx - the bone you are interested in                                                    *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- * the index of that bone's parent                                                             *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/12/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 int HTreeClass::Get_Parent_Index(int boneidx) const
 {
 	assert(boneidx >= 0);

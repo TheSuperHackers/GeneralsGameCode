@@ -30,9 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   HModelDefClass::HModelDefClass -- Constructor                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -43,18 +40,6 @@
 #include "snapPts.h"
 
 
-/***********************************************************************************************
- * HModelDefClass::HModelDefClass -- Constructor                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/15/97   GTH : Created.                                                                 *
- *=============================================================================================*/
 HModelDefClass::HModelDefClass() :
 	SubObjectCount(0),
 	SubObjects(nullptr),
@@ -63,35 +48,12 @@ HModelDefClass::HModelDefClass() :
 
 }
 
-/***********************************************************************************************
- * HModelDefClass::~HModelDefClass -- destructor                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 HModelDefClass::~HModelDefClass()
 {
 	Free();
 }
 
-/***********************************************************************************************
- * HModelDefClass::Free -- de-allocate all memory in use                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// De-allocate all memory in use.
 void HModelDefClass::Free()
 {
 	delete[] SubObjects;
@@ -105,18 +67,7 @@ void HModelDefClass::Free()
 }
 
 
-/***********************************************************************************************
- * HModelDefClass::Load -- load a set of mesh connections from a file                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Load a set of mesh connections from a file.
 int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 {
 	bool pre30 = false;
@@ -214,19 +165,7 @@ Error:
 }
 
 
-/***********************************************************************************************
- * HModelDefClass::read_connection -- read a single connection from the file                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *   10/22/97   GH  : Check for mesh connections with PivotID=-1                               *
- *=============================================================================================*/
+// Read a single connection from the file. Mesh connections with PivotID=-1 are checked for.
 bool HModelDefClass::read_connection(ChunkLoadClass & cload,HmdlNodeDefStruct * node,bool pre30)
 {
 
