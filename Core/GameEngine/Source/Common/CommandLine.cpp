@@ -481,10 +481,15 @@ Int parseDataDir(char *args[], int num)
 	// Each -dataDir "<dir>" adds one folder with lower priority .big files.
 	if (num > 1)
 	{
-		// The archive loader appends the file mask straight to the folder, so it needs the separator.
+		// An empty folder would reload the game folder and skip the Zero Hour registry fallback.
 		AsciiString dataDir = args[1];
-		FileSystem::appendPathSeparator(dataDir);
-		TheWritableGlobalData->m_dataDirs.push_back(dataDir);
+		if (dataDir.isNotEmpty())
+		{
+			// The archive loader appends the file mask straight to the folder, so it needs the separator.
+			FileSystem::appendPathSeparator(dataDir);
+			TheWritableGlobalData->m_dataDirs.push_back(dataDir);
+		}
+
 		return 2;
 	}
 	return 1;
