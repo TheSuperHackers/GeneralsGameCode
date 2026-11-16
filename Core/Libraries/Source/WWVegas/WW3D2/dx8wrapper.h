@@ -1131,14 +1131,14 @@ WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
 
 WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector4& color)
 {
-	return Convert_Color(reinterpret_cast<const Vector3&>(color),color[3]);
+	return Convert_Color(Vector3(color.X,color.Y,color.Z),color.W);
 }
 
 WWINLINE unsigned int DX8Wrapper::Convert_Color_Clamp(const Vector4& color)
 {
 	Vector4 clamped_color=color;
 	DX8Wrapper::Clamp_Color(clamped_color);
-	return Convert_Color(reinterpret_cast<const Vector3&>(clamped_color),clamped_color[3]);
+	return Convert_Color(clamped_color);
 }
 
 #endif
