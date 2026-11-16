@@ -478,10 +478,13 @@ Int parseSetCwd(char *args[], int num)
 
 Int parseDataDir(char *args[], int num)
 {
-	// -dataDir "<dir1>;<dir2>" adds folders with lower priority .big files.
+	// Each -dataDir "<dir>" adds one folder with lower priority .big files.
 	if (num > 1)
 	{
-		TheWritableGlobalData->m_dataDirs = args[1];
+		// The archive loader appends the file mask straight to the folder, so it needs the separator.
+		AsciiString dataDir = args[1];
+		FileSystem::appendPathSeparator(dataDir);
+		TheWritableGlobalData->m_dataDirs.push_back(dataDir);
 		return 2;
 	}
 	return 1;
@@ -1208,8 +1211,8 @@ static CommandLineParam paramsForStartup[] =
 	{ "-useCwd", parseUseCwd },
 
 	// TheSuperHackers @feature CryoTheRenegade 17/10/2026
-	// Load .big files from these ';'-separated folders after the game folder. Earlier folders take priority.
-	// In Zero Hour they replace the Generals InstallPath registry value. Relative paths are resolved from the working directory.
+	// Load .big files from this folder after the game folder. Repeat it for more folders. Earlier folders take priority.
+	// In Zero Hour these folders replace the Generals InstallPath registry value. Relative paths are resolved from the working directory.
 	{ "-dataDir", parseDataDir },
 };
 

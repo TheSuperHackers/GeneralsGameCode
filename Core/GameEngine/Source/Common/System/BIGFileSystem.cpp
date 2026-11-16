@@ -93,20 +93,17 @@ void BIGFileSystem::init() {
 	Bool loadedDataDir = FALSE;
 	if (TheGlobalData != nullptr)
 	{
-		AsciiString dataDirs = TheGlobalData->m_dataDirs;
-		AsciiString dataDir;
-		while (dataDirs.nextToken(&dataDir, ";"))
+		const std::vector<AsciiString>& dataDirs = TheGlobalData->m_dataDirs;
+		for (std::vector<AsciiString>::const_iterator it = dataDirs.begin(); it != dataDirs.end(); ++it)
 		{
-			FileSystem::appendPathSeparator(dataDir);
-
 			// Log here, not during startup parsing, which runs before the debug log file is open.
-			if (loadArchiveFilesFromDirectory(dataDir, "*.big"))
+			if (loadArchiveFilesFromDirectory(*it, "*.big"))
 			{
 				loadedDataDir = TRUE;
 			}
 			else
 			{
-				DEBUG_LOG(("Data dir '%s' has no .big files. Skipping it.", dataDir.str()));
+				DEBUG_LOG(("Data dir '%s' has no .big files. Skipping it.", it->str()));
 			}
 		}
 	}
