@@ -55,6 +55,7 @@ public:
 	  , OutOfSpaceFrame(0)
 	  , PackFrame(0)
 	  , OutOfSpace(false)
+	  , AtlasDisabled(false)
 	{}
 
 	struct TextureLocation
@@ -108,4 +109,5 @@ private:
 	unsigned OutOfSpaceFrame;
 	unsigned PackFrame;
 	bool OutOfSpace;
+	bool AtlasDisabled;
 };

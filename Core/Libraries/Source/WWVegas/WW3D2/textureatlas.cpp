@@ -41,12 +41,13 @@ void TextureAtlasClass::Reset()
 	OutOfSpace = false;
 	OutOfSpaceFrame = 0;
 	PacksThisFrame = 0;
+	AtlasDisabled = false;
 }
 
 TextureAtlasClass::TextureLocation TextureAtlasClass::Find_Or_Insert(TextureClass& source, const bool premultiplyAlpha)
 {
 	// Skip textures without name as it is required for indexing.
-	if (source.Get_Texture_Name().Is_Empty())
+	if (AtlasDisabled || source.Get_Texture_Name().Is_Empty())
 	{
 		return TextureLocation::Create_Invalid();
 	}
@@ -217,6 +218,8 @@ bool TextureAtlasClass::Create_Page()
 	// The device may give a different format, size or mip count than asked for. In that case a page cannot be created.
 	if (page.texture->Peek_D3D_Texture() == nullptr || page.texture->Peek_D3D_Texture()->GetLevelCount() != TextureAtlas::MIP_LEVEL_COUNT)
 	{
+		DEBUG_CRASH(("TextureAtlas: page not allocated or wrong mip count. Atlas disabled."));
+		AtlasDisabled = true;
 		return false;
 	}
 
@@ -224,6 +227,8 @@ bool TextureAtlasClass::Create_Page()
 	page.texture->Get_Level_Description(desc, 0);
 	if (desc.Format != WW3D_FORMAT_A8R8G8B8 || desc.Width != TextureAtlas::PAGE_SIZE || desc.Height != TextureAtlas::PAGE_SIZE)
 	{
+		DEBUG_CRASH(("TextureAtlas: page has wrong format or size. Atlas disabled."));
+		AtlasDisabled = true;
 		return false;
 	}
 
