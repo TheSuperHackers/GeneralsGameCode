@@ -124,7 +124,7 @@ static UnsignedByte * saveSurface(IDirect3DSurface8 *surface)
 	targ.Header.Height=height;
 	targ.Header.PixelDepth=24;
 	targ.Header.ImageType=TGA_TRUECOLOR;
-	targ.SetImage(image);
+	targ.SetImage(image, sizeof(image));
 	targ.YFlip();
 
 	targ.Save("ObjectPreview.tga",TGAF_IMAGE,false);

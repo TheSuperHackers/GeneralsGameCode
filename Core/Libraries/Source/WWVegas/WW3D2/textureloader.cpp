@@ -564,7 +564,7 @@ IDirect3DSurface8* TextureLoader::Load_Surface_Immediate(
 
 	// NOTE: We load the palette but we do not yet support paletted textures!
 	char palette[256*4];
-	targa.SetPalette(palette);
+	targa.SetPalette(palette, sizeof(palette));
 	if (TARGA_ERROR_HANDLER(targa.Load(filename, TGAF_IMAGE, false),filename)) return MissingTexture::_Create_Missing_Surface();
 
 	unsigned char* src_surface=(unsigned char*)targa.GetImage();
@@ -1736,7 +1736,7 @@ bool TextureLoadTaskClass::Load_Uncompressed_Mipmap()
 	dest_format = Get_Format();	// Texture can be requested in different format than the most obvious from the TGA
 
 	char palette[256*4];
-	targa.SetPalette(palette);
+	targa.SetPalette(palette, sizeof(palette));
 
 	unsigned int src_width	= targa.Header.Width;
 	unsigned int src_height	= targa.Header.Height;
