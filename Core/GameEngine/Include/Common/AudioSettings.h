@@ -42,6 +42,7 @@ struct AudioSettings
 #elif RTS_ZEROHOUR
 		, m_defaultMoneyTransactionVolume(0.0f) // Uses zero volume by default because originally the money sounds did not work in Zero Hour
 #endif
+		, m_playAudioInBackground(false)
 	{
 	}
 
@@ -87,6 +88,7 @@ struct AudioSettings
 	Real m_preferredSpeechVolume;
 	Real m_preferredMusicVolume;
 	Real m_preferredMoneyTransactionVolume; // TheSuperHackers @feature Modifies the volume of money deposit and withdraw sounds
+	Bool m_playAudioInBackground; // TheSuperHackers @feature L3-M 16/11/2026 Allows audio playback while the game window is unfocused
 
 	//The desired altitude of the microphone to improve panning relative to terrain.
 	Real m_microphoneDesiredHeightAboveTerrain;
