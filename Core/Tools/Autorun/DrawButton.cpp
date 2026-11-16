@@ -30,14 +30,6 @@
  *																			  *
  *                   Last Update : October 2, 2000  [MML]					  *
  *																			  *
- *----------------------------------------------------------------------------*
- * Functions:																  *
- *		DrawButton::DrawButton												  *
- *		DrawButton::Is_Mouse_In_Region										  *
- *		DrawButton::Return_Bitmap											  *
- *		DrawButton::Return_Area												  *
- *		DrawButton::Set_Stretched_Width										  *
- *		DrawButton::Set_Stretched_Height									  *
  *----------------------------------------------------------------------------*/
 
 

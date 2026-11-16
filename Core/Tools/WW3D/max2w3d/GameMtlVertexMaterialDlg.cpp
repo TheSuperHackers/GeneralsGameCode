@@ -30,13 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 12                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   GameMtlVertexMaterialDlg::GameMtlVertexMaterialDlg -- constructor                         *
- *   GameMtlVertexMaterialDlg::~GameMtlVertexMaterialDlg -- destructor                         *
- *   GameMtlVertexMaterialDlg::Dialog_Proc -- windows message handler                          *
- *   GameMtlVertexMaterialDlg::ReloadDialog -- reload the contents of the controls             *
- *   GameMtlVertexMaterialDlg::ActivateDlg -- activate / deactivate this dialog                *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -46,18 +39,6 @@
 #include "resource.h"
 
 
-/***********************************************************************************************
- * GameMtlVertexMaterialDlg::GameMtlVertexMaterialDlg -- constructor                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 GameMtlVertexMaterialDlg::GameMtlVertexMaterialDlg
 (
 	HWND				parent,
@@ -84,18 +65,6 @@ GameMtlVertexMaterialDlg::GameMtlVertexMaterialDlg
 }
 
 
-/***********************************************************************************************
- * GameMtlVertexMaterialDlg::~GameMtlVertexMaterialDlg -- destructor                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 GameMtlVertexMaterialDlg::~GameMtlVertexMaterialDlg()
 {
 	if (AmbientSwatch) {
@@ -127,18 +96,7 @@ GameMtlVertexMaterialDlg::~GameMtlVertexMaterialDlg()
 }
 
 
-/***********************************************************************************************
- * GameMtlVertexMaterialDlg::Dialog_Proc -- windows message handler                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
+// Windows message handler.
 BOOL GameMtlVertexMaterialDlg::Dialog_Proc(HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int val;
@@ -284,18 +242,7 @@ BOOL GameMtlVertexMaterialDlg::Dialog_Proc(HWND dlg_wnd, UINT message, WPARAM wp
 }
 
 
-/***********************************************************************************************
- * GameMtlVertexMaterialDlg::ReloadDialog -- reload the contents of the controls               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
+// Reload the contents of the controls.
 void GameMtlVertexMaterialDlg::ReloadDialog()
 {
 	// Vertex Material Controls
@@ -363,18 +310,6 @@ void GameMtlVertexMaterialDlg::ReloadDialog()
 }
 
 
-/***********************************************************************************************
- * GameMtlVertexMaterialDlg::ActivateDlg -- activate / deactivate this dialog                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void GameMtlVertexMaterialDlg::ActivateDlg(BOOL onoff)
 {
 	if (AmbientSwatch) {

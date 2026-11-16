@@ -32,23 +32,6 @@
  *                                                                                             *
  *                    $Revision:: 7                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   GeometryExportTaskClass::GeometryExportTaskClass -- Constructor                           *
- *   GeometryExportTaskClass::GeometryExportTaskClass -- Copy Constructor                      *
- *   GeometryExportTaskClass::~GeometryExportTaskClass -- Destructor                           *
- *   GeometryExportTaskClass::Get_Full_Name -- Composes the full name of this robj             *
- *   GeometryExportTaskClass::Create_Task -- virtual constructor for export tasks              *
- *   GeometryExportTaskClass::Optimize_Geometry -- Optimizes the export tasks                  *
- *   GeometryExportTaskClass::Generate_Unique_Name -- create a unique name for this object     *
- *   MeshGeometryExportTaskClass::Is_Single_Material -- Tests if this mesh uses a single mater *
- *   MeshGeometryExportTaskClass::Get_Single_Material -- returns pointer to the material       *
- *   MeshGeometryExportTaskClass::Cache_Single_Material -- updates the cached material pointer *
- *   MeshGeometryExportTaskClass::Split -- Splits into single material meshes                  *
- *   MeshGeometryExportTaskClass::Reduce_To_Single_Material -- deletes polys                   *
- *   MeshGeometryExportTaskClass::Can_Combine -- can this mesh combine with anything           *
- *   MeshGeometryExportTaskClass::Can_Combine_With -- can this mesh be combined with the given *
- *   MeshGeometryExportTaskClass::Combine_Mesh -- Add the given mesh into this mesh            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "geometryexporttask.h"
@@ -383,18 +366,6 @@ protected:
 **
 ***********************************************************************************************/
 
-/***********************************************************************************************
- * GeometryExportTaskClass::GeometryExportTaskClass -- Constructor                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/20/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 GeometryExportTaskClass::GeometryExportTaskClass(INode * node,GeometryExportContextClass & context) :
 	BoneIndex(0),
 	ExportSpace(1),
@@ -422,18 +393,6 @@ GeometryExportTaskClass::GeometryExportTaskClass(INode * node,GeometryExportCont
 }
 
 
-/***********************************************************************************************
- * GeometryExportTaskClass::GeometryExportTaskClass -- Copy Constructor                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/20/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 GeometryExportTaskClass::GeometryExportTaskClass(const GeometryExportTaskClass & that) :
 	BoneIndex(that.BoneIndex),
 	ExportSpace(that.ExportSpace),
@@ -445,34 +404,12 @@ GeometryExportTaskClass::GeometryExportTaskClass(const GeometryExportTaskClass &
 }
 
 
-/***********************************************************************************************
- * GeometryExportTaskClass::~GeometryExportTaskClass -- Destructor                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 GeometryExportTaskClass::~GeometryExportTaskClass()
 {
 }
 
 
-/***********************************************************************************************
- * GeometryExportTaskClass::Get_Full_Name -- Composes the full name of this robj               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/24/2000 gth : Created.                                                                 *
- *=============================================================================================*/
+// Composes the full name of this robj.
 void GeometryExportTaskClass::Get_Full_Name(char * buffer,int size)
 {
 	char tmp[128];
@@ -487,21 +424,7 @@ void GeometryExportTaskClass::Get_Full_Name(char * buffer,int size)
 }
 
 
-/***********************************************************************************************
- * GeometryExportTaskClass::Create_Task -- virtual constructor for export tasks                *
- *                                                                                             *
- * Virtual constructor for geometry export tasks.  Will create the proper task                 *
- * type depending on the W3D flag settings.                                                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/20/2000 gth : Created.                                                                 *
- *=============================================================================================*/
+// Will create the proper task type depending on the W3D flag settings.
 GeometryExportTaskClass *
 GeometryExportTaskClass::Create_Task(INode * node,GeometryExportContextClass & context)
 {
@@ -539,23 +462,9 @@ GeometryExportTaskClass::Create_Task(INode * node,GeometryExportContextClass & c
 }
 
 
-/***********************************************************************************************
- * GeometryExportTaskClass::Optimize_Geometry -- Optimizes the export tasks                    *
- *                                                                                             *
- *    This function will attempt to split meshes so that they use only a single material and   *
- *    then try to combine small meshes that use the same material.  Export tasks may be        *
- *    removed and new ones added.                                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- * tasks - dynamic vector of export task pointers.  Some tasks may be deleted, some added      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/20/2000 gth : Created.                                                                 *
- *=============================================================================================*/
+// This function will attempt to split meshes so that they use only a single material and then try
+// to combine small meshes that use the same material. Export tasks may be removed and new ones
+// added.
 void GeometryExportTaskClass::Optimize_Geometry
 (
 	DynamicVectorClass<GeometryExportTaskClass *> & tasks,
@@ -672,22 +581,7 @@ void GeometryExportTaskClass::Optimize_Geometry
 }
 
 
-/***********************************************************************************************
- * GeometryExportTaskClass::Generate_Name -- create a name for this object                     *
- *                                                                                             *
- * During optimization, we can generate new meshes which need unique names.                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- * index - will be used to create the name, don't re-use the same index within an LOD          *
- * context - geometry export context                                                           *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/23/2000 gth : Created.                                                                 *
- *=============================================================================================*/
+// During optimization, we can generate new meshes which need unique names.
 void GeometryExportTaskClass::Generate_Name(char * root,int index,GeometryExportContextClass & context)
 {
 	/*
@@ -725,20 +619,7 @@ void GeometryExportTaskClass::Generate_Name(char * root,int index,GeometryExport
 }
 
 
-/***********************************************************************************************
- * MeshGeometryExportTaskClass::Update_Cached_Data -- updates the cached material pointer, etc *
- *                                                                                             *
- * This should be called after the meshdata changes                                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/23/2000 gth : Created.                                                                 *
- *=============================================================================================*/
+// Updates the cached material pointer, etc. This should be called after the meshdata changes.
 void	MeshGeometryExportTaskClass::Update_Cached_Data()
 {
 	SingleMtl = nullptr;
@@ -824,56 +705,20 @@ void	MeshGeometryExportTaskClass::Update_Cached_Data()
 }
 
 
-/***********************************************************************************************
- * MeshGeometryExportTaskClass::Is_Single_Material -- Tests if this mesh uses a single materia *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/20/2000 gth : Created.                                                                 *
- *=============================================================================================*/
+// Tests if this mesh uses a single material.
 bool MeshGeometryExportTaskClass::Is_Single_Material()
 {
 	return ((SingleMtl != nullptr) || (Node->GetMtl() == nullptr));
 }
 
 
-/***********************************************************************************************
- * MeshGeometryExportTaskClass::Get_Single_Material -- returns pointer to the material         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/23/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 Mtl* MeshGeometryExportTaskClass::Get_Single_Material()
 {
 	return SingleMtl;
 }
 
-/***********************************************************************************************
- * MeshGeometryExportTaskClass::Split -- Splits into single material meshes                    *
- *                                                                                             *
- * This function will create new export tasks and add them to the supplied array.  Each of     *
- * these will be single-material meshes.                                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/20/2000 gth : Created.                                                                 *
- *=============================================================================================*/
+// Splits into single material meshes. This function will create new export tasks and add them to
+// the supplied array.
 void MeshGeometryExportTaskClass::Split(DynamicVectorClass<MeshGeometryExportTaskClass *> & simple_meshes)
 {
 	assert(!Is_Single_Material());
@@ -917,22 +762,8 @@ void MeshGeometryExportTaskClass::Split(DynamicVectorClass<MeshGeometryExportTas
 }
 
 
-/***********************************************************************************************
- * MeshGeometryExportTaskClass::Reduce_To_Single_Material -- deletes polys                     *
- *                                                                                             *
- *    This function deletes all polys (and subsequent un-used vertices) except for the ones    *
- *    that use the specified material.                                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- * mat_id - only faces using this material id will remain in the mesh.                         *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/20/2000 gth : Created.                                                                 *
- *=============================================================================================*/
+// Deletes all polys (and subsequent un-used vertices) except for the ones that use the specified
+// material.
 void MeshGeometryExportTaskClass::Reduce_To_Single_Material(int mat_id)
 {
 	int sub_mtl_count = Node->GetMtl()->NumSubMtls();
@@ -956,20 +787,7 @@ void MeshGeometryExportTaskClass::Reduce_To_Single_Material(int mat_id)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryExportTaskClass::Can_Combine -- can this mesh combine with anything             *
- *                                                                                             *
- *    This will return false if the mesh has multiple materials, too many polys, etc.          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/24/2000 gth : Created.                                                                 *
- *=============================================================================================*/
+// This will return false if the mesh has multiple materials, too many polys, etc.
 bool MeshGeometryExportTaskClass::Can_Combine()
 {
 	/*
@@ -991,18 +809,7 @@ bool MeshGeometryExportTaskClass::Can_Combine()
 }
 
 
-/***********************************************************************************************
- * MeshGeometryExportTaskClass::Can_Combine_With -- can this mesh be combined with the given m *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/24/2000 gth : Created.                                                                 *
- *=============================================================================================*/
+// Can this mesh be combined with the given mesh?
 bool MeshGeometryExportTaskClass::Can_Combine_With(MeshGeometryExportTaskClass * other_mesh)
 {
 	/*
@@ -1053,18 +860,6 @@ bool MeshGeometryExportTaskClass::Can_Combine_With(MeshGeometryExportTaskClass *
 }
 
 
-/***********************************************************************************************
- * MeshGeometryExportTaskClass::Combine_Mesh -- Add the given mesh into this mesh              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/24/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 void MeshGeometryExportTaskClass::Combine_Mesh(MeshGeometryExportTaskClass * other_mesh)
 {
 	/*

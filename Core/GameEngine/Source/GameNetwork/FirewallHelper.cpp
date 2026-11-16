@@ -43,7 +43,6 @@
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  *                                                                                             *
- * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
@@ -65,20 +64,6 @@ FirewallHelperClass * createFirewallHelper()
 }
 
 
-/***********************************************************************************************
- * FirewallHelperClass::FirewallHelperClass -- Constructor                                     *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/15/01 5:03PM ST : Created                                                               *
- *=============================================================================================*/
 /* static */ Int FirewallHelperClass::m_sourcePortPool = 4096;
 
 FirewallHelperClass::FirewallHelperClass()
@@ -115,39 +100,12 @@ FirewallHelperClass::FirewallHelperClass()
 
 
 
-/***********************************************************************************************
- * FirewallHelperClass::~FirewallHelperClass -- Destructor                                     *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/16/02 BGC : Created                                                                     *
- *=============================================================================================*/
 FirewallHelperClass::~FirewallHelperClass()
 {
 	reset();
 }
 
-/***********************************************************************************************
- * FirewallHelperClass::Reset -- Cleans out the object                                         *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/29/01 1:04AM ST : Created                                                               *
- *=============================================================================================*/
+// Cleans out the object.
 void FirewallHelperClass::reset()
 {
 	closeAllSpareSockets();
@@ -160,20 +118,6 @@ void FirewallHelperClass::reset()
 
 
 
-/***********************************************************************************************
- * FirewallHelperClass::Detect_Firewall -- See what our firewall is up to                      *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/15/01 6:47PM ST : Created                                                               *
- *=============================================================================================*/
 Bool FirewallHelperClass::detectFirewall()
 {
 	OptionPreferences pref;
@@ -236,20 +180,7 @@ Bool FirewallHelperClass::behaviorDetectionUpdate()
 	}
 }
 
-/***********************************************************************************************
- * FHC::getNextTemporarySourcePort -- Get a throwaway source port for temporary use        *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    number of ports in sequence to skip                                               *
- *                                                                                             *
- * OUTPUT:   port number                                                                       *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/15/01 12:06PM ST : Created                                                              *
- *=============================================================================================*/
+// Get a throwaway source port for temporary use.
 UnsignedShort FirewallHelperClass::getNextTemporarySourcePort(Int skip)
 {
 	UnsignedShort return_port = (UnsignedShort) m_sourcePortPool;
@@ -292,21 +223,7 @@ UnsignedShort FirewallHelperClass::getNextTemporarySourcePort(Int skip)
 
 
 
-/***********************************************************************************************
- * FHC::sendToManglerFromPort -- Send to the mangler from the specified port               *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Address of mangler server                                                         *
- *           Source port to send *from*                                                        *
- *                                                                                             *
- * OUTPUT:   True if sent OK                                                                   *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/15/01 12:47PM ST : Created                                                              *
- *=============================================================================================*/
+// Returns true if sent OK.
 Bool FirewallHelperClass::sendToManglerFromPort(UnsignedInt address, UnsignedShort port, UnsignedShort packetID, Bool blitzme)
 {
 	DEBUG_LOG(("sizeof(ManglerMessage) == %d, sizeof(ManglerData) == %d",
@@ -406,20 +323,6 @@ void FirewallHelperClass::byteAdjust(ManglerData *data) {
 	data->PacketID = htons(data->PacketID);
 }
 
-/***********************************************************************************************
- * FHC::Get_Mangler_Response_On_Port -- Get the manglers response to a specific query           *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Packet id of packet we are looking for                                            *
- *                                                                                             *
- * OUTPUT:   Port the mangler saw this packet come from.                                       *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/15/01 12:51PM ST : Created                                                              *
- *=============================================================================================*/
 UnsignedShort FirewallHelperClass::getManglerResponse(UnsignedShort packetID, Int time)
 {
 	ManglerMessage *msg = nullptr;
@@ -483,20 +386,6 @@ UnsignedShort FirewallHelperClass::getManglerResponse(UnsignedShort packetID, In
 
 
 
-/***********************************************************************************************
- * FirewallHelperClass::Write_Firewall_Settings -- Save out firewall settings.                 *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/22/01 10:23PM ST : Created                                                              *
- *=============================================================================================*/
 void FirewallHelperClass::writeFirewallBehavior()
 {
 	OptionPreferences pref;
@@ -518,21 +407,7 @@ void FirewallHelperClass::writeFirewallBehavior()
 }
 
 
-/***********************************************************************************************
- * FirewallHelperClass::flagNeedToRefresh -- Flag that the next time we log in we need to      *
- *    refresh our firewall settings.                                                           *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    flag - whether or not to refresh...munkee                                         *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/19/03 4:30PM BGC : Created                                                              *
- *=============================================================================================*/
+// Flag that the next time we log in we need to refresh our firewall settings.
 void FirewallHelperClass::flagNeedToRefresh(Bool flag)
 {
 	OptionPreferences pref;
@@ -543,20 +418,7 @@ void FirewallHelperClass::flagNeedToRefresh(Bool flag)
 }
 
 
-/***********************************************************************************************
- * FirewallHelperClass::Read_Firewall_Behavior -- Read in old firewall settings                *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/22/01 10:25PM ST : Created                                                              *
- *=============================================================================================*/
+// Read in old firewall settings.
 void FirewallHelperClass::readFirewallBehavior()
 {
 #if (0)
@@ -567,20 +429,7 @@ void FirewallHelperClass::readFirewallBehavior()
 
 
 
-/***********************************************************************************************
- * FHC::detectFirewallBehavior -- What is that wacky firewall doing to our packet headers?   *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Firewall behavior                                                                 *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/15/01 12:30PM ST : Created                                                              *
- *=============================================================================================*/
+// What is that wacky firewall doing to our packet headers?
 void FirewallHelperClass::detectFirewallBehavior(/*Bool &canRecord*/)
 {
 	m_behavior = FIREWALL_TYPE_SIMPLE;
@@ -1186,24 +1035,7 @@ Bool FirewallHelperClass::detectionTest5Update() {
 }
 
 
-/***********************************************************************************************
- * FHC::Get_NAT_Port_Allocation_Scheme -- Find out how a NAT is allocating ports               *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Number of ports we should analyze                                                 *
- *           List of original port numbers                                                     *
- *           List of mangled port numbers                                                      *
- *           relative_delta (out) Is the delta relative to the original port number?           *
- *           looks_good (out) Do all the values point to the same delta?                       *
- *                                                                                             *
- * OUTPUT:   Port allocation delta                                                             *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/15/01 4:45PM ST : Created                                                               *
- *=============================================================================================*/
+// Find out how a NAT is allocating ports.
 Int FirewallHelperClass::getNATPortAllocationScheme(Int numPorts, UnsignedShort *originalPorts, UnsignedShort *mangledPorts, Bool &relativeDelta, Bool &looksGood)
 {
 	DEBUG_ASSERTCRASH(numPorts > 3, ("numPorts too small"));
@@ -1358,20 +1190,7 @@ Int FirewallHelperClass::getNATPortAllocationScheme(Int numPorts, UnsignedShort 
 
 
 
-/***********************************************************************************************
- * FHC::Get_Firewall_Hardness -- How hard is it to connect to this firewall                    *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Firewall behavior                                                                 *
- *                                                                                             *
- * OUTPUT:   Hardness                                                                          *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/16/01 11:43AM ST : Created                                                              *
- *=============================================================================================*/
+// How hard is it to connect to this firewall.
 Int FirewallHelperClass::getFirewallHardness(FirewallBehaviorType behavior)
 {
 
@@ -1407,20 +1226,7 @@ Int FirewallHelperClass::getFirewallHardness(FirewallBehaviorType behavior)
 
 
 
-/***********************************************************************************************
- * FHC::Get_Firewall_Retries -- How many retries is it likely to take before we connect?       *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Firewall behavior                                                                 *
- *                                                                                             *
- * OUTPUT:   Hardness                                                                          *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/16/01 11:43AM ST : Created                                                              *
- *=============================================================================================*/
+// How many retries is it likely to take before we connect?
 Int FirewallHelperClass::getFirewallRetries(FirewallBehaviorType behavior)
 {
 

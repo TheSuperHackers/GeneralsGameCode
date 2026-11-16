@@ -30,9 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *  wwExportTreeSettings  -- Returns the directory to export, and recursive flag.              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -60,22 +57,8 @@
 def_visible_primitive(export_tree_settings, "wwExportTreeSettings");
 
 
-/***********************************************************************************************
- * export_tree_settings_cf - Returns the directory to export, and recursive flag.              *
- *                                                                                             *
- * wwExportTreeSettings - Usage: wwExportTreeSettings #(<initial path>, <recursive>)           *
- *                                                                                             *
- * INPUT: A MaxScript array containing two values:                                             *
- *		initial_path (string)	- the initial export directory                                   *
- *		recursive (bool)			- the initial recursive setting                                  *
- *                                                                                             *
- * OUTPUT: An array of the same format containing the values the user chose.                   *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/4/1999  AJA : Created.                                                                 *
- *=============================================================================================*/
+// Returns the directory to export, and recursive flag.
+// Usage: wwExportTreeSettings #(<initial path>, <recursive>)
 Value * export_tree_settings_cf (Value **arg_list, int count)
 {
 	// We want an array as an argument
