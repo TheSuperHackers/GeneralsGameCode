@@ -1011,7 +1011,7 @@ void WaterTracksRenderSystem::loadTracks()
 
 	AsciiString fileName=TheTerrainLogic->getSourceFilename();
 	// TheSuperHackers @bugfix bobtista 11/10/2026 Saved maps do not include their water track file.
-	if (TheGameState != nullptr && TheGameState->isInSaveDirectory(fileName))
+	if (TheGameState->isInSaveDirectory(fileName))
 	{
 		fileName = TheGameState->getPristineMapName();
 	}
