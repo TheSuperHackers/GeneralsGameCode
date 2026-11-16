@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <Utility/stringex.h>
+
 inline Char getNativePathSeparator()
 {
 #ifdef _WIN32
@@ -114,4 +116,32 @@ template <typename T> T* getExtension(T* path)
 			lastDot = nullptr;
 	}
 	return lastDot;
+}
+
+struct EnsureTrailingSeparatorInPathResult
+{
+	bool ok;
+	size_t length;
+};
+
+// Appends the native path separator unless the path is empty or already ends with a separator.
+// Fails when the buffer has no room for the separator. Returns the resulting path length.
+template <typename T> EnsureTrailingSeparatorInPathResult ensureTrailingSeparatorInPath(T* path, size_t size)
+{
+	EnsureTrailingSeparatorInPathResult result;
+	result.ok = true;
+	result.length = strlen_t(path);
+	if (result.length == 0 || isPathSeparator(path[result.length - 1]))
+	{
+		return result;
+	}
+	if (result.length + 1 >= size)
+	{
+		result.ok = false;
+		return result;
+	}
+	path[result.length] = getNativePathSeparator();
+	path[result.length + 1] = 0;
+	++result.length;
+	return result;
 }
