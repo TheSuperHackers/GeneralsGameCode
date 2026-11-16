@@ -31,17 +31,6 @@
  *                                                                         *
  *                  Last Update : June 2, 1997 [GH]                        *
  *                                                                         *
- *-------------------------------------------------------------------------*
- * Functions:                                                              *
- *   Scalar Division Operator -- Divide a vector by a scalar               *
- *   Scalar Multiply Operator -- Multiply a vector by a scalar             *
- *   Vector Addition Operator -- Add two vectors                           *
- *   Vector Subtraction Operator -- Subtract two vectors                   *
- *   Vector Inner Product Operator -- Compute the inner or dot product     *
- *   Vector Equality Operator -- Detemine if two vectors are identical     *
- *   Vector Inequality Operator -- Detemine if two vectors are identical   *
- *   Swap -- swap two Vector4's                                            *
- *   Vector4::Is_Valid -- Vector4::Is_Valid                                *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -117,18 +106,6 @@ public:
 	WWINLINE bool Is_Valid() const;
 };
 
-/**************************************************************************
- * Scalar Multiply Operator -- Multiply a vector by a scalar              *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   02/24/1997 GH  : Created.                                            *
- *========================================================================*/
 WWINLINE Vector4 operator * (const Vector4 &a,float k)
 {
 	return Vector4((a.X * k),(a.Y * k),(a.Z * k),(a.W * k));
@@ -139,35 +116,14 @@ WWINLINE Vector4 operator * (float k, const Vector4 &a)
 	return a*k;
 }
 
-/**************************************************************************
- * Scalar Division Operator -- Divide a vector by a scalar                *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *========================================================================*/
+// Divide a vector by a scalar.
 WWINLINE Vector4 operator / (const Vector4 &a,float k)
 {
 	float ook=1.0f/k;
 	return Vector4((a[0] * ook),(a[1] * ook),(a[2] * ook),(a[3] * ook));
 }
 
-/**************************************************************************
- * Vector Addition Operator -- Add two vectors                            *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   02/24/1997 GH  : Created.                                            *
- *========================================================================*/
+// Add two vectors.
 WWINLINE Vector4 operator + (const Vector4 &a,const Vector4 &b)
 {
 	return Vector4(
@@ -178,18 +134,6 @@ WWINLINE Vector4 operator + (const Vector4 &a,const Vector4 &b)
 						);
 }
 
-/**************************************************************************
- * Vector Subtraction Operator -- Subtract two vectors                    *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   02/24/1997 GH  : Created.                                            *
- *========================================================================*/
 WWINLINE Vector4 operator - (const Vector4 &a,const Vector4 &b)
 {
 	return Vector4(
@@ -200,17 +144,7 @@ WWINLINE Vector4 operator - (const Vector4 &a,const Vector4 &b)
 						);
 }
 
-/**************************************************************************
- * Vector Inner Product -- Compute the inner or dot product of two vector *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *========================================================================*/
+// Compute the inner or dot product of two vectors.
 WWINLINE float operator * (const Vector4 &a,const Vector4 &b)
 {
 	return	a[0]*b[0] +
@@ -225,49 +159,18 @@ WWINLINE float Vector4::Dot_Product(const Vector4 &a,const Vector4 &b)
 }
 
 
-/**************************************************************************
- * Vector Equality Operator -- Detemine if two vectors are identical      *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *========================================================================*/
+// Determine if two vectors are identical.
 WWINLINE bool operator == (const Vector4 &a,const Vector4 &b)
 {
 	return ( (a[0] == b[0]) && (a[1] == b[1]) && (a[2] == b[2]) && (a[3] == b[3]));
 }
 
-/**************************************************************************
- * Vector Inequality Operator -- Detemine if two vectors are identical    *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *========================================================================*/
+// Determine if two vectors are not identical.
 WWINLINE bool operator != (const Vector4 &a,const Vector4 &b)
 {
 	return ( (a[0] != b[0]) || (a[1] != b[1]) || (a[2] != b[2]) || (a[3] != b[3]));
 }
 
-/**************************************************************************
- * Vector4::Normalize -- Normalizes the vector.                           *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *========================================================================*/
 WWINLINE void Vector4::Normalize()
 {
 	float len2 = Length2();
@@ -290,51 +193,19 @@ WWINLINE Vector4 Normalize(const Vector4 & vec)
 	return Vector4(0.0f,0.0f,0.0f,0.0f);
 }
 
-/**************************************************************************
- * Vector4::Length -- Returns the length of the vector                    *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *========================================================================*/
 WWINLINE float Vector4::Length() const
 {
 	return WWMath::Sqrt(Length2());
 }
 
-/**************************************************************************
- * Vector4::Length -- Returns the square of the length of the vector      *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *========================================================================*/
+// Returns the square of the length of the vector.
 WWINLINE float Vector4::Length2() const
 {
 	return X*X + Y*Y + Z*Z + W*W;
 }
 
 
-/***********************************************************************************************
- * Swap -- swap two Vector4's                                                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/02/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Swap two Vector4's.
 WWINLINE void Swap(Vector4 & a,Vector4 & b)
 {
 	Vector4 tmp(a);
@@ -342,18 +213,8 @@ WWINLINE void Swap(Vector4 & a,Vector4 & b)
 	b = tmp;
 }
 
-/***********************************************************************************************
- * Lerp -- linearly interpolate two Vector4's by an interpolation factor.                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS: No checking is done to ensure that alpha is between 0 and 1.                      *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   01/14/1999 NH  : Created.                                                                 *
- *=============================================================================================*/
+// Linearly interpolate two Vector4's by an interpolation factor.
+// WARNING: No checking is done to ensure that alpha is between 0 and 1.
 WWINLINE Vector4 Lerp(const Vector4 & a, const Vector4 & b, float alpha)
 {
    return Vector4(
@@ -382,21 +243,7 @@ WWINLINE void Vector4::Lerp(const Vector4 & a, const Vector4 & b, float alpha,Ve
 	set_result->X = (a.W + (b.W - a.W)*alpha);
 }
 
-/***********************************************************************************************
- * Vector4::Is_Valid -- Vector4::Is_Valid                                                      *
- *                                                                                             *
- *    verifies that all members of this vector are valid floats                                *
- *                                                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/99   gth : Created.                                                                 *
- *=============================================================================================*/
+// Verifies that all members of this vector are valid floats.
 WWINLINE bool Vector4::Is_Valid() const
 {
 	return (WWMath::Is_Valid_Float(X) && WWMath::Is_Valid_Float(Y) && WWMath::Is_Valid_Float(Z) && WWMath::Is_Valid_Float(W));
