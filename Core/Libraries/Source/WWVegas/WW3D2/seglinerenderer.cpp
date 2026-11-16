@@ -1139,26 +1139,17 @@ void SegLineRendererClass::Render
 		{
 			DynamicVBAccessClass::WriteLockClass Lock(&Verts);
 			unsigned int i;
-			unsigned char *vb=(unsigned char*)Lock.Get_Formatted_Vertex_Array();
-			const FVFInfoClass& fvfinfo=Verts.FVF_Info();
-
-			const unsigned int verticesOffset = fvfinfo.Get_Location_Offset();
-			const unsigned diffuseOffset = fvfinfo.Get_Diffuse_Offset();
-			const unsigned textureOffset = fvfinfo.Get_Tex_Offset(0);
-			const unsigned vbSize = fvfinfo.Get_FVF_Size();
+			VertexFormatXYZNDUV2* vb=Lock.Get_Formatted_Vertex_Array();
 
 			for (i=0; i<vnum; i++)
 			{
-				// Copy Locations
-				Vector3 *vertex = reinterpret_cast<Vector3 *>(vb + verticesOffset);
-				vertex->X = vArray[i].x;
-				vertex->Y = vArray[i].y;
-				vertex->Z = vArray[i].z;
-				*reinterpret_cast<unsigned int *>(vb + diffuseOffset) = vArray[i].diffuse;
-				Vector2 *texture = reinterpret_cast<Vector2 *>(vb + textureOffset);
-				texture->U = vArray[i].u1;
-				texture->V = vArray[i].v1;
-				vb += vbSize;
+				// Copy the location, color and texture coordinates
+				vb[i].x = vArray[i].x;
+				vb[i].y = vArray[i].y;
+				vb[i].z = vArray[i].z;
+				vb[i].diffuse = vArray[i].diffuse;
+				vb[i].u1 = vArray[i].u1;
+				vb[i].v1 = vArray[i].v1;
 			}
 		}
 
