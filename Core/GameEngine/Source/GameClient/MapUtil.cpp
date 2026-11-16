@@ -332,7 +332,7 @@ AsciiString MapCache::getMapExtension() const
 AsciiString MapCache::getCachePath( const AsciiString &mapDir )
 {
 	AsciiString path = mapDir;
-	FileSystem::appendPathSeparator(path);
+	FileSystem::ensureTrailingPathSeparatorInPath(path);
 	path.concat(m_mapCacheName);
 	return path;
 }
