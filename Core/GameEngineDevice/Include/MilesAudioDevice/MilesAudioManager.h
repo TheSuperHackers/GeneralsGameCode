@@ -24,7 +24,7 @@
 #include "Common/GameAudio.h"
 #include "mss/mss.h"
 #include "WWLib/mutex.h"
-#include "Utility/atomic_adapter.h"
+#include <Utility/atomic_adapter.h>
 
 class AudioEventRTS;
 class DynamicAudioEventRTS;

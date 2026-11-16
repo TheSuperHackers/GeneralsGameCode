@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include "Utility/atomic_adapter.h"
+#include <Utility/atomic_adapter.h>
 
 // Lock-free intrusive queue for multiple producer threads and a single consumer thread,
 // using the same algorithm as the Win32 InterlockedPushEntrySList/InterlockedFlushSList
