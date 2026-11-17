@@ -97,9 +97,6 @@
 #include "w3d_file.h"
 #include "WWMath/vp.h"
 #include "htree.h"
-#include "WWMath/matrix4.h"
-#include "rinfo.h"
-#include "camera.h"
 
 
 #if (OPTIMIZE_PLANEEQ_RAM)

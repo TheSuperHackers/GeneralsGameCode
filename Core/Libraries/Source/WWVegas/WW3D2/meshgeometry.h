@@ -58,7 +58,6 @@ class SphereClass;
 class ChunkLoadClass;
 class AABTreeClass;
 class HTreeClass;
-class RenderInfoClass;
 
 // Define which kind of index vector to use (16- or 32 bit)
 typedef Vector3i16 TriIndex;

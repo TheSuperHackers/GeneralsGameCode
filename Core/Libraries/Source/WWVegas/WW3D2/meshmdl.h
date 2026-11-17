@@ -55,7 +55,6 @@
 
 class TextureClass;
 class RenderInfoClass;
-class SpecialRenderInfoClass;
 class MatBufferClass;
 class TexBufferClass;
 class AABoxClass;
