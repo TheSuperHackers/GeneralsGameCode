@@ -48,6 +48,7 @@
 #include "d3d8.h"
 #include "statistics.h"
 #include <WWDebug/wwprofile.h>
+#include <Utility/cmath_adapter.h>
 #include <algorithm>
 #include <list>
 

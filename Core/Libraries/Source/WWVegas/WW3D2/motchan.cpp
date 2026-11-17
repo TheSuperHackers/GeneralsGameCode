@@ -51,6 +51,7 @@
 #include "WWMath/wwmath.h"
 #include "WWMath/quat.h"
 #include <Utility/bit_adapter.h>
+#include <Utility/cmath_adapter.h>
 //#include <Windows.h>
 // Static Table, for Adaptive Delta Decompressor
 #define FILTER_TABLE_SIZE (256)

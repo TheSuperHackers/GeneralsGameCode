@@ -38,7 +38,6 @@
 
 #include "WWLib/always.h"
 #include <Utility/bit_adapter.h>
-#include <Utility/cmath_adapter.h>
 #include <math.h>
 #include <float.h>
 #include <assert.h>
