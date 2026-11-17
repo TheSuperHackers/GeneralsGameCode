@@ -1010,7 +1010,7 @@ void WaterTracksRenderSystem::loadTracks()
 		return;
 
 	AsciiString fileName=TheTerrainLogic->getSourceFilename();
-	// TheSuperHackers @bugfix bobtista 11/10/2026 Saved maps do not include their water track file.
+	// TheSuperHackers @bugfix bobtista 11/10/2026 A save game embeds only the .map file, so load the .wak file of the original map.
 	if (TheGameState->isInSaveDirectory(fileName))
 	{
 		fileName = TheGameState->getPristineMapName();
