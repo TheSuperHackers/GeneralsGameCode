@@ -99,6 +99,7 @@ const VecObjectPtr& Squad::getAllObjects() // Not a const function cause we clea
 	return m_objectsCached;
 }
 
+// ObjectIsNotSelectable //////////////////////////////////////////////////////////////////////////
 struct ObjectIsNotSelectable
 {
 	Bool operator()(const Object* obj) const
