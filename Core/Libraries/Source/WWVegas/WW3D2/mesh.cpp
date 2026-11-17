@@ -1026,7 +1026,8 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
  *=============================================================================================*/
 void MeshClass::Special_Render(SpecialRenderInfoClass & rinfo)
 {
-	if (Is_Not_Hidden_At_All() == false) {
+	if (Is_Not_Hidden_At_All() == false)
+	{
 		return;
 	}
 
