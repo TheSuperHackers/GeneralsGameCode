@@ -246,13 +246,16 @@ size_t Utf8_To_Wide_Len(const char* src, size_t srcLen)
 
 size_t Wide_To_Utf8(char* dest, size_t destLen, const unichar* src, size_t srcLen)
 {
-	if (!Fits_Int(destLen) || !Fits_Int(srcLen))
+	size_t needed = 0;
+	if (Fits_Int(destLen) && Fits_Int(srcLen))
+	{
+		needed = Wide_To_Utf8_Convert(dest, destLen, src, srcLen);
+	}
+	else
 	{
 		assert(false);
-		return 0;
 	}
 
-	const size_t needed = Wide_To_Utf8_Convert(dest, destLen, src, srcLen);
 	size_t out = needed;
 	if (needed > destLen)
 	{
@@ -280,6 +283,10 @@ size_t Utf8_To_Wide(unichar* dest, size_t destLen, const char* src, size_t srcLe
 	if (Fits_Int(destLen) && Fits_Int(srcLen))
 	{
 		needed = Utf8_To_Wide_Convert(dest, destLen, src, srcLen);
+	}
+	else
+	{
+		assert(false);
 	}
 
 	if (needed == UTF8_INVALID)
