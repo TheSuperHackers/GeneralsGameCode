@@ -854,9 +854,22 @@ Bool PathfindCell::isObstacleFence() const
 #endif
 }
 
+// TheSuperHackers @bugfix Mauller 21/11/2026 Improve distance to goal evaluation.
+// The octile distance uses the same 10/14 movement weights as the grid to prevent distance overestimation.
+static UnsignedInt octileDistance(const PathfindCell *start, const PathfindCell *finish)
+{
+	DEBUG_ASSERTCRASH(start->hasInfo() && finish->hasInfo(), ("Has to have info."));
+	const Int dx = abs(start->getXIndex() - finish->getXIndex());
+	const Int dy = abs(start->getYIndex() - finish->getYIndex());
+
+	return COST_ORTHOGONAL * max(dx, dy) + (COST_DIAGONAL - COST_ORTHOGONAL) * min(dx, dy);
+}
+
 UnsignedInt PathfindCell::costToGoal( PathfindCell *goal )
 {
 	DEBUG_ASSERTCRASH(m_info, ("Has to have info."));
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
 	Int dx = m_info->m_pos.x - goal->getXIndex();
 	Int dy = m_info->m_pos.y - goal->getYIndex();
 #define NO_REAL_DIST
@@ -876,6 +889,12 @@ UnsignedInt PathfindCell::costToGoal( PathfindCell *goal )
 
 
 	return cost;
+	}
+	else
+#endif
+	{
+		return octileDistance(this, goal);
+	}
 }
 
 UnsignedInt PathfindCell::costToHierGoal( PathfindCell *goal )
@@ -885,10 +904,18 @@ UnsignedInt PathfindCell::costToHierGoal( PathfindCell *goal )
 		DEBUG_CRASH( ("Has to have info.") );
 		return 100000; //...patch hack 1.01
 	}
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
 	Int dx = m_info->m_pos.x - goal->getXIndex();
 	Int dy = m_info->m_pos.y - goal->getYIndex();
 	Int cost = REAL_TO_INT_FLOOR(COST_ORTHOGONAL*WWMath::Sqrt((float)(dx*dx + dy*dy)) + 0.5f);
 	return cost;
+	}
+	else
+#endif
+	{
+		return octileDistance(this, goal);
+	}
 }
 
 UnsignedInt PathfindCell::costSoFar( PathfindCell *parent )
