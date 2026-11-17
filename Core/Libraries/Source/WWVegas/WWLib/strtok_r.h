@@ -34,7 +34,6 @@
 
 #pragma once
 
-// TheSuperHackers @build OmarAglan 16/11/2026 Include string.h first so that the C linkage declaration of strtok_r in MinGW-w64 comes before this one.
 #include <string.h>
 
 #ifndef _UNIX
