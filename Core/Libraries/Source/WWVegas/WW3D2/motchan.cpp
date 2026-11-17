@@ -1267,6 +1267,7 @@ return;
 		float value=Data[i];
 		if (std::isnan(value))
 			value=0.0f;
+
 		if (value>100000.0f) value=0.0f;
 		if (value<-100000.0f) value=0.0f;
 		Data[i]=value;
