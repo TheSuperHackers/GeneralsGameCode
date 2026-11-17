@@ -299,7 +299,8 @@ void PhysicsBehavior::applyForce( const Coord3D *force )
 #if defined(RTS_DEBUG) || !RETAIL_COMPATIBLE_CRC
 	DEBUG_ASSERTCRASH(!(std::isnan(force->x) || std::isnan(force->y) || std::isnan(force->z)), ("PhysicsBehavior::applyForce force NAN!"));
 #endif
-	if (std::isnan(force->x) || std::isnan(force->y) || std::isnan(force->z)) {
+	if (std::isnan(force->x) || std::isnan(force->y) || std::isnan(force->z))
+	{
 		return;
 	}
 	// F = ma  -->  a = F/m  (divide force by mass)
@@ -594,7 +595,8 @@ UpdateSleepTime PhysicsBehavior::update()
 		}
 
 		if (std::isnan(mtx.Get_X_Translation()) || std::isnan(mtx.Get_Y_Translation()) ||
-			std::isnan(mtx.Get_Z_Translation())) {
+			std::isnan(mtx.Get_Z_Translation()))
+		{
 			DEBUG_CRASH(("Object position is NAN, deleting."));
 			TheGameLogic->destroyObject(obj);
 		}
