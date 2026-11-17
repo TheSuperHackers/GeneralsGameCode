@@ -20,8 +20,6 @@
 
 #if defined(RTS_ICU_DYNAMIC)
 
-#include <windows.h>
-
 // Loads icu.dll on the first conversion and caches success or failure until unload.
 // Conversion calls and unload are serialized with a Windows critical section,
 // including on VC6. Function pointers stay private and cannot outlive the DLL.
