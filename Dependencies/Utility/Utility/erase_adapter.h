@@ -55,6 +55,7 @@ inline size_t erase_if(Container& container, Predicate pred)
 			++it;
 		}
 	}
+
 	return count;
 }
 
