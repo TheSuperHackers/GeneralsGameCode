@@ -837,6 +837,7 @@ TEST(AtomicX86Interlocked, FlagSpinLockExcludesThreads)
 			while (lock.test_and_set(x86asm::memory_order_acq_rel))
 			{
 			}
+
 			++count;
 			lock.clear(x86asm::memory_order_release);
 		}
