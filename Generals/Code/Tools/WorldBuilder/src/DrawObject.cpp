@@ -1629,7 +1629,7 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 
 	Renderer::Set_Material(m_vertexMaterialClass);
 	Renderer::Set_Shader(m_shaderClass);
-	DX8Wrapper::Set_Texture(0, nullptr);
+	Renderer::Set_Texture(0, nullptr);
 	Renderer::Apply_Render_State_Changes();
 	Int count=0;
 	Int i;

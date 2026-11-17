@@ -550,7 +550,7 @@ void Render2DClass::Render()
 	Renderer::Set_Viewport(vp);
 
 
-	DX8Wrapper::Set_Texture(0,Texture);
+	Renderer::Set_Texture(0,Texture);
 
 	VertexMaterialClass *vm=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 	Renderer::Set_Material(vm);
