@@ -3261,7 +3261,7 @@ void W3DRoadBuffer::drawRoads(CameraClass * camera, TextureClass *cloudTexture, 
 			if (m_roadTypes[i].getNumIndices() == 0) continue;
 			if (wireframe) {
 				m_roadTypes[i].applyTexture();
-				DX8Wrapper::Set_Texture(0,nullptr);
+				Renderer::Set_Texture(0,nullptr);
 				Renderer::Set_Shader(detailShader); // shows clipping.
 			} else {
 				m_roadTypes[i].applyTexture();
@@ -3294,11 +3294,11 @@ void W3DRoadBuffer::drawRoads(CameraClass * camera, TextureClass *cloudTexture, 
 			loadLitRoadsInVertexAndIndexBuffers(pDynamicLightsIterator);
 			if (this->m_curNumRoadIndices == 0) continue;
 			if (wireframe) {
-					DX8Wrapper::Set_Texture(0,nullptr);
+					Renderer::Set_Texture(0,nullptr);
 			} else {
 				m_roadTypes[i].applyTexture();
 				if (cloudTexture) {
-					DX8Wrapper::Set_Texture(1,cloudTexture);
+					Renderer::Set_Texture(1,cloudTexture);
 				}
 			}
 			Renderer::Set_Shader(detailAlphaShader);
