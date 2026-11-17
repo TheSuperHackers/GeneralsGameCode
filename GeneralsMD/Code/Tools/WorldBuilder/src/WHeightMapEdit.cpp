@@ -2009,8 +2009,9 @@ void WorldHeightMapEdit::addObject(MapObject *pMapObj)
 void WorldHeightMapEdit::removeFirstObject()
 {
 	MapObject *firstObj = MapObject::TheMapObjectListPtr;
-	if (!firstObj)
+	if (!firstObj) {
 		return;
+	}
 	MapObject::TheMapObjectListPtr = firstObj->getNext();
 	firstObj->setNextMap(nullptr); // so we don't delete the whole list.
 	deleteInstance(firstObj);
@@ -2061,7 +2062,7 @@ Bool WorldHeightMapEdit::selectDuplicates()
 					continue;
 				}
 				MapObject *prevNextObj = prevObj->getNext();
-				if (!prevNextObj || prevNextObj == pObj || !prevNextObj->getFlag(FLAG_ROAD_POINT2)) {
+				if (!prevNextObj || !prevNextObj->getFlag(FLAG_ROAD_POINT2)) {
 					continue;
 				}
 				Coord3D nextLoc = *nextObj->getLocation();
