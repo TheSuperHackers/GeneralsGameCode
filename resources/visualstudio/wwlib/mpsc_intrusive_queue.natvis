@@ -3,11 +3,11 @@
     <!-- Push prepends, and the chain is only reversed inside Flush, so the entries below
          are listed newest first, which is the reverse of the order a consumer will see. -->
     <Type Name="MPSCIntrusiveQueue&lt;*&gt;">
-        <DisplayString Condition="m_head == 0">{{ empty }}</DisplayString>
+        <DisplayString Condition="m_head._Storage._Value == 0">{{ empty }}</DisplayString>
         <DisplayString>{{ MPSCIntrusiveQueue }}</DisplayString>
         <Expand>
             <CustomListItems>
-                <Variable Name="node" InitialValue="m_head"/>
+                <Variable Name="node" InitialValue="m_head._Storage._Value"/>
                 <Loop>
                     <Break Condition="node == 0"/>
                     <Item>node</Item>
