@@ -116,7 +116,9 @@ class FastCriticalSectionClass
 
 public:
 	// Name can (and usually should) be nullptr. Use name only if you wish to create a globally unique mutex
-	FastCriticalSectionClass() {}
+	FastCriticalSectionClass()
+	{
+	}
 
 	class LockClass
 	{
@@ -134,26 +136,26 @@ public:
 
 	private:
 
-	void lock()
-	{
-		while (cs.Flag.test_and_set(std::memory_order_acq_rel))
+		void lock()
 		{
+			while (cs.Flag.test_and_set(std::memory_order_acq_rel))
+			{
 #if defined(_MSC_VER) && _MSC_VER < 1300
-			// VC6 has no atomic wait, so the thread sleeps for a moment before it tries again.
-			ThreadClass::Switch_Thread();
+				// VC6 has no atomic wait, so the thread sleeps for a moment before it tries again.
+				ThreadClass::Switch_Thread();
 #else
-			cs.Flag.wait(true, std::memory_order_relaxed);
+				cs.Flag.wait(true, std::memory_order_relaxed);
+#endif
+			}
+		}
+
+		void unlock()
+		{
+			cs.Flag.clear(std::memory_order_release);
+#if !(defined(_MSC_VER) && _MSC_VER < 1300)
+			cs.Flag.notify_one();
 #endif
 		}
-	}
-
-	void unlock()
-	{
-		cs.Flag.clear(std::memory_order_release);
-#if !(defined(_MSC_VER) && _MSC_VER < 1300)
-		cs.Flag.notify_one();
-#endif
-	}
 
 		LockClass &operator=(const LockClass&);
     LockClass(const LockClass&);

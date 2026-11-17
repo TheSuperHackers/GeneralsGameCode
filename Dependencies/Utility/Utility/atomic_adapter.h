@@ -20,9 +20,10 @@
 // the functions of interlocked_adapter.h. The atomic class supports bool, the integer types, float, double, enums and
 // pointers.
 //
-// The VC6 class has the size of the type it holds, like the standard class. It differs from it in these points:
-// - Its constructor is not constexpr. An object with static storage duration is initialized when its constructor
-//   runs during the static initialization, where the standard class initializes it at compile time. A value that
+// The VC6 atomic class has the size of the type it holds, like the standard class. The VC6 atomic flag has the size
+// of a long, like the class of the Microsoft standard library. They differ from the standard classes in these points:
+// - Their constructors are not constexpr. An object with static storage duration is initialized when its constructor
+//   runs during the static initialization, where the standard classes initialize it at compile time. A value that
 //   another static initializer stored into the object before that is overwritten.
 // - An atomic pointer has no fetch_add, fetch_sub, ++, --, += and -=.
 // - A 64 bit value is loaded with a locked instruction, which costs as much as storing it.
