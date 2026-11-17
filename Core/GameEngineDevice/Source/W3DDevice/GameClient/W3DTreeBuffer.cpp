@@ -1900,7 +1900,7 @@ void W3DTreeBuffer::xfer( Xfer *xfer )
 		if (xfer->getXferMode() != XFER_LOAD) {
 			tree = m_trees[i];
 			treeType = m_trees[i].treeType;
-			if (treeType != DELETED_TREE_TYPE) {
+			if (treeType != DELETED_TREE_TYPE && treeType < m_numTreeTypes) {
 				modelName = m_treeTypes[treeType].m_data->m_modelName;
 				modelTexture = m_treeTypes[treeType].m_data->m_textureName;
 			}
