@@ -837,7 +837,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
  		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, "Install_Final.bmp",	IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
 
 		// Begin reporting with TheGlobalData available; the INIs provide the user-data path later.
-		CrashReporting::initialize(TheGlobalData->getPath_UserData(), VERSION_MAJOR, VERSION_MINOR, VERSION_BUILDNUM);
+		CrashReporting::initialize(TheGlobalData->getPath_UserData());
 		// register windows class and create application window
 		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
 		{

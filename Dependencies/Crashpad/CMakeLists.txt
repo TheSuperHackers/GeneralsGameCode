@@ -35,8 +35,8 @@ target_compile_features(rts_crashpad PRIVATE cxx_std_20)
 target_link_libraries(rts_crashpad PRIVATE crashpad::crashpad)
 set_target_properties(rts_crashpad PROPERTIES
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+    MSVC_DEBUG_INFORMATION_FORMAT Embedded
     DISABLE_PRECOMPILE_HEADERS ON)
-target_compile_options(rts_crashpad PRIVATE /Zi)
 target_link_options(rts_crashpad PRIVATE /DEBUG)
 target_compile_definitions(rts_crashpad PRIVATE
     "RTS_CRASHPAD_COMPILER=\"${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}\""
@@ -49,7 +49,6 @@ configure_file("${package}/share/crashpad/copyright" "${notices}/crashpad-LICENS
 configure_file("${package}/share/zlib/copyright" "${notices}/zlib-LICENSE" COPYONLY)
 configure_file("${package}/share/crashpad/vcpkg.spdx.json" "${notices}/crashpad-package.spdx.json" COPYONLY)
 configure_file("${package}/share/zlib/vcpkg.spdx.json" "${notices}/zlib-package.spdx.json" COPYONLY)
-configure_file("${package}/share/crashpad/vcpkg_abi_info.txt" "${notices}/crashpad-package-abi.txt" COPYONLY)
 configure_file(getopt-LICENSE "${notices}/getopt-LICENSE" COPYONLY)
 configure_file(mini-chromium-LICENSE "${notices}/mini-chromium-LICENSE" COPYONLY)
 set(RTS_CRASHPAD_NOTICES "${notices}" PARENT_SCOPE)

@@ -18,7 +18,6 @@
 
 // Deliberately compiled outside the game PCH, forced includes and allocator.
 #include <windows.h>
-#include <csignal>
 #include <map>
 #include <memory>
 #include <string>
@@ -36,28 +35,22 @@ namespace
 {
     std::unique_ptr<crashpad::CrashpadClient> client;
     LPTOP_LEVEL_EXCEPTION_FILTER previousFilter;
-    void (*previousAbortHandler)(int);
-    crashpad::ScopedKernelHANDLE stopEvent;
     crashpad::ScopedKernelHANDLE captureEvent;
     crashpad::ScopedKernelHANDLE completedEvent;
-    crashpad::ScopedKernelHANDLE watchdogThread;
     volatile LONG capturedFatal;
-    bool attempted;
     bool active;
 
     // DumpWithoutCrash waits indefinitely in the pinned Windows client. Keep
     // the request on the faulting thread, and bound fatal capture with a thread
     // created while the process is healthy. Do not terminate a reporting thread
     // and then let the game reuse memory still referenced by the handler.
+    // The thread stays blocked until process exit unless a capture starts.
     DWORD WINAPI Watchdog(void*)
     {
-        const HANDLE events[] = {stopEvent.get(), captureEvent.get()};
-        if (WaitForMultipleObjects(2, events, FALSE, INFINITE) == WAIT_OBJECT_0 + 1)
+        WaitForSingleObject(captureEvent.get(), INFINITE);
+        if (WaitForSingleObject(completedEvent.get(), 15000) != WAIT_OBJECT_0)
         {
-            if (WaitForSingleObject(completedEvent.get(), 15000) != WAIT_OBJECT_0)
-            {
-                TerminateProcess(GetCurrentProcess(), 1);
-            }
+            TerminateProcess(GetCurrentProcess(), 1);
         }
 
         return 0;
@@ -66,38 +59,25 @@ namespace
     LONG WINAPI AlreadyCaptured(EXCEPTION_POINTERS*)
     {
         // A failure in best-effort fatal diagnostics must not create a second
-        // report that hides the original explicit fatal capture.
+        // report that hides the original explicit fatal capture. Let a capture
+        // still in progress finish first; the watchdog bounds this wait.
+        WaitForSingleObject(completedEvent.get(), INFINITE);
         TerminateProcess(GetCurrentProcess(), 1);
         return EXCEPTION_EXECUTE_HANDLER;
     }
 
-    void StopWatchdog()
-    {
-        if (watchdogThread.is_valid())
-        {
-            SetEvent(stopEvent.get());
-            WaitForSingleObject(watchdogThread.get(), INFINITE);
-        }
-
-        watchdogThread.reset();
-        stopEvent.reset();
-        captureEvent.reset();
-        completedEvent.reset();
-    }
-
     bool Initialize(const char* userDirectory, const char* game,
-                    const char* version, const char* revision, int dirty)
+                    const char* revision, int dirty)
     {
-        const int count = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
-                                             userDirectory, -1, nullptr, 0);
+        // The game creates and opens this path with ANSI file APIs.
+        const int count = MultiByteToWideChar(CP_ACP, 0, userDirectory, -1, nullptr, 0);
         if (count <= 1)
         {
             return false;
         }
 
         std::vector<wchar_t> userPath(count);
-        if (!MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, userDirectory,
-                                -1, userPath.data(), count))
+        if (!MultiByteToWideChar(CP_ACP, 0, userDirectory, -1, userPath.data(), count))
         {
             return false;
         }
@@ -145,22 +125,21 @@ namespace
             new crashpad::DatabaseSizePruneCondition(500 * 1024));
         crashpad::PruneCrashReportDatabase(database.get(), &retention);
 
-        stopEvent.reset(CreateEventW(nullptr, TRUE, FALSE, nullptr));
         captureEvent.reset(CreateEventW(nullptr, TRUE, FALSE, nullptr));
         completedEvent.reset(CreateEventW(nullptr, TRUE, FALSE, nullptr));
-        if (!stopEvent.is_valid() || !captureEvent.is_valid() || !completedEvent.is_valid())
+        if (!captureEvent.is_valid() || !completedEvent.is_valid())
         {
             return false;
         }
 
-        watchdogThread.reset(CreateThread(nullptr, 0, Watchdog, nullptr, 0, nullptr));
-        if (!watchdogThread.is_valid())
+        const crashpad::ScopedKernelHANDLE watchdog(CreateThread(nullptr, 0, Watchdog, nullptr, 0, nullptr));
+        if (!watchdog.is_valid())
         {
             return false;
         }
 
         const std::map<std::string, std::string> annotations = {
-            {"game", game}, {"version", version}, {"revision", revision},
+            {"game", game}, {"revision", revision},
             {"dirty", dirty ? "true" : "false"}, {"architecture", "x86"},
             {"compiler", RTS_CRASHPAD_COMPILER}, {"configuration", RTS_CRASHPAD_CONFIGURATION},
             {"backend", "crashpad"}, {"crashpad_revision", RTS_CRASHPAD_REVISION}
@@ -177,21 +156,13 @@ namespace
 }
 
 extern "C" int __cdecl RtsCrashpadInitialize(const char* userDirectory,
-    const char* game, const char* version, const char* revision, int dirty)
+    const char* game, const char* revision, int dirty)
 {
-    if (attempted)
-    {
-        return active;
-    }
-
-    attempted = true;
     previousFilter = SetUnhandledExceptionFilter(nullptr);
     SetUnhandledExceptionFilter(previousFilter);
-    previousAbortHandler = std::signal(SIGABRT, SIG_DFL);
-    std::signal(SIGABRT, previousAbortHandler);
     try
     {
-        active = Initialize(userDirectory, game, version, revision, dirty);
+        active = Initialize(userDirectory, game, revision, dirty);
     }
     catch (...)
     {
@@ -208,8 +179,16 @@ extern "C" int __cdecl RtsCrashpadInitialize(const char* userDirectory,
 
 extern "C" void __cdecl RtsCrashpadCaptureFatal()
 {
-    if (!active || InterlockedCompareExchange(&capturedFatal, 1, 0) != 0)
+    if (!active)
     {
+        return;
+    }
+
+    if (InterlockedCompareExchange(&capturedFatal, 1, 0) != 0)
+    {
+        // Another thread owns the capture. Do not let this one exit the process
+        // before that dump is written; the watchdog bounds this wait.
+        WaitForSingleObject(completedEvent.get(), INFINITE);
         return;
     }
 
@@ -220,22 +199,19 @@ extern "C" void __cdecl RtsCrashpadCaptureFatal()
         TerminateProcess(GetCurrentProcess(), 1);
     }
 
+    SetUnhandledExceptionFilter(AlreadyCaptured);
     crashpad::CrashpadClient::DumpWithoutCrash(context);
     SetEvent(completedEvent.get());
-    SetUnhandledExceptionFilter(AlreadyCaptured);
     // Removes the heap-corruption vectored handler too. The client leaves its
     // IPC state alive for process lifetime; never unload this DLL.
     client.reset();
-    std::signal(SIGABRT, SIG_DFL);
 }
 
 extern "C" void __cdecl RtsCrashpadShutdown()
 {
     active = false;
     SetUnhandledExceptionFilter(previousFilter);
-    std::signal(SIGABRT, previousAbortHandler);
     client.reset();
-    StopWatchdog();
     // The handler observes process exit and exits itself. Crashpad's Windows
     // API intentionally retains its IPC handles until then.
 }

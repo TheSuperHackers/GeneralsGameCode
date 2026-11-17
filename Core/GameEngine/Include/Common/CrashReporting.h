@@ -23,7 +23,7 @@ class AsciiString;
 // Keep this interface compatible with VC6 and tools that only use MiniDumper.
 namespace CrashReporting
 {
-    void initialize(const AsciiString& userDirectory, int major, int minor, int build);
+    void initialize(const AsciiString& userDirectory);
     void userDirectoryReady(const AsciiString& userDirectory);
     void captureFatal();
     void shutdown();

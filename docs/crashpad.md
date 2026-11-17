@@ -4,7 +4,7 @@
 through a separate handler process for modern MSVC and ClangCL Win32 game builds.
 WorldBuilder and other tools keep their existing reporting behavior. Disabled
 builds do not acquire or link Crashpad. Unsupported configurations, including
-VC6, non-Windows, x64, sanitizer/fuzzing builds and `RTS_CRASHDUMP_ENABLE=OFF`,
+VC6, non-Windows, x64, sanitizer builds and `RTS_CRASHDUMP_ENABLE=OFF`,
 reject an explicit request to enable it.
 
 The optional backend expects Windows 10 or newer. It does not change the OS
@@ -38,7 +38,7 @@ package. The adapter and handler link the C++ runtime statically.
 
 ## Capture and fallback
 
-The game loads `rts_crashpad.dll` by absolute path beside its executable. The DLL
+The game loads `rts_crashpad.dll` only from its executable directory. The DLL
 isolates Crashpad's C++ requirements and CRT allocations from the game's memory
 allocator. Zero Hour initializes it in WinMain. Generals uses MiniDumper until
 its user-data path is available after GameData loading and startup options.
@@ -59,7 +59,7 @@ legacy unhandled-exception text and do not provide the legacy full-memory dump.
 
 Reports stay in `<user-data>/CrashDumps/Crashpad/`. Uploads are disabled, with no
 upload URL or attachments. Each report is a binary minidump with build annotations
-including the game version, Git revision, dirty state, compiler and configuration.
+including the game, Git revision, dirty state, compiler and configuration.
 Crashpad does not generate a readable diagnosis of the crash.
 
 At startup, the database API prunes reports older than 30 days and older reports

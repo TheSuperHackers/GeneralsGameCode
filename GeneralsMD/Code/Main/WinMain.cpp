@@ -864,7 +864,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #endif
 
 		// Initialize reporting after parseCommandLineForStartup provides the user-data path.
-		CrashReporting::initialize(TheGlobalData->getPath_UserData(), VERSION_MAJOR, VERSION_MINOR, VERSION_BUILDNUM);
+		CrashReporting::initialize(TheGlobalData->getPath_UserData());
 
 		// register windows class and create application window
 		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)

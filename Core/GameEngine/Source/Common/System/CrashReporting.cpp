@@ -31,29 +31,12 @@ namespace
 {
     RtsCrashpadCaptureFatalFunction capture;
     RtsCrashpadShutdownFunction stop;
-    bool awaitingUserDirectory;
-    int savedMajor;
-    int savedMinor;
-    int savedBuild;
+    Bool awaitingUserDirectory;
 
-    bool StartCrashpad(const AsciiString& userDirectory, int major, int minor, int build)
+    Bool StartCrashpad(const AsciiString& userDirectory)
     {
-        wchar_t path[32768];
-        const DWORD count = GetModuleFileNameW(nullptr, path, ARRAY_SIZE(path));
-        if (!count || count >= ARRAY_SIZE(path))
-        {
-            return false;
-        }
-
-        wchar_t* leaf = wcsrchr(path, L'\\');
-        const wchar_t name[] = L"rts_crashpad.dll";
-        if (!leaf || (leaf + 1 - path) + ARRAY_SIZE(name) > ARRAY_SIZE(path))
-        {
-            return false;
-        }
-
-        memcpy(leaf + 1, name, sizeof(name));
-        HMODULE module = LoadLibraryExW(path, nullptr, LOAD_WITH_ALTERED_SEARCH_PATH);
+        HMODULE module = LoadLibraryExW(L"rts_crashpad.dll", nullptr,
+            LOAD_LIBRARY_SEARCH_APPLICATION_DIR | LOAD_LIBRARY_SEARCH_SYSTEM32);
         if (!module)
         {
             return false;
@@ -63,14 +46,12 @@ namespace
             GetProcAddress(module, "RtsCrashpadInitialize"));
         capture = reinterpret_cast<RtsCrashpadCaptureFatalFunction>(GetProcAddress(module, "RtsCrashpadCaptureFatal"));
         stop = reinterpret_cast<RtsCrashpadShutdownFunction>(GetProcAddress(module, "RtsCrashpadShutdown"));
-        char version[64];
-        snprintf(version, ARRAY_SIZE(version), "%d.%d.%d", major, minor, build);
 #if RTS_ZEROHOUR
         const char* game = "Zero Hour";
 #else
         const char* game = "Generals";
 #endif
-        if (start && capture && stop && start(userDirectory.str(), game, version, GitSHA1, GitUncommittedChanges))
+        if (start && capture && stop && start(userDirectory.str(), game, GitSHA1, GitUncommittedChanges))
         {
             return true;
         }
@@ -84,26 +65,21 @@ namespace
 }
 #endif
 
-void CrashReporting::initialize(const AsciiString& userDirectory, int major, int minor, int build)
+void CrashReporting::initialize(const AsciiString& userDirectory)
 {
 #ifdef RTS_USE_CRASHPAD
     // Generals resolves UserDataLeafName from GameData.ini during engine init.
     // Zero Hour already has its registry-derived path at WinMain startup.
     awaitingUserDirectory = userDirectory.isEmpty();
-    savedMajor = major;
-    savedMinor = minor;
-    savedBuild = build;
-    if (!awaitingUserDirectory && StartCrashpad(userDirectory, major, minor, build))
+    if (!awaitingUserDirectory && StartCrashpad(userDirectory))
     {
-        OutputDebugStringA("Crash reporting: Crashpad (local only)\n");
-        DEBUG_LOG(("Crash reporting: Crashpad (local only)\n"));
+        DEBUG_LOG(("Crash reporting: Crashpad (local only)"));
         return;
     }
 
     if (!awaitingUserDirectory)
     {
-        OutputDebugStringA("Crashpad startup failed; trying MiniDumper\n");
-        DEBUG_LOG(("Crashpad startup failed; trying MiniDumper\n"));
+        DEBUG_LOG(("Crashpad startup failed; trying MiniDumper"));
     }
 #endif
 #ifdef RTS_ENABLE_CRASHDUMP
@@ -112,7 +88,7 @@ void CrashReporting::initialize(const AsciiString& userDirectory, int major, int
 #else
     MiniDumper::initMiniDumper(userDirectory.str(), 'G');
 #endif
-    DEBUG_LOG(("Crash reporting: %s\n",
+    DEBUG_LOG(("Crash reporting: %s",
         TheMiniDumper && TheMiniDumper->IsInitialized() ? "minidumper" : "unavailable"));
 #endif
 }
@@ -123,8 +99,10 @@ void CrashReporting::userDirectoryReady(const AsciiString& userDirectory)
     // Tools never call initialize(), so this cannot start Crashpad in a tool.
     if (awaitingUserDirectory && !userDirectory.isEmpty())
     {
+#ifdef RTS_ENABLE_CRASHDUMP
         MiniDumper::shutdownMiniDumper();
-        initialize(userDirectory, savedMajor, savedMinor, savedBuild);
+#endif
+        initialize(userDirectory);
     }
 #endif
 }
