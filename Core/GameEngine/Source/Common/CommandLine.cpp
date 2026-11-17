@@ -476,7 +476,7 @@ Int parseSetCwd(char *args[], int num)
 	return 1;
 }
 
-Int parseDataDir(char *args[], int num)
+Int parseDataDir(char* args[], int num)
 {
 	// Each -dataDir "<dir>" adds one folder with lower priority .big files.
 	if (num > 1)
@@ -492,6 +492,7 @@ Int parseDataDir(char *args[], int num)
 
 		return 2;
 	}
+
 	return 1;
 }
 

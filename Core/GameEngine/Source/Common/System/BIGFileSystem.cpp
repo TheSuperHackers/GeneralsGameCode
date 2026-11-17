@@ -90,7 +90,7 @@ void BIGFileSystem::init() {
 
 	// TheSuperHackers @feature CryoTheRenegade 17/10/2026 Load the -dataDir folders in the listed order.
 	// Files already in the tree are kept, so earlier folders take priority.
-	Bool loadedDataDir = FALSE;
+	MAYBE_UNUSED Bool loadedDataDir = FALSE;
 	if (TheGlobalData != nullptr)
 	{
 		const std::vector<AsciiString>& dataDirs = TheGlobalData->m_dataDirs;
