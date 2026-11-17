@@ -48,18 +48,16 @@ DockUpdateModuleData::DockUpdateModuleData()
 }
 
 // TheSuperHackers @bugfix CryoTheRenegade 27/09/2026 Bound fixed docking positions by the bone buffer while preserving dynamic docking.
-static void parseNumberApproachPositions(INI* ini, void* instance, void* store, const void* userData)
+static void parseNumberApproachPositions(INI* ini, void* /*instance*/, void* store, const void* /*userData*/)
 {
 	Int count = INI::scanInt(ini->getNextToken());
 	if( count < DYNAMIC_APPROACH_VECTOR_FLAG || count > DEFAULT_APPROACH_VECTOR_SIZE )
 	{
 		DEBUG_LOG(( "DockUpdate - Clamping invalid NumberApproachPositions %d to a usable fixed count", count ));
 		// Below the dynamic sentinel becomes 1; above the bone buffer becomes its size.
-		if( count < 1 )
-			count = 1;
-		else
-			count = DEFAULT_APPROACH_VECTOR_SIZE;
+		count = clamp<Int>(1, count, DEFAULT_APPROACH_VECTOR_SIZE);
 	}
+
 	*(Int*)store = count;
 }
 
@@ -622,6 +620,7 @@ void DockUpdate::xfer( Xfer *xfer )
 		DEBUG_LOG(( "DockUpdate::xfer - Invalid approach vector size" ));
 		throw SC_INVALID_DATA;
 	}
+
 	m_approachPositions.resize(vectorSize);
 	Int vectorIndex = 0;
 	for( ; vectorIndex < vectorSize; ++vectorIndex )
@@ -635,11 +634,12 @@ void DockUpdate::xfer( Xfer *xfer )
 	// approach position owners
 	vectorSize = m_approachPositionOwners.size();
 	xfer->xferInt( &vectorSize );
-	if( vectorSize < 0 || vectorSize != m_approachPositions.size() )
+	if( vectorSize != (Int)m_approachPositions.size() )
 	{
 		DEBUG_LOG(( "DockUpdate::xfer - Inconsistent approach vector sizes" ));
 		throw SC_INVALID_DATA;
 	}
+
 	m_approachPositionOwners.resize(vectorSize);
 	for( vectorIndex = 0; vectorIndex < vectorSize; ++vectorIndex )
 	{
@@ -649,11 +649,12 @@ void DockUpdate::xfer( Xfer *xfer )
 	// approach positions reached
 	vectorSize = m_approachPositionReached.size();
 	xfer->xferInt( &vectorSize );
-	if( vectorSize < 0 || vectorSize != m_approachPositions.size() )
+	if( vectorSize != (Int)m_approachPositions.size() )
 	{
 		DEBUG_LOG(( "DockUpdate::xfer - Inconsistent approach vector sizes" ));
 		throw SC_INVALID_DATA;
 	}
+
 	m_approachPositionReached.resize(vectorSize);
 	for( vectorIndex = 0; vectorIndex < vectorSize; ++vectorIndex )
 	{

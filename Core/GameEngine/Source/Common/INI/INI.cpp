@@ -591,13 +591,9 @@ void INI::parseUnsignedInt( INI* ini, void * /*instance*/, void *store, const vo
 //-------------------------------------------------------------------------------------------------
 void INI::parseIntClamped( INI* ini, void* /*instance*/, void* store, const void* userData )
 {
-	const Int maxValue = (Int)userData;
+	const Int maxValue = (Int)(intptr_t)userData;
 	const Int value = scanInt(ini->getNextToken());
-	Int clampedValue = value;
-	if( clampedValue < 0 )
-		clampedValue = 0;
-	else if( clampedValue > maxValue )
-		clampedValue = maxValue;
+	const Int clampedValue = clamp<Int>(0, value, maxValue);
 
 	if( clampedValue != value )
 		DEBUG_LOG(( "INI::parseIntClamped - Clamping %d to %d in '%s' line %d", value, clampedValue, ini->getFilename().str(), ini->getLineNum() ));
@@ -610,7 +606,7 @@ void INI::parseIntClamped( INI* ini, void* /*instance*/, void* store, const void
 //-------------------------------------------------------------------------------------------------
 void INI::parseUnsignedIntClamped( INI* ini, void* /*instance*/, void* store, const void* userData )
 {
-	const UnsignedInt maxValue = (UnsignedInt)userData;
+	const UnsignedInt maxValue = (UnsignedInt)(uintptr_t)userData;
 	UnsignedInt value = scanUnsignedInt(ini->getNextToken());
 	if( value > maxValue )
 	{
