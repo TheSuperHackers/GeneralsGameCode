@@ -140,9 +140,9 @@ namespace
 
         const std::map<std::string, std::string> annotations = {
             {"game", game}, {"revision", revision},
-            {"dirty", dirty ? "true" : "false"}, {"architecture", "x86"},
+            {"dirty", dirty ? "true" : "false"},
             {"compiler", RTS_CRASHPAD_COMPILER}, {"configuration", RTS_CRASHPAD_CONFIGURATION},
-            {"backend", "crashpad"}, {"crashpad_revision", RTS_CRASHPAD_REVISION}
+            {"crashpad_revision", RTS_CRASHPAD_REVISION}
         };
         client = std::make_unique<crashpad::CrashpadClient>();
         // Wait for the IPC ping before claiming readiness, but do not block game

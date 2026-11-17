@@ -27,12 +27,12 @@
 // Author: Michael S. Booth, April 2001
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
-#include "Common/CrashReporting.h"
 
 #include "Common/ActionManager.h"
 #include "Common/AudioAffect.h"
 #include "Common/BuildAssistant.h"
 #include "Common/CRCDebug.h"
+#include "Common/CrashReporting.h"
 #include "Common/FramePacer.h"
 #include "Common/Radar.h"
 #include "Common/PlayerTemplate.h"
