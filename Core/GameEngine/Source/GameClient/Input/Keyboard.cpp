@@ -55,9 +55,9 @@ static Bool isCtrlShiftAltKey(KeyDefType key)
 		case KEY_LALT:
 		case KEY_RALT:
 			return TRUE;
+		default:
+			return FALSE;
 	}
-
-	return FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------

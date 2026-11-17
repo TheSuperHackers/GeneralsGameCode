@@ -135,7 +135,7 @@ protected:
 	Bool checkKeyRepeat();  ///< check for repeating keys
 	UnsignedByte getKeyStatusData( KeyDefType key );  ///< get key status
 	Bool getKeyStateBit( KeyDefType key, KeyState bit );  ///< get key state bit
-	void setKeyStateData( KeyDefType key, KeyState data );  ///< get key state
+	void setKeyStateData( KeyDefType key, KeyState data );  ///< set key state
 
 	KeyState m_modifiers;
 	// internal keyboard data members
