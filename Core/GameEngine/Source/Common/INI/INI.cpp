@@ -607,14 +607,13 @@ void INI::parseIntClamped( INI* ini, void* /*instance*/, void* store, const void
 void INI::parseUnsignedIntClamped( INI* ini, void* /*instance*/, void* store, const void* userData )
 {
 	const UnsignedInt maxValue = (UnsignedInt)(uintptr_t)userData;
-	UnsignedInt value = scanUnsignedInt(ini->getNextToken());
-	if( value > maxValue )
-	{
-		DEBUG_LOG(( "INI::parseUnsignedIntClamped - Clamping %u to %u in '%s' line %d", value, maxValue, ini->getFilename().str(), ini->getLineNum() ));
-		value = maxValue;
-	}
+	const UnsignedInt value = scanUnsignedInt(ini->getNextToken());
+	const UnsignedInt clampedValue = min<UnsignedInt>(value, maxValue);
 
-	*(UnsignedInt*)store = value;
+	if( clampedValue != value )
+		DEBUG_LOG(( "INI::parseUnsignedIntClamped - Clamping %u to %u in '%s' line %d", value, clampedValue, ini->getFilename().str(), ini->getLineNum() ));
+
+	*(UnsignedInt*)store = clampedValue;
 }
 
 //-------------------------------------------------------------------------------------------------
