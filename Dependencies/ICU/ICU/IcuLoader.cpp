@@ -20,6 +20,8 @@
 
 #if defined(RTS_ICU_DYNAMIC)
 
+#include <windows.h>
+
 #include <Utility/lazy_static.h>
 #include <Utility/stringex.h>
 #include <stdlib.h>
@@ -74,38 +76,6 @@ private:
 	LoaderLock& operator=(const LoaderLock&);
 };
 
-HMODULE loadModule()
-{
-	// Use absolute paths so -setCwd and PATH cannot supply an unexpected DLL.
-	// Wide paths also allow app-local ICU in non-ASCII installation directories.
-	wchar_t path[MAX_PATH];
-	const DWORD length = GetModuleFileNameW(nullptr, path, MAX_PATH);
-	if (length > 0 && length < MAX_PATH)
-	{
-		wchar_t* separator = wcsrchr(path, L'\\');
-		if (separator != nullptr)
-		{
-			separator[1] = L'\0';
-			if (wcslcat(path, L"icu.dll", MAX_PATH) < MAX_PATH)
-			{
-				HMODULE module = LoadLibraryW(path);
-				if (module != nullptr)
-				{
-					return module;
-				}
-			}
-		}
-	}
-
-	const UINT systemLength = GetSystemDirectoryW(path, MAX_PATH);
-	if (systemLength > 0 && systemLength < MAX_PATH && wcslcat(path, L"\\icu.dll", MAX_PATH) < MAX_PATH)
-	{
-		return LoadLibraryW(path);
-	}
-
-	return nullptr;
-}
-
 void freeResources()
 {
 	if (Module != nullptr)
@@ -118,16 +88,10 @@ void freeResources()
 	ToUtf8WithSub = nullptr;
 }
 
-// The caller holds the critical section across loading and the ICU call.
-bool load()
+// Loads the DLL at path and resolves its exports, or leaves nothing loaded.
+bool loadModule(const wchar_t* path)
 {
-	if (LoadAttempted)
-	{
-		return Module != nullptr;
-	}
-
-	LoadAttempted = true;
-	Module = loadModule();
+	Module = LoadLibraryW(path);
 	if (Module == nullptr)
 	{
 		return false;
@@ -142,6 +106,43 @@ bool load()
 	}
 
 	return true;
+}
+
+// The caller holds the critical section across loading and the ICU call.
+bool load()
+{
+	if (LoadAttempted)
+	{
+		return Module != nullptr;
+	}
+
+	LoadAttempted = true;
+
+	// Use absolute paths so -setCwd and PATH cannot supply an unexpected DLL.
+	// Wide paths also allow app-local ICU in non-ASCII installation directories.
+	// An app-local icu.dll without the exports falls through to the system one.
+	wchar_t path[MAX_PATH];
+	const DWORD length = GetModuleFileNameW(nullptr, path, MAX_PATH);
+	if (length > 0 && length < MAX_PATH)
+	{
+		wchar_t* separator = wcsrchr(path, L'\\');
+		if (separator != nullptr)
+		{
+			separator[1] = L'\0';
+			if (wcslcat(path, L"icu.dll", MAX_PATH) < MAX_PATH && loadModule(path))
+			{
+				return true;
+			}
+		}
+	}
+
+	const UINT systemLength = GetSystemDirectoryW(path, MAX_PATH);
+	if (systemLength > 0 && systemLength < MAX_PATH && wcslcat(path, L"\\icu.dll", MAX_PATH) < MAX_PATH)
+	{
+		return loadModule(path);
+	}
+
+	return false;
 }
 
 } // namespace
