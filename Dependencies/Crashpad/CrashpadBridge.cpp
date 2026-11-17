@@ -194,11 +194,7 @@ extern "C" void __cdecl RtsCrashpadCaptureFatal()
 
     CONTEXT context;
     crashpad::CaptureContext(&context);
-    if (!SetEvent(captureEvent.get()))
-    {
-        TerminateProcess(GetCurrentProcess(), 1);
-    }
-
+    SetEvent(captureEvent.get());
     SetUnhandledExceptionFilter(AlreadyCaptured);
     crashpad::CrashpadClient::DumpWithoutCrash(context);
     SetEvent(completedEvent.get());

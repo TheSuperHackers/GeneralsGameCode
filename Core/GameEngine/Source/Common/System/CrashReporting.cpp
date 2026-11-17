@@ -71,14 +71,14 @@ void CrashReporting::initialize(const AsciiString& userDirectory)
     // Generals resolves UserDataLeafName from GameData.ini during engine init.
     // Zero Hour already has its registry-derived path at WinMain startup.
     awaitingUserDirectory = userDirectory.isEmpty();
-    if (!awaitingUserDirectory && StartCrashpad(userDirectory))
-    {
-        DEBUG_LOG(("Crash reporting: Crashpad (local only)"));
-        return;
-    }
-
     if (!awaitingUserDirectory)
     {
+        if (StartCrashpad(userDirectory))
+        {
+            DEBUG_LOG(("Crash reporting: Crashpad (local only)"));
+            return;
+        }
+
         DEBUG_LOG(("Crashpad startup failed; trying MiniDumper"));
     }
 #endif
@@ -131,7 +131,6 @@ void CrashReporting::captureFatal()
 void CrashReporting::shutdown()
 {
 #ifdef RTS_USE_CRASHPAD
-    awaitingUserDirectory = false;
     if (stop)
     {
         stop();

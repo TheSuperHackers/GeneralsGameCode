@@ -869,7 +869,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// register windows class and create application window
 		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
 		{
-			CrashReporting::shutdown();
 			return exitcode;
 		}
 
@@ -907,7 +906,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			DEBUG_LOG(("Generals is already running...Bail!"));
 			delete TheVersion;
 			TheVersion = nullptr;
-			CrashReporting::shutdown();
 			shutdownMemoryManager();
 			return exitcode;
 		}
