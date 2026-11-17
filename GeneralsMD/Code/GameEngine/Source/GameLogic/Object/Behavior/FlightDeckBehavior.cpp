@@ -171,11 +171,12 @@ UnsignedInt FlightDeckBehavior::getNumRows() const
 	for( UnsignedInt runway = 0; runway < data->m_numCols; runway++ )
 	{
 		const UnsignedInt numSpaceBones = (UnsignedInt)data->m_runwayInfo[ runway ].m_spacesBoneNames.size();
-		if( numRows > numSpaceBones )
+		if( numSpaceBones < data->m_numRows )
 		{
 			DEBUG_LOG(( "FlightDeckBehavior - Runway %u has %u spaces, fewer than NumSpacesPerRunway %u", runway + 1, numSpaceBones, data->m_numRows ));
-			numRows = numSpaceBones;
 		}
+
+		numRows = min( numRows, numSpaceBones );
 	}
 
 	return numRows;
