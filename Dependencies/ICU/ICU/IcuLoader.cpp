@@ -30,7 +30,7 @@ namespace
 
 typedef IcuLoader::Char* (__cdecl* StrFromUtf8)(IcuLoader::Char*, int, int*, const char*, int, IcuLoader::ErrorCode*);
 typedef char* (__cdecl* StrToUtf8WithSub)(char*, int, int*, const IcuLoader::Char*, int,
-    IcuLoader::Char32, int*, IcuLoader::ErrorCode*);
+	IcuLoader::Char32, int*, IcuLoader::ErrorCode*);
 
 bool LoadAttempted = false;
 HMODULE Module = nullptr;
@@ -40,17 +40,17 @@ StrToUtf8WithSub ToUtf8WithSub = nullptr;
 class CriticalSection
 {
 public:
-    CriticalSection()
-    {
-        InitializeCriticalSection(&m_criticalSection);
-        atexit(IcuLoader::unload);
-    }
+	CriticalSection()
+	{
+		InitializeCriticalSection(&m_criticalSection);
+		atexit(IcuLoader::unload);
+	}
 
-    void lock() { EnterCriticalSection(&m_criticalSection); }
-    void unlock() { LeaveCriticalSection(&m_criticalSection); }
+	void lock() { EnterCriticalSection(&m_criticalSection); }
+	void unlock() { LeaveCriticalSection(&m_criticalSection); }
 
 private:
-    CRITICAL_SECTION m_criticalSection;
+	CRITICAL_SECTION m_criticalSection;
 };
 
 // Usable before global constructors and throughout static destruction, including on VC6.
@@ -59,123 +59,123 @@ lazy_static<CriticalSection> Lock;
 class LoaderLock
 {
 public:
-    LoaderLock()
-    {
-        Lock.get().lock();
-    }
+	LoaderLock()
+	{
+		Lock.get().lock();
+	}
 
-    ~LoaderLock()
-    {
-        Lock.get().unlock();
-    }
+	~LoaderLock()
+	{
+		Lock.get().unlock();
+	}
 
 private:
-    LoaderLock(const LoaderLock&);
-    LoaderLock& operator=(const LoaderLock&);
+	LoaderLock(const LoaderLock&);
+	LoaderLock& operator=(const LoaderLock&);
 };
 
 HMODULE loadModule()
 {
-    // Use absolute paths so -setCwd and PATH cannot supply an unexpected DLL.
-    // Wide paths also allow app-local ICU in non-ASCII installation directories.
-    wchar_t path[MAX_PATH];
-    const DWORD length = GetModuleFileNameW(nullptr, path, MAX_PATH);
-    if (length > 0 && length < MAX_PATH)
-    {
-        wchar_t* separator = wcsrchr(path, L'\\');
-        if (separator != nullptr)
-        {
-            separator[1] = L'\0';
-            if (wcslcat(path, L"icu.dll", MAX_PATH) < MAX_PATH)
-            {
-                HMODULE module = LoadLibraryW(path);
-                if (module != nullptr)
-                {
-                    return module;
-                }
-            }
-        }
-    }
+	// Use absolute paths so -setCwd and PATH cannot supply an unexpected DLL.
+	// Wide paths also allow app-local ICU in non-ASCII installation directories.
+	wchar_t path[MAX_PATH];
+	const DWORD length = GetModuleFileNameW(nullptr, path, MAX_PATH);
+	if (length > 0 && length < MAX_PATH)
+	{
+		wchar_t* separator = wcsrchr(path, L'\\');
+		if (separator != nullptr)
+		{
+			separator[1] = L'\0';
+			if (wcslcat(path, L"icu.dll", MAX_PATH) < MAX_PATH)
+			{
+				HMODULE module = LoadLibraryW(path);
+				if (module != nullptr)
+				{
+					return module;
+				}
+			}
+		}
+	}
 
-    const UINT systemLength = GetSystemDirectoryW(path, MAX_PATH);
-    if (systemLength > 0 && systemLength < MAX_PATH && wcslcat(path, L"\\icu.dll", MAX_PATH) < MAX_PATH)
-    {
-        return LoadLibraryW(path);
-    }
+	const UINT systemLength = GetSystemDirectoryW(path, MAX_PATH);
+	if (systemLength > 0 && systemLength < MAX_PATH && wcslcat(path, L"\\icu.dll", MAX_PATH) < MAX_PATH)
+	{
+		return LoadLibraryW(path);
+	}
 
-    return nullptr;
+	return nullptr;
 }
 
 void freeResources()
 {
-    if (Module != nullptr)
-    {
-        FreeLibrary(Module);
-        Module = nullptr;
-    }
+	if (Module != nullptr)
+	{
+		FreeLibrary(Module);
+		Module = nullptr;
+	}
 
-    FromUtf8 = nullptr;
-    ToUtf8WithSub = nullptr;
+	FromUtf8 = nullptr;
+	ToUtf8WithSub = nullptr;
 }
 
 // The caller holds the critical section across loading and the ICU call.
 bool load()
 {
-    if (LoadAttempted)
-    {
-        return Module != nullptr;
-    }
+	if (LoadAttempted)
+	{
+		return Module != nullptr;
+	}
 
-    LoadAttempted = true;
-    Module = loadModule();
-    if (Module == nullptr)
-    {
-        return false;
-    }
+	LoadAttempted = true;
+	Module = loadModule();
+	if (Module == nullptr)
+	{
+		return false;
+	}
 
-    FromUtf8 = reinterpret_cast<StrFromUtf8>(GetProcAddress(Module, "u_strFromUTF8"));
-    ToUtf8WithSub = reinterpret_cast<StrToUtf8WithSub>(GetProcAddress(Module, "u_strToUTF8WithSub"));
-    if (FromUtf8 == nullptr || ToUtf8WithSub == nullptr)
-    {
-        freeResources();
-        return false;
-    }
+	FromUtf8 = reinterpret_cast<StrFromUtf8>(GetProcAddress(Module, "u_strFromUTF8"));
+	ToUtf8WithSub = reinterpret_cast<StrToUtf8WithSub>(GetProcAddress(Module, "u_strToUTF8WithSub"));
+	if (FromUtf8 == nullptr || ToUtf8WithSub == nullptr)
+	{
+		freeResources();
+		return false;
+	}
 
-    return true;
+	return true;
 }
 
 } // namespace
 
 void IcuLoader::unload()
 {
-    LoaderLock lock;
-    freeResources();
-    LoadAttempted = false;
+	LoaderLock lock;
+	freeResources();
+	LoadAttempted = false;
 }
 
 bool IcuLoader::fromUtf8(Char* dest, int capacity, int* length, const char* src, int srcLength, ErrorCode* error)
 {
-    LoaderLock lock;
-    if (!load())
-    {
-        return false;
-    }
+	LoaderLock lock;
+	if (!load())
+	{
+		return false;
+	}
 
-    FromUtf8(dest, capacity, length, src, srcLength, error);
-    return true;
+	FromUtf8(dest, capacity, length, src, srcLength, error);
+	return true;
 }
 
 bool IcuLoader::toUtf8WithSub(char* dest, int capacity, int* length, const Char* src, int srcLength,
-    Char32 substitution, int* substitutions, ErrorCode* error)
+	Char32 substitution, int* substitutions, ErrorCode* error)
 {
-    LoaderLock lock;
-    if (!load())
-    {
-        return false;
-    }
+	LoaderLock lock;
+	if (!load())
+	{
+		return false;
+	}
 
-    ToUtf8WithSub(dest, capacity, length, src, srcLength, substitution, substitutions, error);
-    return true;
+	ToUtf8WithSub(dest, capacity, length, src, srcLength, substitution, substitutions, error);
+	return true;
 }
 
 #endif

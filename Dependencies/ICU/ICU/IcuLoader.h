@@ -29,23 +29,23 @@
 class IcuLoader
 {
 public:
-    // These types match the Windows ICU C ABI, including its 32-bit error enum.
-    typedef unsigned short Char;
-    typedef int Char32;
-    typedef int ErrorCode;
+	// These types match the Windows ICU C ABI, including its 32-bit error enum.
+	typedef unsigned short Char;
+	typedef int Char32;
+	typedef int ErrorCode;
 
-    static void unload();
+	static void unload();
 
-    // Return false when ICU is unavailable; otherwise call ICU and return true.
-    // The caller checks error for the conversion result, including preflight.
-    static bool fromUtf8(Char* dest, int capacity, int* length, const char* src, int srcLength, ErrorCode* error);
-    static bool toUtf8WithSub(char* dest, int capacity, int* length, const Char* src, int srcLength,
-        Char32 substitution, int* substitutions, ErrorCode* error);
+	// Return false when ICU is unavailable; otherwise call ICU and return true.
+	// The caller checks error for the conversion result, including preflight.
+	static bool fromUtf8(Char* dest, int capacity, int* length, const char* src, int srcLength, ErrorCode* error);
+	static bool toUtf8WithSub(char* dest, int capacity, int* length, const Char* src, int srcLength,
+		Char32 substitution, int* substitutions, ErrorCode* error);
 
 private:
-    IcuLoader();
-    IcuLoader(const IcuLoader&);
-    IcuLoader& operator=(const IcuLoader&);
+	IcuLoader();
+	IcuLoader(const IcuLoader&);
+	IcuLoader& operator=(const IcuLoader&);
 };
 
 #endif

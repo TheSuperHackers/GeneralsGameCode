@@ -76,6 +76,7 @@ static size_t Wide_To_Utf8_Convert(char* dest, size_t destLen, const unichar* sr
 		assert(false);
 		return 0;
 	}
+
 	return static_cast<size_t>(length);
 }
 
@@ -113,11 +114,13 @@ static size_t Wide_To_Utf8_Convert(char* dest, size_t destLen, const unichar* sr
 		u_strToUTF8WithSub(dest, static_cast<int32_t>(destLen), &length, &utf16[0], utf16Len,
 			UTF8_REPLACEMENT_CHAR, nullptr, &error);
 	}
+
 	if (!Icu_Succeeded(error))
 	{
 		assert(false);
 		return 0;
 	}
+
 	return static_cast<size_t>(length);
 }
 
@@ -140,6 +143,7 @@ static size_t Utf8_To_Wide_Convert(unichar* dest, size_t destLen, const char* sr
 		u_strToUTF32(reinterpret_cast<UChar32*>(dest), static_cast<int32_t>(destLen), &length,
 			&utf16[0], utf16Len, &error);
 	}
+
 	return Icu_Succeeded(error) ? static_cast<size_t>(length) : UTF8_INVALID;
 }
 
@@ -168,11 +172,13 @@ static size_t Win32_Wide_To_Utf8(char* dest, size_t destLen, const unichar* src,
 	{
 		length = WideCharToMultiByte(CP_UTF8, 0, src, static_cast<int>(srcLen), nullptr, 0, nullptr, nullptr);
 	}
+
 	if (length == 0 && srcLen != 0)
 	{
 		assert(false);
 		return 0;
 	}
+
 	return static_cast<size_t>(length);
 }
 
@@ -184,10 +190,12 @@ static size_t Win32_Utf8_To_Wide(unichar* dest, size_t destLen, const char* src,
 	{
 		length = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, src, static_cast<int>(srcLen), nullptr, 0);
 	}
+
 	if (length == 0 && srcLen != 0)
 	{
 		return UTF8_INVALID;
 	}
+
 	return static_cast<size_t>(length);
 }
 
@@ -201,11 +209,13 @@ static size_t Wide_To_Utf8_Convert(char* dest, size_t destLen, const unichar* sr
 	{
 		return Win32_Wide_To_Utf8(dest, destLen, src, srcLen);
 	}
+
 	if (!Icu_Succeeded(error))
 	{
 		assert(false);
 		return 0;
 	}
+
 	return static_cast<size_t>(length);
 }
 
@@ -218,6 +228,7 @@ static size_t Utf8_To_Wide_Convert(unichar* dest, size_t destLen, const char* sr
 	{
 		return Win32_Utf8_To_Wide(dest, destLen, src, srcLen);
 	}
+
 	return Icu_Succeeded(error) ? static_cast<size_t>(length) : UTF8_INVALID;
 }
 
@@ -255,6 +266,7 @@ size_t Wide_To_Utf8(char* dest, size_t destLen, const unichar* src, size_t srcLe
 			memcpy(dest, &full[0], out);
 		}
 	}
+
 	if (out < destLen)
 	{
 		dest[out] = '\0';
@@ -269,12 +281,14 @@ size_t Utf8_To_Wide(unichar* dest, size_t destLen, const char* src, size_t srcLe
 	{
 		needed = Utf8_To_Wide_Convert(dest, destLen, src, srcLen);
 	}
+
 	if (needed == UTF8_INVALID)
 	{
 		if (destLen > 0)
 		{
 			dest[0] = L'\0';
 		}
+
 		return UTF8_INVALID;
 	}
 
@@ -297,6 +311,7 @@ size_t Utf8_To_Wide(unichar* dest, size_t destLen, const char* src, size_t srcLe
 			memcpy(dest, &full[0], out * sizeof(unichar));
 		}
 	}
+
 	if (out < destLen)
 	{
 		dest[out] = L'\0';
