@@ -65,7 +65,6 @@
 
 #include "Common/file.h"
 
-#include <Utility/interlocked_adapter.h>
 #include "MilesLoader.h"
 
 #include <dsound.h>
@@ -1087,9 +1086,11 @@ void MilesAudioManager::stopPlayingAudio( PlayingAudio *playing )
 	playing->m_status.compare_exchange_strong(status, PS_Stopping);
 	// Advance from Stopping to Stopped
 	status = PS_Stopping;
-	if (!playing->m_status.compare_exchange_strong(status, PS_Stopped)) {
+	if (!playing->m_status.compare_exchange_strong(status, PS_Stopped))
+	{
 		return;
 	}
+
 	releaseMilesHandles(playing);
 	playing->m_rerequestOnNextUpdate = false;
 }
