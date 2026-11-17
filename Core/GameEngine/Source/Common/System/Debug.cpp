@@ -207,14 +207,12 @@ void ReleaseCrash(const char *reason)
 
 	CrashReporting::captureFatal();
 
-	// We are shutting down, and TheGlobalData has been freed. jba. [4/15/2003]
-	if (TheGlobalData == nullptr)
-	{
-		return;
-	}
-
 	char prevbuf[ _MAX_PATH ];
 	char curbuf[ _MAX_PATH ];
+
+	if (TheGlobalData==nullptr) {
+		return; // We are shutting down, and TheGlobalData has been freed.  jba. [4/15/2003]
+	}
 
 	strlcpy(prevbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(prevbuf));
 	strlcat(prevbuf, RELEASECRASH_FILE_NAME_PREV, ARRAY_SIZE(prevbuf));
@@ -285,10 +283,9 @@ void ReleaseCrash(const char *reason)
 
 void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 {
-	// TheSuperHackers @bugfix CryoTheRenegade 01/10/2026 Let ReleaseCrash handle shutdown instead of dereferencing freed global data.
-	if (!TheGameText || TheGlobalData == nullptr) {
+	if (!TheGameText) {
 		ReleaseCrash(m.str());
-		// Returns only during shutdown, after TheGlobalData was freed
+		// This won't ever return
 		return;
 	}
 
