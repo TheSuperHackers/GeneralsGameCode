@@ -135,7 +135,7 @@ int ReplaySimulation::simulateReplaysInWorkerProcesses(const std::vector<AsciiSt
 	WideChar exePath[1024];
 	GetModuleFileNameW(nullptr, exePath, ARRAY_SIZE(exePath));
 
-	// TheSuperHackers @feature CryoTheRenegade 16/11/2026 Pass the -dataDir folders, so that the workers load the same archives.
+	// Pass the -dataDir folders, so that the workers load the same archives.
 	UnicodeString dataDirArgs;
 	const std::vector<AsciiString>& dataDirs = TheGlobalData->m_dataDirs;
 	for (std::vector<AsciiString>::const_iterator it = dataDirs.begin(); it != dataDirs.end(); ++it)
