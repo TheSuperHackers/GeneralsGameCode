@@ -48,7 +48,6 @@ class ModuleFactory;
 class ThingFactory;
 class FunctionLexicon;
 class Radar;
-class WebBrowser;
 class ParticleSystemManager;
 
 class GameEngine : public SubsystemInterface
@@ -99,7 +98,6 @@ protected:
 	virtual ThingFactory *createThingFactory() = 0;				///< Factory for the thing factory
 	virtual FunctionLexicon *createFunctionLexicon() = 0;	///< Factory for Function Lexicon
 	virtual Radar *createRadar(Bool dummy) = 0;						///< Factory for radar
-	virtual WebBrowser *createWebBrowser() = 0;						///< Factory for embedded browser
 	virtual ParticleSystemManager* createParticleSystemManager(Bool dummy) = 0;
 	virtual AudioManager *createAudioManager(Bool dummy) = 0;				///< Factory for Audio Manager
 

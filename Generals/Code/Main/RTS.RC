@@ -74,7 +74,6 @@ IDB_LOAD_SCREEN         BITMAP  DISCARDABLE     "Install_Final.bmp"
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-1 TYPELIB "../Libraries/Include/EABrowserDispatch/BrowserDispatch.tlb"
 
 
 /////////////////////////////////////////////////////////////////////////////

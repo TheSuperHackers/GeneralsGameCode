@@ -69,11 +69,6 @@ if(MINGW)
         winmm       # Multimedia (timeGetTime, etc.)
     )
 
-    # Note: MinGW-w64 does not provide comsuppw (COM support utilities library).
-    # COM support utilities (_com_util::ConvertStringToBSTR, ConvertBSTRToString)
-    # are provided by Dependencies/Utility/Utility/comsupp_compat.h as header-only
-    # implementations. No library linking required.
-
     # MinGW-w64 compatibility: Create d3dx8 as an alias to d3dx8d
     # MinGW-w64 only provides libd3dx8d.a (debug library), not libd3dx8.a
     # The min-dx8-sdk (dx8.cmake) handles this correctly via d3d8lib interface target,

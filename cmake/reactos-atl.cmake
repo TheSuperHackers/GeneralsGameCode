@@ -31,10 +31,6 @@ if(MINGW)
             "${reactos_atl_SOURCE_DIR}/sdk/lib/atl"
         )
 
-        # COM support (_com_util::ConvertStringToBSTR and ConvertBSTRToString)
-        # is provided by Dependencies/Utility/Utility/comsupp_compat.h as a
-        # header-only implementation. No library needs to be built or linked.
-
         # Add required ATL defines for MinGW compatibility
         # NOTE: Do NOT define _ATL_NO_AUTOMATIC_NAMESPACE
         # The codebase uses ATL types (CComModule, CComObject, CString, etc.)
@@ -52,7 +48,6 @@ if(MINGW)
 
         message(STATUS "ReactOS ATL headers: ${reactos_atl_SOURCE_DIR}/sdk/lib/atl")
         message(STATUS "ReactOS PSEH headers: ${reactos_atl_SOURCE_DIR}/sdk/lib/pseh/include")
-        message(STATUS "COM support (comsupp): Header-only in Dependencies/Utility/Utility/comsupp_compat.h")
         message(STATUS "Using ReactOS PSEH in C++-compatible dummy mode (_USE_DUMMY_PSEH)")
         message(STATUS "Using MinGW-w64 CRT headers (NOT ReactOS CRT)")
     endif()
