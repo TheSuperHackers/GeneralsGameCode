@@ -785,7 +785,6 @@ typedef struct SRecord {
 } SRecord;
 
 
-// Returns a pointer to the text of the string resource.
 char const * Fetch_String(int id)
 {
 	static SRecord _buffers[64];

@@ -177,7 +177,6 @@ class IndexClass
 };
 
 
-// Constructs an empty index handler.
 template<class INDEX, class T>
 IndexClass<INDEX, T>::IndexClass() :
 	IndexTable(0),
@@ -190,7 +189,6 @@ IndexClass<INDEX, T>::IndexClass() :
 }
 
 
-// Frees any resources managed by this index handler.
 template<class INDEX, class T>
 IndexClass<INDEX, T>::~IndexClass()
 {
@@ -198,8 +196,6 @@ IndexClass<INDEX, T>::~IndexClass()
 }
 
 
-// Frees all internal resources and brings the index handler into a known empty state. After this
-// routine, the index handler is free to be reused.
 template<class INDEX, class T>
 void IndexClass<INDEX, T>::Clear()
 {
@@ -212,9 +208,7 @@ void IndexClass<INDEX, T>::Clear()
 }
 
 
-// Increases the capacity of the internal index table without altering the index data. Use this
-// routine prior to adding a new element if the existing capacity is insufficient.
-// WARNING: If there is insufficient RAM, then this routine will fail.
+// Does not alter the index data.
 template<class INDEX, class T>
 bool IndexClass<INDEX, T>::Increase_Table_Size(int amount)
 {
@@ -255,7 +249,6 @@ bool IndexClass<INDEX, T>::Increase_Table_Size(int amount)
 }
 
 
-// Returns the number of index entries recorded by this index handler.
 template<class INDEX, class T>
 int IndexClass<INDEX, T>::Count() const
 {
@@ -263,7 +256,6 @@ int IndexClass<INDEX, T>::Count() const
 }
 
 
-// Checks for presence of index entry.
 template<class INDEX, class T>
 bool IndexClass<INDEX, T>::Is_Present(INDEX const & id) const
 {
@@ -306,7 +298,6 @@ bool IndexClass<INDEX, T>::Is_Present(INDEX const & id) const
 }
 
 
-// Fetch data from specified index.
 // WARNING: This routine presumes that the index exists. If it doesn't exist, then the default
 // constructed object "T" is returned instead. To avoid this problem, always verify the existence of
 // the index by calling Is_Present() first.
@@ -335,7 +326,6 @@ T const & IndexClass<INDEX, T>::Fetch_By_Position(int pos) const
 }
 
 
-// Checks if the index ID matches the previously recorded index archive pointer.
 template<class INDEX, class T>
 bool IndexClass<INDEX, T>::Is_Archive_Same(INDEX const & id) const
 {
@@ -346,8 +336,8 @@ bool IndexClass<INDEX, T>::Is_Archive_Same(INDEX const & id) const
 }
 
 
-// This routine will set the archive pointer to an invalid state. This must be performed if ever the
-// archive pointer would become illegal (such as when the element it refers to is deleted).
+// This must be performed if ever the archive pointer would become illegal (such as when the element
+// it refers to is deleted).
 template<class INDEX, class T>
 void IndexClass<INDEX, T>::Invalidate_Archive() const
 {
@@ -355,8 +345,8 @@ void IndexClass<INDEX, T>::Invalidate_Archive() const
 }
 
 
-// Records the node pointer into the archive. Use this routine when there is a good chance that the
-// specified node will be requested in the immediate future.
+// Use this routine when there is a good chance that the specified node will be requested in the
+// immediate future.
 template<class INDEX, class T>
 void IndexClass<INDEX, T>::Set_Archive(NodeElement const * node) const
 {
@@ -364,7 +354,6 @@ void IndexClass<INDEX, T>::Set_Archive(NodeElement const * node) const
 }
 
 
-// Associates the index number with the data specified. Returns false if RAM has been exhausted.
 // WARNING: The data is COPIED to internal storage. This means that the data object must have a
 // functional and efficient copy constructor and assignment operator.
 template<class INDEX, class T>
@@ -407,7 +396,6 @@ bool IndexClass<INDEX, T>::Add_Index(INDEX const & id, T const & data)
 }
 
 
-// Find matching index and remove it from system.
 template<class INDEX, class T>
 bool IndexClass<INDEX, T>::Remove_Index(INDEX const & id)
 {
@@ -471,8 +459,7 @@ int _USERENTRY IndexClass<INDEX, T>::search_compfunc(void const * ptr1, void con
 }
 
 
-// Performs a binary search on the previously recorded index values. Returns nullptr if no matching
-// index could be found.
+// Performs a binary search on the previously recorded index values.
 template<class INDEX, class T>
 typename IndexClass<INDEX, T>::NodeElement const * IndexClass<INDEX, T>::Search_For_Node(INDEX const & id) const
 {

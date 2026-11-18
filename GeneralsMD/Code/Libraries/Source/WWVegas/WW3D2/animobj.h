@@ -209,7 +209,6 @@ protected:
 
 
 
-// Animation update function for the base pose.
 inline void Animatable3DObjClass::Base_Update(const Matrix3D & root)
 {
 	/*
@@ -239,7 +238,6 @@ inline void Animatable3DObjClass::Anim_Update(const Matrix3D & root,HAnimClass *
 }
 
 
-// Update function for a blend of two animations.
 inline void Animatable3DObjClass::Blend_Update
 (
 	const Matrix3D &	root,
@@ -260,7 +258,6 @@ inline void Animatable3DObjClass::Blend_Update
 }
 
 
-// Animation update for a combination of anims.
 inline void Animatable3DObjClass::Combo_Update( const Matrix3D & root, HAnimComboClass *anim )
 {
 	if (HTree) {

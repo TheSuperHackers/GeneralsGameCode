@@ -122,7 +122,6 @@ const Matrix3D	Matrix3D::RotateZ270
 );
 
 
-// Init a matrix3D from a matrix3 and a position.
 void Matrix3D::Set(const Matrix3x3 & rot,const Vector3 & pos)
 {
 	Row[0].Set( rot[0][0], rot[0][1], rot[0][2], pos[0]);
@@ -131,7 +130,6 @@ void Matrix3D::Set(const Matrix3x3 & rot,const Vector3 & pos)
 }
 
 
-// Init a matrix3D from a quaternion and a position.
 void Matrix3D::Set(const Quaternion & rot,const Vector3 & pos)
 {
    Set_Rotation(rot);
@@ -213,10 +211,10 @@ Vector3 Matrix3D::Inverse_Rotate_Vector(const Vector3 &vect) const
 	);
 }
 
-// Creates a "look at" transformation. Builds a transformation matrix which positions the origin at
-// p, points the negative z-axis towards a target t, and rolls about the z-axis by the angle
-// specified by roll (in radians). This can be useful for creating a camera matrix, just invert the
-// matrix after initializing it with this function.
+// Builds a transformation matrix which positions the origin at p, points the negative z-axis
+// towards a target t, and rolls about the z-axis by the angle specified by roll (in radians). This
+// can be useful for creating a camera matrix, just invert the matrix after initializing it with
+// this function.
 // WARNING: This function is written assuming the convention that the "ground" is the X-Y plane and
 // Z is altitude.
 void Matrix3D::Look_At(const Vector3 &p,const Vector3 &t,float roll)
@@ -464,7 +462,6 @@ void Matrix3D::Get_Orthogonal_Inverse(Matrix3D & inv) const
 	inv.Row[2][3] = trans[2];
 }
 
-// Copies a 3x3 (float[9]) matrix into this matrix.
 void Matrix3D::Copy_3x3_Matrix(float matrix[3][3])
 {
 	Row[0][0] = matrix[0][0];
@@ -832,7 +829,6 @@ not_equal2:
 }
 #endif
 
-// Compute transformed axis-aligned box.
 void Matrix3D::Transform_Min_Max_AABox
 (
 	const Vector3 &		min,
@@ -875,7 +871,6 @@ void Matrix3D::Transform_Min_Max_AABox
 }
 
 
-// Compute transformed axis-aligned box.
 void Matrix3D::Transform_Center_Extent_AABox
 (
 	const Vector3 &		center,
@@ -971,7 +966,7 @@ void Matrix3D::Re_Orthogonalize()
 }
 
 
-// Linearly interpolate matrices (orientation is slerped).
+// The orientation is slerped.
 void Matrix3D::Lerp(const Matrix3D &A, const Matrix3D &B, float factor, Matrix3D& result)
 {
    assert(factor >= 0.0f);

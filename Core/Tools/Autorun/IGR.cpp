@@ -32,7 +32,7 @@
 IGROptionsClass *OnlineOptions = nullptr;
 
 
-// Class initializer. Reads from the registry.
+// Reads the options from the registry.
 bool IGROptionsClass::Init()
 {
 	int	size;

@@ -65,7 +65,6 @@ GenNamesDialogClass::~GenNamesDialogClass()
 }
 
 
-// Presents the dialog to the user and records the selections into the passed-in options structure.
 bool GenNamesDialogClass::Get_Options(OptionsStruct * options)
 {
 	Options = options;
@@ -88,7 +87,6 @@ bool GenNamesDialogClass::Get_Options(OptionsStruct * options)
 }
 
 
-// Verifies that the input is valid.
 bool GenNamesDialogClass::Ok_To_Exit()
 {
 	if (IsDlgButtonChecked(Hwnd,IDC_ASSIGN_NAMES_CHECK) == BST_CHECKED) {
@@ -109,7 +107,6 @@ bool GenNamesDialogClass::Ok_To_Exit()
 }
 
 
-// Toggles the controls related to name assignment.
 void GenNamesDialogClass::Toggle_Name_Assignment()
 {
 	bool onoff = (IsDlgButtonChecked(Hwnd,IDC_ASSIGN_NAMES_CHECK) == BST_CHECKED);
@@ -121,7 +118,6 @@ void GenNamesDialogClass::Toggle_Name_Assignment()
 }
 
 
-// Toggles the controls related to collision bits assignment.
 void GenNamesDialogClass::Toggle_Collision_Bits_Assignment()
 {
 	bool onoff = (IsDlgButtonChecked(Hwnd,IDC_ASSIGN_COLLISION_BITS_CHECK) == BST_CHECKED);

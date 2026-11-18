@@ -47,7 +47,7 @@ void RenderObjectRecyclerClass::Reset()
 }
 
 
-// Create/Re-use a render object.
+// Creates a new render object or re-uses one from the pool.
 RenderObjClass * RenderObjectRecyclerClass::Get_Render_Object(const char * name,const Matrix3D & tm)
 {
 	RefRenderObjListIterator it(&InactiveModels);
@@ -87,14 +87,13 @@ void RenderObjectRecyclerClass::Return_Render_Object(RenderObjClass * obj)
 }
 
 
-// Internally add a render object to the pool.
 void RenderObjectRecyclerClass::Insert_Inactive_Model(RenderObjClass * obj)
 {
 	WWASSERT(obj != nullptr);
 	InactiveModels.Add(obj);
 }
 
-// Resets a render object so it can be re-used.
+// Resets the render object so it can be re-used.
 void RenderObjectRecyclerClass::Reset_Model(RenderObjClass * model)
 {
 	/*

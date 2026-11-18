@@ -147,7 +147,6 @@ RingRenderObjClass::RingRenderObjClass()
 	calculate_value_array(1.0f, Value);
 }
 
-// Constructor - init from a definition.
 RingRenderObjClass::RingRenderObjClass(const W3dRingStruct & def)
 	:	anim_time (0.0F),
 		IsAnimating(false),
@@ -419,7 +418,7 @@ void RingRenderObjClass::render_ring(RenderInfoClass & rinfo,const Vector3 & cen
 }
 
 
-// Submits box to the GERD for VIS. This renders the ring with the specified VIS-ID.
+// Submits the ring to the GERD for VIS. This renders the ring with the specified VIS-ID.
 void RingRenderObjClass::vis_render_ring(SpecialRenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent)
 {
 	WWASSERT(0);
@@ -565,7 +564,6 @@ Vector2 RingRenderObjClass::Get_Default_Outer_Scale() const
 }
 
 
-// Special render this ring (vis).
 void RingRenderObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 {
 	Matrix3D temp(1);
@@ -593,7 +591,6 @@ void RingRenderObjClass::Set_Position(const Vector3 &v)
 }
 
 
-// Update the world-space version of this ring.
 void RingRenderObjClass::update_cached_box()
 {
 	CachedBox.Center = Transform.Get_Translation() + ObjSpaceCenter;
@@ -601,7 +598,6 @@ void RingRenderObjClass::update_cached_box()
 }
 
 
-// Return the object-space bounding sphere.
 void RingRenderObjClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
 	sphere.Center = ObjSpaceCenter;
@@ -702,7 +698,6 @@ void RingRenderObjClass::Scale(float scale)
 }
 
 
-// Scales ring non-uniformly.
 void RingRenderObjClass::Scale(float scalex, float scaley, float scalez)
 {
 	// Scale default values
@@ -744,7 +739,6 @@ void RingRenderObjClass::Update_On_Visibility()
 	}
 }
 
-// Update Current Display state.
 void RingRenderObjClass::animate()
 {
 	if (Is_Animating ()) {
@@ -1082,7 +1076,6 @@ void RingMeshClass::Scale (const Vector2 &inner_scale, const Vector2 &outer_scal
 }
 
 
-// Create Ring Geometry.
 void RingMeshClass::Generate(float radius, int slices)
 {
 	Free ();
@@ -1159,7 +1152,6 @@ RingMeshClass::~RingMeshClass()
 	Free();
 }
 
-// Release memory that the ring mesh is using.
 void RingMeshClass::Free()
 {
 

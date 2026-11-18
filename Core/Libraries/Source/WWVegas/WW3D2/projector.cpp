@@ -69,7 +69,7 @@ const Matrix3D & ProjectorClass::Get_Transform() const
 }
 
 
-// Set up a perspective projection. The field of view angles are in radians.
+// The field of view angles are in radians.
 // WARNING: Remember that znear and zfar are *distances*. They are positive numbers as in the OpenGL
 // convention even though the coordinates will be negative.
 void ProjectorClass::Set_Perspective_Projection(float hfov,float vfov,float znear,float zfar)
@@ -103,14 +103,13 @@ void ProjectorClass::Set_Ortho_Projection(float xmin,float xmax,float ymin,float
 }
 
 
-// Computes texcoord for given world-space point.
+// The point is in world space.
 void ProjectorClass::Compute_Texture_Coordinate(const Vector3 & point,Vector3 * set_stq)
 {
 	Mapper->Compute_Texture_Coordinate(point,set_stq);
 }
 
 
-// Recalculate the world-space bounding box.
 void ProjectorClass::Update_WS_Bounding_Volume()
 {
 	/*

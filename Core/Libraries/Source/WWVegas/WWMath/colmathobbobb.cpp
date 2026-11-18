@@ -132,8 +132,8 @@ private:
 
 
 
-// Intersection test for a basis vector from box0. The optimization here is that the projection of
-// the first box is known since the axis is one of its basis vectors.
+// The optimization here is that the projection of the first box is known since the axis is one of
+// its basis vectors.
 static bool obb_intersect_box0_basis
 (
 	ObbIntersectionStruct &	context,
@@ -157,8 +157,8 @@ static bool obb_intersect_box0_basis
 }
 
 
-// Intersection test for a basis vector from box1. The "optimization" here is that the extent for
-// the second box is known since the axis is one of its basis vectors.
+// The "optimization" here is that the extent for the second box is known since the axis is one of
+// its basis vectors.
 static bool obb_intersect_box1_basis
 (
 	ObbIntersectionStruct &	context,
@@ -182,10 +182,9 @@ static bool obb_intersect_box1_basis
 }
 
 
-// Intersection test for an axis. Checks intersection on an arbitrary axis where you've already
-// computed the projections. Many of the later tests in the OBB-OBB algorithm fall into here since
-// there are optimizations in computing the projections but they are all specific to the axis being
-// used.
+// Checks intersection on an arbitrary axis where you've already computed the projections. Many of
+// the later tests in the OBB-OBB algorithm fall into here since there are optimizations in
+// computing the projections but they are all specific to the axis being used.
 static inline bool obb_intersect_axis
 (
 	ObbIntersectionStruct &	context,
@@ -203,10 +202,10 @@ static inline bool obb_intersect_axis
 }
 
 
-// Test two OBBoxes for intersection. This function works in a very similar (but simplified) way as
-// the Collide function. See the comments in that function for more clues regarding the math
-// involved... Due to the re-usage of intermediate calculations, this function is ~2x faster than
-// the equivalent Oriented_Boxes_Intersect.
+// This function works in a very similar (but simplified) way as the Collide function. See the
+// comments in that function for more clues regarding the math involved... Due to the re-usage of
+// intermediate calculations, this function is ~2x faster than the equivalent
+// Oriented_Boxes_Intersect.
 bool intersect_obb_obb
 (
 	ObbIntersectionStruct & context
@@ -356,7 +355,7 @@ bool intersect_obb_obb
 }
 
 
-// Test two obb's for intersection. Simply sets up the context and calls intersect_obb_obb.
+// Simply sets up the context and calls intersect_obb_obb.
 bool CollisionMath::Intersection_Test(const OBBoxClass & box0,const OBBoxClass & box1)
 {
 	ObbIntersectionStruct context(box0,box1);
@@ -364,7 +363,6 @@ bool CollisionMath::Intersection_Test(const OBBoxClass & box0,const OBBoxClass &
 }
 
 
-// Test an OBB for intersection with an AAB.
 bool CollisionMath::Intersection_Test(const OBBoxClass & box0,const AABoxClass & box1)
 {
 	OBBoxClass obbox1(box1.Center,box1.Extent);
@@ -373,7 +371,6 @@ bool CollisionMath::Intersection_Test(const OBBoxClass & box0,const AABoxClass &
 }
 
 
-// Test an AAB for intersection with an OBB.
 bool CollisionMath::Intersection_Test(const AABoxClass & box0,const OBBoxClass & box1)
 {
 	OBBoxClass obbox0(box0.Center,box0.Extent);
@@ -456,7 +453,6 @@ private:
 
 
 
-// Test the projections of two obb's for separation.
 static inline bool obb_separation_test
 (
  	ObbCollisionStruct & context,
@@ -500,7 +496,6 @@ static inline bool obb_separation_test
 }
 
 
-// Projects the boxes onto a basis vector from box0.
 static bool obb_check_box0_basis
 (
 	ObbCollisionStruct &		context,
@@ -523,7 +518,6 @@ static bool obb_check_box0_basis
 }
 
 
-// Projects the two obbs onto a basis vector from box1.
 static bool obb_check_box1_basis
 (
 	ObbCollisionStruct &		context,
@@ -545,7 +539,6 @@ static bool obb_check_box1_basis
 }
 
 
-// Projects the obbs onto an arbitrary axis.
 static inline bool obb_check_axis
 (
 	ObbCollisionStruct &		context,
@@ -559,7 +552,6 @@ static inline bool obb_check_axis
 }
 
 
-// Computes projections of two boxes onto an arbitrary axis.
 static inline void obb_compute_projections
 (
 	const ObbCollisionStruct &		context,
@@ -577,7 +569,7 @@ static inline void obb_compute_projections
 }
 
 
-// Computes the contact normal (after contact is detected).
+// Called after contact is detected.
 static inline void compute_contact_normal(ObbCollisionStruct & context,CastResultStruct * result)
 {
 	switch(context.AxisId)
@@ -674,7 +666,7 @@ static inline float eval_side(float ab,float side)
 }
 
 
-// Computes the contact point (after contact is detected).
+// Called after contact is detected.
 static inline void compute_contact_point(ObbCollisionStruct & context,CastResultStruct * result)
 {
 	int i,j;
@@ -895,7 +887,6 @@ static inline void compute_contact_point(ObbCollisionStruct & context,CastResult
 }
 
 
-// Test two obb's for collision.
 bool collide_obb_obb
 (
 	ObbCollisionStruct &		context,
@@ -1122,7 +1113,6 @@ exit:
 	return false;
 }
 
-// Collide two obb's.
 bool CollisionMath::Collide
 (
 	const OBBoxClass &		box0,
@@ -1137,7 +1127,6 @@ bool CollisionMath::Collide
 }
 
 
-// Collide an OBB with an AAB.
 bool CollisionMath::Collide
 (
 	const OBBoxClass &		box0,
@@ -1153,7 +1142,6 @@ bool CollisionMath::Collide
 }
 
 
-// Collide an AAB with an OBB.
 bool CollisionMath::Collide
 (
 	const AABoxClass &		box0,

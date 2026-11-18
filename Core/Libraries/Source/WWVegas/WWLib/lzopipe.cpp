@@ -41,7 +41,6 @@
 #include	<string.h>
 
 
-// Prepares the LZOPipe object for compression or decompression as indicated.
 LZOPipe::LZOPipe(CompControl control, int blocksize) :
 		Control(control),
 		Counter(0),
@@ -56,7 +55,6 @@ LZOPipe::LZOPipe(CompControl control, int blocksize) :
 }
 
 
-// Frees any buffers it may have allocated.
 LZOPipe::~LZOPipe()
 {
 	delete [] Buffer;
@@ -67,9 +65,8 @@ LZOPipe::~LZOPipe()
 }
 
 
-// Send some data through the LZO processor pipe (decompression or compression). It does this by
-// accumulating the necessary bytes to make a whole block. Then the block is processed and the
-// entire contents are flushed to the next pipe segment in the chain.
+// Accumulates the necessary bytes to make a whole block. Then the block is processed and the entire
+// contents are flushed to the next pipe segment in the chain.
 // WARNING: The compression process may be slow as well as consuming two buffers.
 int LZOPipe::Put(void const * source, int slen)
 {

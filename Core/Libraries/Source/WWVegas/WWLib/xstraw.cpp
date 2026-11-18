@@ -41,8 +41,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 
-// Fetch data from the straw's buffer holding tank (as set up by the straw's constructor). Returns
-// fewer bytes than requested when the holding tank is exhausted.
+// The holding tank is set up by the straw's constructor. Returns fewer bytes than requested when
+// the holding tank is exhausted.
 int BufferStraw::Get(void * source, int slen)
 {
 	int total = 0;
@@ -72,8 +72,8 @@ int BufferStraw::Get(void * source, int slen)
 //---------------------------------------------------------------------------------------------------------
 
 
-// Fetch data from the file (as specified in the straw's constructor). Returns fewer bytes than
-// requested when the file is exhausted.
+// The file is specified in the straw's constructor. Returns fewer bytes than requested when the
+// file is exhausted.
 int FileStraw::Get(void * source, int slen)
 {
 	if (Valid_File() && source != nullptr && slen > 0) {

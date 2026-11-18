@@ -186,7 +186,6 @@ HLodSaveClass::HLodSaveClass (MeshConnectionsClass **connections, int lod_count,
 }
 
 
-// Destructor blows away the dynamic memory we used.
 HLodSaveClass::~HLodSaveClass ()
 {
 	if (lod_array)
@@ -197,7 +196,6 @@ HLodSaveClass::~HLodSaveClass ()
 }
 
 
-// Method called when saving to a W3D file. Saves the chunks that define a HLOD.
 bool HLodSaveClass::Save(ChunkSaveClass &csave)
 {
 	if (!lod_array)

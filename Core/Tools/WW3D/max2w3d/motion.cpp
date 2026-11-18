@@ -452,7 +452,6 @@ Matrix3 MotionClass::get_motion_matrix(int node,int frame)
 }
 
 
-// Store euler angles.
 void MotionClass::set_eulers(int node,int frame, float x, float y, float z)
 {
 	/*
@@ -516,7 +515,6 @@ Point3 MotionClass::get_eulers(int node,int frame)
 }
 
 
-// Store a visibility bit.
 void MotionClass::set_visibility(int node,int frame,bool visible)
 {
 	VisData[node][frame] = visible;
@@ -524,14 +522,12 @@ void MotionClass::set_visibility(int node,int frame,bool visible)
 }
 
 
-// Retrieve the visibility bit for this node:frame.
 bool MotionClass::get_visibility(int node,int frame)
 {
 	return VisData[node][frame];
 }
 
 
-// Store a binary movement bit.
 void MotionClass::set_binary_movement(int node,int frame,bool visible)
 {
 	BinMoveData[node][frame] = visible;
@@ -539,7 +535,6 @@ void MotionClass::set_binary_movement(int node,int frame,bool visible)
 }
 
 
-// Retrieve the movement bit for this node:frame.
 bool MotionClass::get_binary_movement(int node,int frame)
 {
 	return BinMoveData[node][frame];

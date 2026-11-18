@@ -84,7 +84,6 @@ MeshConnectionsClass::~MeshConnectionsClass()
 }
 
 
-// Returns the name and bone index for a given object.
 bool MeshConnectionsClass::Get_Sub_Object_Data (int mesh_idx, char **out_name, int *out_boneindex,
 														INode **out_inode)
 {
@@ -101,7 +100,6 @@ bool MeshConnectionsClass::Get_Sub_Object_Data (int mesh_idx, char **out_name, i
 }
 
 
-// Name and bone for the given aggregate.
 bool MeshConnectionsClass::Get_Aggregate_Data(int mesh_idx, char **out_name, int *out_boneindex,
 														INode **out_inode)
 {
@@ -118,7 +116,6 @@ bool MeshConnectionsClass::Get_Aggregate_Data(int mesh_idx, char **out_name, int
 }
 
 
-// Name and transform for the specified proxy object.
 bool MeshConnectionsClass::Get_Proxy_Data(int index, char **out_name, int *out_boneindex,
 														INode **out_inode)
 {

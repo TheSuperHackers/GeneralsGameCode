@@ -52,7 +52,6 @@ LogDataDialogClass * _LogDialog = nullptr;
 */
 
 
-// Initialize the export logging system.
 void ExportLog::Init(HWND parent)
 {
 	assert(_LogDialog == nullptr);
@@ -60,7 +59,6 @@ void ExportLog::Init(HWND parent)
 }
 
 
-// Shutdown the export logging system.
 void ExportLog::Shutdown(bool wait_for_ok)
 {
 	if (_LogDialog != nullptr) {
@@ -97,7 +95,6 @@ void ExportLog::rprintf(const char * format, ...)
 }
 
 
-// Set the position of the progress bar.
 void ExportLog::updatebar(float position, float total)
 {
 	if (_LogDialog != nullptr) {

@@ -216,7 +216,7 @@ void Animatable3DObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 }
 
 
-// Sets the transform and marks sub-objects as dirty.
+// Also marks the sub-objects as dirty.
 void Animatable3DObjClass::Set_Transform(const Matrix3D &m)
 {
 	CompositeRenderObjClass::Set_Transform(m);
@@ -224,7 +224,7 @@ void Animatable3DObjClass::Set_Transform(const Matrix3D &m)
 }
 
 
-// Sets the position and marks sub-objects as dirty.
+// Also marks the sub-objects as dirty.
 void Animatable3DObjClass::Set_Position(const Vector3 &v)
 {
 	CompositeRenderObjClass::Set_Position(v);
@@ -263,7 +263,7 @@ int Animatable3DObjClass::Get_Bone_Index(const char * bonename)
 
 
 
-// Set the animation state to "none" (base pose).
+// Sets the animation state to the base pose.
 void Animatable3DObjClass::Set_Animation()
 {
 	Release();
@@ -272,7 +272,6 @@ void Animatable3DObjClass::Set_Animation()
 }
 
 
-// Set the animation state to the given anim/frame.
 void Animatable3DObjClass::Set_Animation(HAnimClass * motion, float frame, int mode)
 {
 
@@ -309,7 +308,6 @@ void Animatable3DObjClass::Set_Animation(HAnimClass * motion, float frame, int m
 }
 
 
-// Set the animation state to a blend of two anims.
 void Animatable3DObjClass::Set_Animation
 (
 	HAnimClass * motion0,
@@ -351,7 +349,6 @@ void Animatable3DObjClass::Set_Animation
 }
 
 
-// Set animation state with an anim combo.
 void Animatable3DObjClass::Set_Animation
 (
 	HAnimComboClass * anim_combo
@@ -422,7 +419,7 @@ const Matrix3D &	Animatable3DObjClass::Get_Bone_Transform(int boneindex)
 }
 
 
-// Capture the specified bone (override animation).
+// The captured bone overrides the animation.
 void Animatable3DObjClass::Capture_Bone(int boneindex)
 {
 	if (HTree) {
@@ -431,7 +428,7 @@ void Animatable3DObjClass::Capture_Bone(int boneindex)
 }
 
 
-// Release the specified bone (allow animation).
+// The released bone follows the animation again.
 void Animatable3DObjClass::Release_Bone(int boneindex)
 {
 	if (HTree) {
@@ -466,7 +463,6 @@ void Animatable3DObjClass::Control_Bone(int bindex,const Matrix3D & objtm,bool w
 	}
 }
 
-// Recalculate the transforms for our sub-objects.
 void Animatable3DObjClass::Update_Sub_Object_Transforms()
 {
 	/*

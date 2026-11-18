@@ -36,9 +36,8 @@
 #include	"cstraw.h"
 
 
-// Fetch data from the data source. The data is requested from the next straw in the chain such that
-// the data stream is requested in chunks. This serves to lessen the impact of multiple small data
-// requests. Returns fewer bytes than requested when the data source has been exhausted.
+// The data is requested from the next straw in the chain such that the data stream is requested in
+// chunks. This serves to lessen the impact of multiple small data requests.
 int CacheStraw::Get(void * source, int slen)
 {
 	int total = 0;

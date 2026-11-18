@@ -71,10 +71,8 @@ void BufferedFileClass::Close()
 }
 
 
-// Reads the specified number of bytes into a memory buffer. If buffer or size is null, no read is
-// performed. It is legal to call this routine with a request for more bytes than are in the file.
-// This condition can result in fewer bytes being read than requested. Determine this by examining
-// the return value.
+// If buffer or size is null, no read is performed. It is legal to request more bytes than are in
+// the file, in which case fewer bytes are read.
 int BufferedFileClass::Read(void * buffer, int size)
 {
 	int read = 0;
@@ -137,8 +135,8 @@ int BufferedFileClass::Read(void * buffer, int size)
 }
 
 
-// Writes the specified data to the file. A disk full condition is caught, so this routine will
-// always return with the number matching the size request.
+// A disk full condition is caught, so this routine will always return with the number matching the
+// size request.
 // WARNING: A fatal file condition could cause this routine to never return.
 int BufferedFileClass::Write(void const * buffer, int size)
 {
@@ -150,9 +148,7 @@ int BufferedFileClass::Write(void const * buffer, int size)
 }
 
 
-// Reposition the file pointer as indicated. It can move either relative to current position or
-// absolute from the beginning or ending of the file. This routine will only return if it
-// successfully performed the seek.
+// This routine will only return if it successfully performed the seek.
 // WARNING: If there was a file error, then this routine might never return.
 int BufferedFileClass::Seek(int pos, int dir)
 {

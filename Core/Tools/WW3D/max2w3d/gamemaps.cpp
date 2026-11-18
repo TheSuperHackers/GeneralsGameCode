@@ -98,14 +98,12 @@ Class_ID GameMapsClass::ClassID()
 	return _GameMapsClassID;
 }
 
-// Assigns a controller to one of the Sub-Anims.
 BOOL GameMapsClass::AssignController(Animatable *control,int subAnim)
 {
 	ReplaceReference(SubNumToRefNum(subAnim),(ReferenceTarget *)control);
 	return TRUE;
 }
 
-// Max is notifying GameMapsClass that a reference has changed.
 RefResult GameMapsClass::NotifyRefChanged
 (
 	Interval				changeInt,
@@ -142,7 +140,6 @@ RefTargetHandle GameMapsClass::Clone(RemapDir &remap)
 }
 
 
-// Saves the GameMapsClass data into a MAX file.
 IOResult GameMapsClass::Save(ISave * isave)
 {
 	ULONG nb,f=0;

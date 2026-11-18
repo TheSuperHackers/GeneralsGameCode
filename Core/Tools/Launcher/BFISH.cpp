@@ -65,13 +65,13 @@ BlowfishEngine::~BlowfishEngine()
 }
 
 
-// Submit a key that will allow data processing. This routine must be called before any data can be
-// encrypted or decrypted. This routine need only be called when the key is to be changed or set for
-// the first time. Once the key has been set, the engine may be used to encrypt, decrypt, or both
-// operations indefinitely. The key must be 56 bytes or less in length. This is necessary because
-// any keys longer than that will not correctly affect the encryption process. If the key pointer is
-// null, then the S-Box tables are reset to identity. This will mask the previous key setting. Use
-// this method to clear the engine after processing in order to gain a measure of security.
+// This routine must be called before any data can be encrypted or decrypted. This routine need
+// only be called when the key is to be changed or set for the first time. Once the key has been
+// set, the engine may be used to encrypt, decrypt, or both operations indefinitely. The key must
+// be 56 bytes or less in length. This is necessary because any keys longer than that will not
+// correctly affect the encryption process. If the key pointer is null, then the S-Box tables are
+// reset to identity. This will mask the previous key setting. Use this method to clear the engine
+// after processing in order to gain a measure of security.
 // WARNING: This is a time consuming process.
 void BlowfishEngine::Submit_Key(void const * key, int length)
 {
@@ -151,9 +151,9 @@ void BlowfishEngine::Submit_Key(void const * key, int length)
 }
 
 
-// Encrypt an arbitrary block of data. The block must be an even multiple of 8 bytes. Any bytes left
-// over will not be encrypted. The 8 byte requirement is necessary because the underlying algorithm
-// processes blocks in 8 byte chunks. Partial blocks are unrecoverable and useless.
+// The block must be an even multiple of 8 bytes. Any bytes left over will not be encrypted. The 8
+// byte requirement is necessary because the underlying algorithm processes blocks in 8 byte
+// chunks. Partial blocks are unrecoverable and useless.
 // WARNING: You must submit the key before calling this routine.
 int BlowfishEngine::Encrypt(void const * plaintext, int length, void * cyphertext)
 {
@@ -199,9 +199,9 @@ int BlowfishEngine::Encrypt(void const * plaintext, int length, void * cyphertex
 }
 
 
-// Decrypt an arbitrary block of data. The block must be an even multiple of 8 bytes. Any bytes left
-// over will not be decrypted. The 8 byte requirement is necessary because the underlying algorithm
-// processes blocks in 8 byte chunks. Partial blocks are unrecoverable and useless.
+// The block must be an even multiple of 8 bytes. Any bytes left over will not be decrypted. The 8
+// byte requirement is necessary because the underlying algorithm processes blocks in 8 byte
+// chunks. Partial blocks are unrecoverable and useless.
 // WARNING: You must submit the key before calling this routine.
 int BlowfishEngine::Decrypt(void const * cyphertext, int length, void * plaintext)
 {
@@ -247,12 +247,11 @@ int BlowfishEngine::Decrypt(void const * cyphertext, int length, void * plaintex
 }
 
 
-// Process a block of data using Blowfish algorithm. This is the main processing routine for
-// encryption and decryption. This algorithm will encrypt and decrypt using the same S-Box tables.
-// The encryption control is handled by the permutation table. The algorithm consists of a 16 round
-// Feistel network and uses mathematics from different algebraic groups (strengthens against
-// differential cryptanalysis). The large S-Boxes and the rounds strengthen it against linear
-// cryptanalysis.
+// This is the main processing routine for encryption and decryption. This algorithm will encrypt
+// and decrypt using the same S-Box tables. The encryption control is handled by the permutation
+// table. The algorithm consists of a 16 round Feistel network and uses mathematics from different
+// algebraic groups (strengthens against differential cryptanalysis). The large S-Boxes and the
+// rounds strengthen it against linear cryptanalysis.
 // WARNING: The source and destination buffers must be 8 bytes long.
 void BlowfishEngine::Process_Block(void const * plaintext, void * cyphertext, unsigned long const * ptable)
 {

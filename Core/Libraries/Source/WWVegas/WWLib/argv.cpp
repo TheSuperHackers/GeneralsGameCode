@@ -42,7 +42,6 @@
 int   	 ArgvClass::Argc = 0;
 char 		*ArgvClass::Argv[MAX_ARGC];
 
-// Create an instance to parse argv with.
 ArgvClass::ArgvClass(bool case_sensitive, bool exact_size):
 	Flags(0),
 	LastArg(nullptr),
@@ -52,8 +51,7 @@ ArgvClass::ArgvClass(bool case_sensitive, bool exact_size):
 	Exact_Size(exact_size);
 }
 
-// Search for a string given the flags. If arg is nullptr, LastArg will be used. Returns null if not
-// found.
+// If arg is nullptr, LastArg will be used.
 const char *ArgvClass::Find_Again(const char *arg)
 {
 	if (arg) {
@@ -106,8 +104,8 @@ const char *ArgvClass::Find_Again(const char *arg)
 	return nullptr;
 }
 
-// Setup the command line. Quotes force spaces to be ignored. An argument with the file prefix tells
-// the system to load the postfixed file name as command line params.
+// Quotes force spaces to be ignored. An argument with the file prefix tells the system to load the
+// postfixed file name as command line params.
 // WARNING: This may be called multiple times with different strings. Once Argc reaches MAX_ARGC, no
 // more will be added.
 int ArgvClass::Init(char *lpCmdLine, const char *fileprefix)
@@ -223,7 +221,6 @@ bool ArgvClass::Load_File(const char *fname)
 	return(false);
 }
 
-// Release data allocated.
 void ArgvClass::Free()
 {
 	for (int lp = 0; lp < Argc; lp++) {
@@ -234,7 +231,6 @@ void ArgvClass::Free()
 }
 
 
-// Find value of argument given prefix.
 const char *ArgvClass::Find_Value(const char *arg)
 {
 	if (arg && *arg) {
@@ -246,7 +242,6 @@ const char *ArgvClass::Find_Value(const char *arg)
 	return(nullptr);
 }
 
-// Get value of current argument.
 const char *ArgvClass::Get_Cur_Value(unsigned prefixlen, bool * val_in_next)
 {
 	if (val_in_next) *val_in_next = false;
@@ -288,7 +283,6 @@ const char *ArgvClass::Get_Cur_Value(unsigned prefixlen, bool * val_in_next)
 
 
 
-// Add/Replace a value.
 // WARNING: Not Tested!
 void ArgvClass::Update_Value(const char *attrib, const char *value)
 {

@@ -259,7 +259,6 @@ private:
 
 
 
-// Constrains indices to be a valid location.
 WWINLINE void GridCullSystemClass::clamp_indices_to_grid(int * i,int * j,int * k)
 {
 	if (*i < 0) *i = 0;
@@ -302,7 +301,6 @@ WWINLINE bool GridCullSystemClass::map_point_to_address(const Vector3 & pt,int &
 }
 
 
-// Computes the address for given index triplet.
 WWINLINE int GridCullSystemClass::map_indices_to_address(int i,int j,int k)
 {
 	return i + j*CellCount[0] + k*CellCount[0]*CellCount[1];
@@ -315,7 +313,6 @@ WWINLINE int GridCullSystemClass::total_cell_count()
 }
 
 
-// Computes the bounding box for a grid cell.
 WWINLINE void	GridCullSystemClass::compute_box(int i,int j,int k,AABoxClass * set_box)
 {
 	WWASSERT(set_box != nullptr);
@@ -336,7 +333,6 @@ WWINLINE void	GridCullSystemClass::compute_box(int i,int j,int k,AABoxClass * se
 }
 
 
-// Computes bounding box for a range of grid cells.
 WWINLINE void	GridCullSystemClass::compute_box(const GridCullSystemClass::VolumeStruct & vol, AABoxClass * set_box)
 {
 	WWASSERT(set_box != nullptr);
@@ -359,7 +355,6 @@ WWINLINE void	GridCullSystemClass::compute_box(const GridCullSystemClass::Volume
 }
 
 
-// Inits volume to contain the given range.
 WWINLINE void GridCullSystemClass::init_volume
 (
 	const Vector3 &		bound_min,
@@ -393,7 +388,6 @@ WWINLINE void GridCullSystemClass::init_volume
 }
 
 
-// Inits volume to contain the given line segment.
 WWINLINE void GridCullSystemClass::init_volume(const LineSegClass & line,VolumeStruct * set_volume)
 {
 	Vector3 min_pt,max_pt;
@@ -407,14 +401,12 @@ WWINLINE void GridCullSystemClass::init_volume(const LineSegClass & line,VolumeS
 }
 
 
-// Inits volume to contain the given box.
 WWINLINE void GridCullSystemClass::init_volume(const AABoxClass & box,VolumeStruct * set_volume)
 {
 	init_volume(box.Center - box.Extent,box.Center + box.Extent,set_volume);
 }
 
 
-// Inits volume to contain the given oriented box.
 WWINLINE void GridCullSystemClass::init_volume(const OBBoxClass & box,VolumeStruct * set_volume)
 {
 	Vector3 aaextent;
@@ -423,7 +415,6 @@ WWINLINE void GridCullSystemClass::init_volume(const OBBoxClass & box,VolumeStru
 }
 
 
-// Inits volume to contain the given frustum.
 WWINLINE void GridCullSystemClass::init_volume(const FrustumClass & frustum,VolumeStruct * set_volume)
 {
 	init_volume(frustum.Get_Bound_Min(),frustum.Get_Bound_Max(),set_volume);
@@ -455,7 +446,7 @@ WWINLINE bool GridCullSystemClass::VolumeStruct::Is_Leaf() const
 }
 
 
-// Check if volume is empty (or invalid).
+// Also returns true for an invalid volume.
 WWINLINE bool GridCullSystemClass::VolumeStruct::Is_Empty() const
 {
 	return ((Max[0]-Min[0] <= 0) || (Max[1]-Min[1] <= 0) || (Max[2]-Min[2] <= 0));

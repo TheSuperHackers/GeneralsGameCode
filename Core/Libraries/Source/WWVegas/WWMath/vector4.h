@@ -116,14 +116,12 @@ WWINLINE Vector4 operator * (float k, const Vector4 &a)
 	return a*k;
 }
 
-// Divide a vector by a scalar.
 WWINLINE Vector4 operator / (const Vector4 &a,float k)
 {
 	float ook=1.0f/k;
 	return Vector4((a[0] * ook),(a[1] * ook),(a[2] * ook),(a[3] * ook));
 }
 
-// Add two vectors.
 WWINLINE Vector4 operator + (const Vector4 &a,const Vector4 &b)
 {
 	return Vector4(
@@ -144,7 +142,6 @@ WWINLINE Vector4 operator - (const Vector4 &a,const Vector4 &b)
 						);
 }
 
-// Compute the inner or dot product of two vectors.
 WWINLINE float operator * (const Vector4 &a,const Vector4 &b)
 {
 	return	a[0]*b[0] +
@@ -159,13 +156,11 @@ WWINLINE float Vector4::Dot_Product(const Vector4 &a,const Vector4 &b)
 }
 
 
-// Determine if two vectors are identical.
 WWINLINE bool operator == (const Vector4 &a,const Vector4 &b)
 {
 	return ( (a[0] == b[0]) && (a[1] == b[1]) && (a[2] == b[2]) && (a[3] == b[3]));
 }
 
-// Determine if two vectors are not identical.
 WWINLINE bool operator != (const Vector4 &a,const Vector4 &b)
 {
 	return ( (a[0] != b[0]) || (a[1] != b[1]) || (a[2] != b[2]) || (a[3] != b[3]));
@@ -205,7 +200,6 @@ WWINLINE float Vector4::Length2() const
 }
 
 
-// Swap two Vector4's.
 WWINLINE void Swap(Vector4 & a,Vector4 & b)
 {
 	Vector4 tmp(a);
@@ -213,7 +207,6 @@ WWINLINE void Swap(Vector4 & a,Vector4 & b)
 	b = tmp;
 }
 
-// Linearly interpolate two Vector4's by an interpolation factor.
 // WARNING: No checking is done to ensure that alpha is between 0 and 1.
 WWINLINE Vector4 Lerp(const Vector4 & a, const Vector4 & b, float alpha)
 {
@@ -243,7 +236,6 @@ WWINLINE void Vector4::Lerp(const Vector4 & a, const Vector4 & b, float alpha,Ve
 	set_result->X = (a.W + (b.W - a.W)*alpha);
 }
 
-// Verifies that all members of this vector are valid floats.
 WWINLINE bool Vector4::Is_Valid() const
 {
 	return (WWMath::Is_Valid_Float(X) && WWMath::Is_Valid_Float(Y) && WWMath::Is_Valid_Float(Z) && WWMath::Is_Valid_Float(W));

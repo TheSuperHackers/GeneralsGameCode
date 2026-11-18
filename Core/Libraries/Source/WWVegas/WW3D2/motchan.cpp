@@ -87,7 +87,6 @@ MotionChannelClass::~MotionChannelClass()
 	Free();
 }
 
-// De-allocates all memory in use.
 void MotionChannelClass::Free()
 {
 	delete[] CompressedData;
@@ -162,7 +161,6 @@ void BitChannelClass::Free()
 }
 
 
-// Read a bit channel from a w3d chunk.
 bool BitChannelClass::Load_W3D(ChunkLoadClass & cload)
 {
 	Free();
@@ -221,7 +219,6 @@ TimeCodedMotionChannelClass::~TimeCodedMotionChannelClass()
 	Free();
 }
 
-// De-allocates all memory in use.
 void TimeCodedMotionChannelClass::Free()
 {
 	delete[] Data;
@@ -495,7 +492,6 @@ void TimeCodedBitChannelClass::Free()
 }
 
 
-// Read a bit channel from a w3d chunk.
 bool TimeCodedBitChannelClass::Load_W3D(ChunkLoadClass & cload)
 {
 	Free();
@@ -609,7 +605,6 @@ AdaptiveDeltaMotionChannelClass::~AdaptiveDeltaMotionChannelClass()
 	Free();
 }
 
-// De-allocates all memory in use.
 void AdaptiveDeltaMotionChannelClass::Free()
 {
 	delete[] Data;
@@ -805,7 +800,6 @@ void AdaptiveDeltaMotionChannelClass::decompress(uint32 src_idx, float *srcdata,
 }
 
 
-// Returns decompressed data for frame/vectorindex.
 float AdaptiveDeltaMotionChannelClass::getframe(uint32 frame_idx, uint32 vector_idx)
 {
 	// Make sure frame_idx is valid

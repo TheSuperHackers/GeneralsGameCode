@@ -180,8 +180,8 @@ TexProjectClass::~TexProjectClass()
 }
 
 
-// Set the size of texture to use in pixels. Note that this size is only used if you have the
-// TexProjectClass generate a texture.
+// The size is in pixels. Note that this size is only used if you have the TexProjectClass generate
+// a texture.
 void TexProjectClass::Set_Texture_Size(int size)
 {
 	WWASSERT(size > 0);
@@ -200,7 +200,7 @@ int TexProjectClass::Get_Texture_Size()
 }
 
 
-// Turn specified flag on or off. See the TexProjectClass header file for valid flags.
+// See the TexProjectClass header file for valid flags.
 void TexProjectClass::Set_Flag(uint32 flag,bool onoff)
 {
 	if (onoff) {
@@ -218,10 +218,9 @@ bool TexProjectClass::Get_Flag(uint32 flag) const
 }
 
 
-// Set the intensity of this projector. The "intensity" is a value between 0 and 1. At 0, the
-// projector will have no effect. At 1, the projector will be at its highest strength. The intensity
-// will automatically smoothly interpolate towards the value specified unless you use the immediate
-// option.
+// The "intensity" is a value between 0 and 1. At 0, the projector will have no effect. At 1, the
+// projector will be at its highest strength. The intensity will automatically smoothly interpolate
+// towards the value specified unless you use the immediate option.
 void TexProjectClass::Set_Intensity(float intensity,bool immediate)
 {
 	WWASSERT(intensity <= 1.0f);
@@ -478,7 +477,6 @@ void TexProjectClass::Set_Texture(TextureClass * texture)
 }
 
 
-// WARNING: The pointer is ref-counted! make sure to keep track of your references.
 TextureClass * TexProjectClass::Get_Texture() const
 {
 	return MaterialPass->Get_Texture();
@@ -522,9 +520,8 @@ void TexProjectClass::Set_Ortho_Projection(float xmin,float xmax,float ymin,floa
 	Set_Flag(PERSPECTIVE,false);
 }
 
-// Set up a perspective projection of an object. This function automates the process of generating
-// the perspective parameters needed to tightly bound the projection of an object. If znear or zfar
-// is -1.0, it will be generated.
+// Automates the process of generating the perspective parameters needed to tightly bound the
+// projection of an object. If znear or zfar is -1.0, it will be generated.
 bool TexProjectClass::Compute_Perspective_Projection
 (
 	RenderObjClass *	model,
@@ -546,9 +543,8 @@ bool TexProjectClass::Compute_Perspective_Projection
 }
 
 
-// Set up a perspective projection of an object. This function automates the process of generating
-// the perspective parameters needed to tightly bound the projection of an object. If znear or zfar
-// is -1.0, it will be generated.
+// Automates the process of generating the perspective parameters needed to tightly bound the
+// projection of an object. If znear or zfar is -1.0, it will be generated.
 bool TexProjectClass::Compute_Perspective_Projection
 (
 	const AABoxClass & obj_box,
@@ -616,8 +612,8 @@ bool TexProjectClass::Compute_Perspective_Projection
 }
 
 
-// Automatic Orthographic projection. Generates the orthographic projection parameters to tightly
-// bound an object. If znear or zfar is -1.0, it will be generated.
+// Generates the orthographic projection parameters to tightly bound an object. If znear or zfar is
+// -1.0, it will be generated.
 bool TexProjectClass::Compute_Ortho_Projection
 (
 	RenderObjClass *	model,
@@ -639,8 +635,8 @@ bool TexProjectClass::Compute_Ortho_Projection
 }
 
 
-// Automatic Orthographic projection. Generates the orthographic projection parameters to tightly
-// bound an object. If znear or zfar is -1.0, it will be generated.
+// Generates the orthographic projection parameters to tightly bound an object. If znear or zfar is
+// -1.0, it will be generated.
 bool TexProjectClass::Compute_Ortho_Projection
 (
 	const AABoxClass & obj_box,
@@ -770,14 +766,12 @@ bool TexProjectClass::Compute_Texture
 }
 
 
-// Returns whether this projector needs a render target.
 bool TexProjectClass::Needs_Render_Target()
 {
 	return Get_Flag(TEXTURE_DIRTY);
 }
 
 
-// Install a render target for this projector to use.
 void TexProjectClass::Set_Render_Target
 (
 	TextureClass* render_target,
@@ -892,7 +886,6 @@ void TexProjectClass::Pre_Render_Update(const Matrix3D & camera)
 }
 
 
-// Recalculate the world-space bounding box.
 void TexProjectClass::Update_WS_Bounding_Volume()
 {
 	ProjectorClass::Update_WS_Bounding_Volume();

@@ -272,7 +272,6 @@ void RenderObjClass::Set_Position(const Vector3 &v)
 }
 
 
-// If the transform is dirty, this causes it to be re-calculated.
 void RenderObjClass::Validate_Transform() const
 {
 	/*
@@ -303,7 +302,6 @@ void RenderObjClass::Validate_Transform() const
 		IsTransformIdentity = Check_Is_Transform_Identity(Transform);
 }
 
-// Similar to Get_Transform but returns only the position.
 Vector3 RenderObjClass::Get_Position() const
 {
 	Validate_Transform();
@@ -311,7 +309,7 @@ Vector3 RenderObjClass::Get_Position() const
 }
 
 
-// Returns pointer to first sub-obj with given name.
+// Returns the first sub-object with the given name.
 RenderObjClass * RenderObjClass::Get_Sub_Object_By_Name(const char * name, int *index) const
 {
 	int i;
@@ -354,7 +352,6 @@ RenderObjClass * RenderObjClass::Get_Sub_Object_By_Name(const char * name, int *
 }
 
 
-// Add an object to a named bone.
 // WARNING: If the bone name is unknown then this function will add the object to the root
 // transform rather than failing. This is due to the fact that GetBoneIndex returns the root
 // transform for unknown bones.
@@ -417,9 +414,9 @@ float RenderObjClass::Get_Cost() const
 }
 
 
-// Calc arrays for predictive LOD processing. This member function is usually only called internally
-// inside LOD objects for initialization purposes, or externally by specialized LOD objects like the
-// G predictive LOD PIP proxy. The screen area used is in normalized units.
+// This member function is usually only called internally inside LOD objects for initialization
+// purposes, or externally by specialized LOD objects like the G predictive LOD PIP proxy. The
+// screen area used is in normalized units.
 // WARNING: This member function assumes that the arrays passed are large enough (# LODs for the
 // cost array and # LODs + 1 for the value array) to contain the desired data.
 int RenderObjClass::Calculate_Cost_Value_Arrays(float screen_area, float *values, float *costs) const
@@ -468,8 +465,8 @@ void RenderObjClass::Update_Sub_Object_Bits()
 }
 
 
-// Re-evaluate the transforms of my sub-objects. The default implementation is empty, derived
-// classes which have sub-objects should implement it to update the transforms of their sub-objects.
+// The default implementation is empty, derived classes which have sub-objects should implement it
+// to update the transforms of their sub-objects.
 void RenderObjClass::Update_Sub_Object_Transforms()
 {
 }
@@ -508,12 +505,11 @@ bool RenderObjClass::Remove()
 }
 
 
-// Notifies the object that it is in a scene. This function will be called whenever an object is
-// directly or indirectly added to a scene. An example of "indirect" addition would be if you were
-// added as a sub-object to an HModel that was already in a scene. Override this function if you
-// want to register your object for per-frame-updating or as a VertexProcessor. (See the Register
-// method of SceneClass, ParticleBufferClass, etc). Container objects must forward this notification
-// to their sub objects.
+// This function will be called whenever an object is directly or indirectly added to a scene. An
+// example of "indirect" addition would be if you were added as a sub-object to an HModel that was
+// already in a scene. Override this function if you want to register your object for
+// per-frame-updating or as a VertexProcessor. (See the Register method of SceneClass,
+// ParticleBufferClass, etc). Container objects must forward this notification to their sub objects.
 // WARNING: Due to implementation details of some derived scenes, the SceneClass calls this
 // function. Please don't move the call to this to RenderObjClass::Add. Derived classes should also
 // call the base class to ensure that the scene pointer is set.
@@ -523,9 +519,8 @@ void RenderObjClass::Notify_Added(SceneClass * scene)
 }
 
 
-// Notifies an object that it has been removed. Works similar to the Notify_Added function. You can
-// override and Unregister yourself from any scene based special processing. Container objects must
-// recurse to their sub objects.
+// Works similar to the Notify_Added function. You can override and Unregister yourself from any
+// scene based special processing. Container objects must recurse to their sub objects.
 // WARNING: Derived classes should also call the base class to ensure that the scene pointer is
 // cleared.
 void RenderObjClass::Notify_Removed(SceneClass * scene)
@@ -596,7 +591,6 @@ bool RenderObjClass::Intersect(IntersectionClass *Intersection, IntersectionResu
 }
 
 
-// Tests for intersection with the bounding sphere.
 bool RenderObjClass::Intersect_Sphere(IntersectionClass *Intersection, IntersectionResultClass *Final_Result)
 {
 	SphereClass sphere = Get_Bounding_Sphere();
@@ -604,7 +598,6 @@ bool RenderObjClass::Intersect_Sphere(IntersectionClass *Intersection, Intersect
 }
 
 
-// Tests for intersection with the bounding sphere.
 bool RenderObjClass::Intersect_Sphere_Quick(IntersectionClass *Intersection, IntersectionResultClass *Final_Result)
 {
 	SphereClass sphere = Get_Bounding_Sphere();

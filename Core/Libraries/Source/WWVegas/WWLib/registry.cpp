@@ -336,7 +336,6 @@ void	RegistryClass::Set_String( const WCHAR * name, const WCHAR *value )
 
 
 
-// Save values in a key to an .ini file.
 void RegistryClass::Save_Registry_Values(HKEY key, char *path, INIClass *ini)
 {
 	int index = 0;
@@ -398,7 +397,6 @@ void RegistryClass::Save_Registry_Values(HKEY key, char *path, INIClass *ini)
 
 
 
-// Save out a whole chunk or registry as an .INI.
 void RegistryClass::Save_Registry_Tree(char *path, INIClass *ini)
 {
 	HKEY base_key;
@@ -542,7 +540,6 @@ void RegistryClass::Load_Registry(const char *filename, char *old_path, char *ne
 
 
 
-// Delete all values under the given key.
 void RegistryClass::Delete_Registry_Values(HKEY key)
 {
 	int index = 0;
@@ -566,7 +563,7 @@ void RegistryClass::Delete_Registry_Values(HKEY key)
 
 
 
-// Delete all values and sub keys of a registry key.
+// Deletes all values and sub keys.
 // WARNING: !!!!! DANGER DANGER !!!!!
 void RegistryClass::Delete_Registry_Tree(char *path)
 {

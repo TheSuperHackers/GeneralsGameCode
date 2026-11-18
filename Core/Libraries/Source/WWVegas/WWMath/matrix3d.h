@@ -435,7 +435,6 @@ WWINLINE Matrix3D & Matrix3D::operator = (const Matrix3D & m)
 }
 
 
-// Init a Matrix3D from an array of 12 floats.
 WWINLINE void Matrix3D::Set(float m[12])
 {
 	Row[0].Set(m[0],m[1],m[2],m[3]);
@@ -444,7 +443,6 @@ WWINLINE void Matrix3D::Set(float m[12])
 }
 
 
-// Init a Matrix3D from 12 individual floats.
 WWINLINE void Matrix3D::Set(		float m11,float m12,float m13,float m14,
 										float m21,float m22,float m23,float m24,
 										float m31,float m32,float m33,float m34)
@@ -455,7 +453,6 @@ WWINLINE void Matrix3D::Set(		float m11,float m12,float m13,float m14,
 }
 
 
-// Init a matrix from 3 axis vectors and a position.
 WWINLINE void Matrix3D::Set(		const Vector3	&x,		// x-axis unit vector
 										const Vector3	&y,		// y-axis unit vector
 										const Vector3	&z,		// z-axis unit vector
@@ -467,7 +464,6 @@ WWINLINE void Matrix3D::Set(		const Vector3	&x,		// x-axis unit vector
 }
 
 
-// Init a matrix to be a rotation about the given axis.
 WWINLINE void Matrix3D::Set(const Vector3 & axis,float angle)
 {
 	float c = WWMath::Cosf(angle);
@@ -476,7 +472,6 @@ WWINLINE void Matrix3D::Set(const Vector3 & axis,float angle)
 	Set(axis,s,c);
 }
 
-// Init a matrix to be a rotation about the given axis.
 WWINLINE void Matrix3D::Set(const Vector3 & axis,float s,float c)
 {
 	assert(WWMath::Fabsf_Legacy(axis.Length2() - 1.0f) < 0.001f);
@@ -513,7 +508,6 @@ WWINLINE void Matrix3D::Set(const Vector3 & position)
 }
 
 
-// Initializes the matrix to be the identity matrix.
 WWINLINE void Matrix3D::Make_Identity()
 {
 	Row[0].Set(1.0f,0.0f,0.0f,0.0f);
@@ -1011,7 +1005,6 @@ WWINLINE void Matrix3D::In_Place_Pre_Rotate_Z(float s,float c)
 }
 
 #ifdef ALLOW_TEMPORARIES
-// Matrix multiplication.
 WWINLINE Matrix3D operator * (const Matrix3D &A,const Matrix3D &B)
 {
 	Matrix3D C;
@@ -1158,7 +1151,6 @@ WWINLINE void Matrix3D::mul(const Matrix3D& A, const Matrix3D& B)
 #endif
 
 #ifdef ALLOW_TEMPORARIES
-// Matrix - vector multiplication.
 WWINLINE Vector3 operator * (const Matrix3D &A,const Vector3 &a)
 {
 #if 0
@@ -1231,7 +1223,6 @@ WWINLINE void Matrix3D::mulVector3Array(Vector3* inout, int count) const
 #endif
 }
 
-// Matrix equality operator.
 WWINLINE bool operator == (const Matrix3D &A, const Matrix3D &B)
 {
    for (int i = 0; i < 3; i++) {
@@ -1243,7 +1234,6 @@ WWINLINE bool operator == (const Matrix3D &A, const Matrix3D &B)
 }
 
 
-// Matrix inequality operator.
 WWINLINE bool operator != (const Matrix3D &A, const Matrix3D &B)
 {
    return !(A == B);

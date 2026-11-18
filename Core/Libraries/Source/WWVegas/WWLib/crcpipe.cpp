@@ -45,7 +45,6 @@ int CRCPipe::Put(void const * source, int slen)
 }
 
 
-// Fetches the CRC of the data that has passed through the pipe up to this time.
 long CRCPipe::Result() const
 {
 	return(CRC());

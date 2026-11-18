@@ -138,14 +138,12 @@ HierarchySaveClass::~HierarchySaveClass()
 	Free();
 }
 
-// Releases all allocated memory.
 void HierarchySaveClass::Free()
 {
 	Node.Clear();
 }
 
 
-// Returns the transformation matrix of the specified node.
 Matrix3 HierarchySaveClass::Get_Node_Transform(int nodeidx) const
 {
 	Matrix3 tm(1);
@@ -198,7 +196,6 @@ const char * HierarchySaveClass::Get_Name() const
 }
 
 
-// Get the Max INode.
 INode * HierarchySaveClass::Get_Node(int node) const
 {
 	assert(node >= 0);
@@ -228,7 +225,6 @@ int HierarchySaveClass::Find_Named_Node(const char * name) const
 	return match;
 }
 
-// Find the bone and coordinate system for the given object.
 void HierarchySaveClass::Get_Export_Coordinate_System
 (
 	INode * node,
@@ -292,7 +288,6 @@ void HierarchySaveClass::Get_Export_Coordinate_System
 	}
 }
 
-// Write the hierarchy into a W3D file.
 bool HierarchySaveClass::Save(ChunkSaveClass & csave)
 {
 	ExportLog::printf("\nSaving Hierarchy Tree %s.\n",HierarchyHeader.Name);
@@ -326,7 +321,6 @@ bool HierarchySaveClass::Save(ChunkSaveClass & csave)
 }
 
 
-// Read the hierarchy from a W3D file.
 bool HierarchySaveClass::Load(ChunkLoadClass & cload)
 {
 	Free();
@@ -358,7 +352,6 @@ bool HierarchySaveClass::Load(ChunkLoadClass & cload)
 }
 
 
-// Adds a node and all of its children.
 void HierarchySaveClass::add_tree(INode * node,int pidx)
 {
 	int nextparent;
@@ -392,7 +385,6 @@ void HierarchySaveClass::add_tree(INode * node,int pidx)
 }
 
 
-// Adds a single node to the tree.
 int HierarchySaveClass::add_node(INode * node,int pidx)
 {
 	/*
@@ -566,7 +558,6 @@ Matrix3 HierarchySaveClass::fixup_matrix(const Matrix3 & csrc) const
 }
 
 
-// Writes the header into a W3D file.
 bool HierarchySaveClass::save_header(ChunkSaveClass & csave)
 {
 	if (!csave.Begin_Chunk(W3D_CHUNK_HIERARCHY_HEADER)) {
@@ -585,7 +576,6 @@ bool HierarchySaveClass::save_header(ChunkSaveClass & csave)
 }
 
 
-// Writes the pivots into a W3D file.
 bool HierarchySaveClass::save_pivots(ChunkSaveClass & csave)
 {
 	if (!csave.Begin_Chunk(W3D_CHUNK_PIVOTS)) {
@@ -605,7 +595,6 @@ bool HierarchySaveClass::save_pivots(ChunkSaveClass & csave)
 	return true;
 }
 
-// Writes the fixup transforms into a W3D file.
 bool HierarchySaveClass::save_fixups(ChunkSaveClass & csave)
 {
 	if (!csave.Begin_Chunk(W3D_CHUNK_PIVOT_FIXUPS)) {
@@ -626,7 +615,6 @@ bool HierarchySaveClass::save_fixups(ChunkSaveClass & csave)
 }
 
 
-// Reads the header from a W3D file.
 bool HierarchySaveClass::load_header(ChunkLoadClass & cload)
 {
 	/*
@@ -662,7 +650,6 @@ bool HierarchySaveClass::load_header(ChunkLoadClass & cload)
 }
 
 
-// Reads the pivots from a W3D file.
 bool HierarchySaveClass::load_pivots(ChunkLoadClass & cload)
 {
 	for (uint32 i=0; i<HierarchyHeader.NumPivots; i++) {
@@ -674,7 +661,6 @@ bool HierarchySaveClass::load_pivots(ChunkLoadClass & cload)
 	return true;
 }
 
-// Reads the fixup transforms from a W3D file.
 bool HierarchySaveClass::load_fixups(ChunkLoadClass & cload)
 {
 	for (uint32 i=0; i<HierarchyHeader.NumPivots; i++) {

@@ -74,7 +74,6 @@ LogDataDialogClass::~LogDataDialogClass()
 }
 
 
-// Handles doing printfs into the current log window.
 void LogDataDialogClass::printf(const char *text, ...)
 {
 	va_list arguments;
@@ -136,7 +135,6 @@ void LogDataDialogClass::rprintf(const char *text, va_list args)
 }
 
 
-// Send message to progress meter.
 void	LogDataDialogClass::updatebar(float position, float total)
 {
 	int pos;
@@ -164,7 +162,6 @@ void LogDataDialogClass::Wait_OK()
 
 
 
-// Handles the windows message for the options dialog.
 bool LogDataDialogClass::Dialog_Proc
 (
 	HWND hwnd,

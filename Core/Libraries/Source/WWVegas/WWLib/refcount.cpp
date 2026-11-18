@@ -50,7 +50,6 @@ RefCountListClass			RefCountClass::ActiveRefList;
 
 
 
-// Add a new referenced object to the list.
 RefCountClass *	RefCountClass::Add_Active_Ref(RefCountClass *obj)
 {
 	ActiveRefList.Add_Head(&(obj->ActiveRefNode));
@@ -59,7 +58,6 @@ RefCountClass *	RefCountClass::Add_Active_Ref(RefCountClass *obj)
 	return obj;
 }
 
-// Update the owner file/line for the given object.
 RefCountClass *	RefCountClass::Set_Ref_Owner(RefCountClass *obj,const char * file,int line)
 {
 //	static RefCountClass *hunt = (RefCountClass *)0x06558890;
@@ -81,7 +79,6 @@ void RefCountClass::Remove_Active_Ref(RefCountClass * obj)
 	obj->ActiveRefNode.Unlink();
 }
 
-// Confirm a pointer has a node in the active ref list.
 bool RefCountClass::Validate_Active_Ref(RefCountClass * obj)
 {
 	RefCountNodeClass *node = ActiveRefList.First();
@@ -115,7 +112,6 @@ void RefCountClass::Add_Ref() const
 	Inc_Total_Refs(this);
 }
 
-// Decrements the total reference count.
 void	RefCountClass::Dec_Total_Refs(const RefCountClass * obj)
 {
 #ifdef PARANOID_REFCOUNTS

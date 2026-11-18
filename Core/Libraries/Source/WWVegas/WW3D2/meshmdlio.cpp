@@ -501,7 +501,6 @@ WW3DErrorType MeshModelClass::read_chunks(ChunkLoadClass & cload,MeshLoadContext
 }
 
 
-// Read in the texture coordinates chunk.
 WW3DErrorType MeshModelClass::read_texcoords(ChunkLoadClass & cload,MeshLoadContextClass * context)
 {
 	W3dTexCoordStruct texcoord;
@@ -897,7 +896,6 @@ WW3DErrorType MeshModelClass::read_material_pass(ChunkLoadClass & cload,MeshLoad
 }
 
 
-// Read the vmat ids for a pass.
 WW3DErrorType MeshModelClass::read_vertex_material_ids(ChunkLoadClass & cload,MeshLoadContextClass * context)
 {
 	/*
@@ -936,7 +934,6 @@ WW3DErrorType MeshModelClass::read_vertex_material_ids(ChunkLoadClass & cload,Me
 }
 
 
-// Read the shader indexes for a pass.
 WW3DErrorType MeshModelClass::read_shader_ids(ChunkLoadClass & cload,MeshLoadContextClass * context)
 {
 	/*
@@ -1162,7 +1159,6 @@ WW3DErrorType MeshModelClass::read_texture_stage(ChunkLoadClass & cload,MeshLoad
 }
 
 
-// Read the texture ids for a pass,stage.
 WW3DErrorType MeshModelClass::read_texture_ids(ChunkLoadClass & cload,MeshLoadContextClass * context)
 {
 	uint32 texid;
@@ -1206,7 +1202,7 @@ WW3DErrorType MeshModelClass::read_texture_ids(ChunkLoadClass & cload,MeshLoadCo
 }
 
 
-// Read the texcoords for a pass,stage. The vertex count is calculated directly from the chunk size.
+// The vertex count is calculated directly from the chunk size.
 WW3DErrorType MeshModelClass::read_stage_texcoords(ChunkLoadClass & cload,MeshLoadContextClass * context)
 {
 	unsigned				elementcount;
@@ -1241,7 +1237,6 @@ WW3DErrorType MeshModelClass::read_stage_texcoords(ChunkLoadClass & cload,MeshLo
 }
 
 
-// Read uv indices for given (pass,stage).
 WW3DErrorType MeshModelClass::read_per_face_texcoord_ids (ChunkLoadClass &cload, MeshLoadContextClass *context)
 {
 	unsigned size;
@@ -1324,7 +1319,7 @@ WW3DErrorType MeshModelClass::read_prelit_material (ChunkLoadClass &cload, MeshL
 }
 
 
-// Post loading, perform any processing on this model, including static sort postprocessing.
+// Includes static sort postprocessing.
 void MeshModelClass::post_process()
 {
 #if 0
@@ -1745,7 +1740,6 @@ ShaderClass MeshLoadContextClass::Peek_Legacy_Shader(int legacy_material_index)
 }
 
 
-// Returns a pointer to a legacy vertex material.
 VertexMaterialClass * MeshLoadContextClass::Peek_Legacy_Vertex_Material(int legacy_material_index)
 {
 	WWASSERT(legacy_material_index >= 0);

@@ -109,7 +109,6 @@ GetCDClass::~GetCDClass()
 //		DPMI_real_free(cdDrive_addrp);		// free up those conventional buffers
 }
 
-// Get_CD_Drive_For_This_Volume.
 
 int	GetCDClass::Get_CD_Drive_For_This_Volume ( const char *volume_label )
 {
@@ -177,7 +176,6 @@ int	GetCDClass::Get_CD_Drive_For_This_Volume ( const char *volume_label )
 	return( Get_First_CD_Drive());
 }
 
-// Get_Volume_Label.
 
 const char * GetCDClass::Get_Volume_Label	( int index )
 {
@@ -187,7 +185,6 @@ const char * GetCDClass::Get_Volume_Label	( int index )
 	return( _CD_Volume_Label[0]);
 }
 
-// Get_Volume_For_This_CD_Drive.
 
 const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *volume_name )
 {
@@ -250,7 +247,6 @@ const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *v
 	return( volume_name );
 }
 
-// Check volume label of the CD in the given drive.
 
 bool CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_find )
 {

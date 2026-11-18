@@ -45,7 +45,6 @@
 BonePickerClass TheBonePicker;
 
 
-// Determine whether the passed node is suitable.
 BOOL BonePickerClass::Filter(INode *node)
 {
 	if (BoneList == nullptr) {

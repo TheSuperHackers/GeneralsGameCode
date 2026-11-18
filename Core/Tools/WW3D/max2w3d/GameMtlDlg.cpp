@@ -137,7 +137,7 @@ void GameMtlDlg::SetThing(ReferenceTarget *m)
 	ReloadDialog();
 }
 
-// Sets the time value, updates the material and the dialog.
+// Also updates the material and the dialog.
 void GameMtlDlg::SetTime(TimeValue t)
 {
 	if (t!=CurTime) {
@@ -147,7 +147,6 @@ void GameMtlDlg::SetTime(TimeValue t)
 	}
 }
 
-// Updates the values in all of the dialog's controls.
 void GameMtlDlg::ReloadDialog()
 {
 	/*
@@ -185,7 +184,6 @@ void GameMtlDlg::ActivateDlg(BOOL onoff)
 	}
 }
 
-// Causes the dialog to be redrawn.
 void GameMtlDlg::Invalidate()
 {
 	InvalidateRect(HwndSurfaceType,nullptr,0);

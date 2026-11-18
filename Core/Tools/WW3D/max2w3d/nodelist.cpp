@@ -108,7 +108,6 @@ INodeListClass::INodeListClass(INodeListClass & copyfrom,TimeValue time,INodeFil
 	}
 }
 
-// Delete the INode List.
 INodeListClass::~INodeListClass()
 {
 	while (ListHead)
@@ -123,7 +122,6 @@ INodeListClass::~INodeListClass()
 }
 
 
-// Array-like access to the list members.
 INode * INodeListClass::operator[] ( int index ) const
 {
 	INodeListEntryClass * entry = ListHead;
@@ -155,7 +153,6 @@ void INodeListClass::Insert(INode * node)
 }
 
 
-// Remove the i'th element of the list.
 void INodeListClass::Remove(int i)
 {
 	if ((i < 0) || (i > Num_Nodes())) {

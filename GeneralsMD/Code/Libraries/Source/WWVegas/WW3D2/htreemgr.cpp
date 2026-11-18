@@ -54,13 +54,11 @@ HTreeManagerClass::~HTreeManagerClass()
 	Free();
 }
 
-// De-allocate all memory in use.
 void HTreeManagerClass::Free()
 {
 	Free_All_Trees();
 }
 
-// De-allocates all hierarchy trees currently loaded.
 void HTreeManagerClass::Free_All_Trees()
 {
 	// Clear the hash table
@@ -73,7 +71,6 @@ void HTreeManagerClass::Free_All_Trees()
 	NumTrees = 0;
 }
 
-// De-allocates all trees not in list.
 void HTreeManagerClass::Free_All_Trees_With_Exclusion_List(const W3DExclusionListClass & exclusion_list)
 {
 	// For this system, since it is so simplistic, we simply loop over the array either deleting the tree
@@ -154,7 +151,6 @@ Error:
 
 }
 
-// Look up the ID of a named hierarchy tree.
 int HTreeManagerClass::Get_Tree_ID(const char * name)
 {
 	for (int i=0; i<NumTrees; i++) {
@@ -165,7 +161,6 @@ int HTreeManagerClass::Get_Tree_ID(const char * name)
 	return -1;
 }
 
-// Look up the name of a id'd hierarchy tree.
 char *HTreeManagerClass::Get_Tree_Name(const int idx)
 {
 	if ((idx < NumTrees) && TreePtr[idx]) {

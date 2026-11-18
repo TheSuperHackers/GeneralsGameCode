@@ -63,7 +63,6 @@ GenLodExtensionDialogClass::~GenLodExtensionDialogClass()
 }
 
 
-// Presents the dialog, gets user input.
 bool GenLodExtensionDialogClass::Get_Options(OptionsStruct * options)
 {
 	Options = options;
@@ -86,7 +85,6 @@ bool GenLodExtensionDialogClass::Get_Options(OptionsStruct * options)
 }
 
 
-// Windows message handling.
 bool GenLodExtensionDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM)
 {
 	switch (message )	{

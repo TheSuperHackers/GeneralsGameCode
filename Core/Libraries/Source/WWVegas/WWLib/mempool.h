@@ -151,7 +151,6 @@ ObjectPoolClass<T,BLOCKSIZE> AutoPoolClass<T,BLOCKSIZE>::Allocator = {}
 #endif
 
 
-// Initializes the object pool to the empty state.
 template<class T,int BLOCK_SIZE>
 ObjectPoolClass<T,BLOCK_SIZE>::ObjectPoolClass() :
 	FreeListHead(nullptr),
@@ -161,7 +160,6 @@ ObjectPoolClass<T,BLOCK_SIZE>::ObjectPoolClass() :
 {
 }
 
-// Deletes the blocks of memory in use by the object pool.
 template<class T,int BLOCK_SIZE>
 ObjectPoolClass<T,BLOCK_SIZE>::~ObjectPoolClass()
 {
@@ -192,7 +190,6 @@ T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object()
 	return new (obj) T;
 }
 
-// Releases obj back into the pool.
 template<class T,int BLOCK_SIZE>
 void ObjectPoolClass<T,BLOCK_SIZE>::Free_Object(T * obj)
 {
@@ -203,7 +200,6 @@ void ObjectPoolClass<T,BLOCK_SIZE>::Free_Object(T * obj)
 	Free_Object_Memory(obj);
 }
 
-// Internal function which returns memory for an instance.
 template<class T,int BLOCK_SIZE>
 T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object_Memory()
 {
@@ -236,7 +232,6 @@ T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object_Memory()
 }
 
 
-// Internal function, returns object's memory to the pool.
 template<class T,int BLOCK_SIZE>
 void ObjectPoolClass<T,BLOCK_SIZE>::Free_Object_Memory(T * obj)
 {
@@ -249,7 +244,6 @@ void ObjectPoolClass<T,BLOCK_SIZE>::Free_Object_Memory(T * obj)
 }
 
 
-// Overridden new which calls the internal ObjectPool.
 template<class T, int BLOCK_SIZE>
 void * AutoPoolClass<T,BLOCK_SIZE>::operator new( size_t size )
 {
@@ -258,7 +252,6 @@ void * AutoPoolClass<T,BLOCK_SIZE>::operator new( size_t size )
 }
 
 
-// Overridden delete which calls the internal ObjectPool.
 template<class T, int BLOCK_SIZE>
 void AutoPoolClass<T,BLOCK_SIZE>::operator delete( void * memory )
 {

@@ -39,8 +39,6 @@
 #include "XSTRAW.h"
 
 
-// Read a text line from the file. The EOF flag is set to true if the source file has been
-// exhausted.
 int Read_Line(FileClass & file, char * buffer, int len, bool & eof)
 {
 	FileStraw fs(file);
@@ -48,8 +46,6 @@ int Read_Line(FileClass & file, char * buffer, int len, bool & eof)
 }
 
 
-// Reads a text line from the straw object specified. The EOF flag is set to true if the source straw
-// data has been exhausted.
 int Read_Line(Straw & file, char * buffer, int len, bool & eof)
 {
 	if (len == 0 || buffer == nullptr) return(0);

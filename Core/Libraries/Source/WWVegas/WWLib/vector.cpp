@@ -43,8 +43,7 @@
 
 //----------------------------------------------------------------------------------------------
 
-// Explicit data buffer constructor. This constructor takes the memory pointer provided and assigns
-// that as the array data pointer.
+// Takes the memory pointer provided and assigns that as the array data pointer.
 // WARNING: You must make sure that the memory specified is large enough to contain the bits
 // specified.
 BooleanVectorClass::BooleanVectorClass(unsigned size, unsigned char * array) :
@@ -132,8 +131,7 @@ int BooleanVectorClass::Resize(unsigned size)
 }
 
 
-// Resets boolean vector to empty state. This will free any allocated memory and result in the
-// boolean vector being unusable until the Resize function is subsequently called.
+// Frees any allocated memory.
 // WARNING: The boolean vector cannot be used until it is resized to a non null condition.
 void BooleanVectorClass::Clear()
 {
@@ -143,8 +141,7 @@ void BooleanVectorClass::Clear()
 }
 
 
-// Clear all boolean values in array. This is the preferred (and quick) method to clear the boolean
-// array to a false condition.
+// Clears all boolean values to false. This is the preferred (and quick) method.
 void BooleanVectorClass::Reset()
 {
 	LastIndex = -1;
@@ -154,8 +151,7 @@ void BooleanVectorClass::Reset()
 }
 
 
-// Forces all boolean elements to true. This is the preferred (and fast) way to set all boolean
-// elements to true.
+// This is the preferred (and fast) way to set all boolean elements to true.
 void BooleanVectorClass::Set()
 {
 	LastIndex = -1;
@@ -213,7 +209,6 @@ void BooleanVectorClass::Fixup(int index) const
 }
 
 
-// Initializes the bit vector from an user array.
 void BooleanVectorClass::Init(unsigned size, unsigned char * array)
 {
 	Copy = false;
@@ -223,7 +218,6 @@ void BooleanVectorClass::Init(unsigned size, unsigned char * array)
 }
 
 
-// Initializes the bit vector from an user array.
 void BooleanVectorClass::Init(unsigned size)
 {
 	Copy = false;

@@ -56,7 +56,6 @@ LayerClass::LayerClass(const LayerClass &src) :
 {
 }
 
-// Constructs a layer class, initialized with the desired settings.
 LayerClass::LayerClass
 (
 		SceneClass * scene,
@@ -103,7 +102,6 @@ void LayerClass::Set_Scene(SceneClass * scene)
 }
 
 
-// Get the scene being rendered by this layer.
 SceneClass * LayerClass::Get_Scene() const
 {
 	if (Scene) {
@@ -113,14 +111,12 @@ SceneClass * LayerClass::Get_Scene() const
 }
 
 
-// Get the scene being rendered by this layer.
 SceneClass * LayerClass::Peek_Scene() const
 {
 	return Scene;
 }
 
 
-// Set the camera being used by this layer.
 void LayerClass::Set_Camera(CameraClass * cam)
 {
 	if (Camera) {
@@ -133,7 +129,6 @@ void LayerClass::Set_Camera(CameraClass * cam)
 }
 
 
-// Get the camera being used by this layer.
 CameraClass * LayerClass::Get_Camera() const
 {
 	if (Camera) {

@@ -94,7 +94,6 @@ GameMtlShaderDlg::~GameMtlShaderDlg()
 }
 
 
-// Windows message handler.
 BOOL GameMtlShaderDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int cursel;
@@ -202,7 +201,6 @@ BOOL GameMtlShaderDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, L
 }
 
 
-// Reload the contents of all of the controls.
 void GameMtlShaderDlg::ReloadDialog()
 {
 	DebugPrint("GameMtlShaderDlg::ReloadDialog\n");

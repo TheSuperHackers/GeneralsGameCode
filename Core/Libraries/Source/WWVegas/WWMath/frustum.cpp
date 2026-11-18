@@ -35,8 +35,8 @@
 #include "frustum.h"
 
 
-// Initializes a frustum from the description of a camera. Note that the camera looks down the -Z
-// axis. The near and far clip planes should be negative, they are negated if they are not.
+// The camera looks down the -Z axis. The near and far clip planes should be negative, they are
+// negated if they are not.
 // WARNING: The vpmin and vpmax variables are the min and max of a view-plane at z=-1.0 (not
 // necessarily the near clip plane).
 void FrustumClass::Init

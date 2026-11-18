@@ -84,7 +84,6 @@ FloaterDialogClass::~FloaterDialogClass()
 }
 
 
-// Test whether the floater has already been created.
 bool FloaterDialogClass::Is_Created()
 {
 	return (Hwnd != nullptr);

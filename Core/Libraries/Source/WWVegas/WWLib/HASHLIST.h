@@ -412,7 +412,7 @@ HashNodeClass<T,U> *HashListClass<T, U, NumHashValues>::Add(HashNodeClass<T,U> *
 }
 
 
-// Add record to list, list creates node for user.
+// The list creates the node for the user.
 template <class T, class U, int NumHashValues>
 HashNodeClass<T,U> *HashListClass<T, U, NumHashValues>::Add(T record, unsigned key)
 {
@@ -425,7 +425,6 @@ HashNodeClass<T,U> *HashListClass<T, U, NumHashValues>::Add(T record, unsigned k
 	return (node);
 }
 
-// Find record in hash table.
 template <class T, class U, int NumHashValues>
 HashNodeClass<T,U> *HashListClass<T, U, NumHashValues>::Find(unsigned key)
 {
@@ -455,7 +454,7 @@ HashNodeClass<T,U> *HashListClass<T, U, NumHashValues>::Find(unsigned key)
 
 }
 
-// Remove node from hash table. Protected function for usage by Remove() routines.
+// Protected function for usage by the Remove() routines.
 template <class T, class U, int NumHashValues>
 void HashListClass<T, U, NumHashValues>::Remove(HashNodeClass<T,U> *node)
 {
@@ -504,7 +503,6 @@ void HashListClass<T, U, NumHashValues>::Remove(HashNodeClass<T,U> *node)
 	NumRecords--;
 }
 
-// Remove record from hash table.
 template <class T, class U, int NumHashValues>
 bool HashListClass<T, U, NumHashValues>::Remove(unsigned key)
 {
@@ -519,7 +517,6 @@ bool HashListClass<T, U, NumHashValues>::Remove(unsigned key)
 	return(false);
 }
 
-// Move nodes from one list to another.
 template <class T, class U, int NumHashValues>
 void HashListClass<T, U, NumHashValues>::Move_To(HashListClass<T,U> *newlist)
 {

@@ -79,7 +79,7 @@ void MaterialPassClass::Install_Materials() const
 }
 
 
-// Set texture to use (or nullptr).
+// The texture can be nullptr.
 void MaterialPassClass::Set_Texture(TextureClass * tex,int stage)
 {
 	WWASSERT(stage >= 0);
@@ -96,7 +96,6 @@ void MaterialPassClass::Set_Shader(ShaderClass shader)
 }
 
 
-// Set vertex material to use.
 void MaterialPassClass::Set_Material(VertexMaterialClass * mat)
 {
 	REF_PTR_SET(Material,mat);

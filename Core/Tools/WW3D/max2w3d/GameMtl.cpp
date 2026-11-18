@@ -772,7 +772,6 @@ GameMtl::~GameMtl()
 }
 
 
-// Returns the max ClassID of the material plugin.
 Class_ID GameMtl::ClassID()
 {
 	return GameMaterialClassID;
@@ -785,7 +784,6 @@ SClass_ID GameMtl::SuperClassID()
 }
 
 
-// Returns the name of this plugin class.
 void GameMtl::GetClassName(TSTR& s)
 {
 	s = Get_String(IDS_GAMEMTL);
@@ -910,7 +908,6 @@ RefResult GameMtl::NotifyRefChanged
 }
 
 
-// Set the i'th reference.
 void GameMtl::SetReference(int i, RefTargetHandle rtarg)
 {
 	assert(i < REF_COUNT);
@@ -944,7 +941,6 @@ void GameMtl::SetReference(int i, RefTargetHandle rtarg)
 }
 
 
-// Returns the i'th reference.
 RefTargetHandle GameMtl::GetReference(int i)
 {
 	if (i == REF_MAPS) {
@@ -971,14 +967,12 @@ RefTargetHandle GameMtl::GetReference(int i)
 }
 
 
-// Returns the number of texture maps in this material.
 int GameMtl::NumSubTexmaps()
 {
 	return (W3dMaterialClass::MAX_PASSES * W3dMaterialClass::MAX_STAGES) + 1;
 }
 
 
-// Set the i'th texture map.
 void GameMtl::SetSubTexmap(int i, Texmap * m)
 {
 	ReplaceReference(REF_TEXTURE + i, m);
@@ -996,7 +990,6 @@ void GameMtl::SetSubTexmap(int i, Texmap * m)
 }
 
 
-// Returns the i'th texture map.
 Texmap * GameMtl::GetSubTexmap(int i)
 {
 	if (i == DISPLACEMENT_INDEX) {
@@ -1019,7 +1012,6 @@ ParamDlg * GameMtl::CreateParamDlg(HWND hwnd_mtl_edit, IMtlParams *imp)
 }
 
 
-// Someone has changed this material.
 void GameMtl::Notify_Changed()
 {
 	NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
@@ -1115,7 +1107,6 @@ void GameMtl::Update(TimeValue t, Interval &ivalid)
 }
 
 
-// Return the validity of the material at time t.
 Interval GameMtl::Validity(TimeValue t)
 {
 	return FOREVER;
@@ -1365,7 +1356,6 @@ IOResult GameMtl::Load(ILoad *iload)
 }
 
 
-// Saving into a MAX file.
 IOResult GameMtl::Save(ISave *isave)
 {
 	IOResult res;

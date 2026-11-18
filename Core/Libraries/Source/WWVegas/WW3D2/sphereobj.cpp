@@ -100,7 +100,6 @@ SphereRenderObjClass::SphereRenderObjClass()
 }
 
 
-// Constructor - init from a definition.
 SphereRenderObjClass::SphereRenderObjClass(const W3dSphereStruct & def)
 	:	anim_time (0.0F),
 		IsAnimating (true),
@@ -470,7 +469,6 @@ void SphereRenderObjClass::Render(RenderInfoClass & rinfo)
 }
 
 
-// Special render this sphere (vis).
 void SphereRenderObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 {
 	Matrix3D temp(1);
@@ -498,7 +496,6 @@ void SphereRenderObjClass::Set_Position(const Vector3 &v)
 }
 
 
-// Update the world-space version of this sphere.
 void SphereRenderObjClass::update_cached_box()
 {
 	CachedBox.Center = Transform.Get_Translation() + ObjSpaceCenter;
@@ -506,7 +503,6 @@ void SphereRenderObjClass::update_cached_box()
 }
 
 
-// Return the object-space bounding sphere.
 void SphereRenderObjClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
 	sphere.Init(ObjSpaceCenter,ObjSpaceExtent.Length());
@@ -599,7 +595,6 @@ void SphereRenderObjClass::Scale(float scale)
 }
 
 
-// Scales sphere non-uniformly.
 void SphereRenderObjClass::Scale(float scalex, float scaley, float scalez)
 {
 	// Scale default value
@@ -622,7 +617,6 @@ void SphereRenderObjClass::Scale(float scalex, float scaley, float scalez)
 
 
 
-// Updates world-space bounding volumes.
 void SphereRenderObjClass::Update_Cached_Bounding_Volumes() const
 {
 	CachedBoundingBox.Extent.X = ObjSpaceExtent.X * CurrentScale.X;
@@ -709,7 +703,6 @@ void SphereRenderObjClass::Update_On_Visibility()
 }
 
 
-// Update Current Display state.
 void SphereRenderObjClass::animate ()
 {
 	if (Is_Animating ()) {
@@ -1051,7 +1044,6 @@ void	SphereMeshClass::Set_Alpha_Vector (const AlphaVectorStruct &v, bool inverse
 }
 
 
-// Alloc Memory, and Generate Geometry, for the SphereMesh.
 void SphereMeshClass::Generate(float radius, int slices, int stacks)
 {
 	// compute # of vertices
@@ -1262,7 +1254,6 @@ SphereMeshClass::~SphereMeshClass()
 }
 
 
-// Frees memory used by geometry for the SphereMesh.
 void SphereMeshClass::Free()
 {
 	delete [] vtx;

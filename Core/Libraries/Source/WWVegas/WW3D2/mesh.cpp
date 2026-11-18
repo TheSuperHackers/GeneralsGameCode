@@ -90,7 +90,6 @@ static SimpleDynVecClass<uint32> temp_apt;
 static DynamicVectorClass<Vector3>	_TempVertexBuffer;
 
 
-// Initializes an empty mesh class.
 MeshClass::MeshClass() :
 	Model(nullptr),
 	DecalMesh(nullptr),
@@ -106,7 +105,6 @@ MeshClass::MeshClass() :
 }
 
 
-// Creates a mesh which is a copy of the given mesh.
 MeshClass::MeshClass(const MeshClass & that) :
 	RenderObjClass(that),
 	Model(nullptr),
@@ -124,7 +122,6 @@ MeshClass::MeshClass(const MeshClass & that) :
 }
 
 
-// Assignment operator for MeshClass.
 MeshClass & MeshClass::operator = (const MeshClass & that)
 {
 	if (this != &that) {
@@ -148,7 +145,7 @@ MeshClass::~MeshClass()
 }
 
 
-// Determines whether mesh contains a (worldspace) point. This function will NOT work for skins.
+// The point is in world space. This function will NOT work for skins.
 // WARNING: Assumes mesh is a closed manifold - results are undefined otherwise.
 bool MeshClass::Contains(const Vector3 &point)
 {
@@ -159,7 +156,6 @@ bool MeshClass::Contains(const Vector3 &point)
 }
 
 
-// Releases all memory/assets in use by this mesh.
 void MeshClass::Free()
 {
 	REF_PTR_RELEASE(Model);
@@ -184,14 +180,12 @@ void MeshClass::Set_Name(const char * name)
 	Model->Set_Name(name);
 }
 
-// Access to the W3D flags.
 uint32 MeshClass::Get_W3D_Flags()
 {
 	return Model->W3dAttributes;
 }
 
 
-// Access to the text buffer.
 const char * MeshClass::Get_User_Text() const
 {
 	return Model->Get_User_Text();
@@ -210,7 +204,6 @@ MaterialInfoClass * MeshClass::Get_Material_Info()
 }
 
 
-// User access to the mesh model.
 MeshModelClass * MeshClass::Get_Model()
 {
 	if (Model != nullptr) {
@@ -746,7 +739,6 @@ void MeshClass::Replace_Texture(TextureClass* texture,TextureClass* new_texture)
 }
 
 
-// Replaces existing vertex material with a new one.
 void MeshClass::Replace_VertexMaterial(VertexMaterialClass* vmat,VertexMaterialClass* new_vmat)
 {
 	Model->Replace_VertexMaterial(vmat,new_vmat);
@@ -767,7 +759,6 @@ void MeshClass::Make_Unique(bool force_meshmdl_clone)
 	REF_PTR_RELEASE(newmesh);
 }
 
-// Creates a mesh out of a mesh chunk in a .w3d file.
 WW3DErrorType MeshClass::Load_W3D(ChunkLoadClass & cload)
 {
 	Vector3 boxmin,boxmax;
@@ -898,7 +889,6 @@ bool MeshClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 }
 
 
-// Cast an obbox against this mesh.
 bool MeshClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;

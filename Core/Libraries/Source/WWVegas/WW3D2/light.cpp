@@ -119,7 +119,6 @@ LightClass::~LightClass()
 }
 
 
-// Virtual copy constructor.
 RenderObjClass * LightClass::Clone() const
 {
 	return W3DNEW LightClass(*this);
@@ -158,7 +157,6 @@ void LightClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 }
 
 
-// Initialize this light from a W3D file.
 WW3DErrorType LightClass::Load_W3D(ChunkLoadClass & cload)
 {
 	W3dLightStruct lightinfo;
@@ -226,7 +224,6 @@ WW3DErrorType LightClass::Load_W3D(ChunkLoadClass & cload)
 }
 
 
-// Save this light's settings into a W3D file.
 WW3DErrorType LightClass::Save_W3D(ChunkSaveClass & csave)
 {
 	csave.Begin_Chunk(W3D_CHUNK_LIGHT);

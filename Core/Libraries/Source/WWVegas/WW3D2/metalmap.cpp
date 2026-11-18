@@ -51,7 +51,6 @@
 */
 Vector3 * MetalMapManagerClass::_NormalTable = nullptr;
 
-// Create metal map manager from INI.
 MetalMapManagerClass::MetalMapManagerClass(INIClass &ini) :
 	MapCount(0),
 	Textures(nullptr),
@@ -146,7 +145,6 @@ MetalMapManagerClass::~MetalMapManagerClass()
 }
 
 
-// Get the texture for a metal map by id number.
 TextureClass * MetalMapManagerClass::Get_Metal_Map(int id)
 {
 	if (id < 0 || id >= MapCount) return nullptr;
@@ -161,7 +159,6 @@ int MetalMapManagerClass::Metal_Map_Count()
 }
 
 
-// Update the lighting parameters used for generating the maps.
 void MetalMapManagerClass::Update_Lighting(const Vector3& ambient, const Vector3& main_light_color,
 	const Vector3& main_light_dir, const Vector3& camera_dir)
 {
@@ -171,7 +168,7 @@ void MetalMapManagerClass::Update_Lighting(const Vector3& ambient, const Vector3
 	CurrentCameraDir= camera_dir;
 }
 
-// Update metal map textures (call once/frame before rendering).
+// Call once per frame before rendering.
 void MetalMapManagerClass::Update_Textures()
 {
 	// Currently the lighting is done using a simple Phong (actually Blinn) model.
@@ -287,7 +284,7 @@ void MetalMapManagerClass::initialize_normal_table()
 
 }
 
-// Utility function (shared CTor code).
+// Shared constructor code.
 void MetalMapManagerClass::initialize_metal_params(int map_count, MetalParams *metal_params)
 {
 	MapCount = map_count;

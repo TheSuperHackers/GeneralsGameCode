@@ -210,7 +210,7 @@ Value *find_skin_node_in_tree (INode *root)
 }
 
 
-// Find the "WWSkin Binding" modifier on this object. Returns null if one doesn't exist.
+// Finds the "WWSkin Binding" modifier.
 SkinModifierClass *find_skin_binding (INode *skinned_obj)
 {
 	// WWSkin Binding ties us to a space warp, so search the node's
@@ -257,7 +257,6 @@ INode *find_skin_wsm (INode *skinned_obj)
 }
 
 
-// Gets the SkinWSMObjectClass from a WWSkin WSM node.
 SkinWSMObjectClass *get_skin_wsm_obj (INode *wsm_node)
 {
 	// We need a valid node.
@@ -326,7 +325,7 @@ INode *duplicate_wsm (INode *wsm_node, INode *tree)
 }
 
 
-// Searches a hierarchy for an object equivalent to the given one. Returns null if none was found.
+// Searches a hierarchy for an object equivalent to the given one.
 INode *find_equivalent_node (INode *source, INode *tree, bool name_is_valid)
 {
 	// We need a valid source and tree.

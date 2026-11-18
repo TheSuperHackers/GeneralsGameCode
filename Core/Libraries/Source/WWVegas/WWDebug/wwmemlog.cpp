@@ -553,7 +553,6 @@ MemLogClass * WWMemoryLogClass::Get_Log()
 }
 
 
-// Free the memory used by WWMemoryLogClass so it doesn't leak.
 // WARNING: Called as part of _onexit processing.
 void WWMemoryLogClass::Release_Log()
 {
@@ -606,9 +605,9 @@ struct MemoryLogStruct
 
 
 
-// This function adds a header to the memory allocated so that when the memory is freed the proper
-// memory category size can be decremented. The application using this logging system should call
-// this function from inside its overloaded 'new' operator.
+// Adds a header to the memory allocated so that when the memory is freed the proper memory category
+// size can be decremented. The application using this logging system should call this function from
+// inside its overloaded 'new' operator.
 void * WWMemoryLogClass::Allocate_Memory(size_t size)
 {
 	AllocateCount++;
@@ -657,8 +656,8 @@ void * WWMemoryLogClass::Allocate_Memory(size_t size)
 }
 
 
-// This function checks for a wwmemlog header and decrements the relevant memory category. It should
-// be called in the application's custom delete operator.
+// Checks for a wwmemlog header and decrements the relevant memory category. It should be called in
+// the application's custom delete operator.
 void WWMemoryLogClass::Release_Memory(void *ptr)
 {
 	FreeCount++;

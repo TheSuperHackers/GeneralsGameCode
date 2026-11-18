@@ -158,21 +158,18 @@ WWINLINE void	AABoxClass::Translate(const Vector3 & trans)
 }
 
 
-// Comparison operator.
 WWINLINE  bool AABoxClass::operator== (const AABoxClass &src)
 {
 	return (Center == src.Center) && (Extent == src.Extent);
 }
 
 
-// Comparison operator.
 WWINLINE bool AABoxClass::operator!= (const AABoxClass &src)
 {
 	return (Center != src.Center) || (Extent != src.Extent);
 }
 
 
-// Create a box which bounds the given points.
 WWINLINE void AABoxClass::Init(Vector3 * points,int num)
 {
 	Vector3 Min = points[0];
@@ -193,7 +190,6 @@ WWINLINE void AABoxClass::Init(Vector3 * points,int num)
 }
 
 
-// Initialize from a min-max form of a box.
 WWINLINE void AABoxClass::Init(const MinMaxAABoxClass & mmbox)
 {
 	Center = (mmbox.MaxCorner + mmbox.MinCorner) * 0.5f;
@@ -201,7 +197,6 @@ WWINLINE void AABoxClass::Init(const MinMaxAABoxClass & mmbox)
 }
 
 
-// Init from a line segment.
 WWINLINE void AABoxClass::Init(const LineSegClass & line)
 {
 	Vector3 min_corner = line.Get_P0();
@@ -226,7 +221,6 @@ WWINLINE void AABoxClass::Init_Min_Max(const Vector3 & min,const Vector3 & max)
 }
 
 
-// Expand the box to contain the given point.
 WWINLINE void AABoxClass::Add_Point(const Vector3 & point)
 {
 	Vector3 Min = Center - Extent;
@@ -245,7 +239,7 @@ WWINLINE void AABoxClass::Add_Point(const Vector3 & point)
 }
 
 
-// Expand this box to enclose the passed box. Boxes with zero extent are OK to add.
+// Boxes with zero extent are OK to add.
 WWINLINE void AABoxClass::Add_Box(const AABoxClass & b)
 {
 	Vector3 newmin = Center - Extent;
@@ -258,7 +252,7 @@ WWINLINE void AABoxClass::Add_Box(const AABoxClass & b)
 }
 
 
-// Expand this box to enclose the passed box. Boxes with zero extent are OK to add.
+// Boxes with zero extent are OK to add.
 WWINLINE void AABoxClass::Add_Box(const MinMaxAABoxClass & b)
 {
 	Vector3 newmin = Center - Extent;
@@ -301,13 +295,11 @@ WWINLINE bool AABoxClass::Contains(const MinMaxAABoxClass & other_box) const
 	return true;
 }
 
-// Test whether this box contains the given point.
 WWINLINE bool AABoxClass::Contains(const Vector3 & point) const
 {
 	return CollisionMath::Overlap_Test(*this,point) == CollisionMath::INSIDE;
 }
 
-// Makes a box which encloses the given array of points.
 WWINLINE void MinMaxAABoxClass::Init(Vector3 * points,int num)
 {
 	assert(num > 0);
@@ -321,7 +313,6 @@ WWINLINE void MinMaxAABoxClass::Init(Vector3 * points,int num)
 }
 
 
-// Initializes this box from a center-extent box.
 WWINLINE void MinMaxAABoxClass::Init(const AABoxClass & box)
 {
 	MinCorner = box.Center - box.Extent;
@@ -329,7 +320,6 @@ WWINLINE void MinMaxAABoxClass::Init(const AABoxClass & box)
 }
 
 
-// Updates this box so it encloses the given point.
 WWINLINE void MinMaxAABoxClass::Add_Point(const Vector3 & point)
 {
 	MinCorner.Update_Min(point);
@@ -337,7 +327,6 @@ WWINLINE void MinMaxAABoxClass::Add_Point(const Vector3 & point)
 }
 
 
-// Update this box to enclose the given box.
 WWINLINE void MinMaxAABoxClass::Add_Box(const MinMaxAABoxClass & box)
 {
 	if (box.MinCorner == box.MaxCorner) return;
@@ -347,7 +336,6 @@ WWINLINE void MinMaxAABoxClass::Add_Box(const MinMaxAABoxClass & box)
 }
 
 
-// Update this box to enclose the given box.
 WWINLINE void MinMaxAABoxClass::Add_Box(const AABoxClass & box)
 {
 	if (box.Extent == Vector3(0.0f, 0.0f, 0.0f)) return;
@@ -356,7 +344,6 @@ WWINLINE void MinMaxAABoxClass::Add_Box(const AABoxClass & box)
 	MaxCorner.Update_Max(box.Center + box.Extent);
 }
 
-// Updates this box to enclose the specified box.
 WWINLINE void MinMaxAABoxClass::Add_Box(const Vector3 & min_corner,const Vector3 & max_corner)
 {
 	assert(max_corner.X >= min_corner.X);

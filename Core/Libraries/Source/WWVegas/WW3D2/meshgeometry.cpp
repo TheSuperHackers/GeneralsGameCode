@@ -266,7 +266,6 @@ void MeshGeometryClass::Generate_Rigid_APT(const Vector3 & view_dir, SimpleDynVe
 }
 
 
-// Generate active polygon table by culling the mesh against the specified volume.
 void MeshGeometryClass::Generate_Rigid_APT(const OBBoxClass & local_box, SimpleDynVecClass<uint32> & apt)
 {
 	if (CullTree != nullptr) {
@@ -295,7 +294,6 @@ void MeshGeometryClass::Generate_Rigid_APT(const OBBoxClass & local_box, SimpleD
 }
 
 
-// Generate an apt for a box and view direction.
 void MeshGeometryClass::Generate_Rigid_APT(const OBBoxClass & local_box,const Vector3 & viewdir,SimpleDynVecClass<uint32> & apt)
 {
 	if (CullTree != nullptr) {
@@ -325,7 +323,6 @@ void MeshGeometryClass::Generate_Rigid_APT(const OBBoxClass & local_box,const Ve
 	}
 }
 
-// Generate an active polygon table by culling the mesh against the specified volume.
 void MeshGeometryClass::Generate_Skin_APT(const OBBoxClass & world_box, SimpleDynVecClass<uint32> & apt, const Vector3 *world_vertex_locs)
 {
 	WWASSERT(world_vertex_locs);
@@ -353,7 +350,6 @@ void MeshGeometryClass::Generate_Skin_APT(const OBBoxClass & world_box, SimpleDy
 }
 
 
-// Test if the mesh contains the given point.
 bool MeshGeometryClass::Contains(const Vector3 &point)
 {
 	// To determine whether the mesh contains a point, we will use the parity method (cast a
@@ -442,7 +438,6 @@ bool MeshGeometryClass::Intersect_OBBox(OBBoxIntersectionTestClass & boxtest)
 }
 
 
-// Test for intersection with a worldspace AABox.
 bool MeshGeometryClass::Cast_World_Space_AABox(AABoxCollisionTestClass & boxtest, const Matrix3D &transform)
 {
 	/*
@@ -560,7 +555,6 @@ int MeshGeometryClass::cast_semi_infinite_axis_aligned_ray(const Vector3 & start
 }
 
 
-// Aligned aabox test.
 bool MeshGeometryClass::cast_aabox_identity(AABoxCollisionTestClass & boxtest, const Vector3 & translation)
 {
 	// transform the test into the mesh's coordinate system
@@ -576,7 +570,6 @@ bool MeshGeometryClass::cast_aabox_identity(AABoxCollisionTestClass & boxtest, c
 }
 
 
-// Aabox test which is rotated about z by 90 degrees.
 bool MeshGeometryClass::cast_aabox_z90(AABoxCollisionTestClass & boxtest, const Vector3 & translation)
 {
 	// transform the test into the mesh's coordinate system
@@ -604,7 +597,6 @@ bool MeshGeometryClass::cast_aabox_z90(AABoxCollisionTestClass & boxtest, const 
 }
 
 
-// Aabox test which is rotated about z by 180 degrees.
 bool MeshGeometryClass::cast_aabox_z180(AABoxCollisionTestClass & boxtest, const Vector3 & translation)
 {
 	// transform the test into the meshes coordinate system
@@ -631,7 +623,6 @@ bool MeshGeometryClass::cast_aabox_z180(AABoxCollisionTestClass & boxtest, const
 }
 
 
-// Aabox test which is rotated about z by 270 degrees.
 bool MeshGeometryClass::cast_aabox_z270(AABoxCollisionTestClass & boxtest, const Vector3 & translation)
 {
 	// transform the test into the mesh's coordinate system
@@ -976,7 +967,6 @@ const Vector3 * MeshGeometryClass::Get_Vertex_Normal_Array()
 
 
 
-// Get the plane array memory (internal).
 Vector4 * MeshGeometryClass::get_planes(bool create)
 {
 #if (OPTIMIZE_PLANEEQ_RAM)
@@ -994,7 +984,7 @@ Vector4 * MeshGeometryClass::get_planes(bool create)
 }
 
 
-// Validates and returns the array of plane equations.
+// Validates the array of plane equations before returning it.
 const Vector4 * MeshGeometryClass::Get_Plane_Array(bool create)
 {
 #if (OPTIMIZE_PLANEEQ_RAM)
@@ -1010,7 +1000,6 @@ const Vector4 * MeshGeometryClass::Get_Plane_Array(bool create)
 #endif
 }
 
-// Compute the plane equation of a single poly.
 void MeshGeometryClass::Compute_Plane(int pidx,PlaneClass * set_plane) const
 {
 	WWASSERT(pidx >= 0);
@@ -1224,7 +1213,6 @@ WW3DErrorType MeshGeometryClass::read_chunks(ChunkLoadClass & cload)
 }
 
 
-// Read the vertex chunk from a W3D file.
 WW3DErrorType MeshGeometryClass::read_vertices(ChunkLoadClass & cload)
 {
 	W3dVectorStruct vert;
@@ -1328,7 +1316,6 @@ WW3DErrorType MeshGeometryClass::read_user_text(ChunkLoadClass & cload)
 }
 
 
-// Read the vertex influences chunk from a w3d file.
 WW3DErrorType MeshGeometryClass::read_vertex_influences(ChunkLoadClass & cload)
 {
 	W3dVertInfStruct vinf;

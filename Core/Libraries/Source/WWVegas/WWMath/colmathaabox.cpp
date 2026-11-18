@@ -45,7 +45,6 @@
 #include "WWDebug/wwdebug.h"
 
 
-// Test intersection between two AABoxes.
 bool CollisionMath::Intersection_Test(const AABoxClass & box,const AABoxClass & box2)
 {
 	Vector3 dc = box2.Center - box.Center;
@@ -56,7 +55,6 @@ bool CollisionMath::Intersection_Test(const AABoxClass & box,const AABoxClass & 
 	return true;
 }
 
-// Tests overlap between an AABox and a sphere.
 CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,const SphereClass & sphere)
 {
 	// TODO: this function seems incorrect.  Not currently using it though
@@ -295,7 +293,6 @@ CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,co
 #endif // Alternate Overlap Test for AABox-Ray
 
 
-// Tests overlap between an AABox and a triangle.
 CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,const TriClass & tri)
 {
 	CastResultStruct res;
@@ -304,7 +301,6 @@ CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,co
 }
 
 
-// Collision test for a moving AABox and a plane.
 bool CollisionMath::Collide
 (
 	const AABoxClass &		box,
@@ -399,8 +395,8 @@ private:
 };
 
 
-// Tests two AAB's for separation on an axis. This function is very similar to the
-// obb_separation_test. If a flaw is found in either, we should update the other...
+// This function is very similar to the obb_separation_test. If a flaw is found in either, we should
+// update the other...
 static inline bool aab_separation_test
 (
 	AABCollisionStruct & context,
@@ -450,8 +446,7 @@ static inline bool aab_separation_test
 }
 
 
-// Collision test for two moving AABoxes. This function sweeps two AABoxes and finds the first time
-// of collision.
+// Sweeps two AABoxes and finds the first time of collision.
 // WARNING: Currently there is no parameter for the movement of the second box. The internal code
 // can handle it though.
 bool CollisionMath::Collide(const AABoxClass & box,const Vector3 & move,const AABoxClass & box2,CastResultStruct * result)

@@ -136,7 +136,6 @@ HCompressedAnimClass::~HCompressedAnimClass()
 }
 
 
-// De-allocates all memory in use.
 void HCompressedAnimClass::Free()
 {
 	delete[] NodeMotion;
@@ -291,7 +290,6 @@ Error:
 
 }
 
-// Reads in a single channel of motion.
 bool HCompressedAnimClass::read_channel(ChunkLoadClass & cload,TimeCodedMotionChannelClass * * newchan)
 {
 	TimeCodedMotionChannelClass* channel = W3DNEW TimeCodedMotionChannelClass;
@@ -404,7 +402,6 @@ void HCompressedAnimClass::add_bit_channel(TimeCodedBitChannelClass * newchan)
 	}
 }
 
-// Returns the translation vector for the given frame.
 void HCompressedAnimClass::Get_Translation( Vector3& trans, int pividx, float frame ) const
 {
 	struct NodeCompressedMotionStruct * motion = &NodeMotion[pividx];
@@ -428,7 +425,6 @@ void HCompressedAnimClass::Get_Translation( Vector3& trans, int pividx, float fr
 	}
 }
 
-// Returns a quaternion for the orientation of the pivot at the given frame.
 void HCompressedAnimClass::Get_Orientation(Quaternion& q, int pividx,float frame) const
 {
 	switch(Flavor) {
@@ -446,7 +442,6 @@ void HCompressedAnimClass::Get_Orientation(Quaternion& q, int pividx,float frame
 	}
 }
 
-// Returns the transform matrix for the given frame.
 void HCompressedAnimClass::Get_Transform( Matrix3D& mtx, int pividx, float frame ) const
 {
 	struct NodeCompressedMotionStruct * motion = &NodeMotion[pividx];
@@ -481,7 +476,6 @@ void HCompressedAnimClass::Get_Transform( Matrix3D& mtx, int pividx, float frame
 	}
 }
 
-// Return visibility state for given pivot/frame.
 bool HCompressedAnimClass::Get_Visibility(int pividx,float frame)
 {
 
@@ -496,7 +490,6 @@ bool HCompressedAnimClass::Get_Visibility(int pividx,float frame)
 
 
 
-// Return true if there is motion defined for this frame.
 bool HCompressedAnimClass::Is_Node_Motion_Present(int pividx)
 {
 	WWASSERT((pividx >= 0) && (pividx < NumNodes));

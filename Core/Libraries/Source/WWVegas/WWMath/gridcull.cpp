@@ -106,7 +106,6 @@ GridCullSystemClass::~GridCullSystemClass()
 }
 
 
-// Collect all objects touching the given point.
 void GridCullSystemClass::Collect_Objects(const Vector3 & point)
 {
 	/*
@@ -141,7 +140,6 @@ void GridCullSystemClass::Collect_Objects(const Vector3 & point)
 }
 
 
-// Collect all objects touching the given AABox.
 void GridCullSystemClass::Collect_Objects(const AABoxClass & box)
 {
 	/*
@@ -177,7 +175,6 @@ void GridCullSystemClass::Collect_Objects(const AABoxClass & box)
 }
 
 
-// Collect all objects touching the given OBBox.
 void GridCullSystemClass::Collect_Objects(const OBBoxClass & box)
 {
 	/*
@@ -213,7 +210,6 @@ void GridCullSystemClass::Collect_Objects(const OBBoxClass & box)
 }
 
 
-// Collect all objects touching the given Frustum.
 void GridCullSystemClass::Collect_Objects(const FrustumClass & frustum)
 {
 	/*
@@ -249,7 +245,6 @@ void GridCullSystemClass::Collect_Objects(const FrustumClass & frustum)
 }
 
 
-// Re-compute grid parameters for the given volume.
 void GridCullSystemClass::Re_Partition(const Vector3 & input_min,const Vector3 & input_max,float objdim)
 {
 	/*
@@ -347,9 +342,8 @@ void GridCullSystemClass::Re_Partition(const Vector3 & input_min,const Vector3 &
 }
 
 
-// Collects all objects and removes them from the grid. This is used when re-partitioning the grid.
-// All objects are pulled out and linked into the collection list. When the grid has been
-// re-initialized, the objects are put back in.
+// This is used when re-partitioning the grid. All objects are pulled out and linked into the
+// collection list. When the grid has been re-initialized, the objects are put back in.
 void GridCullSystemClass::Collect_And_Unlink_All()
 {
 	Reset_Collection();
@@ -455,7 +449,6 @@ void GridCullSystemClass::Remove_Object_Internal(CullableClass * obj)
 }
 
 
-// Figures out which cell the object is in and links it.
 void GridCullSystemClass::link_object(CullableClass * obj)
 {
 	WWASSERT(obj);

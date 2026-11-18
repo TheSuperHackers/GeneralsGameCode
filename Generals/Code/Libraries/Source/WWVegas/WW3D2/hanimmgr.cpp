@@ -196,7 +196,6 @@ HAnimClass * HAnimManagerClass::Get_Anim(const char * name)
 }
 
 
-// De-allocate all currently loaded animations.
 void HAnimManagerClass::Free_All_Anims()
 {
 	// Make an iterator, and release all ptrs
@@ -210,7 +209,6 @@ void HAnimManagerClass::Free_All_Anims()
 	AnimPtrTable->Reset();
 }
 
-// Release animations not in the list.
 void HAnimManagerClass::Free_All_Anims_With_Exclusion_List(const W3DExclusionListClass & exclusion_list)
 {
 	// Remove and Release_Ref any animation not in the exclusion list.

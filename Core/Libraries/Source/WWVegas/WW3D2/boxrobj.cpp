@@ -123,7 +123,6 @@ BoxRenderObjClass::BoxRenderObjClass()
 }
 
 
-// Constructor - init from a definition.
 BoxRenderObjClass::BoxRenderObjClass(const W3dBoxStruct & def)
 {
 	Set_Name(def.Name);
@@ -205,7 +204,7 @@ void BoxRenderObjClass::Init()
 }
 
 
-// Cleanup box render system. Releases resources allocated in Init.
+// Releases resources allocated in Init.
 // NOTE: This is a static function that should only be called by the system.
 void BoxRenderObjClass::Shutdown()
 {
@@ -334,7 +333,6 @@ AABoxRenderObjClass::AABoxRenderObjClass()
 }
 
 
-// Constructor - init from a definition.
 AABoxRenderObjClass::AABoxRenderObjClass(const W3dBoxStruct & def) :
 	BoxRenderObjClass(def)
 {
@@ -414,7 +412,6 @@ void AABoxRenderObjClass::Set_Position(const Vector3 &v)
 }
 
 
-// Update the world-space version of this box.
 void AABoxRenderObjClass::update_cached_box()
 {
 	CachedBox.Center = Transform.Get_Translation() + ObjSpaceCenter;
@@ -476,7 +473,6 @@ bool AABoxRenderObjClass::Intersect_OBBox(OBBoxIntersectionTestClass & boxtest)
 }
 
 
-// Return the object-space bounding sphere.
 void AABoxRenderObjClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
 	sphere.Init(ObjSpaceCenter,ObjSpaceExtent.Length());
@@ -495,7 +491,6 @@ OBBoxRenderObjClass::OBBoxRenderObjClass()
 }
 
 
-// Constructor - initialize from a definition.
 OBBoxRenderObjClass::OBBoxRenderObjClass(const W3dBoxStruct & def) :
 	BoxRenderObjClass(def)
 {
@@ -509,7 +504,6 @@ OBBoxRenderObjClass::OBBoxRenderObjClass(const OBBoxRenderObjClass & that)
 }
 
 
-// Constructor - initialize from a wwmath obbox.
 OBBoxRenderObjClass::OBBoxRenderObjClass(const OBBoxClass & box)
 {
 	ObjSpaceCenter.Set(Vector3(0,0,0));
@@ -572,7 +566,6 @@ void OBBoxRenderObjClass::Set_Position(const Vector3 &v)
 }
 
 
-// Update the cached world-space box.
 void OBBoxRenderObjClass::update_cached_box()
 {
 	Matrix3D::Transform_Vector(Transform,ObjSpaceCenter,&CachedBox.Center);
@@ -595,7 +588,6 @@ bool OBBoxRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 }
 
 
-// Cast a swept aabox against this box.
 bool OBBoxRenderObjClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;
@@ -609,7 +601,6 @@ bool OBBoxRenderObjClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 }
 
 
-// Cast a swept obbox against this box.
 bool OBBoxRenderObjClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;

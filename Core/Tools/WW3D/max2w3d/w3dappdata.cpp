@@ -312,7 +312,6 @@ static int get_geometry_type(INode * node)
 	return W3DAppData2Struct::Get_App_Data(node)->Get_Geometry_Type();
 }
 
-// Check if a node is a "bone".
 bool Is_Bone(INode * node)
 {
 	/*
@@ -330,7 +329,6 @@ bool Is_Geometry(INode * node)
 	return (W3DAppData2Struct::Get_App_Data(node)->Is_Geometry());
 }
 
-// Check if a node is a mesh.
 bool Is_Normal_Mesh(INode * node)
 {
  	if (!Is_Geometry(node)) return false;
@@ -340,21 +338,18 @@ bool Is_Normal_Mesh(INode * node)
 }
 
 
-// Check if a node is to be a camera aligned mesh.
 bool Is_Camera_Aligned_Mesh(INode * node)
 {
 	if (!Is_Geometry(node)) return false;
 	return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_CAMERA_ALIGNED);
 }
 
-// Check if a node is to be a camera oriented mesh.
 bool Is_Camera_Oriented_Mesh(INode * node)
 {
 	if (!Is_Geometry(node)) return false;
 	return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_CAMERA_ORIENTED);
 }
 
-// Check if a node is a collision box.
 bool Is_Collision_AABox(INode * node)
 {
 	if (!Is_Geometry(node)) return false;
@@ -362,14 +357,12 @@ bool Is_Collision_AABox(INode * node)
 }
 
 
-// Check if a node is a collision box.
 bool Is_Collision_OBBox(INode * node)
 {
 	if (!Is_Geometry(node)) return false;
 	return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_OBBOX);
 }
 
-// Check if a node is a skin.
 bool Is_Skin(INode * node)
 {
 	if (!Is_Geometry(node)) return false;
@@ -404,7 +397,6 @@ bool Is_Shadow(INode * node)
 	return (wdata->Is_Shadow_Enabled());
 }
 
-// Check if a node is a null object.
 bool Is_Null_Object(INode * node)
 {
 	if (!Is_Geometry(node)) return false;
@@ -412,7 +404,6 @@ bool Is_Null_Object(INode * node)
 }
 
 
-// Check if a node is a dazzle object.
 bool	Is_Dazzle(INode * node)
 {
 	if (!Is_Geometry(node)) return false;
@@ -420,14 +411,12 @@ bool	Is_Dazzle(INode * node)
 }
 
 
-// Check if a node is an aggregate object.
 bool Is_Aggregate(INode * node)
 {
 	if (!Is_Geometry(node)) return false;
 	return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_AGGREGATE);
 }
 
-// Is node categorized as "physical collision geometry"?
 bool Is_Physical_Collision(INode * node)
 {
 	W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(node);
@@ -435,7 +424,6 @@ bool Is_Physical_Collision(INode * node)
 }
 
 
-// Is node categorized as "projectile collision geometry"?
 bool Is_Projectile_Collision(INode * node)
 {
 	W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(node);
@@ -443,7 +431,6 @@ bool Is_Projectile_Collision(INode * node)
 }
 
 
-// Is node categorized as "vis collision geometry"?
 bool Is_Vis_Collision(INode * node)
 {
 	W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(node);
@@ -451,21 +438,18 @@ bool Is_Vis_Collision(INode * node)
 }
 
 
-// Is node categorized as "camera collision geometry"?
 bool Is_Camera_Collision(INode * node)
 {
 	W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(node);
 	return (wdata->Is_Camera_Collision_Enabled());
 }
 
-// Is node categorized as "Vehicle collision geometry"?
 bool Is_Vehicle_Collision(INode * node)
 {
 	W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(node);
 	return (wdata->Is_Vehicle_Collision_Enabled());
 }
 
-// Checks whether the node should be hidden.
 // WARNING: This has nothing to do with its hidden status inside of max. Things hidden in max are
 // ignored by the exporter. (artist request way back...weird huh?).
 bool	Is_Hidden(INode * node)
@@ -475,7 +459,6 @@ bool	Is_Hidden(INode * node)
 }
 
 
-// Checks whether the node should be two sided.
 bool	Is_Two_Sided(INode * node)
 {
 	W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(node);

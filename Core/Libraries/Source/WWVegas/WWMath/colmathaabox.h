@@ -42,7 +42,6 @@
 #include "lineseg.h"
 
 
-// Test overlap between an AABox and a point.
 WWINLINE CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,const Vector3 & point)
 {
 	if (WWMath::Fabsf_Legacy(point.X - box.Center.X) > box.Extent.X) return POS;
@@ -52,7 +51,6 @@ WWINLINE CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass
 	return NEG;
 }
 
-// Tests overlap between two AABoxes.
 WWINLINE CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,const AABoxClass & box2)
 {
 	Vector3 dc;

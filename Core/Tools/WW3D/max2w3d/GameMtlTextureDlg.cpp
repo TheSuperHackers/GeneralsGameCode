@@ -99,7 +99,7 @@ GameMtlTextureDlg::~GameMtlTextureDlg()
 }
 
 
-// Windows message handler. The display button is turned off when the texture is turned off.
+// The display button is turned off when the texture is turned off.
 BOOL GameMtlTextureDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int cursel;
@@ -434,7 +434,6 @@ BOOL GameMtlTextureDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, 
 }
 
 
-// Reload the contents of all of the controls in this dialog.
 void GameMtlTextureDlg::ReloadDialog()
 {
 	DebugPrint("GameMtlTextureDlg::ReloadDialog\n");

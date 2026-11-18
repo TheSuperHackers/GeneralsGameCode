@@ -247,7 +247,6 @@ void * Load_Alloc_Data( char *filename, long *filesize )
 	return( ptr );
 }
 
-// Returns a buffer loaded with the file desired.
 // WARNING: Searches MixFile first, then local directory. Use free() to release buffer.
 
 void *Load_File ( char *filename, long *filesize )
@@ -267,7 +266,6 @@ void *Load_File ( char *filename, long *filesize )
 }
 
 
-// Returns a buffer to the path desired.
 
 char *Make_Current_Path_To ( const char *filename, char *path )
 {
@@ -306,7 +304,6 @@ unichar *Make_Current_Path_To ( const unichar *filename, unichar *path )
 }
 
 
-// Add a '\\' to the end of the path.
 
 char *Path_Add_Back_Slash ( char *path )
 {
@@ -329,7 +326,6 @@ unichar *Path_Add_Back_Slash ( unichar *path )
 }
 
 
-// Remove a '\\' from the end of the path.
 
 char *Path_Remove_Back_Slash ( char *path )
 {

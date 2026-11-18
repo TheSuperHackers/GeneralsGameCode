@@ -42,7 +42,7 @@
 #include <d3d8types.h>
 #include <d3dx8math.h>
 
-// Multiply two Matrix4x4's together. The result must not point to a or b.
+// The result must not point to a or b.
 void Matrix4x4::Multiply(const Matrix4x4 &a,const Matrix4x4 &b,Matrix4x4 * res)
 {
 	assert(res != &a);

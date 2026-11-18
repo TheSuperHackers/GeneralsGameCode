@@ -1195,7 +1195,6 @@ void GridWSEnvMapperClass::Calculate_Texture_Matrix(Matrix4x4 &tex_matrix)
 	tex_matrix = md * mv;
 }
 
-// Grid WS Env Map.
 GridWSClassicEnvironmentMapperClass::GridWSClassicEnvironmentMapperClass(float fps, unsigned int gridwidth_log2, unsigned int last_frame, unsigned int offset, AxisType axis, unsigned int stage) :
 	GridWSEnvMapperClass(fps, gridwidth_log2, last_frame, offset, axis, stage)
 {
@@ -1225,7 +1224,6 @@ void GridWSClassicEnvironmentMapperClass::Apply(int uv_array_index)
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
 }
 
-// Grid WS Env Map.
 GridWSEnvironmentMapperClass::GridWSEnvironmentMapperClass(float fps, unsigned int gridwidth_log2, unsigned int last_frame, unsigned int offset, AxisType axis, unsigned int stage) :
 	GridWSEnvMapperClass(fps, gridwidth_log2, last_frame, offset, axis, stage)
 {

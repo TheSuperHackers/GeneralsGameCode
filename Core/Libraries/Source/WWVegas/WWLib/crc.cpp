@@ -36,9 +36,8 @@
 #include "CRC.h"
 
 
-// Submits one byte of data to the CRC engine. This routine is designed to be as fast as possible
-// since the typical use of this routine is to feed one of presumably many byte sized chunks of data
-// to the CRC engine.
+// This routine is designed to be as fast as possible since the typical use of this routine is to
+// feed one of presumably many byte sized chunks of data to the CRC engine.
 // WARNING: If possible, use the buffer/size operator to submit data rather than repeated calls to
 // this routine.
 void CRCEngine::operator() (char datum)
@@ -53,7 +52,6 @@ void CRCEngine::operator() (char datum)
 }
 
 
-// Submits an arbitrary data block to the CRC engine. The buffer will not be modified.
 long CRCEngine::operator() (void const * buffer, int length)
 {
 	if (buffer != nullptr && length > 0)  {

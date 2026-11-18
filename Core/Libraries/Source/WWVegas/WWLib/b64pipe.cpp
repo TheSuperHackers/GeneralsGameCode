@@ -105,9 +105,8 @@ int Base64Pipe::Put(void const * source, int slen)
 }
 
 
-// Flushes the final pending data through the pipe. If there is any non-processed data accumulated
-// in the holding buffer (quite likely when encoding), then it will be processed and flushed out the
-// end of the pipe.
+// If there is any non-processed data accumulated in the holding buffer (quite likely when
+// encoding), then it will be processed and flushed out the end of the pipe.
 int Base64Pipe::Flush()
 {
 	int len = 0;

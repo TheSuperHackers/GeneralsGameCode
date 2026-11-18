@@ -207,7 +207,6 @@ void WW3D::Set_NPatches_Level(unsigned level)
 	NPatchesLevel = level;
 }
 
-// Initialize the WW3D Library.
 WW3DErrorType WW3D::Init(void *hwnd, char *defaultpal, bool lite)
 {
 	assert(IsInitted == false);
@@ -260,7 +259,6 @@ WW3DErrorType WW3D::Init(void *hwnd, char *defaultpal, bool lite)
 }
 
 
-// Shutdown the WW3D Library.
 WW3DErrorType WW3D::Shutdown()
 {
 	assert(Lite || IsInitted == true);
@@ -315,7 +313,6 @@ WW3DErrorType WW3D::Shutdown()
 }
 
 
-// Set the render device being currently used.
 WW3DErrorType WW3D::Set_Render_Device( const char * dev_name, int width, int height, int bits, int windowed, bool resize_window )
 {
 	bool success = DX8Wrapper::Set_Render_Device(dev_name,width,height,bits,windowed,resize_window);
@@ -327,7 +324,6 @@ WW3DErrorType WW3D::Set_Render_Device( const char * dev_name, int width, int hei
 }
 
 
-// Set any render device you can find.
 WW3DErrorType WW3D::Set_Any_Render_Device()
 {
 	bool success = DX8Wrapper::Set_Any_Render_Device();
@@ -339,7 +335,6 @@ WW3DErrorType WW3D::Set_Any_Render_Device()
 }
 
 
-// Set the render device being currently used.
 WW3DErrorType WW3D::Set_Render_Device(int dev, int width, int height, int bits, int windowed, bool resize_window, bool reset_device, bool restore_assets )
 {
 	bool success = DX8Wrapper::Set_Render_Device(dev,width,height,bits,windowed,resize_window,reset_device, restore_assets );
@@ -351,7 +346,6 @@ WW3DErrorType WW3D::Set_Render_Device(int dev, int width, int height, int bits, 
 }
 
 
-// Just go to the next device in the list.
 WW3DErrorType WW3D::Set_Next_Render_Device()
 {
 	bool success = DX8Wrapper::Set_Next_Render_Device();
@@ -372,9 +366,8 @@ bool WW3D::Is_Windowed()
 	return Renderer::Is_Windowed();
 }
 
-// Toggle the current render device between fullscreen and windowed mode. Note: It's called
-// '_Windowed' to be consistent with the other references inside WW3D, a more descriptive name would
-// be Toggle_Fullscreen.
+// It's called '_Windowed' to be consistent with the other references inside WW3D, a more
+// descriptive name would be Toggle_Fullscreen.
 WW3DErrorType WW3D::Toggle_Windowed ()
 {
 	bool success = DX8Wrapper::Toggle_Windowed();
@@ -405,14 +398,12 @@ int WW3D::Get_Render_Device_Count()
 }
 
 
-// Returns the name of the n-th render device.
 const char * WW3D::Get_Render_Device_Name(int device_index)
 {
 	return Renderer::Get_Render_Device_Name(device_index);
 }
 
 
-// Set the current resolution and bitdepth.
 WW3DErrorType WW3D::Set_Device_Resolution(int width,int height,int bits,int windowed, bool resize_window)
 {
 	bool success = DX8Wrapper::Set_Device_Resolution(width,height,bits,windowed,resize_window);
@@ -437,7 +428,6 @@ void WW3D::Get_Device_Resolution(int & set_w,int & set_h,int & set_bits,bool & s
 }
 
 
-// Saves settings to Registry.
 WW3DErrorType WW3D::Registry_Save_Render_Device( const char * sub_key )
 {
 	bool success = DX8Wrapper::Registry_Save_Render_Device(sub_key);
@@ -448,7 +438,6 @@ WW3DErrorType WW3D::Registry_Save_Render_Device( const char * sub_key )
 	}
 }
 
-// Saves settings to Registry.
 WW3DErrorType WW3D::Registry_Save_Render_Device( const char *sub_key, int device, int width, int height, int depth, bool windowed, int texture_depth )
 {
 	bool success = DX8Wrapper::Registry_Save_Render_Device(sub_key,device,width,height,depth,windowed,texture_depth);
@@ -514,7 +503,6 @@ void WW3D::Set_Anisotropy_Level(int level)
 	TextureFilterClass::_Set_Max_Anisotropy((TextureFilterClass::AnisotropicFilterMode)AnisotropyLevel);
 }
 
-// Mark the start of rendering for a new frame.
 WW3DErrorType WW3D::Begin_Render(bool clear,bool clearz,const Vector3 & color, float dest_alpha, void(*network_callback)())
 {
 	if (!IsInitted) {
@@ -587,7 +575,7 @@ WW3DErrorType WW3D::Begin_Render(bool clear,bool clearz,const Vector3 & color, f
 	return WW3D_ERROR_OK;
 }
 
-// Render a list of layers, starting at the back.
+// Renders the layers starting at the back.
 WW3DErrorType WW3D::Render(const LayerListClass &LayerList)
 {
 	if (!IsInitted) {
@@ -623,7 +611,6 @@ WW3DErrorType WW3D::Render(const LayerClass &Layer)
 }
 
 
-// Render a 3D Scene using the given camera.
 WW3DErrorType WW3D::Render(SceneClass * scene,CameraClass * cam,bool clear,bool clearz,const Vector3 & color)
 {
 	if (!IsInitted) {
@@ -733,7 +720,6 @@ void WW3D::Flush(RenderInfoClass & rinfo)
 }
 
 
-// Mark the completion of a frame.
 WW3DErrorType WW3D::End_Render(bool flip_frame)
 {
 	if (!IsInitted) {
@@ -785,7 +771,6 @@ void WW3D::Flip_To_Primary()
 }
 
 
-// Returns the number of polys submitted in the previous frame.
 unsigned int WW3D::Get_Last_Frame_Poly_Count()
 {
 	return Debug_Statistics::Get_DX8_Polygons();
@@ -816,7 +801,6 @@ void WW3D::Sync(bool step)
 	}
 }
 
-// Sets the swap interval the device should aim sync for.
 // WARNING: Not supported by all rendering devices.
 void WW3D::Set_Ext_Swap_Interval(long swap)
 {
@@ -824,7 +808,6 @@ void WW3D::Set_Ext_Swap_Interval(long swap)
 }
 
 
-// Queries the swap interval the device is aiming sync for.
 // WARNING: Not supported by all rendering devices.
 long WW3D::Get_Ext_Swap_Interval()
 {
@@ -832,7 +815,6 @@ long WW3D::Get_Ext_Swap_Interval()
 }
 
 
-// Control rendering of collision boxes.
 void WW3D::Set_Collision_Box_Display_Mask(int mask)
 {
 	BoxRenderObjClass::Set_Box_Display_Mask(mask);
@@ -844,7 +826,7 @@ int WW3D::Get_Collision_Box_Display_Mask()
 }
 
 
-// Convert pixel coords to normalized screen coords 0..1.
+// Normalized screen coords are in the range 0..1.
 void WW3D::Normalize_Coordinates(int x, int y, float &fx, float &fy)
 {
 	// clip the coordinates back into the resolution of the screen
@@ -857,7 +839,6 @@ void WW3D::Normalize_Coordinates(int x, int y, float &fx, float &fy)
 }
 
 
-// Saves a screenshot with the given base filename.
 void WW3D::Make_Screen_Shot( const char * filename_base , const float gamma, const ScreenShotFormatEnum format)
 {
 
@@ -1036,7 +1017,6 @@ void WW3D::Make_Screen_Shot( const char * filename_base , const float gamma, con
 }
 
 
-// Begins dumping frames to a movie.
 void WW3D::Start_Movie_Capture( const char * filename_base, float frame_rate )
 {
 #ifdef _WIN32
@@ -1068,7 +1048,6 @@ void WW3D::Start_Movie_Capture( const char * filename_base, float frame_rate )
 }
 
 
-// Ends dumping frames to a movie.
 void WW3D::Stop_Movie_Capture()
 {
 #ifdef _WIN32
@@ -1100,7 +1079,6 @@ void WW3D::Start_Single_Frame_Movie_Capture(const char *filename_base)
 }
 
 
-// Tells ww3d to grab another frame for the movie.
 void WW3D::Capture_Next_Movie_Frame()
 {
 	RecordNextFrame = true;
@@ -1113,28 +1091,24 @@ void WW3D::Pause_Movie(bool mode)
 }
 
 
-// Returns whether the movie capture system is paused.
 bool WW3D::Is_Movie_Paused()
 {
 	return PauseRecord;
 }
 
 
-// Returns whether the next frame will be dumped to a movie.
 bool WW3D::Is_Recording_Next_Frame()
 {
 	return (Movie != nullptr) && (!PauseRecord || RecordNextFrame);
 }
 
 
-// Returns whether the movie capture system is ready.
 bool WW3D::Is_Movie_Ready()
 {
 	return Movie != nullptr;
 }
 
 
-// Dumps the current frame into the movie.
 void WW3D::Update_Movie_Capture()
 {
 #ifdef _WIN32
@@ -1200,7 +1174,6 @@ void WW3D::Update_Movie_Capture()
 }
 
 
-// Returns the framerate at which the movie is being captured.
 float	WW3D::Get_Movie_Capture_Frame_Rate()
 {
 #ifdef _WIN32
@@ -1212,7 +1185,6 @@ float	WW3D::Get_Movie_Capture_Frame_Rate()
 }
 
 
-// Sets the (hacky) texture reduction factor.
 void	WW3D::Set_Texture_Reduction( int value, int minDim )
 {
 	if (_TextureReduction != value || _TextureMinDim != minDim) {
@@ -1235,13 +1207,11 @@ void WW3D::Enable_Coloring(unsigned int color)
 	IsColoringEnabled = (color == 0) ? false : true;
 }
 
-// Gets the (hacky) texture reduction factor.
 int	WW3D::Get_Texture_Reduction()
 {
 	return _TextureReduction;
 }
 
-// Gets the minimum number of mip levels permitted.
 int	WW3D::Get_Texture_Min_Dimension()
 {
 	return _TextureMinDim;

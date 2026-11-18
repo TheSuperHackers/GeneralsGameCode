@@ -162,11 +162,10 @@ PointGroupClass & PointGroupClass::operator = (const PointGroupClass & that)
 }
 
 
-// Set point location/color/enable arrays. Colors, alphas, APT, sizes, orientations and frames are
-// optional. active_point_count can also be used with a nullptr apt. In this case active_point_count
-// is ignored if it is -1 (default value) and otherwise it indicates the first N active points in
-// the arrays. The view plane rectangle may optionally be passed as well - this is only used in
-// SCREENSPACE mode.
+// Colors, alphas, APT, sizes, orientations and frames are optional. active_point_count can also be
+// used with a nullptr apt. In this case active_point_count is ignored if it is -1 (default value)
+// and otherwise it indicates the first N active points in the arrays. The view plane rectangle may
+// optionally be passed as well - this is only used in SCREENSPACE mode.
 void PointGroupClass::Set_Arrays(
 	ShareBufferClass<Vector3> *locs,
 	ShareBufferClass<Vector4> *diffuse,
@@ -292,7 +291,6 @@ PointGroupClass::PointModeEnum PointGroupClass::Get_Point_Mode()
 }
 
 
-// Set given flag to on or off.
 void PointGroupClass::Set_Flag(FlagsType flag, bool onoff)
 {
 	if (onoff) Flags|=1<<flag;
@@ -300,7 +298,6 @@ void PointGroupClass::Set_Flag(FlagsType flag, bool onoff)
 		Flags&=~(1<<flag);
 }
 
-// Get current value (on/off) of given flag.
 int PointGroupClass::Get_Flag(FlagsType flag)
 {
 	return (Flags>>flag) & 0x1;
@@ -608,7 +605,6 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 
 
 
-// Update all arrays used in rendering.
 void PointGroupClass::Update_Arrays(
 	Vector3 *point_loc,
 	Vector4 *point_diffuse,

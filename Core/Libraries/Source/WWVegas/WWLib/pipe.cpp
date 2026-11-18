@@ -54,8 +54,7 @@ Pipe::~Pipe()
 }
 
 
-// Connect a pipe to flow data into from this pipe. The specified pipe will be fed data from this
-// pipe.
+// The specified pipe will be fed data from this pipe.
 void Pipe::Put_To(Pipe * pipe)
 {
 	if (ChainTo != pipe) {
@@ -77,7 +76,7 @@ void Pipe::Put_To(Pipe * pipe)
 }
 
 
-// Feed some data through the pipe. It is guaranteed to accept data as fast as you can supply it.
+// It is guaranteed to accept data as fast as you can supply it.
 int Pipe::Put(void const * source, int length)
 {
 	if (ChainTo != nullptr) {
@@ -87,9 +86,8 @@ int Pipe::Put(void const * source, int length)
 }
 
 
-// Flush all pending data out the pipe. Since pipe segments might have internal staging buffer for
-// the data, this routine is necessary to force all staging buffers to be clear. This routine is
-// called when the pipe is being destroyed.
+// Since pipe segments might have internal staging buffer for the data, this routine is necessary to
+// force all staging buffers to be clear. This routine is called when the pipe is being destroyed.
 int Pipe::Flush()
 {
 	if (ChainTo != nullptr) {

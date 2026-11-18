@@ -105,7 +105,6 @@ public:
 ** The HLod Loader Implementation
 */
 
-// Loads an HlodDef from a W3D file.
 PrototypeClass *HLodLoaderClass::Load_W3D( ChunkLoadClass &cload )
 {
 	HLodDefClass * def = W3DNEW HLodDefClass;
@@ -132,7 +131,6 @@ PrototypeClass *HLodLoaderClass::Load_W3D( ChunkLoadClass &cload )
 ** HLod Prototype Implementation
 */
 
-// Creates an HLod from an HLodDef.
 RenderObjClass * HLodPrototypeClass::Create()
 {
 	HLodClass * hlod = NEW_REF( HLodClass , ( *Definition ) );
@@ -171,7 +169,6 @@ HLodDefClass::~HLodDefClass()
 }
 
 
-// Releases all resources being used.
 void HLodDefClass::Free()
 {
 	::free(Name);
@@ -434,7 +431,6 @@ WW3DErrorType HLodDefClass::Load_W3D(ChunkLoadClass & cload)
 }
 
 
-// Loads the HLodDef header from a W3d file.
 bool HLodDefClass::read_header(ChunkLoadClass & cload)
 {
 	/*
@@ -462,9 +458,9 @@ bool HLodDefClass::read_header(ChunkLoadClass & cload)
 }
 
 
-// Load the proxy names. This function is coded separately from SubObjectArrayClass::Load because we
-// are going to store the proxies in a shared data structure. Because all of the proxy data is
-// constant, each instanced HLOD can just add-ref a pointer to its proxy array.
+// This function is coded separately from SubObjectArrayClass::Load because we are going to store
+// the proxies in a shared data structure. Because all of the proxy data is constant, each instanced
+// HLOD can just add-ref a pointer to its proxy array.
 bool HLodDefClass::read_proxy_array(ChunkLoadClass & cload)
 {
 	REF_PTR_RELEASE(ProxyArray);
@@ -514,7 +510,6 @@ HLodDefClass::SubObjectArrayClass::~SubObjectArrayClass()
 }
 
 
-// Release the contents of this array.
 void HLodDefClass::SubObjectArrayClass::Reset()
 {
 	MaxScreenSize = NO_MAX_SCREEN_SIZE;
@@ -591,7 +586,6 @@ bool HLodDefClass::SubObjectArrayClass::Load_W3D(ChunkLoadClass & cload)
 	return true;
 }
 
-// Saves a w3d file for this HLodDef.
 // TheSuperHackers @fix Writes only the array contents, as Load_W3D reads them. The caller wraps
 // them in W3D_CHUNK_HLOD_LOD_ARRAY or W3D_CHUNK_HLOD_AGGREGATE_ARRAY.
 bool HLodDefClass::SubObjectArrayClass::Save_W3D(ChunkSaveClass &csave)
@@ -772,7 +766,6 @@ HLodClass::HLodClass(const char * name,RenderObjClass ** lods,int count) :
 }
 
 
-// Constructs an HLod from an HLodDef.
 HLodClass::HLodClass(const HLodDefClass & def) :
 	Animatable3DObjClass(def.HierarchyTreeName),
 	LodCount(0),
@@ -849,7 +842,6 @@ HLodClass::HLodClass(const HLodDefClass & def) :
 }
 
 
-// Constructs an HLod from an HModelDef.
 HLodClass::HLodClass(const HModelDefClass & def) :
 	Animatable3DObjClass(def.BasePoseName),
 	LodCount(0),
@@ -991,7 +983,6 @@ HLodClass::~HLodClass()
 }
 
 
-// Releases all resources.
 void HLodClass::Free()
 {
 	int lod,model;
@@ -1036,7 +1027,6 @@ void HLodClass::Free()
 }
 
 
-// Virtual copy constructor.
 RenderObjClass * HLodClass::Clone() const
 {
 	return W3DNEW HLodClass(*this);
@@ -1190,7 +1180,6 @@ float HLodClass::Get_Max_Screen_Size(int lod_index) const
 }
 
 
-// Returns number of levels of detail.
 int HLodClass::Get_Lod_Count() const
 {
 	return LodCount;
@@ -1210,7 +1199,6 @@ void HLodClass::Set_LOD_Bias(float bias)
 }
 
 
-// Number of sub-objs in a given level of detail.
 int HLodClass::Get_Lod_Model_Count(int lod_index) const
 {
 	int count = 0;
@@ -1358,7 +1346,6 @@ int HLodClass::Get_Additional_Model_Bone (int model_index) const
 }
 
 
-// Does this HLod have nullptr as its lowest LOD.
 bool HLodClass::Is_NULL_Lod_Included() const
 {
 	bool included = false;
@@ -1373,7 +1360,6 @@ bool HLodClass::Is_NULL_Lod_Included() const
 }
 
 
-// Add nullptr as the lowest LOD.
 void HLodClass::Include_NULL_Lod(bool include)
 {
 	if ((include == false) && Is_NULL_Lod_Included ()) {
@@ -1463,7 +1449,6 @@ int HLodClass::Get_Proxy_Count() const
 }
 
 
-// Returns the information for the i'th proxy.
 bool HLodClass::Get_Proxy (int index, ProxyClass &proxy) const
 {
 	bool retval = false;
@@ -1582,7 +1567,6 @@ void HLodClass::Set_Position(const Vector3 &v)
 }
 
 
-// Callback notifies subobjs that they were added.
 void HLodClass::Notify_Added(SceneClass * scene)
 {
 	RenderObjClass::Notify_Added(scene);
@@ -1599,7 +1583,6 @@ void HLodClass::Notify_Added(SceneClass * scene)
 }
 
 
-// Notifies subobjs that they were removed.
 void HLodClass::Notify_Removed(SceneClass * scene)
 {
 	int i;
@@ -1807,7 +1790,6 @@ int HLodClass::Add_Sub_Object_To_Bone(RenderObjClass * subobj,int boneindex)
 }
 
 
-// Set animation state to the base-pose.
 void HLodClass::Set_Animation()
 {
 	Animatable3DObjClass::Set_Animation();
@@ -1815,7 +1797,6 @@ void HLodClass::Set_Animation()
 }
 
 
-// Set animation state to an animation frame.
 void HLodClass::Set_Animation(HAnimClass * motion,float frame,int mode)
 {
 	Animatable3DObjClass::Set_Animation(motion,frame,mode);
@@ -1823,7 +1804,6 @@ void HLodClass::Set_Animation(HAnimClass * motion,float frame,int mode)
 }
 
 
-// Set animation state to a blend of two animations.
 void HLodClass::Set_Animation
 (
 	HAnimClass * motion0,
@@ -1838,7 +1818,6 @@ void HLodClass::Set_Animation
 }
 
 
-// Set animation state to a combination of anims.
 void HLodClass::Set_Animation(HAnimComboClass * anim_combo)
 {
 	Animatable3DObjClass::Set_Animation(anim_combo);
@@ -1846,7 +1825,6 @@ void HLodClass::Set_Animation(HAnimComboClass * anim_combo)
 }
 
 
-// Cast a ray against this HLod.
 bool HLodClass::Cast_Ray(RayCollisionTestClass & raytest)
 {
 	if (Are_Sub_Object_Transforms_Dirty ()) {
@@ -1870,7 +1848,6 @@ bool HLodClass::Cast_Ray(RayCollisionTestClass & raytest)
 }
 
 
-// Cast a swept AABox against this HLod.
 bool HLodClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 {
 	if (Are_Sub_Object_Transforms_Dirty ()) {
@@ -1894,7 +1871,6 @@ bool HLodClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 }
 
 
-// Cast a swept OBBox against this HLod.
 bool HLodClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 {
 	if (Are_Sub_Object_Transforms_Dirty ()) {
@@ -2047,7 +2023,6 @@ void HLodClass::Recalculate_Static_LOD_Factors()
 }
 
 
-// Move to next lod.
 void HLodClass::Increment_LOD()
 {
 	if (CurLod >= (LodCount-1)) return;
@@ -2070,7 +2045,6 @@ void HLodClass::Increment_LOD()
 }
 
 
-// Move to previous lod.
 void HLodClass::Decrement_LOD()
 {
 	if (CurLod < 1) return;
@@ -2143,7 +2117,6 @@ int HLodClass::Get_LOD_Level() const
 }
 
 
-// Returns the number of levels of detail.
 int HLodClass::Get_LOD_Count() const
 {
 	return LodCount;
@@ -2187,7 +2160,6 @@ int HLodClass::Calculate_Cost_Value_Arrays(float screen_area, float *values, flo
 }
 
 
-// Returns a render object which represents the current LOD.
 RenderObjClass * HLodClass::Get_Current_LOD()
 {
 	int count = Get_Lod_Model_Count(CurLod);
@@ -2199,7 +2171,6 @@ RenderObjClass * HLodClass::Get_Current_LOD()
 }
 
 
-// Resizeable texture support.
 /*
 void HLodClass::Set_Texture_Reduction_Factor(float trf)
 {
@@ -2216,7 +2187,6 @@ void HLodClass::Set_Texture_Reduction_Factor(float trf)
 }
 */
 
-// Scale this HLod model.
 void HLodClass::Scale(float scale)
 {
 	if (scale==1.0f) return;
@@ -2452,8 +2422,7 @@ void HLodClass::Create_Decal(DecalGeneratorClass * generator)
 }
 
 
-// Remove a decal from this HLod. The decal_id is the ID which was assigned to the
-// DecalGeneratorClass when you created the decal.
+// The decal_id is the ID which was assigned to the DecalGeneratorClass when you created the decal.
 void HLodClass::Delete_Decal(uint32 decal_id)
 {
 	for (int lod=0; lod<LodCount; lod++) {
@@ -2468,7 +2437,6 @@ void HLodClass::Delete_Decal(uint32 decal_id)
 }
 
 
-// Replace the hierarchy tree.
 void HLodClass::Set_HTree(HTreeClass * htree)
 {
 	Animatable3DObjClass::Set_HTree(htree);

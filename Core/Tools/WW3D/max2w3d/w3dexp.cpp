@@ -796,7 +796,6 @@ bool W3dExportClass::Export_Geometry(char * name,ChunkSaveClass & csave,Progress
 }
 
 
-// Export an HLOD description.
 bool W3dExportClass::Export_HLod( char *name, const char *htree_name, ChunkSaveClass &csave,
 											 Progress_Meter_Class &meter, MeshConnectionsClass **connections,
 											 int lod_count)
@@ -980,7 +979,6 @@ bool W3dExportClass::get_export_options(BOOL suppress_prompts)
 
 
 
-// Start the MAX progress meter.
 void W3dExportClass::Start_Progress_Bar()
 {
 	MaxInterface->ProgressStart(

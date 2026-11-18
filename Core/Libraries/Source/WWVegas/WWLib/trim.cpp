@@ -39,7 +39,7 @@
 #include	<wctype.h>
 #endif // _UNIX
 
-// Trim leading and trailing white space off of string. The string is modified in place.
+// The string is modified in place.
 char* strtrim(char* buffer)
 {
 	if (buffer) {

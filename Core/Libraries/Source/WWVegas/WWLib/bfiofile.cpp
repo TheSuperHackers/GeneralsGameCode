@@ -37,9 +37,8 @@
 #include	<string.h>
 
 
-// Filename based constructor for a file object. The file is not opened. An assumption is made that
-// the supplied filename is a constant string. A duplicate of the filename string is not created
-// since it would be wasteful in that case.
+// The file is not opened. An assumption is made that the supplied filename is a constant string. A
+// duplicate of the filename string is not created since it would be wasteful in that case.
 BufferIOFileClass::BufferIOFileClass(char const * filename) :
 	IsAllocated(false),
 	IsOpen(false),
@@ -90,8 +89,7 @@ BufferIOFileClass::~BufferIOFileClass()
 }
 
 
-// Load part or all of a file data into RAM. It could fail if there wasn't enough room to allocate the
-// raw data block.
+// Load part or all of a file data into RAM.
 // WARNING: This routine goes to disk for a potentially very long time.
 bool BufferIOFileClass::Cache( long size, void * ptr )
 {
@@ -335,9 +333,9 @@ bool BufferIOFileClass::Is_Open() const
 }
 
 
-// Assigns name and opens file in one operation. If the file object was already open, then it will
-// be closed first. If the file object was previously assigned a filename, then it will be replaced
-// with the new name. The open is designed to never return unless it succeeded.
+// If the file object was already open, then it will be closed first. If the file object was
+// previously assigned a filename, then it will be replaced with the new name. The open is designed
+// to never return unless it succeeded.
 int BufferIOFileClass::Open(char const * filename, int rights)
 {
 	Set_Name(filename);
@@ -345,9 +343,8 @@ int BufferIOFileClass::Open(char const * filename, int rights)
 }
 
 
-// Opens the file object with the rights specified. This only works if the file has already been
-// assigned a filename. It is guaranteed, by the error handler, that this routine will always return
-// with success.
+// This only works if the file has already been assigned a filename. It is guaranteed, by the error
+// handler, that this routine will always return with success.
 int BufferIOFileClass::Open(int rights)
 {
 	BufferIOFileClass::Close();
@@ -632,8 +629,8 @@ int BufferIOFileClass::Read(void * buffer, int size)
 }
 
 
-// Moves the current file pointer in the file. It follows the same rules as a normal Seek() does,
-// but if the file is part of the mixfile system, then only the position value needs to be updated.
+// It follows the same rules as a normal Seek() does, but if the file is part of the mixfile system,
+// then only the position value needs to be updated.
 int BufferIOFileClass::Seek(int pos, int dir)
 {
 	if (UseBuffer) {

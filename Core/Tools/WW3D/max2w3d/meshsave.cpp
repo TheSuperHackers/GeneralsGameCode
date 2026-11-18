@@ -1706,7 +1706,6 @@ void MeshSaveClass::create_materials(Mtl * nodemtl,DWORD wirecolor, char *materi
 	Header.SortLevel = MaterialDesc.Get_Sort_Level();
 }
 
-// Computes a bounding box and bounding sphere for the mesh.
 void MeshSaveClass::compute_bounding_volumes()
 {
 	Vector3 min,max,center;
@@ -1729,7 +1728,6 @@ void MeshSaveClass::compute_bounding_volumes()
 }
 
 
-// Pre-transform the MAX mesh by a specified matrix.
 void MeshSaveClass::prep_mesh(Mesh & mesh,Matrix3 & objoff)
 {
 	int vert_index;

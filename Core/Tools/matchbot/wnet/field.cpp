@@ -223,7 +223,6 @@ char *FieldClass::Get_ID()
 return(ID);
 }
 
-// Converts host field to net format.
 void FieldClass::Host_To_Net()
 {
   //
@@ -260,7 +259,6 @@ void FieldClass::Host_To_Net()
   Size      = htons(Size);
 }
 
-// Converts net field to host format.
 void FieldClass::Net_To_Host()
 {
   //

@@ -51,7 +51,6 @@ SysTimeClass::~SysTimeClass()
 	timeEndPeriod(1);
 }
 
-// Reset class to good state.
 void SysTimeClass::Reset()
 {
 	StartTime = timeGetTime();

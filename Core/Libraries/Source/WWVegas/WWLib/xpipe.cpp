@@ -43,9 +43,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 
-// Submit data to the buffered pipe segment. The buffered pipe is a pipe terminator. That is, the
-// data never flows onto subsequent pipe chains. The data is stored into the buffer previously
-// submitted to the pipe. If the buffer is full, no more data is output to the buffer.
+// The buffered pipe is a pipe terminator. That is, the data never flows onto subsequent pipe
+// chains. The data is stored into the buffer previously submitted to the pipe. If the buffer is
+// full, no more data is output to the buffer.
 int BufferPipe::Put(void const * source, int slen)
 {
 	int total = 0;
@@ -84,11 +84,11 @@ FilePipe::~FilePipe()
 }
 
 
-// End the file pipe handler. This routine is called when there will be no more data sent through
-// the pipe. It is responsible for cleaning up anything it needs to. This is not handled by the
-// destructor, although it serves a similar purpose, because pipes are linked together and the
-// destructor order is not easily controlled. If the destructors for a pipe chain were called out of
-// order, the result might be less than pleasant.
+// This routine is called when there will be no more data sent through the pipe. It is responsible
+// for cleaning up anything it needs to. This is not handled by the destructor, although it serves a
+// similar purpose, because pipes are linked together and the destructor order is not easily
+// controlled. If the destructors for a pipe chain were called out of order, the result might be
+// less than pleasant.
 // WARNING: Don't send any more data through the pipe after this routine is called.
 int FilePipe::End()
 {
@@ -101,8 +101,7 @@ int FilePipe::End()
 }
 
 
-// Writes the data block to the file. If the file was not already open, this routine will open it for
-// write.
+// If the file was not already open, this routine will open it for write.
 int FilePipe::Put(void const * source, int slen)
 {
 	if (Valid_File() && source != nullptr && slen > 0) {

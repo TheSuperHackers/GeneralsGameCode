@@ -172,14 +172,12 @@ inline void OBBoxClass::Compute_Axis_Aligned_Extent(Vector3 * set_extent) const
 }
 
 
-// Comparison operator.
 inline bool OBBoxClass::operator== (const OBBoxClass &src)
 {
 	return (Center == src.Center) && (Extent == src.Extent) && (Basis == src.Basis);
 }
 
 
-// Comparison operator.
 inline bool OBBoxClass::operator!= (const OBBoxClass &src)
 {
 	return (Center != src.Center) || (Extent != src.Extent) || (Basis != src.Basis);

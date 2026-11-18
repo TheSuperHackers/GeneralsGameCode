@@ -53,9 +53,8 @@ Straw::~Straw()
 }
 
 
-// Connect one straw segment to another. The straw segment specified as the parameter will be linked
-// to the chain such that when data is requested, it will be fetched from the specified link before
-// being processed by this link.
+// The straw segment specified as the parameter will be linked to the chain such that when data is
+// requested, it will be fetched from the specified link before being processed by this link.
 void Straw::Get_From(Straw * straw)
 {
 	if (ChainTo != straw) {
@@ -76,10 +75,9 @@ void Straw::Get_From(Straw * straw)
 }
 
 
-// Fetch some data from the straw chain. It is presumed that this routine will be overridden to
-// provide some useful functionality. At this level, the straw chain merely passes the request on to
-// the next straw in the chain. Returns fewer bytes than requested when the straw data has been
-// exhausted.
+// It is presumed that this routine will be overridden to provide some useful functionality. At this
+// level, the straw chain merely passes the request on to the next straw in the chain. Returns fewer
+// bytes than requested when the straw data has been exhausted.
 int Straw::Get(void * source, int slen)
 {
 	if (ChainTo != nullptr) {

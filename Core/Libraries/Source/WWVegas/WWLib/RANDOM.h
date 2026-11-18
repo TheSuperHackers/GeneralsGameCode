@@ -184,8 +184,8 @@ class Random4Class {
 };
 
 
-// Picks a random number between two values (inclusive), subject to the bit precision limitations of
-// the random number generator itself.
+// The range is inclusive, subject to the bit precision limitations of the random number generator
+// itself.
 template<class T>
 int Pick_Random_Number(T & generator, int minval, int maxval)
 {

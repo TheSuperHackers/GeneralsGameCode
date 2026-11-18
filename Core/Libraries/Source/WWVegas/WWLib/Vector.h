@@ -112,8 +112,8 @@ class VectorClass
 };
 
 
-// The vector is placed in the optional preallocated memory block. If this pointer is nullptr (or not
-// provided), then the vector is allocated out of free store (with the "new" operator).
+// The vector is placed in the optional preallocated memory block. If this pointer is nullptr (or
+// not provided), then the vector is allocated out of free store (with the "new" operator).
 template<class T>
 VectorClass<T>::VectorClass(int size, T const * array) :
 	Vector(nullptr),
@@ -136,7 +136,6 @@ VectorClass<T>::VectorClass(int size, T const * array) :
 }
 
 
-// Deallocates any memory that the vector may have allocated.
 template<class T>
 VectorClass<T>::~VectorClass()
 {
@@ -178,8 +177,6 @@ VectorClass<T> & VectorClass<T>::operator =(VectorClass<T> const & vec)
 }
 
 
-// Performs an object by object comparison between the two vectors.
-// WARNING: The equality operator must exist for the objects that this vector contains.
 template<class T>
 bool VectorClass<T>::operator == (VectorClass<T> const & vec) const
 {
@@ -195,9 +192,8 @@ bool VectorClass<T>::operator == (VectorClass<T> const & vec) const
 }
 
 
-// Converts a pointer to an element in the vector back into the index number of that object. For
-// "equivalent" object index number (such as with similar integral values) then use the "by value"
-// index number ID function.
+// For "equivalent" object index number (such as with similar integral values) then use the "by
+// value" index number ID function.
 // WARNING: This routine is only valid for actual pointers to object that exist within the vector.
 // All other object pointers will yield undefined results.
 template<class T>
@@ -208,8 +204,8 @@ inline int VectorClass<T>::ID(T const * ptr)
 }
 
 
-// Finds the index value of an object with equivalent value in the vector. Typical use of this would
-// be for integral types. Returns -1 if no matching value could be found.
+// Finds an object with equivalent value. Typical use of this would be for integral types. Returns
+// -1 if no matching value could be found.
 template<class T>
 int VectorClass<T>::ID(T const & object)
 {
@@ -224,8 +220,8 @@ int VectorClass<T>::ID(T const & object)
 }
 
 
-// Frees all allocated memory and resets the vector to an empty state. In order for the vector to be
-// useful after this point, the Resize function must be called to give it element space.
+// In order for the vector to be useful after this point, the Resize function must be called to give
+// it element space.
 template<class T>
 void VectorClass<T>::Clear()
 {
@@ -238,10 +234,8 @@ void VectorClass<T>::Clear()
 }
 
 
-// Changes the size of the vector. This is the only way to increase the vector's working room
-// (number of elements). The vector is placed in the optional preallocated memory block, or else
-// allocated from free store.
-// WARNING: Failure to succeed could be the result of running out of memory.
+// This is the only way to increase the vector's working room (number of elements). The vector is
+// placed in the optional preallocated memory block, or else allocated from free store.
 template<class T>
 bool VectorClass<T>::Resize(int newsize, T const * array)
 {
@@ -414,7 +408,6 @@ class DynamicVectorClass : public VectorClass<T>
 };
 
 
-// The vector is initialized to contain the number of elements specified in the "size" parameter.
 // The memory is allocated from free store unless the optional array parameter is provided. In this
 // case it will place the vector at the memory location specified.
 template<class T>
@@ -429,7 +422,6 @@ DynamicVectorClass<T>::DynamicVectorClass(unsigned size, T const * array)
 // Changes the maximum number of allocated objects within this vector. If a memory buffer is
 // provided, then the vector will be located there. Otherwise, the memory will be allocated out of
 // free store.
-// WARNING: Failure to resize the vector could be the result of lack of free store.
 template<class T>
 bool DynamicVectorClass<T>::Resize(int newsize, T const * array)
 {
@@ -441,9 +433,8 @@ bool DynamicVectorClass<T>::Resize(int newsize, T const * array)
 }
 
 
-// Finds a matching object (by value) in the vector. Unlike the base class ID function of similar
-// name, this one restricts the scan to the current number of valid objects. Returns -1 if no
-// equivalent object could be found.
+// Unlike the base class ID function of similar name, this one restricts the scan to the current
+// number of valid objects. Returns -1 if no equivalent object could be found.
 template<class T>
 int DynamicVectorClass<T>::ID(T const & object)
 {
@@ -454,9 +445,8 @@ int DynamicVectorClass<T>::ID(T const & object)
 }
 
 
-// Adds an element to the end of the vector. The vector will automatically be resized to
-// accommodate the new element IF the vector was allocated previously and the growth rate is not
-// zero.
+// The vector will automatically be resized to accommodate the new element IF the vector was
+// allocated previously and the growth rate is not zero.
 template<class T>
 bool DynamicVectorClass<T>::Add(T const & object)
 {
@@ -488,7 +478,6 @@ bool DynamicVectorClass<T>::Add(T const & object)
 }
 
 
-// Adds element to head of the list. If necessary, the vector will be expanded accordingly.
 template<class T>
 bool DynamicVectorClass<T>::Add_Head(T const & object)
 {
@@ -564,8 +553,7 @@ bool DynamicVectorClass<T>::Insert(int index,T const & object)
 }
 
 
-// Removes the specified object from the vector. All objects in the vector that follow the one
-// deleted will be moved "down" to fill the hole.
+// All objects in the vector that follow the one deleted will be moved "down" to fill the hole.
 // WARNING: Do not pass a reference to an object that is NOT part of this vector. The results of
 // this are undefined and probably catastrophic.
 template<class T>
@@ -579,8 +567,8 @@ bool DynamicVectorClass<T>::Delete(T const & object)
 }
 
 
-// Deletes the object at the specified index from the vector. All the remaining objects are moved
-// "down" in order to fill the hole. Returns false if the index is out of bounds.
+// All the remaining objects are moved "down" in order to fill the hole. Returns false if the index
+// is out of bounds.
 template<class T>
 bool DynamicVectorClass<T>::Delete(int index)
 {
@@ -634,11 +622,11 @@ void DynamicVectorClass<T>::Delete_All()
 }
 
 
-// Adds an empty place to the vector. To avoid copying when creating an object and adding it to the
-// vector, use this and immediately fill the area that the return value points to with a valid
-// object (by hand for a struct or by using placement new for a class object). This function does
-// everything Add does except copying an object into the new space, thus leaving an uninitialized
-// area of memory. Returns nullptr if the space could not be added.
+// To avoid copying when creating an object and adding it to the vector, use this and immediately
+// fill the area that the return value points to with a valid object (by hand for a struct or by
+// using placement new for a class object). This function does everything Add does except copying an
+// object into the new space, thus leaving an uninitialized area of memory. Returns nullptr if the
+// space could not be added.
 // WARNING: If memory area is left uninitialized, Very Bad Things will happen.
 template<class T>
 T * DynamicVectorClass<T>::Uninitialized_Add()

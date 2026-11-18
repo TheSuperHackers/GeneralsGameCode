@@ -266,7 +266,6 @@ bool HTreeClass::read_pivots(ChunkLoadClass & cload,bool pre30)
 }
 
 
-// De-allocate all memory in use.
 void HTreeClass::Free()
 {
 	delete[] Pivot;
@@ -278,7 +277,6 @@ void HTreeClass::Free()
 }
 
 
-// Returns the transform of a pivot at the given frame.
 bool HTreeClass::Simple_Evaluate_Pivot
 (
 	HAnimClass *		motion,
@@ -353,7 +351,6 @@ bool HTreeClass::Simple_Evaluate_Pivot
 
 
 
-// Returns the transform of a pivot at the given frame.
 bool HTreeClass::Simple_Evaluate_Pivot
 (
 	int					pivot_index,
@@ -424,7 +421,6 @@ void HTreeClass::Base_Update(const Matrix3D & root)
 	}
 }
 
-// Computes the transform for each pivot with motion.
 void HTreeClass::Anim_Update(const Matrix3D & root,HAnimClass * motion,float frame)
 {
 	PivotClass *pivot;
@@ -558,7 +554,6 @@ void HTreeClass::Anim_Update_Without_Interpolation(const Matrix3D & root,HRawAni
 }
 
 
-// Computes each pivot as a blend of two anims.
 void HTreeClass::Blend_Update
 (
 	const Matrix3D &					root,
@@ -619,7 +614,6 @@ void HTreeClass::Blend_Update
 
 
 
-// Compute each pivot's transform using an anim combo.
 void HTreeClass::Combo_Update
 (
 	const Matrix3D & root,

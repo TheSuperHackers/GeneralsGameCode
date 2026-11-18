@@ -63,7 +63,6 @@ CompositeRenderObjClass & CompositeRenderObjClass::operator = (const CompositeRe
 }
 
 
-// Recursively call Restart on all sub-objects.
 void CompositeRenderObjClass::Restart()
 {
 	for (int ni = 0; ni < Get_Num_Sub_Objects(); ni++) {
@@ -113,7 +112,6 @@ int CompositeRenderObjClass::Get_Num_Polys() const
 }
 
 
-// Notify all sub-objects that they were added.
 void CompositeRenderObjClass::Notify_Added(SceneClass * scene)
 {
 	RenderObjClass::Notify_Added(scene);
@@ -126,7 +124,6 @@ void CompositeRenderObjClass::Notify_Added(SceneClass * scene)
 }
 
 
-// Notifies all subobjs they were removed from the scene.
 void CompositeRenderObjClass::Notify_Removed(SceneClass * scene)
 {
 	for (int ni = 0; ni < Get_Num_Sub_Objects(); ni++) {
@@ -152,7 +149,6 @@ bool CompositeRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 }
 
 
-// Cast a swept AABox against this object.
 bool CompositeRenderObjClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 {
 	bool res = false;
@@ -166,7 +162,6 @@ bool CompositeRenderObjClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 }
 
 
-// Cast a swept OBBox against this object.
 bool CompositeRenderObjClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 {
 	bool res = false;
@@ -217,8 +212,8 @@ void CompositeRenderObjClass::Create_Decal(DecalGeneratorClass * generator)
 }
 
 
-// Remove a logical decal from this object. This internally removes all decals with the given ID.
-// The ID comes from the generator which was used to create the decals.
+// Removes all decals with the given ID. The ID comes from the generator which was used to create
+// the decals.
 void CompositeRenderObjClass::Delete_Decal(uint32 decal_id)
 {
 	for (int i=0; i<Get_Num_Sub_Objects(); i++) {

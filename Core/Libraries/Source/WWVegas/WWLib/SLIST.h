@@ -94,8 +94,7 @@ class SList {
 };
 
 
-// Inserts an entry prior to the specified entry in the list. If the specified entry is null, it
-// will add it prior to the head of the list.
+// If the old node is null, the new node is added prior to the head of the list.
 template<class T>
 bool SList<T>::Insert_Before(T *newnode, T   *oldnode)
 {
@@ -127,8 +126,7 @@ bool SList<T>::Insert_Before(T *newnode, T   *oldnode)
 }
 
 
-// Inserts an entry after the specified entry in the list. If the specified entry is null, it will
-// add it prior to the head of the list.
+// If the old node is null, the new node is added prior to the head of the list.
 template<class T>
 bool SList<T>::Insert_After(T *newnode, T *oldnode)
 {
@@ -168,7 +166,6 @@ void SList<T>::Remove_All()
 	HeadNode = TailNode = nullptr;
 }
 
-// Removes an element in the list.
 template<class T>
 bool SList<T>::Remove(T *element)
 {
@@ -224,7 +221,6 @@ T *SList<T>::Remove_Head()
 // tails, then you should consider a doubly linked list.
 //
 
-// Removes the tail element from the list.
 // WARNING: On a singly linked list it is slow as hell to remove a tail! If you need to frequently
 // remove tails, then you should consider a doubly linked list.
 template<class T>
@@ -332,7 +328,6 @@ bool SList<T>::Add_Tail(SList<T>& list)
 }
 
 
-// Returns first node in list matching the input.
 template<class T>
 inline SLNode<T> *SList<T>::Find_Node(T * data) const
 {

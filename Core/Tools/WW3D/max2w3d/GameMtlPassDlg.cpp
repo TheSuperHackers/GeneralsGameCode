@@ -101,7 +101,6 @@ GameMtlPassDlg::~GameMtlPassDlg()
 }
 
 
-// Windows message handler.
 BOOL GameMtlPassDlg::DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	int i=0;
@@ -195,7 +194,6 @@ void GameMtlPassDlg::Invalidate()
 }
 
 
-// Update the contents of all of the controls.
 void GameMtlPassDlg::ReloadDialog()
 {
 	int i;
@@ -224,7 +222,6 @@ Class_ID	GameMtlPassDlg::ClassID()
 }
 
 
-// Set the material being edited.
 void GameMtlPassDlg::SetThing(ReferenceTarget* target)
 {
 	// Note, parent will "reload" when our "thing" changes :-)

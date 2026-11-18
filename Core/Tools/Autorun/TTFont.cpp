@@ -301,7 +301,6 @@ int TTFontClass::Char_Pixel_Width ( HDC hdc, char const * string, int *num_bytes
 }
 
 
-// Determines how many pixels wide the string will be if it were printed.
 // WARNING: This routine does not take into account clipping.
 
 int TTFontClass::String_Pixel_Width( HDC hdc, char const * string ) const
@@ -409,7 +408,7 @@ void TTFontClass::String_Pixel_Bounds( HDC hdc, const char* string, Rect& bounds
 	bounds.Height	= height;
 }
 
-// Get the first character even if DBSC.
+// Gets the first character even if it is a double-byte character.
 // WARNING: I added this function based on code provided by Ikeda-san.
 //
 // [OYO]	Supports DBCS ( multi-byte characters ).
@@ -474,8 +473,8 @@ int TTFontClass::Get_Height() const
 	return( Height );
 }
 
-// Set the X spacing override value. If the value is negative, the font becomes compressed. If the
-// value is positive, then the font becomes expanded.
+// If the value is negative, the font becomes compressed. If the value is positive, then the font
+// becomes expanded.
 int TTFontClass::Set_XSpacing( HDC hdc, int x )
 {
 //	HGDIOBJ old_object;
@@ -491,9 +490,9 @@ int TTFontClass::Set_XSpacing( HDC hdc, int x )
 }
 
 
-// Set the vertical (Y) spacing override value. Use this routine to control the "line spacing" of a
-// font. If the Y spacing is negative then the font becomes closer to the line above it. If value is
-// positive, then more space occurs between lines.
+// Use this routine to control the "line spacing" of a font. If the Y spacing is negative then the
+// font becomes closer to the line above it. If value is positive, then more space occurs between
+// lines.
 int TTFontClass::Set_YSpacing( int y )
 {
 	FontYSpacing = y;
@@ -847,7 +846,6 @@ Point2D TTFontClass::Print(
 	return( point );
 }
 
-// Finds the vertical length of text in pixels.
 //
 // [OYO]	Supports DBCS ( multi-byte characters ).
 //
@@ -1195,7 +1193,6 @@ FontManagerClass::~FontManagerClass ()
 }
 
 
-// Convert flags into a font pointer.
 // WARNING: If no match could be found, a default font pointer is returned.
 TTFontClass * Font_From_TPF ( TextPrintType flags )
 {

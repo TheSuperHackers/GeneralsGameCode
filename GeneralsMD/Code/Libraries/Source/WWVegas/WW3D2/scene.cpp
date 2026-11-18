@@ -215,8 +215,7 @@ void SimpleSceneClass::Unregister(RenderObjClass * obj,RegType for_what)
 
 
 
-// Set the visibility status of the render objects, checking the bounding sphere against the
-// frustum.
+// Checks the bounding sphere of each render object against the frustum.
 void SimpleSceneClass::Visibility_Check(CameraClass * camera)
 {
 	RefRenderObjListIterator it(&RenderList);

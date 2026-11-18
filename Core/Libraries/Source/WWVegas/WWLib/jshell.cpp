@@ -50,7 +50,6 @@ void Set_Bit(void * array, int bit, int value)
 }
 
 
-// Fetch the bit value from a bit array. This is the counterpart function to the Set_Bit() function.
 int Get_Bit(void const * array, int bit)
 {
 	unsigned char mask = (unsigned char)(1 << (bit % 8));

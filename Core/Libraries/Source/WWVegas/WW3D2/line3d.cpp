@@ -251,7 +251,6 @@ void Line3DClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 	box.Extent.Set(half_l, 0.0f, 0.0f);
 }
 
-// Reset line start and end points.
 void Line3DClass::Reset(const Vector3 & new_start, const Vector3 & new_end)
 {
 	// Adjust length of line:
@@ -275,7 +274,6 @@ void Line3DClass::Reset(const Vector3 & new_start, const Vector3 & new_end)
 }
 
 
-// Reset line start and end points, and line width.
 void Line3DClass::Reset(const Vector3 & new_start, const Vector3 & new_end, float new_width)
 {
 	// Adjust length and width of line:
@@ -309,14 +307,12 @@ void Line3DClass::Reset(const Vector3 & new_start, const Vector3 & new_end, floa
 }
 
 
-// Reset the line color.
 void Line3DClass::Re_Color(float r, float g, float b)
 {
 	Color=Vector4(r,g,b,Color.W);
 }
 
 
-// Reset the line opacity.
 void Line3DClass::Set_Opacity(float opacity)
 {
 	if (opacity < 1.0f)

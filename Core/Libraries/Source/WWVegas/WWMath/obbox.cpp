@@ -264,7 +264,6 @@ void OBBoxClass::Init_Random(float min_extent,float max_extent)
 
 
 
-// Test if two boxes intersect on given axis.
 bool Oriented_Boxes_Intersect_On_Axis
 (
 	const OBBoxClass & box0,
@@ -291,7 +290,6 @@ bool Oriented_Boxes_Intersect_On_Axis
 }
 
 
-// Test if two oriented boxes intersect.
 bool Oriented_Boxes_Intersect
 (
 	const OBBoxClass & box0,
@@ -361,7 +359,6 @@ bool Oriented_Boxes_Intersect
 
 
 
-// Test if two boxes collide on the given axis.
 bool Oriented_Boxes_Collide_On_Axis
 (
 	const OBBoxClass & box0,
@@ -394,7 +391,6 @@ bool Oriented_Boxes_Collide_On_Axis
 }
 
 
-// Test if two oriented boxes collide.
 bool Oriented_Boxes_Collide
 (
 	const OBBoxClass & box0,

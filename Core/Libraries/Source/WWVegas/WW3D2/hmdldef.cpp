@@ -53,7 +53,6 @@ HModelDefClass::~HModelDefClass()
 	Free();
 }
 
-// De-allocate all memory in use.
 void HModelDefClass::Free()
 {
 	delete[] SubObjects;
@@ -165,7 +164,7 @@ Error:
 }
 
 
-// Read a single connection from the file. Mesh connections with PivotID=-1 are checked for.
+// Mesh connections with PivotID=-1 are checked for.
 bool HModelDefClass::read_connection(ChunkLoadClass & cload,HmdlNodeDefStruct * node,bool pre30)
 {
 

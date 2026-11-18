@@ -171,14 +171,12 @@ WWINLINE Vector3 operator * (float k, const Vector3 &a)
 	return Vector3((a.X * k),(a.Y * k),(a.Z * k));
 }
 
-// Divide a vector by a scalar.
 WWINLINE Vector3 operator / (const Vector3 &a,float k)
 {
 	float ook = 1.0f/k;
 	return Vector3((a.X * ook),(a.Y * ook),(a.Z * ook));
 }
 
-// Add two vectors.
 WWINLINE Vector3 operator + (const Vector3 &a,const Vector3 &b)
 {
 	return Vector3(
@@ -197,7 +195,6 @@ WWINLINE Vector3 operator - (const Vector3 &a,const Vector3 &b)
 						);
 }
 
-// Compute the inner or dot product of two vectors.
 WWINLINE float operator * (const Vector3 &a,const Vector3 &b)
 {
 	return	a.X*b.X +
@@ -213,19 +210,16 @@ WWINLINE float Vector3::Dot_Product(const Vector3 &a,const Vector3 &b)
 }
 
 
-// Determine if two vectors are identical.
 WWINLINE bool operator == (const Vector3 &a,const Vector3 &b)
 {
 	return ( (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z));
 }
 
-// Determine if two vectors are not identical.
 WWINLINE bool operator != (const Vector3 &a,const Vector3 &b)
 {
 	return ( (a.X != b.X) || (a.Y != b.Y) || (a.Z != b.Z));
 }
 
-// Determine if two vectors are identical within e.
 WWINLINE bool Equal_Within_Epsilon(const Vector3 &a,const Vector3 &b,float epsilon)
 {
    return(	(WWMath::Fabsf_Legacy(a.X - b.X) < epsilon) &&
@@ -234,7 +228,6 @@ WWINLINE bool Equal_Within_Epsilon(const Vector3 &a,const Vector3 &b,float epsil
 }
 
 
-// Compute the cross product of two vectors.
 #ifdef ALLOW_TEMPORARIES
 WWINLINE Vector3 Vector3::Cross_Product(const Vector3 &a,const Vector3 &b)
 {
@@ -333,7 +326,6 @@ WWINLINE float Vector3::Quick_Length() const
 }
 
 
-// Swap two Vector3's.
 WWINLINE void Swap(Vector3 & a,Vector3 & b)
 {
 	Vector3 tmp(a);
@@ -341,7 +333,6 @@ WWINLINE void Swap(Vector3 & a,Vector3 & b)
 	b = tmp;
 }
 
-// Linearly interpolate two Vector3's without return-by-value.
 WWINLINE void Vector3::Lerp(const Vector3 & a, const Vector3 & b, float alpha,Vector3 * set_result)
 {
 	assert(set_result != nullptr);
@@ -360,7 +351,6 @@ WWINLINE Vector3 Vector3::Lerp(const Vector3 & a, const Vector3 & b, float alpha
 }
 #endif
 
-// Add two vector3's without return-by-value.
 WWINLINE void Vector3::Add(const Vector3 &a,const Vector3 &b,Vector3 * set_result)
 {
 	assert(set_result != nullptr);
@@ -370,7 +360,6 @@ WWINLINE void Vector3::Add(const Vector3 &a,const Vector3 &b,Vector3 * set_resul
 }
 
 
-// Subtract two vector3's without return-by-value.
 WWINLINE void Vector3::Subtract(const Vector3 &a,const Vector3 &b,Vector3 * set_result)
 {
 	assert(set_result != nullptr);
@@ -430,7 +419,6 @@ WWINLINE void Vector3::Cap_Absolute_To(const Vector3 & a)
 
 }
 
-// Scale this vector by 3 independent scale factors.
 WWINLINE void Vector3::Scale(const Vector3 & scale)
 {
 	X *= scale.X;
@@ -439,14 +427,12 @@ WWINLINE void Vector3::Scale(const Vector3 & scale)
 }
 
 
-// Rotates this vector around the X axis.
 WWINLINE void Vector3::Rotate_X(float angle)
 {
 	Rotate_X(WWMath::Sinf(angle),WWMath::Cosf(angle));
 }
 
 
-// Rotates this vector around the x axis.
 WWINLINE void Vector3::Rotate_X(float s_angle,float c_angle)
 {
 	float tmp_y = Y;
@@ -457,14 +443,12 @@ WWINLINE void Vector3::Rotate_X(float s_angle,float c_angle)
 }
 
 
-// Rotates this vector around the y axis.
 WWINLINE void Vector3::Rotate_Y(float angle)
 {
 	Rotate_Y(WWMath::Sinf(angle),WWMath::Cosf(angle));
 }
 
 
-// Rotates this vector around the Y axis.
 WWINLINE void Vector3::Rotate_Y(float s_angle,float c_angle)
 {
 	float tmp_x = X;
@@ -475,14 +459,12 @@ WWINLINE void Vector3::Rotate_Y(float s_angle,float c_angle)
 }
 
 
-// Rotates this vector around the Z axis.
 WWINLINE void Vector3::Rotate_Z(float angle)
 {
 	Rotate_Z(WWMath::Sinf(angle),WWMath::Cosf(angle));
 }
 
 
-// Rotates this vector around the Z axis.
 WWINLINE void Vector3::Rotate_Z(float s_angle,float c_angle)
 {
 	float tmp_x = X;
@@ -493,7 +475,6 @@ WWINLINE void Vector3::Rotate_Z(float s_angle,float c_angle)
 }
 
 
-// Verifies that each component of this vector is a valid float.
 WWINLINE bool Vector3::Is_Valid() const
 {
 	return (WWMath::Is_Valid_Float(X) && WWMath::Is_Valid_Float(Y) && WWMath::Is_Valid_Float(Z));
@@ -540,7 +521,6 @@ WWINLINE float Vector3::Quick_Distance(const Vector3 &p1, const Vector3 &p2)
 	return (temp.Quick_Length());
 }
 
-// Converts to SR packed color.
 WWINLINE unsigned long	Vector3::Convert_To_ABGR() const
 {
 	return (unsigned(255)<<24) |
@@ -549,7 +529,6 @@ WWINLINE unsigned long	Vector3::Convert_To_ABGR() const
 			 (unsigned(X*255.0f));
 }
 
-// Converts to packed color.
 WWINLINE unsigned long	Vector3::Convert_To_ARGB() const
 {
 	return (unsigned(255)<<24) |

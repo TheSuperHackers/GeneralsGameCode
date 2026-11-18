@@ -708,7 +708,6 @@ static inline void obbtri_compute_contact_point
 
 
 
-// Collide an obbox into a triangle.
 bool CollisionMath::Collide
 (
 	const OBBoxClass &		box,
@@ -1091,7 +1090,6 @@ static inline bool obbtri_check_intersection_basis_axis
 }
 
 
-// Axis being checked is the triangle's normal.
 static inline bool obbtri_check_intersection_normal_axis
 (
 	BTIntersectStruct &	context
@@ -1118,7 +1116,6 @@ static inline bool obbtri_check_intersection_normal_axis
 }
 
 
-// Intersection check for an OBBox and a triangle.
 // WARNING: Note that the other inline functions are "quick-reject" functions which return true when
 // the objects are separated.
 bool CollisionMath::Intersection_Test(const OBBoxClass & box,const TriClass & tri)

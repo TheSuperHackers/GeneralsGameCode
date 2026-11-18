@@ -176,7 +176,6 @@ LODHeapNode	*		PredictiveLODOptimizerClass::VisibleObjArray2;
 int					PredictiveLODOptimizerClass::VisibleObjArraySize;
 
 
-// Clear object list and total cost.
 void PredictiveLODOptimizerClass::Clear()
 {
 	if (ObjectArray) {
@@ -194,7 +193,7 @@ void PredictiveLODOptimizerClass::Clear()
 }
 
 
-// Adds object to list, cost.
+// Also adds the cost of the object to the total cost.
 void PredictiveLODOptimizerClass::Add_Object(RenderObjClass *robj)
 {
 	// If array present but too small, free it and copy it to new array.
@@ -320,7 +319,6 @@ void PredictiveLODOptimizerClass::Optimize_LODs(float max_cost)
 }
 
 
-// Releases all memory used.
 void PredictiveLODOptimizerClass::Free()
 {
 	Clear();

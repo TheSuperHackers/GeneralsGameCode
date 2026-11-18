@@ -350,7 +350,6 @@ inline const FrustumClass & CameraClass::Get_View_Space_Frustum() const
 }
 
 
-// Returns the view space clip planes for this camera.
 inline const PlaneClass * CameraClass::Get_View_Space_Frustum_Planes() const
 {
 	const FrustumClass & frustum = Get_View_Space_Frustum();

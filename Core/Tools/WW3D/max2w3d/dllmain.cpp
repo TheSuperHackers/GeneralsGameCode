@@ -60,7 +60,6 @@ static W3dClassDesc		W3d_Export_Class_Descriptor;
 
 
 
-// Entry point for the dll.
 BOOL WINAPI DllMain(HINSTANCE	hinstDLL,ULONG /*fdwReason*/,LPVOID /*lpvReserved*/)
 {
 	AppInstance = hinstDLL;
@@ -106,7 +105,6 @@ DLLEXPORT ClassDesc * LibClassDesc(int i)
 }
 
 
-// Returns the version number of this library.
 DLLEXPORT ULONG LibVersion()
 {
 	return VERSION_3DSMAX;

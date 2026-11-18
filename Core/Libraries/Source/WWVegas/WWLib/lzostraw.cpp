@@ -39,8 +39,7 @@
 #include	<string.h>
 
 
-// Whether the object is to compress or decompress and the block size to use is specified. The data
-// is compressed in blocks that are sized to be quick to compress and yet still yield good
+// The data is compressed in blocks that are sized to be quick to compress and yet still yield good
 // compression ratios.
 // WARNING: It takes two buffers of the blocksize specified if compression is to be performed.
 LZOStraw::LZOStraw(CompControl control, int blocksize) :
@@ -58,7 +57,6 @@ LZOStraw::LZOStraw(CompControl control, int blocksize) :
 }
 
 
-// Frees up the buffers that were allocated in the constructor.
 LZOStraw::~LZOStraw()
 {
 	delete [] Buffer;
@@ -69,9 +67,9 @@ LZOStraw::~LZOStraw()
 }
 
 
-// Fetch data through the LZO processor. It does this by first accumulating a full block of data and
-// then compressing or decompressing it as indicated. Subsequent requests for data will draw from
-// this buffer of processed data until it is exhausted and another block must be fetched.
+// First accumulates a full block of data and then compresses or decompresses it as indicated.
+// Subsequent requests for data will draw from this buffer of processed data until it is exhausted
+// and another block must be fetched.
 int LZOStraw::Get(void * destbuf, int slen)
 {
 	assert(Buffer != nullptr);

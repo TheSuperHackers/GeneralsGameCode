@@ -105,7 +105,6 @@ FirewallHelperClass::~FirewallHelperClass()
 	reset();
 }
 
-// Cleans out the object.
 void FirewallHelperClass::reset()
 {
 	closeAllSpareSockets();
@@ -180,7 +179,6 @@ Bool FirewallHelperClass::behaviorDetectionUpdate()
 	}
 }
 
-// Get a throwaway source port for temporary use.
 UnsignedShort FirewallHelperClass::getNextTemporarySourcePort(Int skip)
 {
 	UnsignedShort return_port = (UnsignedShort) m_sourcePortPool;
@@ -223,7 +221,6 @@ UnsignedShort FirewallHelperClass::getNextTemporarySourcePort(Int skip)
 
 
 
-// Returns true if sent OK.
 Bool FirewallHelperClass::sendToManglerFromPort(UnsignedInt address, UnsignedShort port, UnsignedShort packetID, Bool blitzme)
 {
 	DEBUG_LOG(("sizeof(ManglerMessage) == %d, sizeof(ManglerData) == %d",
@@ -407,7 +404,7 @@ void FirewallHelperClass::writeFirewallBehavior()
 }
 
 
-// Flag that the next time we log in we need to refresh our firewall settings.
+// The firewall settings are refreshed the next time we log in.
 void FirewallHelperClass::flagNeedToRefresh(Bool flag)
 {
 	OptionPreferences pref;
@@ -418,7 +415,6 @@ void FirewallHelperClass::flagNeedToRefresh(Bool flag)
 }
 
 
-// Read in old firewall settings.
 void FirewallHelperClass::readFirewallBehavior()
 {
 #if (0)
@@ -429,7 +425,6 @@ void FirewallHelperClass::readFirewallBehavior()
 
 
 
-// What is that wacky firewall doing to our packet headers?
 void FirewallHelperClass::detectFirewallBehavior(/*Bool &canRecord*/)
 {
 	m_behavior = FIREWALL_TYPE_SIMPLE;
@@ -1035,7 +1030,6 @@ Bool FirewallHelperClass::detectionTest5Update() {
 }
 
 
-// Find out how a NAT is allocating ports.
 Int FirewallHelperClass::getNATPortAllocationScheme(Int numPorts, UnsignedShort *originalPorts, UnsignedShort *mangledPorts, Bool &relativeDelta, Bool &looksGood)
 {
 	DEBUG_ASSERTCRASH(numPorts > 3, ("numPorts too small"));
@@ -1190,7 +1184,6 @@ Int FirewallHelperClass::getNATPortAllocationScheme(Int numPorts, UnsignedShort 
 
 
 
-// How hard is it to connect to this firewall.
 Int FirewallHelperClass::getFirewallHardness(FirewallBehaviorType behavior)
 {
 
@@ -1226,7 +1219,6 @@ Int FirewallHelperClass::getFirewallHardness(FirewallBehaviorType behavior)
 
 
 
-// How many retries is it likely to take before we connect?
 Int FirewallHelperClass::getFirewallRetries(FirewallBehaviorType behavior)
 {
 

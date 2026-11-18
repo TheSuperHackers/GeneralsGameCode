@@ -484,7 +484,6 @@ MeshBuilderClass::~MeshBuilderClass()
 }
 
 
-// Release all memory in use.
 void MeshBuilderClass::Free()
 {
 	if (Faces != nullptr) {
@@ -504,7 +503,6 @@ void MeshBuilderClass::Free()
 }
 
 
-// Get the builder ready to process a mesh.
 void MeshBuilderClass::Reset(int passcount,int face_count_guess,int face_count_growth_rate)
 {
 	Free();
@@ -572,7 +570,6 @@ void MeshBuilderClass::Build_Mesh(bool compute_normals)
 }
 
 
-// Computes all of the face normals from the indexed vertices.
 void MeshBuilderClass::Compute_Face_Normals()
 {
 	for (int faceidx = 0; faceidx < FaceCount; faceidx++) {
@@ -783,7 +780,6 @@ void MeshBuilderClass::Compute_Mesh_Stats()
 }
 
 
-// Computes an axis-aligned bounding box for the mesh.
 void MeshBuilderClass::Compute_Bounding_Box(Vector3 * set_min,Vector3 * set_max)
 {
 	int i;
@@ -1404,7 +1400,6 @@ void MeshBuilderClass::Strip_Optimize_Mesh()
 
 
 
-// Increases the size of the face array.
 void MeshBuilderClass::Grow_Face_Array()
 {
 	int oldcount = AllocFaceCount;

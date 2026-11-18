@@ -107,7 +107,6 @@ CameraClass::~CameraClass()
 }
 
 
-// Virtual copy constructor.
 RenderObjClass * CameraClass::Clone() const
 {
 	return NEW_REF( CameraClass, (*this) );
@@ -159,8 +158,8 @@ Vector3 CameraClass::Get_Up_Dir() const
 	return Get_Transform().Get_Y_Vector();
 }
 
-// Control over the view plane. The view rectangle is given by its upper left and lower right
-// corners, at an assumed distance of 1.0.
+// The view rectangle is given by its upper left and lower right corners, at an assumed distance of
+// 1.0.
 void CameraClass::Set_View_Plane(const Vector2 & vmin,const Vector2 & vmax)
 {
 	ViewPlane.Min = vmin;
@@ -170,7 +169,6 @@ void CameraClass::Set_View_Plane(const Vector2 & vmin,const Vector2 & vmax)
 }
 
 
-// Set the viewplane using fov angles.
 void CameraClass::Set_View_Plane(float hfov,float vfov)
 {
 	float width_half = tan(hfov/2.0f);
@@ -206,8 +204,7 @@ void CameraClass::Get_View_Plane(Vector2 & set_min,Vector2 & set_max) const
 }
 
 
-// Project a point from ws to the view plane. The resulting point is on the normalized view plane,
-// with x, y and z ranging from -1 to 1.
+// The resulting point is on the normalized view plane, with x, y and z ranging from -1 to 1.
 // WARNING: When the input is behind the near clip plane, 0,0,0 is returned.
 CameraClass::ProjectionResType CameraClass::Project(Vector3 & dest,const Vector3 & ws_point) const
 {
@@ -267,8 +264,7 @@ CameraClass::Project_Camera_Space_Point(Vector3 & dest,const Vector3 & cam_point
 	return INSIDE_FRUSTUM;
 }
 
-// "unproject" a point from the view plane to world space. The given point is assumed to be on the
-// view_plane at z=-1. The 3D world space point that this represents will be returned in dest.
+// The given point is assumed to be on the view plane at z=-1.
 void CameraClass::Un_Project(Vector3 & dest,const Vector2 & view_point) const
 {
 	/*
@@ -287,7 +283,6 @@ void CameraClass::Un_Project(Vector3 & dest,const Vector2 & view_point) const
 }
 
 
-// Transforms the given world space point to camera space.
 void CameraClass::Transform_To_View_Space(Vector3 & dest,const Vector3 & ws_point) const
 {
 	Update_Frustum();
@@ -295,7 +290,6 @@ void CameraClass::Transform_To_View_Space(Vector3 & dest,const Vector3 & ws_poin
 }
 
 
-// Rotates the given world space vector to camera space.
 void CameraClass::Rotate_To_View_Space(Vector3 & dest,const Vector3 & ws_vector) const
 {
 	Update_Frustum();
@@ -304,7 +298,6 @@ void CameraClass::Rotate_To_View_Space(Vector3 & dest,const Vector3 & ws_vector)
 
 
 
-// Returns an obb that contains near clip plane.
 const OBBoxClass & CameraClass::Get_Near_Clip_Bounding_Box() const
 {
 	Update_Frustum();
@@ -312,7 +305,6 @@ const OBBoxClass & CameraClass::Get_Near_Clip_Bounding_Box() const
 }
 
 
-// Tests whether the given box can be culled.
 bool CameraClass::Cull_Box(const AABoxClass & box) const
 {
 	const FrustumClass & frustum = Get_Frustum();
@@ -370,7 +362,6 @@ void CameraClass::Update_Frustum() const
 }
 
 
-// Converts the given device coordinate to view space.
 void CameraClass::Device_To_View_Space(const Vector2 & device_coord,Vector3 * set_view)
 {
 	int res_width;
@@ -397,7 +388,6 @@ void CameraClass::Device_To_View_Space(const Vector2 & device_coord,Vector3 * se
 }
 
 
-// Converts given device coord to world space.
 void CameraClass::Device_To_World_Space(const Vector2 & device_coord,Vector3 * world_coord)
 {
 	Vector3 vs;

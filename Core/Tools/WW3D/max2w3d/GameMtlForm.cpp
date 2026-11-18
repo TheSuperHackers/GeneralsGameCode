@@ -50,7 +50,6 @@ GameMtlFormClass::GameMtlFormClass
 }
 
 
-// Set the material being edited by this form.
 void GameMtlFormClass::SetThing(ReferenceTarget * target)
 {
 	assert (target->SuperClassID()==MATERIAL_CLASS_ID);
@@ -60,7 +59,6 @@ void GameMtlFormClass::SetThing(ReferenceTarget * target)
 }
 
 
-// Get the material being edited by this form.
 ReferenceTarget * GameMtlFormClass::GetThing()
 {
 	return (ReferenceTarget*)TheMtl;

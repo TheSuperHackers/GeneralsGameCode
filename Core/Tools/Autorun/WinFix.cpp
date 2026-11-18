@@ -276,7 +276,6 @@ char *WindowsVersionInfo::Version_String()
 	return (version);
 }
 
-// Returns version # as char string.
 
 char * WindowsVersionInfo::Version_Name()
 {

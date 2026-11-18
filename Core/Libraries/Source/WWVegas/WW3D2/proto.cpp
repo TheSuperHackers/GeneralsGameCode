@@ -101,7 +101,6 @@ protected:
 };
 
 
-// Reads in a mesh and creates a prototype for it.
 PrototypeClass * MeshLoaderClass::Load_W3D(ChunkLoadClass & cload)
 {
 	MeshClass * mesh = NEW_REF( MeshClass, () );
@@ -128,7 +127,6 @@ PrototypeClass * MeshLoaderClass::Load_W3D(ChunkLoadClass & cload)
 }
 
 
-// Reads in an hmodel and creates a prototype for it.
 PrototypeClass * HModelLoaderClass::Load_W3D(ChunkLoadClass & cload)
 {
 	HModelDefClass * hdef = W3DNEW HModelDefClass;

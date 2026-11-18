@@ -96,7 +96,6 @@ GameMtlVertexMaterialDlg::~GameMtlVertexMaterialDlg()
 }
 
 
-// Windows message handler.
 BOOL GameMtlVertexMaterialDlg::Dialog_Proc(HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int val;
@@ -242,7 +241,6 @@ BOOL GameMtlVertexMaterialDlg::Dialog_Proc(HWND dlg_wnd, UINT message, WPARAM wp
 }
 
 
-// Reload the contents of the controls.
 void GameMtlVertexMaterialDlg::ReloadDialog()
 {
 	// Vertex Material Controls

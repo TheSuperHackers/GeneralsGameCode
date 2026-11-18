@@ -71,7 +71,6 @@ static void Get_W3D_Name (const char *filename, char *w3d_name, size_t w3d_name_
 static const char * Make_W3D_Filename (const char *w3d_name);
 
 
-// Scans a W3D file to determine which other files it depends on.
 bool Get_W3D_Dependencies (const char *w3d_filename, StringList &files)
 {
 	assert(w3d_filename);
@@ -152,7 +151,6 @@ static void Scan_Chunk (ChunkLoadClass &cload, StringList &files, const char *w3
 }
 
 
-// Scans a mesh for references to other files.
 static void Scan_Mesh (ChunkLoadClass &cload, StringList &files, const char *w3d_name)
 {
 	// Scan the mesh's sub-chunks.
@@ -219,7 +217,6 @@ static void Scan_Mesh_Textures (ChunkLoadClass &cload, StringList &files, const 
 }
 
 
-// Scans an animation for references to other files.
 static void Scan_Anim (ChunkLoadClass &cload, StringList &files, const char *w3d_name)
 {
 	while (cload.Open_Chunk())
@@ -242,7 +239,6 @@ static void Scan_Anim (ChunkLoadClass &cload, StringList &files, const char *w3d
 }
 
 
-// Scans a compressed animation mesh for references to other files.
 static void Scan_Compressed_Anim (ChunkLoadClass &cload, StringList &files, const char *w3d_name)
 {
 	while (cload.Open_Chunk())
@@ -265,7 +261,6 @@ static void Scan_Compressed_Anim (ChunkLoadClass &cload, StringList &files, cons
 }
 
 
-// Scans an HModel for references to other files.
 static void Scan_HModel (ChunkLoadClass &cload, StringList &files, const char *w3d_name)
 {
 	while (cload.Open_Chunk())
@@ -288,7 +283,6 @@ static void Scan_HModel (ChunkLoadClass &cload, StringList &files, const char *w
 }
 
 
-// Scans an emitter for references to other files.
 static void Scan_Emitter (ChunkLoadClass &cload, StringList &files, const char *w3d_name)
 {
 	while (cload.Open_Chunk())
@@ -307,7 +301,6 @@ static void Scan_Emitter (ChunkLoadClass &cload, StringList &files, const char *
 }
 
 
-// Scans an aggregate for references to other files.
 static void Scan_Aggregate (ChunkLoadClass &cload, StringList &files, const char *w3d_name)
 {
 	while (cload.Open_Chunk())
@@ -345,7 +338,6 @@ static void Scan_Aggregate (ChunkLoadClass &cload, StringList &files, const char
 }
 
 
-// Scans an HLOD for references to other files.
 static void Scan_HLOD (ChunkLoadClass &cload, StringList &files, const char *w3d_name)
 {
 	while (cload.Open_Chunk())
@@ -367,7 +359,6 @@ static void Scan_HLOD (ChunkLoadClass &cload, StringList &files, const char *w3d
 }
 
 
-// Gets a W3D object name from a W3D filename.
 static void Get_W3D_Name(const char* filename, char* w3d_name, size_t w3d_name_size)
 {
 	assert(filename);
@@ -392,7 +383,6 @@ static void Get_W3D_Name(const char* filename, char* w3d_name, size_t w3d_name_s
 }
 
 
-// Converts a W3D object name into a W3D filename.
 static const char * Make_W3D_Filename (const char *w3d_name)
 {
 	assert(w3d_name);

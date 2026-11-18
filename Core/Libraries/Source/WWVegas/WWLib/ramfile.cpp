@@ -36,13 +36,13 @@
 #include "RAMFILE.h"
 
 
-// Construct a RAM buffer based "file" object. Access to the buffer will appear as if it was
-// accessing a file. This is different from the caching ability of the buffered file class in that
-// this file class has no real file counterpart. Typical use of this is for algorithms that were
-// originally designed for file processing, but are now desired to work with a buffer. The buffer
-// will already contain data if the file is opened for READ. It will be considered a scratch buffer
-// if opened for WRITE. If the buffer pointer is nullptr but the length is not, then a buffer will
-// be allocated of the specified length. This case is only useful for opening the file for WRITE.
+// Access to the buffer will appear as if it was accessing a file. This is different from the
+// caching ability of the buffered file class in that this file class has no real file counterpart.
+// Typical use of this is for algorithms that were originally designed for file processing, but are
+// now desired to work with a buffer. The buffer will already contain data if the file is opened for
+// READ. It will be considered a scratch buffer if opened for WRITE. If the buffer pointer is
+// nullptr but the length is not, then a buffer will be allocated of the specified length. This case
+// is only useful for opening the file for WRITE.
 RAMFileClass::RAMFileClass(void * buffer, int len) :
 	Buffer((char *)buffer),
 	MaxLength(len),
@@ -110,18 +110,17 @@ bool RAMFileClass::Is_Open() const
 }
 
 
-// Opens a RAM based file for read or write. The name is meaningless so that parameter is ignored.
-// If the access mode is for write, then the pseudo-file can be written until the buffer is full. If
-// the file is opened for read, then the buffer is presumed to be full of the data to be read.
+// The name is meaningless so that parameter is ignored. If the access mode is for write, then the
+// pseudo-file can be written until the buffer is full. If the file is opened for read, then the
+// buffer is presumed to be full of the data to be read.
 int RAMFileClass::Open(char const *, int access)
 {
 	return(Open(access));
 }
 
 
-// Opens the RAM based file for read or write. If the file is opened for write, the 'file' can be
-// written up to the limit of the buffer's size. If the file is opened for read, then the buffer is
-// presumed to hold the data to be read.
+// If the file is opened for write, the 'file' can be written up to the limit of the buffer's size.
+// If the file is opened for read, then the buffer is presumed to hold the data to be read.
 int RAMFileClass::Open(int access)
 {
 	if (Buffer == nullptr || Is_Open()) {
@@ -149,8 +148,7 @@ int RAMFileClass::Open(int access)
 }
 
 
-// Read data from the file. Use this routine just like a normal file read. When the ram buffer is
-// exhausted, less bytes than requested will be read.
+// When the ram buffer is exhausted, less bytes than requested will be read.
 // WARNING: The read function only applies to ram 'files' opened for read access.
 int RAMFileClass::Read(void * buffer, int size)
 {
@@ -180,8 +178,6 @@ int RAMFileClass::Read(void * buffer, int size)
 }
 
 
-// Controls the ram file virtual read/write position. It functions similarly to the regular file seek
-// method.
 int RAMFileClass::Seek(int pos, int dir)
 {
 	if (Buffer == nullptr || !Is_Open()) {
@@ -226,8 +222,7 @@ int RAMFileClass::Size()
 }
 
 
-// Copies data to the current write position in the ram file. Returns less than requested if the
-// buffer is exhausted of space prematurely.
+// Returns less than requested if the buffer is exhausted of space prematurely.
 int RAMFileClass::Write(void const * buffer, int size)
 {
 	if (Buffer == nullptr || buffer == nullptr || size == 0) {

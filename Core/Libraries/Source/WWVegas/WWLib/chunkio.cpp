@@ -77,7 +77,7 @@ bool ChunkSaveClass::Begin_Chunk(uint32 id)
 }
 
 
-// Close a chunk, computes the size and adds to the header.
+// Computes the size and adds it to the header.
 bool ChunkSaveClass::End_Chunk()
 {
 	// If the user didn't close his micro chunks bad things are gonna happen
@@ -201,7 +201,6 @@ uint32 ChunkSaveClass::Write(const IOQuaternionStruct & q)
 	return Write(&q,sizeof(q));
 }
 
-// Returns the current chunk recursion depth (debugging).
 int ChunkSaveClass::Cur_Chunk_Depth()
 {
 	return StackIndex;
@@ -220,7 +219,7 @@ ChunkLoadClass::ChunkLoadClass(FileClass * file) :
 }
 
 
-// Open a chunk in the file, reads in the chunk header.
+// Reads in the chunk header.
 bool ChunkLoadClass::Open_Chunk()
 {
 	// if user didn't close any micro chunks that he opened, bad things could happen
@@ -245,7 +244,7 @@ bool ChunkLoadClass::Open_Chunk()
 }
 
 
-// Close a chunk, seeks to the end if needed.
+// Seeks to the end if needed.
 bool ChunkLoadClass::Close_Chunk()
 {
 	// if user didn't close any micro chunks that he opened, bad things could happen
@@ -313,7 +312,7 @@ bool ChunkLoadClass::Open_Micro_Chunk()
 }
 
 
-// Closes a micro-chunk (seeks to end).
+// Seeks to the end of the micro-chunk.
 bool ChunkLoadClass::Close_Micro_Chunk()
 {
 	assert(InMicroChunk);

@@ -169,7 +169,6 @@ protected:
 };
 
 
-// Constructor, optionally initialize to Identity matrix.
 WWINLINE Matrix4x4::Matrix4x4(bool identity)
 {
 	if (identity) {
@@ -182,7 +181,6 @@ WWINLINE Matrix4x4::Matrix4x4(const Matrix4x4 & m)
 	Row[0] = m.Row[0]; Row[1] = m.Row[1]; Row[2] = m.Row[2]; Row[3] = m.Row[3];
 }
 
-// Convert a Matrix3D (fake 4x4) to a Matrix4x4.
 WWINLINE Matrix4x4::Matrix4x4(const Matrix3D & m)
 {
 	Init(m);
@@ -208,7 +206,6 @@ WWINLINE void Matrix4x4::Make_Identity()
 }
 
 
-// Initializes from the contents of the given Matrix3D.
 WWINLINE void Matrix4x4::Init(const Matrix3D & m)
 {
 	Row[0] = m[0]; Row[1] = m[1]; Row[2] = m[2]; Row[3] = Vector4(0.0,0.0,0.0,1.0);
@@ -222,7 +219,6 @@ WWINLINE void Matrix4x4::Init(const Vector4 & r0, const Vector4 & r1, const Vect
 }
 
 
-// Initializes the rows from the given 16 floats.
 WWINLINE void Matrix4x4::Init(float m11,float m12,float m13,float m14, float m21,float m22,float m23,float m24,
 	float m31,float m32,float m33,float m34, float m41,float m42,float m43,float m44)
 {
@@ -233,11 +229,10 @@ WWINLINE void Matrix4x4::Init(float m11,float m12,float m13,float m14, float m21
 }
 
 
-// Initialize to an orthographic projection matrix. You can find the formulas for this in the
-// appendix of the OpenGL programming guide. Also this happens to be the same convention used by
-// Surrender. The result of this projection will be that points inside the volume will have all
-// coords between -1 and +1. A point at znear will project to z=-1. A point at zfar will project to
-// z=+1.
+// You can find the formulas for this in the appendix of the OpenGL programming guide. Also this
+// happens to be the same convention used by Surrender. The result of this projection will be that
+// points inside the volume will have all coords between -1 and +1. A point at znear will project to
+// z=-1. A point at zfar will project to z=+1.
 // WARNING: Note that the znear and zfar parameters are positive distances to the clipping planes
 // even though in the camera coordinate system, the clipping planes are at negative z coordinates.
 // This holds for all of the projection initializations and is consistent with OpenGL's convention.
@@ -264,11 +259,10 @@ WWINLINE void Matrix4x4::Init_Ortho
 }
 
 
-// Initialize to a perspective projection matrix. You can find the formulas for this matrix in the
-// appendix of the OpenGL programming guide. Also, this happens to be the same convention used by
-// Surrender. The result of this projection will be that points inside the volume will have all
-// coords between -1 and +1. A point at znear will project to z=-1. A point at zfar will project to
-// z=+1. The field of view angles are in radians.
+// You can find the formulas for this matrix in the appendix of the OpenGL programming guide. Also,
+// this happens to be the same convention used by Surrender. The result of this projection will be
+// that points inside the volume will have all coords between -1 and +1. A point at znear will
+// project to z=-1. A point at zfar will project to z=+1. The field of view angles are in radians.
 // WARNING: Note that the znear and zfar parameters are positive distances to the clipping planes
 // even though in the camera coordinate system, the clipping planes are at negative z coordinates.
 // This holds for all of the projection initializations and is consistent with OpenGL's convention.
@@ -287,11 +281,10 @@ WWINLINE void Matrix4x4::Init_Perspective(float hfov,float vfov,float znear,floa
 }
 
 
-// Initialize to a perspective projection matrix. You can find the formulas for this matrix in the
-// appendix of the OpenGL programming guide. Also, this happens to be the same convention used by
-// Surrender. The result of this projection will be that points inside the volume will have all
-// coords between -1 and +1. A point at znear will project to z=-1. A point at zfar will project to
-// z=+1.
+// You can find the formulas for this matrix in the appendix of the OpenGL programming guide. Also,
+// this happens to be the same convention used by Surrender. The result of this projection will be
+// that points inside the volume will have all coords between -1 and +1. A point at znear will
+// project to z=-1. A point at zfar will project to z=+1.
 // WARNING: Note that the znear and zfar parameters are positive distances to the clipping planes
 // even though in the camera coordinate system, the clipping planes are at negative z coordinates.
 // This holds for all of the projection initializations and is consistent with OpenGL's convention.
@@ -417,28 +410,24 @@ WWINLINE Matrix4x4 & Matrix4x4::operator = (const Matrix4x4 & m)
 	return *this;
 }
 
-// "plus equals" operator.
 WWINLINE Matrix4x4& Matrix4x4::operator += (const Matrix4x4 & m)
 {
 	Row[0] += m.Row[0]; Row[1] += m.Row[1]; Row[2] += m.Row[2]; Row[3] += m.Row[3];
 	return *this;
 }
 
-// "minus equals" operator.
 WWINLINE Matrix4x4& Matrix4x4::operator -= (const Matrix4x4 & m)
 {
 	Row[0] -= m.Row[0]; Row[1] -= m.Row[1]; Row[2] -= m.Row[2]; Row[3] -= m.Row[3];
 	return *this;
 }
 
-// "times equals" operator.
 WWINLINE Matrix4x4& Matrix4x4::operator *= (float d)
 {
 	Row[0] *= d; Row[1] *= d; Row[2] *= d; Row[3] *= d;
 	return *this;
 }
 
-// "divide equals" operator.
 WWINLINE Matrix4x4& Matrix4x4::operator /= (float d)
 {
 	float ood = d;

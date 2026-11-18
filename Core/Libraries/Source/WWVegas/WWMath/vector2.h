@@ -147,7 +147,6 @@ WWINLINE Vector2 operator * (float k, const Vector2 &a)
 	return Vector2(a0k,a1k);
 }
 
-// Divide a vector by a scalar.
 WWINLINE Vector2 operator / (const Vector2 &a,float k)
 {
 	float ook=1.0f/k;
@@ -156,7 +155,6 @@ WWINLINE Vector2 operator / (const Vector2 &a,float k)
 	return Vector2(a0ook,a1ook);
 }
 
-// Add two vectors.
 WWINLINE Vector2 operator + (const Vector2 &a,const Vector2 &b)
 {
 	return Vector2(
@@ -173,7 +171,6 @@ WWINLINE Vector2 operator - (const Vector2 &a,const Vector2 &b)
 						);
 }
 
-// Compute the inner or dot product of two vectors.
 WWINLINE float operator * (const Vector2 &a,const Vector2 &b)
 {
 	return	a.X*b.X + a.Y*b.Y;
@@ -189,7 +186,6 @@ WWINLINE float Vector2::Perp_Dot_Product(const Vector2 &a,const Vector2 &b)
 	return a.X * -b.Y + a.Y * b.X;
 }
 
-// Determine if two vectors are identical.
 WWINLINE bool operator == (const Vector2 &a,const Vector2 &b)
 {
 	bool a0b0(a[0] == b[0]);
@@ -197,7 +193,6 @@ WWINLINE bool operator == (const Vector2 &a,const Vector2 &b)
 	return ( a0b0 & a1b1);
 }
 
-// Determine if two vectors are not identical.
 WWINLINE bool operator != (const Vector2 &a,const Vector2 &b)
 {
 	bool a0b0(a[0] != b[0]);
@@ -205,7 +200,6 @@ WWINLINE bool operator != (const Vector2 &a,const Vector2 &b)
 	return ( a0b0 | a1b1);
 }
 
-// Determine if two vectors are identical within e.
 WWINLINE bool Equal_Within_Epsilon(const Vector2 &a,const Vector2 &b,float epsilon)
 {
    return( (WWMath::Fabsf_Legacy(a.X - b.X) < epsilon) && (WWMath::Fabsf_Legacy(a.Y - b.Y) < epsilon) );
@@ -255,16 +249,14 @@ WWINLINE void Vector2::Rotate(float s, float c)
 	Y = new_y;
 }
 
-// Rotate towards given vector (stop on reaching it). Returns true if we have reached the desired
-// vector.
+// Stops on reaching the target vector and then returns true.
 // WARNING: This function assumes both vectors are normalized!
 WWINLINE bool Vector2::Rotate_Towards_Vector(Vector2 &target, float max_theta, bool & positive_turn)
 {
 	return Rotate_Towards_Vector(target, WWMath::Sinf_Legacy(max_theta), WWMath::Cosf_Legacy(max_theta), positive_turn);
 }
 
-// Rotate towards given vector (stop on reaching it). Returns true if we have reached the desired
-// vector.
+// Stops on reaching the target vector and then returns true.
 // WARNING: This function assumes both vectors are normalized!
 WWINLINE bool Vector2::Rotate_Towards_Vector(Vector2 &target, float max_s, float max_c, bool & positive_turn)
 {
@@ -287,7 +279,6 @@ WWINLINE bool Vector2::Rotate_Towards_Vector(Vector2 &target, float max_s, float
 	return return_value;
 }
 
-// Swap two Vector2's.
 WWINLINE void Swap(Vector2 & a,Vector2 & b)
 {
 	Vector2 tmp(a);
@@ -296,7 +287,6 @@ WWINLINE void Swap(Vector2 & a,Vector2 & b)
 }
 
 
-// Verifies that all components are valid floats.
 WWINLINE bool Vector2::Is_Valid() const
 {
 	return (WWMath::Is_Valid_Float(X) && WWMath::Is_Valid_Float(Y));
@@ -319,7 +309,6 @@ WWINLINE void Vector2::Update_Max (const Vector2 & a)
 }
 
 
-// Multiply components of a vector by independent scaling factors.
 WWINLINE void Vector2::Scale (float a, float b)
 {
 	X *= a;
@@ -327,7 +316,6 @@ WWINLINE void Vector2::Scale (float a, float b)
 }
 
 
-// Multiply components of a vector by independent scaling factors.
 WWINLINE void Vector2::Scale (const Vector2 & a)
 {
 	X *= a.X;
@@ -379,7 +367,6 @@ WWINLINE float Distance(float x1, float y1, float x2, float y2)
 }
 
 
-// Linearly interpolates two Vector2's.
 WWINLINE void Vector2::Lerp(const Vector2 & a,const Vector2 & b,float t,Vector2 * set_result)
 {
 	assert(set_result != nullptr);

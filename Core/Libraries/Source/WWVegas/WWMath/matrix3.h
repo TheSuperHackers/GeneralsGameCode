@@ -233,7 +233,6 @@ protected:
 };
 
 
-// Constructor, optionally initialize to Identity matrix.
 WWINLINE Matrix3x3::Matrix3x3(bool identity)
 {
 	if (identity) {
@@ -399,28 +398,24 @@ WWINLINE Matrix3x3 & Matrix3x3::operator = (const Matrix3x3 & m)
 	return *this;
 }
 
-// "plus equals" operator.
 WWINLINE Matrix3x3& Matrix3x3::operator += (const Matrix3x3 & m)
 {
 	Row[0] += m.Row[0]; Row[1] += m.Row[1]; Row[2] += m.Row[2];
 	return *this;
 }
 
-// "minus equals" operator.
 WWINLINE Matrix3x3& Matrix3x3::operator -= (const Matrix3x3 & m)
 {
 	Row[0] -= m.Row[0]; Row[1] -= m.Row[1]; Row[2] -= m.Row[2];
 	return *this;
 }
 
-// "times equals" operator.
 WWINLINE Matrix3x3& Matrix3x3::operator *= (float d)
 {
 	Row[0] *= d; Row[1] *= d; Row[2] *= d;
 	return *this;
 }
 
-// "divide equals" operator.
 WWINLINE Matrix3x3& Matrix3x3::operator /= (float d)
 {
 	Row[0] /= d; Row[1] /= d; Row[2] /= d;

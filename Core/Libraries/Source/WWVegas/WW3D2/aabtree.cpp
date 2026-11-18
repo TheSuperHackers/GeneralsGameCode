@@ -55,7 +55,6 @@ AABTreeClass::AABTreeClass() :
 {
 }
 
-// Builds an AABTree from the contents of an AABTreeBuilderClass.
 AABTreeClass::AABTreeClass(AABTreeBuilderClass * builder)
 {
 	NodeCount = builder->Node_Count();
@@ -106,7 +105,6 @@ AABTreeClass & AABTreeClass::operator = (const AABTreeClass & that)
 }
 
 
-// Reset this tree, releases all allocated resources.
 void AABTreeClass::Reset()
 {
 	NodeCount = 0;
@@ -120,7 +118,6 @@ void AABTreeClass::Reset()
 	Mesh = nullptr;
 }
 
-// Uniform scale.
 void AABTreeClass::Scale(float f)
 {
 	for (int i=0;i<NodeCount;++i) {
@@ -246,8 +243,8 @@ void AABTreeClass::Generate_OBBox_APT_Recursive(CullNodeStruct * node,OBBoxAPTCo
 }
 
 
-// Generate an apt from a box and viewdir. Indices of the polys which intersect the box and are not
-// backfacing to the given viewdir will be added to the passed in apt.
+// Indices of the polys which intersect the box and are not backfacing to the given viewdir will be
+// added to the passed in apt.
 void AABTreeClass::Generate_APT
 (
 	const OBBoxClass & box,
@@ -260,7 +257,6 @@ void AABTreeClass::Generate_APT
 }
 
 
-// Recurse, generate the apt for a box and viewdir.
 void AABTreeClass::Generate_OBBox_APT_Recursive(CullNodeStruct * node, OBBoxRayAPTContextStruct & context)
 {
 	/*
@@ -346,9 +342,8 @@ bool AABTreeClass::Cast_Ray_Recursive(CullNodeStruct * node,RayCollisionTestClas
 }
 
 
-// Internal implementation. The direction 0 means the ray goes toward the negative axis, 1 means
-// positive. The flags are a reference bitfield for result flags (ray hit edge, start point embedded
-// in tri, etc).
+// The direction 0 means the ray goes toward the negative axis, 1 means positive. The flags are a
+// reference bitfield for result flags (ray hit edge, start point embedded in tri, etc).
 int AABTreeClass::Cast_Semi_Infinite_Axis_Aligned_Ray_Recursive(CullNodeStruct * node,
 	const Vector3 & start_point, int axis_r, int axis_1, int axis_2, int direction,
 	unsigned char & flags)
@@ -517,9 +512,8 @@ bool AABTreeClass::Cast_Ray_To_Polys(CullNodeStruct * node,RayCollisionTestClass
 	return false;
 }
 
-// Cast ray to polys in the node. The direction 0 means the ray goes toward the negative axis, 1
-// means positive. The flags are a reference bitfield for result flags (ray hit edge, start point
-// embedded in tri, etc).
+// The direction 0 means the ray goes toward the negative axis, 1 means positive. The flags are a
+// reference bitfield for result flags (ray hit edge, start point embedded in tri, etc).
 int AABTreeClass::Cast_Semi_Infinite_Axis_Aligned_Ray_To_Polys(CullNodeStruct * node,
 	const Vector3 & start_point, int axis_r, int axis_1, int axis_2, int direction,
 	unsigned char & flags)
@@ -766,7 +760,6 @@ void AABTreeClass::Update_Bounding_Boxes_Recursive(CullNodeStruct * node)
 }
 
 
-// Updates min and max given a polygon index.
 void AABTreeClass::Update_Min_Max(int poly_index,Vector3 & min,Vector3 & max)
 {
 	for (int vert_index = 0; vert_index < 3; vert_index++) {
@@ -785,7 +778,6 @@ void AABTreeClass::Update_Min_Max(int poly_index,Vector3 & min,Vector3 & max)
 }
 
 
-// Load a W3D description of an AABTree.
 void AABTreeClass::Load_W3D(ChunkLoadClass & cload)
 {
 	Reset();
@@ -817,14 +809,12 @@ void AABTreeClass::Load_W3D(ChunkLoadClass & cload)
 }
 
 
-// Load the polygon index array.
 void AABTreeClass::Read_Poly_Indices(ChunkLoadClass & cload)
 {
 	cload.Read(PolyIndices,sizeof(uint32) * PolyCount);
 }
 
 
-// Load the node array.
 void AABTreeClass::Read_Nodes(ChunkLoadClass & cload)
 {
 	W3dMeshAABTreeNode w3dnode;

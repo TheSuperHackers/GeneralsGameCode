@@ -69,7 +69,6 @@ inline void get_far_extent(const Vector3 & normal,const Vector3 & extent,Vector3
 }
 
 
-// Tests overlap between a plane and a point.
 inline
 CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const PlaneClass & plane,const Vector3 & point)
@@ -85,7 +84,6 @@ CollisionMath::Overlap_Test(const PlaneClass & plane,const Vector3 & point)
 }
 
 
-// Tests overlap between a plane and an AABox.
 inline
 CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const PlaneClass & plane,const AABoxClass & box)

@@ -136,7 +136,6 @@ INIClass::INIClass(const char *filename)
 
 
 
-// Deletes all of the allocations it might have done.
 INIClass::~INIClass()
 {
 	Clear();
@@ -145,8 +144,8 @@ INIClass::~INIClass()
 
 
 // Clears out a section (or all sections) of the INI data. If no section is specified, then the
-// entire INI data is cleared out. If an entry is specified, then only this specific entry (if found)
-// will be cleared.
+// entire INI data is cleared out. If an entry is specified, then only this specific entry (if
+// found) will be cleared.
 bool INIClass::Clear(char const * section, char const * entry)
 {
 	if (section == nullptr) {
@@ -214,8 +213,8 @@ int INIClass::Load(const char *filename)
 
 
 
-// Load the INI data from the data stream (straw). Merges with any existing INI data. Fails on
-// duplicate entry CRCs. Treats "foobar=" as a valid entry with value " " if KeepBlankEntries is set.
+// Merges with any existing INI data. Fails on duplicate entry CRCs. Treats "foobar=" as a valid
+// entry with value " " if KeepBlankEntries is set.
 int INIClass::Load(Straw & ffile)
 {
 	bool end_of_file = false;
@@ -436,7 +435,6 @@ int INIClass::Save(const char *filename) const
 
 
 
-// Saves the INI data to a pipe stream.
 int INIClass::Save(Pipe & pipe) const
 {
 	int total = 0;
@@ -485,7 +483,6 @@ int INIClass::Save(Pipe & pipe) const
 }
 
 
-// Find the specified section within the INI data. Returns nullptr if the section was not found.
 INISection * INIClass::Find_Section(char const * section) const
 {
 	if (section != nullptr) {
@@ -500,14 +497,12 @@ INISection * INIClass::Find_Section(char const * section) const
 }
 
 
-// Counts the number of sections in the INI data.
 int INIClass::Section_Count() const
 {
 	return(SectionIndex->Count());
 }
 
 
-// Fetches the number of entries in a specified section.
 int INIClass::Entry_Count(char const * section) const
 {
 	INISection * secptr = Find_Section(section);
@@ -518,7 +513,6 @@ int INIClass::Entry_Count(char const * section) const
 }
 
 
-// Find specified entry within section. Returns nullptr if the entry was not found.
 INIEntry * INIClass::Find_Entry(char const * section, char const * entry) const
 {
 	INISection * secptr = Find_Section(section);
@@ -529,8 +523,7 @@ INIEntry * INIClass::Find_Entry(char const * section, char const * entry) const
 }
 
 
-// Get the entry identifier name given ordinal number and section name. The entry identifier is the
-// text that appears to the left of the "=" character.
+// The entry identifier is the text that appears to the left of the "=" character.
 char const * INIClass::Get_Entry(char const * section, int index) const
 {
 	INISection * secptr = Find_Section(section);
@@ -568,9 +561,9 @@ unsigned INIClass::Enumerate_Entries(const char *Section, const char * Entry_Pre
 
 
 
-// Store a binary encoded data block into the INI database. The data is converted into displayable
-// form and then broken into lines that are stored in sequence to the section. A section used to
-// store data in this fashion can not be used for any other entries.
+// The data is converted into displayable form and then broken into lines that are stored in
+// sequence to the section. A section used to store data in this fashion can not be used for any
+// other entries.
 bool INIClass::Put_UUBlock(char const * section, void const * block, int len)
 {
 	if (section == nullptr || block == nullptr || len < 1) return(false);
@@ -601,7 +594,7 @@ bool INIClass::Put_UUBlock(char const * section, void const * block, int len)
 
 // Decomposes all the entries in the specified section into a binary block of data. A section
 // processed by this routine can contain no other entries than those put there by a previous call to
-// Put_UUBlock. Returns the number of bytes decoded into the buffer.
+// Put_UUBlock.
 // WARNING: If the number of bytes retrieved exactly matches the length of the buffer specified,
 // then you might have a condition of buffer "overflow".
 int INIClass::Get_UUBlock(char const * section, void * block, int len) const
@@ -738,10 +731,10 @@ int INIClass::Get_UUBlock(char const * section, char const *entry, void * block,
 
 
 
-// Stores a block of text into an INI section. The text is broken up into lines and each line is then
-// stored as a numbered entry in the specified section. A section used to store text in this way can
-// not be used to hold any other entries. The text is presumed to contain space characters scattered
-// throughout it and that one space between words and sentences is natural.
+// The text is broken up into lines and each line is then stored as a numbered entry in the
+// specified section. A section used to store text in this way can not be used to hold any other
+// entries. The text is presumed to contain space characters scattered throughout it and that one
+// space between words and sentences is natural.
 bool INIClass::Put_TextBlock(char const * section, char const * text)
 {
 	if (section == nullptr) return(false);
@@ -790,11 +783,10 @@ bool INIClass::Put_TextBlock(char const * section, char const * text)
 }
 
 
-// Fetch a block of normal text. This will take all entries in the specified section and format them
-// into a block of normalized text. That is, text with single spaces between each concatenated line.
-// Use Put_TextBlock to build the entries in the section. The text will, at most, fill the buffer
-// with the last character being forced to null. Returns the number of characters placed into the
-// buffer, not counting the trailing null.
+// Formats all entries in the specified section into a block of normalized text. That is, text with
+// single spaces between each concatenated line. Use Put_TextBlock to build the entries in the
+// section. The text will, at most, fill the buffer with the last character being forced to null.
+// The trailing null is not counted in the returned length.
 int INIClass::Get_TextBlock(char const * section, char * buffer, int len) const
 {
 	if (len <= 0) return(0);
@@ -852,8 +844,7 @@ bool INIClass::Put_Int(char const * section, char const * entry, int number, int
 }
 
 
-// Fetch an integer entry from the specified section. If no entry could be found, then the default
-// value will be returned instead. All the formats written by Put_Int are understood.
+// All the formats written by Put_Int are understood.
 int INIClass::Get_Int(char const * section, char const * entry, int defvalue) const
 {
 	/*
@@ -879,7 +870,6 @@ int INIClass::Get_Int(char const * section, char const * entry, int defvalue) co
 
 
 
-// Stores the four values that constitute the specified rectangle.
 bool INIClass::Put_Rect(char const * section, char const * entry, Rect const & value)
 {
 	char buffer[64];
@@ -889,7 +879,6 @@ bool INIClass::Put_Rect(char const * section, char const * entry, Rect const & v
 }
 
 
-// Retrieve a rectangle data from the database. Returns the default value if not found.
 Rect const INIClass::Get_Rect(char const * section, char const * entry, Rect const & defvalue) const
 {
 	char buffer[64];
@@ -903,7 +892,6 @@ Rect const INIClass::Get_Rect(char const * section, char const * entry, Rect con
 }
 
 
-// Store an integer into the INI database, but use a hex format.
 bool INIClass::Put_Hex(char const * section, char const * entry, int number)
 {
 	char buffer[64];
@@ -913,8 +901,6 @@ bool INIClass::Put_Hex(char const * section, char const * entry, int number)
 }
 
 
-// Fetches integer [hex format] from the section and entry specified. If no entry could be found,
-// then the default value is returned instead.
 int INIClass::Get_Hex(char const * section, char const * entry, int defvalue) const
 {
 	/*
@@ -930,7 +916,6 @@ int INIClass::Get_Hex(char const * section, char const * entry, int defvalue) co
 }
 
 
-// Fetch a floating point number from the database. Returns the default value if not found.
 float INIClass::Get_Float(char const * section, char const * entry, float defvalue) const
 {
 	/*
@@ -951,7 +936,6 @@ float INIClass::Get_Float(char const * section, char const * entry, float defval
 }
 
 
-// Store a floating point number to the database.
 bool INIClass::Put_Float(char const * section, char const * entry, float number)
 {
 	char buffer[64];
@@ -961,8 +945,6 @@ bool INIClass::Put_Float(char const * section, char const * entry, float number)
 }
 
 
-// Fetch a double-precision floating point number from the database. Returns the default value if
-// not found.
 double INIClass::Get_Double(char const * section, char const * entry, double defvalue) const
 {
 	/*
@@ -983,7 +965,6 @@ double INIClass::Get_Double(char const * section, char const * entry, double def
 }
 
 
-// Store a double-precision floating point number to the database.
 bool INIClass::Put_Double(char const * section, char const * entry, double number)
 {
 	char buffer[64];
@@ -993,8 +974,8 @@ bool INIClass::Put_Double(char const * section, char const * entry, double numbe
 }
 
 
-// Output a string to the section and entry specified. Any previous matching entry will be replaced.
-// On a duplicate entry CRC, the strings are checked for being identical.
+// Any previous matching entry will be replaced. On a duplicate entry CRC, the strings are checked
+// for being identical.
 bool INIClass::Put_String(char const * section, char const * entry, char const * string)
 {
 	if (section == nullptr || entry == nullptr) return(false);
@@ -1046,10 +1027,8 @@ bool INIClass::Put_String(char const * section, char const * entry, char const *
 }
 
 
-// Fetch the value of a particular entry in a specified section. This will retrieve the entire text
-// to the right of the "=" character. If no matching entry could be found, then the default value
-// will be stored in the output string buffer. The maximum string length that could be retrieved
-// will be one less than the buffer size, due to the forced trailing zero.
+// Retrieves the entire text to the right of the "=" character. The maximum string length that could
+// be retrieved will be one less than the buffer size, due to the forced trailing zero.
 int INIClass::Get_String(char const * section, char const * entry, char const * defvalue, char * buffer, int size) const
 {
 	/*
@@ -1112,10 +1091,7 @@ const StringClass& INIClass::Get_String(StringClass& new_string, char const * se
 
 
 
-// Fetch the value of a particular entry in a specified section. This will retrieve the entire text
-// to the right of the "=" character. If no matching entry could be found, then the default value
-// will be stored in the output string buffer. The maximum string length that could be retrieved
-// will be one less than the buffer size, due to the forced trailing zero.
+// Retrieves the entire text to the right of the "=" character.
 char *INIClass::Get_Alloc_String(char const * section, char const * entry, char const * defvalue) const
 {
 	if (section == nullptr || entry == nullptr) return(nullptr);
@@ -1223,7 +1199,7 @@ int *	INIClass::Get_Alloc_Int_Array(char const * section, char const * entry, in
 	return retval;
 }
 
-// Store a boolean value into the INI database. The boolean value will be stored as "yes" or "no".
+// The boolean value will be stored as "yes" or "no".
 bool INIClass::Put_Bool(char const * section, char const * entry, bool value)
 {
 	if (value) {
@@ -1234,10 +1210,8 @@ bool INIClass::Put_Bool(char const * section, char const * entry, bool value)
 }
 
 
-// Fetch a boolean value for the section and entry specified. In the case of no matching entry, the
-// default value will be returned instead. The boolean value is interpreted using the standard
-// boolean conventions. e.g., "Yes", "Y", "1", "True", "T" are all considered to be a TRUE boolean
-// value.
+// The boolean value is interpreted using the standard boolean conventions. e.g., "Yes", "Y", "1",
+// "True", "T" are all considered to be a TRUE boolean value.
 bool INIClass::Get_Bool(char const * section, char const * entry, bool defvalue) const
 {
 	/*
@@ -1263,7 +1237,6 @@ bool INIClass::Get_Bool(char const * section, char const * entry, bool defvalue)
 }
 
 
-// Store a point value to the database.
 bool INIClass::Put_Point(char const * section, char const * entry, TPoint2D<int> const & value)
 {
 	char buffer[54];
@@ -1272,8 +1245,6 @@ bool INIClass::Put_Point(char const * section, char const * entry, TPoint2D<int>
 }
 
 
-// Fetch a point value from the INI database. Returns the default value if the section and entry
-// were not found.
 TPoint2D<int> const INIClass::Get_Point(char const * section, char const * entry, TPoint2D<int> const & defvalue) const
 {
 	char buffer[64];
@@ -1286,7 +1257,6 @@ TPoint2D<int> const INIClass::Get_Point(char const * section, char const * entry
 }
 
 
-// Stores a 3D point to the database.
 bool INIClass::Put_Point(char const * section, char const * entry, TPoint3D<int> const & value)
 {
 	char buffer[54];
@@ -1295,8 +1265,6 @@ bool INIClass::Put_Point(char const * section, char const * entry, TPoint3D<int>
 }
 
 
-// Fetch a 3D point from the database. Returns the default value if the section and entry could not
-// be found.
 TPoint3D<int> const INIClass::Get_Point(char const * section, char const * entry, TPoint3D<int> const & defvalue) const
 {
 	char buffer[64];
@@ -1309,7 +1277,6 @@ TPoint3D<int> const INIClass::Get_Point(char const * section, char const * entry
 }
 
 
-// Stores a 3D point to the database.
 bool INIClass::Put_Point(char const * section, char const * entry, TPoint3D<float> const & value)
 {
 	char buffer[54];
@@ -1318,8 +1285,6 @@ bool INIClass::Put_Point(char const * section, char const * entry, TPoint3D<floa
 }
 
 
-// Fetch a 3D point from the database. Returns the default value if the section and entry could not
-// be found.
 TPoint3D<float> const INIClass::Get_Point(char const * section, char const * entry, TPoint3D<float> const & defvalue) const
 {
 	char buffer[64];
@@ -1332,8 +1297,6 @@ TPoint3D<float> const INIClass::Get_Point(char const * section, char const * ent
 }
 
 
-// Fetch a point value from the INI database. Returns the default value if the section and entry
-// were not found.
 TPoint2D<float> const INIClass::Get_Point(char const * section, char const * entry, TPoint2D<float> const & defvalue) const
 {
 	char buffer[64];
@@ -1346,8 +1309,7 @@ TPoint2D<float> const INIClass::Get_Point(char const * section, char const * ent
 }
 
 
-// This routine scans the supplied entry for the section specified. This is used for internal
-// database maintenance. Returns nullptr if the entry was not found.
+// This is used for internal database maintenance.
 INIEntry * INISection::Find_Entry(char const * entry) const
 {
 	if (entry != nullptr) {
@@ -1361,7 +1323,7 @@ INIEntry * INISection::Find_Entry(char const * entry) const
 }
 
 
-// Strips comments of the specified text line. Leading and trailing blanks are also removed.
+// Leading and trailing blanks are also removed.
 void INIClass::Strip_Comments(char * buffer)
 {
 	if (buffer != nullptr) {

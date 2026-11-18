@@ -83,7 +83,6 @@ HRawAnimClass::~HRawAnimClass()
 }
 
 
-// De-allocates all memory in use.
 void HRawAnimClass::Free()
 {
 	delete[] NodeMotion;
@@ -207,7 +206,6 @@ Error:
 
 }
 
-// Reads in a single channel of motion.
 bool HRawAnimClass::read_channel(ChunkLoadClass & cload,MotionChannelClass * * newchan,bool pre30)
 {
 	MotionChannelClass* channel = W3DNEW MotionChannelClass;
@@ -299,7 +297,6 @@ void HRawAnimClass::add_bit_channel(BitChannelClass * newchan)
 	}
 }
 
-// Returns the translation vector for the given frame.
 void HRawAnimClass::Get_Translation(Vector3& trans, int pividx, float frame ) const
 {
 	struct NodeMotionStruct * motion = &NodeMotion[pividx];
@@ -353,7 +350,6 @@ void HRawAnimClass::Get_Translation(Vector3& trans, int pividx, float frame ) co
 	Vector3::Lerp( trans0, trans1, ratio, &trans );
 }
 
-// Returns a quaternion for the orientation of the pivot at the given frame.
 void HRawAnimClass::Get_Orientation(Quaternion& q, int pividx,float frame) const
 {
 //	int frame0 = (int)frame;
@@ -421,7 +417,6 @@ void HRawAnimClass::Get_Orientation(Quaternion& q, int pividx,float frame) const
 #endif
 }
 
-// Returns the transform matrix for the given frame.
 void HRawAnimClass::Get_Transform(Matrix3D& mtx, int pividx, float frame ) const
 {
 	struct NodeMotionStruct * motion = &NodeMotion[pividx];
@@ -483,7 +478,6 @@ void HRawAnimClass::Get_Transform(Matrix3D& mtx, int pividx, float frame ) const
 	mtx.Set_Translation(trans);
 }
 
-// Return visibility state for given pivot/frame.
 bool HRawAnimClass::Get_Visibility(int pividx,float frame)
 {
 	if (NodeMotion[pividx].Vis != nullptr) {
@@ -495,7 +489,6 @@ bool HRawAnimClass::Get_Visibility(int pividx,float frame)
 }
 
 
-// Return true if there is motion defined for this frame.
 bool HRawAnimClass::Is_Node_Motion_Present(int pividx)
 {
 	WWASSERT((pividx >= 0) && (pividx < NumNodes));

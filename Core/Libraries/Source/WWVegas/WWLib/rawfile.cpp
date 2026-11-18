@@ -103,9 +103,8 @@
 #endif
 
 
-// This constructs a null file object. A null file object has no file handle or filename associated
-// with it. In order to use a file object created in this fashion it must be assigned a name and
-// then opened.
+// A null file object has no file handle or filename associated with it. In order to use a file
+// object created in this fashion it must be assigned a name and then opened.
 RawFileClass::RawFileClass() :
 	Rights(READ),
 	BiasStart(0),
@@ -119,15 +118,13 @@ RawFileClass::RawFileClass() :
 
 
 
-// Checks to see if the file is open or not.
 bool RawFileClass::Is_Open() const
 {
 	return(Handle != NULL_HANDLE);
 }
 
-// Handles displaying a file error message. The error number is the same as the DOSERR.h error
-// numbers. If it is allowed to retry, then pressing a key will return from this function.
-// Otherwise, it will exit the program with "exit()".
+// The error number is the same as the DOSERR.h error numbers. If it is allowed to retry, then
+// pressing a key will return from this function. Otherwise, it will exit the program with "exit()".
 // WARNING: This routine may not return at all. It handles being in text mode as well as if in a
 // graphic mode.
 void RawFileClass::Error(int, int, char const * )
@@ -141,9 +138,8 @@ int RawFileClass::Transfer_Block_Size()
 	return (int)((unsigned)UINT_MAX)-16L;
 }
 
-// The file object is created with a supplied filename, but not opened at the same time. In this
-// case, an assumption is made that the supplied filename is a constant string. A duplicate of the
-// filename string is not created since it would be wasteful in that case.
+// The file is not opened. An assumption is made that the supplied filename is a constant string. A
+// duplicate of the filename string is not created since it would be wasteful in that case.
 RawFileClass::RawFileClass(char const * filename) :
 	Rights(0),
 	BiasStart(0),
@@ -167,15 +163,13 @@ void RawFileClass::Reset()
 	Filename = "";
 }
 
-// Returns nullptr if no filename has yet been assigned. This is a virtual function and thus can't be
-// inlined.
+// This is a virtual function and thus can't be inlined.
 char const * RawFileClass::File_Name() const
 {
 	return(Filename);
 }
 
-// Manually sets the name for a file object. Setting the name in this fashion doesn't affect the
-// closed or opened state of the file.
+// Setting the name in this fashion doesn't affect the closed or opened state of the file.
 char const * RawFileClass::Set_Name(char const * filename)
 {
 	Bias(0);
@@ -198,9 +192,9 @@ char const * RawFileClass::Set_Name(char const * filename)
 }
 
 
-// Assigns name and opens file in one operation. If the file object was already open, then it will
-// be closed first. If the file object was previously assigned a filename, then it will be replaced
-// with the new name. The open is designed to never return unless it succeeded.
+// If the file object was already open, then it will be closed first. If the file object was
+// previously assigned a filename, then it will be replaced with the new name. The open is designed
+// to never return unless it succeeded.
 int RawFileClass::Open(char const * filename, int rights)
 {
 	Set_Name(filename);
@@ -208,9 +202,8 @@ int RawFileClass::Open(char const * filename, int rights)
 }
 
 
-// Opens the file object with the rights specified. This only works if the file has already been
-// assigned a filename. It is guaranteed, by the error handler, that this routine will always return
-// with success.
+// This only works if the file has already been assigned a filename. It is guaranteed, by the error
+// handler, that this routine will always return with success.
 int RawFileClass::Open(int rights)
 {
 	Close();
@@ -290,9 +283,9 @@ int RawFileClass::Open(int rights)
 }
 
 
-// Checks to see if the specified file is available to open. Use this routine before opening a file
-// in order to make sure that it is available or to perform other necessary actions.
-// WARNING: If force is true, this routine keeps retrying until the file becomes available, and it
+// Use this routine before opening a file in order to make sure that it is available or to perform
+// other necessary actions.
+// WARNING: If forced is true, this routine keeps retrying until the file becomes available, and it
 // may never return. If it doesn't become available, then the program will abort.
 bool RawFileClass::Is_Available(int forced)
 {
@@ -343,7 +336,6 @@ bool RawFileClass::Is_Available(int forced)
 }
 
 
-// Perform a closure of the file. In the rare case of an error, handle it as appropriate.
 // WARNING: Some rare error conditions may cause this routine to abort the program.
 void RawFileClass::Close()
 {
@@ -371,10 +363,8 @@ void RawFileClass::Close()
 }
 
 
-// Reads the specified number of bytes into a memory buffer. If buffer or size is null, no read is
-// performed. It is legal to call this routine with a request for more bytes than are in the file.
-// This condition can result in fewer bytes being read than requested. Determine this by examining
-// the return value.
+// If buffer or size is null, no read is performed. It is legal to request more bytes than are in
+// the file, in which case fewer bytes are read.
 int RawFileClass::Read(void * buffer, int size)
 {
 	long	bytesread = 0;			// Running count of the number of bytes read into the buffer.
@@ -434,8 +424,8 @@ int RawFileClass::Read(void * buffer, int size)
 }
 
 
-// Writes the specified data to the file. A disk full condition is caught, so this routine will
-// always return with the number matching the size request.
+// A disk full condition is caught, so this routine will always return with the number matching the
+// size request.
 // WARNING: A fatal file condition could cause this routine to never return.
 int RawFileClass::Write(void const * buffer, int size)
 {
@@ -487,9 +477,7 @@ int RawFileClass::Write(void const * buffer, int size)
 }
 
 
-// Reposition the file pointer as indicated. It can move either relative to current position or
-// absolute from the beginning or ending of the file. This routine will only return if it
-// successfully performed the seek.
+// This routine will only return if it successfully performed the seek.
 // WARNING: If there was a file error, then this routine might never return.
 int RawFileClass::Seek(int pos, int dir)
 {
@@ -600,8 +588,7 @@ int RawFileClass::Size()
 }
 
 
-// Creates an empty file. The file object's filename must already have been assigned before this
-// routine will function.
+// The file object's filename must already have been assigned before this routine will function.
 // WARNING: A fatal error condition could occur with this routine. Especially if the disk is full or
 // a read-only media was selected.
 int RawFileClass::Create()
@@ -625,7 +612,7 @@ int RawFileClass::Create()
 }
 
 
-// Deletes the file object from the disk. Returns false if the file was already missing.
+// Returns false if the file was already missing.
 int RawFileClass::Delete()
 {
 	/*
@@ -672,7 +659,6 @@ int RawFileClass::Delete()
 	return(true);
 }
 
-// Gets the date and time the file was last modified.
 unsigned long RawFileClass::Get_Date_Time()
 {
 	// Return value
@@ -700,7 +686,6 @@ unsigned long RawFileClass::Get_Date_Time()
 }
 
 
-// Sets the date and time the file was last modified.
 bool RawFileClass::Set_Date_Time(unsigned long datetime)
 {
 	DEBUG_ASSERTLOG(false, ("Set_Date_Time is not implemented"));
@@ -708,9 +693,8 @@ bool RawFileClass::Set_Date_Time(unsigned long datetime)
 }
 
 
-// Bias a file with a specific starting position and length. By using this routine, it is possible
-// to 'fool' the file into ignoring a header and trailing extra data. An example of this would be a
-// file inside of a mixfile.
+// By using this routine, it is possible to 'fool' the file into ignoring a header and trailing
+// extra data. An example of this would be a file inside of a mixfile.
 void RawFileClass::Bias(int start, int length)
 {
 	if (start == 0) {
@@ -736,8 +720,8 @@ void RawFileClass::Bias(int start, int length)
 }
 
 
-// Performs a seek on the file as if it were unbiased. This is in spite of any bias setting the file
-// may have. The ability to perform a raw seek in this fashion is necessary to maintain the bias
+// Performs a seek on the file as if it were unbiased, in spite of any bias setting the file may
+// have. The ability to perform a raw seek in this fashion is necessary to maintain the bias
 // ability.
 int RawFileClass::Raw_Seek(int pos, int dir)
 {
@@ -768,7 +752,6 @@ int RawFileClass::Raw_Seek(int pos, int dir)
 	return(pos);
 }
 
-// Provides a file handle for the class to use.
 void RawFileClass::Attach (void *handle, int rights)
 {
 	Reset ();
@@ -782,7 +765,7 @@ void RawFileClass::Attach (void *handle, int rights)
 	Handle = (FILE *)handle;
 }
 
-// Removes the file handle from the object without closing the handle.
+// Does not close the handle.
 void RawFileClass::Detach ()
 {
 	Rights = 0;

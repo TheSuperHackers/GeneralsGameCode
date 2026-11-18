@@ -126,8 +126,8 @@ Buffer::~Buffer()
 }
 
 
-// Clears the buffer object to null (newly constructed) state. If there was any buffer allocated or
-// referred to by this object, it will be freed or dereferenced as necessary.
+// If there was any buffer allocated or referred to by this object, it will be freed or dereferenced
+// as necessary.
 void Buffer::Reset()
 {
 	if (IsAllocated) {

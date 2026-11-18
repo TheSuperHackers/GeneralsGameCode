@@ -175,14 +175,12 @@ CollectionClass::~CollectionClass()
 }
 
 
-// Virtual copy constructor.
 RenderObjClass * CollectionClass::Clone() const
 {
 	return NEW_REF( CollectionClass, (*this));
 }
 
 
-// Releases all assets in use by this collection.
 void CollectionClass::Free()
 {
 	for (int i=0; i<SubObjects.Count(); i++) {
@@ -229,7 +227,6 @@ void CollectionClass::Render(RenderInfoClass & rinfo)
 }
 
 
-// Passes the special render call to all sub-objects.
 void CollectionClass::Special_Render(SpecialRenderInfoClass & rinfo)
 {
 	if (Is_Not_Hidden_At_All() == false) {
@@ -321,7 +318,6 @@ int CollectionClass::Remove_Sub_Object(RenderObjClass * robj)
 }
 
 
-// Passes the ray test to each sub object.
 bool CollectionClass::Cast_Ray(RayCollisionTestClass & raytest)
 {
 	bool res = false;
@@ -332,7 +328,6 @@ bool CollectionClass::Cast_Ray(RayCollisionTestClass & raytest)
 }
 
 
-// Passes the axis-aligned box test to each sub object.
 bool CollectionClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 {
 	bool res = false;
@@ -343,7 +338,6 @@ bool CollectionClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 }
 
 
-// Passes the oriented box test to each sub object.
 bool CollectionClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 {
 	bool res = false;
@@ -385,7 +379,6 @@ void CollectionClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 }
 
 
-// Returns the number of snap points in this collection.
 int CollectionClass::Snap_Point_Count()
 {
 	if (SnapPoints) {
@@ -396,7 +389,7 @@ int CollectionClass::Snap_Point_Count()
 }
 
 
-// Sets the passed vector to be equal to the object space coordinates of the desired snap point.
+// The snap point is in object space.
 void CollectionClass::Get_Snap_Point(int index,Vector3 * set)
 {
 	WWASSERT(set != nullptr);
@@ -424,7 +417,6 @@ void CollectionClass::Scale(float scalex, float scaley, float scalez)
 }
 
 
-// Recomputes the object space bounding volumes.
 void CollectionClass::Update_Obj_Space_Bounding_Volumes()
 {
 	int i;
@@ -511,7 +503,6 @@ CollectionDefClass::~CollectionDefClass()
 }
 
 
-// Releases assets in use by a collection definition.
 void CollectionDefClass::Free()
 {
 	for (int i=0; i<ObjectNames.Count(); i++) {
@@ -529,7 +520,6 @@ const char * CollectionDefClass::Get_Name() const
 }
 
 
-// Loads a collection definition from a w3d file.
 WW3DErrorType CollectionDefClass::Load(ChunkLoadClass & cload)
 {
 	Free();
@@ -598,7 +588,6 @@ Error:
 	return WW3D_ERROR_LOAD_FAILED;
 }
 
-// Reads a collection from a w3d file.
 PrototypeClass * CollectionLoaderClass::Load_W3D(ChunkLoadClass & cload)
 {
 	CollectionDefClass * def = W3DNEW CollectionDefClass;

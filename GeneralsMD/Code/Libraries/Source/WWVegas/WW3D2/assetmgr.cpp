@@ -347,14 +347,12 @@ void WW3DAssetManager::Log_Texture_Statistics()
 */
 }
 
-// Free all memory (un-needed?).
 void WW3DAssetManager::Free()
 {
 	Free_Assets();
 }
 
 
-// Release all loaded assets.
 void WW3DAssetManager::Free_Assets()
 {
 	WWPROFILE( "WW3DAssetManager::Free_Assets" );
@@ -398,8 +396,7 @@ void WW3DAssetManager::Release_Unused_Assets()
 	Release_Unused_Font3DDatas();
 }
 
-// Release all assets that are not named in the exclusion list. This function checks if each
-// prototype is named or is a child of something named in the given exclusion list.
+// Checks if each prototype is named or is a child of something named in the given exclusion list.
 void WW3DAssetManager::Free_Assets_With_Exclusion_List(const DynamicVectorClass<StringClass> & exclusion_names)
 {
 	// Reset the dx8 mesh renderer
@@ -453,8 +450,7 @@ void WW3DAssetManager::Free_Assets_With_Exclusion_List(const DynamicVectorClass<
 
 }
 
-// Create a list of the W3D files that are loaded. This function checks if each prototype is named
-// or is a child of something named in the given exclusion list.
+// Creates a list of the W3D files that are loaded.
 // WARNING: As in other places in the code, we are assuming that w3d filenames match the "top-level"
 // render object contained within them!
 void WW3DAssetManager::Create_Asset_List(DynamicVectorClass<StringClass> & model_list)
@@ -496,7 +492,6 @@ bool WW3DAssetManager::Load_3D_Assets( const char * filename )
 }
 
 
-// Load 3D assets from a .W3D file.
 bool WW3DAssetManager::Load_3D_Assets(FileClass & w3dfile)
 {
 	WWPROFILE( "WW3DAssetManager::Load_3D_Assets" );
@@ -656,7 +651,6 @@ RenderObjClass * WW3DAssetManager::Create_Render_Obj(const char * name)
 }
 
 
-// Check whether a render object with the given name exists.
 bool WW3DAssetManager::Render_Obj_Exists(const char * name)
 {
 	if (Find_Prototype(name) == nullptr) return false;
@@ -664,7 +658,6 @@ bool WW3DAssetManager::Render_Obj_Exists(const char * name)
 }
 
 
-// The iterator returned can enumerate all of the loaded render objects for you.
 // WARNING: User must release the iterator back to the asset manager or there will be a memory leak.
 RenderObjIterator * WW3DAssetManager::Create_Render_Obj_Iterator()
 {
@@ -678,8 +671,6 @@ void WW3DAssetManager::Release_Render_Obj_Iterator(RenderObjIterator * it)
 	delete it;
 }
 
-// Creates an iterator which can enumerate each of the named hierarchical animations which are
-// currently loaded.
 // WARNING: User must delete the iterator!
 AssetIterator * WW3DAssetManager::Create_HAnim_Iterator()
 {
@@ -693,14 +684,12 @@ AssetIterator * WW3DAssetManager::Create_HTree_Iterator()
 }
 
 
-// Creates an iterator which can enumerate each of the Font3DDatas currently loaded.
 // WARNING: User must delete the iterator!
 AssetIterator * WW3DAssetManager::Create_Font3DData_Iterator()
 {
 	return W3DNEW Font3DDataIterator();
 }
 
-// Returns a pointer to a named HAnim.
 // WARNING: The implementation has changed since its inception, the asset manager no longer owns the
 // hanims so they need to be released by the caller.
 HAnimClass *	WW3DAssetManager::Get_HAnim(const char * name)
@@ -746,7 +735,6 @@ HAnimClass *	WW3DAssetManager::Get_HAnim(const char * name)
 }
 
 
-// Returns a pointer to the named HTree.
 // WARNING: DO NOT DELETE the HTree you get from this function, it is "owned" by the asset manager.
 HTreeClass *	WW3DAssetManager::Get_HTree(const char * name)
 {
@@ -780,7 +768,6 @@ HTreeClass *	WW3DAssetManager::Get_HTree(const char * name)
 	return htree;
 }
 
-// Get a TextureClass from the specified file.
 TextureClass * WW3DAssetManager::Get_Texture
 (
 	const char * filename,
@@ -1105,10 +1092,9 @@ void	WW3DAssetManager::Free_All_FontChars_Glyph_Caches()
 	}
 }
 
-// Add a new loader to the system. The library will automatically install loaders for the "built-in"
-// render object types. This function exists so that the user can design App-specific render
-// objects, define a chunk format for them, and have the asset manager load them in like everything
-// else.
+// The library will automatically install loaders for the "built-in" render object types. This
+// function exists so that the user can design App-specific render objects, define a chunk format
+// for them, and have the asset manager load them in like everything else.
 void WW3DAssetManager::Register_Prototype_Loader(PrototypeLoaderClass * loader)
 {
 	WWASSERT(loader != nullptr);
@@ -1116,7 +1102,6 @@ void WW3DAssetManager::Register_Prototype_Loader(PrototypeLoaderClass * loader)
 }
 
 
-// Returns null if no loader handles this chunk type.
 PrototypeLoaderClass * WW3DAssetManager::Find_Prototype_Loader(int chunk_id)
 {
 	for (int i=0; i<PrototypeLoaders.Count(); i++) {
@@ -1140,7 +1125,6 @@ void WW3DAssetManager::Add_Prototype(PrototypeClass * newproto)
 }
 
 
-// Removes all references to the prototype.
 void WW3DAssetManager::Remove_Prototype(PrototypeClass *proto)
 {
 	WWASSERT(proto != nullptr);
@@ -1181,7 +1165,6 @@ void WW3DAssetManager::Remove_Prototype(PrototypeClass *proto)
 }
 
 
-// Removes all references to the prototype.
 void WW3DAssetManager::Remove_Prototype(const char *name)
 {
 	WWASSERT(name != nullptr);
@@ -1199,7 +1182,6 @@ void WW3DAssetManager::Remove_Prototype(const char *name)
 }
 
 
-// Searches the hash table for the prototype.
 PrototypeClass * WW3DAssetManager::Find_Prototype(const char * name)
 {
 	// Special case Null render object.  So we always have it...

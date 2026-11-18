@@ -60,7 +60,6 @@ AABTreeBuilderClass::~AABTreeBuilderClass()
 }
 
 
-// Reset the builder, delete all arrays.
 void AABTreeBuilderClass::Reset()
 {
 	if (Root) {
@@ -78,7 +77,6 @@ void AABTreeBuilderClass::Reset()
 	}
 }
 
-// Build an AABTree for the given mesh.
 void AABTreeBuilderClass::Build_AABTree(int polycount,Vector3i * polys,int vertcount,Vector3 * verts)
 {
 	WWASSERT(polycount > 0);
@@ -132,7 +130,6 @@ void AABTreeBuilderClass::Build_AABTree(int polycount,Vector3i * polys,int vertc
 }
 
 
-// Recursively builds the culling tree.
 void AABTreeBuilderClass::Build_Tree(CullNodeStruct * node,int polycount,int * polyindices)
 {
 	/*
@@ -204,7 +201,6 @@ void AABTreeBuilderClass::Build_Tree(CullNodeStruct * node,int polycount,int * p
 }
 
 
-// Select a partition for the given polys.
 AABTreeBuilderClass::SplitChoiceStruct
 AABTreeBuilderClass::Select_Splitting_Plane(int polycount,int * polyindices)
 {
@@ -253,7 +249,6 @@ AABTreeBuilderClass::Select_Splitting_Plane(int polycount,int * polyindices)
 }
 
 
-// Evaluate the suitability of a partition plane.
 AABTreeBuilderClass::SplitChoiceStruct
 AABTreeBuilderClass::Compute_Plane_Score(int polycount,int * polyindices,const AAPlaneClass & plane)
 {
@@ -309,7 +304,6 @@ AABTreeBuilderClass::Compute_Plane_Score(int polycount,int * polyindices,const A
 }
 
 
-// Which side of a plane is the given poly.
 AABTreeBuilderClass::OverlapType
 AABTreeBuilderClass::Which_Side(const AAPlaneClass & plane,int poly_index)
 {
@@ -364,7 +358,6 @@ AABTreeBuilderClass::Which_Side(const AAPlaneClass & plane,int poly_index)
 }
 
 
-// Partition the polys with a plane.
 void AABTreeBuilderClass::Split_Polys
 (
 	int									polycount,
@@ -412,7 +405,6 @@ void AABTreeBuilderClass::Split_Polys
 }
 
 
-// Compute bounding boxes for the cull nodes.
 void AABTreeBuilderClass::Compute_Bounding_Box(CullNodeStruct * node)
 {
 	/*
@@ -473,7 +465,6 @@ void AABTreeBuilderClass::Compute_Bounding_Box(CullNodeStruct * node)
 }
 
 
-// Assign an array index to each node.
 int AABTreeBuilderClass::Assign_Index(CullNodeStruct * node,int index)
 {
 	/*
@@ -526,7 +517,6 @@ int AABTreeBuilderClass::Node_Count_Recursive(CullNodeStruct * node,int curcount
 }
 
 
-// Ensure given vector is < min of the poly.
 void AABTreeBuilderClass::Update_Min(int poly_index,Vector3 & min)
 {
 	for (int vert_index = 0; vert_index < 3; vert_index++) {
@@ -541,7 +531,6 @@ void AABTreeBuilderClass::Update_Min(int poly_index,Vector3 & min)
 }
 
 
-// Ensure given vector is > max of poly.
 void AABTreeBuilderClass::Update_Max(int poly_index,Vector3 & max)
 {
 	for (int vert_index = 0; vert_index < 3; vert_index++) {
@@ -556,7 +545,6 @@ void AABTreeBuilderClass::Update_Max(int poly_index,Vector3 & max)
 }
 
 
-// Ensure given vector is in min max of poly.
 void	AABTreeBuilderClass::Update_Min_Max(int poly_index, Vector3 & min, Vector3 & max)
 {
 	for (int vert_index = 0; vert_index < 3; vert_index++) {
@@ -576,8 +564,7 @@ void	AABTreeBuilderClass::Update_Min_Max(int poly_index, Vector3 & min, Vector3 
 
 
 
-// Saves this AABTree into a W3D chunk. This function will export the AABTree into a W3D chunk so
-// that it can be loaded by its sister class "AABTreeClass" in the WW3D library.
+// The exported chunk can be loaded by the sister class "AABTreeClass" in the WW3D library.
 void AABTreeBuilderClass::Export(ChunkSaveClass & csave)
 {
 	csave.Begin_Chunk(W3D_CHUNK_AABTREE);
@@ -623,7 +610,6 @@ void AABTreeBuilderClass::Export(ChunkSaveClass & csave)
 }
 
 
-// Build array of indices and W3dMeshAABTreeNode structs.
 void AABTreeBuilderClass::Build_W3D_AABTree_Recursive
 (
 	AABTreeBuilderClass::CullNodeStruct *	node,

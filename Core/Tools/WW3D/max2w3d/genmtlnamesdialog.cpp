@@ -65,7 +65,6 @@ GenMtlNamesDialogClass::~GenMtlNamesDialogClass()
 }
 
 
-// Present the dialog, get user input.
 bool GenMtlNamesDialogClass::Get_Options(OptionsStruct * options)
 {
 	Options = options;
@@ -88,7 +87,6 @@ bool GenMtlNamesDialogClass::Get_Options(OptionsStruct * options)
 }
 
 
-// Verify that the input is valid.
 bool GenMtlNamesDialogClass::Ok_To_Exit()
 {
 	// just check that the user entered a name
@@ -106,7 +104,6 @@ bool GenMtlNamesDialogClass::Ok_To_Exit()
 }
 
 
-// Windows message handling.
 bool GenMtlNamesDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM)
 {
 	switch (message )	{

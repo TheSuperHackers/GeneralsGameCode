@@ -43,7 +43,6 @@
 #include "packet.h"
 
 
-// Destroys a packet class by freeing the list.
 PacketClass::~PacketClass()
 {
   FieldClass *current;
@@ -59,14 +58,13 @@ PacketClass::~PacketClass()
 }
 
 
-// Adds a FieldClass entry to head of packet list.
+// Adds the field to the head of the packet list.
 void PacketClass::Add_Field(FieldClass *field)
 {
   field->Next = Head;
   Head = field;
 }
 
-// Creates a Packet object from a COMMS packet.
 PacketClass::PacketClass(char *curbuf)
 {
   int remaining_size;
@@ -131,7 +129,6 @@ PacketClass::PacketClass(char *curbuf)
   }
 }
 
-// Walks field list creating a packet.
 // WARNING: This routine allocates memory that the user is responsible for freeing.
 char *PacketClass::Create_Comms_Packet(int &size)
 {
@@ -238,7 +235,6 @@ int PacketClass::Get_Num_Fields()
 }
 
 
-// Find specified name and returns data.
 // WARNING: The data reference is not changed if the field is not found.
 bit8 PacketClass::Get_Field(char *id, char &data)
 {
@@ -250,7 +246,6 @@ bit8 PacketClass::Get_Field(char *id, char &data)
 }
 
 
-// Find specified name and returns data.
 // WARNING: The data reference is not changed if the field is not found.
 bit8 PacketClass::Get_Field(char *id, unsigned char &data)
 {
@@ -262,7 +257,6 @@ bit8 PacketClass::Get_Field(char *id, unsigned char &data)
 }
 
 
-// Find specified name and returns data.
 // WARNING: The data reference is not changed if the field is not found.
 bit8 PacketClass::Get_Field(char *id, short &data)
 {
@@ -274,7 +268,6 @@ bit8 PacketClass::Get_Field(char *id, short &data)
 }
 
 
-// Find specified name and returns data.
 // WARNING: The data reference is not changed if the field is not found.
 bit8 PacketClass::Get_Field(char *id, unsigned short &data)
 {
@@ -286,7 +279,6 @@ bit8 PacketClass::Get_Field(char *id, unsigned short &data)
 }
 
 
-// Find specified name and returns data.
 // WARNING: The data reference is not changed if the field is not found.
 bit8 PacketClass::Get_Field(char *id, long &data)
 {
@@ -310,7 +302,6 @@ bit8 PacketClass::Get_Field(char *id, int &data)
 
 
 
-// Find specified name and returns data as a string.
 // WARNING: The string is not changed if the field is not found. It is assumed that the string
 // variable specified by the pointer is large enough to hold the data.
 bit8 PacketClass::Get_Field(char *id, char *data)
@@ -322,7 +313,6 @@ bit8 PacketClass::Get_Field(char *id, char *data)
   return((field) ? true : false);
 }
 
-// Find specified name and returns data.
 // WARNING: The data reference is not changed if the field is not found.
 bit8 PacketClass::Get_Field(char *id, unsigned long &data)
 {
@@ -344,7 +334,6 @@ bit8 PacketClass::Get_Field(char *id, unsigned  &data)
 
 
 
-// Find specified name and returns data.
 // WARNING: The data reference is not changed if the field is not found.
 bit8 PacketClass::Get_Field(char *id, void *data, int &length)
 {

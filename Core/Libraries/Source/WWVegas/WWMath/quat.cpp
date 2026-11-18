@@ -54,7 +54,7 @@ static int _nxt[3] = { 1 , 2 , 0 };
 static float project_to_sphere(float,float,float);
 
 
-// Constructs a quaternion from the given axis and angle of rotation (in RADIANS of course).
+// The angle is in radians.
 Quaternion::Quaternion(const Vector3 & axis,float angle)
 {
 	float s = WWMath::Sinf_Legacy(angle/2);
@@ -139,7 +139,6 @@ Quaternion Trackball(float x0, float y0, float x1, float y1, float sphsize)
 }
 
 
-// Creates a quaternion given an axis and angle of rotation.
 Quaternion Axis_To_Quat(const Vector3 &a, float phi)
 {
 	Quaternion q;
@@ -156,7 +155,6 @@ Quaternion Axis_To_Quat(const Vector3 &a, float phi)
 	return q;
 }
 
-// Spherical Linear interpolation!
 
 #if 0
 #pragma warning (disable : 4725)
@@ -470,7 +468,6 @@ void Slerp_Setup(const Quaternion & p,const Quaternion & q,SlerpInfoStruct * sle
 	}
 }
 
-// Quaternion slerping, optimized with cached values.
 Quaternion Cached_Slerp(const Quaternion & p,const Quaternion & q,float alpha,SlerpInfoStruct * slerpinfo)
 {
 	float beta;				// complementary interploation parameter
@@ -532,7 +529,6 @@ void Cached_Slerp(const Quaternion & p,const Quaternion & q,float alpha,SlerpInf
 	set_q->W = beta*p.W + alpha*q.W;
 }
 
-// Creates a quaternion from a Matrix.
 // WARNING: Matrix MUST NOT have scaling!
 Quaternion Build_Quaternion(const Matrix3D & mat)
 {
@@ -664,7 +660,6 @@ Quaternion Build_Quaternion(const Matrix4x4 & mat)
 }
 
 
-// Creates a Matrix from a Quaternion.
 Matrix3x3 Build_Matrix3(const Quaternion & q)
 {
 	Matrix3x3 m;

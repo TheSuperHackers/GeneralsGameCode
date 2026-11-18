@@ -112,9 +112,9 @@ typedef union {
 }	PacketType;
 
 
-// Encode data into Base 64 format. Base 64 format has the property of being very portable across
-// text editors and country character encoding schemes. As such it is ideal for e-mail. Note that
-// the output data will be about 33% larger than the source.
+// Base 64 format has the property of being very portable across text editors and country character
+// encoding schemes. As such it is ideal for e-mail. Note that the output data will be about 33%
+// larger than the source.
 // WARNING: Be sure that the destination buffer is big enough to hold the encoded output.
 int Base64_Encode(void const * source, int slen, void * dest, int dlen)
 {
@@ -192,10 +192,9 @@ int Base64_Encode(void const * source, int slen, void * dest, int dlen)
 }
 
 
-// Decodes Base 64 data into its original data form. Unrecognized input characters are ignored. This
-// allows mangled source (filled with line breaks or spaces) to be correctly decoded. The decode
-// process terminates when the end of the source data has been reached or the special end of data
-// marker is encountered.
+// Unrecognized input characters are ignored. This allows mangled source (filled with line breaks or
+// spaces) to be correctly decoded. The decode process terminates when the end of the source data
+// has been reached or the special end of data marker is encountered.
 int Base64_Decode(void const * source, int slen, void * dest, int dlen)
 {
 	/*

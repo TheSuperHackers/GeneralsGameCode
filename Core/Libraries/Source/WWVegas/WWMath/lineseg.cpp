@@ -37,7 +37,6 @@
 
 #include "matrix3d.h"
 
-// Initialize this 'lineseg' by transforming another 'lineseg'.
 void LineSegClass::Set(const LineSegClass & that,const Matrix3D & tm)
 {
 	/*
@@ -62,7 +61,6 @@ void LineSegClass::Set(const LineSegClass & that,const Matrix3D & tm)
 	Length = that.Length;
 }
 
-// Create a random linesegment within the given space.
 void LineSegClass::Set_Random(const Vector3 & min,const Vector3 & max)
 {
 	float frac;

@@ -131,7 +131,6 @@ TPoint2D<T> const Bias_To(TPoint2D<T> const & point, TRect<T> const & rect)
 }
 
 
-// Combines two rectangles such that a larger one is returned that encompasses both rectangles.
 template<class T>
 TRect<T> const Union(TRect<T> const & rect1, TRect<T> const & rect2)
 {

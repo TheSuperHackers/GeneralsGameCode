@@ -45,7 +45,6 @@
 
 
 // Sphere Intersection functions.  Does the sphere intersect the passed in object
-// Sphere - AAbox intersection.
 bool CollisionMath::Intersection_Test(const SphereClass & sphere,const AABoxClass & box)
 {
 	/*
@@ -61,7 +60,6 @@ bool CollisionMath::Intersection_Test(const SphereClass & sphere,const AABoxClas
 }
 
 
-// Sphere - OBBox intersection.
 bool CollisionMath::Intersection_Test(const SphereClass & sphere,const OBBoxClass & box)
 {
 	/*
@@ -79,7 +77,6 @@ bool CollisionMath::Intersection_Test(const SphereClass & sphere,const OBBoxClas
 }
 
 // Sphere Overlap functions.  Where is operand B with respect to the sphere
-// Sphere - Point overlap test.
 CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const SphereClass & sphere,const Vector3 & point)
 {
@@ -94,7 +91,6 @@ CollisionMath::Overlap_Test(const SphereClass & sphere,const Vector3 & point)
 }
 
 
-// Sphere line overlap test.
 CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const SphereClass & /*sphere*/,const LineSegClass & /*line*/)
 {
@@ -103,7 +99,6 @@ CollisionMath::Overlap_Test(const SphereClass & /*sphere*/,const LineSegClass & 
 }
 
 
-// Sphere triangle overlap test.
 CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const SphereClass & /*sphere*/,const TriClass & /*tri*/)
 {
@@ -112,7 +107,6 @@ CollisionMath::Overlap_Test(const SphereClass & /*sphere*/,const TriClass & /*tr
 }
 
 
-// Sphere - Sphere overlap test.
 CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const SphereClass & sphere,const SphereClass & sphere2)
 {
@@ -131,7 +125,6 @@ CollisionMath::Overlap_Test(const SphereClass & sphere,const SphereClass & spher
 }
 
 
-// Sphere - AABox overlap test.
 CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const SphereClass & sphere,const AABoxClass & aabox)
 {
@@ -140,7 +133,6 @@ CollisionMath::Overlap_Test(const SphereClass & sphere,const AABoxClass & aabox)
 }
 
 
-// Sphere - OBBox overlap test.
 CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const SphereClass & sphere,const OBBoxClass & obbox)
 {

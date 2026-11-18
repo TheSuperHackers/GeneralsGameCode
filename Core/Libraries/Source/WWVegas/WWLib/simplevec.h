@@ -143,8 +143,8 @@ inline bool SimpleVecClass<T>::Resize(int newsize)
 	return true;
 }
 
-// Resize the array if current array is too small. Note that the function doesn't copy the contents,
-// so if resizing occurs, the contents are assumed uninitialised after the call.
+// Resizes only if the current array is too small. The contents are not copied, so if resizing
+// occurs, the contents are assumed uninitialised after the call.
 template<class T>
 inline bool SimpleVecClass<T>::Uninitialised_Grow(int newsize)
 {
@@ -247,7 +247,6 @@ inline bool SimpleDynVecClass<T>::Resize(int newsize)
 	return(false);
 }
 
-// Add an item to the end of the array.
 template<class T>
 inline bool SimpleDynVecClass<T>::Add(T const & object,int new_size_hint)
 {
@@ -287,8 +286,7 @@ inline T *  SimpleDynVecClass<T>::Add_Multiple( int number_to_add )
 }
 
 
-// Delete an item from the array. This causes the items below the specified index to be mem-moved
-// up.
+// The items below the specified index are mem-moved up.
 template<class T>
 inline bool SimpleDynVecClass<T>::Delete(int index,bool allow_shrink)
 {
@@ -314,8 +312,7 @@ inline bool SimpleDynVecClass<T>::Delete(int index,bool allow_shrink)
 	return true;
 }
 
-// Remove the specified object from the vector. All objects in the vector that follow the one
-// deleted will be moved "down" to fill the hole.
+// All objects in the vector that follow the one deleted will be moved "down" to fill the hole.
 template<class T>
 inline bool SimpleDynVecClass<T>::Delete(T const & object,bool allow_shrink)
 {
@@ -326,8 +323,7 @@ inline bool SimpleDynVecClass<T>::Delete(T const & object,bool allow_shrink)
 	return(false);
 }
 
-// Delete several items from the array. This causes the items below the specified index range to be
-// mem-moved up.
+// The items below the specified index range are mem-moved up.
 template<class T>
 inline bool SimpleDynVecClass<T>::Delete_Range(int start,int count,bool allow_shrink)
 {
@@ -355,7 +351,6 @@ inline bool SimpleDynVecClass<T>::Delete_Range(int start,int count,bool allow_sh
 	return true;
 }
 
-// Delete all items from the array.
 template<class T>
 inline void SimpleDynVecClass<T>::Delete_All(bool allow_shrink)
 {
@@ -369,7 +364,6 @@ inline void SimpleDynVecClass<T>::Delete_All(bool allow_shrink)
 	}
 }
 
-// Increase the size of the array.
 template<class T>
 inline bool SimpleDynVecClass<T>::Grow(int new_size_hint)
 {
@@ -383,7 +377,6 @@ inline bool SimpleDynVecClass<T>::Grow(int new_size_hint)
 	return Resize(new_size);
 }
 
-// Reduce the size of the array.
 template<class T>
 inline bool SimpleDynVecClass<T>::Shrink()
 {
@@ -397,8 +390,8 @@ inline bool SimpleDynVecClass<T>::Shrink()
 }
 
 
-// Find matching value in the dynamic vector. This restricts the scan to the current number of valid
-// objects. Returns -1 if no equivalent object could be found.
+// Restricts the scan to the current number of valid objects. Returns -1 if no equivalent object
+// could be found.
 template<class T>
 inline int SimpleDynVecClass<T>::Find_Index(T const & object)
 {

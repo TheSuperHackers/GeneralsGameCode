@@ -409,7 +409,6 @@ GeometryExportTaskClass::~GeometryExportTaskClass()
 }
 
 
-// Composes the full name of this robj.
 void GeometryExportTaskClass::Get_Full_Name(char * buffer,int size)
 {
 	char tmp[128];
@@ -705,7 +704,6 @@ void	MeshGeometryExportTaskClass::Update_Cached_Data()
 }
 
 
-// Tests if this mesh uses a single material.
 bool MeshGeometryExportTaskClass::Is_Single_Material()
 {
 	return ((SingleMtl != nullptr) || (Node->GetMtl() == nullptr));
@@ -717,8 +715,7 @@ Mtl* MeshGeometryExportTaskClass::Get_Single_Material()
 	return SingleMtl;
 }
 
-// Splits into single material meshes. This function will create new export tasks and add them to
-// the supplied array.
+// Splits into single material meshes.
 void MeshGeometryExportTaskClass::Split(DynamicVectorClass<MeshGeometryExportTaskClass *> & simple_meshes)
 {
 	assert(!Is_Single_Material());
@@ -762,8 +759,7 @@ void MeshGeometryExportTaskClass::Split(DynamicVectorClass<MeshGeometryExportTas
 }
 
 
-// Deletes all polys (and subsequent un-used vertices) except for the ones that use the specified
-// material.
+// Also deletes the vertices which are no longer used.
 void MeshGeometryExportTaskClass::Reduce_To_Single_Material(int mat_id)
 {
 	int sub_mtl_count = Node->GetMtl()->NumSubMtls();
@@ -809,7 +805,6 @@ bool MeshGeometryExportTaskClass::Can_Combine()
 }
 
 
-// Can this mesh be combined with the given mesh?
 bool MeshGeometryExportTaskClass::Can_Combine_With(MeshGeometryExportTaskClass * other_mesh)
 {
 	/*

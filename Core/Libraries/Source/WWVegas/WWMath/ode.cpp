@@ -47,7 +47,6 @@ static StateVectorClass		_WorkVector5;
 static StateVectorClass		_WorkVector6;
 static StateVectorClass		_WorkVector7;
 
-// Uses Eulers method to integrate a system of ODE's.
 void IntegrationSystem::Euler_Integrate(ODESystemClass * sys, float dt)
 {
 	WWASSERT(sys != nullptr);
@@ -79,7 +78,7 @@ void IntegrationSystem::Euler_Integrate(ODESystemClass * sys, float dt)
 	sys->Set_State(Y1);
 }
 
-// Midpoint method (Runge-Kutta 2).
+// Runge-Kutta 2.
 void IntegrationSystem::Midpoint_Integrate(ODESystemClass * sys,float dt)
 {
 	int i;
@@ -191,7 +190,6 @@ void IntegrationSystem::Runge_Kutta_Integrate(ODESystemClass * sys,float dt)
 	sys->Set_State(Y1);
 }
 
-// 5th order Runge-Kutta.
 void IntegrationSystem::Runge_Kutta5_Integrate(ODESystemClass * odesys,float dt)
 {
 	int i;

@@ -117,7 +117,6 @@ const Matrix3x3 Matrix3x3::RotateZ270
 
 
 
-// Convert a Matrix3D (fake 4x4) to a Matrix3x3.
 Matrix3x3::Matrix3x3(const Matrix3D & m)
 {
 	Row[0].Set(m[0][0],m[0][1],m[0][2]);

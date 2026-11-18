@@ -37,8 +37,8 @@
 #include	"base64.h"
 
 
-// Fetch data and convert it to/from base 64 encoding. The nature of Base 64 encoding means that the
-// data will increase in size by 30% when encoding and decrease in like manner when decoding.
+// The nature of Base 64 encoding means that the data will increase in size by 30% when encoding and
+// decrease in like manner when decoding.
 int Base64Straw::Get(void * source, int slen)
 {
 	int total = 0;

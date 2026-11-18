@@ -200,14 +200,12 @@ inline SphereClass::SphereClass(const Vector3 *Position,const int VertCount)
 }
 
 
-// Assign a new center and radius to this sphere.
 inline void SphereClass::Init(const Vector3 & pos,float radius)
 {
 	Center = pos;
 	Radius = radius;
 }
 
-// Assign a new center and radius to this sphere.
 inline void SphereClass::Init(const Matrix3D& mtx, const Vector3 & pos,float radius)
 {
 #ifdef ALLOW_TEMPORARIES
@@ -219,7 +217,7 @@ inline void SphereClass::Init(const Matrix3D& mtx, const Vector3 & pos,float rad
 }
 
 
-// Move the center, update radius to enclose old sphere.
+// The radius is updated to enclose the old sphere.
 inline void SphereClass::Re_Center(const Vector3 & center)
 {
 	float dist = (Center - center).Length();
@@ -228,7 +226,6 @@ inline void SphereClass::Re_Center(const Vector3 & center)
 }
 
 
-// Expands 'this' sphere to enclose the given sphere.
 inline void SphereClass::Add_Sphere(const SphereClass & s)
 {
 	if (!s.Is_Valid()) return;
@@ -278,7 +275,6 @@ inline float SphereClass::Volume() const
 	return (4.0 / 3.0) * WWMATH_PI * (Radius * Radius * Radius);
 }
 
-// Expands 'this' sphere to also enclose the given sphere.
 inline SphereClass & SphereClass::operator += (const SphereClass & s)
 {
 	Add_Sphere(s);
@@ -286,7 +282,6 @@ inline SphereClass & SphereClass::operator += (const SphereClass & s)
 }
 
 
-// Transform this sphere by the given matrix.
 inline SphereClass & SphereClass::operator *= (const Matrix3D & m)
 {
 	Init(m, Center, Radius);
@@ -294,7 +289,6 @@ inline SphereClass & SphereClass::operator *= (const Matrix3D & m)
 }
 
 
-// Test whether two spheres intersect.
 inline bool Spheres_Intersect(const SphereClass & s0,const SphereClass & s1)
 {
 	Vector3 delta = s0.Center - s1.Center;
@@ -308,7 +302,6 @@ inline bool Spheres_Intersect(const SphereClass & s0,const SphereClass & s1)
 }
 
 
-// Add two spheres together, creating sphere which encloses both.
 inline SphereClass Add_Spheres(const SphereClass & s0, const SphereClass & s1)
 {
 	if (s0.Is_Valid()) {
@@ -321,7 +314,6 @@ inline SphereClass Add_Spheres(const SphereClass & s0, const SphereClass & s1)
 }
 
 
-// Add two spheres together, creating a sphere which encloses both.
 inline SphereClass operator + (const SphereClass & s0,const SphereClass & s1)
 {
 	return Add_Spheres(s0,s1);
@@ -347,7 +339,6 @@ inline void Transform_Sphere(const Matrix3D & m, const SphereClass & s,SphereCla
 }
 
 
-// Transform a sphere.
 inline SphereClass operator * (const Matrix3D & m, const SphereClass & s)
 {
 	return Transform_Sphere(m,s);

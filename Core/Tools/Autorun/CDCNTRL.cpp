@@ -57,7 +57,7 @@ CDControlClass::~CDControlClass()
 {
 }
 
-// Open the CD tray on the given drive (0=a, 1=b etc).
+// The drive number is 0 for a, 1 for b and so on.
 void CDControlClass::Force_CD_Eject(int drive)
 {
 	if ( WinVersion.Is_Win9x() ) {
@@ -67,7 +67,7 @@ void CDControlClass::Force_CD_Eject(int drive)
 	}
 }
 
-// Prevent CD ejection on the specified drive (0=a etc).
+// The drive number is 0 for a, 1 for b and so on.
 bool CDControlClass::Lock_CD_Tray (int drive)
 {
 	if ( WinVersion.Is_Win9x() ) {
@@ -77,7 +77,7 @@ bool CDControlClass::Lock_CD_Tray (int drive)
 	}
 }
 
-// Allow CD ejection on the specified drive (0=a etc).
+// The drive number is 0 for a, 1 for b and so on.
 bool CDControlClass::Unlock_CD_Tray (int drive)
 {
 	if ( WinVersion.Is_Win9x() ) {
@@ -222,7 +222,6 @@ bool CDControlClass::Prevent_Removal_Of_Volume( HANDLE volume, bool prevent )
 	return( result );
 }
 
-// Eject the removable media.
 bool CDControlClass::Auto_Eject_Volume(HANDLE volume)
 {
 	assert (WinVersion.Is_WinNT());
@@ -237,7 +236,6 @@ bool CDControlClass::Auto_Eject_Volume(HANDLE volume)
 	return (result);
 }
 
-// Force the CD drive to eject.
 bool CDControlClass::Eject_CD(char drive)
 {
 	assert (WinVersion.Is_WinNT());
@@ -269,7 +267,6 @@ bool CDControlClass::Eject_CD(char drive)
 	return (ejected);
 }
 
-// Lock the CD tray and prevent ejection.
 bool CDControlClass::Lock_CD_Drive(char drive)
 {
 	assert (WinVersion.Is_WinNT());
@@ -302,7 +299,6 @@ bool CDControlClass::Lock_CD_Drive(char drive)
 	return (true);
 }
 
-// Unlock the CD tray and allow ejection.
 bool CDControlClass::Unlock_CD_Drive(char drive)
 {
 	assert (WinVersion.Is_WinNT());
@@ -335,7 +331,7 @@ bool CDControlClass::Unlock_CD_Drive(char drive)
 	return (true);
 }
 
-// Eject the cd in the given drive (0=a etc).
+// The drive number is 0 for a, 1 for b and so on.
 void CDControlClass::Eject_CD_Win95 (char drive)
 {
 	assert (WinVersion.Is_Win9x());
@@ -378,7 +374,7 @@ void CDControlClass::Eject_CD_Win95 (char drive)
 	Close_VWin32 (vwin32);
 }
 
-// Prevent the user from ejecting the cd in the given drive (0=a etc).
+// The drive number is 0 for a, 1 for b and so on.
 bool CDControlClass::Lock_CD_Drive_95 (char drive)
 {
 //	DebugString ("CDControlClass::Lock_CD_Drive_95\n");
@@ -435,7 +431,7 @@ bool CDControlClass::Lock_CD_Drive_95 (char drive)
 	return (retval);
 }
 
-// Allow the user to eject the cd in the given drive (0=a etc).
+// The drive number is 0 for a, 1 for b and so on.
 bool CDControlClass::Unlock_CD_Drive_95 (char drive)
 {
 //	DebugString ("CDControlClass::Unlock_CD_Drive_95\n");
@@ -491,7 +487,6 @@ bool CDControlClass::Unlock_CD_Drive_95 (char drive)
 	return (retval);
 }
 
-// Unlocks removable media so that it can be ejected.
 bool CDControlClass::Unlock_Volume_95 (HANDLE vwin32, char drive)
 {
 	assert (WinVersion.Is_Win9x());
@@ -564,7 +559,6 @@ bool CDControlClass::Unlock_Volume_95 (HANDLE vwin32, char drive)
 	return (result);
 }
 
-// Locks removable media so that it can't be ejected.
 bool CDControlClass::Lock_Volume_95 (HANDLE vwin32, char drive)
 {
 	assert (WinVersion.Is_Win9x());
@@ -636,7 +630,6 @@ HANDLE WINAPI CDControlClass::Open_VWin32 ()
 	return (result);
 }
 
-// Closes the handle opened by Open_VWin32.
 bool WINAPI CDControlClass::Close_VWin32 (HANDLE vwin32)
 {
 	assert (WinVersion.Is_Win9x());

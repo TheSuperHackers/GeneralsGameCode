@@ -48,7 +48,6 @@ static CriticalSectionClass mutex;
 #define	BUFFER_OVERRUN_TEST_VALUE	((char)0x7d)
 
 
-// Compress a buffer using LZO.
 int LZOCompressor::Compress
 (
 	const lzo_byte * in,
@@ -74,7 +73,6 @@ int LZOCompressor::Compress
 }
 
 
-// Decompress a buffer using LZO.
 int LZOCompressor::Decompress
 (
 	const lzo_byte * in,

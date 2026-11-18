@@ -46,7 +46,6 @@
 ** Inline collision functions dealing with frustums
 */
 
-// Test a frustum and an AABox for overlap.
 inline
 CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const FrustumClass & frustum,const AABoxClass & box,int & planes_passed)

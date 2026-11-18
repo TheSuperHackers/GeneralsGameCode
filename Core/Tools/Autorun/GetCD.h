@@ -215,7 +215,7 @@ inline int GetCDClass::Get_First_CD_Drive()
 	return (Get_Next_CD_Drive());
 }
 
-// Return the logical drive number of the next CD drive, or -1 if none.
+// Returns -1 if no CD drives are available; otherwise wraps around after the last drive.
 
 inline int GetCDClass::Get_Next_CD_Drive()
 {
@@ -230,8 +230,7 @@ inline int GetCDClass::Get_Next_CD_Drive()
 }
 
 
-// Adds red book functionality. This class inherits from GetCDClass and adds red book play
-// functionality.
+// Adds red book play functionality to GetCDClass.
 
 #ifdef NOT_FOR_WIN95
 class RedBookClass : public GetCDClass

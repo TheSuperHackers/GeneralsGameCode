@@ -120,10 +120,9 @@ DistLODDefClass::DistLODDefClass() :
 }
 
 
-// Manual constructor for DistLODDefClass. This constructor allows you to create a DistLODDef
-// manually (and then use it to create the desired DistLODClass). The array of
-// DistLODModelDefStructs which you pass in will only be read from so you are responsible for the
-// memory used by them.
+// Allows you to create a DistLODDef manually (and then use it to create the desired DistLODClass).
+// The array of DistLODModelDefStructs which you pass in will only be read from so you are
+// responsible for the memory used by them.
 DistLODDefClass::DistLODDefClass(const char * name,int lodcount,DistLODNodeDefStruct * modeldefs) :
 	Name(nullptr),
 	LodCount(0),
@@ -148,7 +147,6 @@ DistLODDefClass::~DistLODDefClass()
 }
 
 
-// Releases all memory in use by this object.
 void DistLODDefClass::Free()
 {
 	delete[] Name;
@@ -165,7 +163,6 @@ void DistLODDefClass::Free()
 }
 
 
-// Initialize this object from a W3D file.
 WW3DErrorType DistLODDefClass::Load_W3D(ChunkLoadClass & cload)
 {
 	/*
@@ -240,7 +237,6 @@ bool DistLODDefClass::read_header(ChunkLoadClass & cload)
 }
 
 
-// Read a model node description from a W3D file.
 bool DistLODDefClass::read_node(ChunkLoadClass & cload,DistLODNodeDefStruct * node)
 {
 	return true;
@@ -297,7 +293,6 @@ DistLODClass::~DistLODClass()
 }
 
 
-// Releases memory in use.
 void DistLODClass::Free()
 {
 	if (Lods != nullptr) {
@@ -341,7 +336,7 @@ void DistLODClass::Special_Render(SpecialRenderInfoClass & rinfo)
 }
 
 
-// Returns the number of subobjects (levels of detail).
+// The sub-objects are the levels of detail.
 int DistLODClass::Get_Num_Sub_Objects() const
 {
 	return LodCount;
@@ -377,7 +372,6 @@ int DistLODClass::Add_Sub_Object_To_Bone(RenderObjClass * subobj,int bone_index)
 }
 
 
-// Sets the transform in all LODs.
 void DistLODClass::Set_Transform(const Matrix3D &m)
 {
 	RenderObjClass::Set_Transform(m);
@@ -388,7 +382,6 @@ void DistLODClass::Set_Transform(const Matrix3D &m)
 }
 
 
-// Sets the position of all lods.
 void DistLODClass::Set_Position(const Vector3 &v)
 {
 	RenderObjClass::Set_Position(v);
@@ -399,7 +392,6 @@ void DistLODClass::Set_Position(const Vector3 &v)
 }
 
 
-// Set the animation state of this model.
 void	DistLODClass::Set_Animation()
 {
 	for (int i=0; i<LodCount; i++) {
@@ -409,7 +401,6 @@ void	DistLODClass::Set_Animation()
 }
 
 
-// Set the animation state of this model.
 void DistLODClass::Set_Animation( HAnimClass * motion,float frame,int mode)
 {
 	for (int i=0; i<LodCount; i++) {
@@ -419,7 +410,6 @@ void DistLODClass::Set_Animation( HAnimClass * motion,float frame,int mode)
 }
 
 
-// Set the animation state to a blend of two anims.
 void DistLODClass::Set_Animation( HAnimClass * motion0,float frame0,HAnimClass * motion1,float frame1,float percentage)
 {
 	for (int i=0; i<LodCount; i++) {
@@ -429,7 +419,6 @@ void DistLODClass::Set_Animation( HAnimClass * motion0,float frame0,HAnimClass *
 }
 
 
-// Set the animation state to a combination of anims.
 void DistLODClass::Set_Animation( HAnimComboClass * anim_combo)
 {
 	for (int i=0; i<LodCount; i++) {
@@ -478,7 +467,6 @@ const Matrix3D &	DistLODClass::Get_Bone_Transform(int boneindex)
 }
 
 
-// Take control of a bone.
 void DistLODClass::Capture_Bone(int bindex)
 {
 	for (int i=0; i<LodCount; i++) {
@@ -504,7 +492,6 @@ bool DistLODClass::Is_Bone_Captured(int bindex) const
 }
 
 
-// Set the transform for a captured bone.
 void DistLODClass::Control_Bone(int bindex,const Matrix3D & tm,bool world_space_translation)
 {
 	for (int i=0; i<LodCount; i++) {
@@ -535,7 +522,6 @@ bool DistLODClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 }
 
 
-// Perform an OBBox cast against this model.
 bool DistLODClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 {
 	if (boxtest.CollisionType & Get_Collision_Type()) {
@@ -558,7 +544,6 @@ void DistLODClass::Get_Snap_Point(int index,Vector3 * set)
 }
 
 
-// Scale this model; passes on to each LOD.
 void DistLODClass::Scale(float scale)
 {
 	for (int i=0; i<LodCount; i++) {
@@ -568,7 +553,6 @@ void DistLODClass::Scale(float scale)
 }
 
 
-// Scale this model; passes on to each LOD.
 void DistLODClass::Scale(float scalex, float scaley, float scalez)
 {
 	for (int i=0; i<LodCount; i++) {
@@ -578,7 +562,7 @@ void DistLODClass::Scale(float scalex, float scaley, float scalez)
 }
 
 
-// Adjusts the current LOD based on the distance.
+// Based on the distance to the camera.
 void DistLODClass::Update_Lod(const CameraClass & camera)
 {
 	// evaluate the distance from the camera and select an LOD based on it.

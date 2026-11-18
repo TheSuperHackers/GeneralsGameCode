@@ -194,7 +194,6 @@ void WWProfileHierarchyNodeClass::Add_To_String_Compact(StringClass& string,int 
 	}
 }
 
-// Searches for a child node by name (pointer).
 // WARNING: All profile names are assumed to be static strings so this function uses pointer
 // compares to find the named node.
 WWProfileHierarchyNodeClass * WWProfileHierarchyNodeClass::Get_Sub_Node( const char * name )
@@ -272,9 +271,8 @@ __int64								WWProfileManager::ResetTime = 0;
 static unsigned int				ThreadID = static_cast<unsigned int>(-1);
 
 
-// Begin a named profile. Steps one level deeper into the tree, if a child already exists with the
-// specified name then it accumulates the profiling; otherwise a new child node is added to the
-// profile tree.
+// Steps one level deeper into the tree. If a child already exists with the specified name then it
+// accumulates the profiling; otherwise a new child node is added to the profile tree.
 // WARNING: The string used is assumed to be a static string; pointer compares are used throughout
 // the profiling code for efficiency.
 void	WWProfileManager::Start_Profile( const char * name )
@@ -305,7 +303,6 @@ void	WWProfileManager::Start_Root_Profile( const char * name )
 }
 
 
-// Stop timing and record the results.
 void	WWProfileManager::Stop_Profile()
 {
 	if (::GetCurrentThreadId() != ThreadID) {
@@ -333,8 +330,7 @@ void	WWProfileManager::Stop_Root_Profile()
 }
 
 
-// Reset the contents of the profiling system. This resets everything except for the tree structure.
-// All of the timing data is reset.
+// Resets everything except for the tree structure.
 void	WWProfileManager::Reset()
 {
 	ThreadID = ::GetCurrentThreadId();
@@ -362,7 +358,6 @@ void WWProfileManager::Increment_Frame_Counter()
 }
 
 
-// Returns the elapsed time since last reset.
 float WWProfileManager::Get_Time_Since_Reset()
 {
 	__int64 time;
@@ -373,14 +368,12 @@ float WWProfileManager::Get_Time_Since_Reset()
 }
 
 
-// Creates an iterator for the profile tree.
 WWProfileIterator *	WWProfileManager::Get_Iterator()
 {
 	return W3DNEW WWProfileIterator( &Root );
 }
 
 
-// Releases an iterator for the profile tree.
 void	WWProfileManager::Release_Iterator( WWProfileIterator * iterator )
 {
 	delete iterator;
@@ -677,7 +670,6 @@ void WWProfileManager::Load_Profile_Log(const char* filename, WWProfileHierarchy
 }
 
 
-// Creates an "in-order" iterator for the profile tree.
 WWProfileInOrderIterator * WWProfileManager::Get_In_Order_Iterator()
 {
 	return W3DNEW WWProfileInOrderIterator;

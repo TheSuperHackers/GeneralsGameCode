@@ -37,7 +37,7 @@
 #include "nstrdup.h"
 //#include "../app/main/gnew.h"
 
-// Duplicates a string using new[].
+// Uses new[].
 char * nstrdup(const char *str)
 {
 	if(str == nullptr) return nullptr;

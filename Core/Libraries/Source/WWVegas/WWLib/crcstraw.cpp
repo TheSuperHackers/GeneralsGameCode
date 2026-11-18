@@ -37,8 +37,7 @@
 
 
 // The data will not be modified by this straw segment, but the CRC engine will examine the data so
-// as to keep an accurate CRC value. Returns fewer bytes than requested when the data stream has
-// been exhausted.
+// as to keep an accurate CRC value.
 int CRCStraw::Get(void * source, int slen)
 {
 	if (source == nullptr || slen < 1) {
@@ -51,7 +50,6 @@ int CRCStraw::Get(void * source, int slen)
 }
 
 
-// Returns with the CRC of all data passed through the straw.
 long CRCStraw::Result() const
 {
 	return(CRC());

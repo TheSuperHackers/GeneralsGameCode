@@ -40,7 +40,6 @@
 #include "dx8wrapper.h"
 
 
-// Initializes the member variables to defaults.
 MatrixMapperClass::MatrixMapperClass(int stage) :
 	TextureMapperClass(stage),
 	Flags(0),

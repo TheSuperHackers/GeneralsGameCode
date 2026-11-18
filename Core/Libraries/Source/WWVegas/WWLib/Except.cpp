@@ -821,7 +821,6 @@ void Register_Thread_ID(unsigned long thread_id, char *thread_name, bool main_th
 
 
 #if (0)
-// Keep a copy of the thread handle that matches this thread ID.
 bool Register_Thread_Handle(unsigned long thread_id, HANDLE thread_handle)
 {
 	for (int i=0 ; i<ThreadList.Count() ; i++) {
@@ -836,7 +835,6 @@ bool Register_Thread_Handle(unsigned long thread_id, HANDLE thread_handle)
 
 
 
-// Get the number of threads being tracked.
 int Get_Num_Threads()
 {
 	return(ThreadList.Count());
@@ -851,7 +849,6 @@ HANDLE Get_Thread_Handle(int thread_index)
 }
 #endif //(0)
 
-// Remove a thread entry from the thread list.
 void Unregister_Thread_ID(unsigned long thread_id, char *thread_name)
 {
 	for (int i=0 ; i<ThreadList.Count() ; i++) {
@@ -945,7 +942,6 @@ void Load_Image_Helper()
 
 
 
-// Get the symbol for a given code address.
 bool Lookup_Symbol(void *code_ptr, char *symbol, int &displacement)
 {
 	/*
@@ -1001,8 +997,7 @@ bool Lookup_Symbol(void *code_ptr, char *symbol, int &displacement)
 
 
 
-// Walk the stack and get the last n return addresses. A null context means the current context is
-// used.
+// A null context means the current context is used.
 int Stack_Walk(unsigned long *return_addresses, int num_addresses, CONTEXT *context)
 {
 	static HINSTANCE _imagehelp = (HINSTANCE) -1;

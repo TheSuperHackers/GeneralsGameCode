@@ -253,7 +253,6 @@ void SurfaceClass::Clear()
 }
 
 
-// Copies from a byte array to the surface.
 void SurfaceClass::Copy(const unsigned char *other)
 {
 	SurfaceDescription sd;
@@ -278,7 +277,6 @@ void SurfaceClass::Copy(const unsigned char *other)
 }
 
 
-// Copies a block of system ram to the surface.
 void SurfaceClass::Copy(const Vector2i &min, const Vector2i &max, const unsigned char *other)
 {
 	SurfaceDescription sd;
@@ -309,7 +307,6 @@ void SurfaceClass::Copy(const Vector2i &min, const Vector2i &max, const unsigned
 }
 
 
-// Creates a byte array copy of the surface.
 unsigned char *SurfaceClass::CreateCopy(int *width,int *height,int*size,bool flip)
 {
 	SurfaceDescription sd;
@@ -348,7 +345,6 @@ unsigned char *SurfaceClass::CreateCopy(int *width,int *height,int*size,bool fli
 }
 
 
-// Copies a region from one surface to another.
 void SurfaceClass::Copy(
 	unsigned int dstx, unsigned int dsty,
 	unsigned int srcx, unsigned int srcy,
@@ -394,7 +390,6 @@ void SurfaceClass::Copy(
 	}
 }
 
-// Copies a region from one surface to another.
 void SurfaceClass::Stretch_Copy(
 	unsigned int dstx, unsigned int dsty, unsigned int dstwidth, unsigned int dstheight,
 	unsigned int srcx, unsigned int srcy, unsigned int srcwidth, unsigned int srcheight,
@@ -482,7 +477,6 @@ void SurfaceClass::FindBB(Vector2i *min,Vector2i*max)
 }
 
 
-// Tests to see if the column is transparent or not.
 bool SurfaceClass::Is_Transparent_Column(unsigned int column)
 {
 	SurfaceDescription sd;
@@ -536,7 +530,6 @@ bool SurfaceClass::Is_Transparent_Column(unsigned int column)
 	return true;
 }
 
-// Returns the pixel's RGB values to the caller.
 // TheSuperHackers @performance Added bits and pitch to the argument list.
 void SurfaceClass::Get_Pixel(Vector3 &rgb, int x, int y, LockedSurfacePtr pBits, int pitch)
 {
@@ -600,7 +593,6 @@ void SurfaceClass::Draw_H_Line(const unsigned int y, const unsigned int x1, cons
 }
 
 
-// Checks if surface is monochrome or not.
 bool SurfaceClass::Is_Monochrome()
 {
 	unsigned int x,y;

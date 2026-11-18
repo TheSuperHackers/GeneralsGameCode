@@ -84,7 +84,6 @@ typedef struct tConnInfoStruct {
 	unsigned short RemotePort;
 } ConnInfoStruct;
 
-// Which address are we using to talk to the chat server?
 Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverPort, UnsignedInt& localIP)
 {
 	//return false;

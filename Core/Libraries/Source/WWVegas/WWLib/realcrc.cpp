@@ -117,7 +117,6 @@ unsigned long	CRC_Memory( const unsigned char *data, unsigned long length, unsig
 }
 
 
-// Calculates a CRC for a null-terminated string.
 unsigned long	CRC_String( const char *string, unsigned long crc )
 {
  	crc ^= 0xFFFFFFFF;									// invert previous CRC
@@ -128,7 +127,6 @@ unsigned long	CRC_String( const char *string, unsigned long crc )
 }
 
 
-// Calculates a CRC for a string, case-insensitive.
 unsigned long	CRC_Stringi( const char *string, unsigned long crc )
 {
  	crc ^= 0xFFFFFFFF;									// invert previous CRC

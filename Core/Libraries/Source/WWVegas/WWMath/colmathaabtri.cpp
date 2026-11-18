@@ -472,7 +472,6 @@ inline void VERIFY_CROSS(const Vector3 & a, const Vector3 & b,const Vector3 & cr
 #endif
 }
 
-// Collide an aabox into a triangle.
 bool CollisionMath::Collide
 (
 	const AABoxClass &		box,
@@ -782,8 +781,7 @@ private:
 static AABTIntersectStruct IntersectContext;
 
 
-// Intersection check for a "cross-product" axis. Axis being checked is a cross product between a
-// triangle edge and a box basis vector.
+// Axis being checked is a cross product between a triangle edge and a box basis vector.
 static inline bool aabtri_intersect_cross_axis
 (
 	Vector3 &					axis,
@@ -844,7 +842,6 @@ static inline bool aabtri_intersect_basis_axis
 }
 
 
-// Intersection check for the triangle normal. Axis being checked is the triangle's normal.
 static inline bool aabtri_intersect_normal_axis
 (
 	Vector3 &					axis
@@ -871,7 +868,6 @@ static inline bool aabtri_intersect_normal_axis
 }
 
 
-// Intersection check for an AABox and a triangle.
 bool CollisionMath::Intersection_Test(const AABoxClass & box,const TriClass & tri)
 {
 	Vector3 axis;
