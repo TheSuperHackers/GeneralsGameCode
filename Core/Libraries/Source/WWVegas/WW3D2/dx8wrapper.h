@@ -423,6 +423,8 @@ public:
 	static IDirect3DSurface8 * _Create_DX8_Surface(const char *filename);
 	static IDirect3DSurface8 * _Get_DX8_Front_Buffer();
 	static SurfaceClass * _Get_DX8_Back_Buffer(unsigned int num=0);
+	/// Returns the surface the scene is rendered into: the scene alpha target when there is one, otherwise the back buffer.
+	static SurfaceClass * _Get_DX8_Scene_Surface();
 
 	static void _Copy_DX8_Rects(
 			IDirect3DSurface8* pSourceSurface,
@@ -532,7 +534,7 @@ public:
 
 	static IDirect3DDevice8* _Get_D3D_Device8() { return D3DDevice; }
 	static IDirect3D8* _Get_D3D8() { return D3DInterface; }
-	/// Returns the display format - added by TR for video playback - not part of W3D
+	/// Returns the format of the surface the scene is rendered into - added by TR for video playback - not part of W3D
 	static WW3DFormat	getBackBufferFormat();
 	static bool Reset_Device(bool reload_assets=true);
 
@@ -624,6 +626,12 @@ protected:
 	static bool Find_Color_Mode(D3DFORMAT colorbuffer, int resx, int resy, UINT *mode);
 	static bool Find_Z_Mode(D3DFORMAT colorbuffer,D3DFORMAT backbuffer, D3DFORMAT *zmode);
 	static bool Test_Z_Mode(D3DFORMAT colorbuffer,D3DFORMAT backbuffer, D3DFORMAT zmode);
+	static void Use_Display_Format_For_Fullscreen_Back_Buffer();
+	static void Prepare_Scene_Alpha_Target();
+	static void Create_Scene_Alpha_Target();
+	static void Release_Scene_Alpha_Target();
+	static void Copy_Scene_Alpha_Target_To_Back_Buffer();
+	static IDirect3DSurface8 * Get_Scene_Alpha_Render_Surface() { return SceneAlphaMultisampleSurface ? SceneAlphaMultisampleSurface : SceneAlphaTextureSurface; }
 	static void Compute_Caps(WW3DFormat display_format);
 
 	/*
@@ -651,6 +659,15 @@ protected:
 	static bool								IsWindowed;
 	static D3DFORMAT					DisplayFormat;
 	static D3DMULTISAMPLE_TYPE	MultiSampleAntiAliasing;
+	static bool								FullscreenBackBufferUsesDisplayFormat;
+	static unsigned						FullscreenResetsWithoutPresent;
+	static bool								UseSceneAlphaTarget;
+	static D3DMULTISAMPLE_TYPE	SceneAlphaMultiSampleType;
+	static IDirect3DTexture8 *			SceneAlphaTexture;
+	static IDirect3DSurface8 *			SceneAlphaTextureSurface;
+	static IDirect3DSurface8 *			SceneAlphaMultisampleSurface;
+	static IDirect3DSurface8 *			SceneAlphaDepthSurface;
+	static DWORD								SceneAlphaStateBlock;
 
 
 	// shader system updates KJM v
