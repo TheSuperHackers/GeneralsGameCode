@@ -409,9 +409,7 @@ void MoveInfo::DoMove(CWorldBuilderDoc *pDoc)
 	m_objectToModify->setLocation(&m_newLocation);
 	pDoc->invalObject(m_objectToModify);
 
-	if (m_newThing != m_oldThing) {
-		m_objectToModify->setThingTemplate(m_newThing);
-	}
+	m_objectToModify->setThingTemplate(m_newThing);
 	m_objectToModify->setName(m_newName);
 }
 
@@ -422,9 +420,7 @@ void MoveInfo::UndoMove(CWorldBuilderDoc *pDoc)
 	m_objectToModify->setLocation(&m_oldLocation);
 	pDoc->invalObject(m_objectToModify);
 
-	if (m_newThing != m_oldThing) {
-		m_objectToModify->setThingTemplate(m_oldThing);
-	}
+	m_objectToModify->setThingTemplate(m_oldThing);
 	m_objectToModify->setName(m_oldName);
 }
 
