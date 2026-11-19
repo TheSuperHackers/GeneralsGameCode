@@ -66,9 +66,8 @@ public:
 	enum WaterType
 	{
 		WATER_TYPE_0_TRANSLUCENT = 0,	//translucent water, no reflection
-		WATER_TYPE_1_FB_REFLECTION,		//legacy frame buffer reflection (non translucent)
-		WATER_TYPE_2_PVSHADER,		//pixel/vertex shader, texture reflection
-		WATER_TYPE_3_GRIDMESH,		//3D Mesh based water
+		WATER_TYPE_2_PVSHADER = 2,		//pixel/vertex shader, texture reflection
+		WATER_TYPE_3_GRIDMESH = 3,		//3D Mesh based water
 	};
 
 	WaterRenderObjClass();

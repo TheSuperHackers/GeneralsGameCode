@@ -235,16 +235,8 @@ void W3DTerrainVisual::init()
 #ifdef DO_UNIT_TIMINGS
 #pragma MESSAGE("********************* WARNING- Doing UNIT TIMINGS. ")
 #else
-		if (TheGlobalData->m_waterType == WaterRenderObjClass::WATER_TYPE_1_FB_REFLECTION)
-		{
- 			// add water render object to the pre-pass scene (to be rendered before main scene)
- 			//W3DDisplay::m_prePass3DScene->Add_Render_Object( m_waterRenderObject);
-		}
-		else
-		{
-			// add water render object to the post-pass scene (to be rendered after main scene)
-			W3DDisplay::m_3DScene->Add_Render_Object( m_waterRenderObject);
-		}
+		// add water render object to the scene
+		W3DDisplay::m_3DScene->Add_Render_Object( m_waterRenderObject);
 #endif
 		if (TheGlobalData->m_useCloudPlane)
 			m_waterRenderObject->toggleCloudLayer(true);
