@@ -21,6 +21,7 @@
 #include "WWLib/simplevec.h"
 #include "dx8renderer.h"
 #include "dx8wrapper.h"
+#include "Renderer.h"
 #include "dx8caps.h"
 #include "textureloader.h"
 #include "texture.h"
@@ -296,7 +297,7 @@ void Debug_Statistics::Record_DX8_Skin_Polys_And_Vertices(int pcount,int vcount)
 
 void Debug_Statistics::Record_DX8_Polys_And_Vertices(int pcount,int vcount,const ShaderClass& shader)
 {
-	if (shader.Get_NPatch_Enable()==ShaderClass::NPATCH_ENABLE && DX8Wrapper::Get_Current_Caps()->Support_NPatches()) {
+	if (shader.Get_NPatch_Enable()==ShaderClass::NPATCH_ENABLE && Renderer::Supports_NPatches()) {
 		unsigned level=WW3D::Get_NPatches_Level();
 		level*=level;
 		pcount*=level;
