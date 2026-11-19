@@ -153,7 +153,6 @@ typedef VertexFormatXYZDUV2 MaterMeshVertexFormat;
 	ShaderClass::TEXTURING_ENABLE, ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_DISABLE, ShaderClass::DETAILCOLOR_DISABLE, ShaderClass::DETAILALPHA_DISABLE) )
 
 static ShaderClass zFillAlphaShader(SC_ZFILL_BLEND3);
-static ShaderClass blendStagesShader(SC_DETAIL_BLEND);
 
 WaterRenderObjClass *TheWaterRenderObj=nullptr; ///<global water rendering object
 
