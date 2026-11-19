@@ -595,7 +595,7 @@ void Render2DClass::Render()
 		//special case added to draw grayscale non-alpha blended images.
 		Renderer::Set_Shader(ShaderClass::_PresetOpaqueShader);
 		Renderer::Apply_Render_State_Changes();	//force update of all regular W3D states.
-		if (DX8Wrapper::Get_Current_Caps()->Support_Dot3())
+		if (Renderer::Supports_Dot3())
 		{
 			//Override W3D states with customizations for grayscale
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_TEXTUREFACTOR, 0x80A5CA8E);
