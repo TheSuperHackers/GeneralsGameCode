@@ -308,7 +308,7 @@ void Release_Refs(SortingNodeStruct* state)
 	}
 	REF_PTR_RELEASE(state->sorting_state.index_buffer);
 	REF_PTR_RELEASE(state->sorting_state.material);
-	for (i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i)
+	for (i=0;i<Renderer::Get_Max_Textures_Per_Pass();++i)
 	{
 		REF_PTR_RELEASE(state->sorting_state.Textures[i]);
 	}
@@ -363,7 +363,7 @@ static void Apply_Render_State(RenderStateStruct& render_state)
 
 	Renderer::Set_Material(render_state.material);
 
-	for (int i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i)
+	for (int i=0;i<Renderer::Get_Max_Textures_Per_Pass();++i)
 	{
 		Renderer::Set_Texture(i,render_state.Textures[i]);
 	}
