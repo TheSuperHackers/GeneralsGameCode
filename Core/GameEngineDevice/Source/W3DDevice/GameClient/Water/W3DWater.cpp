@@ -178,16 +178,6 @@ void doSkyBoxSet(Bool startDraw)
 }
 
 
-#define DONUT_SIDES	90
-#define INNER_RADIUS 200.0f
-#define OUTER_RADIUS 250.0f
-#define TEXTURE_REPEAT_COUNT 16
-#define DONUT_HEIGHT	15.0f
-//#define DO_FLAT_DONUT
-#define AMP_SCALE	(30.0f/120.0f)
-#define WAVE_FREQ	0.3f
-#define AMP_SCALE2	(10.0f/120.0f)
-#define NOISE_FREQ	(2.0f*PI/WAVE_FREQ)
 
 #define NOISE_REPEAT_FACTOR ((float)(1.0f/(16.0f)))
 
