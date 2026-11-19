@@ -2325,7 +2325,7 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 	Renderer::Set_Texture(0,m_destAlphaTexture);
 	Renderer::Set_Transform(RenderTransform_World,Matrix3D(true));
 	//Enabled writes to destination alpha only
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_ALPHA);
+	Renderer::Set_Color_Write_Mask(RenderColorWrite_Alpha);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0,  D3DTSS_TEXCOORDINDEX, 0);
 
 
@@ -2341,7 +2341,7 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 			DynamicIBAccessClass::WriteLockClass lockib(&ib_access);
 			UnsignedShort *ib=lockib.Get_Index_Array();
 			if (!ib || !vb)
-			{	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_BLUE|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_RED);
+			{	Renderer::Set_Color_Write_Mask(RenderColorWrite_RGB);
 				return;
 			}
 
@@ -2450,7 +2450,7 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 	}
 
 	//Disable writes to destination alpha
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_BLUE|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_RED);
+	Renderer::Set_Color_Write_Mask(RenderColorWrite_RGB);
 	ShaderClass::Invalidate();
 }
 
@@ -2511,7 +2511,7 @@ void BaseHeightMapRenderObjClass::renderShoreLinesSorted(CameraClass *pCamera)
 	Renderer::Set_Texture(0,m_destAlphaTexture);
 	Renderer::Set_Transform(RenderTransform_World,Matrix3D(true));
 	//Enabled writes to destination alpha only
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_ALPHA);
+	Renderer::Set_Color_Write_Mask(RenderColorWrite_Alpha);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0,  D3DTSS_TEXCOORDINDEX, 0);
 
 	Bool isDone=FALSE;
@@ -2529,7 +2529,7 @@ void BaseHeightMapRenderObjClass::renderShoreLinesSorted(CameraClass *pCamera)
 			DynamicIBAccessClass::WriteLockClass lockib(&ib_access);
 			UnsignedShort *ib=lockib.Get_Index_Array();
 			if (!ib || !vb)
-			{	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_BLUE|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_RED);
+			{	Renderer::Set_Color_Write_Mask(RenderColorWrite_RGB);
 				return;
 			}
 
@@ -2793,7 +2793,7 @@ flushVertexBuffer1:
 	}
 
 	//Disable writes to destination alpha
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_BLUE|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_RED);
+	Renderer::Set_Color_Write_Mask(RenderColorWrite_RGB);
 	ShaderClass::Invalidate();
 }
 
