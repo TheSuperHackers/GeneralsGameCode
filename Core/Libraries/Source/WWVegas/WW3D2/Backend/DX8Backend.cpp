@@ -322,6 +322,11 @@ void Renderer::Set_Transform(RenderTransform transform, const Matrix3D & m)
     DX8Wrapper::Set_Transform(To_D3D_Transform(transform), m);
 }
 
+void Renderer::Set_Texture_Transform(unsigned stage, const Matrix4x4 & m)
+{
+    DX8Wrapper::Set_Transform(static_cast<D3DTRANSFORMSTATETYPE>(D3DTS_TEXTURE0 + stage), m);
+}
+
 void Renderer::Get_Transform(RenderTransform transform, Matrix4x4 & m)
 {
     DX8Wrapper::Get_Transform(To_D3D_Transform(transform), m);
