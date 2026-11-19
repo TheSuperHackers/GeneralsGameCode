@@ -2318,11 +2318,11 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 
 	ShaderClass unlitShader=ShaderClass::_PresetOpaque2DShader;
 	unlitShader.Set_Depth_Compare(ShaderClass::PASS_LEQUAL);
-	DX8Wrapper::Set_Shader(unlitShader);
+	Renderer::Set_Shader(unlitShader);
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vmat);
+	Renderer::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);
-	DX8Wrapper::Set_Texture(0,m_destAlphaTexture);
+	Renderer::Set_Texture(0,m_destAlphaTexture);
 	Renderer::Set_Transform(RenderTransform_World,Matrix3D(true));
 	//Enabled writes to destination alpha only
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_ALPHA);
@@ -2439,9 +2439,9 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 
 		if (indexCount > 0 && vertexCount > 0)
 		{
-			DX8Wrapper::Set_Index_Buffer(ib_access,0);
-			DX8Wrapper::Set_Vertex_Buffer(vb_access);
-			DX8Wrapper::Draw_Triangles(	0,indexCount/3, 0,	vertexCount);	//draw a quad, 2 triangles, 4 verts
+			Renderer::Set_Index_Buffer(ib_access,0);
+			Renderer::Set_Vertex_Buffer(vb_access);
+			Renderer::Draw_Triangles(	0,indexCount/3, 0,	vertexCount);	//draw a quad, 2 triangles, 4 verts
 			m_numVisibleShoreLineTiles += indexCount/6;
 		}
 
@@ -2504,11 +2504,11 @@ void BaseHeightMapRenderObjClass::renderShoreLinesSorted(CameraClass *pCamera)
 
 	ShaderClass unlitShader=ShaderClass::_PresetOpaque2DShader;
 	unlitShader.Set_Depth_Compare(ShaderClass::PASS_LEQUAL);
-	DX8Wrapper::Set_Shader(unlitShader);
+	Renderer::Set_Shader(unlitShader);
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vmat);
+	Renderer::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);
-	DX8Wrapper::Set_Texture(0,m_destAlphaTexture);
+	Renderer::Set_Texture(0,m_destAlphaTexture);
 	Renderer::Set_Transform(RenderTransform_World,Matrix3D(true));
 	//Enabled writes to destination alpha only
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_ALPHA);
@@ -2782,9 +2782,9 @@ flushVertexBuffer1:
 
 		if (indexCount > 0 && vertexCount > 0)
 		{
-			DX8Wrapper::Set_Index_Buffer(ib_access,0);
-			DX8Wrapper::Set_Vertex_Buffer(vb_access);
-			DX8Wrapper::Draw_Triangles(	0,indexCount/3, 0,	vertexCount);	//draw a quad, 2 triangles, 4 verts
+			Renderer::Set_Index_Buffer(ib_access,0);
+			Renderer::Set_Vertex_Buffer(vb_access);
+			Renderer::Draw_Triangles(	0,indexCount/3, 0,	vertexCount);	//draw a quad, 2 triangles, 4 verts
 			m_numVisibleShoreLineTiles += indexCount/6;
 		}
 
@@ -2814,7 +2814,7 @@ void BaseHeightMapRenderObjClass::renderTrees(CameraClass * camera)
 	if (Scene==nullptr) return;
 	if (m_treeBuffer) {
 		Renderer::Set_Transform(RenderTransform_World,Transform);
-		DX8Wrapper::Set_Material(m_vertexMaterialClass);
+		Renderer::Set_Material(m_vertexMaterialClass);
 		RTS3DScene *pMyScene = (RTS3DScene *)Scene;
 		RefRenderObjListIterator pDynamicLightsIterator(pMyScene->getDynamicLights());
 		m_treeBuffer->drawTrees(camera, &pDynamicLightsIterator);

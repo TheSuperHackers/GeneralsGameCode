@@ -469,9 +469,9 @@ void SphereRenderObjClass::render_sphere()
 	} else {
 		SphereShader.Set_Texturing (ShaderClass::TEXTURING_DISABLE);
 	}
-	DX8Wrapper::Set_Shader(SphereShader);
-	DX8Wrapper::Set_Texture(0,SphereTexture);
-	DX8Wrapper::Set_Material(SphereMaterial);
+	Renderer::Set_Shader(SphereShader);
+	Renderer::Set_Texture(0,SphereTexture);
+	Renderer::Set_Material(SphereMaterial);
 
 	// Enable sorting if the primitive is translucent, alpha testing is not enabled, and sorting is enabled globally.
 	const bool sort = (SphereShader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO) && (SphereShader.Get_Alpha_Test() == ShaderClass::ALPHATEST_DISABLE) && (WW3D::Is_Sorting_Enabled());
@@ -518,13 +518,13 @@ void SphereRenderObjClass::render_sphere()
 		}
 	}
 
-	DX8Wrapper::Set_Vertex_Buffer(vb);
-	DX8Wrapper::Set_Index_Buffer(ib,0);
+	Renderer::Set_Vertex_Buffer(vb);
+	Renderer::Set_Index_Buffer(ib,0);
 
 	if (sort) {
 		SortingRendererClass::Insert_Triangles(Get_Bounding_Sphere(), 0, mesh.face_ct, 0, mesh.Vertex_ct);
 	} else {
-		DX8Wrapper::Draw_Triangles(0,mesh.face_ct,0,mesh.Vertex_ct);
+		Renderer::Draw_Triangles(0,mesh.face_ct,0,mesh.Vertex_ct);
 	}
 
 }

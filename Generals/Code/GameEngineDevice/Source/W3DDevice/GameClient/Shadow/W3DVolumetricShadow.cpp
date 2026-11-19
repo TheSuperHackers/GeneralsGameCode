@@ -43,6 +43,7 @@
 #include "WW3D2/camera.h"
 #include "WW3D2/light.h"
 #include "WW3D2/dx8wrapper.h"
+#include "WW3D2/Renderer.h"
 #include "WW3D2/hlod.h"
 #include "WW3D2/mesh.h"
 #include "WW3D2/meshmdl.h"
@@ -3342,13 +3343,13 @@ void W3DVolumetricShadowManager::renderShadows( Bool forceStencilFill )
 
 		//Set W3D to some known state
 		VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-		DX8Wrapper::Set_Material(vmat);
+		Renderer::Set_Material(vmat);
 		REF_PTR_RELEASE(vmat);
 
-		DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaqueShader);
-		DX8Wrapper::Set_Texture(0,nullptr);	//turn off textures
-		DX8Wrapper::Set_Texture(1,nullptr);	//turn off textures
-		DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
+		Renderer::Set_Shader(ShaderClass::_PresetOpaqueShader);
+		Renderer::Set_Texture(0,nullptr);	//turn off textures
+		Renderer::Set_Texture(1,nullptr);	//turn off textures
+		Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 
 		// turn off z writing
 		m_pDev->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
@@ -3520,7 +3521,7 @@ void W3DVolumetricShadowManager::renderShadows( Bool forceStencilFill )
 		m_pDev->SetRenderState(D3DRS_ALPHABLENDENABLE , FALSE);
 		m_pDev->SetRenderState(D3DRS_LIGHTING, FALSE);
 
-		DX8Wrapper::Invalidate_Cached_Render_States();
+		Renderer::Invalidate_Cached_Render_States();
 	}
 	else
 	if (forceStencilFill)
@@ -3530,15 +3531,15 @@ void W3DVolumetricShadowManager::renderShadows( Bool forceStencilFill )
 
 		//Set W3D to some known state
 		VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-		DX8Wrapper::Set_Material(vmat);
+		Renderer::Set_Material(vmat);
 		REF_PTR_RELEASE(vmat);
-		DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaqueShader);
-		DX8Wrapper::Set_Texture(0,nullptr);
-		DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
+		Renderer::Set_Shader(ShaderClass::_PresetOpaqueShader);
+		Renderer::Set_Texture(0,nullptr);
+		Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 
 		renderStencilShadows();
 
-		DX8Wrapper::Invalidate_Cached_Render_States();
+		Renderer::Invalidate_Cached_Render_States();
 	}
 
 }

@@ -241,18 +241,18 @@ void DebugHintObject::Render(RenderInfoClass & rinfo)
 	SphereClass bounds(Vector3(m_myLoc.x, m_myLoc.y, m_myLoc.z), m_mySize);
 	if (!rinfo.Camera.Cull_Sphere(bounds))
 	{
-		DX8Wrapper::Set_Material(m_vertexMaterialClass);
-		DX8Wrapper::Set_Shader(m_shaderClass);
-		DX8Wrapper::Set_Texture(0, nullptr);
-		DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-		DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile);
+		Renderer::Set_Material(m_vertexMaterialClass);
+		Renderer::Set_Shader(m_shaderClass);
+		Renderer::Set_Texture(0, nullptr);
+		Renderer::Set_Index_Buffer(m_indexBuffer,0);
+		Renderer::Set_Vertex_Buffer(m_vertexBufferTile);
 
 		Matrix3D tm = Transform;
 		Vector3 vec(m_myLoc.x, m_myLoc.y, m_myLoc.z);
 		tm.Set_Translation(vec);
 		Renderer::Set_Transform(RenderTransform_World, tm);
 
-		DX8Wrapper::Draw_Triangles(	0, 1, 0, 3);
+		Renderer::Draw_Triangles(	0, 1, 0, 3);
 	}
 }
 #endif // RTS_DEBUG
