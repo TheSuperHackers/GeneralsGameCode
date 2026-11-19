@@ -70,7 +70,6 @@ public:
 		ST_FLAT_TERRAIN_BASE_NOISE1,	//shader to apply base texture and cloud/noise 1.
 		ST_FLAT_TERRAIN_BASE_NOISE2,	//shader to apply base texture and cloud/noise 2.
 		ST_FLAT_TERRAIN_BASE_NOISE12,//shader to apply base texture and both cloud/noise
-		ST_FLAT_SHROUD_TEXTURE,		//shader to apply shroud texture projection.
 		ST_MAX
 	};
 
