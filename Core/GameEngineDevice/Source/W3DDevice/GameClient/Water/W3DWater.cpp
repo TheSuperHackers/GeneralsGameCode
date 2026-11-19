@@ -1835,6 +1835,15 @@ void WaterRenderObjClass::renderSky()
 ///	@todo: Add code to render properly sorted sun sky body.
 void WaterRenderObjClass::renderSkyBody(Matrix3D *mat)
 {
+	Matrix3D tm(1);
+#if 0
+	// Debug orientation: the moon rotates with the camera, staying upright on screen.
+	Vector3 vRight, vUp, vNormal;
+	mat->Get_X_Vector(&vRight);
+	mat->Get_Y_Vector(&vUp);
+	Vector3::Cross_Product(vRight, vUp, &vNormal);
+	tm = Matrix3D(vRight, vUp, vNormal, Vector3(0,0,0));
+#else
 	Vector3 cPos;
 
 	Vector3 pView,pRight,pUp,pPos(SKYBODY_X,SKYBODY_Y,SKYBODY_HEIGHT);
@@ -1859,10 +1868,9 @@ void WaterRenderObjClass::renderSkyBody(Matrix3D *mat)
 	angle = acos(angle);
 
 
-	Matrix3D tm(1);
 	tm.Set(rotAxis,angle);
 	tm.Adjust_Translation(Vector3(SKYBODY_X,SKYBODY_Y,SKYBODY_HEIGHT));
-
+#endif
 
 	Renderer::Set_Transform(RenderTransform_World,tm);
 
@@ -3017,85 +3025,6 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 }
 
 
-
-//-------------------------------------------------------------------------------------------------
-//debug version where moon rotates with the camera	(always upright on screen)
-//-------------------------------------------------------------------------------------------------
-#if 0
-void WaterRenderObjClass::renderSkyBody(Matrix3D *mat)
-{
-	Vector3 vRight,vUp,V0,V1,V2,V3;
-
-	mat->Get_X_Vector(&vRight);
-	mat->Get_Y_Vector(&vUp);
-
-	//calculate offsets from quad center to each of the 4 corners
-	//	0-----1
-	//  |    /|
-	//  |  /  |
-	//	|/    |
-	//  3-----2
-	V0=-vRight+vUp;
-	V2=vRight+vUp;
-	V2=vRight-vUp;
-	V3=-vRight-vUp;
-
-	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vmat);
-	REF_PTR_RELEASE(vmat);
-	DX8Wrapper::Set_Shader(ShaderClass::/*_PresetAdditiveShader*//*_PresetOpaqueShader*/_PresetAlphaShader);
-//	DX8Wrapper::Set_Texture(0,setting->skyBodyTexture);
-
-	DX8Wrapper::Set_Texture(0,m_alphaClippingTexture);
-
-	//draw an infinite sky plane
-	DynamicVBAccessClass vb_access(BUFFER_TYPE_DYNAMIC_DX8,4);
-	{
-		DynamicVBAccessClass::WriteLockClass lock(&vb_access);
-		VertexFormatXYZNDUV2* verts=lock.Get_Formatted_Vertex_Array();
-		if(verts)
-		{
-			verts[0].x=SKYBODY_SIZE*V0.X;
-			verts[0].y=SKYBODY_SIZE*V0.Y;
-			verts[0].z=SKYBODY_SIZE*V0.Z;
-			verts[0].u2=0;
-			verts[0].v2=1;
-			verts[0].diffuse=0xffffffff;
-
-			verts[1].x=SKYBODY_SIZE*V1.X;
-			verts[1].y=SKYBODY_SIZE*V1.Y;
-			verts[1].z=SKYBODY_SIZE*V1.Z;
-			verts[1].u2=1;
-			verts[1].v2=1;
-			verts[1].diffuse=0xffffffff;
-
-			verts[2].x=SKYBODY_SIZE*V2.X;
-			verts[2].y=SKYBODY_SIZE*V2.Y;
-			verts[2].z=SKYBODY_SIZE*V2.Z;
-			verts[2].u2=1;
-			verts[2].v2=0;
-			verts[2].diffuse=0xffffffff;
-
-			verts[3].x=SKYBODY_SIZE*V3.X;
-			verts[3].y=SKYBODY_SIZE*V3.Y;
-			verts[3].z=SKYBODY_SIZE*V3.Z;
-			verts[3].u2=0;
-			verts[3].v2=0;
-			verts[3].diffuse=0xffffffff;
-		}
-	}
-
-	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-	DX8Wrapper::Set_Vertex_Buffer(vb_access);
-
-	Matrix3D tm(1);
-	//set position of skybody in world
-//	tm.Set_Translation(Vector3(40,0,0));
-	Renderer::Set_Transform(RenderTransform_World,tm);
-
-	DX8Wrapper::Draw_Triangles(	0,2, 0,	4);	//draw a quad, 2 triangles, 4 verts
-}
-#endif
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
