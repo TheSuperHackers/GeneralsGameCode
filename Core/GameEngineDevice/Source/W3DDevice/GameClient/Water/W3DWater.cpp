@@ -44,7 +44,6 @@
 #include "WW3D2/scene.h"
 #include "WW3D2/dx8wrapper.h"
 #include "WW3D2/Renderer.h"
-#include "WW3D2/light.h"
 #include "d3dx8math.h"
 #include "WWLib/simplevec.h"
 #include "WW3D2/mesh.h"
@@ -281,7 +280,6 @@ WaterRenderObjClass::~WaterRenderObjClass()
 {
 	REF_PTR_RELEASE(m_meshVertexMaterialClass);
 	REF_PTR_RELEASE(m_vertexMaterialClass);
-	REF_PTR_RELEASE(m_meshLight);
 	REF_PTR_RELEASE(m_alphaClippingTexture);
 	REF_PTR_RELEASE (m_skyBox);
 
@@ -332,7 +330,6 @@ WaterRenderObjClass::WaterRenderObjClass()
 	m_waterTrackSystem = nullptr;
 	m_doWaterGrid = FALSE;
 	m_meshVertexMaterialClass=nullptr;
-	m_meshLight=nullptr;
 	m_vertexMaterialClass=nullptr;
 	m_alphaClippingTexture=nullptr;
 	m_useCloudLayer=true;
@@ -894,13 +891,6 @@ Int WaterRenderObjClass::init(Real waterLevel, Real dx, Real dy, SceneClass *par
 	m_planeNormal=Vector3(0,0,1);		//water plane normal
 	m_planeDistance=m_level;	//water plane distance(always at zero for now)
 
-	m_meshLight=NEW_REF(LightClass,(LightClass::DIRECTIONAL));
-	m_meshLight->Set_Ambient(Vector3(0.1f,0.1f,0.1f));
-	m_meshLight->Set_Diffuse(Vector3(1.0f,1.0f,1.0f));
-	m_meshLight->Set_Specular(Vector3(1.0f,1.0f,1.0f));
-	m_meshLight->Set_Position(Vector3(1000,1000,1000));
-	//testLight->Set_Spot_Direction(Vector3(TheGlobalData->m_terrainLightX,TheGlobalData->m_terrainLightY,TheGlobalData->m_terrainLightZ));
-	m_meshLight->Set_Spot_Direction(Vector3(-0.57f,-0.57f,-0.57f));
 
 	//Setup material for 3D Mesh water.
 	m_meshVertexMaterialClass=NEW_REF(VertexMaterialClass,());
@@ -2095,25 +2085,7 @@ void WaterRenderObjClass::renderWaterMesh()
 	m_shaderClass.Set_Cull_Mode(ShaderClass::CULL_MODE_ENABLE);	//water should be visible from both sides
 
 	DX8Wrapper::Set_Shader(m_shaderClass);
-#if 1
 	setupFlatWaterShader();
-#else
-	//DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaqueShader);
-	DX8Wrapper::Set_Texture(0,setting->waterTexture);
-	DX8Wrapper::Set_Texture(1,setting->waterTexture);
-
-	DX8Wrapper::Set_Light(0,*m_meshLight);
-	DX8Wrapper::Set_Light(1,nullptr);
-	DX8Wrapper::Set_Light(2,nullptr);
-	DX8Wrapper::Set_Light(3,nullptr);
-/*
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_AMBIENT,0);	//turn off scene ambient
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_SPECULARENABLE,TRUE);
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_LOCALVIEWER,TRUE);
-*/
-
-	DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
-#endif
 
 
 //	m_pDev->SetRenderState(D3DRS_ZFUNC,D3DCMP_ALWAYS);	//used to display grid under map.

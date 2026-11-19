@@ -33,7 +33,6 @@
 #include "WW3D2/dx8indexbuffer.h"
 #include "WW3D2/shader.h"
 #include "WW3D2/vertmaterial.h"
-#include "WW3D2/light.h"
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
 
@@ -128,7 +127,6 @@ protected:
 	ShaderClass m_shaderClass; ///<shader or rendering state for heightmap
 	VertexMaterialClass	  		*m_vertexMaterialClass;	///<vertex lighting material
 	VertexMaterialClass			*m_meshVertexMaterialClass; ///<vertex lighting marial for 3D water.
-	LightClass					*m_meshLight;				///<light used for 3D Mesh Water.
 	TextureClass *m_alphaClippingTexture;	///<used for faked clipping using alpha
 	Real	m_dx;	///<x extent of water surface (offset from local center)
 	Real	m_dy;	///<y extent of water surface (offset from local center)
