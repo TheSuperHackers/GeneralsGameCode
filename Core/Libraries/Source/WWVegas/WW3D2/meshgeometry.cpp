@@ -97,9 +97,6 @@
 #include "w3d_file.h"
 #include "WWMath/vp.h"
 #include "htree.h"
-#include "WWMath/matrix4.h"
-#include "rinfo.h"
-#include "camera.h"
 
 
 #if (OPTIMIZE_PLANEEQ_RAM)
@@ -2086,42 +2083,5 @@ void MeshGeometryClass::get_deformed_vertices(Vector3 *dst_vert, Vector3 *dst_no
 		mytm.Set_Translation(Vector3(0.0f,0.0f,0.0f));
 		VectorProcessorClass::Transform(dst_norm+vi,src_norm+vi,mytm,cnt-vi);
 		vi=cnt;
-	}
-}
-
-// Destination pointers MUST point to arrays large enough to hold all vertices
-void MeshGeometryClass::get_deformed_screenspace_vertices(Vector4 *dst_vert,const RenderInfoClass & rinfo,const Matrix3D & mesh_transform,const HTreeClass * htree)
-{
-	Matrix4x4 prj = rinfo.Camera.Get_Projection_Matrix() * rinfo.Camera.Get_View_Matrix() * mesh_transform;
-
-	Vector3 * src_vert = Vertex->Get_Array();
-	int vertex_count=Get_Vertex_Count();
-
-	if (Get_Flag(SKIN) && VertexBoneLink && htree) {
-		uint16 * bonelink = VertexBoneLink->Get_Array();
-		for (int vi = 0; vi < vertex_count;) {
-			int idx=bonelink[vi];
-
-			Matrix4x4 tm = prj * htree->Get_Transform(idx);
-
-			// Count equal matrices (the vertices should be pre-sorted by matrices they use)
-			int cnt = vi;
-			for (; cnt < vertex_count; cnt++) if (idx!=bonelink[cnt]) break;
-
-			// Transform to screenspace (x,y,z,w)
-			VectorProcessorClass::Transform(
-				dst_vert+vi,
-				src_vert+vi,
-				tm,
-				cnt-vi);
-
-			vi=cnt;
-		}
-	} else {
-		VectorProcessorClass::Transform(
-			dst_vert,
-			src_vert,
-			prj,
-			vertex_count);
 	}
 }

@@ -55,7 +55,6 @@
 
 class TextureClass;
 class RenderInfoClass;
-class SpecialRenderInfoClass;
 class MatBufferClass;
 class TexBufferClass;
 class AABoxClass;
@@ -158,7 +157,6 @@ public:
 	MeshModelClass & operator = (const MeshModelClass & that);
 	void							Reset(int polycount,int vertcount,int passcount);
 	void							Register_For_Rendering();
-	void							Shadow_Render(SpecialRenderInfoClass & rinfo,const Matrix3D & tm,const HTreeClass * htree);
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	// Material interface, All of these functions call through to the current
