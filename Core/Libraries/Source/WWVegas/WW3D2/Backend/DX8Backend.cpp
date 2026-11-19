@@ -136,6 +136,51 @@ WW3DFormat Renderer::Get_Back_Buffer_Format()
     return DX8Wrapper::getBackBufferFormat();
 }
 
+bool Renderer::Supports_Texture_Format(WW3DFormat format)
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(format);
+}
+
+bool Renderer::Supports_DXTC()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_DXTC();
+}
+
+bool Renderer::Supports_Dot3()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_Dot3();
+}
+
+bool Renderer::Supports_Point_Sprites()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_PointSprites();
+}
+
+bool Renderer::Supports_NPatches()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_NPatches();
+}
+
+bool Renderer::Supports_Bump_Envmap()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_Bump_Envmap();
+}
+
+bool Renderer::Supports_Bump_Envmap_Luminance()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_Bump_Envmap_Luminance();
+}
+
+bool Renderer::Supports_ZBias()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_ZBias();
+}
+
+int Renderer::Get_Max_Textures_Per_Pass()
+{
+    return DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();
+}
+
 void Renderer::Set_Gamma(float gamma, float bright, float contrast, bool calibrate, bool uselimit)
 {
     DX8Wrapper::Set_Gamma(gamma, bright, contrast, calibrate, uselimit);
