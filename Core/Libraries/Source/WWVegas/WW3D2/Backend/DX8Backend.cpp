@@ -17,8 +17,9 @@
 */
 
 // TheSuperHackers @refactor bobtista 08/10/2026 DX8 definition of the Renderer
-// methods. Init and Shutdown own the DX8Wrapper lifecycle. The rendering methods
-// are one-line trampolines to the existing DX8Wrapper static API.
+// methods. Init and Shutdown own the DX8Wrapper lifecycle. Most rendering methods
+// are one-line trampolines to the existing DX8Wrapper static API. The effect
+// passes set the DX8 states of their effect.
 
 #include "WW3D2/Renderer.h"
 
@@ -26,7 +27,11 @@
 #include "WW3D2/formconv.h"
 #include "WWMath/vector3.h"
 #include "WW3D2/lightenvironment.h"
+#include "WW3D2/shader.h"
+#include "WW3D2/vertmaterial.h"
 #include "WWDebug/wwdebug.h"
+
+#include <d3dx8math.h>
 
 static unsigned short To_Unsigned_Short(unsigned int value)
 {
@@ -370,4 +375,40 @@ void Renderer::Clear_Light(unsigned index)
 void Renderer::Set_Fog(bool enable, const Vector3 & color, float start, float end)
 {
     DX8Wrapper::Set_Fog(enable, color, start, end);
+}
+
+void Renderer::Begin_Shroud_Overlay(const RenderShroudOverlay & overlay)
+{
+    VertexMaterialClass * material = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
+    DX8Wrapper::Set_Material(material);
+    REF_PTR_RELEASE(material);
+    DX8Wrapper::Set_Texture(0, overlay.texture);
+    DX8Wrapper::Set_Shader(ShaderClass::_PresetMultiplicativeSpriteShader);
+    DX8Wrapper::Apply_Render_State_Changes();
+
+    DX8Wrapper::Set_DX8_Texture_Stage_State(0, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEPOSITION);
+    DX8Wrapper::Set_DX8_Texture_Stage_State(0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
+    DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC, D3DCMP_EQUAL);
+
+    D3DXMATRIX view;
+    DX8Wrapper::_Get_DX8_Transform(D3DTS_VIEW, view);
+
+    D3DXMATRIX inverse_view;
+    float determinant;
+    D3DXMatrixInverse(&inverse_view, &determinant, &view);
+
+    D3DXMATRIX offset;
+    D3DXMATRIX scale;
+    D3DXMatrixTranslation(&offset, overlay.projection.offset_x, overlay.projection.offset_y, 0);
+    D3DXMatrixScaling(&scale, overlay.projection.scale_x, overlay.projection.scale_y, 1);
+    const D3DXMATRIX texture = (inverse_view * offset) * scale;
+    DX8Wrapper::_Set_DX8_Transform(D3DTS_TEXTURE0, texture);
+}
+
+void Renderer::End_Shroud_Overlay()
+{
+    DX8Wrapper::Set_Texture(0, nullptr);
+    DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+    DX8Wrapper::Set_DX8_Texture_Stage_State(0, D3DTSS_TEXCOORDINDEX, 0);
+    DX8Wrapper::Set_DX8_Texture_Stage_State(0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);
 }
