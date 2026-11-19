@@ -258,9 +258,9 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 	}
 
 	VertexMaterialClass * linemat = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(linemat);
-	DX8Wrapper::Set_Shader(Shader);
-	DX8Wrapper::Set_Texture(0, Texture);
+	Renderer::Set_Material(linemat);
+	Renderer::Set_Shader(Shader);
+	Renderer::Set_Texture(0, Texture);
 	REF_PTR_RELEASE(linemat);
 
 	WWASSERT(StartLineLoc && StartLineLoc->Get_Array());
@@ -466,13 +466,13 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 		}
 	}
 
-	DX8Wrapper::Set_Index_Buffer(iba, 0);
-	DX8Wrapper::Set_Vertex_Buffer(vba);
+	Renderer::Set_Index_Buffer(iba, 0);
+	Renderer::Set_Vertex_Buffer(vba);
 
 	if (sort) {
 		SortingRendererClass::Insert_Triangles(0, num_tris, 0, num_vertices);
 	} else {
-		DX8Wrapper::Draw_Triangles(0, num_tris, 0, num_vertices);
+		Renderer::Draw_Triangles(0, num_tris, 0, num_vertices);
 	}
 
 	// restore the matrices
