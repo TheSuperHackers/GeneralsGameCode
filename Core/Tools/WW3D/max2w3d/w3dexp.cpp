@@ -873,7 +873,7 @@ bool W3dExportClass::Export_Geometry(char * name,ChunkSaveClass & csave,Progress
 		targ.Header.Height=16;
 		targ.Header.PixelDepth=24;
 		targ.Header.ImageType=TGA_TRUECOLOR;
-		targ.SetImage(imageBuffer);
+		targ.SetImage(imageBuffer, sizeof(imageBuffer));
 		targ.YFlip();
 
 		if (context.numHouseColors)
