@@ -155,7 +155,7 @@ void ArchiveFile::getFileListInDirectory(const DetailedArchivedDirectoryInfo *di
 	for (; diriter != dirInfo->m_directories.end(); ++diriter) {
 		const DetailedArchivedDirectoryInfo *tempDirInfo = &(diriter->second);
 		AsciiString tempDirName = currentDirectory;
-		FileSystem::appendPathSeparator(tempDirName);
+		FileSystem::ensureTrailingPathSeparatorInPath(tempDirName);
 		tempDirName.concat(tempDirInfo->m_directoryName);
 		getFileListInDirectory(tempDirInfo, tempDirName, searchName, filenameList, searchSubdirectories);
 	}
@@ -166,7 +166,7 @@ void ArchiveFile::getFileListInDirectory(const DetailedArchivedDirectoryInfo *di
 		if (SearchStringMatches(fileInfo.m_filename, searchName)) {
 			AsciiString tempfilename;
 			tempfilename = currentDirectory;
-			FileSystem::appendPathSeparator(tempfilename);
+			FileSystem::ensureTrailingPathSeparatorInPath(tempfilename);
 			tempfilename.concat(fileInfo.m_filename);
 			if (filenameList.find(tempfilename) == filenameList.end()) {
 				// only insert into the list if its not already in there.
