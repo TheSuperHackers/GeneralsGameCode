@@ -120,7 +120,7 @@ void MaterialPassClass::Install_Materials() const
 {
 	Renderer::Set_Material(Peek_Material());
 	Renderer::Set_Shader(Peek_Shader());
-	for (int i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i)
+	for (int i=0;i<Renderer::Get_Max_Textures_Per_Pass();++i)
 	{
 		Renderer::Set_Texture(i,Peek_Texture(i));
 	}
