@@ -38,6 +38,7 @@
 
 #include "matrixmapper.h"
 #include "dx8wrapper.h"
+#include "Renderer.h"
 
 
 MatrixMapperClass::MatrixMapperClass(int stage) :
@@ -146,7 +147,7 @@ void MatrixMapperClass::Apply(int uv_array_index)
 		/*
 		** Orthographic projection
 		*/
-		DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE)(D3DTS_TEXTURE0 + Stage),ViewToPixel);
+		Renderer::Set_Texture_Transform(Stage,ViewToPixel);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXCOORDINDEX,D3DTSS_TCI_CAMERASPACEPOSITION);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
 		break;
@@ -157,7 +158,7 @@ void MatrixMapperClass::Apply(int uv_array_index)
 		m[0]=ViewToPixel[0];
 		m[1]=ViewToPixel[1];
 		m[2]=ViewToPixel[3];
-		DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE)(D3DTS_TEXTURE0 + Stage),m);
+		Renderer::Set_Texture_Transform(Stage,m);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXCOORDINDEX,D3DTSS_TCI_CAMERASPACEPOSITION);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_PROJECTED|D3DTTFF_COUNT3);
 		break;
@@ -170,7 +171,7 @@ void MatrixMapperClass::Apply(int uv_array_index)
 		*/
 		m[0].Set(0,0,0,GradientUCoord);
 		m[1]=ViewToPixel[2];
-		DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE)(D3DTS_TEXTURE0 + Stage),m);
+		Renderer::Set_Texture_Transform(Stage,m);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXCOORDINDEX,D3DTSS_TCI_CAMERASPACEPOSITION);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
 		break;
@@ -183,7 +184,7 @@ void MatrixMapperClass::Apply(int uv_array_index)
 		*/
 		m[0].Set(0,0,0,GradientUCoord);
 		m[1].Set(ViewSpaceProjectionNormal.X,ViewSpaceProjectionNormal.Y,ViewSpaceProjectionNormal.Z, 0);
-		DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE)(D3DTS_TEXTURE0 + Stage),m);
+		Renderer::Set_Texture_Transform(Stage,m);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXCOORDINDEX,D3DTSS_TCI_CAMERASPACENORMAL);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
 		break;

@@ -129,6 +129,7 @@ public:
     static void Set_Transform(RenderTransform transform, const Matrix4x4 & m);
     static void Set_Transform(RenderTransform transform, const Matrix3D & m);
     static void Get_Transform(RenderTransform transform, Matrix4x4 & m);
+    static void Set_Texture_Transform(unsigned stage, const Matrix4x4 & m);
     static void Set_World_Identity();
     static void Set_View_Identity();
     static void Set_Projection_Transform_With_Z_Bias(const Matrix4x4 & matrix, float znear, float zfar);
