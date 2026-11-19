@@ -83,6 +83,16 @@ public:
     static bool Has_Stencil();
     static WW3DFormat Get_Back_Buffer_Format();
 
+    static bool Supports_Texture_Format(WW3DFormat format);
+    static bool Supports_DXTC();
+    static bool Supports_Dot3();
+    static bool Supports_Point_Sprites();
+    static bool Supports_NPatches();
+    static bool Supports_Bump_Envmap();
+    static bool Supports_Bump_Envmap_Luminance();
+    static bool Supports_ZBias();
+    static int Get_Max_Textures_Per_Pass();
+
     static void Set_Gamma(float gamma, float bright, float contrast, bool calibrate = true, bool uselimit = true);
 
     static void Begin_Scene();
