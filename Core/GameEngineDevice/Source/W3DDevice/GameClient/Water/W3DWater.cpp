@@ -208,10 +208,6 @@ void WaterRenderObjClass::setupJbaWaterShader()
 	m_riverTexture->Get_Filter().Set_Min_Filter(TextureFilterClass::FILTER_TYPE_BEST);
 	m_riverTexture->Get_Filter().Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_BEST);
 
-
-//	Setting *setting=&m_settings[m_tod];
-
-
 	DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ALPHAOP,   D3DTOP_ADD );
 	if (!m_riverAlphaEdge->Is_Initialized())
@@ -2929,14 +2925,9 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 				vb->z=vertex.Z;
 
 				vb->diffuse= diffuse;
-				//Old slower version
- 				//vb->u1=(vertex.X/waterFactor) + 0.02*cos(11*m_riverVOrigin)*sin(25*m_riverVOrigin+vertex.X*PI/(4*MAP_XY_FACTOR));
- 				//vb->v1=(vertex.Y/waterFactor) + 0.02*cos(5*m_riverVOrigin)*sin(25*m_riverVOrigin+vertex.Y*PI/(4*MAP_XY_FACTOR));
 				vb->u1=vertex.X*ooWaterFactor + constA*WWMath::Fast_Sin(constC+vertex.X*constD);
 				vb->v1=vertex.Y*ooWaterFactor + constB*WWMath::Fast_Sin(constC+vertex.Y*constD);
 				vb->u2 = vertex.X/BUMP_SIZE;
-				//Old slower version
- 				//vb->v2 = vertex.Y/BUMP_SIZE + 0.3f*vertex.X/BUMP_SIZE;
 				vb->v2 = (vertex.Y+0.3f*vertex.X)/BUMP_SIZE;
 				vb->nx = 0;
 				vb->ny = 0;
