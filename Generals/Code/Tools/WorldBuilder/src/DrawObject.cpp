@@ -1845,7 +1845,7 @@ void DrawObject::Render(RenderInfoClass & rinfo)
  			Renderer::Set_Vertex_Buffer(m_vertexFeedback);
 			Renderer::Set_Index_Buffer(m_indexFeedback,0);
 			Renderer::Set_Shader(SC_OPAQUE_Z);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
+			Renderer::Set_Fill_Mode(RenderFillMode_Wireframe);
 			Renderer::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
 		}
 	} else if (m_toolWantsFeedback && !m_disableFeedback) {
@@ -1869,7 +1869,7 @@ void DrawObject::Render(RenderInfoClass & rinfo)
  			Renderer::Set_Vertex_Buffer(m_vertexFeedback);
 			Renderer::Set_Index_Buffer(m_indexFeedback,0);
 			Renderer::Set_Shader(SC_OPAQUE_Z);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_WIREFRAME);	// we want a solid ramp
+			Renderer::Set_Fill_Mode(RenderFillMode_Wireframe);	// we want a solid ramp
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_LIGHTING, FALSE);				// disable lighting
 			Renderer::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
 		}
@@ -1887,7 +1887,7 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 			Renderer::Set_Index_Buffer(m_indexFeedback,0);
 			Renderer::Set_Shader(m_shaderClass);
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_CULLMODE, D3DCULL_NONE);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_SOLID);	// we want a solid ramp
+			Renderer::Set_Fill_Mode(RenderFillMode_Solid);	// we want a solid ramp
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_LIGHTING, FALSE);				// disable lighting
 			Renderer::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
 		}
@@ -1905,7 +1905,7 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 			Renderer::Set_Index_Buffer(m_indexFeedback,0);
 			Renderer::Set_Shader(m_shaderClass);
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_CULLMODE, D3DCULL_NONE);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_SOLID);	// we want a solid ramp
+			Renderer::Set_Fill_Mode(RenderFillMode_Solid);	// we want a solid ramp
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_LIGHTING, FALSE);				// disable lighting
 			Renderer::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
 		}
