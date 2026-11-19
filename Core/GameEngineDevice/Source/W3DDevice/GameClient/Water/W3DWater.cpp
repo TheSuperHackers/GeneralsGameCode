@@ -51,24 +51,18 @@
 #include "WW3D2/matinfo.h"
 
 #include "Common/FramePacer.h"
+#include "Common/GameLOD.h"
 #include "Common/GameState.h"
 #include "Common/GlobalData.h"
-#include "Common/PerfTimer.h"
 #include "Common/Xfer.h"
-#include "Common/GameLOD.h"
 
 #include "GameClient/Color.h"
 #include "GameClient/Water.h"
-#include "GameLogic/GameLogic.h"
 #include "GameLogic/PolygonTrigger.h"
-#include "GameLogic/ScriptEngine.h"
-#include "W3DDevice/GameClient/W3DShaderManager.h"
-#include "W3DDevice/GameClient/W3DDisplay.h"
+#include "W3DDevice/GameClient/W3DCustomScene.h"
 #include "W3DDevice/GameClient/W3DPoly.h"
 #include "W3DDevice/GameClient/W3DScene.h"
-#include "W3DDevice/GameClient/W3DCustomScene.h"
-
-
+#include "W3DDevice/GameClient/W3DShaderManager.h"
 
 #define MIPMAP_BUMP_TEXTURE
 
