@@ -1196,6 +1196,7 @@ class ShroudTextureShader : public W3DShaderInterface
 	virtual Int init() override;			///<perform any one time initialization and validation
 	virtual void reset() override;		///<do any custom resetting necessary to bring W3D in sync.
 	Int m_stageOfSet;
+	Bool m_isOverlay;
 } shroudTextureShader;
 
 ///List of different shroud shader implementations in order of preference
@@ -1215,9 +1216,49 @@ Int ShroudTextureShader::init()
 	return TRUE;
 }
 
+//We need to scale so shroud texel stretches over one full terrain cell.  Each texel
+//is 1/128 the size of full texture. (assuming 128x128 vid-mem texture).
+static RenderWorldProjection getShroudProjection(W3DShroud *shroud)
+{
+	//We need to make all world coordinates be relative to the heightmap data origin since that
+	//is where the shroud begins.
+	Real width=shroud->getCellWidth();
+	Real height=shroud->getCellHeight();
+
+	RenderWorldProjection projection;
+	projection.offset_x = 0;
+	projection.offset_y = 0;
+	if (TheTerrainRenderObject->getMap())
+	{
+		//subtract origin position from all coordinates.  Origin is shifted by 1 cell width/height to allow for unused border texels.
+		projection.offset_x = -(float)shroud->getDrawOriginX() + width;
+		projection.offset_y = -(float)shroud->getDrawOriginY() + height;
+	}
+	projection.scale_x = 1.0f/(width*shroud->getTextureWidth());
+	projection.scale_y = 1.0f/(height*shroud->getTextureHeight());
+	return projection;
+}
+
 //Setup a texture projection in the given stage that applies our shroud.
 Int ShroudTextureShader::set(Int stage)
 {
+	W3DShroud *shroud = TheTerrainRenderObject->getShroud();
+	m_isOverlay = stage == 0 && shroud != nullptr;
+#if defined(RTS_DEBUG)
+	if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
+		m_isOverlay = false;
+#endif
+	// TheSuperHackers @refactor bobtista 19/11/2026 The renderer backend draws the stage 0 shroud overlay.
+	if (m_isOverlay)
+	{
+		RenderShroudOverlay overlay;
+		overlay.texture = W3DShaderManager::getShaderTexture(0);	//shroud always stored in texture 0
+		overlay.projection = getShroudProjection(shroud);
+		Renderer::Begin_Shroud_Overlay(overlay);
+		m_stageOfSet=stage;
+		return TRUE;
+	}
+
 	//force WW3D2 system to set it's states so it won't later overwrite our custom settings.
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 	Renderer::Set_Material(vmat);
@@ -1243,8 +1284,7 @@ Int ShroudTextureShader::set(Int stage)
 
 	//We need to scale so shroud texel stretches over one full terrain cell.  Each texel
 	//is 1/128 the size of full texture. (assuming 128x128 vid-mem texture).
-	W3DShroud *shroud;
-	if ((shroud=TheTerrainRenderObject->getShroud()) != nullptr)
+	if (shroud != nullptr)
 	{
 		///@todo: All this code really only need to be done once per camera/view.  Find a way to optimize it out.
 		D3DXMATRIX curView;
@@ -1285,6 +1325,12 @@ Int ShroudTextureShader::set(Int stage)
 
 void ShroudTextureShader::reset()
 {
+	if (m_isOverlay)
+	{
+		Renderer::End_Shroud_Overlay();
+		return;
+	}
+
 	Renderer::Set_Texture(m_stageOfSet,nullptr);
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC,D3DCMP_LESSEQUAL);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(m_stageOfSet,  D3DTSS_TEXCOORDINDEX, m_stageOfSet);

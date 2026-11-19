@@ -60,6 +60,22 @@ enum RenderTransform
     RenderTransform_Projection
 };
 
+// Maps world XY to texture UV as uv = (xy + offset) * scale.
+struct RenderWorldProjection
+{
+    float offset_x;
+    float offset_y;
+    float scale_x;
+    float scale_y;
+};
+
+// The terrain shroud multiplied onto drawn geometry.
+struct RenderShroudOverlay
+{
+    TextureClass * texture;
+    RenderWorldProjection projection;
+};
+
 // The interface holds only the methods that callers route through. The rest of
 // the DX8Wrapper API is called directly.
 
@@ -139,4 +155,9 @@ public:
     static void Set_Light(unsigned index, const LightClass & light);
     static void Clear_Light(unsigned index);
     static void Set_Fog(bool enable, const Vector3 & color, float start, float end);
+
+    // Draws until End_Shroud_Overlay multiply the frame by the shroud at the drawn world position.
+    // Only pixels at the depth already in the depth buffer change.
+    static void Begin_Shroud_Overlay(const RenderShroudOverlay & overlay);
+    static void End_Shroud_Overlay();
 };
