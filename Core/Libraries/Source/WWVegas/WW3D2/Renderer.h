@@ -28,10 +28,20 @@
 // Forward declarations keep this header includable without pulling in the full
 // WW3D2 header graph. All W3D classes below are passed by pointer or reference.
 
+class DynamicIBAccessClass;
+class DynamicVBAccessClass;
+class IndexBufferClass;
+class LightClass;
 class LightEnvironmentClass;
 class Matrix3D;
 class Matrix4x4;
+class ShaderClass;
+class TextureBaseClass;
+class TextureClass;
 class Vector3;
+class VertexBufferClass;
+class VertexMaterialClass;
+class ZTextureClass;
 
 struct RenderViewport
 {
@@ -73,6 +83,16 @@ public:
     static bool Has_Stencil();
     static WW3DFormat Get_Back_Buffer_Format();
 
+    static bool Supports_Texture_Format(WW3DFormat format);
+    static bool Supports_DXTC();
+    static bool Supports_Dot3();
+    static bool Supports_Point_Sprites();
+    static bool Supports_NPatches();
+    static bool Supports_Bump_Envmap();
+    static bool Supports_Bump_Envmap_Luminance();
+    static bool Supports_ZBias();
+    static int Get_Max_Textures_Per_Pass();
+
     static void Set_Gamma(float gamma, float bright, float contrast, bool calibrate = true, bool uselimit = true);
 
     static void Begin_Scene();
@@ -84,13 +104,39 @@ public:
     static void Set_Viewport(const RenderViewport & viewport);
     static void Invalidate_Cached_Render_States();
 
+    static void Set_Render_Target_With_Z(TextureClass * texture, ZTextureClass * ztexture = nullptr);
+    static void Set_Default_Render_Target();
+    static bool Is_Render_To_Texture();
+
+    static void Set_Shader(const ShaderClass & shader);
+    static void Set_Material(const VertexMaterialClass * material);
+    static void Set_Texture(unsigned stage, TextureBaseClass * texture);
+    static void Apply_Render_State_Changes();
+
+    static void Set_Vertex_Buffer(const VertexBufferClass * vb, unsigned stream = 0);
+    static void Set_Vertex_Buffer(const DynamicVBAccessClass & vba);
+    static void Set_Index_Buffer(const IndexBufferClass * ib, unsigned int index_base_offset);
+    static void Set_Index_Buffer(const DynamicIBAccessClass & iba, unsigned int index_base_offset);
+    static void Set_Index_Buffer_Index_Offset(unsigned offset);
+
+    static void Draw_Triangles(unsigned buffer_type, unsigned int start_index, unsigned int polygon_count,
+                               unsigned int min_vertex_index, unsigned int vertex_count);
+    static void Draw_Triangles(unsigned int start_index, unsigned int polygon_count,
+                               unsigned int min_vertex_index, unsigned int vertex_count);
+    static void Draw_Strip(unsigned int start_index, unsigned int polygon_count,
+                           unsigned int min_vertex_index, unsigned int vertex_count);
+
     static void Set_Transform(RenderTransform transform, const Matrix4x4 & m);
     static void Set_Transform(RenderTransform transform, const Matrix3D & m);
     static void Get_Transform(RenderTransform transform, Matrix4x4 & m);
+    static void Set_Texture_Transform(unsigned stage, const Matrix4x4 & m);
     static void Set_World_Identity();
     static void Set_View_Identity();
     static void Set_Projection_Transform_With_Z_Bias(const Matrix4x4 & matrix, float znear, float zfar);
 
     static void Set_Ambient(const Vector3 & color);
     static void Set_Light_Environment(LightEnvironmentClass * light_env);
+    static void Set_Light(unsigned index, const LightClass & light);
+    static void Clear_Light(unsigned index);
+    static void Set_Fog(bool enable, const Vector3 & color, float start, float end);
 };

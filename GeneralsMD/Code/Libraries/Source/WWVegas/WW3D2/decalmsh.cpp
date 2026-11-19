@@ -355,9 +355,9 @@ void RigidDecalMeshClass::Render()
 	while (next_poly_index < Polys.Count()) {
 		next_poly_index = Process_Material_Run(cur_poly_index);
 
-		DX8Wrapper::Set_Index_Buffer(dynamic_ib,0);
-		DX8Wrapper::Set_Vertex_Buffer(dynamic_vb);
-		DX8Wrapper::Draw_Triangles(	3*cur_poly_index,
+		Renderer::Set_Index_Buffer(dynamic_ib,0);
+		Renderer::Set_Vertex_Buffer(dynamic_vb);
+		Renderer::Draw_Triangles(	3*cur_poly_index,
 												(next_poly_index - cur_poly_index), // poly count
 												Polys[cur_poly_index].I,
 												1 + Polys[next_poly_index-1].K - Polys[cur_poly_index].I);
@@ -384,9 +384,9 @@ void RigidDecalMeshClass::Render()
  *=============================================================================================*/
 int RigidDecalMeshClass::Process_Material_Run(int start_index)
 {
-	DX8Wrapper::Set_Texture(0,Textures[start_index]);
-	DX8Wrapper::Set_Material(VertexMaterials[Polys[start_index].I]);
-	DX8Wrapper::Set_Shader(Shaders[start_index]);
+	Renderer::Set_Texture(0,Textures[start_index]);
+	Renderer::Set_Material(VertexMaterials[Polys[start_index].I]);
+	Renderer::Set_Shader(Shaders[start_index]);
 
 	int next_index = start_index;
 	while (	(next_index < Polys.Count()) &&
@@ -425,7 +425,7 @@ bool RigidDecalMeshClass::Create_Decal
 	// on hardware "polygon offset" we could remove this code and we could make decals non-sorting
 	Vector3 zbias_offset(0.0f,0.0f,0.0f);
 
-	if (!DX8Wrapper::Get_Current_Caps()->Support_ZBias()) {
+	if (!Renderer::Supports_ZBias()) {
 		const float ZBIAS_DISTANCE = 0.01f;
 		generator->Get_Transform().Get_Z_Vector(&zbias_offset);
 		Matrix3D invtm;
@@ -853,9 +853,9 @@ void SkinDecalMeshClass::Render()
 	while (next_poly_index < Polys.Count()) {
 		next_poly_index = Process_Material_Run(cur_poly_index);
 
-		DX8Wrapper::Set_Index_Buffer(dynamic_ib,0);
-		DX8Wrapper::Set_Vertex_Buffer(dynamic_vb);
-		DX8Wrapper::Draw_Triangles(3*cur_poly_index,
+		Renderer::Set_Index_Buffer(dynamic_ib,0);
+		Renderer::Set_Vertex_Buffer(dynamic_vb);
+		Renderer::Draw_Triangles(3*cur_poly_index,
 											(next_poly_index - cur_poly_index), // poly count
 											Polys[cur_poly_index].I,
 											1 + Polys[next_poly_index-1].K - Polys[cur_poly_index].I);
@@ -882,9 +882,9 @@ void SkinDecalMeshClass::Render()
  *=============================================================================================*/
 int SkinDecalMeshClass::Process_Material_Run(int start_index)
 {
-	DX8Wrapper::Set_Texture(0,Textures[start_index]);
-	DX8Wrapper::Set_Material(VertexMaterials[Polys[start_index].I]);
-	DX8Wrapper::Set_Shader(Shaders[start_index]);
+	Renderer::Set_Texture(0,Textures[start_index]);
+	Renderer::Set_Material(VertexMaterials[Polys[start_index].I]);
+	Renderer::Set_Shader(Shaders[start_index]);
 
 	int next_index = start_index;
 	while (	(next_index < Polys.Count()) &&
