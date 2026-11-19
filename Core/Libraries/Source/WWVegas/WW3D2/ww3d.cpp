@@ -638,13 +638,13 @@ WW3DErrorType WW3D::Render(SceneClass * scene,CameraClass * cam,bool clear,bool 
 	// set the rendering mode
 	switch(scene->Get_Polygon_Mode()) {
 		case SceneClass::POINT:
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_POINT);
+			Renderer::Set_Fill_Mode(RenderFillMode_Point);
 			break;
 		case SceneClass::LINE:
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
+			Renderer::Set_Fill_Mode(RenderFillMode_Wireframe);
 			break;
 		case SceneClass::FILL:
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_SOLID);
+			Renderer::Set_Fill_Mode(RenderFillMode_Solid);
 			break;
 	}
 
@@ -686,7 +686,7 @@ WW3DErrorType WW3D::Render(
 	rinfo.Camera.Apply();
 
 	// set the rendering mode
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_SOLID);
+	Renderer::Set_Fill_Mode(RenderFillMode_Solid);
 
 	// Install the lighting environment if one is supplied
 	if (rinfo.light_environment != nullptr) {

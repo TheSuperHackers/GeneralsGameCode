@@ -60,6 +60,23 @@ enum RenderTransform
     RenderTransform_Projection
 };
 
+enum RenderFillMode
+{
+    RenderFillMode_Point,
+    RenderFillMode_Wireframe,
+    RenderFillMode_Solid
+};
+
+enum RenderColorWrite
+{
+    RenderColorWrite_None = 0,
+    RenderColorWrite_Red = 1 << 0,
+    RenderColorWrite_Green = 1 << 1,
+    RenderColorWrite_Blue = 1 << 2,
+    RenderColorWrite_Alpha = 1 << 3,
+    RenderColorWrite_RGB = RenderColorWrite_Red | RenderColorWrite_Green | RenderColorWrite_Blue
+};
+
 // The interface holds only the methods that callers route through. The rest of
 // the DX8Wrapper API is called directly.
 
@@ -112,6 +129,9 @@ public:
     static void Set_Material(const VertexMaterialClass * material);
     static void Set_Texture(unsigned stage, TextureBaseClass * texture);
     static void Apply_Render_State_Changes();
+
+    static void Set_Fill_Mode(RenderFillMode mode);
+    static void Set_Color_Write_Mask(unsigned int mask);
 
     static void Set_Vertex_Buffer(const VertexBufferClass * vb, unsigned stream = 0);
     static void Set_Vertex_Buffer(const DynamicVBAccessClass & vba);

@@ -126,14 +126,14 @@ void SceneClass::Render(RenderInfoClass & rinfo)
 		switch (Get_Extra_Pass_Polygon_Mode()) {
 		case EXTRA_PASS_LINE:
 			WW3D::Enable_Texturing(false);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
+			Renderer::Set_Fill_Mode(RenderFillMode_Wireframe);
 			DX8Wrapper::Set_DX8_Render_State (D3DRS_ZBIAS, 7);
 			Customized_Render(rinfo);
 			break;
 		case EXTRA_PASS_CLEAR_LINE:
 			Renderer::Clear(true, false, Vector3(0.0f,0.0f,0.0f));	// Clear color but not z
 			WW3D::Enable_Texturing(false);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
+			Renderer::Set_Fill_Mode(RenderFillMode_Wireframe);
 			DX8Wrapper::Set_DX8_Render_State (D3DRS_ZBIAS, 7);
 			Customized_Render(rinfo);
 			break;

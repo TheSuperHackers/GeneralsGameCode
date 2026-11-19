@@ -44,6 +44,44 @@ static D3DTRANSFORMSTATETYPE To_D3D_Transform(RenderTransform transform)
     return D3DTS_WORLD;
 }
 
+static D3DFILLMODE To_D3D_Fill_Mode(RenderFillMode mode)
+{
+    switch (mode)
+    {
+    case RenderFillMode_Point:
+        return D3DFILL_POINT;
+    case RenderFillMode_Wireframe:
+        return D3DFILL_WIREFRAME;
+    case RenderFillMode_Solid:
+        return D3DFILL_SOLID;
+    }
+    WWASSERT(0);
+    return D3DFILL_SOLID;
+}
+
+static unsigned int To_D3D_Color_Write_Mask(unsigned int mask)
+{
+    WWASSERT((mask & ~(RenderColorWrite_RGB | RenderColorWrite_Alpha)) == 0);
+    unsigned int d3dMask = 0;
+    if (mask & RenderColorWrite_Red)
+    {
+        d3dMask |= D3DCOLORWRITEENABLE_RED;
+    }
+    if (mask & RenderColorWrite_Green)
+    {
+        d3dMask |= D3DCOLORWRITEENABLE_GREEN;
+    }
+    if (mask & RenderColorWrite_Blue)
+    {
+        d3dMask |= D3DCOLORWRITEENABLE_BLUE;
+    }
+    if (mask & RenderColorWrite_Alpha)
+    {
+        d3dMask |= D3DCOLORWRITEENABLE_ALPHA;
+    }
+    return d3dMask;
+}
+
 static bool Initialized = false;
 static bool Lite = false;
 
@@ -258,6 +296,16 @@ void Renderer::Set_Texture(unsigned stage, TextureBaseClass * texture)
 void Renderer::Apply_Render_State_Changes()
 {
     DX8Wrapper::Apply_Render_State_Changes();
+}
+
+void Renderer::Set_Fill_Mode(RenderFillMode mode)
+{
+    DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE, To_D3D_Fill_Mode(mode));
+}
+
+void Renderer::Set_Color_Write_Mask(unsigned int mask)
+{
+    DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE, To_D3D_Color_Write_Mask(mask));
 }
 
 void Renderer::Set_Vertex_Buffer(const VertexBufferClass * vb, unsigned stream)
