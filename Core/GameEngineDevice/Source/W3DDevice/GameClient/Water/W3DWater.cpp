@@ -671,46 +671,6 @@ HRESULT WaterRenderObjClass::generateIndexBuffer(Int sizeX, Int sizeY)
 		}
 	}
 
-	/*Old way
-	Int step=1;
-	Int psize=(size-1)/step;
-
-	m_numIndices=psize*((psize+1)*2)+(psize*2)-2;
-
-
-	Int x,z,s_toggle=1;
-	for (z=step; z<size; z+=step)
-	{
-		if (s_toggle)
-		{
-			for (x=0; x<(size-step); x+=step)
-			{
-				*pIndices++=(WORD)((z-0)*size+(x));
-				*pIndices++=(WORD)((z-step)*size+(x));
-			}
-				*pIndices++=(WORD)((z-0)*size+(size-1));
-			*pIndices++=(WORD)((z-step)*size+(size-1));
-			// insert additional degenerate to start next row
-			*pIndices++=pIndices[-2];
-			*pIndices++=pIndices[-1];
-		}
-		else
-		{
-			*pIndices++=(WORD)((z-step)*size+(size-1));
-			*pIndices++=(WORD)((z-0)*size+(size-1));
-			for (x=size-1; x>0; x-=step)
-			{
-				*pIndices++=(WORD)((z-step)*size+(x-step));
-				*pIndices++=(WORD)((z-0)*size+(x-step));
-			}
-			// insert additional degenerate to start next row
-			*pIndices++=pIndices[-1];
-			*pIndices++=pIndices[-1];
-		}
-
-		s_toggle=!s_toggle;
-	}
-*/
 	if (FAILED(hr=m_indexBufferD3D->Unlock())) return hr;
 
 	return S_OK;
