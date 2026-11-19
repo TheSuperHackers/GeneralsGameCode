@@ -3171,6 +3171,17 @@ Bool Object::hasAnySpecialPower() const
   return SPECIALPOWERMASK_ANY_SET( m_specialPowerBits );
 }
 
+void Object::doPowerDisable(bool disabling)
+{
+	if( isKindOf(KINDOF_POWERED) )
+	{
+		if( disabling )
+			setDisabled( DISABLED_UNDERPOWERED ); //set disabled has a pauseAllSpecialPowers that prevents double pausing
+		else
+			clearDisabled( DISABLED_UNDERPOWERED );
+	}
+}
+
 //-------------------------------------------------------------------------------------------------
 void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback )
 {
