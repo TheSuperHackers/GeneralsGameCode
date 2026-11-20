@@ -60,6 +60,30 @@ enum RenderTransform
     RenderTransform_Projection
 };
 
+enum RenderBlend
+{
+    RenderBlend_Zero,
+    RenderBlend_One,
+    RenderBlend_SrcColor,
+    RenderBlend_InvSrcColor,
+    RenderBlend_SrcAlpha,
+    RenderBlend_InvSrcAlpha,
+    RenderBlend_DestAlpha,
+    RenderBlend_InvDestAlpha,
+    RenderBlend_DestColor,
+    RenderBlend_InvDestColor,
+    RenderBlend_SrcAlphaSat
+};
+
+enum RenderBlendOp
+{
+    RenderBlendOp_Add,
+    RenderBlendOp_Subtract,
+    RenderBlendOp_RevSubtract,
+    RenderBlendOp_Min,
+    RenderBlendOp_Max
+};
+
 // The interface holds only the methods that callers route through. The rest of
 // the DX8Wrapper API is called directly.
 
@@ -112,6 +136,10 @@ public:
     static void Set_Material(const VertexMaterialClass * material);
     static void Set_Texture(unsigned stage, TextureBaseClass * texture);
     static void Apply_Render_State_Changes();
+
+    static void Set_Alpha_Blend_Enable(bool enable);
+    static void Set_Blend_Factors(RenderBlend src, RenderBlend dest);
+    static void Set_Blend_Op(RenderBlendOp op);
 
     static void Set_Vertex_Buffer(const VertexBufferClass * vb, unsigned stream = 0);
     static void Set_Vertex_Buffer(const DynamicVBAccessClass & vba);
