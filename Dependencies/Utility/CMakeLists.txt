@@ -17,6 +17,7 @@ set(UTILITY_SRC
     Utility/iostream_adapter.h
     Utility/lazy_static.h
     Utility/mem_compat.h
+    Utility/numeric_adapter.h
     Utility/pseh_compat.h
     Utility/sstream_adapter.h
     Utility/stdio_adapter.h
