@@ -237,7 +237,7 @@ protected:
 	void addMapObject(RoadSegment *pRoad, Bool updateTheCounts);
 	void adjustStacking(Int topUniqueID, Int bottomUniqueID);
 	Int findCrossTypeJoinVector(Vector2 loc, Vector2 *joinVector, Int uniqueID);
-	void flipTheRoad(RoadSegment *pRoad) {TRoadPt tmp=pRoad->m_pt1; pRoad->m_pt1 = pRoad->m_pt2; pRoad->m_pt2 = tmp;}; ///< Flips the loc1 and loc2 info.
+	void flipTheRoad(RoadSegment *pRoad) {std::swap(pRoad->m_pt1, pRoad->m_pt2);}; ///< Flips the loc1 and loc2 info.
 	void insertCurveSegmentAt(Int ndx1, Int ndx2);
 	void insertCrossTypeJoins();
 	void insertJoinAt(Int ndx);

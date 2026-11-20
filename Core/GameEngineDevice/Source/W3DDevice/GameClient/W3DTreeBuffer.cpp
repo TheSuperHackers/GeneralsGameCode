@@ -398,9 +398,7 @@ void W3DTreeBuffer::sort(Int numIterations)
 		for (i=cur+1; i<m_numTrees-iter; i++) {
 			if (m_trees[i].visible) {
 				if (m_trees[cur].sortKey > m_trees[i].sortKey) {
-					TTree tmp = m_trees[cur];
-					m_trees[cur] = m_trees[i];
-					m_trees[i] = tmp;
+					std::swap(m_trees[cur], m_trees[i]);
 					swap = true;
 				}
 				cur = i;

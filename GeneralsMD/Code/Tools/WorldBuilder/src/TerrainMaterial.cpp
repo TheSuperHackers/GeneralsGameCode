@@ -384,9 +384,7 @@ void TerrainMaterial::updateTextures(WorldHeightMapEdit *pMap)
 void TerrainMaterial::OnSwapTextures()
 {
 
-	Int tmp = m_currentFgTexture;
-	m_currentFgTexture = m_currentBgTexture;
-	m_currentBgTexture = tmp;
+	std::swap(m_currentFgTexture, m_currentBgTexture);
 	m_terrainSwatches.Invalidate();
 	updateTextureSelection();
 }

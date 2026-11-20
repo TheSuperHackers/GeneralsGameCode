@@ -223,9 +223,7 @@ int Pick_Random_Number(T & generator, int minval, int maxval)
 	**	Ensure that the min and max range values are in proper order.
 	*/
 	if (minval > maxval) {
-		int temp = minval;
-		minval = maxval;
-		maxval = temp;
+		std::swap(minval, maxval);
 	}
 
 	/*

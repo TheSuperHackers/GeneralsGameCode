@@ -323,37 +323,11 @@ WindowSelectionEntry *GUIEdit::findSelectionEntry( GameWindow *window )
 //=============================================================================
 void GUIEdit::normalizeRegion( IRegion2D *region )
 {
-	ICoord2D temp;
-
 	if( region->hi.x < region->lo.x )
-	{
+		std::swap( region->hi.x, region->lo.x );
 
-		if( region->hi.y < region->lo.y )
-		{
-
-			temp = region->hi;
-			region->hi = region->lo;
-			region->lo = temp;
-
-		}
-		else
-		{
-
-			temp = region->hi;
-			region->hi.x = region->lo.x;
-			region->lo.x = temp.x;
-
-		}
-
-	}
-	else if( region->hi.y < region->lo.y )
-	{
-
-		temp = region->hi;
-		region->hi.y = region->lo.y;
-		region->lo.y = temp.y;
-
-	}
+	if( region->hi.y < region->lo.y )
+		std::swap( region->hi.y, region->lo.y );
 
 }
 
