@@ -72,7 +72,8 @@ public:
 		}
 	};
 
-	TextureLocation Find_Or_Insert(TextureClass& source, bool premultiplyAlpha);    // Gets the page holding the texture and its uv rectangle, or a nullptr page if not found.
+	// A location is valid only during the frame it was created. Returns a nullptr page if not packed.
+	TextureLocation Find_Or_Insert(TextureClass& source, bool premultiplyAlpha);
 	void Reset();    // Release all pages.
 
 	static int Wrap_Or_Clamp(int coordinate, int size, bool wrap);
@@ -95,7 +96,7 @@ private:
 
 	typedef std::map<StringClass, TextureLocation> TextureLocationMap;
 
-	void Evict_If_Out_Of_Space();
+	void Evict_Oldest_Page();
 	bool Has_Pack_Budget();
 	TextureLocation Pack_Texture(const TextureClass& source, bool premultiplyAlpha);
 	bool Allocate_Cell(int width, int height, int& pageIndex, int& x, int& y);

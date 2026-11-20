@@ -52,8 +52,13 @@ TextureAtlasClass::TextureLocation TextureAtlasClass::Find_Or_Insert(TextureClas
 		return TextureLocation::Create_Invalid();
 	}
 
-	// Page eviction must happen early to avoid invalidating in-use packed textures in the middle of a render batch.
-	Evict_If_Out_Of_Space();
+	// If an earlier texture did not fit because all pages were full, the atlas was marked out of space.
+	// Evict the oldest page to make room, but only in a later frame: locations returned in the frame
+	// that ran out of space must stay valid until that frame ends.
+	if (OutOfSpace && OutOfSpaceFrame != WW3D::Get_Frame_Count() && !Pages.empty())
+	{
+		Evict_Oldest_Page();
+	}
 
 	TextureLocationMap& locations = TextureLocations[premultiplyAlpha ? PREMULTIPLY_ON : PREMULTIPLY_OFF];
 	TextureLocationMap::iterator it = locations.find(source.Get_Texture_Name());
@@ -79,14 +84,8 @@ TextureAtlasClass::TextureLocation TextureAtlasClass::Find_Or_Insert(TextureClas
 	return it->second;
 }
 
-void TextureAtlasClass::Evict_If_Out_Of_Space()
+void TextureAtlasClass::Evict_Oldest_Page()
 {
-	// Evict only after a texture did not fit in an earlier frame.
-	if (!OutOfSpace || OutOfSpaceFrame == WW3D::Get_Frame_Count() || Pages.empty())
-	{
-		return;
-	}
-
 	// Forget the textures of the oldest page and the rejected ones, so that they are packed again when drawn.
 	TextureClass* evicted = Pages.front().texture.Peek();
 	for (int i = 0; i < ARRAY_SIZE(TextureLocations); ++i)
