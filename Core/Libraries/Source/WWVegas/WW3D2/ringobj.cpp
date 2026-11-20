@@ -84,7 +84,7 @@
 #include	"WWMath/wwmath.h"
 #include "assetmgr.h"
 #include "WWLib/wwstring.h"
-#include "WWLib/bound.h"
+#include <Utility/clamp_adapter.h>
 #include "camera.h"
 #include "statistics.h"
 #include "predlod.h"
@@ -996,7 +996,7 @@ float RingRenderObjClass::Get_Post_Increment_Value() const
 
 void RingRenderObjClass::Set_LOD_Level(int lod)
 {
-	CurrentLOD = Bound(lod, 0, RING_NUM_LOD);	// RING_NUM_LOD doesn't include the null LOD
+	CurrentLOD = std::clamp(lod, 0, RING_NUM_LOD);	// RING_NUM_LOD doesn't include the null LOD
 }
 
 int RingRenderObjClass::Get_LOD_Level() const

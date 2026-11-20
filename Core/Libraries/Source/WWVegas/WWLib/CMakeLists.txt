@@ -12,7 +12,6 @@ set(WWLIB_SRC
     #bfiofile.h
     binheap.h
     bittype.h
-    bound.h
     BSEARCH.h
     buff.cpp
     BUFF.h

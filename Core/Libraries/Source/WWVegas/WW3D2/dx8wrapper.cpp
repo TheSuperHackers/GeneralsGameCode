@@ -81,7 +81,7 @@
 #include "dx8convert.h"
 #include "formconv.h"
 #include "dx8texman.h"
-#include "WWLib/bound.h"
+#include <Utility/clamp_adapter.h>
 #include "DbgHelpGuard.h"
 #include <Utility/bit_adapter.h>
 
@@ -3596,9 +3596,9 @@ unsigned int DX8Wrapper::Get_Free_Texture_RAM()
 // Contrast - controls the difference between the maximum and the minimum of the curve
 void DX8Wrapper::Set_Gamma(float gamma,float bright,float contrast,bool calibrate,bool uselimit)
 {
-	gamma=Bound(gamma,0.6f,6.0f);
-	bright=Bound(bright,-0.5f,0.5f);
-	contrast=Bound(contrast,0.5f,2.0f);
+	gamma=std::clamp(gamma,0.6f,6.0f);
+	bright=std::clamp(bright,-0.5f,0.5f);
+	contrast=std::clamp(contrast,0.5f,2.0f);
 	float oo_gamma=1.0f/gamma;
 
 	DX8_Assert();
@@ -3621,10 +3621,10 @@ void DX8Wrapper::Set_Gamma(float gamma,float bright,float contrast,bool calibrat
 		float in,out;
 		in=i/256.0f;
 		float x=in-limit;
-		x=Bound(x,0.0f,1.0f);
+		x=std::clamp(x,0.0f,1.0f);
 		x=powf(x,oo_gamma);
 		out=contrast*x+bright;
-		out=Bound(out,0.0f,1.0f);
+		out=std::clamp(out,0.0f,1.0f);
 		ramp.red[i]=(WORD) (out*65535);
 		ramp.green[i]=(WORD) (out*65535);
 		ramp.blue[i]=(WORD) (out*65535);
