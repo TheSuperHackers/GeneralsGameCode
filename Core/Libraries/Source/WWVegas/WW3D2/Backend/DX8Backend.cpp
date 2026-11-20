@@ -44,6 +44,56 @@ static D3DTRANSFORMSTATETYPE To_D3D_Transform(RenderTransform transform)
     return D3DTS_WORLD;
 }
 
+static D3DBLEND To_D3D_Blend(RenderBlend blend)
+{
+    switch (blend)
+    {
+    case RenderBlend_Zero:
+        return D3DBLEND_ZERO;
+    case RenderBlend_One:
+        return D3DBLEND_ONE;
+    case RenderBlend_SrcColor:
+        return D3DBLEND_SRCCOLOR;
+    case RenderBlend_InvSrcColor:
+        return D3DBLEND_INVSRCCOLOR;
+    case RenderBlend_SrcAlpha:
+        return D3DBLEND_SRCALPHA;
+    case RenderBlend_InvSrcAlpha:
+        return D3DBLEND_INVSRCALPHA;
+    case RenderBlend_DestAlpha:
+        return D3DBLEND_DESTALPHA;
+    case RenderBlend_InvDestAlpha:
+        return D3DBLEND_INVDESTALPHA;
+    case RenderBlend_DestColor:
+        return D3DBLEND_DESTCOLOR;
+    case RenderBlend_InvDestColor:
+        return D3DBLEND_INVDESTCOLOR;
+    case RenderBlend_SrcAlphaSat:
+        return D3DBLEND_SRCALPHASAT;
+    }
+    WWASSERT(0);
+    return D3DBLEND_ONE;
+}
+
+static D3DBLENDOP To_D3D_Blend_Op(RenderBlendOp op)
+{
+    switch (op)
+    {
+    case RenderBlendOp_Add:
+        return D3DBLENDOP_ADD;
+    case RenderBlendOp_Subtract:
+        return D3DBLENDOP_SUBTRACT;
+    case RenderBlendOp_RevSubtract:
+        return D3DBLENDOP_REVSUBTRACT;
+    case RenderBlendOp_Min:
+        return D3DBLENDOP_MIN;
+    case RenderBlendOp_Max:
+        return D3DBLENDOP_MAX;
+    }
+    WWASSERT(0);
+    return D3DBLENDOP_ADD;
+}
+
 static bool Initialized = false;
 static bool Lite = false;
 
@@ -258,6 +308,22 @@ void Renderer::Set_Texture(unsigned stage, TextureBaseClass * texture)
 void Renderer::Apply_Render_State_Changes()
 {
     DX8Wrapper::Apply_Render_State_Changes();
+}
+
+void Renderer::Set_Alpha_Blend_Enable(bool enable)
+{
+    DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHABLENDENABLE, enable ? TRUE : FALSE);
+}
+
+void Renderer::Set_Blend_Factors(RenderBlend src, RenderBlend dest)
+{
+    DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND, To_D3D_Blend(src));
+    DX8Wrapper::Set_DX8_Render_State(D3DRS_DESTBLEND, To_D3D_Blend(dest));
+}
+
+void Renderer::Set_Blend_Op(RenderBlendOp op)
+{
+    DX8Wrapper::Set_DX8_Render_State(D3DRS_BLENDOP, To_D3D_Blend_Op(op));
 }
 
 void Renderer::Set_Vertex_Buffer(const VertexBufferClass * vb, unsigned stream)
