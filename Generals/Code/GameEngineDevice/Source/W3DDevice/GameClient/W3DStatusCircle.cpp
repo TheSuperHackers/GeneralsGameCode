@@ -362,21 +362,19 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 			Renderer::Draw_Triangles(	0,2, 0,	(2*3));
 			break;
 		case ScriptEngine::FADE_SUBTRACT:
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_BLENDOP, D3DBLENDOP_REVSUBTRACT );
+			Renderer::Set_Blend_Op(RenderBlendOp_RevSubtract);
 			Renderer::Draw_Triangles(	0,2, 0,	(2*3));
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_BLENDOP, D3DBLENDOP_ADD );
+			Renderer::Set_Blend_Op(RenderBlendOp_Add);
 			break;
 		case ScriptEngine::FADE_SATURATE:
 			// 4x multiply
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND,D3DBLEND_DESTCOLOR);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_DESTBLEND,D3DBLEND_SRCCOLOR);
+			Renderer::Set_Blend_Factors(RenderBlend_DestColor, RenderBlend_SrcColor);
 			Renderer::Draw_Triangles(	0,2, 0,	(2*3));
 			Renderer::Draw_Triangles(	0,2, 0,	(2*3));
 			break;
 		case ScriptEngine::FADE_MULTIPLY:
 			// Straight multiply
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND,D3DBLEND_ZERO);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_DESTBLEND,D3DBLEND_SRCCOLOR);
+			Renderer::Set_Blend_Factors(RenderBlend_Zero, RenderBlend_SrcColor);
 			Renderer::Draw_Triangles(	0,2, 0,	(2*3));
 			break;
 	}
