@@ -174,6 +174,18 @@ public:
 	static Bool groundCliff(const PathfindCell& targetCell, const PathfindCell& sourceCell);
 
 private:
+	// TheSuperHackers @fix Mauller 20/11/2026 Prefer greater cost-so-far when total path costs are tied.
+	// Equal total and cost-so-far values retain insertion order.
+	static Bool hasHigherPriority(const PathfindCellInfo* a, const PathfindCellInfo* b)
+	{
+		if (a->m_totalCost == b->m_totalCost)
+		{
+			return a->m_costSoFar > b->m_costSoFar;
+		}
+
+		return a->m_totalCost < b->m_totalCost;
+	}
+
 	PathfindCellInfo *m_info;
 	ObjectID m_obstacleID;	                  ///< the object ID who overlaps this cell
 	UnsignedInt m_blockedByAlly : 1;          ///< True if this cell is blocked by an allied unit.
