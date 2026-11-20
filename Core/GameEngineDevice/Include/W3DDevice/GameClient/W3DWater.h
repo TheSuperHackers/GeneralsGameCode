@@ -35,6 +35,7 @@
 #include "WW3D2/vertmaterial.h"
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
+#include "W3DDevice/GameClient/W3DRiver.h"
 
 #define INVALID_WATER_HEIGHT 0.0f	///water height guaranteed to be below all terrain.
 
@@ -200,18 +201,16 @@ protected:
 	Int  m_gridCellsY;					///<number of cells along height
 
 	Real m_riverVOrigin;
-	TextureClass *m_riverTexture;
 	TextureClass *m_whiteTexture;		///< a texture containing only white used for null pixel shader stages.
 	TextureClass *m_waterNoiseTexture;
 	DWORD	m_waterPixelShader;		///<D3D handle to pixel shader.
-	DWORD	m_riverWaterPixelShader;		///<D3D handle to pixel shader.
 	DWORD	m_trapezoidWaterPixelShader;	///<handle to D3D vertex shader
 	TextureClass *m_waterSparklesTexture;
 	Real m_riverXOffset;
 	Real m_riverYOffset;
 	Bool m_drawingRiver;
 	Bool m_disableRiver;
-	TextureClass *m_riverAlphaEdge;
+	W3DRiver m_river;
 
 	TimeOfDay m_tod;	///<time of day setting for reflected cloud layer
 
@@ -246,7 +245,6 @@ protected:
 	Bool getClippedWaterPlane(CameraClass *cam, AABoxClass *box);
 
 	void setupFlatWaterShader();
-	void setupJbaWaterShader();
 	void cleanupJbaWaterShader();
 
 	//Methods used for GeForce3 specific water
