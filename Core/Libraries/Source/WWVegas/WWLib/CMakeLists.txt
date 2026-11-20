@@ -10,7 +10,6 @@ set(WWLIB_SRC
     base64.h
     #bfiofile.cpp
     #bfiofile.h
-    binheap.h
     bittype.h
     bound.h
     BSEARCH.h
@@ -23,7 +22,6 @@ set(WWLIB_SRC
     chunkio.h
     cpudetect.cpp
     cpudetect.h
-    #crandom.h
     crc.cpp
     CRC.h
     #crcpipe.cpp
@@ -45,9 +43,7 @@ set(WWLIB_SRC
     hash.h
     hashcalc.h
     HASHLIST.h
-    #hashtab.h
     hashtemplate.h
-    #incdec.h
     INDEX.h
     ini.cpp
     INI.h
@@ -75,7 +71,6 @@ set(WWLIB_SRC
     multilist.h
     mutex.cpp
     mutex.h
-    #noinit.h
     notifier.h
     nstrdup.cpp
     nstrdup.h
@@ -98,7 +93,6 @@ set(WWLIB_SRC
     refcount.h
     #regexpr.cpp
     #regexpr.h
-    #search.h
     sharebuf.h
     Signaler.h
     simplevec.h
@@ -111,7 +105,6 @@ set(WWLIB_SRC
     STRAW.h
     strtok_r.cpp
     strtok_r.h
-    #swap.h
     systimer.cpp
     systimer.h
     TARGA.cpp
