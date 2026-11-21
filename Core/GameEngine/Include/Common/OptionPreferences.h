@@ -130,5 +130,7 @@ public:
 
 	Bool getShowMoneyPerMinute() const;
 
+	Bool getShroudInterpolation() const;
+
 	Real getGameWindowTransitionSpeedMultiplier() const;
 };
