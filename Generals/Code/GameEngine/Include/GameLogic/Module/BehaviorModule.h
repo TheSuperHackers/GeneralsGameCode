@@ -257,6 +257,9 @@ class LandMineInterface
 public:
 	virtual void setScootParms(const Coord3D& start, const Coord3D& end) = 0;
 	virtual void disarm() = 0;
+	virtual void setCovered(Bool covered) = 0;
+	virtual Bool isCovered() const = 0;
+	virtual Bool isUnderStructure(const Object* ignore) const = 0;
 };
 
 //-------------------------------------------------------------------------------------------------
