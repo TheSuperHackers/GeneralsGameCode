@@ -57,27 +57,6 @@ jobs:
             sudo apt-get $APT_OPTS install -y -f
           fi
 
-      - name: Install Wine and widl
-        run: |
-          # Add Wine repository
-          sudo dpkg --add-architecture i386
-          sudo mkdir -pm755 /etc/apt/keyrings
-          sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
-
-          # Determine Ubuntu codename
-          CODENAME=$(lsb_release -cs)
-
-          # Download appropriate sources file
-          sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/${CODENAME}/winehq-${CODENAME}.sources || {
-            sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources
-          }
-
-          # Update and install Wine
-          sudo apt-get update
-          sudo apt-get install -y --install-recommends winehq-stable wine-stable-dev || {
-            sudo apt-get install -y wine-stable-dev
-          }
-
       - name: Cache CMake Dependencies
         id: cache-cmake-deps
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
