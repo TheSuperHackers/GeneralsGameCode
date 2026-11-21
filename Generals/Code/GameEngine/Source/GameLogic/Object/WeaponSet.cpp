@@ -461,6 +461,31 @@ static Int getVictimAntiMask(const Object* victim)
 }
 
 //-------------------------------------------------------------------------------------------------
+void WeaponSet::weaponSetOnWeaponBonusChange(const Object *source)
+{
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix Mauller 16/10/2026 Prevent cyclic updating of shared reload time weapons.
+	// These weapons get updated in a loop within onWeaponBonusChange() and cyclic updating can misapply the bonus.
+	Weapon* currentWeapon = getCurWeapon();
+
+	if (currentWeapon && source->isReloadTimeShared())
+	{
+		currentWeapon->onWeaponBonusChange(source);
+		return;
+	}
+#endif
+
+	for( Int i = 0; i < WEAPONSLOT_COUNT;	i++ )
+	{
+		Weapon *weapon = m_weapons[ i ];
+		if( weapon )
+		{
+			weapon->onWeaponBonusChange(source);
+		}
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
 Bool WeaponSet::isAnyWithinTargetPitch(const Object* obj, const Object* victim) const
 {
 	if (!m_hasPitchLimit)
