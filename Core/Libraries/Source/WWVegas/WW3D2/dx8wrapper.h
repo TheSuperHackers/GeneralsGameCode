@@ -624,6 +624,7 @@ protected:
 	static bool Find_Color_Mode(D3DFORMAT colorbuffer, int resx, int resy, UINT *mode);
 	static bool Find_Z_Mode(D3DFORMAT colorbuffer,D3DFORMAT backbuffer, D3DFORMAT *zmode);
 	static bool Test_Z_Mode(D3DFORMAT colorbuffer,D3DFORMAT backbuffer, D3DFORMAT zmode);
+	static void Use_Display_Format_For_Fullscreen_Back_Buffer();
 	static void Compute_Caps(WW3DFormat display_format);
 
 	/*
@@ -651,6 +652,8 @@ protected:
 	static bool								IsWindowed;
 	static D3DFORMAT					DisplayFormat;
 	static D3DMULTISAMPLE_TYPE	MultiSampleAntiAliasing;
+	static bool								FullscreenBackBufferUsesDisplayFormat;
+	static unsigned						FullscreenResetsWithoutPresent;
 
 
 	// shader system updates KJM v
