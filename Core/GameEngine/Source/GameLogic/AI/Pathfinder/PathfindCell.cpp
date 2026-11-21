@@ -869,26 +869,24 @@ UnsignedInt PathfindCell::costToGoal( PathfindCell *goal )
 {
 	DEBUG_ASSERTCRASH(m_info, ("Has to have info."));
 #if RETAIL_COMPATIBLE_PATHFINDING
-	if (!s_useFixedPathfinding) {
-	Int dx = m_info->m_pos.x - goal->getXIndex();
-	Int dy = m_info->m_pos.y - goal->getYIndex();
+	if (!s_useFixedPathfinding)
+	{
+		Int dx = m_info->m_pos.x - goal->getXIndex();
+		Int dy = m_info->m_pos.y - goal->getYIndex();
 #define NO_REAL_DIST
 #ifdef REAL_DIST
-	Int cost = COST_ORTHOGONAL*WWMath::Sqrt((float)(dx*dx + dy*dy));
+		Int cost = COST_ORTHOGONAL*WWMath::Sqrt((float)(dx*dx + dy*dy));
 #else
-	if (dx<0) dx = -dx;
-	if (dy<0) dy = -dy;
-	Int cost;
-	if (dx>dy) {
-		cost= COST_ORTHOGONAL*dx + (COST_ORTHOGONAL*dy)/2;
-	}	else {
-		cost= COST_ORTHOGONAL*dy + (COST_ORTHOGONAL*dx)/2;
-	}
-
+		if (dx<0) dx = -dx;
+		if (dy<0) dy = -dy;
+		Int cost;
+		if (dx>dy) {
+			cost= COST_ORTHOGONAL*dx + (COST_ORTHOGONAL*dy)/2;
+		}	else {
+			cost= COST_ORTHOGONAL*dy + (COST_ORTHOGONAL*dx)/2;
+		}
 #endif
-
-
-	return cost;
+		return cost;
 	}
 	else
 #endif
@@ -905,11 +903,12 @@ UnsignedInt PathfindCell::costToHierGoal( PathfindCell *goal )
 		return 100000; //...patch hack 1.01
 	}
 #if RETAIL_COMPATIBLE_PATHFINDING
-	if (!s_useFixedPathfinding) {
-	Int dx = m_info->m_pos.x - goal->getXIndex();
-	Int dy = m_info->m_pos.y - goal->getYIndex();
-	Int cost = REAL_TO_INT_FLOOR(COST_ORTHOGONAL*WWMath::Sqrt((float)(dx*dx + dy*dy)) + 0.5f);
-	return cost;
+	if (!s_useFixedPathfinding)
+	{
+		Int dx = m_info->m_pos.x - goal->getXIndex();
+		Int dy = m_info->m_pos.y - goal->getYIndex();
+		Int cost = REAL_TO_INT_FLOOR(COST_ORTHOGONAL*WWMath::Sqrt((float)(dx*dx + dy*dy)) + 0.5f);
+		return cost;
 	}
 	else
 #endif
