@@ -571,6 +571,7 @@ public:
 	Bool				m_breakTheMovie;								///< The user has hit escape!
 	AsciiString m_modDir;
 	AsciiString m_modBIG;
+	std::vector<AsciiString> m_dataDirs;	///< Folders with lower priority .big files, one per -dataDir.
 
 	//-allAdvice feature
 	//Bool m_allAdvice;
