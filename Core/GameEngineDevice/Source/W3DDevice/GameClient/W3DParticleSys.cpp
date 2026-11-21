@@ -62,7 +62,6 @@ W3DParticleSystemManager::W3DParticleSystemManager()
 	m_onScreenParticleCount = 0;
 
 	m_pointGroup = NEW PointGroupClass();
-	//m_streakLine = nullptr;
 	m_streakLine = NEW StreakLineClass();
 	m_terrainParticles = NEW W3DTerrainParticles();
 
@@ -76,12 +75,7 @@ W3DParticleSystemManager::~W3DParticleSystemManager()
 {
 	delete m_pointGroup;
 
-//	W3DDisplay::m_3DScene->Remove_Render_Object( m_streakLine );
-
-	if (m_streakLine)
-	{
-		REF_PTR_RELEASE(m_streakLine);
-	}
+	delete m_streakLine;
 
 	delete m_terrainParticles;
 	m_terrainParticles = nullptr;

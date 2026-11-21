@@ -34,16 +34,18 @@
 
 #pragma once
 
-#include "rendobj.h"
+#include "WWMath/aabox.h"
+#include "WWMath/sphere.h"
 #include "WW3D2/shader.h"
 #include "WWLib/simplevec.h"
 #include "seglinerenderer.h"
 #include "streakRender.h"
 
 class TextureClass;
+class RenderInfoClass;
 
 /*
-** StreakLineClass -- a render object for rendering thick segmented lines.
+** StreakLineClass -- a drawing helper for thick segmented lines.
 **										essentially it is segmentedlineclass++
 **										with added characteristics, such as varying thickness, opacity
 **										color and precise texture tiling...
@@ -51,14 +53,13 @@ class TextureClass;
 ** the upcoming merge with the LasVegas code (to keep our changes out of their code)
 */
 
-class StreakLineClass : public RenderObjClass
+class StreakLineClass
 {
 	public:
 
 		StreakLineClass();
 		StreakLineClass(const StreakLineClass & src);
 		StreakLineClass & operator = (const StreakLineClass &that);
-//		virtual ~StreakLineClass();
 
 		void					Reset_Line();
 
@@ -118,46 +119,9 @@ class StreakLineClass : public RenderObjClass
 		void					Set_Disable_Sorting(int onoff);
 		void					Set_End_Caps(int onoff);
 
-		/////////////////////////////////////////////////////////////////////////////
-		// Render Object Interface - Cloning and Identification
-		/////////////////////////////////////////////////////////////////////////////
-		virtual RenderObjClass *	Clone() const override;
-		virtual int						Class_ID()	const override { return CLASSID_SEGLINE; }
-		virtual int						Get_Num_Polys() const override;
-
-		/////////////////////////////////////////////////////////////////////////////
-		// Render Object Interface - Rendering
-		/////////////////////////////////////////////////////////////////////////////
-		virtual void					Render( RenderInfoClass & rinfo ) override;
-
-		/////////////////////////////////////////////////////////////////////////////
-		// Render Object Interface - Bounding Volumes
-		/////////////////////////////////////////////////////////////////////////////
-		virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
-		virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
-
-		/////////////////////////////////////////////////////////////////////////////
-		// Render Object Interface - Predictive LOD
-		/////////////////////////////////////////////////////////////////////////////
-		virtual void					Prepare_LOD(CameraClass &camera) override;
-		virtual void					Increment_LOD() override;
-		virtual void					Decrement_LOD() override;
-		virtual float					Get_Cost() const override;
-		virtual float					Get_Value() const override;
-		virtual float					Get_Post_Increment_Value() const override;
-		virtual void					Set_LOD_Level(int lod) override;
-		virtual int						Get_LOD_Level() const override;
-		virtual int						Get_LOD_Count() const override;
-
-		/////////////////////////////////////////////////////////////////////////////
-		// Render Object Interface - Attributes, Options, Properties, etc
-		/////////////////////////////////////////////////////////////////////////////
-//		virtual void					Set_Texture_Reduction_Factor(float trf);
-
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// Render Object Interface - Collision Detection
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual bool					Cast_Ray(RayCollisionTestClass & raytest) override;
+		void Render(RenderInfoClass &rinfo);
+		void Get_Obj_Space_Bounding_Sphere(SphereClass &sphere) const;
+		void Get_Obj_Space_Bounding_Box(AABoxClass &box) const;
 
 		void	Set_LocsWidthsColors( unsigned int num_points,
 																Vector3 *locs,
@@ -184,8 +148,6 @@ class StreakLineClass : public RenderObjClass
 		// per-particle seeds
 		unsigned int					*Personalities;
 
-		// Normalized screen area - used for LOD purposes
-		float								NormalizedScreenArea;
 
 	// Per-point location array
 	//ShareBufferClass<Vector3> *PointLocations;
