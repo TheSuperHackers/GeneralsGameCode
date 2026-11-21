@@ -30,28 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 6                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   CompositeRenderObjClass::CompositeRenderObjClass -- Constructor                           *
- *   CompositeRenderObjClass::CompositeRenderObjClass -- copy constructor                      *
- *   CompositeRenderObjClass::~CompositeRenderObjClass -- Destructor                           *
- *   CompositeRenderObjClass::operator -- assignment operator                                  *
- *   CompositeRenderObjClass::Restart -- Recursively call Restart on all sub-objects           *
- *   CompositeRenderObjClass::Get_Name -- returns the name of this render object               *
- *   CompositeRenderObjClass::Set_Name -- sets the name of this render object                  *
- *   CompositeRenderObjClass::Set_Base_Model_Name -- sets the "base-model-name"                *
- *   CompositeRenderObjClass::Get_Num_Polys -- returns the number of polys                     *
- *   CompositeRenderObjClass::Notify_Added -- notify all sub-objects that they were added      *
- *   CompositeRenderObjClass::Notify_Removed -- notifies all subobjs they were removed from th *
- *   CompositeRenderObjClass::Cast_Ray -- cast a ray against this object                       *
- *   CompositeRenderObjClass::Cast_AABox -- cast a swept AABox against this object             *
- *   CompositeRenderObjClass::Cast_OBBox -- cast a swept OBBox against this object             *
- *   CompositeRenderObjClass::Intersect_AABox -- intersect this object with an AABox           *
- *   CompositeRenderObjClass::Intersect_OBBox -- intersect this object with an OBBox           *
- *   CompositeRenderObjClass::Create_Decal -- create a decal on this object                    *
- *   CompositeRenderObjClass::Delete_Decal -- remove a logical decal from this object          *
- *   CompositeRenderObjClass::Update_Obj_Space_Bounding_Volumes -- updates the object-space BV *
- *   CompositeRenderObjClass::Set_User_Data -- set the userdata pointer                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -60,34 +38,11 @@
 #include <stdlib.h>
 
 
-/***********************************************************************************************
- * CompositeRenderObjClass::CompositeRenderObjClass -- Constructor                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 CompositeRenderObjClass::CompositeRenderObjClass()
 {
 }
 
 
-/***********************************************************************************************
- * CompositeRenderObjClass::CompositeRenderObjClass -- copy constructor                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 CompositeRenderObjClass::CompositeRenderObjClass(const CompositeRenderObjClass & that)
 {
 	Set_Name(that.Get_Name());
@@ -95,35 +50,11 @@ CompositeRenderObjClass::CompositeRenderObjClass(const CompositeRenderObjClass &
 }
 
 
-/***********************************************************************************************
- * CompositeRenderObjClass::~CompositeRenderObjClass -- Destructor                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 CompositeRenderObjClass::~CompositeRenderObjClass()
 {
 }
 
 
-/***********************************************************************************************
- * CompositeRenderObjClass::operator -- assignment operator                                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 CompositeRenderObjClass & CompositeRenderObjClass::operator = (const CompositeRenderObjClass & that)
 {
 	Set_Name(that.Get_Name());
@@ -132,18 +63,6 @@ CompositeRenderObjClass & CompositeRenderObjClass::operator = (const CompositeRe
 }
 
 
-/***********************************************************************************************
- * CompositeRenderObjClass::Restart -- Recursively call Restart on all sub-objects             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/30/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 void CompositeRenderObjClass::Restart()
 {
 	for (int ni = 0; ni < Get_Num_Sub_Objects(); ni++) {
@@ -154,56 +73,19 @@ void CompositeRenderObjClass::Restart()
 	}
 }
 
-/***********************************************************************************************
- * CompositeRenderObjClass::Get_Name -- returns the name of this render object                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 const char * CompositeRenderObjClass::Get_Name() const
 {
 	return Name;
 }
 
 
-/***********************************************************************************************
- * CompositeRenderObjClass::Set_Name -- sets the name of this render object                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void CompositeRenderObjClass::Set_Name(const char * name)
 {
 	Name=name;
 }
 
 
-/***********************************************************************************************
- * CompositeRenderObjClass::Set_Base_Model_Name -- sets the "base-model-name"                  *
- *                                                                                             *
- *    The base-model-name was needed by the aggregate code.  Ask Patrick Smith about it :-)    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// The base-model-name was needed by the aggregate code. Ask Patrick Smith about it :-).
 void CompositeRenderObjClass::Set_Base_Model_Name(const char *name)
 {
 	// null is a legal value for BaseModelName. Unfortunately,
@@ -217,18 +99,6 @@ void CompositeRenderObjClass::Set_Base_Model_Name(const char *name)
 }
 
 
-/***********************************************************************************************
- * CompositeRenderObjClass::Get_Num_Polys -- returns the number of polys                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 int CompositeRenderObjClass::Get_Num_Polys() const
 {
 	int count = 0;
@@ -242,18 +112,6 @@ int CompositeRenderObjClass::Get_Num_Polys() const
 }
 
 
-/***********************************************************************************************
- * CompositeRenderObjClass::Notify_Added -- notify all sub-objects that they were added        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void CompositeRenderObjClass::Notify_Added(SceneClass * scene)
 {
 	RenderObjClass::Notify_Added(scene);
@@ -266,18 +124,6 @@ void CompositeRenderObjClass::Notify_Added(SceneClass * scene)
 }
 
 
-/***********************************************************************************************
- * CompositeRenderObjClass::Notify_Removed -- notifies all subobjs they were removed from the  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void CompositeRenderObjClass::Notify_Removed(SceneClass * scene)
 {
 	for (int ni = 0; ni < Get_Num_Sub_Objects(); ni++) {
@@ -290,18 +136,6 @@ void CompositeRenderObjClass::Notify_Removed(SceneClass * scene)
 }
 
 
-/***********************************************************************************************
- * CompositeRenderObjClass::Cast_Ray -- cast a ray against this object                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 bool CompositeRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 {
 	bool res = false;
@@ -315,18 +149,6 @@ bool CompositeRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 }
 
 
-/***********************************************************************************************
- * CompositeRenderObjClass::Cast_AABox -- cast a swept AABox against this object               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 bool CompositeRenderObjClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 {
 	bool res = false;
@@ -340,18 +162,6 @@ bool CompositeRenderObjClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * CompositeRenderObjClass::Cast_OBBox -- cast a swept OBBox against this object               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 bool CompositeRenderObjClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 {
 	bool res = false;
@@ -365,18 +175,6 @@ bool CompositeRenderObjClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * CompositeRenderObjClass::Intersect_AABox -- intersect this object with an AABox             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 bool CompositeRenderObjClass::Intersect_AABox(AABoxIntersectionTestClass & boxtest)
 {
 	bool res = false;
@@ -390,18 +188,6 @@ bool CompositeRenderObjClass::Intersect_AABox(AABoxIntersectionTestClass & boxte
 }
 
 
-/***********************************************************************************************
- * CompositeRenderObjClass::Intersect_OBBox -- intersect this object with an OBBox             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 bool CompositeRenderObjClass::Intersect_OBBox(OBBoxIntersectionTestClass & boxtest)
 {
 	bool res = false;
@@ -415,18 +201,6 @@ bool CompositeRenderObjClass::Intersect_OBBox(OBBoxIntersectionTestClass & boxte
 }
 
 
-/***********************************************************************************************
- * CompositeRenderObjClass::Create_Decal -- create a decal on this object                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void CompositeRenderObjClass::Create_Decal(DecalGeneratorClass * generator)
 {
 	for (int i=0; i<Get_Num_Sub_Objects(); i++) {
@@ -438,21 +212,8 @@ void CompositeRenderObjClass::Create_Decal(DecalGeneratorClass * generator)
 }
 
 
-/***********************************************************************************************
- * CompositeRenderObjClass::Delete_Decal -- remove a logical decal from this object            *
- *                                                                                             *
- * This internally removes all decals with the given ID.  The ID comes from the generator      *
- * which was used to create the decals.                                                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// Removes all decals with the given ID. The ID comes from the generator which was used to create
+// the decals.
 void CompositeRenderObjClass::Delete_Decal(uint32 decal_id)
 {
 	for (int i=0; i<Get_Num_Sub_Objects(); i++) {
@@ -464,18 +225,6 @@ void CompositeRenderObjClass::Delete_Decal(uint32 decal_id)
 }
 
 
-/***********************************************************************************************
- * CompositeRenderObjClass::Update_Obj_Space_Bounding_Volumes -- updates the object-space BVs  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void CompositeRenderObjClass::Update_Obj_Space_Bounding_Volumes()
 {
 	int i;
@@ -525,18 +274,6 @@ void CompositeRenderObjClass::Update_Obj_Space_Bounding_Volumes()
    if (container) container->Update_Obj_Space_Bounding_Volumes();
 }
 
-/***********************************************************************************************
- * CompositeRenderObjClass::Set_User_Data -- set the userdata                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void CompositeRenderObjClass::Set_User_Data(void *value, bool recursive)
 {
 	RenderObjClass::Set_User_Data(value);

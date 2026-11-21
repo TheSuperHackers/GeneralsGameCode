@@ -35,8 +35,6 @@
  * 06/26/02 KM VB Vertex format update for shaders                                       *
  * 07/17/02 KM VB Vertex format update for displacement mapping                               *
  * 08/01/02 KM VB Vertex format update for cube mapping                               *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once

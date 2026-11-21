@@ -30,41 +30,6 @@
  *																			*
  *                   Last Update : October 15, 2001  [MML]					*
  *																			*
- *--------------------------------------------------------------------------*
- * Functions:																*
- *		WinMain																*
- *		Main::MessageLoop													*
- *		MainWindow::Register												*
- *		MainWindow::MainWindow												*
- *		MainWindow::Window_Proc												*
- *		MainWindow::Is_Product_Registered									*
- *		MainWindow::Run_Explorer											*
- *		MainWindow::Run_Game												*
- *		MainWindow::Run_Setup												*
- *		MainWindow::Run_New_Account											*
- *		MainWindow::Run_Register											*
- *		MainWindow::Run_Auto_Update											*
- *		MainWindow::Run_Uninstall											*
- *		MainWindow::Create_Buttons											*
- *		Wnd_Proc															*
- *		Dialog_Box_Proc														*
- *		Stop_Sound_Playing													*
- *		Options																*
- *		Valid_Environment													*
- *		LoadResourceBitmap													*
- *		CreateDIBPalette													*
- *		LoadResourceButton													*
- *		Cant_Find_MessageBox												*
- *		Error_Message														*
- *		Path_Add_Back_Slash													*
- *		Path_Remove_Back_Slash												*
- *		PlugInProductName													*
- *		Fix_Single_Ampersands												*
- *		Fix_Double_Ampersands												*
- *		LaunchObjectClass::LaunchObjectClass								*
- *		LaunchObjectClass::SetPath											*
- *		LaunchObjectClass::SetArgs											*
- *		LaunchObjectClass::Launch											*
  *--------------------------------------------------------------------------*/
 
 
@@ -5109,19 +5074,6 @@ void Cant_Find_MessageBox ( HINSTANCE hInstance, const char *szPath )
 
 }
 
-
-/******************************************************************************
- * Error_Message --
- *
- * INPUT:
- *
- * OUTPUT:
- *
- * WARNINGS:   none
- *
- * HISTORY:
- *   08/14/1998 MML : Created.
- *============================================================================*/
 
 void Error_Message ( HINSTANCE hInstance, const char * title, const char * string, const char *path )
 {

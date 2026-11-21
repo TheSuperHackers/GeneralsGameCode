@@ -30,34 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 5                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *                                                                                             *
- *  CDControlClass::Auto_Eject_Volume -- Eject the removable media                             *
- *  CDControlClass::Auto_Eject_Volume_95 -- Eject the specified CD drive                       *
- *  CDControlClass::CDControlClass -- Class constructor                                        *
- *  CDControlClass::Close_Removable_Volume -- Close the handle to a removable volume           *
- *  CDControlClass::Close_VWin32 -- Closes the handle opened by Open_VWin32.                   *
- *  CDControlClass::Dismount_Volume -- Dismount the given volume                               *
- *  CDControlClass::Eject_CD -- Force the CD drive to eject                                    *
- *  CDControlClass::Eject_CD_Win95 -- Eject the cd in the given drive                          *
- *  CDControlClass::Force_CD_Eject -- Ppen the CD tray on the given drive                      *
- *  CDControlClass::Lock_CD_Drive -- Lock the CD tray and prevent ejection                     *
- *  CDControlClass::Lock_CD_Drive_95 -- Prevent the user from ejecting the cd in the given driv*
- *  CDControlClass::Lock_CD_Tray -- Prevent CD ejection on the specified drive                 *
- *  CDControlClass::Lock_Logical_Volume -- Take a lock on a logical volume                     *
- *  CDControlClass::Lock_Volume -- Prevent access by other threads to a given volume           *
- *  CDControlClass::Lock_Volume_95 -- Locks removable media so that it can't be ejected        *
- *  CDControlClass::Open_Removable_Volume -- Fetch a handle to a removable drive               *
- *  CDControlClass::Open_VWin32 -- Opens a handle to VWIN32 to issue low-level disk I/O        *
- *  CDControlClass::Prevent_Removal_Of_Volume -- Disable the eject button on the given drive   *
- *  CDControlClass::Unlock_CD_Drive -- Unlock the CD tray and allow ejection                   *
- *  CDControlClass::Unlock_CD_Drive_95 -- Allow the user to eject the cd in the given drive    *
- *  CDControlClass::Unlock_CD_Tray -- Allow CD ejection on the specified drive                 *
- *  CDControlClass::Unlock_Logical_Volume -- Unlocks a logical volume                          *
- *  CDControlClass::Unlock_Volume -- Allow access by other threads to a given volume           *
- *  CDControlClass::Unlock_Volume_95 -- Unlocks removable media so that it can be ejected      *
- *  CDControlClass::~CDControlClass -- Class destructor                                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"assert.h"
@@ -76,51 +48,16 @@ CDControlClass CDControl;
 void Last_Error_Text ( LPCTSTR szPrefix, HRESULT hr );
 
 
-/***********************************************************************************************
- * CDControlClass::CDControlClass -- Class constructor                                         *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/17/99 2:03AM ST : Created                                                               *
- *=============================================================================================*/
 CDControlClass::CDControlClass()
 {
 }
 
 
-/***********************************************************************************************
- * CDControlClass::~CDControlClass -- Class destructor                                         *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/17/99 2:03AM ST : Created                                                               *
- *=============================================================================================*/
 CDControlClass::~CDControlClass()
 {
 }
 
-/***********************************************************************************************
- * CDControlClass::Force_CD_Eject -- Ppen the CD tray on the given drive                       *
- *                                                                                             *
- * INPUT:    Drive number (0=a, 1=b etc)                                                       *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/17/99 1:17AM ST : Created                                                               *
- *=============================================================================================*/
+// The drive number is 0 for a, 1 for b and so on.
 void CDControlClass::Force_CD_Eject(int drive)
 {
 	if ( WinVersion.Is_Win9x() ) {
@@ -130,18 +67,7 @@ void CDControlClass::Force_CD_Eject(int drive)
 	}
 }
 
-/***********************************************************************************************
- * CDControlClass::Lock_CD_Tray -- Prevent CD ejection on the specified drive                  *
- *                                                                                             *
- * INPUT:    drive number (0=a: etc)                                                           *
- *                                                                                             *
- * OUTPUT:   true if locked                                                                    *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *               2/17/99 1:56AM ST : Created                                                   *
- *=============================================================================================*/
+// The drive number is 0 for a, 1 for b and so on.
 bool CDControlClass::Lock_CD_Tray (int drive)
 {
 	if ( WinVersion.Is_Win9x() ) {
@@ -151,18 +77,7 @@ bool CDControlClass::Lock_CD_Tray (int drive)
 	}
 }
 
-/***********************************************************************************************
- * CDControlClass::Unlock_CD_Tray -- Allow CD ejection on the specified drive                  *
- *                                                                                             *
- * INPUT:    drive number (0=a: etc)                                                           *
- *                                                                                             *
- * OUTPUT:   true if unlocked OK                                                               *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *         2/17/99 1:57AM ST : Created                                                         *
- *=============================================================================================*/
+// The drive number is 0 for a, 1 for b and so on.
 bool CDControlClass::Unlock_CD_Tray (int drive)
 {
 	if ( WinVersion.Is_Win9x() ) {
@@ -172,18 +87,6 @@ bool CDControlClass::Unlock_CD_Tray (int drive)
 	}
 }
 
-/***********************************************************************************************
- * CDControlClass::Open_Removable_Volume -- Fetch a handle to a removable drive                *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/16/99 11:25PM ST : Created                                                              *
- *=============================================================================================*/
 HANDLE CDControlClass::Open_Removable_Volume( char drive )
 {
 	assert (WinVersion.Is_WinNT());
@@ -231,36 +134,13 @@ HANDLE CDControlClass::Open_Removable_Volume( char drive )
 	return( volume );
 }
 
-/***********************************************************************************************
- * CDControlClass::Close_Removable_Volume -- Close the handle to a removable volume             *
- *                                                                                             *
- * INPUT:    HANDLE of volume to close                                                         *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/16/99 11:27PM ST : Created                                                              *
- *=============================================================================================*/
 bool CDControlClass::Close_Removable_Volume(HANDLE volume)
 {
 	assert (WinVersion.Is_WinNT());
 	return ((CloseHandle(volume)) ? true : false);
 }
 
-/***********************************************************************************************
- * CDControlClass::Lock_Volume -- Prevent access by other threads to a given volume            *
- *                                                                                             *
- * INPUT:    HANDLE to volume                                                                  *
- *                                                                                             *
- * OUTPUT:   true if locked                                                                    *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/16/99 11:29PM ST : Created                                                              *
- *=============================================================================================*/
+// Prevent access by other threads to a given volume.
 bool CDControlClass::Lock_Volume( HANDLE volume )
 {
 	assert( WinVersion.Is_WinNT( ));
@@ -284,18 +164,7 @@ bool CDControlClass::Lock_Volume( HANDLE volume )
 	return( false );
 }
 
-/***********************************************************************************************
- * CDControlClass::Unlock_Volume -- Allow access by other threads to a given volume            *
- *                                                                                             *
- * INPUT:    HANDLE to volume                                                                  *
- *                                                                                             *
- * OUTPUT:   true if unlocked                                                                  *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/16/99 11:29PM ST : Created                                                              *
- *=============================================================================================*/
+// Allow access by other threads to a given volume.
 bool CDControlClass::Unlock_Volume(HANDLE volume)
 {
 	assert( WinVersion.Is_WinNT());
@@ -318,18 +187,6 @@ bool CDControlClass::Unlock_Volume(HANDLE volume)
 	return( false );
 }
 
-/***********************************************************************************************
- * CDControlClass::Dismount_Volume -- Dismount the given volume                                *
- *                                                                                             *
- * INPUT:    HANDLE of volume to dismount                                                      *
- *                                                                                             *
- * OUTPUT:   true if volume dismounted OK                                                      *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/16/99 11:31PM ST : Created                                                              *
- *=============================================================================================*/
 bool CDControlClass::Dismount_Volume(HANDLE volume)
 {
 	assert( WinVersion.Is_WinNT());
@@ -345,19 +202,7 @@ bool CDControlClass::Dismount_Volume(HANDLE volume)
 	return( result );
 }
 
-/***********************************************************************************************
- * CDControlClass::Prevent_Removal_Of_Volume -- Disable the eject button on the given drive    *
- *                                                                                             *
- * INPUT:    HANDLE of volume to enable/disable                                                *
- *           true to prevent removal. false to allow it.                                       *
- *                                                                                             *
- * OUTPUT:   true if status changed OK                                                         *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/16/99 11:32PM ST : Created                                                              *
- *=============================================================================================*/
+// Disable the eject button on the given drive.
 bool CDControlClass::Prevent_Removal_Of_Volume( HANDLE volume, bool prevent )
 {
 	assert( WinVersion.Is_WinNT());
@@ -377,18 +222,6 @@ bool CDControlClass::Prevent_Removal_Of_Volume( HANDLE volume, bool prevent )
 	return( result );
 }
 
-/***********************************************************************************************
- * CDControlClass::Auto_Eject_Volume -- Eject the removable media                              *
- *                                                                                             *
- * INPUT:    HANDLE of volume to eject                                                         *
- *                                                                                             *
- * OUTPUT:   true if ejection occurred                                                         *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/16/99 11:34PM ST : Created                                                              *
- *=============================================================================================*/
 bool CDControlClass::Auto_Eject_Volume(HANDLE volume)
 {
 	assert (WinVersion.Is_WinNT());
@@ -403,18 +236,6 @@ bool CDControlClass::Auto_Eject_Volume(HANDLE volume)
 	return (result);
 }
 
-/***********************************************************************************************
- * CDControlClass::Eject_CD -- Force the CD drive to eject                                     *
- *                                                                                             *
- * INPUT:    drive number                                                                      *
- *                                                                                             *
- * OUTPUT:   true if ejected                                                                   *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/16/99 11:35PM ST : Created                                                              *
- *=============================================================================================*/
 bool CDControlClass::Eject_CD(char drive)
 {
 	assert (WinVersion.Is_WinNT());
@@ -446,18 +267,6 @@ bool CDControlClass::Eject_CD(char drive)
 	return (ejected);
 }
 
-/***********************************************************************************************
- * CDControlClass::Lock_CD_Drive -- Lock the CD tray and prevent ejection                      *
- *                                                                                             *
- * INPUT:    drive number                                                                      *
- *                                                                                             *
- * OUTPUT:   true if locked                                                                    *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/17/99 0:11AM ST : Created                                                               *
- *=============================================================================================*/
 bool CDControlClass::Lock_CD_Drive(char drive)
 {
 	assert (WinVersion.Is_WinNT());
@@ -490,18 +299,6 @@ bool CDControlClass::Lock_CD_Drive(char drive)
 	return (true);
 }
 
-/***********************************************************************************************
- * CDControlClass::Unlock_CD_Drive -- Unlock the CD tray and allow ejection                    *
- *                                                                                             *
- * INPUT:    drive number                                                                      *
- *                                                                                             *
- * OUTPUT:   true if unlocked                                                                  *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/17/99 0:11AM ST : Created                                                               *
- *=============================================================================================*/
 bool CDControlClass::Unlock_CD_Drive(char drive)
 {
 	assert (WinVersion.Is_WinNT());
@@ -534,18 +331,7 @@ bool CDControlClass::Unlock_CD_Drive(char drive)
 	return (true);
 }
 
-/***********************************************************************************************
- * CDControlClass::Eject_CD_Win95 -- Eject the cd in the given drive                           *
- *                                                                                             *
- * INPUT:    drive. 0=a etc.                                                                   *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/17/99 1:04AM ST : Created                                                               *
- *=============================================================================================*/
+// The drive number is 0 for a, 1 for b and so on.
 void CDControlClass::Eject_CD_Win95 (char drive)
 {
 	assert (WinVersion.Is_Win9x());
@@ -588,18 +374,7 @@ void CDControlClass::Eject_CD_Win95 (char drive)
 	Close_VWin32 (vwin32);
 }
 
-/***********************************************************************************************
- * CDControlClass::Lock_CD_Drive_95 -- Prevent the user from ejecting the cd in the given drive*
- *                                                                                             *
- * INPUT:    drive. 0=a etc.                                                                   *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/17/99 1:04AM ST : Created                                                               *
- *=============================================================================================*/
+// The drive number is 0 for a, 1 for b and so on.
 bool CDControlClass::Lock_CD_Drive_95 (char drive)
 {
 //	DebugString ("CDControlClass::Lock_CD_Drive_95\n");
@@ -656,18 +431,7 @@ bool CDControlClass::Lock_CD_Drive_95 (char drive)
 	return (retval);
 }
 
-/***********************************************************************************************
- * CDControlClass::Unlock_CD_Drive_95 -- Allow the user to eject the cd in the given drive     *
- *                                                                                             *
- * INPUT:    drive. 0=a etc.                                                                   *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/17/99 1:04AM ST : Created                                                               *
- *=============================================================================================*/
+// The drive number is 0 for a, 1 for b and so on.
 bool CDControlClass::Unlock_CD_Drive_95 (char drive)
 {
 //	DebugString ("CDControlClass::Unlock_CD_Drive_95\n");
@@ -723,19 +487,6 @@ bool CDControlClass::Unlock_CD_Drive_95 (char drive)
 	return (retval);
 }
 
-/***********************************************************************************************
- * CDControlClass::Unlock_Volume_95 -- Unlocks removable media so that it can be ejected       *
- *                                                                                             *
- * INPUT:    Handle to VWIN32                                                                  *
- *           drive to unlock (DOS format)                                                      *
- *                                                                                             *
- * OUTPUT:   true if unlocked                                                                  *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/17/99 0:19AM ST : Created                                                               *
- *=============================================================================================*/
 bool CDControlClass::Unlock_Volume_95 (HANDLE vwin32, char drive)
 {
 	assert (WinVersion.Is_Win9x());
@@ -808,19 +559,6 @@ bool CDControlClass::Unlock_Volume_95 (HANDLE vwin32, char drive)
 	return (result);
 }
 
-/***********************************************************************************************
- * CDControlClass::Lock_Volume_95 -- Locks removable media so that it can't be ejected         *
- *                                                                                             *
- * INPUT:    Handle to VWIN32                                                                  *
- *           drive to lock (DOS format)                                                        *
- *                                                                                             *
- * OUTPUT:   true if unlocked                                                                  *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/17/99 0:19AM ST : Created                                                               *
- *=============================================================================================*/
 bool CDControlClass::Lock_Volume_95 (HANDLE vwin32, char drive)
 {
 	assert (WinVersion.Is_Win9x());
@@ -857,19 +595,6 @@ bool CDControlClass::Lock_Volume_95 (HANDLE vwin32, char drive)
 	return (result);
 }
 
-/***********************************************************************************************
- * CDControlClass::Auto_Eject_Volume_95 -- Eject the specified CD drive                        *
- *                                                                                             *
- * INPUT:    Handle to VWIN32                                                                  *
- *           Drive number (DOS format)                                                         *
- *                                                                                             *
- * OUTPUT:   True if ejected                                                                   *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/17/99 0:24AM ST : Created                                                               *
- *=============================================================================================*/
 bool CDControlClass::Auto_Eject_Volume_95 (HANDLE vwin32, char drive)
 {
 	assert (WinVersion.Is_Win9x());
@@ -896,18 +621,7 @@ bool CDControlClass::Auto_Eject_Volume_95 (HANDLE vwin32, char drive)
 	return (result);
 }
 
-/***********************************************************************************************
- * CDControlClass::Open_VWin32 -- Opens a handle to VWIN32 to issue low-level disk I/O         *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   HANDLE to VWin32                                                                  *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/17/99 0:26AM ST : Created                                                               *
- *=============================================================================================*/
+// Opens a handle to VWIN32 to issue low-level disk I/O.
 HANDLE WINAPI CDControlClass::Open_VWin32 ()
 {
 	assert (WinVersion.Is_Win9x());
@@ -916,39 +630,12 @@ HANDLE WINAPI CDControlClass::Open_VWin32 ()
 	return (result);
 }
 
-/***********************************************************************************************
- * CDControlClass::Close_VWin32 -- Closes the handle opened by Open_VWin32.                    *
- *                                                                                             *
- * INPUT:    Handle to VWin32                                                                  *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/17/99 0:26AM ST : Created                                                               *
- *=============================================================================================*/
 bool WINAPI CDControlClass::Close_VWin32 (HANDLE vwin32)
 {
 	assert (WinVersion.Is_Win9x());
 	return ((CloseHandle (vwin32)) ? true : false);
 }
 
-/***********************************************************************************************
- * CDControlClass::Lock_Logical_Volume -- Take a lock on a logical volume                      *
- *                                                                                             *
- * INPUT:    Handle to VWin32                                                                  *
- *           drive number (DOS format)                                                         *
- *           lock level                                                                        *
- *           permissions                                                                       *
- *                                                                                             *
- * OUTPUT:   true if locked                                                                    *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/17/99 0:33AM ST : Created                                                               *
- *=============================================================================================*/
 bool WINAPI CDControlClass::Lock_Logical_Volume (HANDLE vwin32, char drive, char lock_level, short permissions)
 {
 	assert (WinVersion.Is_Win9x());
@@ -1005,24 +692,9 @@ bool WINAPI CDControlClass::Lock_Logical_Volume (HANDLE vwin32, char drive, char
 	return (result);
 }
 
-/***********************************************************************************************
- * CDControlClass::Unlock_Logical_Volume -- Unlocks a logical volume                           *
- *                                                                                             *
- * INPUT:    Handle to VWin32                                                                  *
- *           drive number (DOS format)                                                         *
- *                                                                                             *
- * OUTPUT:   true if unlocked                                                                  *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- *  Must be called the same number of times as LockLogicalVolume() to                          *
- *  completely unlock a volume.                                                                *
- *                                                                                             *
- *  Only the lock owner can unlock a volume.                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/17/99 0:39AM ST : Created                                                               *
- *=============================================================================================*/
+// WARNING: Must be called the same number of times as LockLogicalVolume() to completely unlock a
+// volume.
+// WARNING: Only the lock owner can unlock a volume.
 bool WINAPI CDControlClass::Unlock_Logical_Volume (HANDLE vwin32, char drive)
 {
 	assert (WinVersion.Is_Win9x());
@@ -1065,19 +737,7 @@ bool WINAPI CDControlClass::Unlock_Logical_Volume (HANDLE vwin32, char drive)
 	return (result);
 }
 
-/************************************************************************************************
- * Last_Error_Text -- Display error messages based on FormatMessage() and GetLastError().		*
- *																								*
- * INPUT:    LPSTR - title.																		*
- *           HRESULT - last error message.														*
- *																								*
- * OUTPUT:   None																				*
- *																								*
- * WARNINGS: None																				*
- *																								*
- * HISTORY:																						*
- *   6/24/99 4:44PM MML : Created																*
- *==============================================================================================*/
+// Display error messages based on FormatMessage() and GetLastError().
 
 void Last_Error_Text ( LPCTSTR szPrefix, HRESULT hr )
 {

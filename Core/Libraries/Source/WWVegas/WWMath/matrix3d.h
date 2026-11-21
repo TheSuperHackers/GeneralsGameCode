@@ -34,46 +34,6 @@
  *                  Last Update : June 6, 2002 [KM]                                            *
  *                                                                                             *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   Matrix3D::Matrix3D -- Constructors for Matrix3D                                           *
- *   Matrix3D::Set -- init a Matrix3D from an arrray of 12 floats                              *
- *   Matrix3D::Set -- Init a Matrix3D from 12 individual floats                                *
- *   Matrix3D::Set -- Init a matrix from 3 axis vectors and a position                         *
- *   Matrix3D::Set -- init a matrix to be a rotation about the given axis                      *
- *   Matrix3D::Set -- init a matrix to be a rotation about the given axis                      *
- *   Matrix3D::Set -- Init a matrix to be a pure translation                                   *
- *   Matrix3D::Make_Identity -- Initializes the matrix to be the identity matrix               *
- *   Matrix3D::Translate -- Post-Multiplies by a Translation Matrix                            *
- *   Matrix3D::Translate -- Post-Multiplies the matrix by a translation matrix                 *
- *   M3DC::Translate_X -- Post-Multiplies the matrix by a translation matrix with X only       *
- *   M3DC::Translate_Y -- Post-Multiplies the matrix by a translation matrix with Y only       *
- *   M3DC::Translate_Z -- Post-Multiplies the matrix by a translation matrix with Z only       *
- *   Matrix3D::Rotate_X -- Post-Multiplies the matrix by a rotation about the X axis           *
- *   Matrix3D::Rotate_X -- Post-Multiplies the matrix by a rotation about the X axis           *
- *   Matrix3D::Rotate_Y -- Post-multiplies the matrix by a rotation about the Y axis           *
- *   Matrix3D::Rotate_Y -- Post-Multiplies the matrix by a rotation about Y                    *
- *   Matrix3D::Rotate_Z -- Post-multiplies the matrix by a rotation about Z                    *
- *   Matrix3D::Rotate_Z -- Post-multiplies the matrix by a rotation about Z                    *
- *   Matrix3D::Scale		-- Scales Matrix  !!! WARNING DO NOT USE, INV FUNCTION WILL FAIL       *
- *   Matrix3D::Scale		-- Scales Matrix  !!! WARNING DO NOT USE, INV FUNCTION WILL FAIL       *
- *   Matrix3D::Scale		-- Scales Matrix  !!! WARNING DO NOT USE, INV FUNCTION WILL FAIL       *
- *   M3DC::Pre_Rotate_X -- Pre-multiplies the matrix by a rotation about X                     *
- *   M3DC::Pre_Rotate_Y -- Pre-multiplies the matrix by a rotation about Y                     *
- *   M3DC::Pre_Rotate_Z -- Pre-multiplies the matrix by a rotation about Z                     *
- *   M3DC::Pre_Rotate_X -- Pre-multiplies the matrix by a rotation about X                     *
- *   M3DC::Pre_Rotate_Y -- Pre-multiplies the matrix by a rotation about Y                     *
- *   M3DC::Pre_Rotate_Z -- Pre-multiplies the matrix by a rotation about Z                     *
- *   M3DC::In_Place_Pre_Rotate_X -- Pre-multiplies rotation part of matrix by rotation about X *
- *   M3DC::In_Place_Pre_Rotate_Y -- Pre-multiplies rotation part of matrix by rotation about Y *
- *   M3DC::In_Place_Pre_Rotate_Z -- Pre-multiplies rotation part of matrix by rotation about Z *
- *   M3DC::In_Place_Pre_Rotate_X -- Pre-multiplies rotation part of matrix by rotation about X *
- *   M3DC::In_Place_Pre_Rotate_Y -- Pre-multiplies rotation part of matrix by rotation about Y *
- *   M3DC::In_Place_Pre_Rotate_Z -- Pre-multiplies rotation part of matrix by rotation about Z *
- *   operator * -- Matrix multiplication                                                       *
- *   operator * -- Matrix - vector multiplication                                              *
- *   operator == -- Matrix equality operator                                                   *
- *   operator != -- Matrix inequality operator                                                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #define NO_ALLOW_TEMPORARIES
@@ -402,18 +362,6 @@ bool operator == (const Matrix3D &A, const Matrix3D &B);
 bool operator != (const Matrix3D &A, const Matrix3D &B);
 
 
-/***********************************************************************************************
- * M3DC::Matrix3D -- Constructors for Matrix3D										                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/24/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE Matrix3D::Matrix3D(float m[12])
 {
 	Row[0].Set(m[0],m[1],m[2],m[3]);
@@ -487,18 +435,6 @@ WWINLINE Matrix3D & Matrix3D::operator = (const Matrix3D & m)
 }
 
 
-/***********************************************************************************************
- * Matrix3D::Set -- init a Matrix3D from an arrray of 12 floats                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void Matrix3D::Set(float m[12])
 {
 	Row[0].Set(m[0],m[1],m[2],m[3]);
@@ -507,18 +443,6 @@ WWINLINE void Matrix3D::Set(float m[12])
 }
 
 
-/***********************************************************************************************
- * Matrix3D::Set -- Init a Matrix3D from 12 individual floats                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void Matrix3D::Set(		float m11,float m12,float m13,float m14,
 										float m21,float m22,float m23,float m24,
 										float m31,float m32,float m33,float m34)
@@ -529,18 +453,6 @@ WWINLINE void Matrix3D::Set(		float m11,float m12,float m13,float m14,
 }
 
 
-/***********************************************************************************************
- * Matrix3D::Set -- Init a matrix from 3 axis vectors and a position                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void Matrix3D::Set(		const Vector3	&x,		// x-axis unit vector
 										const Vector3	&y,		// y-axis unit vector
 										const Vector3	&z,		// z-axis unit vector
@@ -552,18 +464,6 @@ WWINLINE void Matrix3D::Set(		const Vector3	&x,		// x-axis unit vector
 }
 
 
-/***********************************************************************************************
- * Matrix3D::Set -- init a matrix to be a rotation about the given axis                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void Matrix3D::Set(const Vector3 & axis,float angle)
 {
 	float c = WWMath::Cosf(angle);
@@ -572,18 +472,6 @@ WWINLINE void Matrix3D::Set(const Vector3 & axis,float angle)
 	Set(axis,s,c);
 }
 
-/***********************************************************************************************
- * Matrix3D::Set -- init a matrix to be a rotation about the given axis                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void Matrix3D::Set(const Vector3 & axis,float s,float c)
 {
 	assert(WWMath::Fabsf_Legacy(axis.Length2() - 1.0f) < 0.001f);
@@ -611,18 +499,7 @@ WWINLINE void Matrix3D::Set(const Vector3 & axis,float s,float c)
 }
 
 
-/***********************************************************************************************
- * Matrix3D::Set -- Init a matrix to be a pure translation                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Init a matrix to be a pure translation.
 WWINLINE void Matrix3D::Set(const Vector3 & position)
 {
 	Row[0].Set(1.0f,0.0f,0.0f,position[0]);
@@ -631,18 +508,6 @@ WWINLINE void Matrix3D::Set(const Vector3 & position)
 }
 
 
-/***********************************************************************************************
- * M3DC::Make_Identity -- Initializes the matrix to be the identity matrix                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/24/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void Matrix3D::Make_Identity()
 {
 	Row[0].Set(1.0f,0.0f,0.0f,0.0f);
@@ -651,18 +516,7 @@ WWINLINE void Matrix3D::Make_Identity()
 }
 
 
-/***********************************************************************************************
- * M3DC::Translate -- Post-Multiplies by a Translation Matrix                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/24/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Post-Multiplies by a Translation Matrix.
 WWINLINE void Matrix3D::Translate(float x,float y,float z)
 {
 	Row[0][3]  += (float)(Row[0][0]*x + Row[0][1]*y + Row[0][2]*z);
@@ -671,18 +525,7 @@ WWINLINE void Matrix3D::Translate(float x,float y,float z)
 }
 
 
-/***********************************************************************************************
- * M3DC::Translate -- Post-Multiplies the matrix by a translation matrix                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/24/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Post-Multiplies the matrix by a translation matrix.
 WWINLINE void Matrix3D::Translate(const Vector3 &t)
 {
 	Row[0][3]  += Row[0][0]*t[0] + Row[0][1]*t[1] + Row[0][2]*t[2];
@@ -691,18 +534,7 @@ WWINLINE void Matrix3D::Translate(const Vector3 &t)
 }
 
 
-/***********************************************************************************************
- * M3DC::Translate_X -- Post-Multiplies the matrix by a translation matrix with X only         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/06/1998 NH  : Created.                                                                 *
- *=============================================================================================*/
+// Post-Multiplies the matrix by a translation matrix with X only.
 WWINLINE void Matrix3D::Translate_X(float x)
 {
 	Row[0][3]  += (float)(Row[0][0]*x);
@@ -711,18 +543,7 @@ WWINLINE void Matrix3D::Translate_X(float x)
 }
 
 
-/***********************************************************************************************
- * M3DC::Translate_Y -- Post-Multiplies the matrix by a translation matrix with Y only         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/06/1998 NH  : Created.                                                                 *
- *=============================================================================================*/
+// Post-Multiplies the matrix by a translation matrix with Y only.
 WWINLINE void Matrix3D::Translate_Y(float y)
 {
 	Row[0][3]  += (float)(Row[0][1]*y);
@@ -731,18 +552,7 @@ WWINLINE void Matrix3D::Translate_Y(float y)
 }
 
 
-/***********************************************************************************************
- * M3DC::Translate_Z -- Post-Multiplies the matrix by a translation matrix with Z only         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/06/1998 NH  : Created.                                                                 *
- *=============================================================================================*/
+// Post-Multiplies the matrix by a translation matrix with Z only.
 WWINLINE void Matrix3D::Translate_Z(float z)
 {
 	Row[0][3]  += (float)(Row[0][2]*z);
@@ -751,18 +561,7 @@ WWINLINE void Matrix3D::Translate_Z(float z)
 }
 
 
-/***********************************************************************************************
- * M3DC::Rotate_X -- Post-Multiplies the matrix by a rotation about the X axis                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/24/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Post-Multiplies the matrix by a rotation about the X axis.
 WWINLINE void Matrix3D::Rotate_X(float theta)
 {
 	float tmp1,tmp2;
@@ -786,20 +585,7 @@ WWINLINE void Matrix3D::Rotate_X(float theta)
 }
 
 
-/***********************************************************************************************
- * M3DC::Rotate_X -- Post-Multiplies the matrix by a rotation about the X axis                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- * s - sine of the angle                                                                       *
- * c - cosine of the angle                                                                     *
- * 											                                                           *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/24/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Post-Multiplies the matrix by a rotation about the X axis.
 WWINLINE void Matrix3D::Rotate_X(float s,float c)
 {
 	float tmp1,tmp2;
@@ -818,19 +604,7 @@ WWINLINE void Matrix3D::Rotate_X(float s,float c)
 }
 
 
-/***********************************************************************************************
- * M3DC::Rotate_Y -- Post-multiplies the matrix by a rotation about the Y axis                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- * theta - angle (in radians) to rotate                                                        *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/24/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Post-multiplies the matrix by a rotation about the Y axis.
 WWINLINE void Matrix3D::Rotate_Y(float theta)
 {
 	float tmp1,tmp2;
@@ -853,20 +627,7 @@ WWINLINE void Matrix3D::Rotate_Y(float theta)
 }
 
 
-/***********************************************************************************************
- * M3DC::Rotate_Y -- Post-Multiplies the matrix by a rotation about Y                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- * s - sine of the angle                                                                       *
- * c - cosine of the angle                                                                     *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/24/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Post-Multiplies the matrix by a rotation about Y.
 WWINLINE void Matrix3D::Rotate_Y(float s,float c)
 {
 	float tmp1,tmp2;
@@ -885,19 +646,7 @@ WWINLINE void Matrix3D::Rotate_Y(float s,float c)
 }
 
 
-/***********************************************************************************************
- * M3DC::Rotate_Z -- Post-multiplies the matrix by a rotation about Z                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- * theta - angle (in radians) to rotate                                                        *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/24/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Post-multiplies the matrix by a rotation about Z.
 WWINLINE void Matrix3D::Rotate_Z(float theta)
 {
 	float tmp1,tmp2;
@@ -920,20 +669,7 @@ WWINLINE void Matrix3D::Rotate_Z(float theta)
 }
 
 
-/***********************************************************************************************
- * M3DC::Rotate_Z -- Post-multiplies the matrix by a rotation about Z                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- * s - sine of the angle to rotate                                                             *
- * c - cosine of the angle to rotate                                                           *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/24/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Post-multiplies the matrix by a rotation about Z.
 WWINLINE void Matrix3D::Rotate_Z(float s,float c)
 {
 	float tmp1,tmp2;
@@ -951,18 +687,6 @@ WWINLINE void Matrix3D::Rotate_Z(float s,float c)
 	Row[2][1] = (float)(-s*tmp1 + c*tmp2);
 }
 
-/***********************************************************************************************
- * Matrix3D::Scale -- Scales each Axis											                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/07/2000 jga  : Created.                                                                *
- *=============================================================================================*/
 // !!
 // !! Use Scale methods with Extreme Caution
 // !! The Matrix Inverse function, only works
@@ -984,18 +708,6 @@ WWINLINE void	Matrix3D::Scale(float scale)
 	Row[1][2] *= scale;
 	Row[2][2] *= scale;
 }
-/***********************************************************************************************
- * Matrix3D::Scale -- Scales each Axis											                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/07/2000 jga  : Created.                                                                *
- *=============================================================================================*/
 // !!
 // !! Use Scale methods with Extreme Caution
 // !! The Matrix Inverse function, only works
@@ -1017,18 +729,6 @@ WWINLINE void	Matrix3D::Scale(float x, float y, float z)
 	Row[1][2] *= z;
 	Row[2][2] *= z;
 }
-/***********************************************************************************************
- * Matrix3D::Scale -- Scales each Axis											                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/07/2000 jga  : Created.                                                                *
- *=============================================================================================*/
 // !!
 // !! Use Scale methods with Extreme Caution
 // !! The Matrix Inverse function, only works
@@ -1040,19 +740,7 @@ WWINLINE void	Matrix3D::Scale(Vector3 &scale)
 	Scale(scale.X, scale.Y, scale.Z);
 }
 
-/***********************************************************************************************
- * M3DC::Pre_Rotate_X -- Pre-multiplies the matrix by a rotation about X                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- * theta - angle (in radians) to rotate                                                        *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/1/1999 NH  : Created.                                                                  *
- *=============================================================================================*/
+// Pre-multiplies the matrix by a rotation about X.
 WWINLINE void Matrix3D::Pre_Rotate_X(float theta)
 {
 	float tmp1,tmp2;
@@ -1078,19 +766,7 @@ WWINLINE void Matrix3D::Pre_Rotate_X(float theta)
 	Row[2][3] = (float)(s*tmp1 + c*tmp2);
 }
 
-/***********************************************************************************************
- * M3DC::Pre_Rotate_Y -- Pre-multiplies the matrix by a rotation about Y                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- * theta - angle (in radians) to rotate                                                        *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/1/1999 NH  : Created.                                                                  *
- *=============================================================================================*/
+// Pre-multiplies the matrix by a rotation about Y.
 WWINLINE void Matrix3D::Pre_Rotate_Y(float theta)
 {
 	float tmp1,tmp2;
@@ -1116,19 +792,7 @@ WWINLINE void Matrix3D::Pre_Rotate_Y(float theta)
 	Row[2][3] = (float)(-s*tmp1 + c*tmp2);
 }
 
-/***********************************************************************************************
- * M3DC::Pre_Rotate_Z -- Pre-multiplies the matrix by a rotation about Z                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- * theta - angle (in radians) to rotate                                                        *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/1/1999 NH  : Created.                                                                  *
- *=============================================================================================*/
+// Pre-multiplies the matrix by a rotation about Z.
 WWINLINE void Matrix3D::Pre_Rotate_Z(float theta)
 {
 	float tmp1,tmp2;
@@ -1154,20 +818,7 @@ WWINLINE void Matrix3D::Pre_Rotate_Z(float theta)
 	Row[1][3] = (float)(s*tmp1 + c*tmp2);
 }
 
-/***********************************************************************************************
- * M3DC::Pre_Rotate_X -- Pre-multiplies the matrix by a rotation about X                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- * s - sine of the angle to rotate                                                             *
- * c - cosine of the angle to rotate                                                           *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/1/1999 NH  : Created.                                                                  *
- *=============================================================================================*/
+// Pre-multiplies the matrix by a rotation about X.
 WWINLINE void Matrix3D::Pre_Rotate_X(float s,float c)
 {
 	float tmp1,tmp2;
@@ -1189,20 +840,7 @@ WWINLINE void Matrix3D::Pre_Rotate_X(float s,float c)
 	Row[2][3] = (float)(s*tmp1 + c*tmp2);
 }
 
-/***********************************************************************************************
- * M3DC::Pre_Rotate_Y -- Pre-multiplies the matrix by a rotation about Y                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- * s - sine of the angle to rotate                                                             *
- * c - cosine of the angle to rotate                                                           *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/1/1999 NH  : Created.                                                                  *
- *=============================================================================================*/
+// Pre-multiplies the matrix by a rotation about Y.
 WWINLINE void Matrix3D::Pre_Rotate_Y(float s,float c)
 {
 	float tmp1,tmp2;
@@ -1224,20 +862,7 @@ WWINLINE void Matrix3D::Pre_Rotate_Y(float s,float c)
 	Row[2][3] = (float)(-s*tmp1 + c*tmp2);
 }
 
-/***********************************************************************************************
- * M3DC::Pre_Rotate_Z -- Pre-multiplies the matrix by a rotation about Z                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- * s - sine of the angle to rotate                                                             *
- * c - cosine of the angle to rotate                                                           *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/1/1999 NH  : Created.                                                                  *
- *=============================================================================================*/
+// Pre-multiplies the matrix by a rotation about Z.
 WWINLINE void Matrix3D::Pre_Rotate_Z(float s,float c)
 {
 	float tmp1,tmp2;
@@ -1259,19 +884,7 @@ WWINLINE void Matrix3D::Pre_Rotate_Z(float s,float c)
 	Row[1][3] = (float)(s*tmp1 + c*tmp2);
 }
 
-/***********************************************************************************************
- * M3DC::In_Place_Pre_Rotate_X -- Pre-multiplies rotation part of matrix by a rotation about X *
- *                                                                                             *
- * INPUT:                                                                                      *
- * theta - angle (in radians) to rotate                                                        *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/1/1999 NH  : Created.                                                                  *
- *=============================================================================================*/
+// Pre-multiplies rotation part of matrix by a rotation about X.
 WWINLINE void Matrix3D::In_Place_Pre_Rotate_X(float theta)
 {
 	float tmp1,tmp2;
@@ -1293,19 +906,7 @@ WWINLINE void Matrix3D::In_Place_Pre_Rotate_X(float theta)
 	Row[2][2] = (float)(s*tmp1 + c*tmp2);
 }
 
-/***********************************************************************************************
- * M3DC::In_Place_Pre_Rotate_Y -- Pre-multiplies rotation part of matrix by a rotation about Y *
- *                                                                                             *
- * INPUT:                                                                                      *
- * theta - angle (in radians) to rotate                                                        *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/1/1999 NH  : Created.                                                                  *
- *=============================================================================================*/
+// Pre-multiplies rotation part of matrix by a rotation about Y.
 WWINLINE void Matrix3D::In_Place_Pre_Rotate_Y(float theta)
 {
 	float tmp1,tmp2;
@@ -1327,19 +928,7 @@ WWINLINE void Matrix3D::In_Place_Pre_Rotate_Y(float theta)
 	Row[2][2] = (float)(-s*tmp1 + c*tmp2);
 }
 
-/***********************************************************************************************
- * M3DC::In_Place_Pre_Rotate_Z -- Pre-multiplies rotation part of matrix by a rotation about Z *
- *                                                                                             *
- * INPUT:                                                                                      *
- * theta - angle (in radians) to rotate                                                        *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/1/1999 NH  : Created.                                                                  *
- *=============================================================================================*/
+// Pre-multiplies rotation part of matrix by a rotation about Z.
 WWINLINE void Matrix3D::In_Place_Pre_Rotate_Z(float theta)
 {
 	float tmp1,tmp2;
@@ -1361,20 +950,7 @@ WWINLINE void Matrix3D::In_Place_Pre_Rotate_Z(float theta)
 	Row[1][2] = (float)(s*tmp1 + c*tmp2);
 }
 
-/***********************************************************************************************
- * M3DC::In_Place_Pre_Rotate_X -- Pre-multiplies rotation part of matrix by a rotation about X *
- *                                                                                             *
- * INPUT:                                                                                      *
- * s - sine of the angle to rotate                                                             *
- * c - cosine of the angle to rotate                                                           *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/1/1999 NH  : Created.                                                                  *
- *=============================================================================================*/
+// Pre-multiplies rotation part of matrix by a rotation about X.
 WWINLINE void Matrix3D::In_Place_Pre_Rotate_X(float s,float c)
 {
 	float tmp1,tmp2;
@@ -1392,20 +968,7 @@ WWINLINE void Matrix3D::In_Place_Pre_Rotate_X(float s,float c)
 	Row[2][2] = (float)(s*tmp1 + c*tmp2);
 }
 
-/***********************************************************************************************
- * M3DC::In_Place_Pre_Rotate_Y -- Pre-multiplies rotation part of matrix by a rotation about Y *
- *                                                                                             *
- * INPUT:                                                                                      *
- * s - sine of the angle to rotate                                                             *
- * c - cosine of the angle to rotate                                                           *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/1/1999 NH  : Created.                                                                  *
- *=============================================================================================*/
+// Pre-multiplies rotation part of matrix by a rotation about Y.
 WWINLINE void Matrix3D::In_Place_Pre_Rotate_Y(float s,float c)
 {
 	float tmp1,tmp2;
@@ -1423,20 +986,7 @@ WWINLINE void Matrix3D::In_Place_Pre_Rotate_Y(float s,float c)
 	Row[2][2] = (float)(-s*tmp1 + c*tmp2);
 }
 
-/***********************************************************************************************
- * M3DC::In_Place_Pre_Rotate_Z -- Pre-multiplies rotation part of matrix by a rotation about Z *
- *                                                                                             *
- * INPUT:                                                                                      *
- * s - sine of the angle to rotate                                                             *
- * c - cosine of the angle to rotate                                                           *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/1/1999 NH  : Created.                                                                  *
- *=============================================================================================*/
+// Pre-multiplies rotation part of matrix by a rotation about Z.
 WWINLINE void Matrix3D::In_Place_Pre_Rotate_Z(float s,float c)
 {
 	float tmp1,tmp2;
@@ -1455,18 +1005,6 @@ WWINLINE void Matrix3D::In_Place_Pre_Rotate_Z(float s,float c)
 }
 
 #ifdef ALLOW_TEMPORARIES
-/***********************************************************************************************
- * operator * -- Matrix multiplication                                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/24/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE Matrix3D operator * (const Matrix3D &A,const Matrix3D &B)
 {
 	Matrix3D C;
@@ -1613,18 +1151,6 @@ WWINLINE void Matrix3D::mul(const Matrix3D& A, const Matrix3D& B)
 #endif
 
 #ifdef ALLOW_TEMPORARIES
-/***********************************************************************************************
- * operator * -- Matrix - vector multiplication                                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/24/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE Vector3 operator * (const Matrix3D &A,const Vector3 &a)
 {
 #if 0
@@ -1697,18 +1223,6 @@ WWINLINE void Matrix3D::mulVector3Array(Vector3* inout, int count) const
 #endif
 }
 
-/***********************************************************************************************
- * operator == -- Matrix equality operator                                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   04/29/1998 NH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE bool operator == (const Matrix3D &A, const Matrix3D &B)
 {
    for (int i = 0; i < 3; i++) {
@@ -1720,18 +1234,6 @@ WWINLINE bool operator == (const Matrix3D &A, const Matrix3D &B)
 }
 
 
-/***********************************************************************************************
- * operator != -- Matrix inequality operator                                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   04/29/1998 NH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE bool operator != (const Matrix3D &A, const Matrix3D &B)
 {
    return !(A == B);

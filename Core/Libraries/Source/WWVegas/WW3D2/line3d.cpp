@@ -30,21 +30,6 @@
  *                                                                         *
  *                    $Revision:: 11                                      $*
  *                                                                         *
- *-------------------------------------------------------------------------*
- * Functions:                                                              *
- *   Line3DClass::Line3DClass -- Constructor                               *
- *   Line3DClass::Line3DClass -- Copy constructor.                         *
- *   Line3DClass::operator = -- assignment operator                        *
- *   Line3DClass::~Line3DClass -- Destructor.                              *
- *   Line3DClass::Clone -- Creates a clone of this Line3D                  *
- *   Line3DClass::Scale -- Scale object                                    *
- *   Line3DClass::Scale -- Scale object                                    *
- *   Line3DClass::Update_Cached_Bounding_Volumes -- update bounding vols   *
- *   Line3DClass::Reset -- Reset line start and end points.                *
- *   Line3DClass::Reset -- Reset line start and end points, and line width.*
- *   Re_Color -- Reset the line color.                                     *
- *	  Set_Opacity -- Reset the line opacity.                                *
- *   Line3DClass::Render -- render the 3d line                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "line3d.h"
@@ -77,23 +62,6 @@ const unsigned short Indices[]=
 };
 
 
-/**************************************************************************
- * Line3DClass::Line3DClass -- Constructor                                *
- *                                                                        *
- * INPUT:	Vector3 start, end - start, end points of line (world coords).*
- *       	float width - width of line (in world units).                 *
- *       	float r, g, b - R, G, B components of line color.             *
- *       	float opacity - opacity of line.                              *
- *                                                                        *
- * OUTPUT:	none.                                                         *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   01/15/1998 NH  : Created.                                            *
- *   04/21/1998 NH  : Ported to SR 1.3.                                   *
- *	  02/16/2001 HY  : Ported to DX8													  *
- *========================================================================*/
 Line3DClass::Line3DClass (const Vector3 & start, const Vector3 & end,
 	float width, float r, float g, float b, float opacity)
 {
@@ -143,20 +111,6 @@ Line3DClass::Line3DClass (const Vector3 & start, const Vector3 & end,
 }
 
 
-/**************************************************************************
- * Line3DClass::Line3DClass -- Copy constructor.                          *
- *                                                                        *
- * INPUT:	const Line3DClass & src - source to copy from.                *
- *                                                                        *
- * OUTPUT:	none.                                                         *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   01/15/1998 NH  : Created.                                            *
- *   04/21/1998 NH  : Ported to SR 1.3.                                   *
- *	  02/16/2001 HY  : Ported to DX8													  *
- *========================================================================*/
 Line3DClass::Line3DClass(const Line3DClass & src) :
 	RenderObjClass(src),
 	Length(src.Length),
@@ -168,20 +122,6 @@ Line3DClass::Line3DClass(const Line3DClass & src) :
 }
 
 
-/**************************************************************************
- * Line3DClass::operator = -- assignment operator                         *
- *                                                                        *
- * INPUT:	const Line3DClass & that - source to copy from.               *
- *                                                                        *
- * OUTPUT:	Line3DClass & - result of assignment.                         *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   01/15/1998 NH  : Created.                                            *
- *   04/21/1998 NH  : Ported to SR 1.3.                                   *
- *	  02/16/2001 HY  : Ported to DX8													  *
- *========================================================================*/
 Line3DClass & Line3DClass::operator = (const Line3DClass & that)
 {
 	// Naty: need to add MatInfo and remapper to do this 	Byon
@@ -202,55 +142,15 @@ Line3DClass & Line3DClass::operator = (const Line3DClass & that)
 }
 
 
-/**************************************************************************
- * Line3DClass::~Line3DClass -- Destructor.                               *
- *                                                                        *
- * INPUT:	none.                                                         *
- *                                                                        *
- * OUTPUT:	none.                                                         *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   01/15/1998 NH  : Created.                                            *
- *   04/21/1998 NH  : Ported to SR 1.3.                                   *
- *	  02/16/2001 HY  : Ported to DX8													  *
- *========================================================================*/
 Line3DClass::~Line3DClass()
 {
 }
 
 
-/**************************************************************************
- * Line3DClass::Clone -- Creates a clone of this Line3D                   *
- *                                                                        *
- * INPUT:	none.                                                         *
- *                                                                        *
- * OUTPUT:	RenderObjClass * - pointer to cloned object.                  *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   01/15/1998 NH  : Created.                                            *
- *========================================================================*/
 RenderObjClass * Line3DClass::Clone() const
 {
 	return NEW_REF( Line3DClass, (*this));
 }
-
-/***********************************************************************************************
- * Line3DClass::Render -- render the 3d line                                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *	  02/16/2001 HY  : Ported to DX8													                       *
- *=============================================================================================*/
 
 void Line3DClass::Render(RenderInfoClass & rinfo)
 {
@@ -305,20 +205,6 @@ void Line3DClass::Render(RenderInfoClass & rinfo)
 	DX8Wrapper::Draw_Triangles(0,36/3,0,8);
 }
 
-/**************************************************************************
- * Line3DClass::Scale -- Scale object                                     *
- *                                                                        *
- * INPUT:	float scale - uniform scale factor.                           *
- *                                                                        *
- * OUTPUT:	none.                                                         *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   01/27/1998 NH  : Created.                                            *
- *   04/21/1998 NH  : Ported to SR 1.3.                                   *
- *	  02/16/2001 HY  : Ported to DX8													  *
- *========================================================================*/
 void Line3DClass::Scale(float scale)
 {
 	for (int i=0; i<8; i++) vert[i]*=scale;
@@ -333,20 +219,6 @@ void Line3DClass::Scale(float scale)
 }
 
 
-/**************************************************************************
- * Line3DClass::Scale -- Scale object                                     *
- *                                                                        *
- * INPUT:	float scalex, scaley, scalez - axis scale factors.            *
- *                                                                        *
- * OUTPUT:	none.                                                         *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   01/27/1998 NH  : Created.                                            *
- *   04/21/1998 NH  : Ported to SR 1.3.                                   *
- *	  02/16/2001 HY  : Ported to DX8													  *
- *========================================================================*/
 void Line3DClass::Scale(float scalex, float scaley, float scalez)
 {
 	// The line width is always the same in the y and z axes (the line
@@ -379,19 +251,6 @@ void Line3DClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 	box.Extent.Set(half_l, 0.0f, 0.0f);
 }
 
-/**************************************************************************
- * Line3DClass::Reset -- Reset line start and end points.                 *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   01/19/1998 NH  : Created.                                            *
- *   04/21/1998 NH  : Ported to SR 1.3.                                   *
- *========================================================================*/
 void Line3DClass::Reset(const Vector3 & new_start, const Vector3 & new_end)
 {
 	// Adjust length of line:
@@ -415,19 +274,6 @@ void Line3DClass::Reset(const Vector3 & new_start, const Vector3 & new_end)
 }
 
 
-/**************************************************************************
- * Line3DClass::Reset -- Reset line start and end points, and line width. *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   01/19/1998 NH  : Created.                                            *
- *   04/21/1998 NH  : Ported to SR 1.3.                                   *
- *========================================================================*/
 void Line3DClass::Reset(const Vector3 & new_start, const Vector3 & new_end, float new_width)
 {
 	// Adjust length and width of line:
@@ -461,37 +307,12 @@ void Line3DClass::Reset(const Vector3 & new_start, const Vector3 & new_end, floa
 }
 
 
-/**************************************************************************
- * Re_Color -- Reset the line color.                                      *
- *                                                                        *
- * INPUT:	float r, g, b - components of the new color.                  *
- *                                                                        *
- * OUTPUT:	none.                                                         *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   01/26/1998 NH  : Created.                                            *
- *   04/21/1998 NH  : Ported to SR 1.3.                                   *
- *========================================================================*/
 void Line3DClass::Re_Color(float r, float g, float b)
 {
 	Color=Vector4(r,g,b,Color.W);
 }
 
 
-/**************************************************************************
- * Set_Opacity -- Reset the line opacity.                                 *
- *                                                                        *
- * INPUT:	float opacity - new opacity.                                  *
- *                                                                        *
- * OUTPUT:	none.                                                         *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   11/03/1998 NH  : Created.                                            *
- *========================================================================*/
 void Line3DClass::Set_Opacity(float opacity)
 {
 	if (opacity < 1.0f)

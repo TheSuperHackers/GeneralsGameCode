@@ -30,31 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 7                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   Animatable3DObjClass::Animatable3DObjClass -- constructor                                 *
- *   Animatable3DObjClass::Animatable3DObjClass -- copy constructor                            *
- *   Animatable3DObjClass::~Animatable3DObjClass -- destructor                                 *
- *   Animatable3DObjClass::operator = -- assignment operator                                   *
- *   Animatable3DObjClass::Release -- Releases any anims being held by this object             *
- *   Animatable3DObjClass::Render -- Update this object for rendering                          *
- *   Animatable3DObjClass::Special_Render -- "special render" function for animatables         *
- *   Animatable3DObjClass::Set_Transform -- sets the transform and marks sub-objects as dirty  *
- *   Animatable3DObjClass::Set_Position -- Sets the position and marks sub-objects as dirty    *
- *   Animatable3DObjClass::Get_Num_Bones -- returns number of bones in this object             *
- *   Animatable3DObjClass::Get_Bone_Name -- returns the name of the given bone                 *
- *   Animatable3DObjClass::Get_Bone_Index -- returns the index of the given bone               *
- *   Animatable3DObjClass::Set_Animation -- set the animation state to "none" (base pose)      *
- *   Animatable3DObjClass::Set_Animation -- Set the animation state to the given anim/frame    *
- *   Animatable3DObjClass::Set_Animation -- set the animation state to a blend of two anims    *
- *   Animatable3DObjClass::Set_Animation -- Set animation state with an anim combo             *
- *   Animatable3DObjClass::Get_Bone_Transform -- return the transform for the given bone       *
- *   Animatable3DObjClass::Get_Bone_Transform -- return the transform for the given bone       *
- *   Animatable3DObjClass::Capture_Bone -- capture the specified bone (override animation)     *
- *   Animatable3DObjClass::Release_Bone -- release the specified bone (allow animation)        *
- *   Animatable3DObjClass::Is_Bone_Captured -- returns whether the specified bone is captured  *
- *   Animatable3DObjClass::Control_Bone -- sets the transform for the bone                     *
- *   Animatable3DObjClass::Update_Sub_Object_Transforms -- recalculate the transforms for our  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -68,19 +43,6 @@
 #include "animatedsoundmgr.h"
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Animatable3DObjClass -- constructor                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- * htree_name -- name of the hierarchy tree which defines the "bone" structure for this object *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 Animatable3DObjClass::Animatable3DObjClass(const char * htree_name) :
 	IsTreeValid(0),
 	CurMotionMode(BASE_POSE)
@@ -122,19 +84,6 @@ Animatable3DObjClass::Animatable3DObjClass(const char * htree_name) :
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Animatable3DObjClass -- copy constructor                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- * src -- animatable object to copy.                                                           *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 Animatable3DObjClass::Animatable3DObjClass(const Animatable3DObjClass & src) :
 	CompositeRenderObjClass(src),
 	IsTreeValid(0),
@@ -161,18 +110,6 @@ Animatable3DObjClass::Animatable3DObjClass(const Animatable3DObjClass & src) :
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::~Animatable3DObjClass -- destructor                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 Animatable3DObjClass::~Animatable3DObjClass()
 {
 	Release();
@@ -181,18 +118,6 @@ Animatable3DObjClass::~Animatable3DObjClass()
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::operator = -- assignment operator                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/2/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 Animatable3DObjClass & Animatable3DObjClass::operator = (const Animatable3DObjClass & that)
 {
 	if (&that != this) {
@@ -223,18 +148,7 @@ Animatable3DObjClass & Animatable3DObjClass::operator = (const Animatable3DObjCl
 	return *this;
 }
 
-/***********************************************************************************************
- * Animatable3DObjClass::Release -- Releases any anims being held by this object               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Releases any anims being held by this object.
 void Animatable3DObjClass::Release()
 {
 	switch (CurMotionMode) {
@@ -269,18 +183,6 @@ void Animatable3DObjClass::Release()
 	}
 }
 
-/***********************************************************************************************
- * Animatable3DObjClass::Render -- Update this object for rendering                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void Animatable3DObjClass::Render(RenderInfoClass & rinfo)
 {
 	if (HTree == nullptr) return;
@@ -299,18 +201,6 @@ void Animatable3DObjClass::Render(RenderInfoClass & rinfo)
 	}
 }
 
-/***********************************************************************************************
- * Animatable3DObjClass::Special_Render -- "special render" function for animatables           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/10/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void Animatable3DObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 {
 	if (HTree == nullptr) return;
@@ -326,18 +216,7 @@ void Animatable3DObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Set_Transform -- sets the transform and marks sub-objects as dirty    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/2/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Also marks the sub-objects as dirty.
 void Animatable3DObjClass::Set_Transform(const Matrix3D &m)
 {
 	CompositeRenderObjClass::Set_Transform(m);
@@ -345,18 +224,7 @@ void Animatable3DObjClass::Set_Transform(const Matrix3D &m)
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Set_Position -- Sets the position and marks sub-objects as dirty      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/2/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Also marks the sub-objects as dirty.
 void Animatable3DObjClass::Set_Position(const Vector3 &v)
 {
 	CompositeRenderObjClass::Set_Position(v);
@@ -364,18 +232,6 @@ void Animatable3DObjClass::Set_Position(const Vector3 &v)
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Get_Num_Bones -- returns number of bones in this object               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/2/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 int Animatable3DObjClass::Get_Num_Bones()
 {
 	if (HTree) {
@@ -386,18 +242,6 @@ int Animatable3DObjClass::Get_Num_Bones()
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Get_Bone_Name -- returns the name of the given bone                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/2/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 const char * Animatable3DObjClass::Get_Bone_Name(int bone_index)
 {
 	if (HTree) {
@@ -408,18 +252,6 @@ const char * Animatable3DObjClass::Get_Bone_Name(int bone_index)
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Get_Bone_Index -- returns the index of the given bone                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/2/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 int Animatable3DObjClass::Get_Bone_Index(const char * bonename)
 {
 	if (HTree) {
@@ -431,18 +263,7 @@ int Animatable3DObjClass::Get_Bone_Index(const char * bonename)
 
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Set_Animation -- set the animation state to "none" (base pose)        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Sets the animation state to the base pose.
 void Animatable3DObjClass::Set_Animation()
 {
 	Release();
@@ -451,18 +272,6 @@ void Animatable3DObjClass::Set_Animation()
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Set_Animation -- Set the animation state to the given anim/frame      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void Animatable3DObjClass::Set_Animation(HAnimClass * motion, float frame, int mode)
 {
 
@@ -499,18 +308,6 @@ void Animatable3DObjClass::Set_Animation(HAnimClass * motion, float frame, int m
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Set_Animation -- set the animation state to a blend of two anims      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void Animatable3DObjClass::Set_Animation
 (
 	HAnimClass * motion0,
@@ -552,18 +349,6 @@ void Animatable3DObjClass::Set_Animation
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Set_Animation -- Set animation state with an anim combo               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void Animatable3DObjClass::Set_Animation
 (
 	HAnimComboClass * anim_combo
@@ -590,18 +375,6 @@ void Animatable3DObjClass::Set_Animation
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Peek_Animation													                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 HAnimClass *	Animatable3DObjClass::Peek_Animation()
 {
 	if ( CurMotionMode == SINGLE_ANIM ) {
@@ -612,18 +385,6 @@ HAnimClass *	Animatable3DObjClass::Peek_Animation()
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Get_Bone_Transform -- return the transform for the given bone         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 const Matrix3D &	Animatable3DObjClass::Get_Bone_Transform(const char * bonename)
 {
 	if (HTree) {
@@ -638,18 +399,6 @@ const Matrix3D &	Animatable3DObjClass::Get_Bone_Transform(const char * bonename)
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Get_Bone_Transform -- return the transform for the given bone         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 const Matrix3D &	Animatable3DObjClass::Get_Bone_Transform(int boneindex)
 {
 	Validate_Transform();
@@ -670,18 +419,7 @@ const Matrix3D &	Animatable3DObjClass::Get_Bone_Transform(int boneindex)
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Capture_Bone -- capture the specified bone (override animation)       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/2/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// The captured bone overrides the animation.
 void Animatable3DObjClass::Capture_Bone(int boneindex)
 {
 	if (HTree) {
@@ -690,18 +428,7 @@ void Animatable3DObjClass::Capture_Bone(int boneindex)
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Release_Bone -- release the specified bone (allow animation)          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/2/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// The released bone follows the animation again.
 void Animatable3DObjClass::Release_Bone(int boneindex)
 {
 	if (HTree) {
@@ -710,18 +437,6 @@ void Animatable3DObjClass::Release_Bone(int boneindex)
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Is_Bone_Captured -- returns whether the specified bone is captured    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/2/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 bool Animatable3DObjClass::Is_Bone_Captured(int boneindex) const
 {
 	if (HTree) {
@@ -732,18 +447,6 @@ bool Animatable3DObjClass::Is_Bone_Captured(int boneindex) const
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Control_Bone -- sets the transform for the bone                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/2/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 void Animatable3DObjClass::Control_Bone(int bindex,const Matrix3D & objtm,bool world_space_translation)
 {
 #ifdef DEBUG_CRASHING
@@ -760,18 +463,6 @@ void Animatable3DObjClass::Control_Bone(int bindex,const Matrix3D & objtm,bool w
 	}
 }
 
-/***********************************************************************************************
- * Animatable3DObjClass::Update_Sub_Object_Transforms -- recalculate the transforms for our su *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void Animatable3DObjClass::Update_Sub_Object_Transforms()
 {
 	/*
@@ -849,19 +540,7 @@ void Animatable3DObjClass::Update_Sub_Object_Transforms()
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Simple_Evaluate_Bone -- If the animation is 'single', evaluate the    *
- *																	given pivot and return its transform.		  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   04/13/2000    PDS : Created.                                                              *
- *=============================================================================================*/
+// If the animation is 'single', evaluate the given pivot and return its transform.
 bool Animatable3DObjClass::Simple_Evaluate_Bone(int boneindex, Matrix3D *tm) const
 {
 	bool retval = false;
@@ -888,19 +567,7 @@ bool Animatable3DObjClass::Simple_Evaluate_Bone(int boneindex, Matrix3D *tm) con
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Simple_Evaluate_Bone -- If the animation is 'single', evaluate the    *
- *																	given pivot and return its transform.		  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   04/13/2000    PDS : Created.                                                                *
- *=============================================================================================*/
+// If the animation is 'single', evaluate the given pivot and return its transform.
 bool Animatable3DObjClass::Simple_Evaluate_Bone(int boneindex, float frame, Matrix3D *tm) const
 {
 	bool retval = false;
@@ -920,18 +587,8 @@ bool Animatable3DObjClass::Simple_Evaluate_Bone(int boneindex, float frame, Matr
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Compute_Current_Frame -- Returns the animation frame for the next rend*
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS: Only works for Single and CSingle!                                                *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   04/13/2000    PDS : Created.                                                              *
- *=============================================================================================*/
+// Returns the animation frame for the next render.
+// WARNING: Only works for Single and CSingle!
 float Animatable3DObjClass::Compute_Current_Frame(float *newDirection) const
 {
 	float frame = 0;
@@ -1028,18 +685,8 @@ float Animatable3DObjClass::Compute_Current_Frame(float *newDirection) const
 	return frame;
 }
 
-/***********************************************************************************************
- * Animatable3DObjClass::Single_Anim_Progress -- progress anims for loop and once               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:  Only works for Single and CSingle                                                *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/26/99    BMG : Created.                                                                 *
- *=============================================================================================*/
+// Progress anims for loop and once.
+// WARNING: Only works for Single and CSingle.
 void Animatable3DObjClass::Single_Anim_Progress ()
 {
 	//
@@ -1056,18 +703,8 @@ void Animatable3DObjClass::Single_Anim_Progress ()
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Is_Animation_Complete -- is the current animation on the last frame?  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS: Only works for Single, ONCE anims                                                 *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/13/99    BMG : Created.                                                                 *
- *=============================================================================================*/
+// Is the current animation on the last frame?
+// WARNING: Only works for Single, ONCE anims.
 bool	Animatable3DObjClass::Is_Animation_Complete() const
 {
 	if (CurMotionMode == SINGLE_ANIM) {
@@ -1083,9 +720,6 @@ bool	Animatable3DObjClass::Is_Animation_Complete() const
 	return false;
 }
 
-/***********************************************************************************************
- * Animatable3DObjClass::Peek_Animation_And_Info *
- *=============================================================================================*/
 HAnimClass * Animatable3DObjClass::Peek_Animation_And_Info(float& frame, int& numFrames, int& mode, float& mult)
 {
 	if ( CurMotionMode == SINGLE_ANIM ) {
@@ -1099,9 +733,6 @@ HAnimClass * Animatable3DObjClass::Peek_Animation_And_Info(float& frame, int& nu
 	}
 }
 
-/***********************************************************************************************
- * Animatable3DObjClass::Set_Animation_Frame_Rate_Multiplier *
- *=============================================================================================*/
 void Animatable3DObjClass::Set_Animation_Frame_Rate_Multiplier(float multiplier)
 {
 	// 020607 srj -- added

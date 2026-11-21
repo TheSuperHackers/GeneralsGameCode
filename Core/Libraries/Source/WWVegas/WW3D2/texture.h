@@ -35,8 +35,6 @@
  * 05/16/02 KM Base texture class to abstract major texture types, e.g. 3d, z, cube, etc.
  * 06/27/02 KM Texture class abstraction																			*
  * 08/05/02 KM Texture class redesign (revisited)
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once

@@ -33,41 +33,6 @@
  *                    $Revision:: 24                                                          $*
  *                                                                                             *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   CameraClass::CameraClass -- constructor                                                   *
- *   CameraClass::CameraClass -- copy constructor                                              *
- *   CameraClass::operator == -- assignment operator                                           *
- *   CameraClass::~CameraClass -- destructor                                                   *
- *   CameraClass::Clone -- virtual copy constructor                                            *
- *   CameraClass::Add -- add the camera to the world?                                          *
- *   CameraClass::Remove -- Remove the camera from the world?                                  *
- *   CameraClass::Get_Obj_Space_Bounding_Sphere -- returns the object space bounding sphere    *
- *   CameraClass::Get_Object_Space_Bounding_Box -- returns the object space bounding box       *
- *   CameraClass::Set_Transform -- set the transform of the camera                             *
- *   CameraClass::Set_Position -- Set the position of the camera                               *
- *   CameraClass::Set_Animation -- set the animation state of the camera                       *
- *   CameraClass::Set_Animation -- Set the animation state of the camera                       *
- *   CameraClass::Set_Animation -- set the animation state of the camera                       *
- *   CameraClass::Set_Animation -- set the animation state of the camera                       *
- *   CameraClass::Set_View_Plane -- control over the view plane                                *
- *   CameraClass::Set_View_Plane -- set the viewplane using fov angles                         *
- *   CameraClass::Set_Focal_Length -- set the view plane using focal length and aspect ratio   *
- *   CameraClass::Get_View_Plane -- get the corners of the current view plane                  *
- *   CameraClass::Project -- project a point from ws to the view plane                         *
- *   CameraClass::Project_Camera_Space_Point -- Project a point that is already in camera spac *
- *   CameraClass::Un_Project -- "unproject" a point from the view plane to world space         *
- *   CameraClass::Transform_To_View_Space -- transforms the given world space point to camera  *
- *   CameraClass::Rotate_To_View_Space -- rotates the given world space vector to camera space *
- *   CameraClass::Get_Near_Clip_Bounding_Box -- returns an obb that contains near clip plane   *
- *   CameraCLass::Update_Frustum -- updates the frustum parameters                             *
- *   CameraClass::Cull_Box -- tests whether the given box can be culled                        *
- *   CameraClass::Device_To_View_Space -- converts the given device coordinate to view space   *
- *   CameraClass::Device_To_World_Space -- converts given device coord to world space          *
- *   CameraClass::Camera_Push -- pushes the camera's parameters into the given GERD            *
- *   CameraClass::Camera_Pop -- pops the camera's parameters from the given GERD               *
- *   CameraClass::Set_Aspect_Ratio -- sets the aspect ratio of the camera                      *
- *   CameraClass::Apply_D3D_State -- sets the D3D states controlled by the camera              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -77,18 +42,6 @@
 #include "WWMath/matrix4.h"
 
 
-/***********************************************************************************************
- * CameraClass::CameraClass -- constructor                                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 CameraClass::CameraClass() :
 	Projection(PERSPECTIVE),
 	Viewport(Vector2(0,0),Vector2(1,1)),		// pixel viewport to render into
@@ -104,19 +57,6 @@ CameraClass::CameraClass() :
 }
 
 
-/***********************************************************************************************
- * CameraClass::CameraClass -- copy constructor                                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/21/98    GTH : Created.                                                                 *
- *   4/13/2001  hy : added in copy code for new member functions                               *
- *=============================================================================================*/
 CameraClass::CameraClass(const CameraClass & src) :
 	RenderObjClass(src),
 	Projection(src.Projection),
@@ -138,18 +78,6 @@ CameraClass::CameraClass(const CameraClass & src) :
 }
 
 
-/***********************************************************************************************
- * CameraClass::operator == -- assignment operator                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 CameraClass & CameraClass::operator = (const CameraClass & that)
 {
 	if (this != &that) {
@@ -174,53 +102,17 @@ CameraClass & CameraClass::operator = (const CameraClass & that)
 }
 
 
-/***********************************************************************************************
- * CameraClass::~CameraClass -- destructor                                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 CameraClass::~CameraClass()
 {
 }
 
 
-/***********************************************************************************************
- * CameraClass::Clone -- virtual copy constructor                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 RenderObjClass * CameraClass::Clone() const
 {
 	return NEW_REF( CameraClass, (*this) );
 }
 
 
-/***********************************************************************************************
- * CameraClass::Get_Obj_Space_Bounding_Sphere -- returns the object space bounding sphere      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/29/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void CameraClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
 	sphere.Center.Set(0,0,0);
@@ -228,18 +120,6 @@ void CameraClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 }
 
 
-/***********************************************************************************************
- * CameraClass::Get_Object_Space_Bounding_Box -- returns the object space bounding box         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/29/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void CameraClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 {
 	box.Center.Set(0,0,0);
@@ -247,20 +127,7 @@ void CameraClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 }
 
 
-/***********************************************************************************************
- * CameraClass::Set_Transform -- set the transform of the camera                               *
- *                                                                                             *
- *    This is over-ridden to invalidate the cached frustum parameters                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/29/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// This is over-ridden to invalidate the cached frustum parameters.
 void CameraClass::Set_Transform(const Matrix3D &m)
 {
 	RenderObjClass::Set_Transform(m);
@@ -268,20 +135,7 @@ void CameraClass::Set_Transform(const Matrix3D &m)
 }
 
 
-/***********************************************************************************************
- * CameraClass::Set_Position -- Set the position of the camera                                 *
- *                                                                                             *
- *    This is overridden to invalidate the cached frustum parameters                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/29/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// This is overridden to invalidate the cached frustum parameters.
 void CameraClass::Set_Position(const Vector3 &v)
 {
 	RenderObjClass::Set_Position(v);
@@ -304,20 +158,8 @@ Vector3 CameraClass::Get_Up_Dir() const
 	return Get_Transform().Get_Y_Vector();
 }
 
-/***********************************************************************************************
- * CameraClass::Set_View_Plane -- control over the view plane                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- * min - x,y of the upper left corner of the view rectangle (dist is assumed to be 1.0)        *
- * max - x,y of the lower right corner of the view rectangle                                   *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// The view rectangle is given by its upper left and lower right corners, at an assumed distance of
+// 1.0.
 void CameraClass::Set_View_Plane(const Vector2 & vmin,const Vector2 & vmax)
 {
 	ViewPlane.Min = vmin;
@@ -327,18 +169,6 @@ void CameraClass::Set_View_Plane(const Vector2 & vmin,const Vector2 & vmax)
 }
 
 
-/***********************************************************************************************
- * CameraClass::Set_View_Plane -- set the viewplane using fov angles                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void CameraClass::Set_View_Plane(float hfov,float vfov)
 {
 	float width_half = tan(hfov/2.0f);
@@ -358,18 +188,6 @@ void CameraClass::Set_View_Plane(float hfov,float vfov)
 }
 
 
-/***********************************************************************************************
- * CameraClass::Set_Aspect_Ratio -- sets the aspect ratio of the camera                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/29/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 void CameraClass::Set_Aspect_Ratio(float width_to_height)
 {
 	AspectRatio = width_to_height;
@@ -379,18 +197,6 @@ void CameraClass::Set_Aspect_Ratio(float width_to_height)
 }
 
 
-/***********************************************************************************************
- * CameraClass::Get_View_Plane -- get the corners of the current view plane                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void CameraClass::Get_View_Plane(Vector2 & set_min,Vector2 & set_max) const
 {
 	set_min = ViewPlane.Min;
@@ -398,22 +204,8 @@ void CameraClass::Get_View_Plane(Vector2 & set_min,Vector2 & set_max) const
 }
 
 
-/***********************************************************************************************
- * CameraClass::Project -- project a point from ws to the view plane                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- * dest - will be set to a point on the normalized view plane.  x,y, and z range from -1 to 1  *
- * ws_point - input point in world space                                                       *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- * ProjectionResType indicating whether the point was in the frustum                           *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * When the input is behind the near clip plane, 0,0,0 is returned.                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// The resulting point is on the normalized view plane, with x, y and z ranging from -1 to 1.
+// WARNING: When the input is behind the near clip plane, 0,0,0 is returned.
 CameraClass::ProjectionResType CameraClass::Project(Vector3 & dest,const Vector3 & ws_point) const
 {
 	Update_Frustum();
@@ -443,22 +235,8 @@ CameraClass::ProjectionResType CameraClass::Project(Vector3 & dest,const Vector3
 	return INSIDE_FRUSTUM;
 }
 
-/***********************************************************************************************
- * CameraClass::Project_Camera_Space_Point -- Project a point that is already in camera space  *
- *                                                                                             *
- * INPUT:                                                                                      *
- * dest - will be set to a point on the normalized view plane.  x,y, and z range from -1 to 1  *
- * cam_point - input point in camera space                                                     *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- * ProjectionResType indicating whether the point was in the frustum                           *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * When the input is behind the near clip plane, 0,0,0 is returned.                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/17/2000 gth : Created.                                                                 *
- *=============================================================================================*/
+// The resulting point is on the normalized view plane, with x, y and z ranging from -1 to 1.
+// WARNING: When the input is behind the near clip plane, 0,0,0 is returned.
 CameraClass::ProjectionResType
 CameraClass::Project_Camera_Space_Point(Vector3 & dest,const Vector3 & cam_point) const
 {
@@ -486,23 +264,7 @@ CameraClass::Project_Camera_Space_Point(Vector3 & dest,const Vector3 & cam_point
 	return INSIDE_FRUSTUM;
 }
 
-/***********************************************************************************************
- * CameraClass::Un_Project -- "unproject" a point from the view plane to world space           *
- *                                                                                             *
- * The given point is assumed to be on the view_plane at z=-1.  The 3D world space point that  *
- * this represents will be returned in dest.                                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- * dest - will be filled in with the 3D world space point that the given point represents      *
- * view_point - point on the view_plane to be un-projected                                     *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// The given point is assumed to be on the view plane at z=-1.
 void CameraClass::Un_Project(Vector3 & dest,const Vector2 & view_point) const
 {
 	/*
@@ -521,18 +283,6 @@ void CameraClass::Un_Project(Vector3 & dest,const Vector2 & view_point) const
 }
 
 
-/***********************************************************************************************
- * CameraClass::Transform_To_View_Space -- transforms the given world space point to camera sp *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/22/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 void CameraClass::Transform_To_View_Space(Vector3 & dest,const Vector3 & ws_point) const
 {
 	Update_Frustum();
@@ -540,18 +290,6 @@ void CameraClass::Transform_To_View_Space(Vector3 & dest,const Vector3 & ws_poin
 }
 
 
-/***********************************************************************************************
- * CameraClass::Rotate_To_View_Space -- rotates the given world space vector to camera space   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/22/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 void CameraClass::Rotate_To_View_Space(Vector3 & dest,const Vector3 & ws_vector) const
 {
 	Update_Frustum();
@@ -560,18 +298,6 @@ void CameraClass::Rotate_To_View_Space(Vector3 & dest,const Vector3 & ws_vector)
 
 
 
-/***********************************************************************************************
- * CameraClass::Get_Near_Clip_Bounding_Box -- returns an obb that contains near clip plane     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   8/25/99    GTH : Created.                                                                 *
- *=============================================================================================*/
 const OBBoxClass & CameraClass::Get_Near_Clip_Bounding_Box() const
 {
 	Update_Frustum();
@@ -579,18 +305,6 @@ const OBBoxClass & CameraClass::Get_Near_Clip_Bounding_Box() const
 }
 
 
-/***********************************************************************************************
- * CameraClass::Cull_Box -- tests whether the given box can be culled                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool CameraClass::Cull_Box(const AABoxClass & box) const
 {
 	const FrustumClass & frustum = Get_Frustum();
@@ -598,18 +312,6 @@ bool CameraClass::Cull_Box(const AABoxClass & box) const
 }
 
 
-/***********************************************************************************************
- * CameraClass::Update_Frustum -- updates the frustum parameters                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/29/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void CameraClass::Update_Frustum() const
 {
 	if (FrustumValid) return;
@@ -660,18 +362,6 @@ void CameraClass::Update_Frustum() const
 }
 
 
-/***********************************************************************************************
- * CameraClass::Device_To_View_Space -- converts the given device coordinate to view space     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void CameraClass::Device_To_View_Space(const Vector2 & device_coord,Vector3 * set_view)
 {
 	int res_width;
@@ -698,18 +388,6 @@ void CameraClass::Device_To_View_Space(const Vector2 & device_coord,Vector3 * se
 }
 
 
-/***********************************************************************************************
- * CameraClass::Device_To_World_Space -- converts given device coord to world space            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void CameraClass::Device_To_World_Space(const Vector2 & device_coord,Vector3 * world_coord)
 {
 	Vector3 vs;
@@ -718,18 +396,7 @@ void CameraClass::Device_To_World_Space(const Vector2 & device_coord,Vector3 * w
 }
 
 
-/***********************************************************************************************
- * CameraClass::Apply -- sets the D3D states controlled by the camera                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/29/2001  gth : Created.                                                                 *
- *=============================================================================================*/
+// Sets the D3D states controlled by the camera.
 void CameraClass::Apply()
 {
 	Update_Frustum();

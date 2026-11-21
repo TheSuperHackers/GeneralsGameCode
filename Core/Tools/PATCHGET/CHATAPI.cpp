@@ -785,20 +785,6 @@ typedef struct SRecord {
 } SRecord;
 
 
-/***********************************************************************************************
- * Fetch_String -- Fetches a string resource.                                                  *
- *                                                                                             *
- *    Fetches a string resource and returns a pointer to its text.                             *
- *                                                                                             *
- * INPUT:   id -- The ID number of the string resource to fetch.                               *
- *                                                                                             *
- * OUTPUT:  Returns with a pointer to the actual text of the string resource.                  *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/25/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
 char const * Fetch_String(int id)
 {
 	static SRecord _buffers[64];

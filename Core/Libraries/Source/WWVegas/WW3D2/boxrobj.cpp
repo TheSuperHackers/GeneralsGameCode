@@ -30,61 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 35                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   BoxRenderObjClass::BoxRenderObjClass -- Constructor                                       *
- *   BoxRenderObjClass::BoxRenderObjClass -- Constructor - init from a definition              *
- *   BoxRenderObjClass::BoxRenderObjClass -- Copy constructor                                  *
- *   BoxRenderObjClass::operator -- assignment operator                                        *
- *   BoxRenderObjClass::Get_Num_Polys -- returns number of polygons                            *
- *   BoxRenderObjClass::Get_Name -- returns name                                               *
- *   BoxRenderObjClass::Set_Name -- sets the name                                              *
- *   BoxRenderObjClass::Set_Color -- Sets the color of the box                                 *
- *   BoxRenderObjClass::Init_Box_Render_System -- global initialization needed for boxes to wo *
- *   BoxRenderObjClass::Shutdown_Box_Render_System -- cleanup box render system                *
- *   BoxRenderObjClass::Set_Box_Display_Mask -- Sets global display mask for all boxes         *
- *   BoxRenderObjClass::Get_Box_Display_Mask -- returns the display mask                       *
- *   BoxRenderObjClass::render_box -- submits the box to the GERD                              *
- *   BoxRenderObjClass::vis_render_box -- submits box to the GERD for VIS                      *
- *   AABoxRenderObjClass::AABoxRenderObjClass -- constructor                                   *
- *   AABoxRenderObjClass::AABoxRenderObjClass -- Constructor - init from a definition          *
- *   AABoxRenderObjClass::AABoxRenderObjClass -- copy constructor                              *
- *   AABoxRenderObjClass::AABoxRenderObjClass -- Constructor from a wwmath aabox               *
- *   AABoxRenderObjClass::operator -- assignment operator                                      *
- *   AABoxRenderObjClass::Clone -- clones the box                                              *
- *   AABoxRenderObjClass::Class_ID -- returns the class-id for AABox's                         *
- *   AABoxRenderObjClass::Render -- render this box                                            *
- *   AABoxRenderObjClass::Special_Render -- special render this box (vis)                      *
- *   AABoxRenderObjClass::Set_Transform -- set the transform for this box                      *
- *   AABoxRenderObjClass::Set_Position -- Set the position of this box                         *
- *   AABoxRenderObjClass::update_cached_box -- update the world-space version of this box      *
- *   AABoxRenderObjClass::Cast_Ray -- cast a ray against this box                              *
- *   AABoxRenderObjClass::Cast_AABox -- cast an AABox against this box                         *
- *   AABoxRenderObjClass::Cast_OBBox -- cast an OBBox against this box                         *
- *   AABoxRenderObjClass::Intersect_AABox -- intersect this box with an AABox                  *
- *   AABoxRenderObjClass::Intersect_OBBox -- Intersect this box with an OBBox                  *
- *   AABoxRenderObjClass::Get_Obj_Space_Bounding_Sphere -- return the object-space bounding sp *
- *   AABoxRenderObjClass::Get_Obj_Space_Bounding_Box -- returns the obj-space bounding box     *
- *   OBBoxRenderObjClass::OBBoxRenderObjClass -- Constructor                                   *
- *   OBBoxRenderObjClass::OBBoxRenderObjClass -- Constructor - initiallize from a definition   *
- *   OBBoxRenderObjClass::OBBoxRenderObjClass -- copy constructor                              *
- *   OBBoxRenderObjClass::OBBoxRenderObjClass -- constructor - initialize from a wwmath obbox  *
- *   OBBoxRenderObjClass::operator -- assignment operator                                      *
- *   OBBoxRenderObjClass::Clone -- clone this obbox                                            *
- *   OBBoxRenderObjClass::Class_ID -- returns the class ID of OBBoxRenderObjClass              *
- *   OBBoxRenderObjClass::Render -- render this obbox                                          *
- *   OBBoxRenderObjClass::Special_Render -- special render (vis)                               *
- *   OBBoxRenderObjClass::Set_Transform -- set the transform for this box                      *
- *   OBBoxRenderObjClass::Set_Position -- set the position of this box                         *
- *   OBBoxRenderObjClass::update_cached_box -- update the cached world-space box               *
- *   OBBoxRenderObjClass::Cast_Ray -- cast a ray against this box                              *
- *   OBBoxRenderObjClass::Cast_AABox -- cast a swept aabox against this box                    *
- *   OBBoxRenderObjClass::Cast_OBBox -- cast a swept obbox against this bo                     *
- *   OBBoxRenderObjClass::Intersect_AABox -- test this box for intersection with an AAbox      *
- *   OBBoxRenderObjClass::Intersect_OBBox -- test this box for intersection with an OBBox      *
- *   OBBoxRenderObjClass::Get_Obj_Space_Bounding_Sphere -- return the obj-space bounding spher *
- *   OBBoxRenderObjClass::Get_Obj_Space_Bounding_Box -- returns the obj-space bounding box     *
- *   OBBoxRenderObjClass::Get_Box -- returns the cached world-space box                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -168,18 +113,6 @@ static ShaderClass					_BoxShader;
 */
 
 
-/***********************************************************************************************
- * BoxRenderObjClass::BoxRenderObjClass -- Constructor                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 BoxRenderObjClass::BoxRenderObjClass()
 {
 	memset(Name,0,sizeof(Name));
@@ -190,18 +123,6 @@ BoxRenderObjClass::BoxRenderObjClass()
 }
 
 
-/***********************************************************************************************
- * BoxRenderObjClass::BoxRenderObjClass -- Constructor - init from a definition                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 BoxRenderObjClass::BoxRenderObjClass(const W3dBoxStruct & def)
 {
 	Set_Name(def.Name);
@@ -214,36 +135,12 @@ BoxRenderObjClass::BoxRenderObjClass(const W3dBoxStruct & def)
 }
 
 
-/***********************************************************************************************
- * BoxRenderObjClass::BoxRenderObjClass -- Copy constructor                                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 BoxRenderObjClass::BoxRenderObjClass(const BoxRenderObjClass & src)
 {
 	*this = src;
 }
 
 
-/***********************************************************************************************
- * BoxRenderObjClass::operator -- assignment operator                                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 BoxRenderObjClass & BoxRenderObjClass::operator = (const BoxRenderObjClass & that)
 {
 	if (this != &that) {
@@ -257,54 +154,18 @@ BoxRenderObjClass & BoxRenderObjClass::operator = (const BoxRenderObjClass & tha
 }
 
 
-/***********************************************************************************************
- * BoxRenderObjClass::Get_Num_Polys -- returns number of polygons                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 int BoxRenderObjClass::Get_Num_Polys() const
 {
 	return 12;
 }
 
 
-/***********************************************************************************************
- * BoxRenderObjClass::Get_Name -- returns name                                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 const char * BoxRenderObjClass::Get_Name() const
 {
 	return Name;
 }
 
 
-/***********************************************************************************************
- * BoxRenderObjClass::Set_Name -- sets the name                                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void BoxRenderObjClass::Set_Name(const char * name)
 {
 	WWASSERT(name != nullptr);
@@ -313,38 +174,14 @@ void BoxRenderObjClass::Set_Name(const char * name)
 }
 
 
-/***********************************************************************************************
- * BoxRenderObjClass::Set_Color -- Sets the color of the box                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void BoxRenderObjClass::Set_Color(const Vector3 & color)
 {
 	Color = color;
 }
 
 
-/***********************************************************************************************
- * BoxRenderObjClass::Init_Box_Render_System -- global initialization needed for boxes to work *
- *                                                                                             *
- * Allocates materials which all boxes share.  Initializes vertex tables, etc                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// Global initialization needed for boxes to work. Allocates materials which all boxes share.
+// Initializes vertex tables, etc.
 void BoxRenderObjClass::Init()
 {
 	WWASSERT(IsInitted == false);
@@ -367,21 +204,8 @@ void BoxRenderObjClass::Init()
 }
 
 
-/***********************************************************************************************
- * BoxRenderObjClass::Shutdown -- cleanup box render system                                    *
- *                                                                                             *
- * Releases resources allocated in Init                                                        *
- * NOTE: this is a static function that should only be called by the system                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// Releases resources allocated in Init.
+// NOTE: This is a static function that should only be called by the system.
 void BoxRenderObjClass::Shutdown()
 {
 	WWASSERT(IsInitted == true);
@@ -391,57 +215,21 @@ void BoxRenderObjClass::Shutdown()
 }
 
 
-/***********************************************************************************************
- * BoxRenderObjClass::Set_Box_Display_Mask -- Sets global display mask for all boxes           *
- *                                                                                             *
- * Boxes are debug objects and usually used for collision.  This mask is 'AND'ed with each     *
- * box's collision type to determine whether the box should be rendered.                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// Boxes are debug objects and usually used for collision. This mask is 'AND'ed with each box's
+// collision type to determine whether the box should be rendered.
 void BoxRenderObjClass::Set_Box_Display_Mask(int mask)
 {
 	DisplayMask = mask;
 }
 
 
-/***********************************************************************************************
- * BoxRenderObjClass::Get_Box_Display_Mask -- returns the display mask                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 int BoxRenderObjClass::Get_Box_Display_Mask()
 {
 	return DisplayMask;
 }
 
 
-/***********************************************************************************************
- * BoxRenderObjClass::render_box -- submits the box to the GERD                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// Submits the box to the GERD.
 void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent)
 {
 	if (!IsInitted) return;
@@ -517,20 +305,7 @@ void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & cente
 }
 
 
-/***********************************************************************************************
- * BoxRenderObjClass::vis_render_box -- submits box to the GERD for VIS                        *
- *                                                                                             *
- * this renders the box with the specified VIS-ID.                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// Submits box to the GERD for VIS. This renders the box with the specified VIS-ID.
 void BoxRenderObjClass::vis_render_box(SpecialRenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent)
 {
 	if (!IsInitted) return;
@@ -552,36 +327,12 @@ void BoxRenderObjClass::vis_render_box(SpecialRenderInfoClass & rinfo,const Vect
 ** AABoxRenderObjClass Implementation
 */
 
-/***********************************************************************************************
- * AABoxRenderObjClass::AABoxRenderObjClass -- constructor                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 AABoxRenderObjClass::AABoxRenderObjClass()
 {
 	update_cached_box();
 }
 
 
-/***********************************************************************************************
- * AABoxRenderObjClass::AABoxRenderObjClass -- Constructor - init from a definition            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 AABoxRenderObjClass::AABoxRenderObjClass(const W3dBoxStruct & def) :
 	BoxRenderObjClass(def)
 {
@@ -589,36 +340,12 @@ AABoxRenderObjClass::AABoxRenderObjClass(const W3dBoxStruct & def) :
 }
 
 
-/***********************************************************************************************
- * AABoxRenderObjClass::AABoxRenderObjClass -- copy constructor                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 AABoxRenderObjClass::AABoxRenderObjClass(const AABoxRenderObjClass & src)
 {
 	*this = src;
 }
 
 
-/***********************************************************************************************
- * AABoxRenderObjClass::AABoxRenderObjClass -- Constructor from a wwmath aabox                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 AABoxRenderObjClass::AABoxRenderObjClass(const AABoxClass & box)
 {
 	ObjSpaceCenter.Set(0,0,0);
@@ -628,18 +355,6 @@ AABoxRenderObjClass::AABoxRenderObjClass(const AABoxClass & box)
 }
 
 
-/***********************************************************************************************
- * AABoxRenderObjClass::operator -- assignment operator                                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 AABoxRenderObjClass & AABoxRenderObjClass::operator = (const AABoxRenderObjClass & that)
 {
 	if (this != &that) {
@@ -650,54 +365,18 @@ AABoxRenderObjClass & AABoxRenderObjClass::operator = (const AABoxRenderObjClass
 }
 
 
-/***********************************************************************************************
- * AABoxRenderObjClass::Clone -- clones the box                                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 RenderObjClass * AABoxRenderObjClass::Clone() const
 {
 	return W3DNEW AABoxRenderObjClass(*this);
 }
 
 
-/***********************************************************************************************
- * AABoxRenderObjClass::Class_ID -- returns the class-id for AABox's                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 int AABoxRenderObjClass::Class_ID() const
 {
 	return RenderObjClass::CLASSID_AABOX;
 }
 
 
-/***********************************************************************************************
- * AABoxRenderObjClass::Render -- render this box                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void AABoxRenderObjClass::Render(RenderInfoClass & rinfo)
 {
 	Matrix3D temp(1);
@@ -707,18 +386,6 @@ void AABoxRenderObjClass::Render(RenderInfoClass & rinfo)
 }
 
 
-/***********************************************************************************************
- * AABoxRenderObjClass::Special_Render -- special render this box (vis)                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void AABoxRenderObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 {
 	if (rinfo.RenderType == SpecialRenderInfoClass::RENDER_VIS) {
@@ -731,18 +398,6 @@ void AABoxRenderObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 }
 
 
-/***********************************************************************************************
- * AABoxRenderObjClass::Set_Transform -- set the transform for this box                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void AABoxRenderObjClass::Set_Transform(const Matrix3D &m)
 {
 	RenderObjClass::Set_Transform(m);
@@ -750,18 +405,6 @@ void AABoxRenderObjClass::Set_Transform(const Matrix3D &m)
 }
 
 
-/***********************************************************************************************
- * AABoxRenderObjClass::Set_Position -- Set the position of this box                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void AABoxRenderObjClass::Set_Position(const Vector3 &v)
 {
 	RenderObjClass::Set_Position(v);
@@ -769,18 +412,6 @@ void AABoxRenderObjClass::Set_Position(const Vector3 &v)
 }
 
 
-/***********************************************************************************************
- * AABoxRenderObjClass::update_cached_box -- update the world-space version of this box        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void AABoxRenderObjClass::update_cached_box()
 {
 	CachedBox.Center = Transform.Get_Translation() + ObjSpaceCenter;
@@ -788,18 +419,6 @@ void AABoxRenderObjClass::update_cached_box()
 }
 
 
-/***********************************************************************************************
- * AABoxRenderObjClass::Cast_Ray -- cast a ray against this box                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 bool AABoxRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 {
 	if ((Get_Collision_Type() & raytest.CollisionType) == 0) return false;
@@ -814,18 +433,6 @@ bool AABoxRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 }
 
 
-/***********************************************************************************************
- * AABoxRenderObjClass::Cast_AABox -- cast an AABox against this box                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 bool AABoxRenderObjClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;
@@ -839,18 +446,6 @@ bool AABoxRenderObjClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * AABoxRenderObjClass::Cast_OBBox -- cast an OBBox against this box                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 bool AABoxRenderObjClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;
@@ -864,18 +459,6 @@ bool AABoxRenderObjClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * AABoxRenderObjClass::Intersect_AABox -- intersect this box with an AABox                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 bool AABoxRenderObjClass::Intersect_AABox(AABoxIntersectionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;
@@ -883,18 +466,6 @@ bool AABoxRenderObjClass::Intersect_AABox(AABoxIntersectionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * AABoxRenderObjClass::Intersect_OBBox -- Intersect this box with an OBBox                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 bool AABoxRenderObjClass::Intersect_OBBox(OBBoxIntersectionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;
@@ -902,72 +473,24 @@ bool AABoxRenderObjClass::Intersect_OBBox(OBBoxIntersectionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * AABoxRenderObjClass::Get_Obj_Space_Bounding_Sphere -- return the object-space bounding sphe *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void AABoxRenderObjClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
 	sphere.Init(ObjSpaceCenter,ObjSpaceExtent.Length());
 }
 
 
-/***********************************************************************************************
- * AABoxRenderObjClass::Get_Obj_Space_Bounding_Box -- returns the obj-space bounding box       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void AABoxRenderObjClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 {
 	box.Init(ObjSpaceCenter,ObjSpaceExtent);
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::OBBoxRenderObjClass -- Constructor                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 OBBoxRenderObjClass::OBBoxRenderObjClass()
 {
 	update_cached_box();
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::OBBoxRenderObjClass -- Constructor - initiallize from a definition     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 OBBoxRenderObjClass::OBBoxRenderObjClass(const W3dBoxStruct & def) :
 	BoxRenderObjClass(def)
 {
@@ -975,36 +498,12 @@ OBBoxRenderObjClass::OBBoxRenderObjClass(const W3dBoxStruct & def) :
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::OBBoxRenderObjClass -- copy constructor                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 OBBoxRenderObjClass::OBBoxRenderObjClass(const OBBoxRenderObjClass & that)
 {
 	*this = that;
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::OBBoxRenderObjClass -- constructor - initialize from a wwmath obbox    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 OBBoxRenderObjClass::OBBoxRenderObjClass(const OBBoxClass & box)
 {
 	ObjSpaceCenter.Set(Vector3(0,0,0));
@@ -1014,18 +513,6 @@ OBBoxRenderObjClass::OBBoxRenderObjClass(const OBBoxClass & box)
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::operator -- assignment operator                                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 OBBoxRenderObjClass & OBBoxRenderObjClass::operator = (const OBBoxRenderObjClass & that)
 {
 	if (this != &that) {
@@ -1036,54 +523,18 @@ OBBoxRenderObjClass & OBBoxRenderObjClass::operator = (const OBBoxRenderObjClass
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::Clone -- clone this obbox                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 RenderObjClass * OBBoxRenderObjClass::Clone() const
 {
 	return W3DNEW OBBoxRenderObjClass(*this);
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::Class_ID -- returns the class ID of OBBoxRenderObjClass                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 int OBBoxRenderObjClass::Class_ID() const
 {
 	return RenderObjClass::CLASSID_OBBOX;
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::Render -- render this obbox                                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void OBBoxRenderObjClass::Render(RenderInfoClass & rinfo)
 {
 	Renderer::Set_Transform(RenderTransform_World,Transform);
@@ -1091,18 +542,6 @@ void OBBoxRenderObjClass::Render(RenderInfoClass & rinfo)
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::Special_Render -- special render (vis)                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void OBBoxRenderObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 {
 	if (rinfo.RenderType == SpecialRenderInfoClass::RENDER_VIS) {
@@ -1113,18 +552,6 @@ void OBBoxRenderObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::Set_Transform -- set the transform for this box                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void OBBoxRenderObjClass::Set_Transform(const Matrix3D &m)
 {
 	RenderObjClass::Set_Transform(m);
@@ -1132,18 +559,6 @@ void OBBoxRenderObjClass::Set_Transform(const Matrix3D &m)
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::Set_Position -- set the position of this box                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void OBBoxRenderObjClass::Set_Position(const Vector3 &v)
 {
 	RenderObjClass::Set_Position(v);
@@ -1151,18 +566,6 @@ void OBBoxRenderObjClass::Set_Position(const Vector3 &v)
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::update_cached_box -- update the cached world-space box                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void OBBoxRenderObjClass::update_cached_box()
 {
 	Matrix3D::Transform_Vector(Transform,ObjSpaceCenter,&CachedBox.Center);
@@ -1171,18 +574,6 @@ void OBBoxRenderObjClass::update_cached_box()
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::Cast_Ray -- cast a ray against this box                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 bool OBBoxRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 {
 	if ((Get_Collision_Type() & raytest.CollisionType) == 0) return false;
@@ -1197,18 +588,6 @@ bool OBBoxRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::Cast_AABox -- cast a swept aabox against this box                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 bool OBBoxRenderObjClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;
@@ -1222,18 +601,6 @@ bool OBBoxRenderObjClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::Cast_OBBox -- cast a swept obbox against this bo                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 bool OBBoxRenderObjClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;
@@ -1247,18 +614,6 @@ bool OBBoxRenderObjClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::Intersect_AABox -- test this box for intersection with an AAbox        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 bool OBBoxRenderObjClass::Intersect_AABox(AABoxIntersectionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;
@@ -1266,18 +621,6 @@ bool OBBoxRenderObjClass::Intersect_AABox(AABoxIntersectionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::Intersect_OBBox -- test this box for intersection with an OBBox        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 bool OBBoxRenderObjClass::Intersect_OBBox(OBBoxIntersectionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;
@@ -1285,54 +628,19 @@ bool OBBoxRenderObjClass::Intersect_OBBox(OBBoxIntersectionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::Get_Obj_Space_Bounding_Sphere -- return the obj-space bounding sphere  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void OBBoxRenderObjClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
 	sphere.Init(ObjSpaceCenter,ObjSpaceExtent.Length());
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::Get_Obj_Space_Bounding_Box -- returns the obj-space bounding box       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void OBBoxRenderObjClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 {
 	box.Init(ObjSpaceCenter,ObjSpaceExtent);
 }
 
 
-/***********************************************************************************************
- * OBBoxRenderObjClass::Get_Box -- returns the cached world-space box                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// Returns the cached world-space box.
 OBBoxClass & OBBoxRenderObjClass::Get_Box()
 {
 	Validate_Transform();

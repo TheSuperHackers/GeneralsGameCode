@@ -30,19 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 6                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   WindowsVersionInfo::Major -- Get the major version of the OS							   *
- *   WindowsVersionInfo::Minor -- Get the minor version of the OS							   *
- *   WindowsVersionInfo::Build -- Get the build level of the OS								   *
- *   WindowsVersionInfo::Info -- Get additional system information							   *
- *   WindowsVersionInfo::Is_Win9x -- Determine if we are running on a non-NT system.		   *
- *   WindowsVersionInfo::Is_Win95 -- Determine if we are running on a Win95 system.			   *
- *   WindowsVersionInfo::Is_Win98 -- Determine if we are running on a Win98 system.			   *
- *   WindowsVersionInfo::Is_WinNT -- Determine if we are running on an NT system.			   *
- *   WindowsVersionInfo::Is_WinNT5 -- Determine if we are running on an NT 5 system.		   *
- *   WindowsVersionInfo::Version	--														   *
- *   WindowsVersionInfo::IsOSR2Release --													   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once

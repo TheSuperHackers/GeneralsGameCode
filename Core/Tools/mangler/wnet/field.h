@@ -31,8 +31,6 @@
  * This module takes care of maintaining the field list used to process    *
  * packets.                                                                *
  *                                                                         *
- *-------------------------------------------------------------------------*
- * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once

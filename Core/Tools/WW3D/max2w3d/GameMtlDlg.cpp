@@ -30,8 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 12                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "max_sdk.h"
@@ -57,21 +55,6 @@ static int _Pass_Index_To_Flag[] =
 	GAMEMTL_PASS3_ROLLUP_OPEN,
 };
 
-/***********************************************************************************************
- * GameMtlDlg::GameMtlDlg -- constructor                                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- * 	hwMtlEdit - windows handle of the MAX material editor												  *
- * 	imp - Interface object for MAX materials and textures												  *
- * 	m - pointer to a GameMtl to be edited																	  *
- * 																														  *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 GameMtlDlg::GameMtlDlg(HWND hwMtlEdit, IMtlParams *imp, GameMtl *m)
 {
 	HwndEdit = hwMtlEdit;
@@ -90,18 +73,6 @@ GameMtlDlg::GameMtlDlg(HWND hwMtlEdit, IMtlParams *imp, GameMtl *m)
 	Build_Dialog();
 }
 
-/***********************************************************************************************
- * GameMtlDlg::~GameMtlDlg -- destructor!                                                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 GameMtlDlg::~GameMtlDlg()
 {
 
@@ -132,35 +103,11 @@ GameMtlDlg::~GameMtlDlg()
 }
 
 
-/***********************************************************************************************
- * GameMtlDlg::ClassID -- Returns the ClassID of GameMtl                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 Class_ID GameMtlDlg::ClassID()
 {
 	return GameMaterialClassID;
 }
 
-/***********************************************************************************************
- * GameMtlDlg::SetThing -- Sets the material to be edited                                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 void GameMtlDlg::SetThing(ReferenceTarget *m)
 {
 	assert (m);
@@ -190,18 +137,7 @@ void GameMtlDlg::SetThing(ReferenceTarget *m)
 	ReloadDialog();
 }
 
-/***********************************************************************************************
- * GameMtlDlg::SetTime -- Sets the time value, updates the material and the dialog             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Also updates the material and the dialog.
 void GameMtlDlg::SetTime(TimeValue t)
 {
 	if (t!=CurTime) {
@@ -211,18 +147,6 @@ void GameMtlDlg::SetTime(TimeValue t)
 	}
 }
 
-/***********************************************************************************************
- * GameMtlDlg::ReloadDialog -- Updates the values in all of the dialog's controls              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 void GameMtlDlg::ReloadDialog()
 {
 	/*
@@ -251,18 +175,6 @@ void GameMtlDlg::ReloadDialog()
 	}
 }
 
-/***********************************************************************************************
- * GameMtlDlg::ActivateDlg -- Activates and deactivates the dialog                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 void GameMtlDlg::ActivateDlg(BOOL onoff)
 {
 	for(int i = 0; i < TheMtl->Get_Pass_Count(); i++)
@@ -272,18 +184,6 @@ void GameMtlDlg::ActivateDlg(BOOL onoff)
 	}
 }
 
-/***********************************************************************************************
- * GameMtlDlg::Invalidate -- causes the dialog to be redrawn                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 void GameMtlDlg::Invalidate()
 {
 	InvalidateRect(HwndSurfaceType,nullptr,0);
@@ -541,18 +441,7 @@ static BOOL CALLBACK PassCountDialogDlgProc(HWND hwndDlg, UINT msg, WPARAM wPara
 }
 
 
-/***********************************************************************************************
- * GameMtlDlg::Build_Dialog -- Adds the dialog to the material editor                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Adds the dialog to the material editor.
 void GameMtlDlg::Build_Dialog()
 {
 	if ((TheMtl->Flags&(GAMEMTL_ROLLUP_FLAGS))==0) {

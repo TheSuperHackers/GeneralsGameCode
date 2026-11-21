@@ -33,11 +33,6 @@
  *                    $Revision:: 6                                                           $*
  *                                                                                             *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   Matrix4x4::Multiply -- Multiply two Matrix4x4's together                                      *
- *   Matrix4x4::Multiply -- Multiply a Matrix3D * Matrix4x4                                        *
- *   Matrix4x4::Multiply -- Multiply a Matrix4x4 * Matrix3D                                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "matrix4.h"
@@ -47,21 +42,7 @@
 #include <d3d8types.h>
 #include <d3dx8math.h>
 
-/***********************************************************************************************
- * Matrix4x4::Multiply -- Multiply two Matrix4x4's together                                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *  a - first operand                                                                          *
- *  b - second operand                                                                         *
- *  res - pointer to matrix to store the result in (must not point to a or b)                  *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/13/99   gth : Created.                                                                 *
- *=============================================================================================*/
+// The result must not point to a or b.
 void Matrix4x4::Multiply(const Matrix4x4 &a,const Matrix4x4 &b,Matrix4x4 * res)
 {
 	assert(res != &a);
@@ -93,18 +74,7 @@ void Matrix4x4::Multiply(const Matrix4x4 &a,const Matrix4x4 &b,Matrix4x4 * res)
 }
 
 
-/***********************************************************************************************
- * Matrix4x4::Multiply -- Multiply a Matrix3D * Matrix4x4                                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/13/99   gth : Created.                                                                 *
- *=============================================================================================*/
+// Multiply a Matrix3D * Matrix4x4.
 void Matrix4x4::Multiply(const Matrix3D &a,const Matrix4x4 &b,Matrix4x4 * res)
 {
 	assert(res != &b);
@@ -135,17 +105,7 @@ void Matrix4x4::Multiply(const Matrix3D &a,const Matrix4x4 &b,Matrix4x4 * res)
 }
 
 
-/***********************************************************************************************
- * Matrix4x4::Multiply -- Multiply a Matrix4x4 * Matrix3D                                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
+// Multiply a Matrix4x4 * Matrix3D.
 void Matrix4x4::Multiply(const Matrix4x4 & a,const Matrix3D & b,Matrix4x4 * res)
 {
 	assert(res != &a);

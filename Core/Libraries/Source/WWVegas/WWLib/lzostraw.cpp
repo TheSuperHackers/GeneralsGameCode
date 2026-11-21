@@ -30,11 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   LZOStraw::Get -- Fetch data through the LZO processor.                                    *
- *   LZOStraw::LZOStraw -- Constructor for LZO straw object.                                   *
- *   LZOStraw::~LZOStraw -- Destructor for the LZO straw.                                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
@@ -44,25 +39,9 @@
 #include	<string.h>
 
 
-/***********************************************************************************************
- * LZOStraw::LZOStraw -- Constructor for LZO straw object.                                     *
- *                                                                                             *
- *    This will initialize the LZO straw object. Whether the object is to compress or          *
- *    decompress and the block size to use is specified. The data is compressed in blocks      *
- *    that are sized to be quick to compress and yet still yield good compression ratios.      *
- *                                                                                             *
- * INPUT:   decrypt  -- Should the data be decompressed?                                       *
- *                                                                                             *
- *          blocksize-- The size of the blocks to process.                                     *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   It takes two buffers of the blocksize specified if compression is to be         *
- *             performed.                                                                      *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/04/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// The data is compressed in blocks that are sized to be quick to compress and yet still yield good
+// compression ratios.
+// WARNING: It takes two buffers of the blocksize specified if compression is to be performed.
 LZOStraw::LZOStraw(CompControl control, int blocksize) :
 		Control(control),
 		Counter(0),
@@ -78,20 +57,6 @@ LZOStraw::LZOStraw(CompControl control, int blocksize) :
 }
 
 
-/***********************************************************************************************
- * LZOStraw::~LZOStraw -- Destructor for the LZO straw.                                        *
- *                                                                                             *
- *    The destructor will free up the allocated buffers that it allocated in the constructor.  *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/04/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
 LZOStraw::~LZOStraw()
 {
 	delete [] Buffer;
@@ -102,27 +67,9 @@ LZOStraw::~LZOStraw()
 }
 
 
-/***********************************************************************************************
- * LZOStraw::Get -- Fetch data through the LZO processor.                                      *
- *                                                                                             *
- *    This routine will fetch the data bytes specified. It does this by first accumulating     *
- *    a full block of data and then compressing or decompressing it as indicated. Subsequent   *
- *    requests for data will draw from this buffer of processed data until it is exhausted     *
- *    and another block must be fetched.                                                       *
- *                                                                                             *
- * INPUT:   destbuf  -- Pointer to the buffer to hold the data requested.                      *
- *                                                                                             *
- *          length   -- The number of data bytes requested.                                    *
- *                                                                                             *
- * OUTPUT:  Returns with the actual number of bytes stored into the buffer. If this number     *
- *          is less than that requested, then this indicates that the data source has been     *
- *          exhausted.                                                                         *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/04/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// First accumulates a full block of data and then compresses or decompresses it as indicated.
+// Subsequent requests for data will draw from this buffer of processed data until it is exhausted
+// and another block must be fetched.
 int LZOStraw::Get(void * destbuf, int slen)
 {
 	assert(Buffer != nullptr);

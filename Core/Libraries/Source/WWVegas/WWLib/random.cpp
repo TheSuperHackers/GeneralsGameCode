@@ -30,17 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   RandomClass::RandomClass -- Constructor for the random number class.                      *
- *   RandomClass::operator() -- Fetches the next random number in the sequence.                *
- *   RandomClass::operator() -- Ranged random number generator.                                *
- *   Random2Class::Random2Class -- Constructor for the random class.                           *
- *   Random2Class::operator -- Generates a random number between two values.                   *
- *   Random2Class::operator -- Randomizer function that returns value.                         *
- *   Random3Class::Random3Class -- Initializer for the random number generator.                *
- *   Random3Class::operator -- Generates a random number between two values.                   *
- *   Random3Class::operator -- Random number generator function.                               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
@@ -71,44 +60,17 @@ Rand() - starts breaking in 24 dimensions
 */
 
 
-/***********************************************************************************************
- * RandomClass::RandomClass -- Constructor for the random number class.                        *
- *                                                                                             *
- *    This constructor can take an integer as a parameter. This allows the class to be         *
- *    constructed by assigning an integer to an existing object. The compiler creates a        *
- *    temporary with the constructor and then performs a copy constructor operation.           *
- *                                                                                             *
- * INPUT:   seed  -- The optional starting seed value to use.                                  *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/27/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// This constructor can take an integer as a parameter. This allows the class to be constructed by
+// assigning an integer to an existing object. The compiler creates a temporary with the constructor
+// and then performs a copy constructor operation.
 RandomClass::RandomClass(unsigned seed) :
 	Seed(seed)
 {
 }
 
 
-/***********************************************************************************************
- * RandomClass::operator() -- Fetches the next random number in the sequence.                  *
- *                                                                                             *
- *    This routine will fetch the next random number in the sequence.                          *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  Returns with the next random number.                                               *
- *                                                                                             *
- * WARNINGS:   This routine modifies the seed value so that subsequent calls will not return   *
- *             the same value. Take note that this routine only returns 15 bits of             *
- *             random number.                                                                  *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/27/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: This routine modifies the seed value so that subsequent calls will not return the same
+// value. Take note that this routine only returns 15 bits of random number.
 int RandomClass::operator ()()
 {
 	/*
@@ -124,45 +86,15 @@ int RandomClass::operator ()()
 }
 
 
-/***********************************************************************************************
- * RandomClass::operator() -- Ranged random number generator.                                  *
- *                                                                                             *
- *    This function will return with a random number within the range specified. This replaces *
- *    the functionality of IRandom() in the old library.                                       *
- *                                                                                             *
- * INPUT:   minval   -- The minimum value to return from the function.                         *
- *                                                                                             *
- *          maxval   -- The maximum value to return from the function.                         *
- *                                                                                             *
- * OUTPUT:  Returns with a random number that falls between the minval and maxval (inclusive). *
- *                                                                                             *
- * WARNINGS:   The range specified must fall within the maximum bit significance of the        *
- *             random number algorithm (15 bits), otherwise the value returned will be         *
- *             decidedly non-random.                                                           *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/27/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// The range is inclusive. This replaces the functionality of IRandom() in the old library.
+// WARNING: The range specified must fall within the maximum bit significance of the random number
+// algorithm (15 bits), otherwise the value returned will be decidedly non-random.
 int RandomClass::operator() (int minval, int maxval)
 {
 	return(Pick_Random_Number(*this, minval, maxval));
 }
 
 
-/***********************************************************************************************
- * Random2Class::Random2Class -- Constructor for the random class.                             *
- *                                                                                             *
- *    This will initialize the random class object with the seed value specified.              *
- *                                                                                             *
- * INPUT:   seed  -- The seed value used to scramble the random number generator.              *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/14/1997 JLB : Created.                                                                 *
- *=============================================================================================*/
 Random2Class::Random2Class(unsigned seed) :
 	Index1(0),
 	Index2(103)
@@ -175,21 +107,6 @@ Random2Class::Random2Class(unsigned seed) :
 }
 
 
-/***********************************************************************************************
- * Random2Class::operator -- Randomizer function that returns value.                           *
- *                                                                                             *
- *    This is the random number generator function. It will generate a random number and       *
- *    return the value.                                                                        *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  Returns with a random number.                                                      *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/20/1997 JLB : Created.                                                                 *
- *=============================================================================================*/
 int Random2Class::operator() ()
 {
 	Table[Index1] ^= Table[Index2];
@@ -205,23 +122,7 @@ int Random2Class::operator() ()
 }
 
 
-/***********************************************************************************************
- * Random2Class::operator -- Generates a random number between two values.                     *
- *                                                                                             *
- *    This routine will generate a random number between the two values specified. It uses     *
- *    a method that will not bias the values in any way.                                       *
- *                                                                                             *
- * INPUT:   minval   -- The minimum return value (inclusive).                                  *
- *                                                                                             *
- *          maxval   -- The maximum return value (inclusive).                                  *
- *                                                                                             *
- * OUTPUT:  Returns with a random number that falls between the two values (inclusive).        *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/20/1997 JLB : Created.                                                                 *
- *=============================================================================================*/
+// The range is inclusive. It uses a method that will not bias the values in any way.
 int Random2Class::operator() (int minval, int maxval)
 {
 	return(Pick_Random_Number(*this, minval, maxval));
@@ -250,30 +151,12 @@ int Random3Class::Mix2[20] = {
 };
 
 
-/***********************************************************************************************
- * Random3Class::Random3Class -- Initializer for the random number generator.                  *
- *                                                                                             *
- *    This initializes the random number generator with the seed values specified. Due to a    *
- *    peculiarity of the random number design, the second seed value can be used to find the   *
- *    Nth random number generated by this algorithm. The second seed is used as the Nth index  *
- *    value.                                                                                   *
- *                                                                                             *
- * INPUT:   seed1 -- The seed value to inialize the generator with. It is suggest that some    *
- *                   random value based on user input seed this value.                         *
- *                                                                                             *
- *          seed2 -- The auxiliary seed value. This adds randomness and thus allows this       *
- *                   algorithm to use a 64 bit seed. This second seed also serves as an index  *
- *                   into the algorithm such that the value passed as 'seed2' is will prime    *
- *                   the generator to return that Nth random number when it is called.         *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   As with all random number generators. Randomness is only as strong as the       *
- *             initial seed value.                                                             *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/20/1997 JLB : Created.                                                                 *
- *=============================================================================================*/
+// It is suggested that some random value based on user input seed the first value. The second seed
+// adds randomness and thus allows this algorithm to use a 64 bit seed. Due to a peculiarity of the
+// random number design, the second seed value can be used to find the Nth random number generated
+// by this algorithm. The second seed is used as the Nth index value.
+// WARNING: As with all random number generators. Randomness is only as strong as the initial seed
+// value.
 Random3Class::Random3Class(unsigned seed1, unsigned seed2) :
 	Seed(seed1),
 	Index(seed2)
@@ -281,21 +164,7 @@ Random3Class::Random3Class(unsigned seed1, unsigned seed2) :
 }
 
 
-/***********************************************************************************************
- * Random3Class::operator -- Random number generator function.                                 *
- *                                                                                             *
- *    This routine generates a random number. The number returned is strongly random and is    *
- *    nearly good enough for cryptography.                                                     *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  Returns with a 32bit random number.                                                *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/20/1997 JLB : Created.                                                                 *
- *=============================================================================================*/
+// The number returned is strongly random and is nearly good enough for cryptography.
 int Random3Class::operator() ()
 {
 	int loword = Seed;
@@ -314,23 +183,7 @@ int Random3Class::operator() ()
 }
 
 
-/***********************************************************************************************
- * Random3Class::operator -- Generates a random number between two values.                     *
- *                                                                                             *
- *    This routine will generate a random number between the two values specified. It uses     *
- *    a method that will not bias the values in any way.                                       *
- *                                                                                             *
- * INPUT:   minval   -- The minimum return value (inclusive).                                  *
- *                                                                                             *
- *          maxval   -- The maximum return value (inclusive).                                  *
- *                                                                                             *
- * OUTPUT:  Returns with a random number that falls between the two values (inclusive).        *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/20/1997 JLB : Created.                                                                 *
- *=============================================================================================*/
+// The range is inclusive. It uses a method that will not bias the values in any way.
 int Random3Class::operator() (int minval, int maxval)
 {
 	return(Pick_Random_Number(*this, minval, maxval));

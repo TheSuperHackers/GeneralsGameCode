@@ -32,14 +32,6 @@
  *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   GenMtlNamesDialogClass::GenMtlNamesDialogClass -- Constructor                             *
- *   GenMtlNamesDialogClass::~GenMtlNamesDialogClass -- Destructor                             *
- *   GenMtlNamesDialogClass::Get_Options -- present the dialog, get user input                 *
- *   GenMtlNamesDialogClass::Ok_To_Exit -- verify that the input is valid                      *
- *   GenMtlNamesDialogClass::Dialog_Proc -- windows message handling                           *
- *   _gen_mtl_names_dialog_proc -- windows dialog proc for GenMtlNamesDialog                   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "genmtlnamesdialog.h"
@@ -58,17 +50,6 @@ static BOOL CALLBACK _gen_mtl_names_dialog_proc(HWND Hwnd,UINT message,WPARAM wP
 **********************************************************************************************/
 
 
-/***********************************************************************************************
- * GenMtlNamesDialogClass::GenMtlNamesDialogClass -- Constructor                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 GenMtlNamesDialogClass::GenMtlNamesDialogClass(Interface * maxinterface) :
 	Hwnd(nullptr),
 	Options(nullptr),
@@ -78,38 +59,12 @@ GenMtlNamesDialogClass::GenMtlNamesDialogClass(Interface * maxinterface) :
 }
 
 
-/***********************************************************************************************
- * GenMtlNamesDialogClass::~GenMtlNamesDialogClass -- Destructor                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/10/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 GenMtlNamesDialogClass::~GenMtlNamesDialogClass()
 {
 	ReleaseISpinner(NameIndexSpin);
 }
 
 
-/***********************************************************************************************
- * GenMtlNamesDialogClass::Get_Options -- present the dialog, get user input                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- * options - pointer to structure to hold the user's input                                     *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- * true - user pressed ok and the input is valid                                               *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/10/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 bool GenMtlNamesDialogClass::Get_Options(OptionsStruct * options)
 {
 	Options = options;
@@ -132,18 +87,6 @@ bool GenMtlNamesDialogClass::Get_Options(OptionsStruct * options)
 }
 
 
-/***********************************************************************************************
- * GenMtlNamesDialogClass::Ok_To_Exit -- verify that the input is valid                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/10/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 bool GenMtlNamesDialogClass::Ok_To_Exit()
 {
 	// just check that the user entered a name
@@ -161,18 +104,6 @@ bool GenMtlNamesDialogClass::Ok_To_Exit()
 }
 
 
-/***********************************************************************************************
- * GenMtlNamesDialogClass::Dialog_Proc -- windows message handling                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/10/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 bool GenMtlNamesDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM)
 {
 	switch (message )	{
@@ -230,18 +161,6 @@ bool GenMtlNamesDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LP
 }
 
 
-/***********************************************************************************************
- * _gen_mtl_names_dialog_proc -- windows dialog proc for GenMtlNamesDialog                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/10/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 static BOOL CALLBACK _gen_mtl_names_dialog_proc(HWND hwnd,UINT message,WPARAM wparam,LPARAM lparam)
 {
 	static GenMtlNamesDialogClass * dialog = nullptr;

@@ -36,45 +36,6 @@
  * 06/27/02 KM Texture class abstraction																			*
  * 07/01/02 KM Shader library integration
  * 08/05/02 KM Texture class redesign (revisited)
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   WW3DAssetManager::WW3DAssetManager -- Constructor                                         *
- *   WW3DAssetManager::~WW3DAssetManager -- Destructor                                         *
- *   WW3DAssetManager::Free -- free all memory (un-needed?)                                    *
- *   WW3DAssetManager::Free_Assets -- Release all loaded assets                                *
- *   WW3DAssetManager::Load_3D_Assets -- Load 3D assets from a .W3D file                       *
- *   WW3DAssetManager::Load_Prototype -- loads a prototype from a W3D chunk                    *
- *   WW3DAssetManager::Create_Render_Obj -- Create a render object for the user                *
- *   WW3DAssetManager::Render_Obj_Exists -- Check whether a render object with the given name  *
- *   WW3DAssetManager::Create_Render_Obj_Iterator -- Create an iterator which can enumerate al *
- *   WW3DAssetManager::Release_Render_Obj_Iterator -- release a render object iterator         *
- *   WW3DAssetManager::Create_HAnim_Iterator -- Creates an HAnim Iterator                      *
- *   WW3DAssetManager::Create_HTree_Iterator -- creates an htree iterator                      *
- *   WW3DAssetManager::Create_Material_Iterator -- Create a material iterator                  *
- *   WW3DAssetManager::Create_Font3DData_Iterator -- Create a Font3DData iterator              *
- *   WW3DAssetManager::Get_HAnim -- Returns a pointer to a names HAnim                         *
- *   WW3DAssetManager::Get_HTree -- Returns a pointer to the named HTree                       *
- *   WW3DAssetManager::Get_Material -- Gets a pointer to a loaded material or creates it       *
- *   WW3DAssetManager::Get_Material -- Gets a pointer to a loaded material or creates the mate *
- *   WW3DAssetManager::Get_Material -- Gets a pointer to a loaded material or creates it       *
- *   WW3DAssetManager::Get_Font3DInstance -- Creates a pointer to a Font3DInstance             *
- *   WW3DAssetManager::Get_Font3DData -- Gets a pointer to a loaded Font3DData or creates it   *
- *   WW3DAssetManager::Release_Material -- Release a material                                  *
- *   WW3DAssetManager::Release_Font3DData -- Release a Font3DData	                             *
- *   WW3DAssetManager::Add_Material -- Add a material to the list                              *
- *   WW3DAssetManager::Add_Font3DData -- Add a Font3DData to the list                          *
- *   WW3DAssetManager::Get_Texture -- get a TextureClass for the specified targa               *
- *   WW3DAssetManager::Release_All_Textures -- release all textures in the system              *
- *   WW3DAssetManager::Register_Prototype_Loader -- add a new loader to the system             *
- *   WW3DAssetManager::Find_Prototype_Loader -- find the loader that handles this chunk type   *
- *   WW3DAssetManager::Add_Prototype -- adds the prototype to the hash table                   *
- *   WW3DAssetManager::Find_Prototype -- searches the hash table for the prototype             *
- *   WW3DAssetManager::Open_Texture_File_Cache -- Turn on the texture cache system.            *
- *   WW3DAssetManager::Close_Texture_File_Cache -- Turn off the texture cache system.          *
- *   CachedTextureFileClass::getMipmapData -- get data for texture - check to see if in cache. *
- *   CachedTextureFileClass::getMipmapLevelPartial -- not yet implemented                      *
- *   CachedTextureFileClass::setupDefaultValues -- loads texture in to get default data.       *
- *   WW3DAssetManager::Get_Streaming_Texture -- Gets a streaming texture.                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "assetmgr.h"
@@ -189,19 +150,6 @@ protected:
 	friend class WW3DAssetManager;
 };
 
-/***********************************************************************************************
- * WW3DAssetManager::WW3DAssetManager -- Constructor                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/21/97   GTH : Created.                                                                 *
- *   05/10/1999 SKB : Add TextureCache                                                         *
- *=============================================================================================*/
 WW3DAssetManager::WW3DAssetManager() :
 	PrototypeLoaders		(PROTOLOADERS_VECTOR_SIZE),
 	Prototypes				(PROTOTYPES_VECTOR_SIZE),
@@ -241,18 +189,6 @@ WW3DAssetManager::WW3DAssetManager() :
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::~WW3DAssetManager -- Destructor                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/21/97   GTH : Created.                                                                 *
- *=============================================================================================*/
 WW3DAssetManager::~WW3DAssetManager()
 {
 	delete MetalManager;
@@ -411,37 +347,12 @@ void WW3DAssetManager::Log_Texture_Statistics()
 */
 }
 
-/***********************************************************************************************
- * WW3DAssetManager::Free -- free all memory (un-needed?)                                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/21/97   GTH : Created.                                                                 *
- *=============================================================================================*/
 void WW3DAssetManager::Free()
 {
 	Free_Assets();
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Free_Assets -- Release all loaded assets                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/21/97   GTH : Created.                                                                 *
- *   05/10/1999 SKB : Close down texture cache file.                                           *
- *=============================================================================================*/
 void WW3DAssetManager::Free_Assets()
 {
 	WWPROFILE( "WW3DAssetManager::Free_Assets" );
@@ -476,18 +387,7 @@ void WW3DAssetManager::Free_Assets()
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Free_Unused_Assets -- Release all assets that are referenced only by      *
- *                                         the asset manager.                                  *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/18/99   EHC : Created.                                                                 *
- *=============================================================================================*/
+// Release all assets that are referenced only by the asset manager.
 void WW3DAssetManager::Release_Unused_Assets()
 {
 	// release all references to objects that have only one reference on them
@@ -496,23 +396,7 @@ void WW3DAssetManager::Release_Unused_Assets()
 	Release_Unused_Font3DDatas();
 }
 
-/***********************************************************************************************
- * WW3DAssetManager::Free_Assets_With_Exclusion_List -- Release all assets that are not named  *
- *                                                      in the exclusion list.                 *
- *                                                                                             *
- * This function checks if each prototype is named or is a child of something named in the     *
- * given exclusion list.                                                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- * exclusion_list - list of names of render object prototypes to not release.                  *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/12/2002 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Checks if each prototype is named or is a child of something named in the given exclusion list.
 void WW3DAssetManager::Free_Assets_With_Exclusion_List(const DynamicVectorClass<StringClass> & exclusion_names)
 {
 	// Reset the dx8 mesh renderer
@@ -566,24 +450,9 @@ void WW3DAssetManager::Free_Assets_With_Exclusion_List(const DynamicVectorClass<
 
 }
 
-/***********************************************************************************************
- * WW3DAssetManager::Create_Asset_List -- Create a list of the W3D files that are loaded       *
- *                                                                                             *
- * This function checks if each prototype is named or is a child of something named in the     *
- * given exclusion list.                                                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- * model_list - dynamic vector to populate with names of w3d files loaded                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * As in other places in the code, we are assuming that w3d filenames match the "top-level"    *
- * render object contained within them!                                                        *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/12/2002 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Creates a list of the W3D files that are loaded.
+// WARNING: As in other places in the code, we are assuming that w3d filenames match the "top-level"
+// render object contained within them!
 void WW3DAssetManager::Create_Asset_List(DynamicVectorClass<StringClass> & model_list)
 {
 	for (int i=0; i<Prototypes.Count(); i++) 	{
@@ -605,18 +474,6 @@ void WW3DAssetManager::Create_Asset_List(DynamicVectorClass<StringClass> & model
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Load_3D_Assets -- Load 3D assets from a file                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/22/98   BMG : Created.                                                                 *
- *=============================================================================================*/
 bool WW3DAssetManager::Load_3D_Assets( const char * filename )
 {
 	bool result = false;
@@ -635,18 +492,6 @@ bool WW3DAssetManager::Load_3D_Assets( const char * filename )
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Load_3D_Assets -- Load 3D assets from a .W3D file                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/21/97   GTH : Created.                                                                 *
- *=============================================================================================*/
 bool WW3DAssetManager::Load_3D_Assets(FileClass & w3dfile)
 {
 	WWPROFILE( "WW3DAssetManager::Load_3D_Assets" );
@@ -684,20 +529,7 @@ bool WW3DAssetManager::Load_3D_Assets(FileClass & w3dfile)
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Load_Prototype -- loads a prototype from a W3D chunk                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/29/98    GTH : Created.                                                                 *
- *   2/19/99    EHC : Now has the Add_Prototype call responsible for adding the prototype to   *
- *                    the Prototypes list object.                                              *
- *=============================================================================================*/
+// The Add_Prototype call is responsible for adding the prototype to the Prototypes list.
 bool WW3DAssetManager::Load_Prototype(ChunkLoadClass & cload)
 {
 	WWPROFILE( "WW3DAssetManager::Load_Prototype" );
@@ -770,21 +602,8 @@ bool WW3DAssetManager::Load_Prototype(ChunkLoadClass & cload)
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Create_Render_Obj -- Create a render object for the user                  *
- *                                                                                             *
- *    This function will create any type of render object.  I.e. if you pass in the name       *
- *    of an HModel, it will create an hmodel for you.                                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/21/97   GTH : Created.                                                                 *
- *=============================================================================================*/
+// This function will create any type of render object. I.e. if you pass in the name of an HModel,
+// it will create an hmodel for you.
 RenderObjClass * WW3DAssetManager::Create_Render_Obj(const char * name)
 {
 	WWPROFILE( "WW3DAssetManager::Create_Render_Obj" );
@@ -832,18 +651,6 @@ RenderObjClass * WW3DAssetManager::Create_Render_Obj(const char * name)
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Render_Obj_Exists -- Check whether a render object with the given name ex *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/21/97   GTH : Created.                                                                 *
- *=============================================================================================*/
 bool WW3DAssetManager::Render_Obj_Exists(const char * name)
 {
 	if (Find_Prototype(name) == nullptr) return false;
@@ -851,120 +658,40 @@ bool WW3DAssetManager::Render_Obj_Exists(const char * name)
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Create_Render_Obj_Iterator -- Create an iterator which can enumerate all  *
- *                                                                                             *
- *    The iterator returned can enumerate all of the loaded render objects for you.            *
- *    The user is responsible for releasing the iterator!                                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *    User must release the iterator back to the asset manager or there will be a memory leak  *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/21/97   GTH : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: User must release the iterator back to the asset manager or there will be a memory leak.
 RenderObjIterator * WW3DAssetManager::Create_Render_Obj_Iterator()
 {
 	return W3DNEW RObjIterator();
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Release_Render_Obj_Iterator -- release a render object iterator           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/28/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void WW3DAssetManager::Release_Render_Obj_Iterator(RenderObjIterator * it)
 {
 	WWASSERT(it != nullptr);
 	delete it;
 }
 
-/***********************************************************************************************
- * WW3DAssetManager::Create_HAnim_Iterator -- Creates an HAnim Iterator                        *
- *                                                                                             *
- *    Creates an iterator which can enumerate each of the named hierarchical animations        *
- *    which are currently loaded.                                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *    User must delete the iterator!                                                           *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/21/97   GTH : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: User must delete the iterator!
 AssetIterator * WW3DAssetManager::Create_HAnim_Iterator()
 {
 	return W3DNEW HAnimIterator();
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Create_HTree_Iterator -- creates an htree iterator                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/11/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 AssetIterator * WW3DAssetManager::Create_HTree_Iterator()
 {
 	return W3DNEW HTreeIterator();
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Create_Font3DData_Iterator -- Create a Font3DData iterator                *
- *                                                                                             *
- *   Creates an iterator which can enumerate each of the Font3DDatas currently loaded          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *    User must delete the iterator!                                                           *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/6/98     GTH : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: User must delete the iterator!
 AssetIterator * WW3DAssetManager::Create_Font3DData_Iterator()
 {
 	return W3DNEW Font3DDataIterator();
 }
 
-/***********************************************************************************************
- * WW3DAssetManager::Get_HAnim -- Returns a pointer to a names HAnim                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *    The implementation has changed since its inception, the asset manager no longer owns the *
- *	   hanim's so they need to be released by the caller.													  *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/21/97   GTH : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: The implementation has changed since its inception, the asset manager no longer owns the
+// hanims so they need to be released by the caller.
 HAnimClass *	WW3DAssetManager::Get_HAnim(const char * name)
 {
 	WWPROFILE( "WW3DAssetManager::Get_HAnim" );
@@ -1008,19 +735,7 @@ HAnimClass *	WW3DAssetManager::Get_HAnim(const char * name)
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Get_HTree -- Returns a pointer to the named HTree                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *    DO NOT DELETE the HTree you get from this function, it is "owned" by the asset manager.  *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/21/97   GTH : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: DO NOT DELETE the HTree you get from this function, it is "owned" by the asset manager.
 HTreeClass *	WW3DAssetManager::Get_HTree(const char * name)
 {
 	WWPROFILE( "WW3DAssetManager::Get_HTree" );
@@ -1053,18 +768,6 @@ HTreeClass *	WW3DAssetManager::Get_HTree(const char * name)
 	return htree;
 }
 
-/***********************************************************************************************
- * WW3DAssetManager::Get_Texture -- get a TextureClass from the specified file                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/31/2001  NH : Created.                                                                  *
- *=============================================================================================*/
 TextureClass * WW3DAssetManager::Get_Texture
 (
 	const char * filename,
@@ -1136,18 +839,6 @@ TextureClass * WW3DAssetManager::Get_Texture
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Release_All_Textures -- release all textures in the system                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/10/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void WW3DAssetManager::Release_All_Textures()
 {
 	/*
@@ -1165,18 +856,7 @@ void WW3DAssetManager::Release_All_Textures()
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Release_Unused_Textures -- release all textures with refcount == 1        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/18/99    EHC : Created.                                                                 *
- *=============================================================================================*/
+// Release all textures with refcount == 1.
 void WW3DAssetManager::Release_Unused_Textures()
 {
 	/*
@@ -1209,18 +889,6 @@ void WW3DAssetManager::Release_Unused_Textures()
 	}
 }
 
-/***********************************************************************************************
- * WW3DAssetManager::Release_Texture -- release a specific texture from the asset manager      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/18/99    EHC : Created.                                                                 *
- *=============================================================================================*/
 void WW3DAssetManager::Release_Texture(TextureClass *tex)
 {
 	/*
@@ -1311,18 +979,6 @@ void WW3DAssetManager::Log_All_Textures()
 
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Get_Font3DInstance -- Creates a pointer to a Font3DInstance					  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/6/98     GTH : Created.                                                                 *
- *=============================================================================================*/
 Font3DInstanceClass * WW3DAssetManager::Get_Font3DInstance( const char *name )
 {
 	WWPROFILE( "WW3DAssetManager::Get_Font3DInstance" );
@@ -1330,18 +986,7 @@ Font3DInstanceClass * WW3DAssetManager::Get_Font3DInstance( const char *name )
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Get_Font3DData -- Gets a pointer to a loaded Font3DData or creates it     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/6/98     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Gets a pointer to a loaded Font3DData or creates it.
 Font3DDataClass * WW3DAssetManager::Get_Font3DData( const char *name )
 {
 	WWPROFILE( "WW3DAssetManager::Get_Font3DData" );
@@ -1364,18 +1009,6 @@ Font3DDataClass * WW3DAssetManager::Get_Font3DData( const char *name )
 	return font;
 }
 
-/***********************************************************************************************
- * WW3DAssetManager::Add_Font3DData -- Add a Font3DData to the list                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/6/98     GTH : Created.                                                                 *
- *=============================================================================================*/
 void WW3DAssetManager::Add_Font3DData(Font3DDataClass * font)
 {
 	font->Add_Ref();
@@ -1388,18 +1021,6 @@ void WW3DAssetManager::Remove_Font3DData(Font3DDataClass * font)
 	Font3DDatas.Remove(font);
 }
 
-/***********************************************************************************************
- * WW3DAssetManager::Release_All_Font3DDatas -- Release all Font3DDatas from the asset manager *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/6/98     GTH : Created.                                                                 *
- *=============================================================================================*/
 void	WW3DAssetManager::Release_All_Font3DDatas()
 {
 	// for each mat in the list, get it and release ref it
@@ -1409,18 +1030,7 @@ void	WW3DAssetManager::Release_All_Font3DDatas()
 	}
 }
 
-/***********************************************************************************************
- * WW3DAssetManager::Release_Unused_Font3DDatas -- Release all Font3DDatas with refcount == 1  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/6/98     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Release all Font3DDatas with refcount == 1.
 void	WW3DAssetManager::Release_Unused_Font3DDatas()
 {
 	/*
@@ -1438,18 +1048,7 @@ void	WW3DAssetManager::Release_Unused_Font3DDatas()
 	}
 }
 
-/***********************************************************************************************
- * WW3DAssetManager::Get_FontChars -- Gets a pointer to a loaded FontChars or creates it       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/1/01     BMG : Created.                                                                 *
- *=============================================================================================*/
+// Gets a pointer to a loaded FontChars or creates it.
 FontCharsClass *	WW3DAssetManager::Get_FontChars( const char * name, int point_size, bool is_bold )
 {
 	WWPROFILE( "WW3DAssetManager::Get_FontChars" );
@@ -1476,18 +1075,6 @@ FontCharsClass *	WW3DAssetManager::Get_FontChars( const char * name, int point_s
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Release_All_FontChars -- Release all FontChars from the asset manager     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/1/01     BMG : Created.                                                                 *
- *=============================================================================================*/
 void	WW3DAssetManager::Release_All_FontChars()
 {
 	// for each fontchars in the list, get it and release ref it
@@ -1498,9 +1085,6 @@ void	WW3DAssetManager::Release_All_FontChars()
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Free_All_FontChars_Glyph_Caches -- Discards all cached glyphs              *
- *=============================================================================================*/
 void	WW3DAssetManager::Free_All_FontChars_Glyph_Caches()
 {
 	for ( int i = 0; i < FontCharsList.Count(); i++ ) {
@@ -1508,24 +1092,9 @@ void	WW3DAssetManager::Free_All_FontChars_Glyph_Caches()
 	}
 }
 
-/***********************************************************************************************
- * WW3DAssetManager::Register_Prototype_Loader -- add a new loader to the system               *
- *                                                                                             *
- *    The library will automatically install loaders for the "built-in" render object          *
- *    types.  This function exists so that the user can design App-specific render objects,    *
- *    define a chunk format for them, and have the asset manager load them in like everything  *
- *    else.                                                                                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *    loader - pointer to a global or static instance of your loader type.                     *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/28/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// The library will automatically install loaders for the "built-in" render object types. This
+// function exists so that the user can design App-specific render objects, define a chunk format
+// for them, and have the asset manager load them in like everything else.
 void WW3DAssetManager::Register_Prototype_Loader(PrototypeLoaderClass * loader)
 {
 	WWASSERT(loader != nullptr);
@@ -1533,20 +1102,6 @@ void WW3DAssetManager::Register_Prototype_Loader(PrototypeLoaderClass * loader)
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Find_Prototype_Loader -- find the loader that handles this chunk type     *
- *                                                                                             *
- * INPUT:                                                                                      *
- * chunk_id - chunk type that the loader needs to handle                                       *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- * pointer to the appropriate loader or null if one wasn't found                               *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/28/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 PrototypeLoaderClass * WW3DAssetManager::Find_Prototype_Loader(int chunk_id)
 {
 	for (int i=0; i<PrototypeLoaders.Count(); i++) {
@@ -1559,20 +1114,7 @@ PrototypeLoaderClass * WW3DAssetManager::Find_Prototype_Loader(int chunk_id)
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Add_Prototype -- adds the prototype to the hash table                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/29/98    GTH : Created.                                                                 *
- *   12/8/98    GTH : Renamed to simply Add_Prototype                                          *
- *   2/19/99    EHC : Now adds the prototype to the prototype list                             *
- *=============================================================================================*/
+// Adds the prototype to the hash table and to the prototype list.
 void WW3DAssetManager::Add_Prototype(PrototypeClass * newproto)
 {
 	WWASSERT(newproto != nullptr);
@@ -1583,18 +1125,6 @@ void WW3DAssetManager::Add_Prototype(PrototypeClass * newproto)
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Remove_Prototype -- Removes all references to the protype.					  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/4/99	 PDS : Created.                                                                 *
- *=============================================================================================*/
 void WW3DAssetManager::Remove_Prototype(PrototypeClass *proto)
 {
 	WWASSERT(proto != nullptr);
@@ -1635,18 +1165,6 @@ void WW3DAssetManager::Remove_Prototype(PrototypeClass *proto)
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Remove_Prototype -- Removes all references to the protype.					  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/4/99	 PDS : Created.                                                                 *
- *=============================================================================================*/
 void WW3DAssetManager::Remove_Prototype(const char *name)
 {
 	WWASSERT(name != nullptr);
@@ -1664,19 +1182,6 @@ void WW3DAssetManager::Remove_Prototype(const char *name)
 }
 
 
-/***********************************************************************************************
- * WW3DAssetManager::Find_Prototype -- searches the hash table for the prototype               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/29/98    GTH : Created.                                                                 *
- *   12/8/98    GTH : Renamed to simply Find_Prototype                                         *
- *=============================================================================================*/
 PrototypeClass * WW3DAssetManager::Find_Prototype(const char * name)
 {
 	// Special case Null render object.  So we always have it...

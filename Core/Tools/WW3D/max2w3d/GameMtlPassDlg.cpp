@@ -30,18 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 9                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   PassDlgProc -- dialog proc which thunks into a GameMtlPassDlg                             *
- *   GameMtlPassDlg::GameMtlPassDlg -- constructor                                             *
- *   GameMtlPassDlg::~GameMtlPassDlg -- destructor                                             *
- *   GameMtlPassDlg::DialogProc -- windows message handler                                     *
- *   GameMtlPassDlg::Invalidate -- invalidate the dialog                                       *
- *   GameMtlPassDlg::ReloadDialog -- update the contents of all of the controls                *
- *   GameMtlPassDlg::ClassID -- returns classID of the object being edited                     *
- *   GameMtlPassDlg::SetThing -- set the material being edited                                 *
- *   GameMtlPassDlg::ActivateDlg -- activate or deactivate the dialog                          *
- *   GameMtlPassDlg::SetTime -- set the current time                                           *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -65,18 +53,7 @@ static int _Pass_Index_To_Flag[] =
 };
 
 
-/***********************************************************************************************
- * PassDlgProc -- dialog proc which thunks into a GameMtlPassDlg                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
+// Dialog proc which thunks into a GameMtlPassDlg.
 static BOOL CALLBACK PassDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	GameMtlPassDlg *theDlg;
@@ -95,18 +72,6 @@ static BOOL CALLBACK PassDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM l
 }
 
 
-/***********************************************************************************************
- * GameMtlPassDlg::GameMtlPassDlg -- constructor                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 GameMtlPassDlg::GameMtlPassDlg(HWND hwMtlEdit, IMtlParams *imp, GameMtl *m,int pass)
 {
 	HwndEdit = hwMtlEdit;
@@ -128,18 +93,6 @@ GameMtlPassDlg::GameMtlPassDlg(HWND hwMtlEdit, IMtlParams *imp, GameMtl *m,int p
 }
 
 
-/***********************************************************************************************
- * GameMtlPassDlg::~GameMtlPassDlg -- destructor                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 GameMtlPassDlg::~GameMtlPassDlg()
 {
 	TheMtl->Set_Flag(_Pass_Index_To_Flag[PassIndex],IParams->IsRollupPanelOpen(HwndPanel));
@@ -148,18 +101,6 @@ GameMtlPassDlg::~GameMtlPassDlg()
 }
 
 
-/***********************************************************************************************
- * GameMtlPassDlg::DialogProc -- windows message handler                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 BOOL GameMtlPassDlg::DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	int i=0;
@@ -246,18 +187,6 @@ BOOL GameMtlPassDlg::DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 }
 
 
-/***********************************************************************************************
- * GameMtlPassDlg::Invalidate -- invalidate the dialog                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void GameMtlPassDlg::Invalidate()
 {
 	Valid = FALSE;
@@ -265,18 +194,6 @@ void GameMtlPassDlg::Invalidate()
 }
 
 
-/***********************************************************************************************
- * GameMtlPassDlg::ReloadDialog -- update the contents of all of the controls                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void GameMtlPassDlg::ReloadDialog()
 {
 	int i;
@@ -298,36 +215,13 @@ void GameMtlPassDlg::ReloadDialog()
 }
 
 
-/***********************************************************************************************
- * GameMtlPassDlg::ClassID -- returns classID of the object being edited                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
+// Returns classID of the object being edited.
 Class_ID	GameMtlPassDlg::ClassID()
 {
 	return GameMaterialClassID;
 }
 
 
-/***********************************************************************************************
- * GameMtlPassDlg::SetThing -- set the material being edited                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void GameMtlPassDlg::SetThing(ReferenceTarget* target)
 {
 	// Note, parent will "reload" when our "thing" changes :-)
@@ -342,20 +236,7 @@ void GameMtlPassDlg::SetThing(ReferenceTarget* target)
 }
 
 
-/***********************************************************************************************
- * GameMtlPassDlg::ActivateDlg -- activate or deactivate the dialog                            *
- *                                                                                             *
- * some of the custom max controls need to be activated and deactivated                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
+// Some of the custom max controls need to be activated and deactivated.
 void GameMtlPassDlg::ActivateDlg(BOOL onoff)
 {
 	for (int i=0; i<PAGE_COUNT; i++) {
@@ -364,18 +245,6 @@ void GameMtlPassDlg::ActivateDlg(BOOL onoff)
 }
 
 
-/***********************************************************************************************
- * GameMtlPassDlg::SetTime -- set the current time                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void GameMtlPassDlg::SetTime(TimeValue t)
 {
 	// parent dialog class keeps track of the validty and we

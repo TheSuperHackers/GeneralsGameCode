@@ -31,14 +31,6 @@
  *                                                                                             *
  *                  Last Update : June 26, 1997 [GH]                                           *
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   GameMapsClass::ClassID -- Returns the ClassID for GameMapsClass                           *
- *   GameMapsClass::AssignController -- Assigns a controller to one of the Sub-Anims           *
- *   GameMapsClass::NotifyRefChanged -- Max is notifying GameMapsClass that a reference has cha*
- *   GameMapsClass::Clone -- Create a clone of the GameMapsClass                               *
- *   GameMapsClass::Save -- Saves the GameMapsClass data into a MAX file                       *
- *   GameMapsClass::Load -- Loads GameMapsClass data from a MAX file                           *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -101,53 +93,17 @@ static GameMapsClassDesc _GameMapsCD;
 ClassDesc * Get_Game_Maps_Desc() { return &_GameMapsCD; }
 
 
-/***********************************************************************************************
- * GameMapsClass::ClassID -- Returns the ClassID for GameMapsClass                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 Class_ID GameMapsClass::ClassID()
 {
 	return _GameMapsClassID;
 }
 
-/***********************************************************************************************
- * GameMapsClass::AssignController -- Assigns a controller to one of the Sub-Anims             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 BOOL GameMapsClass::AssignController(Animatable *control,int subAnim)
 {
 	ReplaceReference(SubNumToRefNum(subAnim),(ReferenceTarget *)control);
 	return TRUE;
 }
 
-/***********************************************************************************************
- * GameMapsClass::NotifyRefChanged -- Max is notifying GameMapsClass that a reference has chan *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 RefResult GameMapsClass::NotifyRefChanged
 (
 	Interval				changeInt,
@@ -167,18 +123,6 @@ RefResult GameMapsClass::NotifyRefChanged
 	return(REF_SUCCEED);
 }
 
-/***********************************************************************************************
- * GameMapsClass::Clone -- Create a clone of the GameMapsClass                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 RefTargetHandle GameMapsClass::Clone(RemapDir &remap)
 {
 	GameMapsClass *tm = new GameMapsClass(nullptr);
@@ -196,18 +140,6 @@ RefTargetHandle GameMapsClass::Clone(RemapDir &remap)
 }
 
 
-/***********************************************************************************************
- * GameMapsClass::Save -- Saves the GameMapsClass data into a MAX file                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 IOResult GameMapsClass::Save(ISave * isave)
 {
 	ULONG nb,f=0;
@@ -230,18 +162,6 @@ IOResult GameMapsClass::Save(ISave * isave)
 }
 
 
-/***********************************************************************************************
- * GameMapsClass::Load -- Loads GameMapsClass data from a MAX file                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 IOResult GameMapsClass::Load(ILoad * iload)
 {
 	ULONG nb;

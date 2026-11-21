@@ -34,25 +34,6 @@
  *                  Last Update : June 6, 2002 [KM]                                            *
  *                                                                                             *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   Matrix3D::Set_Rotation -- Sets the rotation part of the matrix                            *
- *   Matrix3D::Set_Rotation -- Sets the rotation part of the matrix                            *
- *   Matrix3D::Set -- Init a matrix3D from a matrix3 and a position                            *
- *   Matrix3D::Set -- Init a matrix3D from a quaternion and a position                         *
- *   Matrix3D::Get_X_Rotation -- approximates the rotation about the X axis                    *
- *   Matrix3D::Get_Y_Rotation -- approximates the rotation about the Y axis                    *
- *   Matrix3D::Get_Z_Rotation -- approximates the rotation about the Z axis                    *
- *   Matrix3D::Multiply -- matrix multiplication without temporaries.                          *
- *   Matrix3D::Inverse_Rotate_Vector -- rotates a vector by the inverse of the 3x3 sub-matrix  *
- *   Matrix3D::Transform_Min_Max_AABox -- compute transformed axis-aligned box                 *
- *   Matrix3D::Transform_Center_Extent_AABox -- compute transformed axis-aligned box           *
- *   Matrix3D::Get_Inverse -- calculate the inverse of this matrix                             *
- *   Matrix3D::Get_Orthogonal_Inverse -- Returns the inverse of the matrix                     *
- *   Matrix3D::Re_Orthogonalize -- makes this matrix orthogonal.                               *
- *   Matrix3D::Is_Orthogonal -- checks whether this matrix is orthogonal                       *
- *   Lerp - linearly interpolate matrices (orientation is slerped)                             *
- *   Matrix3D::Solve_Linear_System -- 3x3 Gauss-Jordan elimination                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "matrix3d.h"
@@ -141,17 +122,6 @@ const Matrix3D	Matrix3D::RotateZ270
 );
 
 
-/***********************************************************************************************
- * Matrix3D::Set -- Init a matrix3D from a matrix3 and a position                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 void Matrix3D::Set(const Matrix3x3 & rot,const Vector3 & pos)
 {
 	Row[0].Set( rot[0][0], rot[0][1], rot[0][2], pos[0]);
@@ -160,17 +130,6 @@ void Matrix3D::Set(const Matrix3x3 & rot,const Vector3 & pos)
 }
 
 
-/***********************************************************************************************
- * Matrix3D::Set -- Init a matrix3D from a quaternion and a position                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 void Matrix3D::Set(const Quaternion & rot,const Vector3 & pos)
 {
    Set_Rotation(rot);
@@ -178,18 +137,6 @@ void Matrix3D::Set(const Quaternion & rot,const Vector3 & pos)
 }
 
 
-/***********************************************************************************************
- * Matrix3D::Set_Rotation -- Sets the rotation part of the matrix                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/11/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void Matrix3D::Set_Rotation(const Matrix3x3 & m)
 {
 	Row[0][0] = m[0][0];
@@ -206,18 +153,6 @@ void Matrix3D::Set_Rotation(const Matrix3x3 & m)
 }
 
 
-/***********************************************************************************************
- * Matrix3D::Set_Rotation -- Sets the rotation part of the matrix                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/11/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void Matrix3D::Set_Rotation(const Quaternion & q)
 {
 	Row[0][0] = (float)(1.0 - 2.0 * (q[1] * q[1] + q[2] * q[2]));
@@ -234,71 +169,28 @@ void Matrix3D::Set_Rotation(const Quaternion & q)
 }
 
 
-/***********************************************************************************************
- * Matrix3D::Get_X_Rotation -- approximates the rotation about the X axis                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Approximates the rotation about the X axis.
 float Matrix3D::Get_X_Rotation() const
 {
 	return WWMath::Atan2(Row[2][1], Row[1][1]);
 }
 
 
-/***********************************************************************************************
- * Matrix3D::Get_Y_Rotation -- approximates the rotation about the Y axis                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Approximates the rotation about the Y axis.
 float Matrix3D::Get_Y_Rotation() const
 {
 	return WWMath::Atan2(Row[0][2], Row[2][2]);
 }
 
 
-/***********************************************************************************************
- * Matrix3D::Get_Z_Rotation -- approximates the rotation about the Z axis                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Approximates the rotation about the Z axis.
 float Matrix3D::Get_Z_Rotation() const
 {
 	return WWMath::Atan2(Row[1][0], Row[0][0]);
 }
 
 
-/***********************************************************************************************
- * M3DC::Rotate_Vector -- Uses the 3x3 sub-matrix to rotate a vector                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
+// Uses the 3x3 sub-matrix to rotate a vector.
 Vector3 Matrix3D::Rotate_Vector(const Vector3 &vect) const
 {
 	return Vector3(
@@ -309,18 +201,7 @@ Vector3 Matrix3D::Rotate_Vector(const Vector3 &vect) const
 }
 
 
-/***********************************************************************************************
- * Matrix3D::Inverse_Rotate_Vector -- rotates a vector by the inverse of the 3x3 sub-matrix    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/27/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Rotates a vector by the inverse of the 3x3 sub-matrix.
 Vector3 Matrix3D::Inverse_Rotate_Vector(const Vector3 &vect) const
 {
 	return Vector3(
@@ -330,29 +211,12 @@ Vector3 Matrix3D::Inverse_Rotate_Vector(const Vector3 &vect) const
 	);
 }
 
-/***********************************************************************************************
- * M3DC::Look_At -- Creates a "look at" transformation.                                        *
- *                                                                                             *
- *	Builds a transformation matrix which positions the origin at p,                             *
- *	points the negative z-axis towards a target t, and rolls about the z-axis                   *
- *	by the angle specified by roll.  														                 *
- *																							                          *
- *	This can be useful for creating a camera matrix, just invert 							           *
- *	the matrix after initializing it with this function...									           *
- *																							                          *
- * INPUT:                                                                                      *
- * p - position of the coordinate system                                                       *
- * t - target of the coordinate system                                                         *
- * roll - roll angle (in radians)                                                              *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * This function is written assuming the convention that the "ground" is the X-Y plane and     *
- * Z is altitude.                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
+// Builds a transformation matrix which positions the origin at p, points the negative z-axis
+// towards a target t, and rolls about the z-axis by the angle specified by roll (in radians). This
+// can be useful for creating a camera matrix, just invert the matrix after initializing it with
+// this function.
+// WARNING: This function is written assuming the convention that the "ground" is the X-Y plane and
+// Z is altitude.
 void Matrix3D::Look_At(const Vector3 &p,const Vector3 &t,float roll)
 {
 	Vector3 dir(t - p);
@@ -440,27 +304,11 @@ void Matrix3D::buildTransformMatrix( const Vector3 &pos, const Vector3 &dir )
 	Rotate_Y( -sinp, cosp );
 }
 
-/***********************************************************************************************
- * M3DC::Obj_Look_At -- Commando Object "look at" transformation.                              *
- *                                                                                             *
- *	Builds a transformation matrix which positions the origin at p,                             *
- *	points the positive X axis towards a target t, and rolls about the X axis                   *
- *	by the angle specified by roll.  														                 *
- *																							                          *
- * The object convention used by Commando and G is Forward = +X, Left = +Y, Up = +Z.  The      *
- *	world is basically the x-y plane with z as altitude and +x is the default "forward".        *
- *																							                          *
- * INPUT:                                                                                      *
- * p - position of the coordinate system                                                       *
- * t - target of the coordinate system                                                         *
- * roll - roll angle (in radians)                                                              *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
+// Commando Object "look at" transformation. Builds a transformation matrix which positions the
+// origin at p, points the positive X axis towards a target t, and rolls about the X axis by the
+// angle specified by roll (in radians). The object convention used by Commando and G is
+// Forward = +X, Left = +Y, Up = +Z. The world is basically the x-y plane with z as altitude and +x
+// is the default "forward".
 void Matrix3D::Obj_Look_At(const Vector3 &p,const Vector3 &t,float roll)
 {
 	float	dx,dy,dz;	//vector from p to t
@@ -505,19 +353,7 @@ void Matrix3D::Obj_Look_At(const Vector3 &p,const Vector3 &t,float roll)
 }
 
 
-/***********************************************************************************************
- * Matrix3D::Get_Inverse -- calculate the inverse of this matrix                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   8/7/98     GTH : Created.                                                                 *
- *   01/03/2026 TheSuperHackers : Implemented.                                                 *
- *=============================================================================================*/
+// TheSuperHackers @feature Implemented the general inverse.
 Matrix3D * Matrix3D::Get_Inverse(Matrix3D * out, float * detOut, const Matrix3D * m)
 {
 	// Read linear + translation elements
@@ -588,35 +424,18 @@ void Matrix3D::Get_Inverse(Matrix3D & inv) const
 	Get_Inverse(&inv, NULL, this);
 }
 
-/***********************************************************************************************
- * Matrix3D::Get_Orthogonal_Inverse -- Returns the inverse of the matrix                       *
- *                                                                                             *
- *	NOTE!!! This only works if the matrix is really ORTHOGONAL!!!						              *
- *																							                          *
- ***********************************************************************************************
- * Inverting an orthogonal Matrix3D																				  *
- *																							                          *
- *  M is the original transform,																	              *
- *  R is rotation submatrix,																                    *
- *  T is translation vector in M.															                 *
- *																							                          *
- *	To build MINV																							           *
- *																							                          *
- *	R' = transpose of R  (inverse of orthogonal 3x3 matrix is transpose)							     *
- *	T' = -R'T																				                       *
- *																							                          *
- *	Build MINV with R'and T'																                    *
- *  MINV is the inverse of M																						  *
- *																							                          *
- ***********************************************************************************************
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
+// NOTE: This only works if the matrix is really ORTHOGONAL!
+//
+// Inverting an orthogonal Matrix3D:
+//  M is the original transform,
+//  R is rotation submatrix,
+//  T is translation vector in M.
+//
+// To build MINV:
+//  R' = transpose of R (inverse of orthogonal 3x3 matrix is transpose)
+//  T' = -R'T
+//
+// Build MINV with R' and T'. MINV is the inverse of M.
 void Matrix3D::Get_Orthogonal_Inverse(Matrix3D & inv) const
 {
 	// Transposing the rotation submatrix
@@ -643,18 +462,6 @@ void Matrix3D::Get_Orthogonal_Inverse(Matrix3D & inv) const
 	inv.Row[2][3] = trans[2];
 }
 
-/***********************************************************************************************
- *  Copy_3x3_Matrix(float *matrix) -- Copies a 3x3 (float[9]) matrix into this matrix          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/16/98    EHC : Created.                                                                 *
- *=============================================================================================*/
 void Matrix3D::Copy_3x3_Matrix(float matrix[3][3])
 {
 	Row[0][0] = matrix[0][0];
@@ -673,18 +480,7 @@ void Matrix3D::Copy_3x3_Matrix(float matrix[3][3])
 
 
 
-/***********************************************************************************************
- * Matrix3D::Multiply -- matrix multiplication without temporaries.                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/22/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Matrix multiplication without temporaries.
 //void print_matrix(const Matrix3D & m);
 
 void Matrix3D::Multiply(const Matrix3D & A,const Matrix3D & B,Matrix3D * set_res)
@@ -1033,18 +829,6 @@ not_equal2:
 }
 #endif
 
-/***********************************************************************************************
- * Matrix3D::Transform_Min_Max_AABox -- compute transformed axis-aligned box                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/17/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void Matrix3D::Transform_Min_Max_AABox
 (
 	const Vector3 &		min,
@@ -1087,18 +871,6 @@ void Matrix3D::Transform_Min_Max_AABox
 }
 
 
-/***********************************************************************************************
- * Matrix3D::Transform_Center_Extent_AABox -- compute transformed axis-aligned box             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/17/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void Matrix3D::Transform_Center_Extent_AABox
 (
 	const Vector3 &		center,
@@ -1128,18 +900,6 @@ void Matrix3D::Transform_Center_Extent_AABox
 }
 
 
-/***********************************************************************************************
- * Matrix3D::Is_Orthogonal -- checks whether this matrix is orthogonal                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/16/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 int Matrix3D::Is_Orthogonal() const
 {
 	Vector3 x(Row[0].X,Row[0].Y,Row[0].Z);
@@ -1157,20 +917,8 @@ int Matrix3D::Is_Orthogonal() const
 	return 1;
 }
 
-/***********************************************************************************************
- * Matrix3D::Re_Orthogonalize -- makes this matrix orthogonal.                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * This function is rather expensive, should only be used if you *know* numerical error is     *
- * killing you.                                                                                *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/16/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: This function is rather expensive, should only be used if you *know* numerical error is
+// killing you.
 void Matrix3D::Re_Orthogonalize()
 {
 	Vector3 x(Row[0][0],Row[0][1],Row[0][2]);
@@ -1218,18 +966,7 @@ void Matrix3D::Re_Orthogonalize()
 }
 
 
-/***********************************************************************************************
- * Lerp - linearly interpolate matrices (orientation is slerped)                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/05/1998 NH  : Created.                                                                 *
- *=============================================================================================*/
+// The orientation is slerped.
 void Matrix3D::Lerp(const Matrix3D &A, const Matrix3D &B, float factor, Matrix3D& result)
 {
    assert(factor >= 0.0f);
@@ -1248,21 +985,9 @@ void Matrix3D::Lerp(const Matrix3D &A, const Matrix3D &B, float factor, Matrix3D
 }
 
 
-/***********************************************************************************************
- * Matrix3D::Solve_Linear_System -- 3x3 Gauss-Jordan elimination                               *
- *                                                                                             *
- *    The result of this function will be that the 3x3 sub-matrix is inverted and the          *
- *    final column will contain the result.  False is returned if the system cannot be solved. *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/18/2001  gth : Created.                                                                 *
- *=============================================================================================*/
+// 3x3 Gauss-Jordan elimination. The result of this function will be that the 3x3 sub-matrix is
+// inverted and the final column will contain the result. False is returned if the system cannot be
+// solved.
 bool Matrix3D::Solve_Linear_System(Matrix3D & system)
 {
 	/*
