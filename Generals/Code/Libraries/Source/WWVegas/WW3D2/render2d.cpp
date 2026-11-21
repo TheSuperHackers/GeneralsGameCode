@@ -552,10 +552,10 @@ void Render2DClass::Render()
 	Renderer::Set_Viewport(vp);
 
 
-	DX8Wrapper::Set_Texture(0,Texture);
+	Renderer::Set_Texture(0,Texture);
 
 	VertexMaterialClass *vm=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vm);
+	Renderer::Set_Material(vm);
 	REF_PTR_RELEASE(vm);
 
 	Renderer::Set_World_Identity();
@@ -593,8 +593,8 @@ void Render2DClass::Render()
 	if (IsGrayScale)
 	{
 		//special case added to draw grayscale non-alpha blended images.
-		DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaqueShader);
-		DX8Wrapper::Apply_Render_State_Changes();	//force update of all regular W3D states.
+		Renderer::Set_Shader(ShaderClass::_PresetOpaqueShader);
+		Renderer::Apply_Render_State_Changes();	//force update of all regular W3D states.
 		if (DX8Wrapper::Get_Current_Caps()->Support_Dot3())
 		{
 			//Override W3D states with customizations for grayscale
@@ -621,7 +621,7 @@ void Render2DClass::Render()
 		}
 	}
 	else
-		DX8Wrapper::Set_Shader(Shader);
+		Renderer::Set_Shader(Shader);
 
 	DX8Wrapper::Draw_Triangles(0,Indices.Count()/3,0,Vertices.Count());
 //	SphereClass sphere(Vector3(0.0f,0.0f,0.0f),0.0f);

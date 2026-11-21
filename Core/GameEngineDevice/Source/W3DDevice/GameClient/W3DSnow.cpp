@@ -397,10 +397,10 @@ void W3DSnowManager::render(RenderInfoClass &rinfo)
 	Matrix4x4 identity(true);
 	Renderer::Set_Transform(RenderTransform_World,identity);
 
-	DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaShader);
+	Renderer::Set_Shader(ShaderClass::_PresetAlphaShader);
 
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vmat);
+	Renderer::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);
 
 	//make sure we have all the resources we need
@@ -410,7 +410,7 @@ void W3DSnowManager::render(RenderInfoClass &rinfo)
 	if (!usePointSprites && !m_indexBuffer)
 		ReAcquireResources();
 
-	DX8Wrapper::Set_Texture(0,m_snowTexture);
+	Renderer::Set_Texture(0,m_snowTexture);
 
 	if (!usePointSprites)
 	{
@@ -420,7 +420,7 @@ void W3DSnowManager::render(RenderInfoClass &rinfo)
 
 	Vector3 snowCenter;
 
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Apply_Render_State_Changes();
 
     // Set the render states for using point sprites
 	DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSPRITEENABLE, TRUE );

@@ -32,7 +32,10 @@ class LightClass;
 class LightEnvironmentClass;
 class Matrix3D;
 class Matrix4x4;
+class ShaderClass;
+class TextureBaseClass;
 class Vector3;
+class VertexMaterialClass;
 
 struct RenderViewport
 {
@@ -84,6 +87,11 @@ public:
                       float dest_alpha = 0.0f, float z = 1.0f, unsigned int stencil = 0);
     static void Set_Viewport(const RenderViewport & viewport);
     static void Invalidate_Cached_Render_States();
+
+    static void Set_Shader(const ShaderClass & shader);
+    static void Set_Material(const VertexMaterialClass * material);
+    static void Set_Texture(unsigned stage, TextureBaseClass * texture);
+    static void Apply_Render_State_Changes();
 
     static void Set_Transform(RenderTransform transform, const Matrix4x4 & m);
     static void Set_Transform(RenderTransform transform, const Matrix3D & m);

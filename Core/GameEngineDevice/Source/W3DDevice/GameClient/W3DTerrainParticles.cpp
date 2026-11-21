@@ -322,14 +322,14 @@ void W3DTerrainParticles::updateSettings()
 	Renderer::Set_World_Identity();
 	RefCountPtr<VertexMaterialClass> material;
 	material.Assign_No_Add_Ref(VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE));
-	DX8Wrapper::Set_Material(material.Peek());
-	DX8Wrapper::Set_Shader(m_shader);
-	DX8Wrapper::Set_Texture(0, m_texture.Peek());
+	Renderer::Set_Material(material.Peek());
+	Renderer::Set_Shader(m_shader);
+	Renderer::Set_Texture(0, m_texture.Peek());
 
 	// To prevent visual glitches on overdraw, we clamp the texture to a transparent black pixel.
 	if (m_texture)
 	{
-		DX8Wrapper::Apply_Render_State_Changes();
+		Renderer::Apply_Render_State_Changes();
 		DX8Wrapper::Set_DX8_Texture_Stage_State(0, D3DTSS_ADDRESSU, D3DTADDRESS_BORDER);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(0, D3DTSS_ADDRESSV, D3DTADDRESS_BORDER);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(0, D3DTSS_BORDERCOLOR, 0x00000000);

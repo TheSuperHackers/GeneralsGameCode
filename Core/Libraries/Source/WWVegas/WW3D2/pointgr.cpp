@@ -918,9 +918,9 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 	Renderer::Set_Transform(RenderTransform_World,identity);
 	Renderer::Set_Transform(RenderTransform_View,identity);
 
-	DX8Wrapper::Set_Material(PointMaterial);
-	DX8Wrapper::Set_Shader(Shader);
-	DX8Wrapper::Set_Texture(0,Texture);
+	Renderer::Set_Material(PointMaterial);
+	Renderer::Set_Shader(Shader);
+	Renderer::Set_Texture(0,Texture);
 
 	// Enable sorting if the primitives are translucent and alpha testing is not enabled.
 	// TheSuperHackers @bugfix stephanmeesters 30/06/2026 However, do not apply sorting to ground-aligned particles.
@@ -1851,9 +1851,9 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 		Renderer::Set_Transform(RenderTransform_World,identity);
 		Renderer::Set_Transform(RenderTransform_View,identity);
 
-		DX8Wrapper::Set_Material(PointMaterial);
-		DX8Wrapper::Set_Shader(Shader);
-		DX8Wrapper::Set_Texture(0,Texture);
+		Renderer::Set_Material(PointMaterial);
+		Renderer::Set_Shader(Shader);
+		Renderer::Set_Texture(0,Texture);
 
 		// Enable sorting if the primitives are translucent and alpha testing is not enabled.
 		// TheSuperHackers @info Volumetric particles, both billboarded and ground-aligned, must have sorting enabled to
