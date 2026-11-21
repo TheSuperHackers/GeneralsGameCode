@@ -96,6 +96,7 @@ public:
 	Real getSpeechVolume();
 	Real getMusicVolume();
 	Real getMoneyTransactionVolume() const;
+	Bool getPlayAudioInBackground() const;
 	Bool saveCameraInReplays();
 	Bool useCameraInReplays();
 	Bool getPlayerObserverEnabled() const;

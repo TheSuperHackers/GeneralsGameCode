@@ -40,6 +40,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "WinMain.h"
+#include "Common/AudioSettings.h"
 #include "Common/CommandLine.h"
 #include "Common/CriticalSection.h"
 #include "Common/GlobalData.h"
@@ -490,7 +491,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 
 				if( active == WA_INACTIVE )
 				{
-					if (TheAudio)
+					if (TheAudio && !TheAudio->getAudioSettings()->m_playAudioInBackground)
 						TheAudio->muteAudio(AudioManager::MuteAudioReason_WindowFocus);
 				}
 				else
