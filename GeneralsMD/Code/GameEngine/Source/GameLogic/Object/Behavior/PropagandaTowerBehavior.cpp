@@ -330,7 +330,12 @@ void PropagandaTowerBehavior::effectLogic( Object *obj, Bool giving,
 	// and cannot change healing senders until the previous one expires (its scandelay)
 
 //		obj->attemptHealing(amount, getObject()); // the regular way to give healing...
+#if RETAIL_COMPATIBLE_CRC
 			obj->attemptHealingFromSoleBenefactor( amount, getObject(), modData->m_scanDelayInFrames );//the non-stacking way
+#else
+			obj->attemptHealingFromSoleBenefactor( amount, getObject(), modData->m_scanDelayInFrames,
+				healthPercent * body->getMaxHealth() / LOGICFRAMES_PER_SECOND );
+#endif
 
 		}
 

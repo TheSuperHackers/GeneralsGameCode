@@ -220,7 +220,7 @@ public:
 	// health and damage
 	void attemptDamage( DamageInfo *damageInfo );			///< damage object as specified by the info
 	void attemptHealing(Real amount, const Object* source);		///< heal object as specified by the info
-	Bool attemptHealingFromSoleBenefactor ( Real amount, const Object* source, UnsignedInt duration );///< for the non-stacking healers like ambulance and propaganda
+	Bool attemptHealingFromSoleBenefactor ( Real amount, const Object* source, UnsignedInt duration, Real healingRate = 0.0f );///< for the non-stacking healers like ambulance and propaganda
 	ObjectID getSoleHealingBenefactor() const;
 
 	Real estimateDamage( DamageInfoInput& damageInfo ) const;
@@ -790,6 +790,11 @@ private:
 	//////////////////////////////////////< for the non-stacking healers like ambulance and propaganda
 	ObjectID m_soleHealingBenefactorID; ///< who is the only other object that can give me this non-stacking heal benefit?
 	UnsignedInt m_soleHealingBenefactorExpirationFrame; ///< on what frame can I accept healing (thus to switch) from a new benefactor
+#if !RETAIL_COMPATIBLE_CRC
+	Real m_soleHealingRate;
+	Real m_soleHealingCredit;
+	UnsignedInt m_soleHealingCreditFrame;
+#endif
 	///////////////////////////////////
 
 	// Entered & exited housekeeping.
