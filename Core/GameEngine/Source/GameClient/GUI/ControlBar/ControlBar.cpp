@@ -1508,7 +1508,7 @@ void ControlBar::update()
 							button->winClearStatus( WIN_STATUS_FLASHING );
 							if( commandButton->getFlashCount() == 0 )
 							{
-								setFlash( FALSE );
+								setFlash( hasFlashingCommandButton() );
 							}
 						}
 					}
@@ -1941,6 +1941,20 @@ void ControlBar::evaluateContextUI()
 
 	}
 
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool ControlBar::hasFlashingCommandButton() const
+{
+	for( const CommandButton *command = m_commandButtons; command; command = command->getNext() )
+	{
+		if( static_cast<const CommandButton *>(command->getFinalOverride())->getFlashCount() > 0 )
+		{
+			return TRUE;
+		}
+	}
+
+	return FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------

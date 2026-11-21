@@ -882,6 +882,7 @@ protected:
 		// methods for flashing cameos
 public:
 	void setFlash( Bool b ) { m_flash = b; }
+	Bool hasFlashingCommandButton() const;
 
 	// get method for list of commandbuttons
 	const CommandButton *getCommandButtons() { return m_commandButtons; }
