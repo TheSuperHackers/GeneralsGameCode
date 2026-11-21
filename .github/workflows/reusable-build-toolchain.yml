@@ -128,7 +128,7 @@ jobs:
         with:
           arch: x86
 
-      # Without ccache the build falls back to an uncached build with precompiled headers.
+      # Without ccache the build falls back to an uncached build.
       - name: Set Up ccache
         if: env.USE_CCACHE == 'true'
         id: ccache
@@ -151,6 +151,8 @@ jobs:
           "CCACHE_COMPILERCHECK=content" >> $env:GITHUB_ENV
           # Preserve MSVC's source encoding for legacy non-UTF-8 files.
           "CCACHE_NOMSVC_UTF8=1" >> $env:GITHUB_ENV
+          # ccache cannot see #define or __TIME__ changes inside a precompiled header, so it skips PCH users unless told to ignore them.
+          "CCACHE_SLOPPINESS=pch_defines,time_macros" >> $env:GITHUB_ENV
           # Bound each game/preset cache to limit storage across the build matrix.
           "CCACHE_MAXSIZE=500M" >> $env:GITHUB_ENV
           "toolchain=$($env:VCToolsVersion ?? 'VC6SP6')" >> $env:GITHUB_OUTPUT
@@ -207,8 +209,6 @@ jobs:
           if ('${{ steps.ccache.outcome }}' -eq 'success') {
               $buildFlags += "-DCMAKE_C_COMPILER_LAUNCHER=ccache"
               $buildFlags += "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
-              # MSVC PCH consumers bypass ccache unless time-macro checking is relaxed.
-              $buildFlags += "-DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON"
           }
 
           Write-Host "Build flags: $($buildFlags -join ' | ')"
