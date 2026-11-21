@@ -30,26 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 30                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   AABoxClass::Transform -- transform an aabox                                               *
- *   AABoxClass::Translate -- transform an aabox                                               *
- *   AABoxClass::Init -- create a box which bounds the given points									  *
- *   AABoxClass::Init -- initialize from a min-max form of a box                               *
- *   AABoxClass::Init_Min_Max -- init the box from a min and max vector                        *
- *   AABoxClass::Add_Point -- expand the box to contain the given point                        *
- *   AABoxClass::Project_To_Axis -- compute projection onto the given axis                     *
- *   AABoxClass::Intersects -- test for intersection with another static aabox                 *
- *   AABoxClass::Add_Box -- expand this box to enclose the passed box                          *
- *   AABoxClass::Add_Box -- Expand this box to enclose the passed box                          *
- *   MinMaxAABoxClass::Init -- init the box from an array of points                            *
- *   MinMaxAABoxClass::Init -- initializes this box from a center-extent box                   *
- *   MinMaxAABoxClass::Add_Point -- updates this box so it encloses the given point            *
- *   MinMaxAABoxClass::Add_Box -- update this box to enclose the given box                     *
- *   MinMaxAABoxClass::Add_Box -- Updates this box to enclose the specified box                *
- *   MinMaxAABoxClass::Transform -- Updates this box to enclose its transformed version        *
- *   MinMaxAABoxClass::Translate -- translates the box                                         *
- *   AABoxClass::Init -- Init from a line segment                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -163,20 +143,7 @@ public:
 
 
 
-/***********************************************************************************************
- * AABoxClass::Transform -- transform an aabox                                                 *
- *                                                                                             *
- * Note that this function expands the box to enclose its transformed form.                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Note that this function expands the box to enclose its transformed form.
 WWINLINE void	AABoxClass::Transform(const Matrix3D & tm)
 {
 	Vector3 oldcenter = Center;
@@ -185,72 +152,24 @@ WWINLINE void	AABoxClass::Transform(const Matrix3D & tm)
 }
 
 
-/***********************************************************************************************
- * AABoxClass::Translate -- translate an aabox                                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void	AABoxClass::Translate(const Vector3 & trans)
 {
 	Center += trans;
 }
 
 
-/***********************************************************************************************
- * AABoxClass::operator== -- Comparison operator                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/21/00    PDS : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE  bool AABoxClass::operator== (const AABoxClass &src)
 {
 	return (Center == src.Center) && (Extent == src.Extent);
 }
 
 
-/***********************************************************************************************
- * AABoxClass::operator!= -- Comparison operator                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/21/00    PDS : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE bool AABoxClass::operator!= (const AABoxClass &src)
 {
 	return (Center != src.Center) || (Extent != src.Extent);
 }
 
 
-/***********************************************************************************************
- * AABoxClass::Init -- create a box which bounds the given points		                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void AABoxClass::Init(Vector3 * points,int num)
 {
 	Vector3 Min = points[0];
@@ -271,18 +190,6 @@ WWINLINE void AABoxClass::Init(Vector3 * points,int num)
 }
 
 
-/***********************************************************************************************
- * AABoxClass::Init -- initialize from a min-max form of a box                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/31/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void AABoxClass::Init(const MinMaxAABoxClass & mmbox)
 {
 	Center = (mmbox.MaxCorner + mmbox.MinCorner) * 0.5f;
@@ -290,18 +197,6 @@ WWINLINE void AABoxClass::Init(const MinMaxAABoxClass & mmbox)
 }
 
 
-/***********************************************************************************************
- * AABoxClass::Init -- Init from a line segment                                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/27/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void AABoxClass::Init(const LineSegClass & line)
 {
 	Vector3 min_corner = line.Get_P0();
@@ -319,18 +214,6 @@ WWINLINE void AABoxClass::Init(const LineSegClass & line)
 	Extent = (max_corner - min_corner) * 0.5f;
 }
 
-/***********************************************************************************************
- * AABoxClass::Init_Min_Max -- init the box from a min and max vector                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/9/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void AABoxClass::Init_Min_Max(const Vector3 & min,const Vector3 & max)
 {
 	Center = (max + min) * 0.5f;
@@ -338,18 +221,6 @@ WWINLINE void AABoxClass::Init_Min_Max(const Vector3 & min,const Vector3 & max)
 }
 
 
-/***********************************************************************************************
- * AABoxClass::Add_Point -- expand the box to contain the given point                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void AABoxClass::Add_Point(const Vector3 & point)
 {
 	Vector3 Min = Center - Extent;
@@ -368,19 +239,7 @@ WWINLINE void AABoxClass::Add_Point(const Vector3 & point)
 }
 
 
-/***********************************************************************************************
- * AABoxClass::Add_Box -- expand this box to enclose the passed box                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/31/98    GTH : Created.                                                                 *
- *   9/29/2000  gth : Ok to add boxes with zero extent                                         *
- *=============================================================================================*/
+// Boxes with zero extent are OK to add.
 WWINLINE void AABoxClass::Add_Box(const AABoxClass & b)
 {
 	Vector3 newmin = Center - Extent;
@@ -393,19 +252,7 @@ WWINLINE void AABoxClass::Add_Box(const AABoxClass & b)
 }
 
 
-/***********************************************************************************************
- * AABoxClass::Add_Box -- Expand this box to enclose the passed box                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/31/98    GTH : Created.                                                                 *
- *   9/29/2000  gth : Ok to add boxes with zero extent                                         *
- *=============================================================================================*/
+// Boxes with zero extent are OK to add.
 WWINLINE void AABoxClass::Add_Box(const MinMaxAABoxClass & b)
 {
 	Vector3 newmin = Center - Extent;
@@ -417,18 +264,6 @@ WWINLINE void AABoxClass::Add_Box(const MinMaxAABoxClass & b)
 	Extent = (newmax - newmin) * 0.5f;
 }
 
-/***********************************************************************************************
- * AABoxClass::Project_To_Axis -- compute projection onto the given axis                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE float AABoxClass::Project_To_Axis(const Vector3 & axis) const
 {
 	float x = Extent[0] * axis[0];
@@ -439,35 +274,11 @@ WWINLINE float AABoxClass::Project_To_Axis(const Vector3 & axis) const
 	return (WWMath::Fabsf_Legacy(x) + WWMath::Fabsf_Legacy(y) + WWMath::Fabsf_Legacy(z));
 }
 
-/***********************************************************************************************
- * AABoxClass::Contains -- Test whether this box contains the given box                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/2/98     GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE bool AABoxClass::Contains(const AABoxClass & other_box) const
 {
 	return CollisionMath::Overlap_Test(*this,other_box) == CollisionMath::INSIDE;
 }
 
-/***********************************************************************************************
- * AABoxClass::Contains -- Test whether this box contains the given box                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/2/98     GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE bool AABoxClass::Contains(const MinMaxAABoxClass & other_box) const
 {
 	Vector3 bmin = Center - Extent;
@@ -484,37 +295,11 @@ WWINLINE bool AABoxClass::Contains(const MinMaxAABoxClass & other_box) const
 	return true;
 }
 
-/***********************************************************************************************
- * AABoxClass::Contains -- test whether this box contains the given point                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/2/98     GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE bool AABoxClass::Contains(const Vector3 & point) const
 {
 	return CollisionMath::Overlap_Test(*this,point) == CollisionMath::INSIDE;
 }
 
-/***********************************************************************************************
- * MinMaxAABoxClass::Init -- init the box from an array of points                              *
- *                                                                                             *
- * Makes a box which encloses the given array of points                                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/31/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void MinMaxAABoxClass::Init(Vector3 * points,int num)
 {
 	assert(num > 0);
@@ -528,18 +313,6 @@ WWINLINE void MinMaxAABoxClass::Init(Vector3 * points,int num)
 }
 
 
-/***********************************************************************************************
- * MinMaxAABoxClass::Init -- initializes this box from a center-extent box                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/31/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void MinMaxAABoxClass::Init(const AABoxClass & box)
 {
 	MinCorner = box.Center - box.Extent;
@@ -547,18 +320,6 @@ WWINLINE void MinMaxAABoxClass::Init(const AABoxClass & box)
 }
 
 
-/***********************************************************************************************
- * MinMaxAABoxClass::Add_Point -- updates this box so it encloses the given point              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/31/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void MinMaxAABoxClass::Add_Point(const Vector3 & point)
 {
 	MinCorner.Update_Min(point);
@@ -566,18 +327,6 @@ WWINLINE void MinMaxAABoxClass::Add_Point(const Vector3 & point)
 }
 
 
-/***********************************************************************************************
- * MinMaxAABoxClass::Add_Box -- update this box to enclose the given box                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/31/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void MinMaxAABoxClass::Add_Box(const MinMaxAABoxClass & box)
 {
 	if (box.MinCorner == box.MaxCorner) return;
@@ -587,18 +336,6 @@ WWINLINE void MinMaxAABoxClass::Add_Box(const MinMaxAABoxClass & box)
 }
 
 
-/***********************************************************************************************
- * MinMaxAABoxClass::Add_Box -- update this box to enclose the given box                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/31/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void MinMaxAABoxClass::Add_Box(const AABoxClass & box)
 {
 	if (box.Extent == Vector3(0.0f, 0.0f, 0.0f)) return;
@@ -607,18 +344,6 @@ WWINLINE void MinMaxAABoxClass::Add_Box(const AABoxClass & box)
 	MaxCorner.Update_Max(box.Center + box.Extent);
 }
 
-/***********************************************************************************************
- * MinMaxAABoxClass::Add_Box -- Updates this box to enclose the specified box                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/31/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void MinMaxAABoxClass::Add_Box(const Vector3 & min_corner,const Vector3 & max_corner)
 {
 	assert(max_corner.X >= min_corner.X);
@@ -632,18 +357,7 @@ WWINLINE void MinMaxAABoxClass::Add_Box(const Vector3 & min_corner,const Vector3
 }
 
 
-/***********************************************************************************************
- * MinMaxAABoxClass::Transform -- Updates this box to enclose its transformed version          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/31/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Updates this box to enclose its transformed version.
 WWINLINE void MinMaxAABoxClass::Transform(const Matrix3D & tm)
 {
 	Vector3 oldmin = MinCorner;
@@ -652,18 +366,6 @@ WWINLINE void MinMaxAABoxClass::Transform(const Matrix3D & tm)
 }
 
 
-/***********************************************************************************************
- * MinMaxAABoxClass::Translate -- translates the box                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/31/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void MinMaxAABoxClass::Translate(const Vector3 & pos)
 {
 	MinCorner+=pos;

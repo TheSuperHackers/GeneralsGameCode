@@ -33,13 +33,6 @@
  *                                                                                             *
  *                    $Revision:: 13                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   HashListClass::Find -- Find record in hash table.                                         *
- *   HashListClass::Remove -- Remove record from hash table.                                   *
- *   HashListClass::Add -- Add record to hash list.                                            *
- *   HashListClass::Add -- Add record to list, list creates node for user.                     *
- *   HashListClass::Move_To -- Move nodes from one list to another.                           *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -383,18 +376,6 @@ class HashListClass : protected HashNodeFriendClass<T,U>
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-/***********************************************************************************************
- * HashListClass::Add -- Add record to hash list.                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/26/1999 SKB : Created.                                                                 *
- *=============================================================================================*/
 template <class T, class U, int NumHashValues>
 HashNodeClass<T,U> *HashListClass<T, U, NumHashValues>::Add(HashNodeClass<T,U> *node)
 {
@@ -431,18 +412,7 @@ HashNodeClass<T,U> *HashListClass<T, U, NumHashValues>::Add(HashNodeClass<T,U> *
 }
 
 
-/***********************************************************************************************
- * HashListClass::Add -- Add record to list, list creates node for user.                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/03/1999 SKB : Created.                                                                 *
- *=============================================================================================*/
+// The list creates the node for the user.
 template <class T, class U, int NumHashValues>
 HashNodeClass<T,U> *HashListClass<T, U, NumHashValues>::Add(T record, unsigned key)
 {
@@ -455,18 +425,6 @@ HashNodeClass<T,U> *HashListClass<T, U, NumHashValues>::Add(T record, unsigned k
 	return (node);
 }
 
-/***********************************************************************************************
- * HashListClass::Find -- Find record in hash table.                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/26/1999 SKB : Created.                                                                 *
- *=============================================================================================*/
 template <class T, class U, int NumHashValues>
 HashNodeClass<T,U> *HashListClass<T, U, NumHashValues>::Find(unsigned key)
 {
@@ -496,21 +454,7 @@ HashNodeClass<T,U> *HashListClass<T, U, NumHashValues>::Find(unsigned key)
 
 }
 
-/***********************************************************************************************
- * HashListClass::Remove_Node -- Remove node from hash table.                                  *
- *                               Protected function for usage by Remove() routines.            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *   HashNodeClass<T,U> *node - node to remove.                                                *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/02/1999 SKB : Created.                                                                 *
- *   01/19/2000 SKB : Remove the node with Unlink.                                             *
- *=============================================================================================*/
+// Protected function for usage by the Remove() routines.
 template <class T, class U, int NumHashValues>
 void HashListClass<T, U, NumHashValues>::Remove(HashNodeClass<T,U> *node)
 {
@@ -559,19 +503,6 @@ void HashListClass<T, U, NumHashValues>::Remove(HashNodeClass<T,U> *node)
 	NumRecords--;
 }
 
-/***********************************************************************************************
- * HashListClass::Remove -- Remove record from hash table.                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *   	unsigned key - key to find node by.                                                           *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/26/1999 SKB : Created.                                                                 *
- *=============================================================================================*/
 template <class T, class U, int NumHashValues>
 bool HashListClass<T, U, NumHashValues>::Remove(unsigned key)
 {
@@ -586,18 +517,6 @@ bool HashListClass<T, U, NumHashValues>::Remove(unsigned key)
 	return(false);
 }
 
-/***********************************************************************************************
- * HashListClass::Move_To -- Move nodes from one list to another.                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/04/1999 SKB : Created.                                                                 *
- *=============================================================================================*/
 template <class T, class U, int NumHashValues>
 void HashListClass<T, U, NumHashValues>::Move_To(HashListClass<T,U> *newlist)
 {

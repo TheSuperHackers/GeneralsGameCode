@@ -33,17 +33,6 @@
  *                    $Revision:: 24                                                          $*
  *                                                                                             *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   OBBoxClass::OBBoxClass -- Constructor that computes the box for a set of point            *
- *   OBBoxClass::Init_From_Box_Points -- Create an OBBox from 8 corners of  a box              *
- *   OBBoxClass::Init_Random -- initialize a random oriented box                               *
- *   Oriented_Boxes_Intersect_On_Axis -- test if two boxes intersect on given axis             *
- *   Oriented_Boxes_Intersect -- test if two oriented boxes intersect                          *
- *   Oriented_Boxes_Collide_On_Axis -- test if two boxes collide on the given axis             *
- *   Oriented_Boxes_Collide -- test if two oriented boxes collide                              *
- *   Oriented_Box_Intersects_Tri_On_Axis -- tests if the box and tri intersect on the axis     *
- *   Oriented_Box_Intersects_Tri -- tests if the given box and tri intersect                   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -58,18 +47,7 @@
 //#include <stdlib.h>
 
 
-/***********************************************************************************************
- * OBBoxClass::OBBoxClass -- Constructor that computes the box for a set of points             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/4/98     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Constructor that computes the box for a set of points.
 OBBoxClass::OBBoxClass(const Vector3 * /*points*/, int /*n*/)
 {
 	// TODO: IMPLEMENT THIS!!!
@@ -185,18 +163,7 @@ OBBoxClass::OBBoxClass(const Vector3 * /*points*/, int /*n*/)
 #endif
 }
 
-/***********************************************************************************************
- * OBBoxClass::Init_From_Box_Points -- Create an OBBox from 8 corners of  a box                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Create an OBBox from 8 corners of a box.
 void OBBoxClass::Init_From_Box_Points(Vector3 * points,int num)
 {
 	int i,j;
@@ -276,18 +243,6 @@ void OBBoxClass::Init_From_Box_Points(Vector3 * points,int num)
 }
 
 
-/***********************************************************************************************
- * OBBoxClass::Init_Random -- initialize a random oriented box                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void OBBoxClass::Init_Random(float min_extent,float max_extent)
 {
 	Center.Set(0,0,0);
@@ -309,18 +264,6 @@ void OBBoxClass::Init_Random(float min_extent,float max_extent)
 
 
 
-/***********************************************************************************************
- * Oriented_Boxes_Intersect_On_Axis -- test if two boxes intersect on given axis               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/7/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 bool Oriented_Boxes_Intersect_On_Axis
 (
 	const OBBoxClass & box0,
@@ -347,18 +290,6 @@ bool Oriented_Boxes_Intersect_On_Axis
 }
 
 
-/***********************************************************************************************
- * Oriented_Boxes_Intersect -- test if two oriented boxes intersect                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/7/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 bool Oriented_Boxes_Intersect
 (
 	const OBBoxClass & box0,
@@ -428,18 +359,6 @@ bool Oriented_Boxes_Intersect
 
 
 
-/***********************************************************************************************
- * Oriented_Boxes_Collide_On_Axis -- test if two boxes collide on the given axis               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/7/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 bool Oriented_Boxes_Collide_On_Axis
 (
 	const OBBoxClass & box0,
@@ -472,18 +391,6 @@ bool Oriented_Boxes_Collide_On_Axis
 }
 
 
-/***********************************************************************************************
- * Oriented_Boxes_Collide -- test if two oriented boxes collide                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/7/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 bool Oriented_Boxes_Collide
 (
 	const OBBoxClass & box0,
@@ -679,18 +586,6 @@ exit:
 
 
 
-/***********************************************************************************************
- * Oriented_Box_Intersects_Tri_On_Axis -- tests if the box and tri intersect on the axis       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/7/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 bool Oriented_Box_Intersects_Tri_On_Axis(const OBBoxClass & box,const TriClass & tri,Vector3 & axis)
 {
 	float leb;		// leading edge of box (farthest point from center)
@@ -728,18 +623,6 @@ bool Oriented_Box_Intersects_Tri_On_Axis(const OBBoxClass & box,const TriClass &
 }
 
 
-/***********************************************************************************************
- * Oriented_Box_Intersects_Tri -- tests if the given box and tri intersect                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/7/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 bool Oriented_Box_Intersects_Tri(const OBBoxClass & box,const TriClass & tri)
 {
 	Vector3 axis;

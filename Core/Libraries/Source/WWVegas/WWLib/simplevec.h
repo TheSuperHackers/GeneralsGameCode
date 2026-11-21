@@ -32,19 +32,6 @@
  *                                                                                             *
  *                    $Revision:: 16                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   SimpleVecClass<T>::SimpleVecClass -- Constructor                                          *
- *   SimpleVecClass<T>::~SimpleVecClass -- Destructor                                          *
- *   SimpleVecClass<T>::Resize -- resize the array                                             *
- *   SimpleVecClass<T>::Uninitialised_Grow -- upscale the array, don't copy contents           *
- *   SimpleDynVecClass<T>::~SimpleDynVecClass -- Destructor                                    *
- *   SimpleDynVecClass<T>::SimpleDynVecClass -- Constructor                                    *
- *   SimpleDynVecClass<T>::Resize -- Resize the array                                          *
- *   SimpleDynVecClass<T>::Add -- Add an item to the end of the array                          *
- *   SimpleDynVecClass<T>::Delete -- Delete an item from the array                             *
- *   SimpleDynVecClass<T>::Delete_Range -- delete several items from the array                 *
- *   SimpleDynVecClass<T>::Delete_All -- delete all items from the array                       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -86,19 +73,6 @@ protected:
 };
 
 
-/***********************************************************************************************
- * SimpleVecClass<T>::SimpleVecClass -- Constructor                                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- * size - initial size of the vector                                                           *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/25/00    gth : Created.                                                                 *
- *=============================================================================================*/
 template<class T>
 inline SimpleVecClass<T>::SimpleVecClass(int size) :
 	Vector(nullptr),
@@ -109,18 +83,6 @@ inline SimpleVecClass<T>::SimpleVecClass(int size) :
 	}
 }
 
-/***********************************************************************************************
- * SimpleVecClass<T>::~SimpleVecClass -- Destructor                                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/25/00    gth : Created.                                                                 *
- *=============================================================================================*/
 template<class T>
 inline SimpleVecClass<T>::~SimpleVecClass()
 {
@@ -129,18 +91,6 @@ inline SimpleVecClass<T>::~SimpleVecClass()
 	VectorMax = 0;
 }
 
-/***********************************************************************************************
- * SimpleVecClass<T>::Resize -- resize the array                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/25/00    gth : Created.                                                                 *
- *=============================================================================================*/
 template<class T>
 inline bool SimpleVecClass<T>::Resize(int newsize)
 {
@@ -193,20 +143,8 @@ inline bool SimpleVecClass<T>::Resize(int newsize)
 	return true;
 }
 
-/***********************************************************************************************
- * SimpleVecClass<T>::Uninitialised_Grow -- resize the array if current array is too small.    *
- * Note that it the function doesn't copy the contents so if resising occurs (contents are     *
- * assumed uninitialised after the call).                                                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/6/00    jani : Created.                                                                 *
- *=============================================================================================*/
+// Resizes only if the current array is too small. The contents are not copied, so if resizing
+// occurs, the contents are assumed uninitialised after the call.
 template<class T>
 inline bool SimpleVecClass<T>::Uninitialised_Grow(int newsize)
 {
@@ -285,19 +223,6 @@ protected:
 };
 
 
-/***********************************************************************************************
- * SimpleDynVecClass<T>::SimpleDynVecClass -- Constructor                                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- * size - initial size of the allocated vector                                                 *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/25/00    gth : Created.                                                                 *
- *=============================================================================================*/
 template<class T>
 inline SimpleDynVecClass<T>::SimpleDynVecClass(int size) :
 	SimpleVecClass<T>(size),
@@ -305,18 +230,6 @@ inline SimpleDynVecClass<T>::SimpleDynVecClass(int size) :
 {
 }
 
-/***********************************************************************************************
- * SimpleDynVecClass<T>::~SimpleDynVecClass -- Destructor                                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/25/00    gth : Created.                                                                 *
- *=============================================================================================*/
 template<class T>
 inline SimpleDynVecClass<T>::~SimpleDynVecClass()
 {
@@ -324,19 +237,6 @@ inline SimpleDynVecClass<T>::~SimpleDynVecClass()
 	Vector = nullptr;
 }
 
-/***********************************************************************************************
- * SimpleDynVecClass<T>::Resize -- Resize the array                                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- * newsize - new desired size of the array                                                     *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/25/00    gth : Created.                                                                 *
- *=============================================================================================*/
 template<class T>
 inline bool SimpleDynVecClass<T>::Resize(int newsize)
 {
@@ -347,19 +247,6 @@ inline bool SimpleDynVecClass<T>::Resize(int newsize)
 	return(false);
 }
 
-/***********************************************************************************************
- * SimpleDynVecClass<T>::Add -- Add an item to the end of the array                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- * object - object to add to the array                                                         *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/25/00    gth : Created.                                                                 *
- *=============================================================================================*/
 template<class T>
 inline bool SimpleDynVecClass<T>::Add(T const & object,int new_size_hint)
 {
@@ -381,18 +268,6 @@ inline bool SimpleDynVecClass<T>::Add(T const & object,int new_size_hint)
 	return true;
 }
 
-/***********************************************************************************************
- * SimpleDynVecClass<T>::Add_Multiple -- Add room for multiple object to vector.					  *
- *                                                                                             *
- * INPUT: number of object slots to add                                                        *
- *                                                                                             *
- * OUTPUT: pointer to first slot added is returned.														  *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/25/01    bmg : Created.                                                                 *
- *=============================================================================================*/
 template<class T>
 inline T *  SimpleDynVecClass<T>::Add_Multiple( int number_to_add )
 {
@@ -411,22 +286,7 @@ inline T *  SimpleDynVecClass<T>::Add_Multiple( int number_to_add )
 }
 
 
-/***********************************************************************************************
- * SimpleDynVecClass<T>::Delete -- Delete an item from the array                               *
- *                                                                                             *
- * This causes the items below the specified index to be mem-moved up.                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- * index - index of the entry to delete                                                        *
- * allow_shrink - should the vector be allowed to resize                                       *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/25/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// The items below the specified index are mem-moved up.
 template<class T>
 inline bool SimpleDynVecClass<T>::Delete(int index,bool allow_shrink)
 {
@@ -452,22 +312,7 @@ inline bool SimpleDynVecClass<T>::Delete(int index,bool allow_shrink)
 	return true;
 }
 
-/***********************************************************************************************
- * SimpleDynVecClass<T>::Delete -- Remove the specified object from the vector.                *
- *                                                                                             *
- *    This routine will delete the object referenced from the vector. All objects in the       *
- *    vector that follow the one deleted will be moved "down" to fill the hole.                *
- *                                                                                             *
- * INPUT:   object   -- Reference to the object in this vector that is to be deleted.          *
- *          allow_shrink -- should the vector be allowed to shrink if it is wasting space?     *
- *                                                                                             *
- * OUTPUT:  bool; Was the object deleted successfully?                                         *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/10/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
+// All objects in the vector that follow the one deleted will be moved "down" to fill the hole.
 template<class T>
 inline bool SimpleDynVecClass<T>::Delete(T const & object,bool allow_shrink)
 {
@@ -478,23 +323,7 @@ inline bool SimpleDynVecClass<T>::Delete(T const & object,bool allow_shrink)
 	return(false);
 }
 
-/***********************************************************************************************
- * SimpleDynVecClass<T>::Delete_Range -- delete several items from the array                   *
- *                                                                                             *
- * This causes the items below the specified index range to be mem-moved up.                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- * start - starting index to delete                                                            *
- * count - number of entries to delete                                                         *
- * allow_shrink - should the vector be allowed to shrink                                       *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/25/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// The items below the specified index range are mem-moved up.
 template<class T>
 inline bool SimpleDynVecClass<T>::Delete_Range(int start,int count,bool allow_shrink)
 {
@@ -522,20 +351,6 @@ inline bool SimpleDynVecClass<T>::Delete_Range(int start,int count,bool allow_sh
 	return true;
 }
 
-/***********************************************************************************************
- * SimpleDynVecClass<T>::Delete_All -- delete all items from the array                         *
- *                                                                                             *
- * Internally, this just resets the ActiveCount...                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/25/00    gth : Created.                                                                 *
- *=============================================================================================*/
 template<class T>
 inline void SimpleDynVecClass<T>::Delete_All(bool allow_shrink)
 {
@@ -549,20 +364,6 @@ inline void SimpleDynVecClass<T>::Delete_All(bool allow_shrink)
 	}
 }
 
-/***********************************************************************************************
- * SimpleDynVecClass<T>::Grow -- increase the size of the array                                *
- *                                                                                             *
- * Internally, this just resets the ActiveCount...                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/25/00    gth : Created.                                                                 *
- *=============================================================================================*/
 template<class T>
 inline bool SimpleDynVecClass<T>::Grow(int new_size_hint)
 {
@@ -576,20 +377,6 @@ inline bool SimpleDynVecClass<T>::Grow(int new_size_hint)
 	return Resize(new_size);
 }
 
-/***********************************************************************************************
- * SimpleDynVecClass<T>::Shrink -- reduce the size of the array                                *
- *                                                                                             *
- * Internally, this just resets the ActiveCount...                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/25/00    gth : Created.                                                                 *
- *=============================================================================================*/
 template<class T>
 inline bool SimpleDynVecClass<T>::Shrink()
 {
@@ -603,24 +390,8 @@ inline bool SimpleDynVecClass<T>::Shrink()
 }
 
 
-/***********************************************************************************************
- * SimpleDynVecClass<T>::Find_Index -- Find matching value in the dynamic vector.              *
- *                                                                                             *
- *    Use this routine to find a matching object (by value) in the vector. Unlike the base     *
- *    class ID function of similar name, this one restricts the scan to the current number     *
- *    of valid objects.                                                                        *
- *                                                                                             *
- * INPUT:   object   -- A reference to the object that a match is to be found in the           *
- *                      vector.                                                                *
- *                                                                                             *
- * OUTPUT:  Returns with the index number of the object that is equivalent to the one          *
- *          specified. If no equivalent object could be found then -1 is returned.             *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/13/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Restricts the scan to the current number of valid objects. Returns -1 if no equivalent object
+// could be found.
 template<class T>
 inline int SimpleDynVecClass<T>::Find_Index(T const & object)
 {

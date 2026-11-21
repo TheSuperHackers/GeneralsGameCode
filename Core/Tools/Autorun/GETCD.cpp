@@ -22,12 +22,6 @@
  *                 Project Name:: Command & Conquer							*
  *                     $Archive:: /Renegade Setup/Autorun/GETCD.cpp              $Author:: Steve_t									*
  *                     $Modtime:: 1/28/02 10:54a                  $Revision:: 20										*
- *--------------------------------------------------------------------------*
- * Functions:																*
- *		GetCDClass::GetCDClass	--	default constructor						*
- *		GetCDClass::~GetCDClass	--	destructor								*
- *		GetCDClass::GetCDDrive	--	returns the logical CD drive			*
- *		CD_Volume_Verification	--	Check label of the CDRom.				*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 #include	<windows.h>
@@ -67,19 +61,6 @@ static int _Num_Volumes = ARRAY_SIZE( _CD_Volume_Label );
 GetCDClass	CDList;
 
 
-/****************************************************************************
- * GetCDClass -- default constructor										*
- *																			*
- * INPUT:																	*
- *			none 															*
- * OUTPUT:																	*
- *			none															*
- * WARNINGS:																*
- *																			*
- * HISTORY:																	*
- *   05/26/1994 SW	:	Created.											*
- *   12/04/1995 ST	:	fixed for Win95										*
- *==========================================================================*/
 GetCDClass::GetCDClass()
 {
 	char path[]={ "a:\\" };
@@ -122,37 +103,12 @@ GetCDClass::GetCDClass()
 	}
 }
 
-/********************************************************************************
- * GetCDClass -- destructor														*
- *																				*
- * INPUT:		none															*
- *																				*
- * OUTPUT:		none															*
- *																				*
- * WARNINGS:																	*
- *																				*
- * HISTORY:																		*
- *   05/26/1994 SW: Created.													*
- *   12/4/95    ST: fixed for Win95												*
- *==============================================================================*/
 GetCDClass::~GetCDClass()
 {
 //	if(cdDrive_addrp.seg)
 //		DPMI_real_free(cdDrive_addrp);		// free up those conventional buffers
 }
 
-/********************************************************************************
- * GetCDClass -- Get_CD_Drive_For_This_Volume									*
- *																				*
- * INPUT:		char *volume_name												*
- *																				*
- * OUTPUT:		int																*
- *																				*
- * WARNINGS:																	*
- *																				*
- * HISTORY:																		*
- *   10/18/2000 MML: Created.													*
- *==============================================================================*/
 
 int	GetCDClass::Get_CD_Drive_For_This_Volume ( const char *volume_label )
 {
@@ -220,18 +176,6 @@ int	GetCDClass::Get_CD_Drive_For_This_Volume ( const char *volume_label )
 	return( Get_First_CD_Drive());
 }
 
-/********************************************************************************
- * GetCDClass -- Get_Volume_Label												*
- *																				*
- * INPUT:		int  index														*
- *																				*
- * OUTPUT:		char *															*
- *																				*
- * WARNINGS:																	*
- *																				*
- * HISTORY:																		*
- *   10/31/2000 MML: Created.	* Happy Halloween! *							*
- *==============================================================================*/
 
 const char * GetCDClass::Get_Volume_Label	( int index )
 {
@@ -241,19 +185,6 @@ const char * GetCDClass::Get_Volume_Label	( int index )
 	return( _CD_Volume_Label[0]);
 }
 
-/********************************************************************************
- * GetCDClass -- Get_Volume_For_This_CD_Drive									*
- *																				*
- * INPUT:		char *volume_name												*
- *				char *path														*
- *																				*
- * OUTPUT:		int																*
- *																				*
- * WARNINGS:																	*
- *																				*
- * HISTORY:																		*
- *   10/31/2000 MML: Created.	* Happy Halloween! *							*
- *==============================================================================*/
 
 const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *volume_name )
 {
@@ -316,19 +247,6 @@ const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *v
 	return( volume_name );
 }
 
-/********************************************************************************
- * CD_VOLUME_VERIFICATION -- Check volume label of the CD in the given drive.	*
- *																				*
- * INPUT:		int drive_number												*
- *	  			char *lable														*
- *																				*
- * OUTPUT:		TRUE/FALSE														*
- *																				*
- * WARNINGS:	None															*
- *																				*
- * HISTORY:																		*
- *    01/11/99 4:20PM MML : Created												*
- *==============================================================================*/
 
 bool CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_find )
 {

@@ -21,14 +21,41 @@ jobs:
     name: ${{ inputs.preset }}
     runs-on: ubuntu-24.04
     timeout-minutes: 45
+    env:
+      MINGW_PACKAGES: mingw-w64 cmake
     steps:
       - name: Checkout Code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
+      - name: Get MinGW-w64 Package Cache Key
+        id: apt-key
+        # Use only the date of the runner image version, because the rest differs between runners of the same image.
+        run: echo "key=mingw-apt-v1-${ImageOS}-${ImageVersion%%.*}-${MINGW_PACKAGES// /-}" >> "$GITHUB_OUTPUT"
+
+      - name: Cache MinGW-w64 Packages
+        id: cache-apt
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        with:
+          path: ~/apt-debs
+          key: ${{ steps.apt-key.outputs.key }}
+
       - name: Install MinGW-w64 Toolchain
+        timeout-minutes: 15
         run: |
-          sudo apt-get update
-          sudo apt-get install -y mingw-w64 cmake
+          # Download from the Ubuntu mirrors only when the packages are not cached, because the mirrors are sometimes very slow.
+          APT_OPTS="-o Acquire::Retries=3 -o Acquire::http::Timeout=60"
+          if [ "${{ steps.cache-apt.outputs.cache-hit }}" != "true" ]; then
+            sudo apt-get clean
+            sudo apt-get $APT_OPTS update
+            sudo apt-get $APT_OPTS install -y --download-only $MINGW_PACKAGES
+            mkdir -p ~/apt-debs
+            cp /var/cache/apt/archives/*.deb ~/apt-debs/
+          fi
+          if ! sudo dpkg -i ~/apt-debs/*.deb; then
+            # The cached packages do not fit this runner, so let apt fix the installation from the mirrors.
+            sudo apt-get $APT_OPTS update
+            sudo apt-get $APT_OPTS install -y -f
+          fi
 
       - name: Install Wine and widl
         run: |

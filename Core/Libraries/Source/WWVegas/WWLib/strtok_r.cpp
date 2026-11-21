@@ -30,9 +30,6 @@
  *                                                                         *
  *                    $Revision:: 1                                       $*
  *                                                                         *
- *-------------------------------------------------------------------------*
- * Functions:                                                              *
- *   strtok_r -- POSIX replacement for strtok (no internal static)         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "strtok_r.h"

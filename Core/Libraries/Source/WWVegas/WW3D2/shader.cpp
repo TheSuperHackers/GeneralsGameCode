@@ -30,14 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 21                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   ShaderClass::Init_From_Material3 -- Initialize a shader from a Material3 structure        *
- *   ShaderClass::Apply -- Apply the renderstates for this shader                              *
- *   ShaderClass::Invert_Backface_Culling -- Globally invert the sense of all backface culling *
- *   ShaderClass::Is_Backface_Culling_Inverted -- Is backface culling inverted?                *
- *   ShaderClass::Get_SS_Category -- Helper function for static sort system                    *
- *   ShaderClass::Guess_Sort_Level -- Guess the static sort level                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "shader.h"
@@ -240,18 +232,6 @@ ShaderClass ShaderClass::_PresetMultiplicative2DShader(SC_MUL_2D);
 ShaderClass ShaderClass::_PresetMultiplicativeSpriteShader(SC_MUL_SPRITE);
 
 
-/***********************************************************************************************
- * ShaderClass::Init_From_Material3 -- Initialize a shader from a Material3 structure          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/24/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 void ShaderClass::Init_From_Material3(const W3dMaterial3Struct & mat3)
 {
 	if ( mat3.Attributes & W3DMATERIAL_USE_ALPHA ) {
@@ -262,21 +242,8 @@ void ShaderClass::Init_From_Material3(const W3dMaterial3Struct & mat3)
 }
 
 
-/***********************************************************************************************
- * ShaderClass::Enable_Fog -- Turn on fog for this shader.                                     *
- *                                                                                             *
- * Enable most appropriate fog mode (FOG_ENABLE, FOG_SCALE_FRAGMENT or FOG_WHITE) for given	  *
- *	source and destination blends.																				  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:																												  *
- *		05/02/00    IML : Created.																					  *
- *=============================================================================================*/
+// Enable most appropriate fog mode (FOG_ENABLE, FOG_SCALE_FRAGMENT or FOG_WHITE) for given source
+// and destination blends.
 
 void ShaderClass::Enable_Fog (const char *source)
 {
@@ -328,18 +295,6 @@ void ShaderClass::Enable_Fog (const char *source)
 }
 
 
-/***********************************************************************************************
- * ShaderClass::Report_Unable_To_Fog --																		  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:																												  *
- *		10/04/00    IML : Created.																					  *
- *=============================================================================================*/
 void ShaderClass::Report_Unable_To_Fog (const char *source)
 {
 #ifdef DEBUG_LOGGING
@@ -395,18 +350,6 @@ const Blend dstBlendLUT[] =
 static_assert(ARRAY_SIZE(dstBlendLUT) == ShaderClass::DSTBLEND_MAX, "Incorrect array size");
 
 
-/***********************************************************************************************
- * ShaderClass::Apply -- Apply the renderstates for this shader                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/24/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 void ShaderClass::Apply()
 {
 	unsigned long diff;
@@ -1043,18 +986,7 @@ void ShaderClass::Apply()
 }
 
 
-/***********************************************************************************************
- * ShaderClass::Invert_Backface_Culling -- Globally invert the sense of all backface culling   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/24/2001  gth : Created.                                                                 *
- *=============================================================================================*/
+// Globally invert the sense of all backface culling.
 void ShaderClass::Invert_Backface_Culling(bool onoff)
 {
 	if (onoff == true) {
@@ -1066,21 +998,7 @@ void ShaderClass::Invert_Backface_Culling(bool onoff)
 }
 
 
-/***********************************************************************************************
- * ShaderClass::Get_SS_Category -- Helper function for static sort system                      *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/13/2001  hy : Created.                                                                  *
- *=============================================================================================*/
+// Helper function for static sort system.
 ShaderClass::StaticSortCategoryType ShaderClass::Get_SS_Category() const
 {
 	// category: Opaque
@@ -1104,21 +1022,6 @@ ShaderClass::StaticSortCategoryType ShaderClass::Get_SS_Category() const
 }
 
 
-/***********************************************************************************************
- * ShaderClass::Guess_Sort_Level -- Guess the static sort level                                *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   8/27/2001  hy : Created.                                                                  *
- *=============================================================================================*/
 int ShaderClass::Guess_Sort_Level() const
 {
 	int sort_level;
@@ -1143,18 +1046,6 @@ int ShaderClass::Guess_Sort_Level() const
 	return sort_level;
 }
 
-/***********************************************************************************************
- * ShaderClass::Is_Backface_Culling_Inverted -- Is backface culling inverted?                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/24/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 bool ShaderClass::Is_Backface_Culling_Inverted()
 {
 	return (_PolygonCullMode == D3DCULL_CCW);

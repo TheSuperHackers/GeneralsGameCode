@@ -31,16 +31,6 @@
  *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   HTreeManagerClass::HTreeManagerClass -- constructor                                       *
- *   HTreeManagerClass::~HTreeManagerClass -- destructor                                       *
- *   HTreeManagerClass::Free -- de-allocate all memory in use                                  *
- *   HTreeManagerClass::Free_All_Trees -- de-allocates all hierarchy trees currently loaded    *
- *   HTreeManagerClass::Load_Tree -- load a hierarchy tree from a file                         *
- *   HTreeManagerClass::Get_Tree_ID -- look up the ID of a named hierarchy tree                *
- *   HTreeManagerClass::Get_Tree -- get a pointer to the specified hierarchy tree              *
- *   HTreeManagerClass::Get_Tree -- get a pointer to the specified hierarchy tree              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -51,18 +41,6 @@
 #include "w3dexclusionlist.h"
 
 
-/***********************************************************************************************
- * HTreeManagerClass::HTreeManagerClass -- constructor                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 HTreeManagerClass::HTreeManagerClass() :
 	NumTrees(0)
 {
@@ -71,52 +49,16 @@ HTreeManagerClass::HTreeManagerClass() :
 	}
 }
 
-/***********************************************************************************************
- * HTreeManagerClass::~HTreeManagerClass -- destructor                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 HTreeManagerClass::~HTreeManagerClass()
 {
 	Free();
 }
 
-/***********************************************************************************************
- * HTreeManagerClass::Free -- de-allocate all memory in use                                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 void HTreeManagerClass::Free()
 {
 	Free_All_Trees();
 }
 
-/***********************************************************************************************
- * HTreeManagerClass::Free_All_Trees -- de-allocates all hierarchy trees currently loaded      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 void HTreeManagerClass::Free_All_Trees()
 {
 	for (int treeidx=0; treeidx < MAX_TREES; treeidx++) {
@@ -126,18 +68,6 @@ void HTreeManagerClass::Free_All_Trees()
 	NumTrees = 0;
 }
 
-/***********************************************************************************************
- * HTreeManagerClass::Free_All_Trees_With_Exclusion_List -- de-allocates all trees not in list *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/12/2002 GH  : Created.                                                                 *
- *=============================================================================================*/
 void HTreeManagerClass::Free_All_Trees_With_Exclusion_List(const W3DExclusionListClass & exclusion_list)
 {
 	// For this system, since it is so simplistic, we simply loop over the array either deleting the tree
@@ -165,18 +95,6 @@ void HTreeManagerClass::Free_All_Trees_With_Exclusion_List(const W3DExclusionLis
 	NumTrees = new_tail;
 }
 
-/***********************************************************************************************
- * HTreeManagerClass::Load_Tree -- load a hierarchy tree from a file                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 int HTreeManagerClass::Load_Tree(ChunkLoadClass & cload)
 {
 	WWMEMLOG(MEM_ANIMATION);
@@ -213,18 +131,6 @@ Error:
 
 }
 
-/***********************************************************************************************
- * HTreeManagerClass::Get_Tree_ID -- look up the ID of a named hierarchy tree                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 int HTreeManagerClass::Get_Tree_ID(const char * name)
 {
 	for (int i=0; i<NumTrees; i++) {
@@ -235,18 +141,6 @@ int HTreeManagerClass::Get_Tree_ID(const char * name)
 	return -1;
 }
 
-/***********************************************************************************************
- * HTreeManagerClass::Get_Tree_Name -- look up the name of a id'd hierarchy tree                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 char *HTreeManagerClass::Get_Tree_Name(const int idx)
 {
 	if ((idx < NumTrees) && TreePtr[idx]) {
@@ -260,18 +154,6 @@ char *HTreeManagerClass::Get_Tree_Name(const int idx)
 
 
 
-/***********************************************************************************************
- * HTreeManagerClass::Get_Tree -- get a pointer to the specified hierarchy tree                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 HTreeClass * HTreeManagerClass::Get_Tree(const char * name)
 {
 	for (int i=0; i<NumTrees; i++) {
@@ -284,18 +166,6 @@ HTreeClass * HTreeManagerClass::Get_Tree(const char * name)
 }
 
 
-/***********************************************************************************************
- * HTreeManagerClass::Get_Tree -- get a pointer to the specified hierarchy tree                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 HTreeClass * HTreeManagerClass::Get_Tree(int id)
 {
 	if ((id >= 0) && (id < NumTrees)) {

@@ -32,13 +32,6 @@
  *                                                                                             *
  *                    $Revision:: 3                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   ExportLog::Init -- Initialize the export logging system                                   *
- *   ExportLog::Shutdown -- Shutdown the export logging system                                 *
- *   ExportLog::printf -- Print a string to the log window                                     *
- *   ExportLog::rprintf -- Print a string over the last line printed                           *
- *   ExportLog::updatebar -- Set the position of the progress bar                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "exportlog.h"
@@ -59,18 +52,6 @@ LogDataDialogClass * _LogDialog = nullptr;
 */
 
 
-/***********************************************************************************************
- * ExportLog::Init -- Initialize the export logging system                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/30/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 void ExportLog::Init(HWND parent)
 {
 	assert(_LogDialog == nullptr);
@@ -78,19 +59,6 @@ void ExportLog::Init(HWND parent)
 }
 
 
-/***********************************************************************************************
- * ExportLog::Shutdown -- Shutdown the export logging system                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- * wait_for_ok - should we wait for the user to press OK on the dialog?                        *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/30/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 void ExportLog::Shutdown(bool wait_for_ok)
 {
 	if (_LogDialog != nullptr) {
@@ -105,18 +73,7 @@ void ExportLog::Shutdown(bool wait_for_ok)
 }
 
 
-/***********************************************************************************************
- * ExportLog::printf -- Print a string to the log window                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/30/2000 gth : Created.                                                                 *
- *=============================================================================================*/
+// Print a string to the log window.
 void ExportLog::printf(const char * format, ...)
 {
 	if (_LogDialog != nullptr) {
@@ -127,18 +84,7 @@ void ExportLog::printf(const char * format, ...)
 }
 
 
-/***********************************************************************************************
- * ExportLog::rprintf -- Print a string over the last line printed                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/30/2000 gth : Created.                                                                 *
- *=============================================================================================*/
+// Print a string over the last line printed.
 void ExportLog::rprintf(const char * format, ...)
 {
 	if (_LogDialog != nullptr) {
@@ -149,18 +95,6 @@ void ExportLog::rprintf(const char * format, ...)
 }
 
 
-/***********************************************************************************************
- * ExportLog::updatebar -- Set the position of the progress bar                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/30/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 void ExportLog::updatebar(float position, float total)
 {
 	if (_LogDialog != nullptr) {

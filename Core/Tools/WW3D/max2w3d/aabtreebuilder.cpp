@@ -32,29 +32,6 @@
  *                                                                                             *
  *                    $Revision:: 4                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   AABTreeBuilderClass::AABTreeBuilderClass -- Constructor                                   *
- *   AABTreeBuilderClass::~AABTreeBuilderClass -- Destructor                                   *
- *   AABTreeBuilderClass::Reset -- reset the builder, delete all arrays                        *
- *   AABTreeBuilderClass::Build_AABTree -- Build an AABTree for the given mesh.                *
- *   AABTreeBuilderClass::Build_Tree -- recursivly builds the culling tree                     *
- *   AABTreeBuilderClass::Select_Splitting_Plane -- select a partition for the given polys     *
- *   AABTreeBuilderClass::Compute_Plane_Score -- evaluate the suitability of a partition plane *
- *   AABTreeBuilderClass::Which_Side -- which side of a plane is the given poly                *
- *   AABTreeBuilderClass::Split_Polys -- partition the polys with a plane                      *
- *   AABTreeBuilderClass::Compute_Bounding_Box -- compute bounding boxes for the cull nodes    *
- *   AABTreeBuilderClass::Assign_Index -- assign an array index to each node                   *
- *   AABTreeBuilderClass::Node_Count -- Count the nodes in the tree                            *
- *   AABTreeBuilderClass::Poly_Count -- returns number of polys                                *
- *   AABTreeBuilderClass::Node_Count_Recursive -- internal implementation of Node_Count        *
- *   AABTreeBuilderClass::Submit_Tree -- install nodes into an AABTreeClass                    *
- *   AABTreeBuilderClass::Submit_Tree_Recursive -- internal implementation of Submit_Tree      *
- *   AABTreeBuilderClass::Update_Min -- ensure given vector is < min of the poly               *
- *   AABTreeBuilderClass::Update_Max -- ensure given vector is > max of poly                   *
- *   AABTreeBuilderClass::Update_Min_Max -- ensure given vector is in min max of poly          *
- *   AABTreeBuilderClass::Export -- Saves this AABTree into a W3D chunk                        *
- *   AABTreeBuilderClass::Build_W3D_AABTree_Recursive -- Build array of indices and W3dMeshAAB *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "aabtreebuilder.h"
@@ -66,17 +43,6 @@
 const float COINCIDENCE_EPSILON = 0.001f;
 
 
-/***********************************************************************************************
- * AABTreeBuilderClass::AABTreeBuilderClass -- Constructor                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 AABTreeBuilderClass::AABTreeBuilderClass() :
 	Root(nullptr),
 	CurPolyIndex(0),
@@ -88,36 +54,12 @@ AABTreeBuilderClass::AABTreeBuilderClass() :
 }
 
 
-/***********************************************************************************************
- * AABTreeBuilderClass::~AABTreeBuilderClass -- Destructor                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/19/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 AABTreeBuilderClass::~AABTreeBuilderClass()
 {
 	Reset();
 }
 
 
-/***********************************************************************************************
- * AABTreeBuilderClass::Reset -- reset the builder, delete all arrays                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/19/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 void AABTreeBuilderClass::Reset()
 {
 	if (Root) {
@@ -135,18 +77,6 @@ void AABTreeBuilderClass::Reset()
 	}
 }
 
-/***********************************************************************************************
- * AABTreeBuilderClass::Build_AABTree -- Build an AABTree for the given mesh.                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void AABTreeBuilderClass::Build_AABTree(int polycount,Vector3i * polys,int vertcount,Vector3 * verts)
 {
 	WWASSERT(polycount > 0);
@@ -200,18 +130,6 @@ void AABTreeBuilderClass::Build_AABTree(int polycount,Vector3i * polys,int vertc
 }
 
 
-/***********************************************************************************************
- * AABTreeBuilderClass::Build_Tree -- recursivly builds the culling tree                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void AABTreeBuilderClass::Build_Tree(CullNodeStruct * node,int polycount,int * polyindices)
 {
 	/*
@@ -283,18 +201,6 @@ void AABTreeBuilderClass::Build_Tree(CullNodeStruct * node,int polycount,int * p
 }
 
 
-/***********************************************************************************************
- * AABTreeBuilderClass::Select_Splitting_Plane -- select a partition for the given polys       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 AABTreeBuilderClass::SplitChoiceStruct
 AABTreeBuilderClass::Select_Splitting_Plane(int polycount,int * polyindices)
 {
@@ -343,18 +249,6 @@ AABTreeBuilderClass::Select_Splitting_Plane(int polycount,int * polyindices)
 }
 
 
-/***********************************************************************************************
- * AABTreeBuilderClass::Compute_Plane_Score -- evaluate the suitability of a partition plane   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 AABTreeBuilderClass::SplitChoiceStruct
 AABTreeBuilderClass::Compute_Plane_Score(int polycount,int * polyindices,const AAPlaneClass & plane)
 {
@@ -410,18 +304,6 @@ AABTreeBuilderClass::Compute_Plane_Score(int polycount,int * polyindices,const A
 }
 
 
-/***********************************************************************************************
- * AABTreeBuilderClass::Which_Side -- which side of a plane is the given poly                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 AABTreeBuilderClass::OverlapType
 AABTreeBuilderClass::Which_Side(const AAPlaneClass & plane,int poly_index)
 {
@@ -476,18 +358,6 @@ AABTreeBuilderClass::Which_Side(const AAPlaneClass & plane,int poly_index)
 }
 
 
-/***********************************************************************************************
- * AABTreeBuilderClass::Split_Polys -- partition the polys with a plane                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void AABTreeBuilderClass::Split_Polys
 (
 	int									polycount,
@@ -535,18 +405,6 @@ void AABTreeBuilderClass::Split_Polys
 }
 
 
-/***********************************************************************************************
- * AABTreeBuilderClass::Compute_Bounding_Box -- compute bounding boxes for the cull nodes      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void AABTreeBuilderClass::Compute_Bounding_Box(CullNodeStruct * node)
 {
 	/*
@@ -607,18 +465,6 @@ void AABTreeBuilderClass::Compute_Bounding_Box(CullNodeStruct * node)
 }
 
 
-/***********************************************************************************************
- * AABTreeBuilderClass::Assign_Index -- assign an array index to each node                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 int AABTreeBuilderClass::Assign_Index(CullNodeStruct * node,int index)
 {
 	/*
@@ -643,18 +489,6 @@ int AABTreeBuilderClass::Assign_Index(CullNodeStruct * node,int index)
 }
 
 
-/***********************************************************************************************
- * AABTreeBuilderClass::Node_Count -- Count the nodes in the tree                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 int AABTreeBuilderClass::Node_Count()
 {
 	if (Root) {
@@ -665,35 +499,11 @@ int AABTreeBuilderClass::Node_Count()
 }
 
 
-/***********************************************************************************************
- * AABTreeBuilderClass::Poly_Count -- returns number of polys                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 int AABTreeBuilderClass::Poly_Count()
 {
 	return PolyCount;
 }
 
-/***********************************************************************************************
- * AABTreeBuilderClass::Node_Count_Recursive -- internal implementation of Node_Count          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 int AABTreeBuilderClass::Node_Count_Recursive(CullNodeStruct * node,int curcount)
 {
 	curcount++;
@@ -707,18 +517,6 @@ int AABTreeBuilderClass::Node_Count_Recursive(CullNodeStruct * node,int curcount
 }
 
 
-/***********************************************************************************************
- * AABTreeBuilderClass::Update_Min -- ensure given vector is < min of the poly                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/22/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void AABTreeBuilderClass::Update_Min(int poly_index,Vector3 & min)
 {
 	for (int vert_index = 0; vert_index < 3; vert_index++) {
@@ -733,18 +531,6 @@ void AABTreeBuilderClass::Update_Min(int poly_index,Vector3 & min)
 }
 
 
-/***********************************************************************************************
- * AABTreeBuilderClass::Update_Max -- ensure given vector is > max of poly                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/22/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void AABTreeBuilderClass::Update_Max(int poly_index,Vector3 & max)
 {
 	for (int vert_index = 0; vert_index < 3; vert_index++) {
@@ -759,18 +545,6 @@ void AABTreeBuilderClass::Update_Max(int poly_index,Vector3 & max)
 }
 
 
-/***********************************************************************************************
- * AABTreeBuilderClass::Update_Min_Max -- ensure given vector is in min max of poly            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/24/98    BMG : Created.                                                                 *
- *=============================================================================================*/
 void	AABTreeBuilderClass::Update_Min_Max(int poly_index, Vector3 & min, Vector3 & max)
 {
 	for (int vert_index = 0; vert_index < 3; vert_index++) {
@@ -790,21 +564,7 @@ void	AABTreeBuilderClass::Update_Min_Max(int poly_index, Vector3 & min, Vector3 
 
 
 
-/***********************************************************************************************
- * AABTreeBuilderClass::Export -- Saves this AABTree into a W3D chunk                          *
- *                                                                                             *
- *    This function will export the AABTree into a W3D chunk so that it can be loaded by its   *
- *    sister class "AABTreeClass" in the WW3D library.                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/22/2000  gth : Created.                                                                 *
- *=============================================================================================*/
+// The exported chunk can be loaded by the sister class "AABTreeClass" in the WW3D library.
 void AABTreeBuilderClass::Export(ChunkSaveClass & csave)
 {
 	csave.Begin_Chunk(W3D_CHUNK_AABTREE);
@@ -850,18 +610,6 @@ void AABTreeBuilderClass::Export(ChunkSaveClass & csave)
 }
 
 
-/***********************************************************************************************
- * AABTreeBuilderClass::Build_W3D_AABTree_Recursive -- Build array of indices and W3dMeshAABTr *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/22/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 void AABTreeBuilderClass::Build_W3D_AABTree_Recursive
 (
 	AABTreeBuilderClass::CullNodeStruct *	node,

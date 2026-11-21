@@ -30,9 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *  wwSceneSetup  -- Allows the user to select how many LOD and damage models to create.       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -59,29 +56,16 @@
 def_visible_primitive(scene_setup, "wwSceneSetup");
 
 
-/***********************************************************************************************
- * scene_setup_cf - MAXScript function wwSceneSetup                                            *
- *                                                                                             *
- * wwSceneSetup - Usage: wwSceneSetup arg_array                                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *	The contents of the given array is assumed to be as follows:                                *
- *		lod_count (int)			- the number of LOD models that will be created                  *
- *		lod_offset (float)		- X offset to move the LODs by                                   *
- *		lod_clone (int)			- 1==copy 2==instance 3==reference                               *
- *		damage_count (int)		- the number of damage models that will be created               *
- *		damage_offset (float)	- Y offset to move the LODs by                                   *
- *		damage_clone (int)		- 1==copy 2==instance 3==reference                               *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- * The function returns an array of the new values the user selected in the same format as     *
- * above.
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/27/1999  AJA : Created.                                                                 *
- *=============================================================================================*/
+// MAXScript function wwSceneSetup.
+// Usage: wwSceneSetup arg_array
+// The contents of the given array is assumed to be as follows:
+//  lod_count (int) - the number of LOD models that will be created
+//  lod_offset (float) - X offset to move the LODs by
+//  lod_clone (int) - 1==copy 2==instance 3==reference
+//  damage_count (int) - the number of damage models that will be created
+//  damage_offset (float) - Y offset to move the LODs by
+//  damage_clone (int) - 1==copy 2==instance 3==reference
+// Returns an array of the new values the user selected in the same format.
 Value * scene_setup_cf (Value **arg_list, int count)
 {
 	// We don't want any arguments for this function.

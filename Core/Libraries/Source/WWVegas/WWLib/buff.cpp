@@ -30,14 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   Buffer::Buffer -- Constructor for buffer object.                                          *
- *   Buffer::Buffer -- Copy constructor for buffer object.                                     *
- *   Buffer::Buffer -- Self-allocating constructor for buffer object.                          *
- *   Buffer::Reset -- Clears the buffer object to null state.                                  *
- *   Buffer::operator = -- Assignment operator for the buffer object.                          *
- *   Buffer::~Buffer -- Destructor for buffer object.                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
@@ -45,25 +37,9 @@
 //#include	<stddef.h>
 
 
-/***********************************************************************************************
- * Buffer::Buffer -- Constructor for buffer object.                                            *
- *                                                                                             *
- *    This is the normal constructor for a buffer object. The buffer pointer and size are      *
- *    specified as parameters.                                                                 *
- *                                                                                             *
- * INPUT:   buffer   -- Pointer to the buffer.                                                 *
- *                                                                                             *
- *          size     -- The size of the buffer.                                                *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   It is possible to construct a Buffer object that has a pointer but a size       *
- *             value of zero. The Buffer object can still be used for its pointer, but it      *
- *             any function that requires a size will fail.                                    *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/29/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: It is possible to construct a Buffer object that has a pointer but a size value of zero.
+// The Buffer object can still be used for its pointer, but any function that requires a size will
+// fail.
 Buffer::Buffer(void * buffer, long size) :
 	BufferPtr(buffer),
 	Size(size),
@@ -102,23 +78,10 @@ Buffer::Buffer(void const * buffer, long size) :
 }
 
 
-/***********************************************************************************************
- * Buffer::Buffer -- Self-allocating constructor for buffer object.                            *
- *                                                                                             *
- *    This construtor for a buffer object will automatically allocate the bytes necessary      *
- *    to fulfill the size requested. This object is also responsible for deleting the buffer   *
- *    it allocated.                                                                            *
- *                                                                                             *
- * INPUT:   size  -- The size of the buffer to allocated.                                      *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   There is no way to tell if the allocation failed. To verify, call Get_Buffer    *
- *             and compare with nullptr.                                                          *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/29/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Self-allocating constructor for buffer object. This object is responsible for deleting the buffer
+// it allocated.
+// WARNING: There is no way to tell if the allocation failed. To verify, call Get_Buffer and compare
+// with nullptr.
 Buffer::Buffer(long size) :
 	BufferPtr(nullptr),
 	Size(size),
@@ -131,21 +94,8 @@ Buffer::Buffer(long size) :
 }
 
 
-/***********************************************************************************************
- * Buffer::Buffer -- Copy constructor for buffer object.                                       *
- *                                                                                             *
- *    This will make a duplicate of the specified buffer object. The ownership of the pointer  *
- *    remains with the original object. This prevents multiple deletion of the same pointer.   *
- *                                                                                             *
- * INPUT:   buffer   -- Reference to the buffer object to be dupilcated.                       *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// The ownership of the pointer remains with the original object. This prevents multiple deletion of
+// the same pointer.
 Buffer::Buffer(Buffer const & buffer) :
 	IsAllocated(false)
 {
@@ -154,21 +104,7 @@ Buffer::Buffer(Buffer const & buffer) :
 }
 
 
-/***********************************************************************************************
- * Buffer::operator = -- Assignment operator for the buffer object.                            *
- *                                                                                             *
- *    This will make a duplicate of the buffer object specified. Any buffer pointed to by the  *
- *    left hand buffer will be lost (possibley freed as a result).                             *
- *                                                                                             *
- * INPUT:   buffer   -- Reference to the right hand buffer object.                             *
- *                                                                                             *
- * OUTPUT:  Returns with a reference to the copied buffer object.                              *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Any buffer pointed to by the left hand buffer will be lost (possibly freed as a result).
 Buffer & Buffer::operator = (Buffer const & buffer)
 {
 	if (&buffer != this) {
@@ -183,43 +119,15 @@ Buffer & Buffer::operator = (Buffer const & buffer)
 }
 
 
-/***********************************************************************************************
- * Buffer::~Buffer -- Destructor for buffer object.                                            *
- *                                                                                             *
- *    This destructor will free any buffer it is responsible for.                              *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/29/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Frees any buffer it is responsible for.
 Buffer::~Buffer()
 {
 	Reset();
 }
 
 
-/***********************************************************************************************
- * Buffer::Reset -- Clears the buffer object to null state.                                    *
- *                                                                                             *
- *    This routine will bring the buffer object into a null (newly constructed) state. If      *
- *    there was any buffer allocated or referred to by this object, it will be freed or        *
- *    dereferenced as necessary.                                                               *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   This routine will free the buffer if it is responsible for doing so when        *
- *             it is no longer referenced.                                                     *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/07/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// If there was any buffer allocated or referred to by this object, it will be freed or dereferenced
+// as necessary.
 void Buffer::Reset()
 {
 	if (IsAllocated) {

@@ -33,12 +33,6 @@
  *                    $Revision:: 24                                                          $*
  *                                                                                             *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   OBBoxClass::Transform -- transform an oriented box                                        *
- *   OBBoxClass::Project_To_Axis -- compute projection onto the given axis                     *
- *   OBBoxClass::Compute_Point -- computes position of a parametricly defined point            *
- *   OBBoxClass::Compute_Axis_Aligned_Extent -- computes extent of an AABox enclosing this box *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -117,18 +111,6 @@ bool Oriented_Boxes_Collide(const OBBoxClass & box0,const Vector3 & v0,const OBB
 bool Oriented_Box_Intersects_Tri(const OBBoxClass & box,const TriClass & tri);
 
 
-/***********************************************************************************************
- * OBBoxClass::Project_To_Axis -- compute projection onto the given axis                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 inline float OBBoxClass::Project_To_Axis(const Vector3 & axis) const
 {
 	float x = Extent[0] * Vector3::Dot_Product(axis,Vector3(Basis[0][0],Basis[1][0],Basis[2][0]));
@@ -140,18 +122,6 @@ inline float OBBoxClass::Project_To_Axis(const Vector3 & axis) const
 }
 
 
-/***********************************************************************************************
- * OBBoxClass::Transform -- transform an oriented box                                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 inline void OBBoxClass::Transform
 (
 	const Matrix3D &		tm,
@@ -168,22 +138,8 @@ inline void OBBoxClass::Transform
 }
 
 
-/***********************************************************************************************
- * OBBoxClass::Compute_Point -- computes position of a parametricly defined point              *
- *                                                                                             *
- * set_point = Center + params[0]*A0 + params[1]*A1 + params[2]*A2                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- * params - parametric description of a point in the box.  -1 < params[i] < 1                  *
- * set_point - pointer to a Vector3 to set.                                                    *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/2/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Computes position of a parametrically defined point, with -1 < params[i] < 1:
+// set_point = Center + params[0]*A0 + params[1]*A1 + params[2]*A2.
 inline void OBBoxClass::Compute_Point(float params[3],Vector3 * set_point) const
 {
 	Vector3 point = Extent;
@@ -196,19 +152,7 @@ inline void OBBoxClass::Compute_Point(float params[3],Vector3 * set_point) const
 }
 
 
-/***********************************************************************************************
- * OBBoxClass::Compute_Axis_Aligned_Extent -- computes extent of an AABox enclosing this box   *
- *                                                                                             *
- * INPUT:                                                                                      *
- * set_extent - pointer to a Vector3 to put the result into                                    *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/15/99   gth : Created.                                                                 *
- *=============================================================================================*/
+// Computes extent of an AABox enclosing this box.
 inline void OBBoxClass::Compute_Axis_Aligned_Extent(Vector3 * set_extent) const
 {
 	WWASSERT(set_extent != nullptr);
@@ -228,36 +172,12 @@ inline void OBBoxClass::Compute_Axis_Aligned_Extent(Vector3 * set_extent) const
 }
 
 
-/***********************************************************************************************
- * OBBoxClass::operator== -- Comparison operator                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/21/00    PDS : Created.                                                                 *
- *=============================================================================================*/
 inline bool OBBoxClass::operator== (const OBBoxClass &src)
 {
 	return (Center == src.Center) && (Extent == src.Extent) && (Basis == src.Basis);
 }
 
 
-/***********************************************************************************************
- * OBBoxClass::operator!= -- Comparison operator                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/21/00    PDS : Created.                                                                 *
- *=============================================================================================*/
 inline bool OBBoxClass::operator!= (const OBBoxClass &src)
 {
 	return (Center != src.Center) || (Extent != src.Extent) || (Basis != src.Basis);

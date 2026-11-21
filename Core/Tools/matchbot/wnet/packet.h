@@ -35,8 +35,6 @@
  * Packets can be created empty and then have fields added to them or can  *
  * be created from an existing linear packet.                              *
  *                                                                         *
- *-------------------------------------------------------------------------*
- * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "field.h"

@@ -32,9 +32,6 @@
  *                                                                                             *
  *                    $Revision:: 3                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   CollisionMath::Overlap_Test -- test a frustum and an AABox for overlap                    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -49,18 +46,6 @@
 ** Inline collision functions dealing with frustums
 */
 
-/***********************************************************************************************
- * CollisionMath::Overlap_Test -- test a frustum and an AABox for overlap                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/29/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 inline
 CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const FrustumClass & frustum,const AABoxClass & box,int & planes_passed)

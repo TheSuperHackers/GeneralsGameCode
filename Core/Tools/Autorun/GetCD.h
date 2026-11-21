@@ -25,8 +25,6 @@
  *                     $Archive:: /Renegade Setup/Autorun/GetCD.h                                        $Author:: Denzil_l														*
  *                     $Modtime:: 1/08/02 3:38p                                                                                         $Revision:: 20															*
  *																								*
- *----------------------------------------------------------------------------------------------*
- * Functions:																					*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 #pragma once
@@ -183,12 +181,7 @@ struct	StopType {
 #endif	//NOT_FOR_WIN95
 
 
-/****************************************************************************
- * GetCDClass -- object which will return logical CD drive					*
- *																			*
- * HISTORY:																	*
- *   06/04/1994 SW : Created.												*
- *==========================================================================*/
+// Object which will return logical CD drive.
 
 #define MAX_CD_DRIVES	26
 #define NO_CD_DRIVE		-1
@@ -216,38 +209,13 @@ class	GetCDClass
 		int	CDIndex;									//Index of current location
 };
 
-/****************************************************************************
- * GCDC::Get_First_CD_Drive -- return the number of the first CD drive		*
- *																			*
- * INPUT:		none														*
- *																			*
- * OUTPUT:		logical drive number 										*
- *																			*
- * WARNINGS:																*
- *																			*
- * HISTORY:																	*
- *   05/26/1994 SW : Created.												*
- *   12/4/95    ST : fixed for Win95										*
- *==========================================================================*/
-
 inline int GetCDClass::Get_First_CD_Drive()
 {
 	CDIndex = 0;
 	return (Get_Next_CD_Drive());
 }
 
-/************************************************************************************
- * GCDC::Get_Next_CD_Drive -- return the logical drive number of the next CD drive	*
- *																												*
- * INPUT:    Nothing																						*
- *																												*
- * OUTPUT:   Logical drive number of a cd drive or -1 if none								*
- *																												*
- * WARNINGS: None																							*
- *																												*
- * HISTORY:																									*
- *    5/21/96 3:50PM ST : Created																	*
- *==================================================================================*/
+// Returns -1 if no CD drives are available; otherwise wraps around after the last drive.
 
 inline int GetCDClass::Get_Next_CD_Drive()
 {
@@ -262,15 +230,7 @@ inline int GetCDClass::Get_Next_CD_Drive()
 }
 
 
-/************************************************************************************
- * RedBookClass -- adds red book functionality													*
- *																												*
- *	this class inherits from GetCDClass and adds red book play functionality			*
- *																												*
- *																												*
- * HISTORY:																									*
- *   06/04/1994 SW : Created.																			*
- *==================================================================================*/
+// Adds red book play functionality to GetCDClass.
 
 #ifdef NOT_FOR_WIN95
 class RedBookClass : public GetCDClass

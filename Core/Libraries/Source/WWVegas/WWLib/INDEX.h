@@ -30,23 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 4                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   IndexClass<T>::Add_Index -- Add element to index tracking system.                         *
- *   IndexClass<T>::Clear -- Clear index handler to empty state.                               *
- *   IndexClass<T>::Count -- Fetch the number of index entries recorded.                       *
- *   IndexClass<T>::Fetch_Index -- Fetch data from specified index.                            *
- *   IndexClass<T>::Increase_Table_Size -- Increase the internal index table capacity.         *
- *   IndexClass<T>::IndexClass -- Constructor for index handler.                               *
- *   IndexClass<T>::Invalidate_Archive -- Invalidate the archive pointer.                      *
- *   IndexClass<T>::Is_Archive_Same -- Checks to see if archive pointer is same as index.      *
- *   IndexClass<T>::Is_Present -- Checks for presence of index entry.                          *
- *   IndexClass<T>::Remove_Index -- Find matching index and remove it from system.             *
- *   IndexClass<T>::Search_For_Node -- Perform a search for the specified node ID              *
- *   IndexClass<T>::Set_Archive -- Records the node pointer into the archive.                  *
- *   IndexClass<T>::Sort_Nodes -- Sorts nodes in preparation for a binary search.              *
- *   IndexClass<T>::~IndexClass -- Destructor for index handler object.                        *
- *   compfunc -- Support function for bsearch and bsort.                                       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -194,20 +177,6 @@ class IndexClass
 };
 
 
-/***********************************************************************************************
- * IndexClass<T>::IndexClass -- Constructor for index handler.                                 *
- *                                                                                             *
- *    This constructs an empty index handler.                                                  *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
 template<class INDEX, class T>
 IndexClass<INDEX, T>::IndexClass() :
 	IndexTable(0),
@@ -220,20 +189,6 @@ IndexClass<INDEX, T>::IndexClass() :
 }
 
 
-/***********************************************************************************************
- * IndexClass<T>::~IndexClass -- Destructor for index handler object.                          *
- *                                                                                             *
- *    This will destruct and free any resources managed by this index handler.                 *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
 template<class INDEX, class T>
 IndexClass<INDEX, T>::~IndexClass()
 {
@@ -241,21 +196,6 @@ IndexClass<INDEX, T>::~IndexClass()
 }
 
 
-/***********************************************************************************************
- * IndexClass<T>::Clear -- Clear index handler to empty state.                                 *
- *                                                                                             *
- *    This routine will free all internal resources and bring the index handler into a         *
- *    known empty state. After this routine, the index handler is free to be reused.           *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
 template<class INDEX, class T>
 void IndexClass<INDEX, T>::Clear()
 {
@@ -268,22 +208,7 @@ void IndexClass<INDEX, T>::Clear()
 }
 
 
-/***********************************************************************************************
- * IndexClass<T>::Increase_Table_Size -- Increase the internal index table capacity.           *
- *                                                                                             *
- *    This helper function will increase the capacity of the internal index table without      *
- *    performing any alterations to the index data. Use this routine prior to adding a new     *
- *    element if the existing capacity is insufficient.                                        *
- *                                                                                             *
- * INPUT:   amount   -- The number of index element spaces to add to its capacity.             *
- *                                                                                             *
- * OUTPUT:  bool; Was the internal capacity increased without error?                           *
- *                                                                                             *
- * WARNINGS:   If there is insufficient RAM, then this routine will fail.                      *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Does not alter the index data.
 template<class INDEX, class T>
 bool IndexClass<INDEX, T>::Increase_Table_Size(int amount)
 {
@@ -324,21 +249,6 @@ bool IndexClass<INDEX, T>::Increase_Table_Size(int amount)
 }
 
 
-/***********************************************************************************************
- * IndexClass<T>::Count -- Fetch the number of index entries recorded.                         *
- *                                                                                             *
- *    This will return the quantity of index entries that have been recorded by this index     *
- *    handler.                                                                                 *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  Returns with number of recorded indices present.                                   *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
 template<class INDEX, class T>
 int IndexClass<INDEX, T>::Count() const
 {
@@ -346,21 +256,6 @@ int IndexClass<INDEX, T>::Count() const
 }
 
 
-/***********************************************************************************************
- * IndexClass<T>::Is_Present -- Checks for presence of index entry.                            *
- *                                                                                             *
- *    This routine will scan for the specified index entry. If it was found, then 'true' is    *
- *    returned.                                                                                *
- *                                                                                             *
- * INPUT:   id -- The index ID to search for.                                                  *
- *                                                                                             *
- * OUTPUT:  bool; Was the index entry found in this index handler object?                      *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
 template<class INDEX, class T>
 bool IndexClass<INDEX, T>::Is_Present(INDEX const & id) const
 {
@@ -403,22 +298,9 @@ bool IndexClass<INDEX, T>::Is_Present(INDEX const & id) const
 }
 
 
-/***********************************************************************************************
- * IndexClass<T>::Fetch_By_Index -- Fetch data from specified index.                           *
- *                                                                                             *
- *    This routine will find the specified index and return the data value associated with it. *
- *                                                                                             *
- * INPUT:   id -- The index ID to search for.                                                  *
- *                                                                                             *
- * OUTPUT:  Returns with the data value associated with the index value.                       *
- *                                                                                             *
- * WARNINGS:   This routine presumes that the index exists. If it doesn't exist, then the      *
- *             default constructed object "T" is returned instead. To avoid this problem,      *
- *             always verfiy the existence of the index by calling Is_Present() first.         *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: This routine presumes that the index exists. If it doesn't exist, then the default
+// constructed object "T" is returned instead. To avoid this problem, always verify the existence of
+// the index by calling Is_Present() first.
 template<class INDEX, class T>
 T const & IndexClass<INDEX, T>::operator [] (INDEX const & id) const
 {
@@ -444,21 +326,6 @@ T const & IndexClass<INDEX, T>::Fetch_By_Position(int pos) const
 }
 
 
-/***********************************************************************************************
- * IndexClass<T>::Is_Archive_Same -- Checks to see if archive pointer is same as index.        *
- *                                                                                             *
- *    This routine compares the specified index ID with the previously recorded index archive  *
- *    pointer in order to determine if they match.                                             *
- *                                                                                             *
- * INPUT:   id -- The index ID to compare to the archive index object pointer.                 *
- *                                                                                             *
- * OUTPUT:  bool; Does the specified index match the archive pointer?                          *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
 template<class INDEX, class T>
 bool IndexClass<INDEX, T>::Is_Archive_Same(INDEX const & id) const
 {
@@ -469,22 +336,8 @@ bool IndexClass<INDEX, T>::Is_Archive_Same(INDEX const & id) const
 }
 
 
-/***********************************************************************************************
- * IndexClass<T>::Invalidate_Archive -- Invalidate the archive pointer.                        *
- *                                                                                             *
- *    This routine will set the archive pointer to an invalid state. This must be performed    *
- *    if ever the archive pointer would become illegal (such as when the element it refers to  *
- *    is deleted).                                                                             *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// This must be performed if ever the archive pointer would become illegal (such as when the element
+// it refers to is deleted).
 template<class INDEX, class T>
 void IndexClass<INDEX, T>::Invalidate_Archive() const
 {
@@ -492,21 +345,8 @@ void IndexClass<INDEX, T>::Invalidate_Archive() const
 }
 
 
-/***********************************************************************************************
- * IndexClass<T>::Set_Archive -- Records the node pointer into the archive.                    *
- *                                                                                             *
- *    This routine records the specified node pointer. Use this routine when there is a        *
- *    good chance that the specified node will be requested in the immediate future.           *
- *                                                                                             *
- * INPUT:   node  -- Pointer to the node to assign to the archive.                             *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Use this routine when there is a good chance that the specified node will be requested in the
+// immediate future.
 template<class INDEX, class T>
 void IndexClass<INDEX, T>::Set_Archive(NodeElement const * node) const
 {
@@ -514,26 +354,8 @@ void IndexClass<INDEX, T>::Set_Archive(NodeElement const * node) const
 }
 
 
-/***********************************************************************************************
- * IndexClass<T>::Add_Index -- Add element to index tracking system.                           *
- *                                                                                             *
- *    This routine will record the index information into this index manager object. It        *
- *    associates the index number with the data specified. The data is copied to an internal   *
- *    storage location.                                                                        *
- *                                                                                             *
- * INPUT:   id    -- The ID number to associate with the data.                                 *
- *                                                                                             *
- *          data  -- The data to store.                                                        *
- *                                                                                             *
- * OUTPUT:  bool; Was the element added without error? Failure indicates that RAM has been     *
- *                exhausted.                                                                   *
- *                                                                                             *
- * WARNINGS:   The data is COPIED to internal storage. This means that the data object must    *
- *             have a functional and efficient copy constructor and assignment operator.       *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: The data is COPIED to internal storage. This means that the data object must have a
+// functional and efficient copy constructor and assignment operator.
 template<class INDEX, class T>
 bool IndexClass<INDEX, T>::Add_Index(INDEX const & id, T const & data)
 {
@@ -574,21 +396,6 @@ bool IndexClass<INDEX, T>::Add_Index(INDEX const & id, T const & data)
 }
 
 
-/***********************************************************************************************
- * IndexClass<T>::Remove_Index -- Find matching index and remove it from system.               *
- *                                                                                             *
- *    This will scan through the previously added index elements and if a match was found, it  *
- *    will be removed.                                                                         *
- *                                                                                             *
- * INPUT:   id -- The index ID to search for and remove.                                       *
- *                                                                                             *
- * OUTPUT:  bool; Was the index element found and removed?                                     *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
 template<class INDEX, class T>
 bool IndexClass<INDEX, T>::Remove_Index(INDEX const & id)
 {
@@ -635,23 +442,10 @@ bool IndexClass<INDEX, T>::Remove_Index(INDEX const & id)
 }
 
 
-/***********************************************************************************************
- * compfunc -- Support function for bsearch and bsort.                                         *
- *                                                                                             *
- *    This compare function presumes that its parameters are pointing to NodeElements and that *
- *    the first "int" in the node is the index ID number to be used for comparison.            *
- *                                                                                             *
- * INPUT:   ptr1  -- Pointer to first node.                                                    *
- *                                                                                             *
- *          ptr2  -- Pointer to second node.                                                   *
- *                                                                                             *
- * OUTPUT:  Returns with the comparision value between the two nodes.                          *
- *                                                                                             *
- * WARNINGS:   This is highly dependent upon the layout of the NodeElement structure.          *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Support function for bsearch and bsort. This compare function presumes that its parameters are
+// pointing to NodeElements and that the first "int" in the node is the index ID number to be used
+// for comparison.
+// WARNING: This is highly dependent upon the layout of the NodeElement structure.
 template<class INDEX, class T>
 int _USERENTRY IndexClass<INDEX, T>::search_compfunc(void const * ptr1, void const * ptr2)
 {
@@ -665,22 +459,7 @@ int _USERENTRY IndexClass<INDEX, T>::search_compfunc(void const * ptr1, void con
 }
 
 
-/***********************************************************************************************
- * IndexClass<T>::Search_For_Node -- Perform a search for the specified node ID                *
- *                                                                                             *
- *    This routine will perform a binary search on the previously recorded index values and    *
- *    if a match was found, it will return a pointer to the NodeElement.                       *
- *                                                                                             *
- * INPUT:   id -- The index ID to search for.                                                  *
- *                                                                                             *
- * OUTPUT:  Returns with a pointer to the NodeElement that matches the index ID specified. If  *
- *          no matching index could be found, then nullptr is returned.                           *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Performs a binary search on the previously recorded index values.
 template<class INDEX, class T>
 typename IndexClass<INDEX, T>::NodeElement const * IndexClass<INDEX, T>::Search_For_Node(INDEX const & id) const
 {

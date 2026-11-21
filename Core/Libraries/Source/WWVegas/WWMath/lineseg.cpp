@@ -30,12 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 25                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   LineSegClass::Set -- Initialize this 'lineseg' by transforming another 'lineseg'          *
- *   LineSegClass::Set_Random -- create a random linesegment within the given space            *
- *   LineSegClass::Find_Point_Closest_To -- Finds point on line closest to point supplied.     *
- *   LineSegClass::Find_Intersection -- Finds the closest points on the two lines				  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "lineseg.h"
@@ -43,18 +37,6 @@
 
 #include "matrix3d.h"
 
-/***********************************************************************************************
- * LineSegClass::Set -- Initialize this 'lineseg' by transforming another 'lineseg'            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/17/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void LineSegClass::Set(const LineSegClass & that,const Matrix3D & tm)
 {
 	/*
@@ -79,18 +61,6 @@ void LineSegClass::Set(const LineSegClass & that,const Matrix3D & tm)
 	Length = that.Length;
 }
 
-/***********************************************************************************************
- * LineSegClass::Set_Random -- create a random linesegment within the given space              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void LineSegClass::Set_Random(const Vector3 & min,const Vector3 & max)
 {
 	float frac;
@@ -118,18 +88,6 @@ void LineSegClass::Set_Random(const Vector3 & min,const Vector3 & max)
 
 
 
-/***********************************************************************************************
- * LineSegClass::Find_Point_Closest_To -- Finds point on line closest to point supplied.       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/26/1999 SKB : Created.                                                                 *
- *=============================================================================================*/
 Vector3 LineSegClass::Find_Point_Closest_To(const Vector3 &pos) const
 {
 	// Get a vector from one line endpoint to point in question.
@@ -150,18 +108,7 @@ Vector3 LineSegClass::Find_Point_Closest_To(const Vector3 &pos) const
 }
 
 
-/***********************************************************************************************
- * LineSegClass::Find_Intersection -- Finds the closest points on the two lines..				  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/03/2000 PDS : Created.                                                                 *
- *=============================================================================================*/
+// Finds the closest points on the two lines.
 bool
 LineSegClass::Find_Intersection
 (

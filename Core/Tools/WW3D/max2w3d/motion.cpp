@@ -31,22 +31,6 @@
  *                                                                                             *
  *                    $Revision:: 26                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   MotionClass::MotionClass -- constructor                                                   *
- *   MotionClass::MotionClass -- constructor                                                   *
- *   MotionClass::init -- initialize                                                           *
- *   MotionClass::~MotionClass -- destructor                                                   *
- *   MotionClass::compute_frame_motion -- compute the motion for a specified frame             *
- *   MotionClass::set_motion_matrix -- save a motin matrix                                     *
- *   MotionClass::get_motion_matrix -- retrieve a motion matrix                                *
- *   MotionClass::set_eulers -- store euler angles                                             *
- *   MotionClass::get_eulers -- retrieve euler angles                                          *
- *   MotionClass::Save -- save the motion to a W3D file                                        *
- *   MotionClass::save_header -- save the header                                               *
- *   MotionClass::save_channels -- save the motion channels                                    *
- *   MotionClass::set_visibility -- store a visibility bit                                     *
- *   MotionClass::get_visibility -- retrieve the visibility bit for this node:frame            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "motion.h"
@@ -61,18 +45,6 @@
 
 
 
-/***********************************************************************************************
- * MotionClass::MotionClass -- constructor                                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 MotionClass::MotionClass
 (
 	IScene * scene,
@@ -109,18 +81,6 @@ MotionClass::MotionClass
 	Set_W3D_Name(Name,name);
 }
 
-/***********************************************************************************************
- * MotionClass::MotionClass -- constructor                                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 MotionClass::MotionClass
 (
 	IScene * scene,
@@ -157,18 +117,6 @@ MotionClass::MotionClass
 	Set_W3D_Name(Name,name);
 }
 
-/***********************************************************************************************
- * MotionClass::init -- initialize                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 void MotionClass::init()
 {
 	int i,j;
@@ -280,18 +228,6 @@ void MotionClass::init()
 
 
 
-/***********************************************************************************************
- * MotionClass::~MotionClass -- destructor                                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 MotionClass::~MotionClass()
 {
 	int i;
@@ -323,18 +259,6 @@ MotionClass::~MotionClass()
 }
 
 
-/***********************************************************************************************
- * MotionClass::compute_frame_motion -- compute the motion for a specified frame               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 void MotionClass::compute_frame_motion(int frame)
 {
 	/*
@@ -505,18 +429,6 @@ void MotionClass::compute_frame_motion(int frame)
 }
 
 
-/***********************************************************************************************
- * MotionClass::set_motion_matrix -- store a motion matrix                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 void MotionClass::set_motion_matrix(int node,int frame,const Matrix3 & motion)
 {
 	assert(node >= 0);
@@ -529,18 +441,6 @@ void MotionClass::set_motion_matrix(int node,int frame,const Matrix3 & motion)
 }
 
 
-/***********************************************************************************************
- * MotionClass::get_motion_matrix -- retrieve a motion matrix                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 Matrix3 MotionClass::get_motion_matrix(int node,int frame)
 {
 	assert(node >= 0);
@@ -552,18 +452,6 @@ Matrix3 MotionClass::get_motion_matrix(int node,int frame)
 }
 
 
-/***********************************************************************************************
- * MotionClass::set_eulers -- store euler angles                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 void MotionClass::set_eulers(int node,int frame, float x, float y, float z)
 {
 	/*
@@ -617,18 +505,6 @@ void MotionClass::set_eulers(int node,int frame, float x, float y, float z)
 }
 
 
-/***********************************************************************************************
- * MotionClass::get_eulers -- retrieve euler angles                                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 Point3 MotionClass::get_eulers(int node,int frame)
 {
 	return Point3(
@@ -639,18 +515,6 @@ Point3 MotionClass::get_eulers(int node,int frame)
 }
 
 
-/***********************************************************************************************
- * MotionClass::set_visibility -- store a visibility bit                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/15/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void MotionClass::set_visibility(int node,int frame,bool visible)
 {
 	VisData[node][frame] = visible;
@@ -658,36 +522,12 @@ void MotionClass::set_visibility(int node,int frame,bool visible)
 }
 
 
-/***********************************************************************************************
- * MotionClass::get_visibility -- retrieve the visibility bit for this node:frame              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/15/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool MotionClass::get_visibility(int node,int frame)
 {
 	return VisData[node][frame];
 }
 
 
-/***********************************************************************************************
- * MotionClass::set_binary_movement -- store a binary movement bit                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/15/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void MotionClass::set_binary_movement(int node,int frame,bool visible)
 {
 	BinMoveData[node][frame] = visible;
@@ -695,18 +535,6 @@ void MotionClass::set_binary_movement(int node,int frame,bool visible)
 }
 
 
-/***********************************************************************************************
- * MotionClass::get_visibility -- retrieve the movement bit for this node:frame                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/15/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool MotionClass::get_binary_movement(int node,int frame)
 {
 	return BinMoveData[node][frame];
@@ -714,18 +542,6 @@ bool MotionClass::get_binary_movement(int node,int frame)
 
 
 
-/***********************************************************************************************
- * MotionClass::Save -- save the motion to a W3D file                                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 bool MotionClass::Save(ChunkSaveClass & csave)
 {
 	uint32 chunk_anim_type = W3D_CHUNK_ANIMATION;
@@ -756,18 +572,6 @@ bool MotionClass::Save(ChunkSaveClass & csave)
 }
 
 
-/***********************************************************************************************
- * MotionClass::save_header -- save the header                                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 bool MotionClass::save_header(ChunkSaveClass & csave)
 {
 
@@ -837,18 +641,6 @@ bool MotionClass::save_header(ChunkSaveClass & csave)
 	return true;
 }
 
-/***********************************************************************************************
- * MotionClass::save_channels -- save the motion channels                                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/26/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 bool MotionClass::save_channels(ChunkSaveClass & csave)
 {
 

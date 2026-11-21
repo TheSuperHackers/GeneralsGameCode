@@ -36,19 +36,6 @@
  *  pointers to the actual data being stored in the nodes are kept.  The   *
  *  users is responsible for creating the objects to be added and deleting *
  *  the objects once they are removed from the list if they need to be.    *
- *-------------------------------------------------------------------------*
- * Functions:                                                              *
- *   *SList<T>::Remove_Head -- Removes the head of the list                *
- *   *SList<T>::Remove_Tail -- Removes the tail element from the list      *
- *   SList<T>::Get_Count -- Returns a count of the entries in the list     *
- *   *SList<T>::Head -- Returns the head node of the list                  *
- *   *SList<T>::Tail -- Returns the tail node of the list                  *
- *   SList<T>::Is_Empty -- Returns true if the list is empty               *
- *   SList<T>::Add_Head -- Adds a node to the head of the list             *
- *   SList<T>::Add_Head -- Adds a list to to the head of the list          *
- *   SList<T>::Add_Tail -- Adds a node to the tail of the list             *
- *   SList<T>::Add_Tail -- Adds a list to the tail of the list             *
- *   *SList<T>::Find_Node -- returns first node in list matching the input *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -107,22 +94,7 @@ class SList {
 };
 
 
-/**************************************************************************
- * SList<T>::Insert_Before -- Inserts entry prior to specified entry      *
- *                                                                        *
- * Inserts an entry prior to the specified entry in the  list.  If the    *
- * specified   entry is null, it will add it prior to the head of the     *
- * list.  Returns true if sucessfully added, false otherwise.             *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   03/11/1997 PWG : Created.                                            *
- *========================================================================*/
+// If the old node is null, the new node is added prior to the head of the list.
 template<class T>
 bool SList<T>::Insert_Before(T *newnode, T   *oldnode)
 {
@@ -154,22 +126,7 @@ bool SList<T>::Insert_Before(T *newnode, T   *oldnode)
 }
 
 
-/**************************************************************************
- * SList<T>::Insert_After -- Inserts an entry after specified entry       *
- *                                                                        *
- * Inserts an entry after to the specified entry in the list.  If the     *
- * specified entry is null, it will add it prior to the head of the list. *
- * Returns true if sucessfully added, false otherwise.                    *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   03/11/1997 PWG : Created.                                            *
- *========================================================================*/
+// If the old node is null, the new node is added prior to the head of the list.
 template<class T>
 bool SList<T>::Insert_After(T *newnode, T *oldnode)
 {
@@ -198,18 +155,6 @@ bool SList<T>::Insert_After(T *newnode, T *oldnode)
 	}
 	return false;
 }
-/**************************************************************************
- * SList<T>::Remove_All -- Removes all of the entries in the current list *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   03/11/1997 PWG : Created.                                            *
- *========================================================================*/
 template<class T>
 void SList<T>::Remove_All()
 {
@@ -221,18 +166,6 @@ void SList<T>::Remove_All()
 	HeadNode = TailNode = nullptr;
 }
 
-/**************************************************************************
- * SList<T>::Remove -- Removes an element in the list.                    *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:  true if element could be removed, false if it could not be    *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   03/11/1997 PWG : Created.                                            *
- *========================================================================*/
 template<class T>
 bool SList<T>::Remove(T *element)
 {
@@ -264,18 +197,6 @@ bool SList<T>::Remove(T *element)
 	return(false);
 }
 
-/**************************************************************************
- * *SList<T>::Remove_Head -- Removes the head of the list                 *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   03/11/1997 PWG : Created.                                            *
- *========================================================================*/
 template<class T>
 T *SList<T>::Remove_Head()
 {
@@ -300,20 +221,8 @@ T *SList<T>::Remove_Head()
 // tails, then you should consider a doubly linked list.
 //
 
-/**************************************************************************
- * *SList<T>::Remove_Tail -- Removes the tail element from the list       *
- *                                                                        *
- * INPUT:		none																		  *
- *                                                                        *
- * OUTPUT:		returns a pointer to the element removed						  *
- *                                                                        *
- * WARNINGS:	On a singlely linked list it is slow as hell to remove a   *
- *					tail!  If you need to frequently remove tails, then you 	  *
- *					should consider a doubly linked list.                      *
- *                                                                        *
- * HISTORY:                                                               *
- *   03/11/1997 PWG : Created.                                            *
- *========================================================================*/
+// WARNING: On a singly linked list it is slow as hell to remove a tail! If you need to frequently
+// remove tails, then you should consider a doubly linked list.
 template<class T>
 T *SList<T>::Remove_Tail()
 {
@@ -325,18 +234,6 @@ T *SList<T>::Remove_Tail()
 }
 
 
-/**************************************************************************
- * SList<T>::Get_Count -- Returns a count of the entries in the list      *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   03/11/1997 PWG : Created.                                            *
- *========================================================================*/
 template<class T>
 inline long SList<T>::Get_Count() const
 {
@@ -347,54 +244,18 @@ inline long SList<T>::Get_Count() const
 }
 
 
-/**************************************************************************
- * *SList<T>::Head -- Returns the head node of the list                   *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   03/11/1997 PWG : Created.                                            *
- *========================================================================*/
 template<class T>
 inline SLNode<T> *SList<T>::Head() const
 {
 	return(HeadNode);
 }
 
-/**************************************************************************
- * *SList<T>::Tail -- Returns the tail node of the list                   *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   03/11/1997 PWG : Created.                                            *
- *========================================================================*/
 template<class T>
 inline SLNode<T> *SList<T>::Tail() const
 {
 	return(TailNode);
 }
 
-/**************************************************************************
- * SList<T>::Is_Empty -- Returns true if the list is empty                *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   03/11/1997 PWG : Created.                                            *
- *========================================================================*/
 template<class T>
 inline bool SList<T>::Is_Empty() const
 {
@@ -402,18 +263,6 @@ inline bool SList<T>::Is_Empty() const
 }
 
 
-/**************************************************************************
- * SList<T>::Add_Head -- Adds a node to the head of the list              *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   03/11/1997 PWG : Created.                                            *
- *========================================================================*/
 template<class T>
 bool SList<T>::Add_Head(T *data)
 {
@@ -428,18 +277,6 @@ bool SList<T>::Add_Head(T *data)
 }
 
 
-/**************************************************************************
- * SList<T>::Add_Head -- Adds a list to to the head of the list           *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   03/11/1997 PWG : Created.                                            *
- *========================================================================*/
 template<class T>
 bool SList<T>::Add_Head(SList<T>& list)
 {
@@ -462,18 +299,6 @@ bool SList<T>::Add_Head(SList<T>& list)
 	return true;
 }
 
-/**************************************************************************
- * SList<T>::Add_Tail -- Adds a node to the tail of the list              *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   03/11/1997 PWG : Created.                                            *
- *========================================================================*/
 template<class T>
 bool SList<T>::Add_Tail(T *data)
 {
@@ -492,18 +317,6 @@ bool SList<T>::Add_Tail(T *data)
 	return true;
 }
 
-/**************************************************************************
- * SList<T>::Add_Tail -- Adds a list to the tail of the list              *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   03/11/1997 PWG : Created.                                            *
- *========================================================================*/
 template<class T>
 bool SList<T>::Add_Tail(SList<T>& list)
 {
@@ -515,18 +328,6 @@ bool SList<T>::Add_Tail(SList<T>& list)
 }
 
 
-/**************************************************************************
- * *SList<T>::Find_Node -- returns first node in list matching the input  *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   08/22/1997 GH  : Created.                                            *
- *========================================================================*/
 template<class T>
 inline SLNode<T> *SList<T>::Find_Node(T * data) const
 {

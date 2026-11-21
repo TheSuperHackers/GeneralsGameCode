@@ -30,16 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 9                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *    -- The constructor builds the whole HLOD tree in a                                       *
- *    -- Destructor blows away the dynamic memory we used.                                     *
- *    -- Method called when saving to a W3D file. Saves the chunks                             *
- *    -- Write the header                                                                      *
- *    -- Writes each LOD                                                                       *
- *    -- Writes the mesh to bone connectivity info for each mesh in an LOD.                    *
- *   HLodSaveClass::save_aggregate_array -- save the aggregates (if any)                       *
- *   HLodSaveClass::save_proxy_array -- save the array of proxies (if any)                     *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -83,19 +73,7 @@ struct W3dHLodSubObjectStruct
 */
 
 
-/***********************************************************************************************
- * HLodSaveClass -- The constructor builds the whole HLOD tree in a form suitable for saving   *
- *  to a W3D file.                                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/14/1999  AJA : Created.                                                                 *
- *=============================================================================================*/
+// The constructor builds the whole HLOD tree in a form suitable for saving to a W3D file.
 HLodSaveClass::HLodSaveClass (MeshConnectionsClass **connections, int lod_count, TimeValue CurTime,
 										char *name, const char *htree_name, Progress_Meter_Class &meter,
 										INodeListClass *origin_list)
@@ -208,18 +186,6 @@ HLodSaveClass::HLodSaveClass (MeshConnectionsClass **connections, int lod_count,
 }
 
 
-/***********************************************************************************************
- * ~HLodSaveClass -- Destructor blows away the dynamic memory we used.                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/14/1999  AJA : Created.                                                                 *
- *=============================================================================================*/
 HLodSaveClass::~HLodSaveClass ()
 {
 	if (lod_array)
@@ -230,19 +196,6 @@ HLodSaveClass::~HLodSaveClass ()
 }
 
 
-/***********************************************************************************************
- * HLodSaveClass::Save -- Method called when saving to a W3D file. Saves the chunks that       *
- *  define a HLOD.                                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/14/1999  AJA : Created.                                                                 *
- *=============================================================================================*/
 bool HLodSaveClass::Save(ChunkSaveClass &csave)
 {
 	if (!lod_array)
@@ -270,18 +223,6 @@ bool HLodSaveClass::Save(ChunkSaveClass &csave)
 }
 
 
-/***********************************************************************************************
- * HLodSaveClass::save_header -- Write the header                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/14/1999  AJA : Created.                                                                 *
- *=============================================================================================*/
 bool HLodSaveClass::save_header (ChunkSaveClass &csave)
 {
 	if (!csave.Begin_Chunk(W3D_CHUNK_HLOD_HEADER))
@@ -297,18 +238,6 @@ bool HLodSaveClass::save_header (ChunkSaveClass &csave)
 }
 
 
-/***********************************************************************************************
- * HLodSaveClass::save_lod_arrays -- Writes each LOD                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/14/1999  AJA : Created.                                                                 *
- *=============================================================================================*/
 bool HLodSaveClass::save_lod_arrays(ChunkSaveClass &csave)
 {
 	for (int i = 0; i < header.LodCount; i++)
@@ -328,18 +257,6 @@ bool HLodSaveClass::save_lod_arrays(ChunkSaveClass &csave)
 
 
 
-/***********************************************************************************************
- * HLodSaveClass::save_aggregate_array -- save the aggregates (if any)                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/25/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 bool HLodSaveClass::save_aggregate_array(ChunkSaveClass & csave)
 {
 	if (aggregate_array.num_sub_objects > 0) {
@@ -356,18 +273,6 @@ bool HLodSaveClass::save_aggregate_array(ChunkSaveClass & csave)
 }
 
 
-/***********************************************************************************************
- * HLodSaveClass::save_proxy_array -- save the array of proxies (if any)                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/27/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 bool HLodSaveClass::save_proxy_array(ChunkSaveClass & csave)
 {
 	if (proxy_array.num_sub_objects > 0) {
@@ -384,19 +289,7 @@ bool HLodSaveClass::save_proxy_array(ChunkSaveClass & csave)
 }
 
 
-/***********************************************************************************************
- * HLodSaveClass::save_sub_object_array -- Writes the mesh to bone connectivity info for each  *
- * mesh in an LOD.                                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/14/1999  AJA : Created.                                                                 *
- *=============================================================================================*/
+// Writes the mesh to bone connectivity info for each mesh in an LOD.
 bool HLodSaveClass::save_sub_object_array(ChunkSaveClass &csave, const HLodArrayEntry & array)
 {
 	if (!csave.Begin_Chunk(W3D_CHUNK_HLOD_SUB_OBJECT_ARRAY_HEADER))

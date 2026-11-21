@@ -151,9 +151,14 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 	while (count>0) {
 		count--;
 		triggerName = file.readAsciiString();
+		// TheSuperHackers @info Retail Generals does not know the layer name that Zero Hour stores in version 4 triggers,
+		// so it reads the following values from the wrong bytes. With an empty layer name, the first trigger is never a
+		// water area, and reading its points runs past the end of the file, so no further triggers are read.
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
 		if (info->version >= K_TRIGGERS_VERSION_4) {
 			layerName = file.readAsciiString();
 		}
+#endif
 		triggerID = file.readInt();
 		isWater = false;
 		if (info->version >= K_TRIGGERS_VERSION_2) {

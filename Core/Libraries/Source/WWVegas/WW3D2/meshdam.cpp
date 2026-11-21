@@ -30,8 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -45,18 +43,6 @@
 //#include <sr.hpp>
 
 
-/***********************************************************************************************
- * DamageClass::DamageClass -- constructor                                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/28/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 DamageClass::DamageClass():
 	DamageIndex(0),
 	NumMaterials(0),
@@ -68,18 +54,6 @@ DamageClass::DamageClass():
 }
 
 
-/***********************************************************************************************
- * DamageClass::~DamageClass -- destructor                                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/28/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 DamageClass::~DamageClass()
 {
 	delete [] Verts;
@@ -89,18 +63,6 @@ DamageClass::~DamageClass()
 	Colors = nullptr;
 }
 
-/***********************************************************************************************
- * DamageClass::Load -- load damage data from a W3D file                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/28/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WW3DErrorType DamageClass::Load(ChunkLoadClass & cload,MeshModelClass * basemesh)
 {
 #if 0
@@ -183,18 +145,6 @@ WW3DErrorType DamageClass::Load(ChunkLoadClass & cload,MeshModelClass * basemesh
 	return WW3D_ERROR_OK;
 }
 
-/***********************************************************************************************
- * DamageClass::read_vertices -- read damage vertices from a W3D file                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/04/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WW3DErrorType DamageClass::read_vertices(ChunkLoadClass & cload,MeshModelClass * basemesh)
 {
 #if 0
@@ -219,18 +169,6 @@ WW3DErrorType DamageClass::read_vertices(ChunkLoadClass & cload,MeshModelClass *
 	return WW3D_ERROR_OK;
 }
 
-/***********************************************************************************************
- * DamageClass::read_colors -- read damage colors from a w3d file                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/04/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WW3DErrorType DamageClass::read_colors(ChunkLoadClass & cload,MeshModelClass * basemesh)
 {
 #if 0

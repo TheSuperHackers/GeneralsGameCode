@@ -30,17 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 13                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   GameMtlShaderDlg::GameMtlShaderDlg -- constructor                                         *
- *   GameMtlShaderDlg::~GameMtlShaderDlg -- destructor                                         *
- *   GameMtlShaderDlg::Dialog_Proc -- windows message handler                                  *
- *   GameMtlShaderDlg::ReloadDialog -- reload the contents of all of the controls              *
- *   GameMtlShaderDlg::ActivateDlg -- activate/deactivate the dialog                           *
- *   GameMtlShaderDlg::Apply_Preset -- apply a preset shader setting                           *
- *   GameMtlShaderDlg::Set_Preset -- determine preset shader setting from game material        *
- *   GameMtlShaderDlg::CompareShaderToBlendPreset -- compare preset to game material shader    *
- *   GameMtlShaderDlg::Set_Advanced_Defaults -- set advanced settings to defaults              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "GameMtlShaderDlg.h"
@@ -87,18 +76,6 @@ static const ShaderBlendSettingPreset ShaderBlendSettingPresets[NUM_SHADER_BLEND
 };
 
 
-/***********************************************************************************************
- * GameMtlShaderDlg::GameMtlShaderDlg -- constructor                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 GameMtlShaderDlg::GameMtlShaderDlg
 (
 	HWND				parent,
@@ -112,34 +89,11 @@ GameMtlShaderDlg::GameMtlShaderDlg
 }
 
 
-/***********************************************************************************************
- * GameMtlShaderDlg::~GameMtlShaderDlg -- destructor                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 GameMtlShaderDlg::~GameMtlShaderDlg()
 {
 }
 
 
-/***********************************************************************************************
- * GameMtlShaderDlg::Dialog_Proc -- windows message handler                                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 BOOL GameMtlShaderDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int cursel;
@@ -247,18 +201,6 @@ BOOL GameMtlShaderDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, L
 }
 
 
-/***********************************************************************************************
- * GameMtlShaderDlg::ReloadDialog -- reload the contents of all of the controls                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void GameMtlShaderDlg::ReloadDialog()
 {
 	DebugPrint("GameMtlShaderDlg::ReloadDialog\n");
@@ -276,36 +218,12 @@ void GameMtlShaderDlg::ReloadDialog()
 }
 
 
-/***********************************************************************************************
- * GameMtlShaderDlg::ActivateDlg -- activate/deactivate the dialog                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void GameMtlShaderDlg::ActivateDlg(BOOL onoff)
 {
 	// shader has no color swatches which need to be activated...
 }
 
 
-/***********************************************************************************************
- * GameMtlShaderDlg::Apply_Preset -- apply a preset shader setting                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void GameMtlShaderDlg::Apply_Preset(int preset_index)
 {
 	if (preset_index < 0 || preset_index >= NUM_SHADER_BLEND_PRESETS) return;
@@ -327,18 +245,6 @@ void GameMtlShaderDlg::Apply_Preset(int preset_index)
 }
 
 
-/***********************************************************************************************
- * GameMtlShaderDlg::Set_Preset -- determine preset shader setting from game material          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/26/99   NH : Created.                                                                  *
- *=============================================================================================*/
 void GameMtlShaderDlg::Set_Preset()
 {
 	for (int i = 0; i < NUM_SHADER_BLEND_PRESETS; i++) {
@@ -348,18 +254,6 @@ void GameMtlShaderDlg::Set_Preset()
 }
 
 
-/***********************************************************************************************
- * GameMtlShaderDlg::CompareShaderToBlendPreset -- compare preset to game material shader      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/26/99   NH : Created.                                                                  *
- *=============================================================================================*/
 bool GameMtlShaderDlg::CompareShaderToBlendPreset(const ShaderBlendSettingPreset &blend_preset)
 {
 	if (TheMtl->Get_Src_Blend(PassIndex) != blend_preset.SrcBlend) return false;
@@ -372,18 +266,6 @@ bool GameMtlShaderDlg::CompareShaderToBlendPreset(const ShaderBlendSettingPreset
 }
 
 
-/***********************************************************************************************
- * GameMtlShaderDlg::Set_Advanced_Defaults -- set advanced settings to defaults                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/26/99   NH : Created.                                                                  *
- *=============================================================================================*/
 void GameMtlShaderDlg::Set_Advanced_Defaults()
 {
 	TheMtl->Set_Pri_Gradient(PassIndex, W3DSHADER_PRIGRADIENT_DEFAULT);

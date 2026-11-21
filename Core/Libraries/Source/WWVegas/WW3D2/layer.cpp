@@ -30,18 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 3                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   LayerClass::LayerClass -- constructor                                                     *
- *   LayerClass::~LayerClass -- destructor                                                     *
- *   LayerClass::Set_Scene -- Set the scene used by this layer                                 *
- *   LayerClass::Get_Scene -- get the scene being rendered by this layer                       *
- *   LayerClass::Peek_Scene -- get the scene being rendered by this layer w/o a ref            *
- *   LayerClass::Set_Camera -- Set the camera being used by this layer                         *
- *   LayerClass::Get_Camera -- get the camera being used by this layer                         *
- *   LayerClass::LayerClass -- default constructor                                             *
- *   LC::Peek_Camera -- Get copy of camera.                                                    *
- *   LC::Set -- Kinda like an assignment operator.                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -50,18 +38,6 @@
 #include "camera.h"
 
 
-/***********************************************************************************************
- * LayerClass::LayerClass -- default constructor                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/27/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 LayerClass::LayerClass() :
 	Scene(nullptr),
 	Camera(nullptr),
@@ -80,21 +56,6 @@ LayerClass::LayerClass(const LayerClass &src) :
 {
 }
 
-/***********************************************************************************************
- * LayerClass::LayerClass -- constructor                                                       *
- *                                                                                             *
- *    simply constructs a layer class, initialized with the desired settings                   *
- *                                                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/27/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 LayerClass::LayerClass
 (
 		SceneClass * scene,
@@ -116,18 +77,6 @@ LayerClass::LayerClass
 }
 
 
-/***********************************************************************************************
- * LayerClass::~LayerClass -- destructor                                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/27/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 LayerClass::~LayerClass()
 {
 	if (Scene) {
@@ -141,18 +90,6 @@ LayerClass::~LayerClass()
 }
 
 
-/***********************************************************************************************
- * LayerClass::Set_Scene -- Set the scene used by this layer                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/27/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void LayerClass::Set_Scene(SceneClass * scene)
 {
 	if (Scene) {
@@ -165,18 +102,6 @@ void LayerClass::Set_Scene(SceneClass * scene)
 }
 
 
-/***********************************************************************************************
- * LayerClass::Get_Scene -- get the scene being rendered by this layer                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/27/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 SceneClass * LayerClass::Get_Scene() const
 {
 	if (Scene) {
@@ -186,36 +111,12 @@ SceneClass * LayerClass::Get_Scene() const
 }
 
 
-/***********************************************************************************************
- * LayerClass::Peek_Scene -- get the scene being rendered by this layer                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/8/99    NH : Created.                                                                   *
- *=============================================================================================*/
 SceneClass * LayerClass::Peek_Scene() const
 {
 	return Scene;
 }
 
 
-/***********************************************************************************************
- * LayerClass::Set_Camera -- Set the camera being used by this layer                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/27/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void LayerClass::Set_Camera(CameraClass * cam)
 {
 	if (Camera) {
@@ -228,18 +129,6 @@ void LayerClass::Set_Camera(CameraClass * cam)
 }
 
 
-/***********************************************************************************************
- * LayerClass::Get_Camera -- get the camera being used by this layer                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/27/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 CameraClass * LayerClass::Get_Camera() const
 {
 	if (Camera) {
@@ -249,36 +138,13 @@ CameraClass * LayerClass::Get_Camera() const
 }
 
 
-/***********************************************************************************************
- * LC::Peek_Camera -- Get copy of camera.                                                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/14/2001 SKB : Created.                                                                 *
- *=============================================================================================*/
 CameraClass * LayerClass::Peek_Camera() const
 {
 	return Camera;
 }
 
 
-/***********************************************************************************************
- * LC::Set -- Kinda like an assignment operator.                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/14/2001 SKB : Created.                                                                 *
- *=============================================================================================*/
+// Kinda like an assignment operator.
 void LayerClass::Set(const LayerClass & layer)
 {
 	Set_Camera(layer.Peek_Camera());

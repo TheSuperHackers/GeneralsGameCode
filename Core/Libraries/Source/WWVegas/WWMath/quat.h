@@ -31,8 +31,6 @@
  *                                                                         *
  *                  Last Update : February 24, 1997 [GH]                   *
  *                                                                         *
- *-------------------------------------------------------------------------*
- * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -283,18 +281,6 @@ WWINLINE bool Equal_Within_Epsilon(const Quaternion &a, const Quaternion &b, flo
 				(WWMath::Fabsf_Legacy(a.W - b.W) < epsilon) );
 }
 
-/***********************************************************************************************
- * Quaternion::operator= -- Assignment operator                                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/24/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE Quaternion & Quaternion::operator = (const Quaternion & source)
 {
   X = source[0];

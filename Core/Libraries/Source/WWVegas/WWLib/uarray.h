@@ -30,11 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 7                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   UniqueArrayClass<T>::UniqueArrayClass -- constructor                                      *
- *   UniqueArrayClass<T>::~UniqueArrayClass -- destructor                                      *
- *   UniqueArrayClass<T>::Add -- Add an item to the array                                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -97,18 +92,6 @@ private:
 
 
 
-/***********************************************************************************************
- * UniqueArrayClass<T>::UniqueArrayClass -- constructor                                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/29/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 template <class T>
 UniqueArrayClass<T>::UniqueArrayClass(int initial_size,int growth_rate,HashCalculatorClass<T> * hasher) :
 	UniqueItems(initial_size),
@@ -130,18 +113,6 @@ UniqueArrayClass<T>::UniqueArrayClass(int initial_size,int growth_rate,HashCalcu
 }
 
 
-/***********************************************************************************************
- * UniqueArrayClass<T>::~UniqueArrayClass -- destructor                                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/29/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 template <class T>
 UniqueArrayClass<T>::~UniqueArrayClass()
 {
@@ -150,21 +121,8 @@ UniqueArrayClass<T>::~UniqueArrayClass()
 }
 
 
-/***********************************************************************************************
- * UniqueArrayClass<T>::Add -- Add an item to the array                                        *
- *                                                                                             *
- * Only adds the item to the end of the array if another duplicate item is not found.  Returns *
- * the array index of where the item is stored.                                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/29/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Only adds the item to the end of the array if another duplicate item is not found. Returns the
+// array index of where the item is stored.
 template <class T>
 inline int UniqueArrayClass<T>::Add(const T & new_item)
 {

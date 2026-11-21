@@ -33,16 +33,6 @@
  *                    $Revision:: 13                                                          $*
  *                                                                                             *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- * Transform - transforms a vector array given  Matrix3D                                       *
- * Copy - Copies data from source to destination                                                *
- * CopyIndexed-copies dst[]=src[index[]]                                                        *
- * Clear - clears array to zero                                                                 *
- * Normalize - normalize the array                                                              *
- * MinMax - Finds the min and max of the array                                                  *
- *                                                                                              *
- *----------------------------------------------------------------------------------------------*
  */
 
 #pragma once

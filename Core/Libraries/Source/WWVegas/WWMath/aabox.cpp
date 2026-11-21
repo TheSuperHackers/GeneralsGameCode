@@ -30,11 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 18                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   AABoxClass::Init_Random -- initializes this box to a random state                         *
- *   AABoxClass::Contains -- test whether this box contains the given point                    *
- *   AABoxClass::Contains -- Test whether this box contains the given box                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "aabox.h"
@@ -43,18 +38,6 @@
 #include <float.h>
 
 
-/***********************************************************************************************
- * AABoxClass::Init_Random -- initializes this box to a random state                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/17/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 void AABoxClass::Init_Random(float min_center,float max_center,float min_extent,float max_extent)
 {
 	Center.X = min_center + WWMath::Random_Float() * (max_center - min_center);

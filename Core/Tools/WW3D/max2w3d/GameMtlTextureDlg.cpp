@@ -30,15 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 15                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   GameMtlTextureDlg::GameMtlTextureDlg -- constructor                                       *
- *   GameMtlTextureDlg::~GameMtlTextureDlg -- destructor                                       *
- *   GameMtlTextureDlg::Dialog_Proc -- windows message handler                                 *
- *   GameMtlTextureDlg::ReloadDialog -- reload the contents of all of the controls in this dia *
- *   GameMtlTextureDlg::ActivateDlg -- activate/deactivate this dialog                         *
- *   GameMtlTextureDlg::Enable_Stage -- enable or disable a texture stage                      *
- *   GameMtlTextureDlg::Update_Texture_Buttons -- update the texture buttons text              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -54,18 +45,6 @@
 #include <stdmat.h>
 
 
-/***********************************************************************************************
- * GameMtlTextureDlg::GameMtlTextureDlg -- constructor                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 GameMtlTextureDlg::GameMtlTextureDlg
 (
 	HWND				parent,
@@ -97,18 +76,6 @@ GameMtlTextureDlg::GameMtlTextureDlg
 }
 
 
-/***********************************************************************************************
- * GameMtlTextureDlg::~GameMtlTextureDlg -- destructor                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 GameMtlTextureDlg::~GameMtlTextureDlg()
 {
 	assert(Stage0FramesSpin && Stage1FramesSpin && Stage0RateSpin && Stage1RateSpin);
@@ -132,19 +99,7 @@ GameMtlTextureDlg::~GameMtlTextureDlg()
 }
 
 
-/***********************************************************************************************
- * GameMtlTextureDlg::Dialog_Proc -- windows message handler                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *   10/6/1999 MLL: Turned off the display button when the texture is turned off.              *
- *=============================================================================================*/
+// The display button is turned off when the texture is turned off.
 BOOL GameMtlTextureDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int cursel;
@@ -479,18 +434,6 @@ BOOL GameMtlTextureDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, 
 }
 
 
-/***********************************************************************************************
- * GameMtlTextureDlg::ReloadDialog -- reload the contents of all of the controls in this dialo *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void GameMtlTextureDlg::ReloadDialog()
 {
 	DebugPrint("GameMtlTextureDlg::ReloadDialog\n");
@@ -543,36 +486,12 @@ void GameMtlTextureDlg::ReloadDialog()
 }
 
 
-/***********************************************************************************************
- * GameMtlTextureDlg::ActivateDlg -- activate/deactivate this dialog                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void GameMtlTextureDlg::ActivateDlg(BOOL onOff)
 {
 	// no color swatches to activate.
 }
 
 
-/***********************************************************************************************
- * GameMtlTextureDlg::Enable_Stage -- enable or disable a texture stage                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void GameMtlTextureDlg::Enable_Stage(int stage,BOOL onoff)
 {
 	assert((stage >= 0) && (stage < W3dMaterialClass::MAX_STAGES));
@@ -616,18 +535,6 @@ void GameMtlTextureDlg::Enable_Stage(int stage,BOOL onoff)
 }
 
 
-/***********************************************************************************************
- * GameMtlTextureDlg::Update_Texture_Buttons -- update the texture buttons text                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void GameMtlTextureDlg::Update_Texture_Buttons()
 {
 	Texmap * texmap;

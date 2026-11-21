@@ -30,10 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 6                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   CatmullRomSpline3DClass::Update_Tangents -- computes the tangents at each key             *
- *   CatmullRomSpline1DClass::Update_Tangents -- Computes the tangents at each key             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -43,19 +39,7 @@
 ** Catmull-Rom 3D spline implementation
 */
 
-/***********************************************************************************************
- * CatmullRomSpline3DClass::Update_Tangents -- computes the tangents at each key               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * I'm not sure about the tangents for the endpoints of the curve.                             *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/7/2000   gth : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: I'm not sure about the tangents for the endpoints of the curve.
 void CatmullRomSpline3DClass::Update_Tangents()
 {
 	if (Keys.Count() < 2) {
@@ -118,18 +102,6 @@ void CatmullRomSpline3DClass::Update_Tangents()
 */
 
 
-/***********************************************************************************************
- * CatmullRomSpline1DClass::Update_Tangents -- Computes the tangents at each key               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/7/2000   gth : Created.                                                                 *
- *=============================================================================================*/
 void CatmullRomSpline1DClass::Update_Tangents()
 {
 	if (Keys.Count() < 2) {

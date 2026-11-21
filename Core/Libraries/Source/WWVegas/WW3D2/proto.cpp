@@ -33,10 +33,6 @@
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
  * 06/26/02 KM Integrating shader system
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   MeshLoaderClass::Load -- reads in a mesh and creates a prototype for it                   *
- *   HModelLoaderClass::Load -- reads in an hmodel definition and creates a prototype for it   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -105,18 +101,6 @@ protected:
 };
 
 
-/***********************************************************************************************
- * MeshLoaderClass::Load -- reads in a mesh and creates a prototype for it                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/28/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 PrototypeClass * MeshLoaderClass::Load_W3D(ChunkLoadClass & cload)
 {
 	MeshClass * mesh = NEW_REF( MeshClass, () );
@@ -143,18 +127,6 @@ PrototypeClass * MeshLoaderClass::Load_W3D(ChunkLoadClass & cload)
 }
 
 
-/***********************************************************************************************
- * HModelLoaderClass::Load -- reads in an hmodel and creates a prototype for it                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/28/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 PrototypeClass * HModelLoaderClass::Load_W3D(ChunkLoadClass & cload)
 {
 	HModelDefClass * hdef = W3DNEW HModelDefClass;

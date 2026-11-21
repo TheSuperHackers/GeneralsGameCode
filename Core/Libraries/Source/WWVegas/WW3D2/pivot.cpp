@@ -31,29 +31,12 @@
  *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   PivotClass::PivotClass -- Constructor for PivotClass                                      *
- *   PivotClass::Compute_Transform -- Update the pivot's transformation matrix                 *
- *   PivotClass::Compute_Transform -- Update the pivot's transformation matrix                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "pivot.h"
 #include "WWMath/wwmath.h"
 
 
-/***********************************************************************************************
- * PivotClass::PivotClass -- Constructor for PivotClass                                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/24/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 PivotClass::PivotClass() :
 	Parent(nullptr),
 	BaseTransform(1),

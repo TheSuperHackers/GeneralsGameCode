@@ -33,33 +33,12 @@
  *                    $Revision:: 6                                                           $*
  *                                                                                             *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   ProjectorClass::ProjectorClass -- Constructor                                             *
- *   ProjectorClass::~ProjectorClass -- Destructor                                             *
- *   ProjectorClass::Set_Transform -- Set the transform for the projector                      *
- *   ProjectorClass::Get_Transform -- Returns the current transform                            *
- *   ProjectorClass::Set_Perspective_Projection -- Set up a perspective projection             *
- *   ProjectorClass::Set_Ortho_Projection -- Set up an orthographic projection                 *
- *   ProjectorClass::Compute_Texture_Coordinate -- computes texcoord for given world-space poi *
- *   ProjectorClass::Update_WS_Bounding_Volume -- Recalculate the world-space bounding box     *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "projector.h"
 #include "matrixmapper.h"
 
 
-/***********************************************************************************************
- * ProjectorClass::ProjectorClass -- Constructor                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 ProjectorClass::ProjectorClass() :
 	Transform(1),
 	Projection(1),
@@ -70,38 +49,13 @@ ProjectorClass::ProjectorClass() :
 }
 
 
-/***********************************************************************************************
- * ProjectorClass::~ProjectorClass -- Destructor                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 ProjectorClass::~ProjectorClass()
 {
 	REF_PTR_RELEASE(Mapper);
 }
 
-/***********************************************************************************************
- * ProjectorClass::Set_Transform -- Set the transform for the projector                        *
- *                                                                                             *
- *    Projectors can be positioned in world space just like cameras!  Just point the -Z axis   *
- *    at the target.                                                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/11/00    gth : Created.                                                                 *
- *   1/27/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// Projectors can be positioned in world space just like cameras! Just point the -Z axis at the
+// target.
 void ProjectorClass::Set_Transform(const Matrix3D & tm)
 {
 	Transform = tm;
@@ -109,42 +63,15 @@ void ProjectorClass::Set_Transform(const Matrix3D & tm)
 }
 
 
-/***********************************************************************************************
- * ProjectorClass::Get_Transform -- Returns the current transform                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/11/00    gth : Created.                                                                 *
- *=============================================================================================*/
 const Matrix3D & ProjectorClass::Get_Transform() const
 {
 	return Transform;
 }
 
 
-/***********************************************************************************************
- * ProjectorClass::Set_Perspective_Projection -- Set up a perspective projection               *
- *                                                                                             *
- * INPUT:                                                                                      *
- * hfov - radians, horizontal field of view of the projection                                  *
- * vfov - radians, vertical field of view of the projection                                    *
- * znear - distance to near clipping plane                                                     *
- * zfar - distance to far clipping plane                                                       *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * Remember that znear and zfar are *distances*.  They are positive numbers as in the OpenGL   *
- * convention even though the coordinates will be negative.                                    *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/11/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// The field of view angles are in radians.
+// WARNING: Remember that znear and zfar are *distances*. They are positive numbers as in the OpenGL
+// convention even though the coordinates will be negative.
 void ProjectorClass::Set_Perspective_Projection(float hfov,float vfov,float znear,float zfar)
 {
 	Mapper->Set_Type(MatrixMapperClass::PERSPECTIVE_PROJECTION);
@@ -162,26 +89,8 @@ void ProjectorClass::Set_Perspective_Projection(float hfov,float vfov,float znea
 }
 
 
-/***********************************************************************************************
- * ProjectorClass::Set_Ortho_Projection -- Set up an orthographic projection                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- * xmin - "left" x coordinate in texture (camera) space                                        *
- * xmax - "right" x coordinate                                                                 *
- * ymin - "bottom" y coordinate                                                                *
- * ymax - "top" y coordinate                                                                   *
- * znear - distance to near clipping plane                                                     *
- * zfar - distance to far clipping plane                                                       *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * Remember that znear and zfar are *distances*.  They are positive numbers as in the OpenGL   *
- * convention even though the coordinates will be negative.                                    *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/11/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: Remember that znear and zfar are *distances*. They are positive numbers as in the OpenGL
+// convention even though the coordinates will be negative.
 void ProjectorClass::Set_Ortho_Projection(float xmin,float xmax,float ymin,float ymax,float znear,float zfar)
 {
 	Mapper->Set_Type(MatrixMapperClass::ORTHO_PROJECTION);
@@ -194,36 +103,13 @@ void ProjectorClass::Set_Ortho_Projection(float xmin,float xmax,float ymin,float
 }
 
 
-/***********************************************************************************************
- * ProjectorClass::Compute_Texture_Coordinate -- computes texcoord for given world-space point *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/27/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// The point is in world space.
 void ProjectorClass::Compute_Texture_Coordinate(const Vector3 & point,Vector3 * set_stq)
 {
 	Mapper->Compute_Texture_Coordinate(point,set_stq);
 }
 
 
-/***********************************************************************************************
- * ProjectorClass::Update_WS_Bounding_Volume -- Recalculate the world-space bounding box       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/11/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void ProjectorClass::Update_WS_Bounding_Volume()
 {
 	/*

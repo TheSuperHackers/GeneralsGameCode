@@ -30,15 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 22                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   CollisionMath::Intersection_Test -- Test intersection between two AABoxes                 *
- *   CollisionMath::Overlap_Test -- Tests overlap between an AABox and a sphere                *
- *   CollisionMath::Overlap_Test -- Tests overlap between an AABox and a triangle              *
- *   CollisionMath::Overlap_Test -- Tests overlap between an AABox and a line segment          *
- *   CollisionMath::Collide -- Collision test for a moving AABox and a plane                   *
- *   aab_separation_test -- tests two AAB's for separation on an axis                          *
- *   CollisionMath::Collide -- Collision test for two moving AABoxes                           *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -54,18 +45,6 @@
 #include "WWDebug/wwdebug.h"
 
 
-/***********************************************************************************************
- * CollisionMath::Intersection_Test -- Test intersection between two AABoxes                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/19/99   gth : Created.                                                                 *
- *=============================================================================================*/
 bool CollisionMath::Intersection_Test(const AABoxClass & box,const AABoxClass & box2)
 {
 	Vector3 dc = box2.Center - box.Center;
@@ -76,18 +55,6 @@ bool CollisionMath::Intersection_Test(const AABoxClass & box,const AABoxClass & 
 	return true;
 }
 
-/***********************************************************************************************
- * CollisionMath::Overlap_Test -- Tests overlap between an AABox and a sphere                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/19/99   gth : Created.                                                                 *
- *=============================================================================================*/
 CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,const SphereClass & sphere)
 {
 	// TODO: this function seems incorrect.  Not currently using it though
@@ -110,37 +77,21 @@ CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,co
 
 
 
-/***********************************************************************************************
- * CollisionMath::Overlap_Test -- Tests overlap between an AABox and a line segment            *
- *                                                                                             *
- * This function uses separating axes to determine whether an AABox and a line segment overlap *
- * I wrote it when we found that ray-casting was taking a huge amount of time in Renegade.     *
- * Here are some statistics comparing this function to the previous function which used the    *
- * same algorithm that Collide(box,ray) uses.                                                  *
- *                                                                                             *
- *                  collide algorithm (Gems)                separating axis (this one)         *
- * -----------------------------------------------------------------------------------------   *
- * number of tests      10000                                  10000                           *
- * avg cycles             641                                    464                           *
- * outside cycles         652                                    390                           *
- * overlap cycles         610                                    683                           *
- *                                                                                             *
- * The idea for this test is that it will early-exit when it can while the old test can't.     *
- * When we are passing a ray down our culling trees, it is common to encounter boxes that      *
- * are not intersecting the ray.  The faster we can reject these, the better!                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- * box - box to test                                                                           *
- * line - line to test                                                                         *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- * overlap status of the line with respect to the box, either INSIDE, OUTSIDE, or OVERLAPPED   *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/19/99   gth : Created.                                                                 *
- *=============================================================================================*/
+// This function uses separating axes to determine whether an AABox and a line segment overlap.
+// I wrote it when we found that ray-casting was taking a huge amount of time in Renegade.
+// Here are some statistics comparing this function to the previous function which used the
+// same algorithm that Collide(box,ray) uses.
+//
+//                  collide algorithm (Gems)                separating axis (this one)
+// -----------------------------------------------------------------------------------------
+// number of tests      10000                                  10000
+// avg cycles             641                                    464
+// outside cycles         652                                    390
+// overlap cycles         610                                    683
+//
+// The idea for this test is that it will early-exit when it can while the old test can't.
+// When we are passing a ray down our culling trees, it is common to encounter boxes that
+// are not intersecting the ray. The faster we can reject these, the better!
 CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,const LineSegClass & line)
 {
 	// If both endpoints are in, return INSIDE
@@ -342,18 +293,6 @@ CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,co
 #endif // Alternate Overlap Test for AABox-Ray
 
 
-/***********************************************************************************************
- * CollisionMath::Overlap_Test -- Tests overlap between an AABox and a triangle                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/19/99   gth : Created.                                                                 *
- *=============================================================================================*/
 CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,const TriClass & tri)
 {
 	CastResultStruct res;
@@ -362,18 +301,6 @@ CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,co
 }
 
 
-/***********************************************************************************************
- * CollisionMath::Collide -- Collision test for a moving AABox and a plane                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/19/99   gth : Created.                                                                 *
- *=============================================================================================*/
 bool CollisionMath::Collide
 (
 	const AABoxClass &		box,
@@ -468,21 +395,8 @@ private:
 };
 
 
-/***********************************************************************************************
- * aab_separation_test -- tests two AAB's for separation on an axis                            *
- *                                                                                             *
- * This function is very similar to the obb_separation_test.  If a flaw is found in either,    *
- * we should update the other...                                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/19/99   gth : Created.                                                                 *
- *=============================================================================================*/
+// This function is very similar to the obb_separation_test. If a flaw is found in either, we should
+// update the other...
 static inline bool aab_separation_test
 (
 	AABCollisionStruct & context,
@@ -532,22 +446,9 @@ static inline bool aab_separation_test
 }
 
 
-/***********************************************************************************************
- * CollisionMath::Collide -- Collision test for two moving AABoxes                             *
- *                                                                                             *
- * this function sweeps two AABoxes and finds the first time of collision.                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * currently there is no parateter for the movement of the second box.  the internal code      *
- * can handle it though.                                                                       *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/19/99   gth : Created.                                                                 *
- *=============================================================================================*/
+// Sweeps two AABoxes and finds the first time of collision.
+// WARNING: Currently there is no parameter for the movement of the second box. The internal code
+// can handle it though.
 bool CollisionMath::Collide(const AABoxClass & box,const Vector3 & move,const AABoxClass & box2,CastResultStruct * result)
 {
 	/*

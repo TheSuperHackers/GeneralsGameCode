@@ -30,12 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 3                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   RawFileClass::File_Name -- Returns with the filename associate with the file object.      *
- *   RawFileClass::RawFileClass -- Default constructor for a file object.                      *
- *   RawFileClass::~RawFileClass -- Default deconstructor for a file object.                   *
- *   RawFileClass::Is_Open -- Checks to see if the file is open or not.                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once

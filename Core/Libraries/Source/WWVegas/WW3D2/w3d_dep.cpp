@@ -30,22 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 4                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   Get_W3D_Dependencies -- Scans a W3D file to determine which other files it depends on.    *
- *   Scan_Chunk -- Chooses the correct chunk loader for this chunk.                            *
- *   Scan_Mesh -- Scans a mesh for references to other files.                                  *
- *   Scan_Mesh_Header -- Scans a mesh's header for file references.                            *
- *   Scan_Mesh_Textures -- Scans a mesh's textures.                                            *
- *   Scan_HTree -- Scans an HTree for references to other files.                               *
- *   Scan_Anim -- Scans an animation for references to other files.                            *
- *   Scan_Compressed_Anim -- Scans an animation for references to other files.                 *
- *   Scan_HModel -- Scans an HModel for references to other files.                             *
- *   Scan_Emitter -- Scans an emitter for references to other files.                           *
- *   Scan_Aggregate -- Scans an aggregate for references to other files.                       *
- *   Scan_HLOD -- Scans an HLOD for references to other files.                                 *
- *   Get_W3D_Name -- Gets a W3D object name from a W3D filename.                               *
- *   Make_W3D_Filename -- Converts a W3D object name into a W3D filename.                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 //-----------------------------------------------------------------------------
@@ -87,18 +71,6 @@ static void Get_W3D_Name (const char *filename, char *w3d_name, size_t w3d_name_
 static const char * Make_W3D_Filename (const char *w3d_name);
 
 
-/***********************************************************************************************
- * Get_W3D_Dependencies -- Scans a W3D file to determine which other files it depends on.      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/3/00     AJA : Created.                                                                 *
- *=============================================================================================*/
 bool Get_W3D_Dependencies (const char *w3d_filename, StringList &files)
 {
 	assert(w3d_filename);
@@ -141,18 +113,7 @@ bool Get_W3D_Dependencies (const char *w3d_filename, StringList &files)
 }
 
 
-/***********************************************************************************************
- * Scan_Chunk -- Chooses the correct chunk loader for this chunk.                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/3/00     AJA : Created.                                                                 *
- *=============================================================================================*/
+// Chooses the correct chunk loader for this chunk.
 static void Scan_Chunk (ChunkLoadClass &cload, StringList &files, const char *w3d_name)
 {
 	assert(w3d_name);
@@ -190,17 +151,6 @@ static void Scan_Chunk (ChunkLoadClass &cload, StringList &files, const char *w3
 }
 
 
-/***********************************************************************************************
- * Scan_Mesh -- Scans a mesh for references to other files.                                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 static void Scan_Mesh (ChunkLoadClass &cload, StringList &files, const char *w3d_name)
 {
 	// Scan the mesh's sub-chunks.
@@ -222,18 +172,6 @@ static void Scan_Mesh (ChunkLoadClass &cload, StringList &files, const char *w3d
 	}
 }
 
-/***********************************************************************************************
- * Scan_Mesh_Header -- Scans a mesh's header for file references.                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/3/00     AJA : Created.                                                                 *
- *=============================================================================================*/
 static void Scan_Mesh_Header (ChunkLoadClass &cload, StringList &files, const char *w3d_name)
 {
 	// In the mesh header, we want the 'ContainerName' string.
@@ -250,18 +188,6 @@ static void Scan_Mesh_Header (ChunkLoadClass &cload, StringList &files, const ch
 	}
 }
 
-/***********************************************************************************************
- * Scan_Mesh_Textures -- Scans a mesh's textures.                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/3/00     AJA : Created.                                                                 *
- *=============================================================================================*/
 static void Scan_Mesh_Textures (ChunkLoadClass &cload, StringList &files, const char *w3d_name)
 {
 	// Let's see which textures are used by this mesh...
@@ -291,17 +217,6 @@ static void Scan_Mesh_Textures (ChunkLoadClass &cload, StringList &files, const 
 }
 
 
-/***********************************************************************************************
- * Scan_Anim -- Scans an animation for references to other files.                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 static void Scan_Anim (ChunkLoadClass &cload, StringList &files, const char *w3d_name)
 {
 	while (cload.Open_Chunk())
@@ -324,17 +239,6 @@ static void Scan_Anim (ChunkLoadClass &cload, StringList &files, const char *w3d
 }
 
 
-/***********************************************************************************************
- * Scan_Compressed_Anim -- Scans a compressed animation mesh for references to other files.    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 static void Scan_Compressed_Anim (ChunkLoadClass &cload, StringList &files, const char *w3d_name)
 {
 	while (cload.Open_Chunk())
@@ -357,17 +261,6 @@ static void Scan_Compressed_Anim (ChunkLoadClass &cload, StringList &files, cons
 }
 
 
-/***********************************************************************************************
- * Scan_HModel -- Scans an HModel for references to other files.                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 static void Scan_HModel (ChunkLoadClass &cload, StringList &files, const char *w3d_name)
 {
 	while (cload.Open_Chunk())
@@ -390,17 +283,6 @@ static void Scan_HModel (ChunkLoadClass &cload, StringList &files, const char *w
 }
 
 
-/***********************************************************************************************
- * Scan_Emitter -- Scans an emitter for references to other files.                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 static void Scan_Emitter (ChunkLoadClass &cload, StringList &files, const char *w3d_name)
 {
 	while (cload.Open_Chunk())
@@ -419,17 +301,6 @@ static void Scan_Emitter (ChunkLoadClass &cload, StringList &files, const char *
 }
 
 
-/***********************************************************************************************
- * Scan_Aggregate -- Scans an aggregate for references to other files.                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 static void Scan_Aggregate (ChunkLoadClass &cload, StringList &files, const char *w3d_name)
 {
 	while (cload.Open_Chunk())
@@ -467,17 +338,6 @@ static void Scan_Aggregate (ChunkLoadClass &cload, StringList &files, const char
 }
 
 
-/***********************************************************************************************
- * Scan_HLOD -- Scans an HLOD for references to other files.                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 static void Scan_HLOD (ChunkLoadClass &cload, StringList &files, const char *w3d_name)
 {
 	while (cload.Open_Chunk())
@@ -499,18 +359,6 @@ static void Scan_HLOD (ChunkLoadClass &cload, StringList &files, const char *w3d
 }
 
 
-/***********************************************************************************************
- * Get_W3D_Name -- Gets a W3D object name from a W3D filename.                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/3/00     AJA : Created.                                                                 *
- *=============================================================================================*/
 static void Get_W3D_Name(const char* filename, char* w3d_name, size_t w3d_name_size)
 {
 	assert(filename);
@@ -535,18 +383,6 @@ static void Get_W3D_Name(const char* filename, char* w3d_name, size_t w3d_name_s
 }
 
 
-/***********************************************************************************************
- * Make_W3D_Filename -- Converts a W3D object name into a W3D filename.                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/3/00     AJA : Created.                                                                 *
- *=============================================================================================*/
 static const char * Make_W3D_Filename (const char *w3d_name)
 {
 	assert(w3d_name);
