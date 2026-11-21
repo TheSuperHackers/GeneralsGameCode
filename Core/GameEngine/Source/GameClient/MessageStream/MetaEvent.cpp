@@ -535,7 +535,7 @@ void MetaEventTranslator::onMouseEvent(const GameMessage *msg)
 void MetaEventTranslator::onKeyEvent(const GameMessage *msg, GameMessageDisposition &disp)
 {
 	const Int systemKey = msg->getArgument(0)->integer;
-	const Int systemKeyState = msg->getArgument(1)->integer;
+	const KeyState systemKeyState = (KeyState)msg->getArgument(1)->integer;
 
 	const MappableKeyType keyType = getActionKeyType(systemKey);
 	const MappableKeyModState keyModState = getKeyModState(systemKeyState);
@@ -598,7 +598,7 @@ void MetaEventTranslator::onKeyModStateRemoved(GameMessageDisposition &disp, Map
 }
 
 //-------------------------------------------------------------------------------------------------
-void MetaEventTranslator::onKeyPressed(GameMessageDisposition &disp, Int systemKeyState, MappableKeyType keyType, MappableKeyModState keyModState)
+void MetaEventTranslator::onKeyPressed(GameMessageDisposition &disp, KeyState systemKeyState, MappableKeyType keyType, MappableKeyModState keyModState)
 {
 	// TheSuperHackers @info The regular key handler only triggers events when the mapped key is pressed,
 	// not when the modifier (CTRL, ALT, SHIFT) is pressed, unless the key is MK_NONE.
@@ -701,7 +701,7 @@ MappableKeyType MetaEventTranslator::getActionKeyType(Int systemKey)
 }
 
 //-------------------------------------------------------------------------------------------------
-MappableKeyModState MetaEventTranslator::getKeyModState(Int systemKeyState)
+MappableKeyModState MetaEventTranslator::getKeyModState(KeyState systemKeyState)
 {
 	// for our purposes here, we don't care to distinguish between right and left keys,
 	// so just fudge a little to simplify things.
