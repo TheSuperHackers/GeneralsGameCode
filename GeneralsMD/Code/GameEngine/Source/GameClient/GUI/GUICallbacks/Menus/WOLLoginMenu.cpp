@@ -66,6 +66,7 @@
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
 
 #include "GameNetwork/GameSpyOverlay.h"
+#include "GameNetwork/FirewallHelper.h"
 
 #ifdef ALLOW_NON_PROFILED_LOGIN
 Bool GameSpyUseProfiles = false;
@@ -796,6 +797,11 @@ void WOLLoginMenuUpdate( WindowLayout * layout, void *userData)
 	// We'll only be successful if we've requested to
 	if(isShuttingDown && TheShell->isAnimFinished() && TheTransitionHandler->isFinished())
 		shutdownComplete(layout);
+
+	if (TheFirewallHelper != nullptr)
+	{
+		TheFirewallHelper->behaviorDetectionUpdate();
+	}
 
 	if (TheShell->isAnimFinished() && !buttonPushed && TheGameSpyPeerMessageQueue)
 	{
