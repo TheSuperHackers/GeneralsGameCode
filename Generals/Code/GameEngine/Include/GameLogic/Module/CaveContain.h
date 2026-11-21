@@ -98,6 +98,8 @@ public:
 	// contain list access
 	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse ) override;
 	virtual UnsignedInt getContainCount() const override;
+	virtual UnsignedInt getHeroUnitsContained() const override;
+	virtual void updateHeroUnitsContained() override;
 	virtual Int getContainMax() const override;
 	virtual const ContainedItemsList* getContainedItemsList() const override;
 	virtual Bool isContained( const Object *obj ) const override;

@@ -388,9 +388,45 @@ void OpenContain::addToContainList( Object *rider )
 	{
 		m_stealthUnitsContained++;
 	}
-	if( rider->isKindOf( KINDOF_HERO ) )
+	updateHeroUnitsContained();
+}
+
+// TheSuperHackers @bugfix arcticdolphin 26/10/2026 Count heroes in nested containers too, such as a hero in a vehicle.
+UnsignedInt OpenContain::countHeroUnits( const ContainedItemsList &list )
+{
+	UnsignedInt count = 0;
+	for( ContainedItemsList::const_iterator it = list.begin(); it != list.end(); ++it )
 	{
-		m_heroUnitsContained++;
+		const Object *rider = *it;
+		if( rider->isKindOf( KINDOF_HERO ) )
+		{
+			++count;
+		}
+
+		const ContainModuleInterface *riderContain = rider->getContain();
+		if( riderContain != nullptr )
+		{
+			count += riderContain->getHeroUnitsContained();
+		}
+	}
+	return count;
+}
+
+void OpenContain::updateHeroUnitsContained()
+{
+	const UnsignedInt count = countHeroUnits( m_containList );
+	if( count == m_heroUnitsContained )
+	{
+		return;
+	}
+
+	m_heroUnitsContained = count;
+
+	// TheSuperHackers @bugfix arcticdolphin 26/10/2026 Look up the container by ID, its pointer can dangle during destruction.
+	Object *containedBy = TheGameLogic->findObjectByID( getObject()->getContainedByID() );
+	if( containedBy != nullptr && containedBy->getContain() != nullptr )
+	{
+		containedBy->getContain()->updateHeroUnitsContained();
 	}
 }
 
@@ -622,11 +658,7 @@ void OpenContain::removeFromContainViaIterator( ContainedItemsList::iterator it,
 			}
 		}
 	}
-	if( rider->isKindOf( KINDOF_HERO ) )
-	{
-		DEBUG_ASSERTCRASH( m_heroUnitsContained > 0, ("OpenContain::removeFromContainViaIterator - Removing hero but hero count is %d", m_heroUnitsContained) );
-		m_heroUnitsContained--;
-	}
+	updateHeroUnitsContained();
 
 
 	if (isEnclosingContainerFor( rider ))
@@ -1479,6 +1511,7 @@ void OpenContain::processDamageToContained(Real percentDamage)
 	// Swap the list back where it belongs.
 	m_containList.swap(list);
 	m_containListSize = (UnsignedInt)m_containList.size();
+	updateHeroUnitsContained();
 
 #endif // RETAIL_COMPATIBLE_CRC
 }
