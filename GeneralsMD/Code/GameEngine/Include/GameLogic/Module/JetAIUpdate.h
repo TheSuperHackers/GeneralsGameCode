@@ -140,7 +140,6 @@ protected:
 	void positionLockon();
 
 	virtual Bool getTreatAsAircraftForLocoDistToGoal() const override;
-	Bool isParkedAt(const Object* obj) const;
 
 private:
 
