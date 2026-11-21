@@ -18,6 +18,10 @@
 
 #pragma once
 
+#if !RETAIL_COMPATIBLE_PATHFINDING
+#undef RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
+#endif
+
 class PathfindCell;
 
 class PathfindCellInfo
