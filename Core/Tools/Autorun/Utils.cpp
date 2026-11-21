@@ -30,42 +30,6 @@
  *																			*
  *              Last Update : March 16, 1998  [MML]             	  		*
  *																			*
- *--------------------------------------------------------------------------*
- * Functions:																*
- *																			*
- *	Clip_Line_To_Rect			--	Clips a line (two points) against a		*
- *										rectangle, using CS algorithm.		*
- *	Compute_Code				--	computes line clipping bit code for 	*
- *										point & rectangle.					*
- *	Copy_File 					--	Copies a file from one dir to another.	*
- *	Convert_Hex_To_Version		--	Converts a hex num obtained from the	*
- *										Registry, into a string				*
- *										representation of a version 		*
- *										number ( XX.XX ).					*
- *	Convert_Version_To_Hex		--	Converts a string to an unsigned long.	*
- *	Convert_To_Version_Format	--	Converts version string's "," to "."s   *
- *	Dialog_Box 					--	draws a dialog background box           *
- *	Draw_Box 					--	Displays a highlighted box.             *
- *	Fatal						--	General purpose fatal error handler.	*
- *	Get_Version					--	Retrieves a version string from a file. *
- *	Get_String 					--	Returns a pointer to the undipped text. *
- *	Is_File_Available 		  	--	Use both FindFirst to check that CD is	*
- *									    in drive & if File_Exists() to 		*
- *										determine if file is really there.	*
- *	Pad_With_Zeros            	--	Adds zeros to the beginning of string.	*
- *	String_Width 				--	Calculate with of the string.			*
- *	Strip_Newlines 			  	--	Remove '\r' from string passed in.		*
- *	TextPtr						--	Returns a pointer to the undipped text. *
- *	Path_Name_Valid			  	--	Validate that the path has the correct  *
- *										number of chars between '\' in the	*
- *										path.								*
- *	Path_Get_Next_Directory		--	Return the next dir path from string.	*
- *	Path_Add_Back_Slash			--	Add a "\\" to the end of the string.	*
- *	Path_Remove_Back_Slash		--	Remove a '\\' at the end of the string.	*
- *	Path_Trim_Blanks			--	Trim lead/trail white spaces off string	*
- *	Pad_With_Zeros				--	Adds zeros to the beginning of string.  *
- *	Remove_Ending_Spaces		--	Remove any blank spaces at end of string*
- *	Remove_Spaces				--	Remove spaces from string passed in.    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 #include <io.h>
@@ -235,22 +199,8 @@ void Fix_Double_Ampersands ( LPSTR pszString, bool upper_case )
 }
 
 
-/******************************************************************************
- * Load_Alloc_Data -- Allocates a buffer and loads the file into it.          *
- *                                                                            *
- *	This is the C++ replacement for the Load_Alloc_Data function. It will     *
- *	allocate the memory big enough to hold the file & read the file into it.  *
- *                                                                            *
- * INPUT:   file  -- The file to read.                                        *
- *          mem   -- The memory system to use for allocation.                 *
- *                                                                            *
- * OUTPUT:  Returns with a pointer to the allocated and filled memory block.  *
- *                                                                            *
- * WARNINGS:   none                                                           *
- *                                                                            *
- * HISTORY:                                                                   *
- *   10/17/1994 JLB : Created.                                                *
- *============================================================================*/
+// This is the C++ replacement for the Load_Alloc_Data function. It will allocate the memory big
+// enough to hold the file and read the file into it.
 
 void * Load_Alloc_Data( char *filename, long *filesize )
 {
@@ -297,19 +247,7 @@ void * Load_Alloc_Data( char *filename, long *filesize )
 	return( ptr );
 }
 
-/****************************************************************************
- * MIXFILECLASS::LOAD_FILE -- Returns a buffer loaded with file desired.	*
- *                                                                 			*
- * INPUT:   	none.														*																								  *
- *                                                                 			*
- * OUTPUT:		none.                        								*
- *																			*
- * WARNINGS:	Searches MixFile first, then local directory.				*
- *				Use free() to release buffer.								*																			*
- *																			*
- * HISTORY:                                                        			*
- *   04/13/1998  ML/MG : Created.                                    		*
- *==========================================================================*/
+// WARNING: Searches MixFile first, then local directory. Use free() to release buffer.
 
 void *Load_File ( char *filename, long *filesize )
 {
@@ -328,18 +266,6 @@ void *Load_File ( char *filename, long *filesize )
 }
 
 
-/****************************************************************************
- * MAKE_CURRENT_PATH_TO -- Returns a buffer to path desired.				*
- *                                                                 			*
- * INPUT:   	none.														*																								  *
- *                                                                 			*
- * OUTPUT:		none.                        								*
- *																			*
- * WARNINGS:																*																			*
- *																			*
- * HISTORY:                                                        			*
- *   10/08/2001  MML : Created.                                    			*
- *==========================================================================*/
 
 char *Make_Current_Path_To ( const char *filename, char *path )
 {
@@ -378,18 +304,6 @@ unichar *Make_Current_Path_To ( const unichar *filename, unichar *path )
 }
 
 
-/******************************************************************************
- * Path_Add_Back_Slash -- Add a '\\' to the end of the path.
- *
- * INPUT:		char * path -- Pointer to the string to be modified.
- *
- * OUTPUT:     char * path
- *
- * WARNINGS:   none
- *
- * HISTORY:
- *   08/14/1998 MML : Created.
- *============================================================================*/
 
 char *Path_Add_Back_Slash ( char *path )
 {
@@ -412,18 +326,6 @@ unichar *Path_Add_Back_Slash ( unichar *path )
 }
 
 
-/******************************************************************************
- * Path_Remove_Back_Slash -- Remove a '\\' from the end of the path.
- *
- * INPUT:		char * path -- Pointer to the string to be modified.
- *
- * OUTPUT:     char * path
- *
- * WARNINGS:   none
- *
- * HISTORY:
- *   08/14/1998 MML : Created.
- *============================================================================*/
 
 char *Path_Remove_Back_Slash ( char *path )
 {

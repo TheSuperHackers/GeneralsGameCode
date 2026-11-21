@@ -30,10 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 3                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   Base64_Decode -- Decodes Base 64 data into its original data form.                        *
- *   Base64_Encode -- Encode data into Base 64 format.                                         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
@@ -116,29 +112,10 @@ typedef union {
 }	PacketType;
 
 
-/***********************************************************************************************
- * Base64_Encode -- Encode data into Base 64 format.                                           *
- *                                                                                             *
- *    This will take an arbitrary length of source data and transform it into base 64 format   *
- *    data. Base 64 format has the property of being very portable across text editors and     *
- *    country character encoding schemes. As such it is ideal for e-mail. Note that the output *
- *    data will be about 33% larger than the source.                                           *
- *                                                                                             *
- * INPUT:   source   -- Pointer to the source data to convert.                                 *
- *                                                                                             *
- *          slen     -- The number of bytes to encode.                                         *
- *                                                                                             *
- *          dest     -- Pointer to the destination buffer that will hold the encoded data.     *
- *                                                                                             *
- *          dlen     -- The size of the destination buffer.                                    *
- *                                                                                             *
- * OUTPUT:  Returns with the number of bytes stored into the destination buffer.               *
- *                                                                                             *
- * WARNINGS:   Be sure that the destination buffer is big enough to hold the encoded output.   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/06/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Base 64 format has the property of being very portable across text editors and country character
+// encoding schemes. As such it is ideal for e-mail. Note that the output data will be about 33%
+// larger than the source.
+// WARNING: Be sure that the destination buffer is big enough to hold the encoded output.
 int Base64_Encode(void const * source, int slen, void * dest, int dlen)
 {
 	/*
@@ -215,31 +192,9 @@ int Base64_Encode(void const * source, int slen, void * dest, int dlen)
 }
 
 
-/***********************************************************************************************
- * Base64_Decode -- Decodes Base 64 data into its original data form.                          *
- *                                                                                             *
- *    Use this routine to decode base 64 data back into the original data. A property of this  *
- *    decode process is that unrecognized input characters are ignored. This allows mangled    *
- *    source (filled with line breaks or spaces) to be correctly decoded. The decode process   *
- *    terminates when the end of the source data has been reached or the special end of data   *
- *    marker is encountered.                                                                   *
- *                                                                                             *
- * INPUT:   source   -- Pointer to the source data to decode.                                  *
- *                                                                                             *
- *          slen     -- The number of bytes in the source data buffer.                         *
- *                                                                                             *
- *          dest     -- Pointer to the destination buffer to be filled with the decoded data.  *
- *                                                                                             *
- *          dlen     -- The maximum size of the destination buffer.                            *
- *                                                                                             *
- * OUTPUT:  Returns with the number of bytes stored into the destination buffer. This will     *
- *          always be less than the number of source bytes (usually by about 33%).             *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/06/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Unrecognized input characters are ignored. This allows mangled source (filled with line breaks or
+// spaces) to be correctly decoded. The decode process terminates when the end of the source data
+// has been reached or the special end of data marker is encountered.
 int Base64_Decode(void const * source, int slen, void * dest, int dlen)
 {
 	/*

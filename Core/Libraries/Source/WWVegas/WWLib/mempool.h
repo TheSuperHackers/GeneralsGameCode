@@ -30,16 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 9                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   ObjectPoolClass::ObjectPoolClass -- constructor for ObjectPoolClass                       *
- *   ObjectPoolClass::~ObjectPoolClass -- destructor for ObjectPoolClass                       *
- *   ObjectPoolClass::Allocate_Object -- allocates an object for the user                      *
- *   ObjectPoolClass::Free_Object -- releases obj back into the pool                           *
- *   ObjectPoolClass::Allocate_Object_Memory -- internal function which returns memory for an  *
- *   ObjectPoolClass::Free_Object_Memory -- internal function, returns object's memory to the  *
- *   AutoPoolClass::operator new -- overridden new which calls the internal ObjectPool          *
- *   AutoPoolClass::operator delete -- overridden delete which calls the internal ObjectPool    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -161,19 +151,6 @@ ObjectPoolClass<T,BLOCKSIZE> AutoPoolClass<T,BLOCKSIZE>::Allocator = {}
 #endif
 
 
-/***********************************************************************************************
- * ObjectPoolClass::ObjectPoolClass -- constructor for ObjectPoolClass                         *
- *                                                                                             *
- * Initializes the object pool to the empty state                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 template<class T,int BLOCK_SIZE>
 ObjectPoolClass<T,BLOCK_SIZE>::ObjectPoolClass() :
 	FreeListHead(nullptr),
@@ -183,19 +160,6 @@ ObjectPoolClass<T,BLOCK_SIZE>::ObjectPoolClass() :
 {
 }
 
-/***********************************************************************************************
- * ObjectPoolClass::~ObjectPoolClass -- destructor for ObjectPoolClass                         *
- *                                                                                             *
- * deletes the blocks of memory in use by the object pool.                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 template<class T,int BLOCK_SIZE>
 ObjectPoolClass<T,BLOCK_SIZE>::~ObjectPoolClass()
 {
@@ -215,20 +179,7 @@ ObjectPoolClass<T,BLOCK_SIZE>::~ObjectPoolClass()
 
 
 
-/***********************************************************************************************
- * ObjectPoolClass::Allocate_Object -- allocates an object for the user                        *
- *                                                                                             *
- * If there are no free objects, another block of objects will be allocated.                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/29/99    GTH : Created.                                                                 *
- *=============================================================================================*/
+// If there are no free objects, another block of objects will be allocated.
 template<class T,int BLOCK_SIZE>
 T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object()
 {
@@ -239,18 +190,6 @@ T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object()
 	return new (obj) T;
 }
 
-/***********************************************************************************************
- * ObjectPoolClass::Free_Object -- releases obj back into the pool                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/29/99    GTH : Created.                                                                 *
- *=============================================================================================*/
 template<class T,int BLOCK_SIZE>
 void ObjectPoolClass<T,BLOCK_SIZE>::Free_Object(T * obj)
 {
@@ -261,18 +200,6 @@ void ObjectPoolClass<T,BLOCK_SIZE>::Free_Object(T * obj)
 	Free_Object_Memory(obj);
 }
 
-/***********************************************************************************************
- * ObjectPoolClass::Allocate_Object_Memory -- internal function which returns memory for an in *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/29/99    GTH : Created.                                                                 *
- *=============================================================================================*/
 template<class T,int BLOCK_SIZE>
 T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object_Memory()
 {
@@ -305,18 +232,6 @@ T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object_Memory()
 }
 
 
-/***********************************************************************************************
- * ObjectPoolClass::Free_Object_Memory -- internal function, returns object's memory to the po *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/29/99    GTH : Created.                                                                 *
- *=============================================================================================*/
 template<class T,int BLOCK_SIZE>
 void ObjectPoolClass<T,BLOCK_SIZE>::Free_Object_Memory(T * obj)
 {
@@ -329,18 +244,6 @@ void ObjectPoolClass<T,BLOCK_SIZE>::Free_Object_Memory(T * obj)
 }
 
 
-/***********************************************************************************************
- * AutoPoolClass::operator new -- overridden new which calls the internal ObjectPool            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/29/99    GTH : Created.                                                                 *
- *=============================================================================================*/
 template<class T, int BLOCK_SIZE>
 void * AutoPoolClass<T,BLOCK_SIZE>::operator new( size_t size )
 {
@@ -349,18 +252,6 @@ void * AutoPoolClass<T,BLOCK_SIZE>::operator new( size_t size )
 }
 
 
-/***********************************************************************************************
- * AutoPoolClass::operator delete -- overridden delete which calls the internal ObjectPool      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/29/99    GTH : Created.                                                                 *
- *=============================================================================================*/
 template<class T, int BLOCK_SIZE>
 void AutoPoolClass<T,BLOCK_SIZE>::operator delete( void * memory )
 {

@@ -34,8 +34,6 @@
  *                                                                                             *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  * 06/27/02 KM Changes to max texture stage caps																*
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "sortingrenderer.h"

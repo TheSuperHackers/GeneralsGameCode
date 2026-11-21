@@ -31,54 +31,12 @@
  *                                                                                             *
  *                    $Revision:: 11                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   ChunkSaveClass::ChunkSaveClass -- Constructor                                             *
- *   ChunkSaveClass::Begin_Chunk -- Begin a new chunk in the file                              *
- *   ChunkSaveClass::End_Chunk -- Close a chunk, computes the size and adds to the header      *
- *   ChunkSaveClass::Begin_Micro_Chunk -- begins a new "micro-chunk"                           *
- *   ChunkSaveClass::End_Micro_Chunk -- close a micro-chunk                                    *
- *   ChunkSaveClass::Write -- Write data into the current chunk                                *
- *   ChunkSaveClass::Write -- write an IOVector2Struct                                         *
- *   ChunkSaveClass::Write -- write an IOVector3Struct                                         *
- *   ChunkSaveClass::Write -- write an IOVector4Struct                                         *
- *   ChunkSaveClass::Write -- write an IOQuaternionStruct                                      *
- *   ChunkSaveClass::Cur_Chunk_Depth -- returns the current chunk recursion depth (debugging)  *
- *   ChunkLoadClass::ChunkLoadClass -- Constructor                                             *
- *   ChunkLoadClass::Open_Chunk -- Open a chunk in the file, reads in the chunk header         *
- *   ChunkLoadClass::Close_Chunk -- Close a chunk, seeks to the end if needed                  *
- *   ChunkLoadClass::Cur_Chunk_ID -- Returns the ID of the current chunk                       *
- *   ChunkLoadClass::Cur_Chunk_Length -- Returns the current length of the current chunk       *
- *   ChunkLoadClass::Cur_Chunk_Depth -- returns the current chunk recursion depth              *
- *   ChunkLoadClass::Contains_Chunks -- Test whether the current chunk contains chunks (or dat *
- *   ChunkLoadClass::Open_Micro_Chunk -- reads in a micro-chunk header                         *
- *   ChunkLoadClass::Close_Micro_Chunk -- closes a micro-chunk                                 *
- *   ChunkLoadClass::Cur_Micro_Chunk_ID -- returns the ID of the current micro-chunk (asserts  *
- *   ChunkLoadClass::Cur_Micro_Chunk_Length -- returns the size of the current micro chunk     *
- *   ChunkLoadClass::Read -- Read data from the file                                           *
- *   ChunkLoadClass::Read -- read an IOVector2Struct                                           *
- *   ChunkLoadClass::Read -- read an IOVector3Struct                                           *
- *   ChunkLoadClass::Read -- read an IOVector4Struct                                           *
- *   ChunkLoadClass::Read -- read an IOQuaternionStruct                                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "chunkio.h"
 #include <assert.h>
 
 
-/***********************************************************************************************
- * ChunkSaveClass::ChunkSaveClass -- Constructor                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *  file - pointer to a FileClass object to write to														  *
- * 																														  *
- * OUTPUT:																												  *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/17/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 ChunkSaveClass::ChunkSaveClass(FileClass * file) :
 	File(file),
 	StackIndex(0),
@@ -91,19 +49,6 @@ ChunkSaveClass::ChunkSaveClass(FileClass * file) :
 }
 
 
-/***********************************************************************************************
- * ChunkSaveClass::Begin_Chunk -- Begin a new chunk in the file                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *  id - id of the chunk																							  *
- * 																														  *
- * OUTPUT:																												  *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/17/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 bool ChunkSaveClass::Begin_Chunk(uint32 id)
 {
 	ChunkHeader	chunkh;
@@ -132,18 +77,7 @@ bool ChunkSaveClass::Begin_Chunk(uint32 id)
 }
 
 
-/***********************************************************************************************
- * ChunkSaveClass::End_Chunk -- Close a chunk, computes the size and adds to the header        *
- *  																														  *
- * INPUT:																												  *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/17/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Computes the size and adds it to the header.
 bool ChunkSaveClass::End_Chunk()
 {
 	// If the user didn't close his micro chunks bad things are gonna happen
@@ -175,24 +109,9 @@ bool ChunkSaveClass::End_Chunk()
 }
 
 
-/***********************************************************************************************
- * ChunkSaveClass::Begin_Micro_Chunk -- begins a new "micro-chunk"                             *
- *                                                                                             *
- * Micro chunks are used to wrap individual variables.  They aren't hierarchical so if you     *
- * attempt to open a micro chunk while already in one, an assert will occur.                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- * id - 8bit id                                                                                *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * id is asserted to be between 0 and 255                                                      *
- * cannot nest micro chunks so it asserts that you are currently not in another micro-chunk    *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Micro chunks are used to wrap individual variables. They aren't hierarchical so if you attempt to
+// open a micro chunk while already in one, an assert will occur.
+// WARNING: Id is asserted to be between 0 and 255.
 bool ChunkSaveClass::Begin_Micro_Chunk(uint32 id)
 {
 	assert(id < 256);
@@ -217,18 +136,6 @@ bool ChunkSaveClass::Begin_Micro_Chunk(uint32 id)
 }
 
 
-/***********************************************************************************************
- * ChunkSaveClass::End_Micro_Chunk -- close a micro-chunk                                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 bool ChunkSaveClass::End_Micro_Chunk()
 {
 	assert(InMicroChunk);
@@ -248,18 +155,6 @@ bool ChunkSaveClass::End_Micro_Chunk()
 	return true;
 }
 
-/***********************************************************************************************
- * ChunkSaveClass::Write -- Write data into the current chunk                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/17/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 uint32 ChunkSaveClass::Write(const void * buf, uint32 nbytes)
 {
 	// If this assert hits, you mixed data and chunks within the same chunk NO NO!
@@ -284,106 +179,34 @@ uint32 ChunkSaveClass::Write(const void * buf, uint32 nbytes)
 }
 
 
-/***********************************************************************************************
- * ChunkSaveClass::Write -- write an IOVector2Struct                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 uint32 ChunkSaveClass::Write(const IOVector2Struct & v)
 {
 	return Write(&v,sizeof(v));
 }
 
 
-/***********************************************************************************************
- * ChunkSaveClass::Write -- write an IOVector3Struct                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 uint32 ChunkSaveClass::Write(const IOVector3Struct & v)
 {
 	return Write(&v,sizeof(v));
 }
 
 
-/***********************************************************************************************
- * ChunkSaveClass::Write -- write an IOVector4Struct                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 uint32 ChunkSaveClass::Write(const IOVector4Struct & v)
 {
 	return Write(&v,sizeof(v));
 }
 
-/***********************************************************************************************
- * ChunkSaveClass::Write -- write an IOQuaternionStruct                                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 uint32 ChunkSaveClass::Write(const IOQuaternionStruct & q)
 {
 	return Write(&q,sizeof(q));
 }
 
-/***********************************************************************************************
- * ChunkSaveClass::Cur_Chunk_Depth -- returns the current chunk recursion depth (debugging)    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/17/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 int ChunkSaveClass::Cur_Chunk_Depth()
 {
 	return StackIndex;
 }
 
 
-/***********************************************************************************************
- * ChunkLoadClass::ChunkLoadClass -- Constructor                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/17/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 ChunkLoadClass::ChunkLoadClass(FileClass * file) :
 	File(file),
 	StackIndex(0),
@@ -396,18 +219,7 @@ ChunkLoadClass::ChunkLoadClass(FileClass * file) :
 }
 
 
-/***********************************************************************************************
- * ChunkLoadClass::Open_Chunk -- Open a chunk in the file, reads in the chunk header           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/17/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Reads in the chunk header.
 bool ChunkLoadClass::Open_Chunk()
 {
 	// if user didn't close any micro chunks that he opened, bad things could happen
@@ -432,18 +244,7 @@ bool ChunkLoadClass::Open_Chunk()
 }
 
 
-/***********************************************************************************************
- * ChunkLoadClass::Close_Chunk -- Close a chunk, seeks to the end if needed                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/17/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Seeks to the end if needed.
 bool ChunkLoadClass::Close_Chunk()
 {
 	// if user didn't close any micro chunks that he opened, bad things could happen
@@ -468,18 +269,6 @@ bool ChunkLoadClass::Close_Chunk()
 }
 
 
-/***********************************************************************************************
- * ChunkLoadClass::Cur_Chunk_ID -- Returns the ID of the current chunk                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/17/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 uint32 ChunkLoadClass::Cur_Chunk_ID()
 {
 	assert(StackIndex >= 1);
@@ -487,18 +276,6 @@ uint32 ChunkLoadClass::Cur_Chunk_ID()
 }
 
 
-/***********************************************************************************************
- * ChunkLoadClass::Cur_Chunk_Length -- Returns the current length of the current chunk         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/17/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 uint32 ChunkLoadClass::Cur_Chunk_Length()
 {
 	assert(StackIndex >= 1);
@@ -506,53 +283,19 @@ uint32 ChunkLoadClass::Cur_Chunk_Length()
 }
 
 
-/***********************************************************************************************
- * ChunkLoadClass::Cur_Chunk_Depth -- returns the current chunk recursion depth                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/17/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 int ChunkLoadClass::Cur_Chunk_Depth()
 {
 	return StackIndex;
 }
 
 
-/***********************************************************************************************
- * ChunkLoadClass::Contains_Chunks -- Test whether the current chunk contains chunks (or data) *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/24/99    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Test whether the current chunk contains chunks (or data).
 int ChunkLoadClass::Contains_Chunks()
 {
 	return HeaderStack[StackIndex-1].Get_Sub_Chunk_Flag();
 }
 
-/***********************************************************************************************
- * ChunkLoadClass::Open_Micro_Chunk -- reads in a micro-chunk header                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Reads in a micro-chunk header.
 bool ChunkLoadClass::Open_Micro_Chunk()
 {
 	assert(!InMicroChunk);
@@ -569,18 +312,7 @@ bool ChunkLoadClass::Open_Micro_Chunk()
 }
 
 
-/***********************************************************************************************
- * ChunkLoadClass::Close_Micro_Chunk -- closes a micro-chunk (seeks to end)                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Seeks to the end of the micro-chunk.
 bool ChunkLoadClass::Close_Micro_Chunk()
 {
 	assert(InMicroChunk);
@@ -604,20 +336,8 @@ bool ChunkLoadClass::Close_Micro_Chunk()
 }
 
 
-/***********************************************************************************************
- * ChunkLoadClass::Cur_Micro_Chunk_ID -- returns the ID of the current micro-chunk (asserts if *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * Asserts if you are not currently inside a micro-chunk                                       *
- * Micro chunks have an id between 0 and 255                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Micro chunks have an id between 0 and 255.
+// WARNING: Asserts if you are not currently inside a micro-chunk.
 uint32 ChunkLoadClass::Cur_Micro_Chunk_ID()
 {
 	assert(InMicroChunk);
@@ -625,20 +345,8 @@ uint32 ChunkLoadClass::Cur_Micro_Chunk_ID()
 }
 
 
-/***********************************************************************************************
- * ChunkLoadClass::Cur_Micro_Chunk_Length -- returns the size of the current micro chunk       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * Asserts if you are not currently inside a micro-chunk                                       *
- * Micro chunks have a maximum size of 255 bytes                                               *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Micro chunks have a maximum size of 255 bytes.
+// WARNING: Asserts if you are not currently inside a micro-chunk.
 uint32 ChunkLoadClass::Cur_Micro_Chunk_Length()
 {
 	assert(InMicroChunk);
@@ -676,18 +384,6 @@ uint32 ChunkLoadClass::Seek(uint32 nbytes)
 	return nbytes;
 }
 
-/***********************************************************************************************
- * ChunkLoadClass::Read -- Read data from the file                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/17/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 uint32 ChunkLoadClass::Read(void * buf,uint32 nbytes)
 {
 	assert(StackIndex >= 1);
@@ -718,18 +414,6 @@ uint32 ChunkLoadClass::Read(void * buf,uint32 nbytes)
 }
 
 
-/***********************************************************************************************
- * ChunkLoadClass::Read -- read an IOVector2Struct                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 uint32 ChunkLoadClass::Read(IOVector2Struct * v)
 {
 	assert(v != nullptr);
@@ -737,18 +421,6 @@ uint32 ChunkLoadClass::Read(IOVector2Struct * v)
 }
 
 
-/***********************************************************************************************
- * ChunkLoadClass::Read -- read an IOVector3Struct                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 uint32 ChunkLoadClass::Read(IOVector3Struct * v)
 {
 	assert(v != nullptr);
@@ -756,18 +428,6 @@ uint32 ChunkLoadClass::Read(IOVector3Struct * v)
 }
 
 
-/***********************************************************************************************
- * ChunkLoadClass::Read -- read an IOVector4Struct                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 uint32 ChunkLoadClass::Read(IOVector4Struct * v)
 {
 	assert(v != nullptr);
@@ -775,18 +435,6 @@ uint32 ChunkLoadClass::Read(IOVector4Struct * v)
 }
 
 
-/***********************************************************************************************
- * ChunkLoadClass::Read -- read an IOQuaternionStruct                                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 uint32 ChunkLoadClass::Read(IOQuaternionStruct * q)
 {
 	assert(q != nullptr);

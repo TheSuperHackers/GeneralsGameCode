@@ -35,8 +35,6 @@
  * 05/16/02 KM Base texture class to abstract major texture types, e.g. 3d, z, cube, etc.
  * 06/27/02 KM Texture class abstraction																			*
  * 08/05/02 KM Texture class redesign (revisited)
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -323,11 +321,12 @@ public:
 	virtual void Apply_New_Surface(IDirect3DBaseTexture8* tex, bool initialized, bool disable_auto_invalidation = false) override;	// If the parameter is true, the texture will be flagged as initialised
 
 	// Get the surface of one of the mipmap levels (defaults to highest-resolution one)
-	SurfaceClass *Get_Surface_Level(unsigned int level = 0);
+	SurfaceClass *Get_Surface_Level(unsigned int level = 0) const;
 	IDirect3DSurface8 *Get_D3D_Surface_Level(unsigned int level = 0);
 	void Get_Level_Description( SurfaceClass::SurfaceDescription & desc, unsigned int level = 0 );
 
 	TextureFilterClass& Get_Filter() { return Filter; }
+	const TextureFilterClass& Get_Filter() const { return Filter; }
 
 	WW3DFormat Get_Texture_Format() const { return TextureFormat; }
 

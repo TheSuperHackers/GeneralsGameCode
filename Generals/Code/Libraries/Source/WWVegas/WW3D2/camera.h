@@ -33,14 +33,6 @@
  *                    $Revision:: 14                                                          $*
  *                                                                                             *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   CameraClass::Get_Frustum -- returns the frustum of the camera                             *
- *   CameraClass::Get_Frustum_Planes -- returns pointer to the array of frustum planes         *
- *   CameraClass::Get_Frustum_Corners -- returns pointer to the array of frustum corners       *
- *   CameraClass::Get_View_Space_Frustum -- returns the view-space frustum for this camera     *
- *   CameraClass::Get_View_Space_Frustum_Planes -- returns the view space clip planes for this *
- *   CameraClass::Get_View_Space_Frustum_Corners -- returns the corners of the view space frus *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -323,18 +315,6 @@ inline bool CameraClass::Cull_Sphere_On_Frustum_Sides(const SphereClass & sphere
 }
 
 
-/***********************************************************************************************
- * CameraClass::Get_Frustum -- returns the frustum of the camera                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/24/99    GTH : Created.                                                                 *
- *=============================================================================================*/
 inline const FrustumClass &
 CameraClass::Get_Frustum() const
 {
@@ -342,18 +322,6 @@ CameraClass::Get_Frustum() const
 	return Frustum;
 }
 
-/***********************************************************************************************
- * CameraClass::Get_Frustum_Planes -- returns pointer to the array of frustum planes           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/29/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 inline const PlaneClass *
 CameraClass::Get_Frustum_Planes() const
 {
@@ -362,25 +330,11 @@ CameraClass::Get_Frustum_Planes() const
 }
 
 
-/***********************************************************************************************
- * CameraClass::Get_Frustum_Corners -- returns pointer to the array of frustum corners         *
- *                                                                                             *
- * The camera frustum corner FrustumCorners are defined in the following order                 *
- * The first four points lie on the near clipping plane:                                       *
- *		upper left 0, upper right 1, lower left 2, lower right 3.                                *
- * The last four points lie on the far clipping plane, numbered analogous fashion.             *
- *		upper left 4, upper right 5, lower left 6, lower right 7.                                *
- * (remember: the camera space has x going to the right, y up and z backwards).                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/29/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// The camera frustum corners FrustumCorners are defined in the following order: The first four
+// points lie on the near clipping plane: upper left 0, upper right 1, lower left 2, lower right 3.
+// The last four points lie on the far clipping plane, numbered in analogous fashion: upper left 4,
+// upper right 5, lower left 6, lower right 7. (Remember: the camera space has x going to the right,
+// y up and z backwards).
 inline const Vector3 *
 CameraClass::Get_Frustum_Corners() const
 {
@@ -389,18 +343,6 @@ CameraClass::Get_Frustum_Corners() const
 }
 
 
-/***********************************************************************************************
- * CameraClass::Get_View_Space_Frustum -- returns the view-space frustum for this camera       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/16/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 inline const FrustumClass & CameraClass::Get_View_Space_Frustum() const
 {
 	Update_Frustum();
@@ -408,18 +350,6 @@ inline const FrustumClass & CameraClass::Get_View_Space_Frustum() const
 }
 
 
-/***********************************************************************************************
- * CameraClass::Get_View_Space_Frustum_Planes -- returns the view space clip planes for this c *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/16/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 inline const PlaneClass * CameraClass::Get_View_Space_Frustum_Planes() const
 {
 	const FrustumClass & frustum = Get_View_Space_Frustum();
@@ -427,25 +357,11 @@ inline const PlaneClass * CameraClass::Get_View_Space_Frustum_Planes() const
 }
 
 
-/***********************************************************************************************
- * CameraClass::Get_View_Space_Frustum_Corners -- returns the corners of the view space frustu *
- *                                                                                             *
- * The camera frustum corner FrustumCorners are defined in the following order                 *
- * The first four points lie on the near clipping plane:                                       *
- *		upper left 0, upper right 1, lower left 2, lower right 3.                                *
- * The last four points lie on the far clipping plane, numbered analogous fashion.             *
- *		upper left 4, upper right 5, lower left 6, lower right 7.                                *
- * (remember: camera space has x going to the right, y up and z backwards).                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/16/2001  gth : Created.                                                                 *
- *=============================================================================================*/
+// The camera frustum corners FrustumCorners are defined in the following order: The first four
+// points lie on the near clipping plane: upper left 0, upper right 1, lower left 2, lower right 3.
+// The last four points lie on the far clipping plane, numbered in analogous fashion: upper left 4,
+// upper right 5, lower left 6, lower right 7. (Remember: camera space has x going to the right, y
+// up and z backwards).
 inline const Vector3 * CameraClass::Get_View_Space_Frustum_Corners() const
 {
 	const FrustumClass & frustum = Get_View_Space_Frustum();

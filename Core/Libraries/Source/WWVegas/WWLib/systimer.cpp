@@ -30,8 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "systimer.h"
@@ -39,60 +37,20 @@
 SysTimeClass SystemTime;
 
 
-/***********************************************************************************************
- * SysTimeClass::SysTimeClass -- default constructor, sets resolution                          *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   01/04/2003 : Created by Mark Wilczynski (EAP)                                             *
- *=============================================================================================*/
+// Sets the timer resolution.
 SysTimeClass::SysTimeClass()
 {
 	//tell windows we need single ms precision.
 	timeBeginPeriod(1);
 }
 
-/***********************************************************************************************
- * SysTimeClass::~SysTimeClass -- default destructor, resets resolution                         *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   01/04/2003 : Created by Mark Wilczynski (EAP)                                             *
- *=============================================================================================*/
+// Resets the timer resolution.
 SysTimeClass::~SysTimeClass()
 {
 	//tell windows we need single ms precision.
 	timeEndPeriod(1);
 }
 
-/***********************************************************************************************
- * SysTimeClass::Reset -- Reset class to good state                                            *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/9/2001 5:51PM ST : Created                                                             *
- *=============================================================================================*/
 void SysTimeClass::Reset()
 {
 	StartTime = timeGetTime();
@@ -101,20 +59,7 @@ void SysTimeClass::Reset()
 
 
 
-/***********************************************************************************************
- * SysTimeClass::Is_Getting_Late -- Are we running out of timer time?                          *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/9/2001 6:04PM ST : Created                                                             *
- *=============================================================================================*/
+// Are we running out of timer time?
 bool SysTimeClass::Is_Getting_Late()
 {
 	/*

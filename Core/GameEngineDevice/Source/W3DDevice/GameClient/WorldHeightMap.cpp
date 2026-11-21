@@ -333,7 +333,9 @@ void MapObject::fastAssignAllUniqueIDs()
 void MapObject::setThingTemplate(const ThingTemplate *thing)
 {
 	m_thingTemplate = thing;
-	m_objectName = thing->getName();
+	if (thing) {
+		m_objectName = thing->getName();
+	}
 }
 
 
@@ -1139,7 +1141,8 @@ Bool WorldHeightMap::ParseBlendTileData(DataChunkInput &file, DataChunkInfo *inf
 	}
 	if (info->version >= K_BLEND_TILE_VERSION_7) {
 		if (info->version==K_BLEND_TILE_VERSION_7) {
-			Int byteWidth = (m_width+1)/8; // previous incorrect length that got used to save the file.  jba. [4/3/2003]
+			// previous incorrect length that got used to save the file.  jba. [4/3/2003]
+			Int byteWidth = (m_width+1)/8;
 			UnsignedByte *data = new UnsignedByte[m_height*byteWidth];
 			file.readArrayOfBytes((char*)data, m_height*byteWidth);
 			for (j=0; j<m_height; j++) {
@@ -1154,6 +1157,48 @@ Bool WorldHeightMap::ParseBlendTileData(DataChunkInput &file, DataChunkInfo *inf
 	} else {
 		initCliffFlagsFromHeights();
 	}
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+	// Retail Generals keeps the cliff bits of maps up to version 7 in rows of (width+1)/8 bytes, which are too short for
+	// the last cells of a row. These cells share their bits with the first cells of the next row, and the pathfinder
+	// relies on the shared values, so they are copied here.
+	if (info->version <= K_BLEND_TILE_VERSION_7) {
+		const Int retailRowCells = 8*((m_width+1)/8);
+		for (j=0; j<m_height-1; ++j) {
+			for (i=retailRowCells; i<m_width-1; ++i) {
+				if (info->version == K_BLEND_TILE_VERSION_7) {
+					// The file holds the shared bits in the first cells of the next row.
+					setCliffState(i, j, getCliffState(i-retailRowCells, j+1));
+				} else {
+					// The flags are computed column by column, so the last cells of a row are written last.
+					setCliffState(i-retailRowCells, j+1, getCliffState(i, j));
+				}
+			}
+		}
+	}
+	// Retail Generals also reads the cliff bits of version 8 maps in rows of (width+1)/8 bytes, but Zero Hour writes them
+	// in rows of (width+7)/8 bytes. When the rows differ in length, the bits are regrouped into the rows retail reads.
+	if (info->version == K_BLEND_TILE_VERSION_8 && m_flipStateWidth != (m_width+1)/8) {
+		const Int retailByteWidth = (m_width+1)/8;
+		UnsignedByte *data = new UnsignedByte[m_height*m_flipStateWidth];
+		memcpy(data, m_cellCliffState, m_height*m_flipStateWidth);
+		for (j=0; j<m_height-1; ++j) {
+			for (i=0; i<m_width-1; ++i) {
+				setCliffState(i, j, (data[j*retailByteWidth + (i>>3)] >> (i&7)) & 1);
+			}
+		}
+		delete[] data;
+	}
+#elif !RETAIL_COMPATIBLE_CRC
+	// Version 7 files have no bits for the last cells of a row, so they are computed from the heights.
+	if (info->version == K_BLEND_TILE_VERSION_7) {
+		const Int retailRowCells = 8*((m_width+1)/8);
+		for (j=0; j<m_height-1; ++j) {
+			for (i=retailRowCells; i<m_width-1; ++i) {
+				setCellCliffFlagFromHeights(i, j);
+			}
+		}
+	}
+#endif
 	m_numBitmapTiles = file.readInt();
 	DEBUG_ASSERTCRASH(m_numBitmapTiles>0 && m_numBitmapTiles<2048, ("Unlikely numBitmapTiles."));
 	m_numBlendedTiles = file.readInt();

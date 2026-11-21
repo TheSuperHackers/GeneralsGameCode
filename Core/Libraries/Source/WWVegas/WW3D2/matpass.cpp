@@ -33,16 +33,6 @@
  *                    $Revision:: 8                                                           $*
  *                                                                                             *
  * 06/27/02 KM Changes to max texture stage caps															*
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   MaterialPassClass::MaterialPassClass -- Constructor                                       *
- *   MaterialPassClass::~MaterialPassClass -- Destructor                                       *
- *   MaterialPassClass::Install_Materials -- Plug our material settings into D3D               *
- *   MaterialPassClass::Set_Texture -- Set texture to use                                      *
- *   MaterialPassClass::Set_Shader -- Set the shader to use                                    *
- *   MaterialPassClass::Set_Material -- set vertex material to use                             *
- *   MaterialPassClass::Get_Texture -- Get a pointer to the texture                            *
- *   MaterialPassClass::Get_Material -- get the vertex material                                *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -57,18 +47,6 @@
 bool MaterialPassClass::EnablePerPolygonCulling = true;
 
 
-/***********************************************************************************************
- * MaterialPassClass::MaterialPassClass -- Constructor                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/26/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 MaterialPassClass::MaterialPassClass() :
 	Shader(0),
 	Material(nullptr),
@@ -80,19 +58,6 @@ MaterialPassClass::MaterialPassClass() :
 	}
 }
 
-/***********************************************************************************************
- * MaterialPassClass::~MaterialPassClass -- Destructor                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/9/99    gth : Created.                                                                 *
- *	  06/27/02   kjm : Changes to max texture stage caps															*
- *=============================================================================================*/
 MaterialPassClass::~MaterialPassClass()
 {
 	for (int i=0; i<MAX_TEX_STAGES; i++) {
@@ -102,19 +67,7 @@ MaterialPassClass::~MaterialPassClass()
 }
 
 
-/***********************************************************************************************
- * MaterialPassClass::Install_Materials -- Plug our material settings into D3D                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/9/99    gth : Created.                                                                 *
- *   2/26/2001  gth : Changed to Install_Materials                                             *
- *=============================================================================================*/
+// Plug our material settings into D3D.
 void MaterialPassClass::Install_Materials() const
 {
 	DX8Wrapper::Set_Material(Peek_Material());
@@ -126,19 +79,7 @@ void MaterialPassClass::Install_Materials() const
 }
 
 
-/***********************************************************************************************
- * MaterialPassClass::Set_Texture -- Set texture to use                                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- * tex - pointer to the texture for this material pass (or nullptr)                               *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/9/99    gth : Created.                                                                 *
- *=============================================================================================*/
+// The texture can be nullptr.
 void MaterialPassClass::Set_Texture(TextureClass * tex,int stage)
 {
 	WWASSERT(stage >= 0);
@@ -148,19 +89,6 @@ void MaterialPassClass::Set_Texture(TextureClass * tex,int stage)
 }
 
 
-/***********************************************************************************************
- * MaterialPassClass::Set_Shader -- Set the shader to use                                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- * shader - shader for this material pass                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/9/99    gth : Created.                                                                 *
- *=============================================================================================*/
 void MaterialPassClass::Set_Shader(ShaderClass shader)
 {
 	Shader = shader;
@@ -168,38 +96,12 @@ void MaterialPassClass::Set_Shader(ShaderClass shader)
 }
 
 
-/***********************************************************************************************
- * MaterialPassClass::Set_Material -- set vertex material to use                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- * mat - pointer to the vertex material this material pass uses                                *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/9/99    gth : Created.                                                                 *
- *=============================================================================================*/
 void MaterialPassClass::Set_Material(VertexMaterialClass * mat)
 {
 	REF_PTR_SET(Material,mat);
 }
 
 
-/***********************************************************************************************
- * MaterialPassClass::Get_Texture -- Get a pointer to the texture                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- * reference counted pointer to the texture this material pass is using                        *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/9/99    gth : Created.                                                                 *
- *=============================================================================================*/
 TextureClass * MaterialPassClass::Get_Texture(int stage) const
 {
 	WWASSERT(stage >= 0);
@@ -212,19 +114,6 @@ TextureClass * MaterialPassClass::Get_Texture(int stage) const
 }
 
 
-/***********************************************************************************************
- * MaterialPassClass::Get_Material -- get the vertex material                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- * reference counted pointer to the vertex material being used by this material pass           *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/9/99    gth : Created.                                                                 *
- *=============================================================================================*/
 VertexMaterialClass * MaterialPassClass::Get_Material() const
 {
 	if (Material) {

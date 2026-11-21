@@ -30,10 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   Base64Pipe::Flush -- Flushes the final pending data through the pipe.                     *
- *   Base64Pipe::Put -- Processes a block of data through the pipe.                            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
@@ -41,25 +37,9 @@
 #include	"base64.h"
 
 
-/***********************************************************************************************
- * Base64Pipe::Put -- Processes a block of data through the pipe.                              *
- *                                                                                             *
- *    This will take the data submitted and either Base64 encode or decode it (as specified    *
- *    in the pipe's constructor). The nature of Base64 encoding means that the data will       *
- *    grow 30% in size when encoding and decrease by a like amount when decoding.              *
- *                                                                                             *
- * INPUT:   source   -- Pointer to the data to be translated.                                  *
- *                                                                                             *
- *          length   -- The number of bytes to translate.                                      *
- *                                                                                             *
- * OUTPUT:  Returns with the actual number of bytes output at the far distant final end of     *
- *          the pipe chain.                                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/03/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Base64 encodes or decodes the data (as specified in the pipe's constructor). The nature of Base64
+// encoding means that the data will grow 30% in size when encoding and decrease by a like amount
+// when decoding.
 int Base64Pipe::Put(void const * source, int slen)
 {
 	if (source == nullptr || slen < 1) {
@@ -125,22 +105,8 @@ int Base64Pipe::Put(void const * source, int slen)
 }
 
 
-/***********************************************************************************************
- * Base64Pipe::Flush -- Flushes the final pending data through the pipe.                       *
- *                                                                                             *
- *    If there is any non-processed data accumulated in the holding buffer (quite likely when  *
- *    encoding), then it will be processed and flushed out the end of the pipe.                *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  Returns with the number of bytes output at the far distant final end of the pipe   *
- *          chain.                                                                             *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/03/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// If there is any non-processed data accumulated in the holding buffer (quite likely when
+// encoding), then it will be processed and flushed out the end of the pipe.
 int Base64Pipe::Flush()
 {
 	int len = 0;

@@ -30,15 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 16                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   WWDebug_Install_Message_Handler -- install function for handling the debug messages       *
- *   WWDebug_Install_Assert_Handler -- Install a function for handling the assert messages     *
- *   WWDebug_Install_Trigger_Handler -- install a trigger handler function                     *
- *   WWDebug_Printf -- Internal function for passing messages to installed handler             *
- *   WWDebug_Assert_Fail -- Internal function for passing assert messages to installed handler *
- *   WWDebug_Assert_Fail_Print -- Internal function, passes assert message to handler          *
- *   WWDebug_Check_Trigger -- calls the user-installed debug trigger handler                   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -89,18 +80,6 @@ int Get_Last_System_Error()
 #endif
 }
 
-/***********************************************************************************************
- * WWDebug_Install_Message_Handler -- install function for handling the debug messages         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 PrintFunc WWDebug_Install_Message_Handler(PrintFunc func)
 {
 	PrintFunc tmp = _CurMessageHandler;
@@ -109,18 +88,6 @@ PrintFunc WWDebug_Install_Message_Handler(PrintFunc func)
 }
 
 
-/***********************************************************************************************
- * WWDebug_Install_Assert_Handler -- Install a function for handling the assert messages       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 AssertPrintFunc WWDebug_Install_Assert_Handler(AssertPrintFunc func)
 {
 	AssertPrintFunc tmp = _CurAssertHandler;
@@ -129,18 +96,6 @@ AssertPrintFunc WWDebug_Install_Assert_Handler(AssertPrintFunc func)
 }
 
 
-/***********************************************************************************************
- * WWDebug_Install_Trigger_Handler -- install a trigger handler function                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 TriggerFunc	WWDebug_Install_Trigger_Handler(TriggerFunc func)
 {
 	TriggerFunc tmp = _CurTriggerHandler;
@@ -149,18 +104,6 @@ TriggerFunc	WWDebug_Install_Trigger_Handler(TriggerFunc func)
 }
 
 
-/***********************************************************************************************
- * WWDebug_Install_Profile_Start_Handler -- install a profile handler function                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 ProfileFunc	WWDebug_Install_Profile_Start_Handler(ProfileFunc func)
 {
 	ProfileFunc tmp = _CurProfileStartHandler;
@@ -169,18 +112,6 @@ ProfileFunc	WWDebug_Install_Profile_Start_Handler(ProfileFunc func)
 }
 
 
-/***********************************************************************************************
- * WWDebug_Install_Profile_Stop_Handler -- install a profile handler function                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 ProfileFunc	WWDebug_Install_Profile_Stop_Handler(ProfileFunc func)
 {
 	ProfileFunc tmp = _CurProfileStopHandler;
@@ -189,18 +120,7 @@ ProfileFunc	WWDebug_Install_Profile_Stop_Handler(ProfileFunc func)
 }
 
 
-/***********************************************************************************************
- * WWDebug_Printf -- Internal function for passing messages to installed handler               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Internal function for passing messages to installed handler.
 
 void WWDebug_Printf(const char * format,...)
 {
@@ -219,18 +139,7 @@ void WWDebug_Printf(const char * format,...)
 	}
 }
 
-/***********************************************************************************************
- * WWDebug_Printf_Warning -- Internal function for passing messages to installed handler       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Internal function for passing messages to installed handler.
 
 void WWDebug_Printf_Warning(const char * format,...)
 {
@@ -249,18 +158,7 @@ void WWDebug_Printf_Warning(const char * format,...)
 	}
 }
 
-/***********************************************************************************************
- * WWDebug_Printf_Error -- Internal function for passing messages to installed handler         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Internal function for passing messages to installed handler.
 
 void WWDebug_Printf_Error(const char * format,...)
 {
@@ -279,18 +177,7 @@ void WWDebug_Printf_Error(const char * format,...)
 	}
 }
 
-/***********************************************************************************************
- * WWDebug_Assert_Fail -- Internal function for passing assert messages to installed handler   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Internal function for passing assert messages to installed handler.
 #ifdef WWDEBUG
 void WWDebug_Assert_Fail(const char * expr,const char * file, int line)
 {
@@ -329,18 +216,7 @@ void WWDebug_Assert_Fail(const char * expr,const char * file, int line)
 
 
 
-/***********************************************************************************************
- * WWDebug_Assert_Fail_Print -- Internal function, passes assert message to handler            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Internal function, passes assert message to handler.
 #ifdef WWDEBUG
 void WWDebug_Assert_Fail_Print(const char * expr,const char * file, int line,const char * string)
 {
@@ -359,18 +235,7 @@ void WWDebug_Assert_Fail_Print(const char * expr,const char * file, int line,con
 #endif
 
 
-/***********************************************************************************************
- * WWDebug_Check_Trigger -- calls the user-installed debug trigger handler                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Calls the user-installed debug trigger handler.
 bool WWDebug_Check_Trigger(int trigger_num)
 {
 	if (_CurTriggerHandler != nullptr) {
@@ -381,18 +246,7 @@ bool WWDebug_Check_Trigger(int trigger_num)
 }
 
 
-/***********************************************************************************************
- * WWDebug_Profile_Start -- calls the user-installed profile start handler                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Calls the user-installed profile start handler.
 void WWDebug_Profile_Start( const char * title)
 {
 	if (_CurProfileStartHandler != nullptr) {
@@ -401,18 +255,7 @@ void WWDebug_Profile_Start( const char * title)
 }
 
 
-/***********************************************************************************************
- * WWDebug_Profile_Stop -- calls the user-installed profile start handler                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Calls the user-installed profile stop handler.
 void WWDebug_Profile_Stop( const char * title)
 {
 	if (_CurProfileStopHandler != nullptr) {
@@ -423,18 +266,6 @@ void WWDebug_Profile_Stop( const char * title)
 
 
 #ifdef WWDEBUG
-/***********************************************************************************************
- * WWDebug_DBWin32_Message_Handler --                                                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/30/98    BMG : Created.                                                                *
- *=============================================================================================*/
 void WWDebug_DBWin32_Message_Handler( const char * str )
 {
 

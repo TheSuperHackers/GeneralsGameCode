@@ -30,12 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   FormClass::Create_Form -- Loads the dialog template and initializes                       *
- *   FormClass::fnFormProc -- windows proc which thunks into the virtual Dialog_Proc           *
- *   FormClass::ExecuteDlgInit -- Initializes controls in the dialog template                  *
- *   FormClass::ExecuteDlgInit -- Initializes the controls in the dialog template              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -46,18 +40,7 @@
 #define RT_DLGINIT  MAKEINTRESOURCE(240)
 
 
-/***********************************************************************************************
- * FormClass::Create_Form -- Loads the dialog template and initializes                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/6/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Loads the dialog template and initializes.
 HWND
 FormClass::Create_Form
 (
@@ -90,18 +73,7 @@ FormClass::Create_Form
 }
 
 
-/***********************************************************************************************
- * FormClass::fnFormProc -- windows proc which thunks into the virtual Dialog_Proc             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/6/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Windows proc which thunks into the virtual Dialog_Proc.
 BOOL WINAPI
 FormClass::fnFormProc
 (
@@ -129,21 +101,9 @@ FormClass::fnFormProc
 }
 
 
-/***********************************************************************************************
- * FormClass::ExecuteDlgInit -- Initializes controls in the dialog template                    *
- *                                                                                             *
- * This code was lifted straight out of MFC.  It does some "interesting" things like putting   *
- * strings into combo boxes which are typed in the resource editor.                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/6/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Initializes controls in the dialog template. This code was lifted straight out of MFC. It does
+// some "interesting" things like putting strings into combo boxes which are typed in the resource
+// editor.
 BOOL FormClass::ExecuteDlgInit(LPCTSTR lpszResourceName)
 {
 	// find resource handle
@@ -178,20 +138,8 @@ BOOL FormClass::ExecuteDlgInit(LPCTSTR lpszResourceName)
 }
 
 
-/***********************************************************************************************
- * FormClass::ExecuteDlgInit -- Initializes the controls in the dialog template                *
- *                                                                                             *
- * As the above ExecuteDlgInit function, this was lifted from MFC...                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/6/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Initializes the controls in the dialog template. As the above ExecuteDlgInit function, this was
+// lifted from MFC...
 BOOL FormClass::ExecuteDlgInit(LPVOID lpResource)
 {
 	BOOL bSuccess = TRUE;

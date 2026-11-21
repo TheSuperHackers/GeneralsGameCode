@@ -30,11 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   Straw::Get_From -- Connect one straw segment to another.                                  *
- *   Straw::Get -- Fetch some data from the straw chain.                                       *
- *   Straw::~Straw -- Destructor for a straw segment.                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
@@ -42,22 +37,8 @@
 #include	<stddef.h>
 
 
-/***********************************************************************************************
- * Straw::~Straw -- Destructor for a straw segment.                                            *
- *                                                                                             *
- *    This destructor will remove this segment from the straw chain. If there were any         *
- *    connected segments to either side, they will be joined so that the straw chain will      *
- *    still remain linked.                                                                     *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/03/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Removes this segment from the straw chain. If there were any connected segments to either side,
+// they will be joined so that the straw chain will still remain linked.
 Straw::~Straw()
 {
 	if (ChainTo != nullptr) {
@@ -72,22 +53,8 @@ Straw::~Straw()
 }
 
 
-/***********************************************************************************************
- * Straw::Get_From -- Connect one straw segment to another.                                    *
- *                                                                                             *
- *    Use this routine to connect straw segments together. The straw segment specified as the  *
- *    parameter will be linked to the chain such that when data is requested, it will be       *
- *    fetched from the specified link before being processed by this link.                     *
- *                                                                                             *
- * INPUT:   straw -- Pointer to the straw segment that data will be fetched from.              *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/03/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// The straw segment specified as the parameter will be linked to the chain such that when data is
+// requested, it will be fetched from the specified link before being processed by this link.
 void Straw::Get_From(Straw * straw)
 {
 	if (ChainTo != straw) {
@@ -108,26 +75,9 @@ void Straw::Get_From(Straw * straw)
 }
 
 
-/***********************************************************************************************
- * Straw::Get -- Fetch some data from the straw chain.                                         *
- *                                                                                             *
- *    Use this routine to fetch some data from the straw. It is presumed that this routine     *
- *    will be overridden to provide some useful functionality. At this level, the straw chain  *
- *    merely passes the request on to the next straw in the chain.                             *
- *                                                                                             *
- * INPUT:   source   -- Pointer to the buffer to hold the requested data.                      *
- *                                                                                             *
- *          length   -- The number of bytes requested.                                         *
- *                                                                                             *
- * OUTPUT:  Returns with the number of bytes stored into the buffer. If the number returned    *
- *          is less than the number requested, then this indicates that the straw data has     *
- *          been exhausted.                                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/03/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// It is presumed that this routine will be overridden to provide some useful functionality. At this
+// level, the straw chain merely passes the request on to the next straw in the chain. Returns fewer
+// bytes than requested when the straw data has been exhausted.
 int Straw::Get(void * source, int slen)
 {
 	if (ChainTo != nullptr) {

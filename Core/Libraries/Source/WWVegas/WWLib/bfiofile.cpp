@@ -30,24 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   BufferIOFileClass::BufferIOFileClass -- Filename based constructor for a file object.     *
- *   BufferIOFileClass::BufferIOFileClass -- default constructor for a file object.            *
- *   BufferIOFileClass::Cache -- Load part or all of a file data into RAM.                     *
- *   BufferIOFileClass::Close -- Perform a closure of the file.                                *
- *   BufferIOFileClass::Commit -- Writes the cache to the file if it has changed.              *
- *   BufferIOFileClass::Free -- Frees the allocated buffer.                                    *
- *   BufferIOFileClass::Is_Available -- Checks for existence of file cached or on disk.        *
- *   BufferIOFileClass::Is_Open -- Determines if the file is open.                             *
- *   BufferIOFileClass::Open -- Assigns name and opens file in one operation.                  *
- *   BufferIOFileClass::Open -- Opens the file object with the rights specified.               *
- *   BufferIOFileClass::Read -- Reads data from the file cache.                                *
- *   BufferIOFileClass::Seek -- Moves the current file pointer in the file.                    *
- *   BufferIOFileClass::Set_Name -- Checks for name changed for a cached file.                 *
- *   BufferIOFileClass::Size -- Determines size of file (in bytes).                            *
- *   BufferIOFileClass::Write -- Writes data to the file cache.                                *
- *   BufferIOFileClass::~BufferIOFileClass -- Destructor for the file object.                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
@@ -55,23 +37,8 @@
 #include	<string.h>
 
 
-/***********************************************************************************************
- * BufferIOFileClass::BufferIOFileClass -- Filename based constructor for a file object.       *
- *                                                                                             *
- *    This constructor is called when a file object is created with a supplied filename, but   *
- *    not opened at the same time. In this case, an assumption is made that the supplied       *
- *    filename is a constant string. A duplicate of the filename string is not created since   *
- *    it would be wasteful in that case.                                                       *
- *                                                                                             *
- * INPUT:   filename -- The filename to assign to this file object.                            *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/10/1995 DRD : Created.                                                                 *
- *=============================================================================================*/
+// The file is not opened. An assumption is made that the supplied filename is a constant string. A
+// duplicate of the filename string is not created since it would be wasteful in that case.
 BufferIOFileClass::BufferIOFileClass(char const * filename) :
 	IsAllocated(false),
 	IsOpen(false),
@@ -94,20 +61,6 @@ BufferIOFileClass::BufferIOFileClass(char const * filename) :
 }
 
 
-/***********************************************************************************************
- * BufferIOFileClass::BufferIOFileClass -- default constructor for a file object.              *
- *                                                                                             *
- *    This is the default constructor for a file object.                                       *
- *                                                                                             *
- * INPUT:  none                                                                                *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/10/1995 DRD : Created.                                                                 *
- *=============================================================================================*/
 BufferIOFileClass::BufferIOFileClass() :
 	IsAllocated(false),
 	IsOpen(false),
@@ -129,39 +82,15 @@ BufferIOFileClass::BufferIOFileClass() :
 }
 
 
-/***********************************************************************************************
- * BufferIOFileClass::~BufferIOFileClass -- Destructor for the file object.                    *
- *                                                                                             *
- *    This destructor will free all memory allocated thru using Cache routines.                *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/10/1995 DRD : Created.                                                                 *
- *=============================================================================================*/
+// Frees all memory allocated thru using Cache routines.
 BufferIOFileClass::~BufferIOFileClass()
 {
 	Free();
 }
 
 
-/***********************************************************************************************
- * BufferIOFileClass::Cache -- Load part or all of a file data into RAM.                       *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  bool; Was the file load successful?  It could fail if there wasn't enough room     *
- *                to allocate the raw data block.                                              *
- *                                                                                             *
- * WARNINGS:   This routine goes to disk for a potentially very long time.                     *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/10/1995 DRD : Created.                                                                 *
- *=============================================================================================*/
+// Load part or all of a file data into RAM.
+// WARNING: This routine goes to disk for a potentially very long time.
 bool BufferIOFileClass::Cache( long size, void * ptr )
 {
 	if (Buffer) {
@@ -310,21 +239,8 @@ bool BufferIOFileClass::Cache( long size, void * ptr )
 }
 
 
-/***********************************************************************************************
- * BufferIOFileClass::Free -- Frees the allocated buffer.                                      *
- *                                                                                             *
- *    This routine will free the buffer. By using this in conjunction with the                 *
- *    Cache() function, one can maintain tight control of memory usage.                        *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/10/1995 DRD : Created.                                                                 *
- *=============================================================================================*/
+// By using this in conjunction with the Cache() function, one can maintain tight control of memory
+// usage.
 void BufferIOFileClass::Free()
 {
 	if (Buffer) {
@@ -344,20 +260,7 @@ void BufferIOFileClass::Free()
 }
 
 
-/***********************************************************************************************
- * BufferIOFileClass::Commit -- Writes the cache to the file if it has changed.                *
- *                                                                                             *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  false, did not need to write the buffer.                                           *
- *          true, wrote the buffer.                                                            *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/15/1995 DRD : Created.                                                                 *
- *=============================================================================================*/
+// Writes the cache to the file if it has changed.
 bool BufferIOFileClass::Commit()
 {
 	long size;
@@ -389,24 +292,9 @@ bool BufferIOFileClass::Commit()
 }
 
 
-/***********************************************************************************************
- * BufferIOFileClass::Set_Name -- Checks for name changed for a cached file.                   *
- *                                                                                             *
- *    Checks for a previous filename and that it is cached.  If so, then check the             *
- *    new filename against the old. If they are the same then return that filename.            *
- *    Otherwise, the file object's name is set with just the raw filename as passed            *
- *    to this routine.                                                                         *
- *                                                                                             *
- * INPUT:   filename -- Pointer to the filename to set as the name of this file object.        *
- *                                                                                             *
- * OUTPUT:  Returns a pointer to the final and complete filename of this file object. This     *
- *          may have a path attached to the file.                                              *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/15/1995 DRD : Created.                                                                 *
- *=============================================================================================*/
+// Checks for a previous filename and that it is cached. If so, then check the new filename against
+// the old. If they are the same then return that filename. Otherwise, the file object's name is set
+// with just the raw filename as passed to this routine.
 char const * BufferIOFileClass::Set_Name(char const * filename)
 {
 	if (File_Name() && UseBuffer) {
@@ -423,19 +311,7 @@ char const * BufferIOFileClass::Set_Name(char const * filename)
 }
 
 
-/***********************************************************************************************
- * BufferIOFileClass::Is_Available -- Checks for existence of file cached or on disk.          *
- *                                                                                             *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  bool; Is the file available for opening?                                           *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/16/1995 DRD : Created.                                                                 *
- *=============================================================================================*/
+// Checks for existence of file cached or on disk.
 bool BufferIOFileClass::Is_Available(int )
 {
 	if (UseBuffer) {
@@ -446,21 +322,7 @@ bool BufferIOFileClass::Is_Available(int )
 }
 
 
-/***********************************************************************************************
- * BufferIOFileClass::Is_Open -- Determines if the file is open.                               *
- *                                                                                             *
- *    If part or all of the file is cached, then return that it is opened. A closed file       *
- *    doesn't have a valid pointer.                                                            *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  bool; Is the file open?                                                            *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/14/1995 DRD : Created.                                                                 *
- *=============================================================================================*/
+// If part or all of the file is cached, then return that it is opened.
 bool BufferIOFileClass::Is_Open() const
 {
 	if (IsOpen && UseBuffer) {
@@ -471,27 +333,9 @@ bool BufferIOFileClass::Is_Open() const
 }
 
 
-/***********************************************************************************************
- * BufferIOFileClass::Open -- Assigns name and opens file in one operation.                    *
- *                                                                                             *
- *    This routine will assign the specified filename to the file object and open it at the    *
- *    same time. If the file object was already open, then it will be closed first. If the     *
- *    file object was previously assigned a filename, then it will be replaced with the new    *
- *    name. Typically, this routine is used when an anonymous file object has been crated and  *
- *    now it needs to be assigned a name and opened.                                           *
- *                                                                                             *
- * INPUT:   filename -- The filename to assign to this file object.                            *
- *                                                                                             *
- *          rights   -- The open file access rights to use.                                    *
- *                                                                                             *
- * OUTPUT:  bool; Was the file opened? The return value of this is moot, since the open file   *
- *          is designed to never return unless it succeeded.                                   *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/14/1995 DRD : Created.                                                                 *
- *=============================================================================================*/
+// If the file object was already open, then it will be closed first. If the file object was
+// previously assigned a filename, then it will be replaced with the new name. The open is designed
+// to never return unless it succeeded.
 int BufferIOFileClass::Open(char const * filename, int rights)
 {
 	Set_Name(filename);
@@ -499,24 +343,8 @@ int BufferIOFileClass::Open(char const * filename, int rights)
 }
 
 
-/***********************************************************************************************
- * BufferIOFileClass::Open -- Opens the file object with the rights specified.                 *
- *                                                                                             *
- *    This routine is used to open the specified file object with the access rights indicated. *
- *    This only works if the file has already been assigned a filename. It is guaranteed, by   *
- *    the error handler, that this routine will always return with success.                    *
- *                                                                                             *
- * INPUT:   rights   -- The file access rights to use when opening this file. This is a        *
- *                      combination of READ and/or WRITE bit flags.                            *
- *                                                                                             *
- * OUTPUT:  bool; Was the file opened successfully? This will always return true by reason of  *
- *          the error handler.                                                                 *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/14/1995 DRD : Created.                                                                 *
- *=============================================================================================*/
+// This only works if the file has already been assigned a filename. It is guaranteed, by the error
+// handler, that this routine will always return with success.
 int BufferIOFileClass::Open(int rights)
 {
 	BufferIOFileClass::Close();
@@ -567,21 +395,7 @@ int BufferIOFileClass::Open(int rights)
 }
 
 
-/***********************************************************************************************
- * BufferIOFileClass::Write -- Writes data to the file cache.                                  *
- *                                                                                             *
- *                                                                                             *
- * INPUT:   buffer   -- Pointer to the buffer that holds the data to be written.               *
- *                                                                                             *
- *          size     -- The number of bytes to write.                                          *
- *                                                                                             *
- * OUTPUT:  Returns the number of bytes actually written.                                      *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/15/1995 DRD : Created.                                                                 *
- *=============================================================================================*/
+// Writes data to the file cache.
 int BufferIOFileClass::Write(void const * buffer, int size)
 {
 	int opened = false;
@@ -710,21 +524,7 @@ int BufferIOFileClass::Write(void const * buffer, int size)
 }
 
 
-/***********************************************************************************************
- * BufferIOFileClass::Read -- Reads data from the file cache.                                  *
- *                                                                                             *
- *                                                                                             *
- * INPUT:   buffer   -- Pointer to the buffer to place the read data.                          *
- *                                                                                             *
- *          size     -- The number of bytes to read.                                           *
- *                                                                                             *
- * OUTPUT:  Returns the actual number of bytes read (this could be less than requested).       *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/15/1995 DRD : Created.                                                                 *
- *=============================================================================================*/
+// Reads data from the file cache.
 int BufferIOFileClass::Read(void * buffer, int size)
 {
 	int opened = false;
@@ -829,26 +629,8 @@ int BufferIOFileClass::Read(void * buffer, int size)
 }
 
 
-/***********************************************************************************************
- * BufferIOFileClass::Seek -- Moves the current file pointer in the file.                      *
- *                                                                                             *
- *    This routine will change the current file pointer to the position specified. It follows  *
- *    the same rules the a normal Seek() does, but if the file is part of the mixfile system,  *
- *    then only the position value needs to be updated.                                        *
- *                                                                                             *
- * INPUT:   pos      -- The position to move the file to relative to the position indicated    *
- *                      by the "dir" parameter.                                                *
- *                                                                                             *
- *          dir      -- The direction to affect the position change against. This can be       *
- *                      either SEEK_CUR, SEEK_END, or SEEK_SET.                                *
- *                                                                                             *
- * OUTPUT:  Returns with the position of the new location.                                     *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/15/1995 DRD : Created.                                                                 *
- *=============================================================================================*/
+// It follows the same rules as a normal Seek() does, but if the file is part of the mixfile system,
+// then only the position value needs to be updated.
 int BufferIOFileClass::Seek(int pos, int dir)
 {
 	if (UseBuffer) {
@@ -917,22 +699,8 @@ int BufferIOFileClass::Seek(int pos, int dir)
 }
 
 
-/***********************************************************************************************
- * BufferIOFileClass::Size -- Determines size of file (in bytes).                              *
- *                                                                                             *
- *    If part or all of the file is cached, then the size of the file is already               *
- *    determined and available. Otherwise, go to the low level system to find the file         *
- *    size.                                                                                    *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  Returns with the number of bytes in the file.                                      *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/14/1995 DRD : Created.                                                                 *
- *=============================================================================================*/
+// If part or all of the file is cached, then the size of the file is already determined and
+// available. Otherwise, go to the low level system to find the file size.
 int BufferIOFileClass::Size()
 {
 	if (IsOpen && UseBuffer) {
@@ -943,21 +711,8 @@ int BufferIOFileClass::Size()
 }
 
 
-/***********************************************************************************************
- * BufferIOFileClass::Close -- Perform a closure of the file.                                  *
- *                                                                                             *
- *    Call Commit() to write the buffer if the file is cached and the buffer has changed,      *
- *    then call lower level Close().                                                           *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/14/1995 DRD : Created.                                                                 *
- *=============================================================================================*/
+// Calls Commit() to write the buffer if the file is cached and the buffer has changed, then calls
+// lower level Close().
 void BufferIOFileClass::Close()
 {
 	if (UseBuffer) {

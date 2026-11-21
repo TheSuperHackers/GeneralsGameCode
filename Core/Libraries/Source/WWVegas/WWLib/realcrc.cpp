@@ -30,11 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 3                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   CRC_Memory -- calculates a CRC for a block of memory                                      *
- *   CRC_String -- Calculates a CRC for a null-terminated string                               *
- *   CRC_Stringi -- Calculates a CRC for a string, case-insensitive                            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "realcrc.h"
@@ -112,17 +107,6 @@ unsigned long  CRC32_Table[ 256 ] =
 #define CRC32(c,crc) (CRC32_Table[((unsigned long)(crc) ^ (c)) & 0xFFL] ^ (((crc) >> 8) & 0x00FFFFFFL))
 
 
-/***********************************************************************************************
- * CRC_Memory -- calculates a CRC for a block of memory                                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 unsigned long	CRC_Memory( const unsigned char *data, unsigned long length, unsigned long crc )
 {
  	crc ^= 0xFFFFFFFF;									// invert previous CRC
@@ -133,17 +117,6 @@ unsigned long	CRC_Memory( const unsigned char *data, unsigned long length, unsig
 }
 
 
-/***********************************************************************************************
- * CRC_String -- Calculates a CRC for a null-terminated string                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 unsigned long	CRC_String( const char *string, unsigned long crc )
 {
  	crc ^= 0xFFFFFFFF;									// invert previous CRC
@@ -154,17 +127,6 @@ unsigned long	CRC_String( const char *string, unsigned long crc )
 }
 
 
-/***********************************************************************************************
- * CRC_Stringi -- Calculates a CRC for a string, case-insensitive                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 unsigned long	CRC_Stringi( const char *string, unsigned long crc )
 {
  	crc ^= 0xFFFFFFFF;									// invert previous CRC

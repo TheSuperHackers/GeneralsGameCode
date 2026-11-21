@@ -30,44 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   CollectionClass::CollectionClass -- default constructor for collection render object      *
- *   CollectionClass::CollectionClass -- constructor for collection render object              *
- *   CollectionClass::CollectionClass -- copy constructor                                      *
- *   CollectionClass::CollectionClass -- assignment operator                                   *
- *   CollectionClass::~CollectionClass -- destructor                                           *
- *   CollectionClass::Clone -- virtual copy constructor                                        *
- *   CollectionClass::Free -- releases all assets in use by this collection                    *
- *   CollectionClass::Class_ID -- returns class id for collection render objects               *
- *   CollectionClass::Get_Num_Polys -- returns the number of polygons in this collection       *
- *   CollectionClass::Render -- render this collection                                         *
- *   CollectionClass::Special_Render -- passes the special render call to all sub-objects      *
- *   CollectionClass::Set_Transform -- set the transform for this collection                   *
- *   CollectionClass::Set_Position -- set the position for this collection                     *
- *   CollectionClass::Get_Num_Sub_Objects -- returns the number of sub objects                 *
- *   CollectionClass::Get_Sub_Object -- returns a pointer to the desired sub object            *
- *   CollectionClass::Add_Sub_Object -- adds another object into this collection               *
- *   CollectionClass::Remove_Sub_Object -- removes a sub object from this collection           *
- *   CollectionClass::Cast_Ray -- passes the ray test to each sub object                       *
- *   CollectionClass::Cast_AABox -- passes the axis-aligned box test to each sub object        *
- *   CollectionClass::Cast_OBBox -- passes the oriented box test to each sub object            *
- *   CollectionClass::Intersect_AABox -- test for intersection with an AABox                   *
- *   CollectionClass::Intersect_OBBox -- test for intersection with an OBBox                   *
- *   CollectionClass::Get_Obj_Space_Bounding_Sphere -- returns the object space bounding spher *
- *   CollectionClass::Get_Obj_Space_Bounding_Box -- returns the object-space bounding box      *
- *   CollectionClass::Snap_Point_Count -- returns the number of snap points in this collecion  *
- *   CollectionClass::Get_Snap_Point -- return the desired snap point                          *
- *   CollectionClass::Scale -- scale the objects in this collection                            *
- *   CollectionClass::Scale -- scale the objects in this collection                            *
- *   CollectionClass::Update_Obj_Space_Bounding_Volumes -- recomputes the object space boundin *
- *   CollectionClass::Update_Sub_Object_Transforms -- recomputes all sub object transforms     *
- *   CollectionLoaderClass::Load -- reads a collection from a w3d file                         *
- *   CollectionDefClass::CollectionDefClass -- constructor                                     *
- *   CollectionDefClass::~CollectionDefClass -- destructor for collection definition           *
- *   CollectionDefClass::Free -- releases assets in use by a collection definition             *
- *   CollectionDefClass::Get_Name -- returns name of the collection                            *
- *   CollectionDefClass::Load -- loads a collection definition from a w3d file                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -135,18 +97,6 @@ protected:
 };
 
 
-/***********************************************************************************************
- * CollectionClass::CollectionClass -- default constructor for collection render object        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   23/8/00    GTH : Created.                                                                 *
- *=============================================================================================*/
 CollectionClass::CollectionClass() :
 	SnapPoints(nullptr)
 {
@@ -154,18 +104,6 @@ CollectionClass::CollectionClass() :
 }
 
 
-/***********************************************************************************************
- * CollectionClass::CollectionClass -- constructor for collection render object                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 CollectionClass::CollectionClass(const CollectionDefClass & def) :
 	SubObjects(def.ObjectNames.Count()),
 	SnapPoints(nullptr)
@@ -196,18 +134,6 @@ CollectionClass::CollectionClass(const CollectionDefClass & def) :
 }
 
 
-/***********************************************************************************************
- * CollectionClass::CollectionClass -- copy constructor                                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 CollectionClass::CollectionClass(const CollectionClass & src) :
 	CompositeRenderObjClass(src),
 	SubObjects(src.SubObjects.Count()),
@@ -217,18 +143,6 @@ CollectionClass::CollectionClass(const CollectionClass & src) :
 }
 
 
-/***********************************************************************************************
- * CollectionClass::CollectionClass -- assignment operator                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 CollectionClass & CollectionClass::operator = (const CollectionClass & that)
 {
 	if (this != &that) {
@@ -255,54 +169,18 @@ CollectionClass & CollectionClass::operator = (const CollectionClass & that)
 }
 
 
-/***********************************************************************************************
- * CollectionClass::~CollectionClass -- destructor                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 CollectionClass::~CollectionClass()
 {
 	Free();
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Clone -- virtual copy constructor                                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 RenderObjClass * CollectionClass::Clone() const
 {
 	return NEW_REF( CollectionClass, (*this));
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Free -- releases all assets in use by this collection                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void CollectionClass::Free()
 {
 	for (int i=0; i<SubObjects.Count(); i++) {
@@ -317,36 +195,12 @@ void CollectionClass::Free()
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Class_ID -- returns class id for collection render objects                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 int CollectionClass::Class_ID()	const
 {
 	return RenderObjClass::CLASSID_COLLECTION;
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Get_Num_Polys -- returns the number of polygons in this collection         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 int CollectionClass::Get_Num_Polys() const
 {
 	int pcount = 0;
@@ -357,18 +211,6 @@ int CollectionClass::Get_Num_Polys() const
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Render -- render this collection                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void CollectionClass::Render(RenderInfoClass & rinfo)
 {
 	if (Is_Not_Hidden_At_All() == false) {
@@ -385,18 +227,6 @@ void CollectionClass::Render(RenderInfoClass & rinfo)
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Special_Render -- passes the special render call to all sub-objects        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/2/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 void CollectionClass::Special_Render(SpecialRenderInfoClass & rinfo)
 {
 	if (Is_Not_Hidden_At_All() == false) {
@@ -412,18 +242,6 @@ void CollectionClass::Special_Render(SpecialRenderInfoClass & rinfo)
 	}
 }
 
-/***********************************************************************************************
- * CollectionClass::Set_Transform -- set the transform for this collection                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void CollectionClass::Set_Transform(const Matrix3D &m)
 {
 	RenderObjClass::Set_Transform(m);
@@ -431,18 +249,6 @@ void CollectionClass::Set_Transform(const Matrix3D &m)
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Set_Position -- set the position for this collection                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void CollectionClass::Set_Position(const Vector3 &v)
 {
 	RenderObjClass::Set_Position(v);
@@ -450,36 +256,12 @@ void CollectionClass::Set_Position(const Vector3 &v)
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Get_Num_Sub_Objects -- returns the number of sub objects                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 int CollectionClass::Get_Num_Sub_Objects() const
 {
 	return SubObjects.Count();
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Get_Sub_Object -- returns a pointer to the desired sub object              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 RenderObjClass * CollectionClass::Get_Sub_Object(int index) const
 {
 	if (SubObjects[index]) {
@@ -489,18 +271,6 @@ RenderObjClass * CollectionClass::Get_Sub_Object(int index) const
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Add_Sub_Object -- adds another object into this collection                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 int CollectionClass::Add_Sub_Object(RenderObjClass * subobj)
 {
 	WWASSERT(subobj);
@@ -517,18 +287,6 @@ int CollectionClass::Add_Sub_Object(RenderObjClass * subobj)
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Remove_Sub_Object -- removes a sub object from this collection             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 int CollectionClass::Remove_Sub_Object(RenderObjClass * robj)
 {
 	if (robj == nullptr) return 0;
@@ -560,18 +318,6 @@ int CollectionClass::Remove_Sub_Object(RenderObjClass * robj)
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Cast_Ray -- passes the ray test to each sub object                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool CollectionClass::Cast_Ray(RayCollisionTestClass & raytest)
 {
 	bool res = false;
@@ -582,18 +328,6 @@ bool CollectionClass::Cast_Ray(RayCollisionTestClass & raytest)
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Cast_AABox -- passes the axis-aligned box test to each sub object          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool CollectionClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 {
 	bool res = false;
@@ -604,18 +338,6 @@ bool CollectionClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Cast_OBBox -- passes the oriented box test to each sub object              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool CollectionClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 {
 	bool res = false;
@@ -626,18 +348,6 @@ bool CollectionClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Intersect_AABox -- test for intersection with an AABox                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 bool CollectionClass::Intersect_AABox(AABoxIntersectionTestClass & boxtest)
 {
 	bool res = false;
@@ -648,18 +358,6 @@ bool CollectionClass::Intersect_AABox(AABoxIntersectionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Intersect_OBBox -- test for intersection with an OBBox                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 bool CollectionClass::Intersect_OBBox(OBBoxIntersectionTestClass & boxtest)
 {
 	bool res = false;
@@ -669,54 +367,18 @@ bool CollectionClass::Intersect_OBBox(OBBoxIntersectionTestClass & boxtest)
 	return res;
 }
 
-/***********************************************************************************************
- * CollectionClass::Get_Obj_Space_Bounding_Sphere -- returns the object space bounding sphere. *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void CollectionClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
 	sphere = BoundSphere;
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Get_Obj_Space_Bounding_Box -- returns the object-space bounding box        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void CollectionClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 {
 	box = BoundBox;
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Snap_Point_Count -- returns the number of snap points in this collecion    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 int CollectionClass::Snap_Point_Count()
 {
 	if (SnapPoints) {
@@ -727,21 +389,7 @@ int CollectionClass::Snap_Point_Count()
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Get_Snap_Point -- return the desired snap point                            *
- *                                                                                             *
- * This function will set the passed vector to be equal to the object space coordinates of     *
- * the desired snap point.                                                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// The snap point is in object space.
 void CollectionClass::Get_Snap_Point(int index,Vector3 * set)
 {
 	WWASSERT(set != nullptr);
@@ -753,18 +401,6 @@ void CollectionClass::Get_Snap_Point(int index,Vector3 * set)
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Scale -- scale the objects in this collection                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void CollectionClass::Scale(float scale)
 {
 	for (int i=0; i<SubObjects.Count(); i++) {
@@ -773,18 +409,6 @@ void CollectionClass::Scale(float scale)
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Scale -- scale the objects in this collection                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void CollectionClass::Scale(float scalex, float scaley, float scalez)
 {
 	for (int i=0; i<SubObjects.Count(); i++) {
@@ -793,18 +417,6 @@ void CollectionClass::Scale(float scalex, float scaley, float scalez)
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Update_Obj_Space_Bounding_Volumes -- recomputes the object space bounding  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void CollectionClass::Update_Obj_Space_Bounding_Volumes()
 {
 	int i;
@@ -845,18 +457,6 @@ void CollectionClass::Update_Obj_Space_Bounding_Volumes()
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Update_Sub_Object_Transforms -- recomputes all sub object transforms       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void CollectionClass::Update_Sub_Object_Transforms()
 {
 	RenderObjClass::Update_Sub_Object_Transforms();
@@ -868,18 +468,6 @@ void CollectionClass::Update_Sub_Object_Transforms()
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Get_Placeholder -- Returns information about a placeholder object.
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/28/99    PDS : Created.                                                                 *
- *=============================================================================================*/
 bool CollectionClass::Get_Proxy (int index, ProxyClass &proxy) const
 {
 	bool retval = false;
@@ -897,72 +485,24 @@ bool CollectionClass::Get_Proxy (int index, ProxyClass &proxy) const
 }
 
 
-/***********************************************************************************************
- * CollectionClass::Get_Proxy_Count -- Returns the count of proxy objects in the collection.
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/28/99    PDS : Created.                                                                 *
- *=============================================================================================*/
 int CollectionClass::Get_Proxy_Count () const
 {
 	return ProxyList.Count ();
 }
 
 
-/***********************************************************************************************
- * CollectionDefClass::CollectionDefClass -- constructor                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 CollectionDefClass::CollectionDefClass()
 {
 	SnapPoints = nullptr;
 }
 
 
-/***********************************************************************************************
- * CollectionDefClass::~CollectionDefClass -- destructor for collection definition             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 CollectionDefClass::~CollectionDefClass()
 {
 	Free();
 }
 
 
-/***********************************************************************************************
- * CollectionDefClass::Free -- releases assets in use by a collection definition               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void CollectionDefClass::Free()
 {
 	for (int i=0; i<ObjectNames.Count(); i++) {
@@ -974,36 +514,12 @@ void CollectionDefClass::Free()
 }
 
 
-/***********************************************************************************************
- * CollectionDefClass::Get_Name -- returns name of the collection                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 const char * CollectionDefClass::Get_Name() const
 {
 	return Name;
 }
 
 
-/***********************************************************************************************
- * CollectionDefClass::Load -- loads a collection definition from a w3d file                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 WW3DErrorType CollectionDefClass::Load(ChunkLoadClass & cload)
 {
 	Free();
@@ -1072,18 +588,6 @@ Error:
 	return WW3D_ERROR_LOAD_FAILED;
 }
 
-/***********************************************************************************************
- * CollectionLoaderClass::Load -- reads a collection from a w3d file                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 PrototypeClass * CollectionLoaderClass::Load_W3D(ChunkLoadClass & cload)
 {
 	CollectionDefClass * def = W3DNEW CollectionDefClass;

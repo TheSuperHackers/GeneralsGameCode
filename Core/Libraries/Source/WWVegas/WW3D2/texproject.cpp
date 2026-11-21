@@ -35,42 +35,6 @@
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  * 06/27/02 KM Render to shadow buffer texture support														*
  * 08/05/02 KM Texture class redesign
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   TexProjectClass::TexProjectClass -- Constructor                                           *
- *   TexProjectClass::~TexProjectClass -- Destructor                                           *
- *   TexProjectClass::Set_Texture_Size -- Set the size of texture to use                       *
- *   TexProjectClass::Get_Texture_Size -- Returns the stored texture size                      *
- *   TexProjectClass::Set_Flag -- Turn specified flag on or off                                *
- *   TexProjectClass::Get_Flag -- Get the current state of specified flag                      *
- *   TexProjectClass::Set_Intensity -- Set the intensity of this projector                     *
- *   TexProjectClass::Get_Intensity -- returns the current "desired" intensity                 *
- *   TexProjectClass::Set_Attenuation -- Set the attenuation factor                            *
- *   TexProjectClass::Get_Attenuation -- Returns the attenuation value                         *
- *   TexProjectClass::Enable_Attenuation -- Set the state of the ATTENUATE flag                *
- *   TexProjectClass::Is_Attenuation_Enabled -- Get the state of the ATTENUATE flag            *
- *   TexProjectClass::Is_Depth_Gradient_Enabled -- returns whether the depth gradient is enabl *
- *   TexProjectClass::Enable_Depth_Gradient -- enable/disable depth gradient                   *
- *   TexProjectClass::Init_Multiplicative -- Initialize this to be a multiplicative texture pr *
- *   TexProjectClass::Is_Intensity_Zero -- check if we can eliminate this projector            *
- *   TexProjectClass::Init_Additive -- Set up the projector to be additive                     *
- *   TexProjectClass::Set_Perspective_Projection -- Set up a perspective projection            *
- *   TexProjectClass::Set_Ortho_Projection -- Set up an orthographic projection                *
- *   TexProjectClass::Set_Texture -- Set the texture to be projected                           *
- *   TexProjectClass::Get_Texture -- Returns the texture being projected                       *
- *   TexProjectClass::Peek_Texture -- Returns the texture being projected                      *
- *   TexProjectClass::Peek_Material_Pass -- Returns the material pass object                   *
- *   TexProjectClass::Compute_Perspective_Projection -- Set up a perspective projection of an  *
- *   TexProjectClass::Compute_Perspective_Projection -- Set up a perspective projection of an  *
- *   TexProjectClass::Compute_Ortho_Projection -- Automatic Orthographic projection            *
- *   TexProjectClass::Compute_Ortho_Projection -- Automatic Orthographic projection            *
- *   TexProjectClass::Compute_Texture -- Generates texture by rendering an object              *
- *   TexProjectClass::Configure_Camera -- setup a camera to match this projector               *
- *   TexProjectClass::Pre_Render_Update -- Prepare the projector for rendering                 *
- *   TexProjectClass::Update_WS_Bounding_Volume -- Recalculate the world-space bounding box    *
- *   TexProjectClass::Get_Surface -- Returns pointer to the texture surface                    *
- *   TexProjectClass::Set_Render_Target -- Install a render target for this projector to use   *
- *   TexProjectClass::Needs_Render_Target -- returns wheter this projector needs a render targ *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -168,18 +132,6 @@ const float INTENSITY_RATE_OF_CHANGE			= 1.0f;			// change in intensity per seco
 
 
 
-/***********************************************************************************************
- * TexProjectClass::TexProjectClass -- Constructor                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/00     gth : Created.                                                                 *
- *=============================================================================================*/
 TexProjectClass::TexProjectClass() :
 	Flags(DEFAULT_FLAGS),
 	DesiredIntensity(1.0f),
@@ -219,18 +171,6 @@ TexProjectClass::TexProjectClass() :
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::~TexProjectClass -- Destructor                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/00     gth : Created.                                                                 *
- *=============================================================================================*/
 TexProjectClass::~TexProjectClass()
 {
 	REF_PTR_RELEASE(Mapper1);
@@ -240,22 +180,8 @@ TexProjectClass::~TexProjectClass()
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Set_Texture_Size -- Set the size of texture to use                         *
- *                                                                                             *
- *    This function stores the desired texture size in this TexProjectClass.  Note that        *
- *    this size is only used if you have the TexProjectClass generate a texture.               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *    size - dimension of the texture in pixels                                                *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/00     gth : Created.                                                                 *
- *=============================================================================================*/
+// The size is in pixels. Note that this size is only used if you have the TexProjectClass generate
+// a texture.
 void TexProjectClass::Set_Texture_Size(int size)
 {
 	WWASSERT(size > 0);
@@ -265,42 +191,16 @@ void TexProjectClass::Set_Texture_Size(int size)
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Get_Texture_Size -- Returns the stored texture size                        *
- *                                                                                             *
- *    Returns the size stored in the flags variable.  This can be different than the actual    *
- *    texture's size if you manually installed a texture.  This size is only used when         *
- *    automatically generating a texture as is the case when creating shadows.                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/00     gth : Created.                                                                 *
- *=============================================================================================*/
+// Returns the size stored in the flags variable. This can be different than the actual texture's
+// size if you manually installed a texture. This size is only used when automatically generating a
+// texture as is the case when creating shadows.
 int TexProjectClass::Get_Texture_Size()
 {
 	return (Flags & SIZE_MASK) >> SIZE_SHIFT;
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Set_Flag -- Turn specified flag on or off                                  *
- *                                                                                             *
- *    See the TexProjectClass header file for valid flags                                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/00     gth : Created.                                                                 *
- *=============================================================================================*/
+// See the TexProjectClass header file for valid flags.
 void TexProjectClass::Set_Flag(uint32 flag,bool onoff)
 {
 	if (onoff) {
@@ -311,44 +211,16 @@ void TexProjectClass::Set_Flag(uint32 flag,bool onoff)
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Get_Flag -- Get the current state of specified flag                        *
- *                                                                                             *
- *    See the TexProjectClass header file for valid flags                                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/00     gth : Created.                                                                 *
- *=============================================================================================*/
+// See the TexProjectClass header file for valid flags.
 bool TexProjectClass::Get_Flag(uint32 flag) const
 {
 	return (Flags & flag) == flag;
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Set_Intensity -- Set the intensity of this projector                       *
- *                                                                                             *
- *    The "intensity" is a value between 0 and 1.  At 0, the projector will have no effect     *
- *    At 1, the projector will be at its highest strength.  The intensity will automatically   *
- *    smoothly interpolate towards the value specified unless you use the immediate option.    *
- *                                                                                             *
- * INPUT:                                                                                      *
- * intensity - desired intensity, 0 <= intensity <= 1                                          *
- * immediate - should the intensity be immediately set to the desired value? (default = false) *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/00     gth : Created.                                                                 *
- *=============================================================================================*/
+// The "intensity" is a value between 0 and 1. At 0, the projector will have no effect. At 1, the
+// projector will be at its highest strength. The intensity will automatically smoothly interpolate
+// towards the value specified unless you use the immediate option.
 void TexProjectClass::Set_Intensity(float intensity,bool immediate)
 {
 	WWASSERT(intensity <= 1.0f);
@@ -361,63 +233,24 @@ void TexProjectClass::Set_Intensity(float intensity,bool immediate)
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Get_Intensity -- returns the current "desired" intensity                   *
- *                                                                                             *
- *    This will return the last value that was sent into this object through Set_Intensity.    *
- *    Note however that the actual intensity used in rendering may not have arrived at         *
- *    that value yet.                                                                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/00     gth : Created.                                                                 *
- *=============================================================================================*/
+// Returns the last value that was sent into this object through Set_Intensity. Note however that
+// the actual intensity used in rendering may not have arrived at that value yet.
 float TexProjectClass::Get_Intensity()
 {
 	return DesiredIntensity;
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Is_Intensity_Zero -- check if we can eliminate this projector              *
- *                                                                                             *
- *    Only returns true if the current intensity is zero AND the target intensity is zero      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/00     gth : Created.                                                                 *
- *=============================================================================================*/
+// Check if we can eliminate this projector. Only returns true if the current intensity is zero AND
+// the target intensity is zero.
 bool TexProjectClass::Is_Intensity_Zero()
 {
 	return ((Intensity == 0.0f) && (DesiredIntensity == 0.0f));
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Set_Attenuation -- Set the attenuation factor                              *
- *                                                                                             *
- *    Attenuation scales the intensity.  I use attenuation to make shadows fade away as they   *
- *    get farther away from the light source or from the viewer.                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/00     gth : Created.                                                                 *
- *=============================================================================================*/
+// Attenuation scales the intensity. I use attenuation to make shadows fade away as they get farther
+// away from the light source or from the viewer.
 void TexProjectClass::Set_Attenuation(float attenuation)
 {
 	WWASSERT(attenuation >= 0.0f);
@@ -426,72 +259,26 @@ void TexProjectClass::Set_Attenuation(float attenuation)
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Get_Attenuation -- Returns the attenuation value                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/00     gth : Created.                                                                 *
- *=============================================================================================*/
 float TexProjectClass::Get_Attenuation()
 {
 	return Attenuation;
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Enable_Attenuation -- Set the state of the ATTENUATE flag                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/00     gth : Created.                                                                 *
- *=============================================================================================*/
+// Set the state of the ATTENUATE flag.
 void TexProjectClass::Enable_Attenuation(bool onoff)
 {
 	Set_Flag(ATTENUATE,onoff);
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Is_Attenuation_Enabled -- Get the state of the ATTENUATE flag              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/00     gth : Created.                                                                 *
- *=============================================================================================*/
+// Get the state of the ATTENUATE flag.
 bool TexProjectClass::Is_Attenuation_Enabled()
 {
 	return Get_Flag(ATTENUATE);
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Enable_Depth_Gradient -- enable/disable depth gradient                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/25/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 void TexProjectClass::Enable_Depth_Gradient(bool onoff)
 {
 	Set_Flag(USE_DEPTH_GRADIENT,onoff);
@@ -505,38 +292,13 @@ void TexProjectClass::Enable_Depth_Gradient(bool onoff)
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Is_Depth_Gradient_Enabled -- returns whether the depth gradient is enabled *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/25/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 bool TexProjectClass::Is_Depth_Gradient_Enabled(bool onoff)
 {
 	return Get_Flag(USE_DEPTH_GRADIENT);
 }
 
-/***********************************************************************************************
- * TexProjectClass::Init_Multiplicative -- Initialize this to be a multiplicative texture proj *
- *                                                                                             *
- *    Set up the internal materials so that the texture is multiplied with whatever it is      *
- *    projected onto.                                                                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/4/00     gth : Created.                                                                 *
- *=============================================================================================*/
+// Set up the internal materials so that the texture is multiplied with whatever it is projected
+// onto.
 void TexProjectClass::Init_Multiplicative()
 {
 	Set_Flag(ADDITIVE,false);
@@ -630,18 +392,6 @@ void TexProjectClass::Init_Multiplicative()
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Init_Additive -- Set up the projector to be additive                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/11/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void TexProjectClass::Init_Additive()
 {
 	Set_Flag(ADDITIVE,true);
@@ -716,18 +466,6 @@ void TexProjectClass::Init_Additive()
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Set_Texture -- Set the texture to be projected                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/11/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void TexProjectClass::Set_Texture(TextureClass * texture)
 {
 	if (texture != nullptr)
@@ -739,73 +477,24 @@ void TexProjectClass::Set_Texture(TextureClass * texture)
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Get_Texture -- Returns the texture being projected                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * the pointer is ref-counted!  make sure to keep track of your references                     *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/11/00    gth : Created.                                                                 *
- *=============================================================================================*/
 TextureClass * TexProjectClass::Get_Texture() const
 {
 	return MaterialPass->Get_Texture();
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Peek_Texture -- Returns the texture being projected                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/11/00    gth : Created.                                                                 *
- *=============================================================================================*/
 TextureClass * TexProjectClass::Peek_Texture() const
 {
 	return MaterialPass->Peek_Texture();
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Peek_Material_Pass -- Returns the material pass object                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/11/00    gth : Created.                                                                 *
- *=============================================================================================*/
 MaterialPassClass * TexProjectClass::Peek_Material_Pass()
 {
 	return MaterialPass;
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Set_Perspective_Projection -- set up a perspective projection              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/27/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void TexProjectClass::Set_Perspective_Projection(float hfov,float vfov,float znear,float zfar)
 {
 	HFov = hfov;
@@ -818,18 +507,6 @@ void TexProjectClass::Set_Perspective_Projection(float hfov,float vfov,float zne
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Set_Ortho_Projection -- set up an orthographic projection                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/27/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void TexProjectClass::Set_Ortho_Projection(float xmin,float xmax,float ymin,float ymax,float znear,float zfar)
 {
 	XMin = xmin;
@@ -843,25 +520,8 @@ void TexProjectClass::Set_Ortho_Projection(float xmin,float xmax,float ymin,floa
 	Set_Flag(PERSPECTIVE,false);
 }
 
-/***********************************************************************************************
- * TexProjectClass::Compute_Perspective_Projection -- Set up a perspective projection of an ob *
- *                                                                                             *
- * This function automates the process of generating the perspective parameters needed to      *
- * tightly bound the projection of an object.                                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- * model - object which we are created a projection of                                         *
- * lightpos - positional light source                                                          *
- * znear - distance to near clipping plane for the projection (if -1.0, will be generated)     *
- * zfar - distance to far clipping plane for the projection (if -1.0, will be generated)       *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/11/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// Automates the process of generating the perspective parameters needed to tightly bound the
+// projection of an object. If znear or zfar is -1.0, it will be generated.
 bool TexProjectClass::Compute_Perspective_Projection
 (
 	RenderObjClass *	model,
@@ -883,26 +543,8 @@ bool TexProjectClass::Compute_Perspective_Projection
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Compute_Perspective_Projection -- Set up a perspective projection of an ob *
- *                                                                                             *
- * This function automates the process of generating the perspective parameters needed to      *
- * tightly bound the projection of an object.                                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- * obj_box - object space bounding box of the object we are projecting                         *
- * tm - transform of the object we are projecting                                              *
- * lightpos - positional light source                                                          *
- * user_znear - distance to near clipping plane for the projection (if -1.0, will be generated)*
- * user_zfar - distance to far clipping plane for the projection (if -1.0, will be generated)  *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/11/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// Automates the process of generating the perspective parameters needed to tightly bound the
+// projection of an object. If znear or zfar is -1.0, it will be generated.
 bool TexProjectClass::Compute_Perspective_Projection
 (
 	const AABoxClass & obj_box,
@@ -970,24 +612,8 @@ bool TexProjectClass::Compute_Perspective_Projection
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Compute_Ortho_Projection -- Automatic Orthographic projection              *
- *                                                                                             *
- * Generates the orthographic projection parameters to tightly bound an object                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- * model - object which we are created a projection of                                         *
- * lightdir - directional light source                                                         *
- * znear - distance to near clipping plane for the projection (if -1.0, will be generated)     *
- * zfar - distance to far clipping plane for the projection (if -1.0, will be generated)       *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/11/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// Generates the orthographic projection parameters to tightly bound an object. If znear or zfar is
+// -1.0, it will be generated.
 bool TexProjectClass::Compute_Ortho_Projection
 (
 	RenderObjClass *	model,
@@ -1009,25 +635,8 @@ bool TexProjectClass::Compute_Ortho_Projection
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Compute_Ortho_Projection -- Automatic Orthographic projection              *
- *                                                                                             *
- * Generates the orthographic projection parameters to tightly bound an object                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- * obj_box - object space bounding box of the object we are projecting                         *
- * tm - transform of the object we are projecting                                              *
- * lightdir - directional light                                                                *
- * user_znear - distance to near clipping plane for the projection (if -1.0, will be generated)*
- * user_zfar - distance to far clipping plane for the projection (if -1.0, will be generated)  *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/11/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// Generates the orthographic projection parameters to tightly bound an object. If znear or zfar is
+// -1.0, it will be generated.
 bool TexProjectClass::Compute_Ortho_Projection
 (
 	const AABoxClass & obj_box,
@@ -1094,21 +703,7 @@ bool TexProjectClass::Compute_Ortho_Projection
 	return true;
 }
 
-/***********************************************************************************************
- * TexProjectClass::Compute_Texture -- Generates texture by rendering an object                *
- *                                                                                             *
- * INPUT:                                                                                      *
- * model - pointer to the render object to generate a shadow texture for                       *
- * context - shadow render context which has been initialized to <TextureSize> resolution      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/11/00    gth : Created.                                                                 *
- *   5/16/02    kjm : Added optional custom depth/stencil target										  *
- *=============================================================================================*/
+// Generates texture by rendering an object.
 bool TexProjectClass::Compute_Texture
 (
 	RenderObjClass * model,
@@ -1171,36 +766,12 @@ bool TexProjectClass::Compute_Texture
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Needs_Render_Target -- returns wheter this projector needs a render target *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/17/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 bool TexProjectClass::Needs_Render_Target()
 {
 	return Get_Flag(TEXTURE_DIRTY);
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Set_Render_Target -- Install a render target for this projector to use     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/16/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 void TexProjectClass::Set_Render_Target
 (
 	TextureClass* render_target,
@@ -1212,19 +783,6 @@ void TexProjectClass::Set_Render_Target
 	REF_PTR_SET(DepthStencilTarget,zbuffer);
 }
 
-/***********************************************************************************************
- * TexProjectClass::Peek_Render_Target -- Returns pointer to the render target if we have one  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/5/2001   gth : Created.                                                                 *
- *   5/16/2002  kjm : Added optional custom zbuffer                                            *
- *=============================================================================================*/
 TextureClass* TexProjectClass::Peek_Render_Target
 (
 	TextureClass** rtarget,
@@ -1243,18 +801,6 @@ TextureClass* TexProjectClass::Peek_Render_Target
 	return RenderTarget;
 }
 
-/***********************************************************************************************
- * TexProjectClass::Configure_Camera -- set up a camera to match this projector                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/11/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void TexProjectClass::Configure_Camera(CameraClass & camera)
 {
 	camera.Set_Transform(Transform);
@@ -1278,18 +824,6 @@ void TexProjectClass::Configure_Camera(CameraClass & camera)
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Pre_Render_Update -- Prepare the projector for rendering                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/11/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void TexProjectClass::Pre_Render_Update(const Matrix3D & camera)
 {
 	/*
@@ -1352,18 +886,6 @@ void TexProjectClass::Pre_Render_Update(const Matrix3D & camera)
 }
 
 
-/***********************************************************************************************
- * TexProjectClass::Update_WS_Bounding_Volume -- Recalculate the world-space bounding box      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/11/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void TexProjectClass::Update_WS_Bounding_Volume()
 {
 	ProjectorClass::Update_WS_Bounding_Volume();

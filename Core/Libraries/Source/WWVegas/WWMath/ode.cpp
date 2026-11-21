@@ -31,12 +31,6 @@
  *                                                                                             *
  *                    $Revision:: 8                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   Euler_Integrate -- uses Eulers method to integrate a system of ODE's                      *
- *   Midpoint_Integrate -- midpoint method (Runge-Kutta 2) for integration                     *
- *   Runge_Kutta_Integrate -- Runge Kutta 4 method                                             *
- *   Runge_Kutta5_Integrate -- 5th order Runge-Kutta                                           *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "ode.h"
@@ -53,22 +47,6 @@ static StateVectorClass		_WorkVector5;
 static StateVectorClass		_WorkVector6;
 static StateVectorClass		_WorkVector7;
 
-/***********************************************************************************************
- * Euler_Solve -- uses Eulers method to integrate a system of ODE's                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- * odesys - pointer to the ODE system to integrate                                             *
- * dt - size of the timestep                                                                   *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- * state vector in odesys will be updated for the next timestep                                *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *   6/25/99    GTH : Updated to the new integrator system                                     *
- *=============================================================================================*/
 void IntegrationSystem::Euler_Integrate(ODESystemClass * sys, float dt)
 {
 	WWASSERT(sys != nullptr);
@@ -100,22 +78,7 @@ void IntegrationSystem::Euler_Integrate(ODESystemClass * sys, float dt)
 	sys->Set_State(Y1);
 }
 
-/***********************************************************************************************
- * Midpoint_Integrate -- midpoint method (Runge-Kutta 2)                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- * sys - pointer to the ODE system to integrate                                                *
- * dt - size of the timestep                                                                   *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- * state vector in odesys will be updated for the next timestep                                *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *   6/25/99    GTH : Updated to the new integrator system                                     *
- *=============================================================================================*/
+// Runge-Kutta 2.
 void IntegrationSystem::Midpoint_Integrate(ODESystemClass * sys,float dt)
 {
 	int i;
@@ -165,21 +128,7 @@ void IntegrationSystem::Midpoint_Integrate(ODESystemClass * sys,float dt)
 }
 
 
-/***********************************************************************************************
- * Runge_Kutta_Integrate -- Runge Kutta 4 method                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- * odesys - pointer to the ODE system to integrate                                             *
- * dt - size of the timestep                                                                   *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- * state vector in odesys will be updated for the next timestep                                *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Runge Kutta 4 method.
 void IntegrationSystem::Runge_Kutta_Integrate(ODESystemClass * sys,float dt)
 {
 	int i;
@@ -241,22 +190,6 @@ void IntegrationSystem::Runge_Kutta_Integrate(ODESystemClass * sys,float dt)
 	sys->Set_State(Y1);
 }
 
-/***********************************************************************************************
- * Runge_Kutta5_Integrate -- 5th order Runge-Kutta                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- * odesys - pointer to the ODE system to integrate                                             *
- * dt - size of the timestep                                                                   *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- * state vector in odesys will be updated for the next timestep                                *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *   6/25/99    GTH : Converted to the new Integrator system                                   *
- *=============================================================================================*/
 void IntegrationSystem::Runge_Kutta5_Integrate(ODESystemClass * odesys,float dt)
 {
 	int i;

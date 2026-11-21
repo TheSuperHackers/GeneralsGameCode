@@ -30,35 +30,15 @@
  *                                                                                             *
  *                    $Revision:: 5                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   FrustumClass::Init -- Initialize a frustum object                                         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "frustum.h"
 
 
-/***********************************************************************************************
- * FrustumClass::Init -- Initialize a frustum object                                           *
- *                                                                                             *
- *    This function initializes a frustum from the description of a camera                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- * camera - camera transform, note that the camera looks down the -Z axis                      *
- * vpmin - min corner of the z=-1.0 view plane (not necessarily the near clip plane)           *
- * vpmax - max corner of the z=-1.0 view plane (not necessarily the near clip plane)           *
- * znear - near clip plane (should be negative, negated if it is not)                          *
- * zfar - far clip plane (should be negative, negated if it is not)                            *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * The vpmin and vpmax variables are the min and max of a view-plane at z=-1.0                 *
- *                                                                                             *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/17/2000  gth : Created.                                                                 *
- *=============================================================================================*/
+// The camera looks down the -Z axis. The near and far clip planes should be negative, they are
+// negated if they are not.
+// WARNING: The vpmin and vpmax variables are the min and max of a view-plane at z=-1.0 (not
+// necessarily the near clip plane).
 void FrustumClass::Init
 (
 	const Matrix3D &		camera,

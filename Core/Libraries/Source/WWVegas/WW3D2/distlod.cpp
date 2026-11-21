@@ -30,50 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 3                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   DistLODDefClass -- default constructor for DistLODDefClass                                *
- *   DistLODDefClass::DistLODDefClass -- manual constructor for DistLODDefClass                *
- *   DistLODDefClass::~DistLODDefClass -- destructor for DistLODDefClass                       *
- *   DistLODDefClass::Free -- releases all memory in use by this object                        *
- *   DistLODDefClass::Load -- initialize this object from a W3D file                           *
- *   DistLODDefClass::read_header -- read the header from a W3D file                           *
- *   DistLODDefClass::read_node -- read a model node description from a W3D file               *
- *   DistLODClass::DistLODClass -- constructor                                                 *
- *   DistLODClass::DistLODClass -- copy constructor                                            *
- *   DistLODClass::~DistLODClass -- destructor                                                 *
- *   DistLODClass::Free -- releases memory in use                                              *
- *   DistLODClass::Get_Name -- returns the name of this LOD object                             *
- *   DistLODClass::Get_Num_Polys -- returns the number of polys in this model                  *
- *   DistLODClass::Render -- Render this LOD.                                                  *
- *   DistLODClass::Special_Render -- custom render function                                    *
- *   DistLODCLass::Get_Num_Sub_Objects -- returns the number of subobjects (levels of detail)  *
- *   DistLODClass::Get_Sub_Object -- returns pointer to the specified sub-object (LOD)         *
- *   DistLODCLass::Set_Transform -- sets the transform for this model                          *
- *   DistLODClass::Set_Position -- set the position of this object                             *
- *   DistLODClass::Set_Animation -- set the animation state of this model                      *
- *   DistLODClass::Set_Animation -- set the animation state of this model                      *
- *   DistLODClass::Set_Animation -- set the animation state to a blend of two anims            *
- *   DistLODClass::Set_Animation -- set the animation state to a combination of anims          *
- *   DistLODClass::Get_Num_Bones -- returns the number of bones                                *
- *   DistLODClass::Get_Bone_Name -- returns the name of the specified bone                     *
- *   DistLODClass::Get_Bone_Index -- returns the index of the given bone (if found)            *
- *   DistLODClass::Get_Bone_Transform -- returns the transform of the given bone               *
- *   DistLODClass::Get_Bone_Transform -- returns the transform of the given bone               *
- *   DistLODClass::Capture_Bone -- take control of a bone                                      *
- *   DistLODClass::Release_Bone -- release control of a bone                                   *
- *   DistLODClass::Is_Bone_Captured -- check whether the given bone is captured                *
- *   DistLODClass::Control_Bone -- set the transform for a captured bone                       *
- *   DistLODClass::Cast_Ray -- cast a ray against this model                                   *
- *   DistLODClass::Cast_AABox -- perform an AABox cast against this model                      *
- *   DistLODClass::Cast_OBBox -- perform an OBBox cast against this model                      *
- *   DistLODCLass::Get_Num_Snap_Points -- returns number of snap points in this model          *
- *   DistLODClass::Get_Snap_Point -- returns the i'th snap point                               *
- *   DistLODCLass::Scale -- scale this model; passes on to each LOD                            *
- *   DistLODClass::Scale -- scale this model; passes on to each LOD                            *
- *   DistLODClass::Update_LOD -- adjusts the current LOD based on the distance                 *
- *   DistLODClass::Increment_Lod -- moves to a higher detail LOD                               *
- *   DistLODClass::Decrement_Lod -- moves to a lower detail LOD                                *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -155,19 +111,7 @@ PrototypeClass *DistLODLoaderClass::Load_W3D( ChunkLoadClass &cload )
 }
 
 
-/***********************************************************************************************
- * DistLODDefClass -- default constructor for DistLODDefClass                                  *
- *                                                                                             *
- * DistLODDefClass is a "blueprint" for constructing a DistLODClass                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
+// DistLODDefClass is a "blueprint" for constructing a DistLODClass.
 DistLODDefClass::DistLODDefClass() :
 	Name(nullptr),
 	LodCount(0),
@@ -176,22 +120,9 @@ DistLODDefClass::DistLODDefClass() :
 }
 
 
-/***********************************************************************************************
- * DistLODDefClass::DistLODDefClass -- manual constructor for DistLODDefClass                  *
- *                                                                                             *
- * This constructor allows you to create a DistLODDef Manually (and then use it to create      *
- * the desired DistLODClass).  The array of DistLODModelDefStructs which you pass in will      *
- * only be read from so you are responsible for the memory used by them.                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/15/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Allows you to create a DistLODDef manually (and then use it to create the desired DistLODClass).
+// The array of DistLODModelDefStructs which you pass in will only be read from so you are
+// responsible for the memory used by them.
 DistLODDefClass::DistLODDefClass(const char * name,int lodcount,DistLODNodeDefStruct * modeldefs) :
 	Name(nullptr),
 	LodCount(0),
@@ -210,36 +141,12 @@ DistLODDefClass::DistLODDefClass(const char * name,int lodcount,DistLODNodeDefSt
 }
 
 
-/***********************************************************************************************
- * DistLODDefClass::~DistLODDefClass -- destructor for DistLODDefClass                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/15/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 DistLODDefClass::~DistLODDefClass()
 {
 	Free();
 }
 
 
-/***********************************************************************************************
- * DistLODDefClass::Free -- releases all memory in use by this object                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/15/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void DistLODDefClass::Free()
 {
 	delete[] Name;
@@ -256,18 +163,6 @@ void DistLODDefClass::Free()
 }
 
 
-/***********************************************************************************************
- * DistLODDefClass::Load -- initialize this object from a W3D file                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/15/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 WW3DErrorType DistLODDefClass::Load_W3D(ChunkLoadClass & cload)
 {
 	/*
@@ -315,18 +210,6 @@ WW3DErrorType DistLODDefClass::Load_W3D(ChunkLoadClass & cload)
 }
 
 
-/***********************************************************************************************
- * DistLODDefClass::read_header -- read the header from a W3D file                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/15/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool DistLODDefClass::read_header(ChunkLoadClass & cload)
 {
 	/*
@@ -354,36 +237,12 @@ bool DistLODDefClass::read_header(ChunkLoadClass & cload)
 }
 
 
-/***********************************************************************************************
- * DistLODDefClass::read_node -- read a model node description from a W3D file                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/15/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool DistLODDefClass::read_node(ChunkLoadClass & cload,DistLODNodeDefStruct * node)
 {
 	return true;
 }
 
 
-/***********************************************************************************************
- * DistLODClass::DistLODClass -- constructor                                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 DistLODClass::DistLODClass(const DistLODDefClass & def)
 {
 	Set_Name(def.Get_Name());
@@ -407,18 +266,6 @@ DistLODClass::DistLODClass(const DistLODDefClass & def)
 }
 
 
-/***********************************************************************************************
- * DistLODClass::DistLODClass -- copy constructor                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 DistLODClass::DistLODClass(const DistLODClass & that) :
 	CompositeRenderObjClass( that )
 {
@@ -440,36 +287,12 @@ DistLODClass::DistLODClass(const DistLODClass & that) :
 }
 
 
-/***********************************************************************************************
- * DistLODClass::~DistLODClass -- destructor                                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 DistLODClass::~DistLODClass()
 {
 	Free();
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Free -- releases memory in use                                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 void DistLODClass::Free()
 {
 	if (Lods != nullptr) {
@@ -488,37 +311,13 @@ void DistLODClass::Free()
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Get_Num_Polys -- returns the number of polys in this model                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * returns the number of polys in the *current* lod.                                           *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: Returns the number of polys in the *current* lod.
 int DistLODClass::Get_Num_Polys() const
 {
 	return Lods[CurLod].Model->Get_Num_Polys();
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Render -- Render this LOD.                                                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 void DistLODClass::Render(RenderInfoClass & rinfo)
 {
 	if (Is_Not_Hidden_At_All() == false) {
@@ -530,18 +329,6 @@ void DistLODClass::Render(RenderInfoClass & rinfo)
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Special_Render -- custom render function                                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 void DistLODClass::Special_Render(SpecialRenderInfoClass & rinfo)
 {
 	Update_Lod(rinfo.Camera);
@@ -549,36 +336,13 @@ void DistLODClass::Special_Render(SpecialRenderInfoClass & rinfo)
 }
 
 
-/***********************************************************************************************
- * DistLODCLass::Get_Num_Sub_Objects -- returns the number of subobjects (levels of detail)    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// The sub-objects are the levels of detail.
 int DistLODClass::Get_Num_Sub_Objects() const
 {
 	return LodCount;
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Get_Sub_Object -- returns pointer to the specified sub-object (LOD)           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 RenderObjClass * DistLODClass::Get_Sub_Object(int index) const
 {
 	assert(index >= 0);
@@ -608,20 +372,6 @@ int DistLODClass::Add_Sub_Object_To_Bone(RenderObjClass * subobj,int bone_index)
 }
 
 
-/***********************************************************************************************
- * DistLODCLass::Set_Transform -- sets the transform for this model                            *
- *                                                                                             *
- * sets the transform in all LODs.                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 void DistLODClass::Set_Transform(const Matrix3D &m)
 {
 	RenderObjClass::Set_Transform(m);
@@ -632,20 +382,6 @@ void DistLODClass::Set_Transform(const Matrix3D &m)
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Set_Position -- set the position of this object                               *
- *                                                                                             *
- * sets the position of all lods                                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 void DistLODClass::Set_Position(const Vector3 &v)
 {
 	RenderObjClass::Set_Position(v);
@@ -656,18 +392,6 @@ void DistLODClass::Set_Position(const Vector3 &v)
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Set_Animation -- set the animation state of this model                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 void	DistLODClass::Set_Animation()
 {
 	for (int i=0; i<LodCount; i++) {
@@ -677,18 +401,6 @@ void	DistLODClass::Set_Animation()
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Set_Animation -- set the animation state of this model                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 void DistLODClass::Set_Animation( HAnimClass * motion,float frame,int mode)
 {
 	for (int i=0; i<LodCount; i++) {
@@ -698,18 +410,6 @@ void DistLODClass::Set_Animation( HAnimClass * motion,float frame,int mode)
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Set_Animation -- set the animation state to a blend of two anims              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 void DistLODClass::Set_Animation( HAnimClass * motion0,float frame0,HAnimClass * motion1,float frame1,float percentage)
 {
 	for (int i=0; i<LodCount; i++) {
@@ -719,18 +419,6 @@ void DistLODClass::Set_Animation( HAnimClass * motion0,float frame0,HAnimClass *
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Set_Animation -- set the animation state to a combination of anims            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 void DistLODClass::Set_Animation( HAnimComboClass * anim_combo)
 {
 	for (int i=0; i<LodCount; i++) {
@@ -740,72 +428,24 @@ void DistLODClass::Set_Animation( HAnimComboClass * anim_combo)
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Peek_Animation													                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 HAnimClass *	DistLODClass::Peek_Animation()
 {
 	return Lods[0].Model->Peek_Animation();
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Get_Num_Bones -- returns the number of bones                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 int DistLODClass::Get_Num_Bones()
 {
 	return Lods[0].Model->Get_Num_Bones();
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Get_Bone_Name -- returns the name of the specified bone                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 const char * DistLODClass::Get_Bone_Name(int bone_index)
 {
 	return Lods[0].Model->Get_Bone_Name(bone_index);
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Get_Bone_Index -- returns the index of the given bone (if found)              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 int DistLODClass::Get_Bone_Index(const char * bonename)
 {
    // Highest LOD is used since lowest may be a Null3DObjClass.
@@ -813,18 +453,6 @@ int DistLODClass::Get_Bone_Index(const char * bonename)
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Get_Bone_Transform -- returns the transform of the given bone                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 const Matrix3D &	DistLODClass::Get_Bone_Transform(const char * bonename)
 {
    // Highest LOD is used since lowest may be a Null3DObjClass.
@@ -832,18 +460,6 @@ const Matrix3D &	DistLODClass::Get_Bone_Transform(const char * bonename)
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Get_Bone_Transform -- returns the transform of the given bone                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 const Matrix3D &	DistLODClass::Get_Bone_Transform(int boneindex)
 {
    // Highest LOD is used since lowest may be a Null3DObjClass.
@@ -851,18 +467,6 @@ const Matrix3D &	DistLODClass::Get_Bone_Transform(int boneindex)
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Capture_Bone -- take control of a bone                                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 void DistLODClass::Capture_Bone(int bindex)
 {
 	for (int i=0; i<LodCount; i++) {
@@ -872,18 +476,6 @@ void DistLODClass::Capture_Bone(int bindex)
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Release_Bone -- release control of a bone                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 void DistLODClass::Release_Bone(int bindex)
 {
 	for (int i=0; i<LodCount; i++) {
@@ -893,18 +485,6 @@ void DistLODClass::Release_Bone(int bindex)
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Is_Bone_Captured -- check whether the given bone is captured                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 bool DistLODClass::Is_Bone_Captured(int bindex) const
 {
    // Highest LOD is used since lowest may be a Null3DObjClass.
@@ -912,18 +492,6 @@ bool DistLODClass::Is_Bone_Captured(int bindex) const
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Control_Bone -- set the transform for a captured bone                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 void DistLODClass::Control_Bone(int bindex,const Matrix3D & tm,bool world_space_translation)
 {
 	for (int i=0; i<LodCount; i++) {
@@ -932,20 +500,7 @@ void DistLODClass::Control_Bone(int bindex,const Matrix3D & tm,bool world_space_
 	}
 }
 
-/***********************************************************************************************
- * DistLODClass::Cast_Ray -- cast a ray against this model                                     *
- *                                                                                             *
- * casts the ray against the top-level LOD                                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Casts the ray against the top-level LOD.
 bool DistLODClass::Cast_Ray(RayCollisionTestClass & raytest)
 {
 	if (raytest.CollisionType & Get_Collision_Type()) {
@@ -956,20 +511,7 @@ bool DistLODClass::Cast_Ray(RayCollisionTestClass & raytest)
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Cast_AABox -- perform an AABox cast against this model                        *
- *                                                                                             *
- * tests against the top-level LOD                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/3/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Tests against the top-level LOD.
 bool DistLODClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 {
 	if (boxtest.CollisionType & Get_Collision_Type()) {
@@ -980,18 +522,6 @@ bool DistLODClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Cast_OBBox -- perform an OBBox cast against this model                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 bool DistLODClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 {
 	if (boxtest.CollisionType & Get_Collision_Type()) {
@@ -1002,54 +532,18 @@ bool DistLODClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * DistLODCLass::Get_Num_Snap_Points -- returns number of snap points in this model            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 int DistLODClass::Get_Num_Snap_Points()
 {
 	return Lods[0].Model->Get_Num_Snap_Points();
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Get_Snap_Point -- returns the i'th snap point                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 void DistLODClass::Get_Snap_Point(int index,Vector3 * set)
 {
 	Lods[0].Model->Get_Snap_Point(index,set);
 }
 
 
-/***********************************************************************************************
- * DistLODCLass::Scale -- scale this model; passes on to each LOD                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 void DistLODClass::Scale(float scale)
 {
 	for (int i=0; i<LodCount; i++) {
@@ -1059,18 +553,6 @@ void DistLODClass::Scale(float scale)
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Scale -- scale this model; passes on to each LOD                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 void DistLODClass::Scale(float scalex, float scaley, float scalez)
 {
 	for (int i=0; i<LodCount; i++) {
@@ -1080,18 +562,7 @@ void DistLODClass::Scale(float scalex, float scaley, float scalez)
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Update_LOD -- adjusts the current LOD based on the distance                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Based on the distance to the camera.
 void DistLODClass::Update_Lod(const CameraClass & camera)
 {
 	// evaluate the distance from the camera and select an LOD based on it.
@@ -1108,18 +579,7 @@ void DistLODClass::Update_Lod(const CameraClass & camera)
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Increment_Lod -- moves to a higher detail LOD                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Moves to a higher detail LOD.
 void DistLODClass::Increment_Lod()
 {
 	// TODO: change the order in which models are stored
@@ -1135,18 +595,7 @@ void DistLODClass::Increment_Lod()
 }
 
 
-/***********************************************************************************************
- * DistLODClass::Decrement_Lod -- moves to a lower detail LOD                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Moves to a lower detail LOD.
 void DistLODClass::Decrement_Lod()
 {
 	if (CurLod < LodCount - 1) {

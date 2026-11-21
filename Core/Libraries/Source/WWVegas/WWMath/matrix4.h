@@ -34,26 +34,6 @@
  *                  Last Update : June 6, 2002 [KM]                                            *
  *                                                                                             *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   Matrix4x4::Matrix4x4 -- Constructor, optionally initialize to Identitiy matrix                *
- *   Matrix4x4::Matrix4x4 -- Copy Constructor                                                      *
- *   Matrix4x4::Matrix4x4 -- Convert a Matrix3D (fake 4x4) to a Matrix4x4                            *
- *   Matrix4x4::Matrix4x4 -- Constructor                                                           *
- *   Matrix4x4::Make_Identity -- Initializes the matrix to Identity                              *
- *   Matrix4x4::Init -- Initializes from the contents of the give Matrix3D                       *
- *   Matrix4x4::Init -- Initializes the rows from the given Vector4s                             *
- *   Matrix4x4::Init -- Initializes the rows from the given 16 floats                            *
- *   Matrix4x4::Init_Ortho -- Initialize to an orthographic projection matrix                    *
- *   Matrix4x4::Init_Perspective -- Initialize to a perspective projection matrix                *
- *   Matrix4x4::Init_Perspective -- Initialize to a perspective projection matrix                *
- *   Matrix4x4::Transpose -- Returns transpose of the matrix                                     *
- *   Matrix4x4::Inverse -- returns the inverse of the matrix                                     *
- *   Matrix4x4::operator = -- assignment operator                                                *
- *   Matrix4x4::operator += -- "plus equals" operator                                            *
- *   Matrix4x4::operator -= -- "minus equals" operator                                            *
- *   Matrix4x4::operator *= -- "times equals" operator                                           *
- *   Matrix4x4::operator /= -- "divide equals" operator                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -189,18 +169,6 @@ protected:
 };
 
 
-/***********************************************************************************************
- * Matrix4x4::Matrix4x4 -- Constructor, optionally initialize to Identitiy matrix                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/02/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE Matrix4x4::Matrix4x4(bool identity)
 {
 	if (identity) {
@@ -208,87 +176,27 @@ WWINLINE Matrix4x4::Matrix4x4(bool identity)
 	}
 }
 
-/***********************************************************************************************
- * Matrix4x4::Matrix4x4 -- Copy Constructor                                                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/02/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE Matrix4x4::Matrix4x4(const Matrix4x4 & m)
 {
 	Row[0] = m.Row[0]; Row[1] = m.Row[1]; Row[2] = m.Row[2]; Row[3] = m.Row[3];
 }
 
-/***********************************************************************************************
- * Matrix4x4::Matrix4x4 -- Convert a Matrix3D (fake 4x4) to a Matrix4x4                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/02/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE Matrix4x4::Matrix4x4(const Matrix3D & m)
 {
 	Init(m);
 }
 
-/***********************************************************************************************
- * Matrix4x4::Matrix4x4 -- Constructor                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/02/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE Matrix4x4::Matrix4x4(const Vector4 & r0, const Vector4 & r1, const Vector4 & r2, const Vector4 & r3)
 {
 	Init(r0,r1,r2,r3);
 }
 
-/***********************************************************************************************
- * Matrix4x4::Matrix4x4 -- Constructor                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/06/2001 NH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE Matrix4x4::Matrix4x4(float m11,float m12,float m13,float m14, float m21,float m22,float m23,float m24,
 	float m31,float m32,float m33,float m34, float m41,float m42,float m43,float m44 )
 {
 	Init(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44);
 }
 
-/***********************************************************************************************
- * Matrix4x4::Make_Identity -- Initializes the matrix to Identity                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/5/99    gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void Matrix4x4::Make_Identity()
 {
 	Row[0].Set(1.0,0.0,0.0,0.0);
@@ -298,54 +206,19 @@ WWINLINE void Matrix4x4::Make_Identity()
 }
 
 
-/***********************************************************************************************
- * Matrix4x4::Init -- Initializes from the contents of the give Matrix3D                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/5/99    gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void Matrix4x4::Init(const Matrix3D & m)
 {
 	Row[0] = m[0]; Row[1] = m[1]; Row[2] = m[2]; Row[3] = Vector4(0.0,0.0,0.0,1.0);
 }
 
 
-/***********************************************************************************************
- * Matrix4x4::Init -- Initializes the rows from the given Vector4s                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/5/99    gth : Created.                                                                 *
- *=============================================================================================*/
+// Initializes the rows from the given Vector4s.
 WWINLINE void Matrix4x4::Init(const Vector4 & r0, const Vector4 & r1, const Vector4 & r2, const Vector4 & r3)
 {
 	Row[0] = r0; Row[1] = r1; Row[2] = r2; Row[3] = r3;
 }
 
 
-/***********************************************************************************************
- * Matrix4x4::Init -- Initializes the rows from the given 16 floats                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/6/01    NH : Created.                                                                  *
- *=============================================================================================*/
 WWINLINE void Matrix4x4::Init(float m11,float m12,float m13,float m14, float m21,float m22,float m23,float m24,
 	float m31,float m32,float m33,float m34, float m41,float m42,float m43,float m44)
 {
@@ -356,29 +229,13 @@ WWINLINE void Matrix4x4::Init(float m11,float m12,float m13,float m14, float m21
 }
 
 
-/***********************************************************************************************
- * Matrix4x4::Init_Ortho -- Initialize to an orthographic projection matrix                      *
- *                                                                                             *
- * You can find the formulas for this in the appendix of the OpenGL programming guide.  Also   *
- * this happens to be the same convention used by Surrender.                                   *
- *                                                                                             *
- * The result of this projection will be that points inside the volume will have all coords    *
- * between -1 and +1.  A point at znear will project to z=-1.  A point at zfar will project    *
- * to z=+1...                                                                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * Note that the znear and zfar parameters are positive distances to the clipping planes       *
- * even though in the camera coordinate system, the clipping planes are at negative z          *
- * coordinates.  This holds for all of the projection initializations and is consistent        *
- * with OpenGL's convention.                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/5/99    gth : Created.                                                                 *
- *=============================================================================================*/
+// You can find the formulas for this in the appendix of the OpenGL programming guide. Also this
+// happens to be the same convention used by Surrender. The result of this projection will be that
+// points inside the volume will have all coords between -1 and +1. A point at znear will project to
+// z=-1. A point at zfar will project to z=+1.
+// WARNING: Note that the znear and zfar parameters are positive distances to the clipping planes
+// even though in the camera coordinate system, the clipping planes are at negative z coordinates.
+// This holds for all of the projection initializations and is consistent with OpenGL's convention.
 WWINLINE void Matrix4x4::Init_Ortho
 (
 	float left,
@@ -402,33 +259,13 @@ WWINLINE void Matrix4x4::Init_Ortho
 }
 
 
-/***********************************************************************************************
- * Matrix4x4::Init_Perspective -- Initialize to a perspective projection matrix                  *
- *                                                                                             *
- * You can find the formulas for this matrix in the appendix of the OpenGL programming guide.  *
- * Also, this happens to be the same convention used by Surrender.                             *
- *                                                                                             *
- * The result of this projection will be that points inside the volume will have all coords    *
- * between -1 and +1.  A point at znear will project to z=-1.  A point at zfar will project    *
- * to z=+1...                                                                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- * hfov - horizontal field of view (in radians)                                                *
- * vfov - vertical field of view (in radians)                                                  *
- * znear - distance to near z clipping plane (positive)                                        *
- * zfar - distance to the far z clipping plane (positive)                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * Note that the znear and zfar parameters are positive distances to the clipping planes       *
- * even though in the camera coordinate system, the clipping planes are at negative z          *
- * coordinates.  This holds for all of the projection initializations and is consistent        *
- * with OpenGL's convention.                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/5/99    gth : Created.                                                                 *
- *=============================================================================================*/
+// You can find the formulas for this matrix in the appendix of the OpenGL programming guide. Also,
+// this happens to be the same convention used by Surrender. The result of this projection will be
+// that points inside the volume will have all coords between -1 and +1. A point at znear will
+// project to z=-1. A point at zfar will project to z=+1. The field of view angles are in radians.
+// WARNING: Note that the znear and zfar parameters are positive distances to the clipping planes
+// even though in the camera coordinate system, the clipping planes are at negative z coordinates.
+// This holds for all of the projection initializations and is consistent with OpenGL's convention.
 WWINLINE void Matrix4x4::Init_Perspective(float hfov,float vfov,float znear,float zfar)
 {
 	assert(znear > 0.0f);
@@ -444,36 +281,13 @@ WWINLINE void Matrix4x4::Init_Perspective(float hfov,float vfov,float znear,floa
 }
 
 
-/***********************************************************************************************
- * Matrix4x4::Init_Perspective -- Initialize to a perspective projection matrix                  *
- *                                                                                             *
- * You can find the formulas for this matrix in the appendix of the OpenGL programming guide.  *
- * Also, this happens to be the same convention used by Surrender.                             *
- *                                                                                             *
- * The result of this projection will be that points inside the volume will have all coords    *
- * between -1 and +1.  A point at znear will project to z=-1.  A point at zfar will project    *
- * to z=+1...                                                                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * left - min x coordinate of near clip plane                                                  *
- * right - max x coordinate of near clip plane                                                 *
- * bottom - min y coordinate of near clip plane                                                *
- * top - max y coordinate of near clip plane                                                   *
- * znear - distance to near Z clipping plane                                                   *
- * zfar - distance to far Z clipping plane                                                     *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * Note that the znear and zfar parameters are positive distances to the clipping planes       *
- * even though in the camera coordinate system, the clipping planes are at negative z          *
- * coordinates.  This holds for all of the projection initializations and is consistent        *
- * with OpenGL's convention.                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/5/99    gth : Created.                                                                 *
- *=============================================================================================*/
+// You can find the formulas for this matrix in the appendix of the OpenGL programming guide. Also,
+// this happens to be the same convention used by Surrender. The result of this projection will be
+// that points inside the volume will have all coords between -1 and +1. A point at znear will
+// project to z=-1. A point at zfar will project to z=+1.
+// WARNING: Note that the znear and zfar parameters are positive distances to the clipping planes
+// even though in the camera coordinate system, the clipping planes are at negative z coordinates.
+// This holds for all of the projection initializations and is consistent with OpenGL's convention.
 WWINLINE void Matrix4x4::Init_Perspective
 (
 	float left,
@@ -498,18 +312,6 @@ WWINLINE void Matrix4x4::Init_Perspective
 	Row[3][3] = 0.0f;
 }
 
-/***********************************************************************************************
- * Matrix4x4::Transpose -- Returns transpose of the matrix                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/02/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE Matrix4x4 Matrix4x4::Transpose() const
 {
     return Matrix4x4(
@@ -520,19 +322,7 @@ WWINLINE Matrix4x4 Matrix4x4::Transpose() const
 	);
 }
 
-/***********************************************************************************************
- * Matrix4x4::Inverse -- returns the inverse of the matrix                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/02/1997 GH  : Created.                                                                 *
- *   01/03/2026 TheSuperHackers : Implemented.                                                 *
- *=============================================================================================*/
+// TheSuperHackers @fix Reimplemented the inverse.
 WWINLINE Matrix4x4* Matrix4x4::Inverse(Matrix4x4* out, float* detOut, const Matrix4x4* m)
 {
 	// Read matrix elements
@@ -614,90 +404,30 @@ WWINLINE Matrix4x4 Matrix4x4::Inverse() const
 	return inv;
 }
 
-/***********************************************************************************************
- * Matrix4x4::operator = -- assignment operator                                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/02/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE Matrix4x4 & Matrix4x4::operator = (const Matrix4x4 & m)
 {
 	Row[0] = m.Row[0]; Row[1] = m.Row[1]; Row[2] = m.Row[2]; Row[3] = m.Row[3];
 	return *this;
 }
 
-/***********************************************************************************************
- * Matrix4x4::operator += -- "plus equals" operator                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/02/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE Matrix4x4& Matrix4x4::operator += (const Matrix4x4 & m)
 {
 	Row[0] += m.Row[0]; Row[1] += m.Row[1]; Row[2] += m.Row[2]; Row[3] += m.Row[3];
 	return *this;
 }
 
-/***********************************************************************************************
- * Matrix4x4::operator-= -- "minus equals" operator                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/02/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE Matrix4x4& Matrix4x4::operator -= (const Matrix4x4 & m)
 {
 	Row[0] -= m.Row[0]; Row[1] -= m.Row[1]; Row[2] -= m.Row[2]; Row[3] -= m.Row[3];
 	return *this;
 }
 
-/***********************************************************************************************
- * Matrix4x4::operator *= -- "times equals" operator                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/02/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE Matrix4x4& Matrix4x4::operator *= (float d)
 {
 	Row[0] *= d; Row[1] *= d; Row[2] *= d; Row[3] *= d;
 	return *this;
 }
 
-/***********************************************************************************************
- * Matrix4x4::operator /= -- "divide equals" operator                                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/02/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE Matrix4x4& Matrix4x4::operator /= (float d)
 {
 	float ood = d;
