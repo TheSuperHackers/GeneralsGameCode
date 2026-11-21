@@ -131,10 +131,11 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 static void embedInUseMap( AsciiString map, Xfer *xfer )
 {
-	FILE *fp = fopen( map.str(), "rb" );
+	// TheSuperHackers @bugfix bobtista 17/10/2026 Open the map through the file system so that letter case does not matter.
+	File *file = TheFileSystem->openFile( map.str(), File::READ | File::BINARY );
 
 	// sanity
-	if( fp == nullptr )
+	if( file == nullptr )
 	{
 
 		DEBUG_CRASH(( "embedInUseMap - Unable to open file '%s'", map.str() ));
@@ -143,11 +144,10 @@ static void embedInUseMap( AsciiString map, Xfer *xfer )
 	}
 
 	// how big is the file
-	fseek( fp, 0, SEEK_END );
-	Int fileSize = ftell( fp );
+	Int fileSize = file->seek( 0, File::END );
 
 	// rewind file back to start
-	fseek( fp, 0, SEEK_SET );
+	file->seek( 0, File::START );
 
 	// allocate a buffer big enough for the entire file
 	char *buffer = new char[ fileSize ];
@@ -160,7 +160,7 @@ static void embedInUseMap( AsciiString map, Xfer *xfer )
 	}
 
 	// read the entire file
-	if( fread( buffer, 1, fileSize, fp ) != fileSize )
+	if( file->read( buffer, fileSize ) != fileSize )
 	{
 
 		delete[] buffer;
@@ -176,7 +176,7 @@ static void embedInUseMap( AsciiString map, Xfer *xfer )
 	xfer->endBlock();
 
 	// close the file
-	fclose( fp );
+	file->close();
 
 	// delete buffer
 	delete [] buffer;
@@ -191,8 +191,9 @@ static void extractAndSaveMap( AsciiString mapToSave, Xfer *xfer )
 	UnsignedInt dataSize;
 
 	// open handle to output file
-	FILE *fp = fopen( mapToSave.str(), "w+b" );
-	if( fp == nullptr )
+	// TheSuperHackers @bugfix bobtista 17/10/2026 Create the map through the file system so that letter case does not matter.
+	File *file = TheFileSystem->openFile( mapToSave.str(), File::WRITE | File::CREATE | File::TRUNCATE | File::BINARY );
+	if( file == nullptr )
 	{
 
 		DEBUG_CRASH(( "extractAndSaveMap - Unable to open file '%s'", mapToSave.str() ));
@@ -217,7 +218,7 @@ static void extractAndSaveMap( AsciiString mapToSave, Xfer *xfer )
 	xfer->xferUser( buffer, dataSize );
 
 	// write contents of buffer to new file
-	if( fwrite( buffer, 1, dataSize, fp ) != dataSize )
+	if( file->write( buffer, dataSize ) != dataSize )
 	{
 
 		delete[] buffer;
@@ -228,7 +229,7 @@ static void extractAndSaveMap( AsciiString mapToSave, Xfer *xfer )
 	}
 
 	// close the new file
-	fclose( fp );
+	file->close();
 
 	// end of data block
 	xfer->endBlock();
