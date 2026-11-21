@@ -38,6 +38,7 @@
 /* ********* PolygonTrigger class ****************************/
 PolygonTrigger *PolygonTrigger::ThePolygonTriggerListPtr = nullptr;
 Int PolygonTrigger::s_currentID = 1;
+Int PolygonTrigger::s_parsedVersion = 0;
 /**
  PolygonTrigger - Constructor.
 */
@@ -145,6 +146,7 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 	AsciiString layerName;
 	// Remove any existing polygon triggers, if any.
 	PolygonTrigger::deleteTriggers(); // just in case.
+	s_parsedVersion = info->version;
 	PolygonTrigger *pPrevTrig = nullptr;
 	ICoord3D loc;
 	count = file.readInt();
@@ -346,6 +348,7 @@ void PolygonTrigger::deleteTriggers()
 	PolygonTrigger *pList = ThePolygonTriggerListPtr;
 	ThePolygonTriggerListPtr = nullptr;
 	s_currentID = 1;
+	s_parsedVersion = 0;
 	deleteInstance(pList);
 }
 

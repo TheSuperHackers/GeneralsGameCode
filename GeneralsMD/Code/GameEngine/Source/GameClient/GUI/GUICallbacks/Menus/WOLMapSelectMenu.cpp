@@ -440,6 +440,7 @@ WindowMsgHandledType WOLMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 					else
 						asciiMap.translate( map );
 					TheGameSpyGame->setMap(asciiMap);
+					warnIfMapLacksSkirmishSides( asciiMap );
 					asciiMap.toLower();
 					std::map<AsciiString, MapMetaData>::iterator it = TheMapCache->find(asciiMap);
 					if (it != TheMapCache->end())

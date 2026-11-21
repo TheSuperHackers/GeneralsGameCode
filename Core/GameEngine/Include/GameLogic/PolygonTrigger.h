@@ -87,6 +87,7 @@ protected:
 
 	static PolygonTrigger* ThePolygonTriggerListPtr;
 	static Int s_currentID; ///< Current id for new triggers.
+	static Int s_parsedVersion; ///< Chunk version of the loaded map
 
 protected:
 	void reallocate();
@@ -105,6 +106,7 @@ public:
 	static PolygonTrigger *getFirstPolygonTrigger() {return ThePolygonTriggerListPtr;}
 	static PolygonTrigger *getPolygonTriggerByID(Int triggerID);
 	static Bool ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
+	static Int getParsedVersion() { return s_parsedVersion; }
 	/// Writes Triggers Info
 	static void WritePolygonTriggersDataChunk(DataChunkOutput &chunkWriter);
 	static void deleteTriggers();
