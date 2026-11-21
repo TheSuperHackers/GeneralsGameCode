@@ -34,7 +34,6 @@
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DSmudge.h"
 #include "W3DDevice/GameClient/W3DSnow.h"
-#include "W3DDevice/GameClient/W3DTerrainParticles.h"
 #include "WW3D2/camera.h"
 
 
@@ -50,46 +49,14 @@ W3DParticleSystemManager::W3DParticleSystemManager()
 	m_batchParticleAlignment = ParticleSystemInfo::PARTICLE_ALIGNMENT_BILLBOARD;
 	m_batchShaderType = ParticleSystemInfo::INVALID_SHADER;
 
-	m_pointGroup = nullptr;
-	m_streakLine = nullptr;
-	m_terrainParticles = nullptr;
-	m_posBuffer = nullptr;
-	m_RGBABuffer = nullptr;
-	m_sizeBuffer = nullptr;
-	m_angleBuffer = nullptr;
 	m_readyToRender = false;
 
 	m_onScreenParticleCount = 0;
 
-	m_pointGroup = NEW PointGroupClass();
-	//m_streakLine = nullptr;
-	m_streakLine = NEW StreakLineClass();
-	m_terrainParticles = NEW W3DTerrainParticles();
-
-	m_posBuffer = NEW_REF( ShareBufferClass<Vector3>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_posBuffer") );
-	m_RGBABuffer = NEW_REF( ShareBufferClass<Vector4>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_RGBABuffer") );
-	m_sizeBuffer = NEW_REF( ShareBufferClass<float>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_sizeBuffer") );
-	m_angleBuffer = NEW_REF( ShareBufferClass<uint8>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_angleBuffer") );
-}
-
-W3DParticleSystemManager::~W3DParticleSystemManager()
-{
-	delete m_pointGroup;
-
-//	W3DDisplay::m_3DScene->Remove_Render_Object( m_streakLine );
-
-	if (m_streakLine)
-	{
-		REF_PTR_RELEASE(m_streakLine);
-	}
-
-	delete m_terrainParticles;
-	m_terrainParticles = nullptr;
-
-	REF_PTR_RELEASE(m_posBuffer);
-	REF_PTR_RELEASE(m_RGBABuffer);
-	REF_PTR_RELEASE(m_sizeBuffer);
-	REF_PTR_RELEASE(m_angleBuffer);
+	m_posBuffer.Assign_No_Add_Ref(NEW_REF( ShareBufferClass<Vector3>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_posBuffer") ));
+	m_RGBABuffer.Assign_No_Add_Ref(NEW_REF( ShareBufferClass<Vector4>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_RGBABuffer") ));
+	m_sizeBuffer.Assign_No_Add_Ref(NEW_REF( ShareBufferClass<float>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_sizeBuffer") ));
+	m_angleBuffer.Assign_No_Add_Ref(NEW_REF( ShareBufferClass<uint8>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_angleBuffer") ));
 }
 
 /**
@@ -299,27 +266,27 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		// Handle drawing streak type particles.
 		if ( sys->isUsingStreak() && (pointCount >= 2) )
 		{
-			m_streakLine->Reset_Line();
+			m_streakLine.Reset_Line();
 
-			m_streakLine->Set_Texture( texture.Peek() );
+			m_streakLine.Set_Texture( texture.Peek() );
 			switch( sys->getShaderType() )
 			{
 				case ParticleSystemInfo::ADDITIVE:
-					m_streakLine->Set_Shader( ShaderClass::_PresetAdditiveSpriteShader );
+					m_streakLine.Set_Shader( ShaderClass::_PresetAdditiveSpriteShader );
 					break;
 				case ParticleSystemInfo::ALPHA:
-					m_streakLine->Set_Shader( ShaderClass::_PresetAlphaSpriteShader );
+					m_streakLine.Set_Shader( ShaderClass::_PresetAlphaSpriteShader );
 					break;
 				case ParticleSystemInfo::ALPHA_TEST:
-					m_streakLine->Set_Shader( ShaderClass::_PresetATestSpriteShader );
+					m_streakLine.Set_Shader( ShaderClass::_PresetATestSpriteShader );
 					break;
 				case ParticleSystemInfo::MULTIPLY:
-					m_streakLine->Set_Shader( ShaderClass::_PresetMultiplicativeSpriteShader );
+					m_streakLine.Set_Shader( ShaderClass::_PresetMultiplicativeSpriteShader );
 					break;
 			}
 
 			//UPDATE THE STREAK'S ARRAYS
-			m_streakLine->Set_LocsWidthsColors(
+			m_streakLine.Set_LocsWidthsColors(
 				pointCount,
 				m_posBuffer->Get_Array(),
 				m_sizeBuffer->Get_Array(),
@@ -327,7 +294,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 				&personalities[0]
 				);
 
-			//WWASSERT( m_streakLine->Get_Num_Points() == pointCount );
+			//WWASSERT( m_streakLine.Get_Num_Points() == pointCount );
 
 			// This is the happy place for this!
 			RGBAArray[0].X = 0;//eliminates the scissor edge on the trailing edge of the streak
@@ -337,7 +304,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 
 
 			//RENDER STREAK!
-			m_streakLine->Render( rinfo );
+			m_streakLine.Render( rinfo );
 			m_onScreenParticleCount += (pointCount - startCount);
 			pointCount = startCount;
 		}
@@ -352,35 +319,35 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		// Handle volumetric type particle systems.
 		else if( sys->isUsingVolumeParticles() && volumeParticleDepth > DEFAULT_VOLUME_PARTICLE_DEPTH )
 		{
-			m_pointGroup->Set_Texture( texture.Peek() );
-			m_pointGroup->Set_Flag( PointGroupClass::TRANSFORM, true );	// transform to screen space
+			m_pointGroup.Set_Texture( texture.Peek() );
+			m_pointGroup.Set_Flag( PointGroupClass::TRANSFORM, true );	// transform to screen space
 
 			switch( sys->getShaderType() )
 			{
 				case ParticleSystemInfo::ADDITIVE:
-					m_pointGroup->Set_Shader( ShaderClass::_PresetAdditiveSpriteShader );
+					m_pointGroup.Set_Shader( ShaderClass::_PresetAdditiveSpriteShader );
 					break;
 				case ParticleSystemInfo::ALPHA:
-					m_pointGroup->Set_Shader( ShaderClass::_PresetAlphaSpriteShader );
+					m_pointGroup.Set_Shader( ShaderClass::_PresetAlphaSpriteShader );
 					break;
 				case ParticleSystemInfo::ALPHA_TEST:
-					m_pointGroup->Set_Shader( ShaderClass::_PresetATestSpriteShader );
+					m_pointGroup.Set_Shader( ShaderClass::_PresetATestSpriteShader );
 					break;
 				case ParticleSystemInfo::MULTIPLY:
-					m_pointGroup->Set_Shader( ShaderClass::_PresetMultiplicativeSpriteShader );
+					m_pointGroup.Set_Shader( ShaderClass::_PresetMultiplicativeSpriteShader );
 					break;
 			}
 
 			/// @todo Use both QUADS and TRIS for particles
-			m_pointGroup->Set_Point_Mode( PointGroupClass::QUADS );
-			m_pointGroup->Set_Arrays( m_posBuffer, m_RGBABuffer, nullptr, m_sizeBuffer, m_angleBuffer, nullptr, pointCount );
-			m_pointGroup->Set_Billboard(sys->getParticleAlignment() == ParticleSystemInfo::PARTICLE_ALIGNMENT_BILLBOARD);
+			m_pointGroup.Set_Point_Mode( PointGroupClass::QUADS );
+			m_pointGroup.Set_Arrays( m_posBuffer.Peek(), m_RGBABuffer.Peek(), nullptr, m_sizeBuffer.Peek(), m_angleBuffer.Peek(), nullptr, pointCount );
+			m_pointGroup.Set_Billboard(sys->getParticleAlignment() == ParticleSystemInfo::PARTICLE_ALIGNMENT_BILLBOARD);
 
 			/// @todo Support animated texture particles
 			/// @todo lorenzen sez: unimplemented code wastes cpu cycles
-			m_pointGroup->Set_Point_Frame( 0 );
+			m_pointGroup.Set_Point_Frame( 0 );
 
-			m_pointGroup->RenderVolumeParticle( rinfo, volumeParticleDepth);
+			m_pointGroup.RenderVolumeParticle( rinfo, volumeParticleDepth);
 			m_onScreenParticleCount += (pointCount - startCount);
 			pointCount = startCount;
 		}
@@ -464,22 +431,22 @@ void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, Unsign
 
 		if (m_batchParticleAlignment == ParticleSystemInfo::PARTICLE_ALIGNMENT_CONFORMING)
 		{
-			m_terrainParticles->setTexture(m_batchTexture.Peek());
-			m_terrainParticles->setShader( shader );
-			m_terrainParticles->setArrays( m_posBuffer, m_RGBABuffer, m_sizeBuffer, m_angleBuffer, pointCount );
-			m_terrainParticles->setBoundingBox( m_currentBoundingBox );
-			m_terrainParticles->render();
+			m_terrainParticles.setTexture(m_batchTexture.Peek());
+			m_terrainParticles.setShader( shader );
+			m_terrainParticles.setArrays( m_posBuffer.Peek(), m_RGBABuffer.Peek(), m_sizeBuffer.Peek(), m_angleBuffer.Peek(), pointCount );
+			m_terrainParticles.setBoundingBox( m_currentBoundingBox );
+			m_terrainParticles.render();
 		}
 		else // draw regular point group
 		{
-			m_pointGroup->Set_Texture(m_batchTexture.Peek());
-			m_pointGroup->Set_Shader(shader);
-			m_pointGroup->Set_Flag(PointGroupClass::TRANSFORM, true);
-			m_pointGroup->Set_Point_Mode(PointGroupClass::QUADS);
-			m_pointGroup->Set_Arrays(m_posBuffer, m_RGBABuffer, nullptr, m_sizeBuffer, m_angleBuffer, nullptr, pointCount);
-			m_pointGroup->Set_Billboard(m_batchParticleAlignment == ParticleSystemInfo::PARTICLE_ALIGNMENT_BILLBOARD);
-			m_pointGroup->Set_Point_Frame(0);
-			m_pointGroup->Render(rinfo);
+			m_pointGroup.Set_Texture(m_batchTexture.Peek());
+			m_pointGroup.Set_Shader(shader);
+			m_pointGroup.Set_Flag(PointGroupClass::TRANSFORM, true);
+			m_pointGroup.Set_Point_Mode(PointGroupClass::QUADS);
+			m_pointGroup.Set_Arrays(m_posBuffer.Peek(), m_RGBABuffer.Peek(), nullptr, m_sizeBuffer.Peek(), m_angleBuffer.Peek(), nullptr, pointCount);
+			m_pointGroup.Set_Billboard(m_batchParticleAlignment == ParticleSystemInfo::PARTICLE_ALIGNMENT_BILLBOARD);
+			m_pointGroup.Set_Point_Frame(0);
+			m_pointGroup.Render(rinfo);
 		}
 
 		pointCount = 0;

@@ -28,12 +28,11 @@
 #pragma once
 
 #include "GameClient/ParticleSys.h"
+#include "W3DDevice/GameClient/W3DTerrainParticles.h"
 #include "WW3D2/pointgr.h"
 #include "WW3D2/streak.h"
 #include "WW3D2/rinfo.h"
 #include "WWLib/bittype.h"
-
-class W3DTerrainParticles;
 
 //=============================================================================
 /** W3D implementation of the game display which is responsible for creating
@@ -44,7 +43,7 @@ class W3DParticleSystemManager : public ParticleSystemManager
 
 public:
 	W3DParticleSystemManager();
-	virtual ~W3DParticleSystemManager() override;
+	virtual ~W3DParticleSystemManager() override = default;
 
 	virtual void doParticles(RenderInfoClass &rinfo) override;
 	virtual void queueParticleRender() override;
@@ -59,13 +58,13 @@ private:
 	enum { MAX_POINTS_PER_GROUP = 512 };
 
 	RefCountPtr<TextureClass> m_batchTexture;		///< the texture used as the drawing surface for batched particle draws
-	PointGroupClass *m_pointGroup;							///< the point group that contains all of the particles
-	StreakLineClass *m_streakLine;							///< the streak class that contains all of the streaks
-	W3DTerrainParticles *m_terrainParticles;			///< the terrain-conforming particles renderer
-	ShareBufferClass<Vector3> *m_posBuffer;			///< array of particle positions
-	ShareBufferClass<Vector4> *m_RGBABuffer;		///< array of particle color and alpha
-	ShareBufferClass<float> *m_sizeBuffer;			///< array of particle sizes
-	ShareBufferClass<uint8> *m_angleBuffer;			///< array of particle orientations
+	PointGroupClass m_pointGroup;							///< the point group that contains all of the particles
+	StreakLineClass m_streakLine;							///< the streak class that contains all of the streaks
+	W3DTerrainParticles m_terrainParticles;			///< the terrain-conforming particles renderer
+	RefCountPtr<ShareBufferClass<Vector3>/**/> m_posBuffer;			///< array of particle positions
+	RefCountPtr<ShareBufferClass<Vector4>/**/> m_RGBABuffer;		///< array of particle color and alpha
+	RefCountPtr<ShareBufferClass<float>/**/> m_sizeBuffer;			///< array of particle sizes
+	RefCountPtr<ShareBufferClass<uint8>/**/> m_angleBuffer;			///< array of particle orientations
 	AABoxClass m_currentBoundingBox;
 
 	ParticleSystemInfo::ParticleShaderType m_batchShaderType;

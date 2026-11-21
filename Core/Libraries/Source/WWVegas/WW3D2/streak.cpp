@@ -35,18 +35,14 @@
 #include "streak.h"
 #include "ww3d.h"
 #include "rinfo.h"
-#include "predlod.h"
 #include "WWMath/v3_rnd.h"
 #include "texture.h"
-#include "coltest.h"
 #include "w3d_file.h"
 #include "texture.h"
 #include "dx8wrapper.h"
 #include "WWMath/vp.h"
 #include "WWMath/Vector3i.h"
-#include "sortingrenderer.h"
 
-static SegLineRendererClass _LineRenderer;
 
 
 /*
@@ -54,8 +50,7 @@ static SegLineRendererClass _LineRenderer;
 */
 
 StreakLineClass::StreakLineClass() :
-		MaxSubdivisionLevels(0),
-		NormalizedScreenArea(0.0f)
+		MaxSubdivisionLevels(0)
 {
 		Personalities = nullptr;
 
@@ -63,7 +58,6 @@ StreakLineClass::StreakLineClass() :
 
 StreakLineClass::StreakLineClass(const StreakLineClass & src) :
 		MaxSubdivisionLevels(src.MaxSubdivisionLevels),
-		NormalizedScreenArea(src.NormalizedScreenArea),
 		PointLocations(src.PointLocations),
 		PointColors(src.PointColors),
 		PointWidths(src.PointWidths),
@@ -75,12 +69,9 @@ StreakLineClass::StreakLineClass(const StreakLineClass & src) :
 
 StreakLineClass & StreakLineClass::operator = (const StreakLineClass &that)
 {
-	RenderObjClass::operator = (that);
-
 	if (this != &that) {
 
 		MaxSubdivisionLevels = that.MaxSubdivisionLevels;
-		NormalizedScreenArea = that.NormalizedScreenArea;
 		PointLocations = that.PointLocations;
 		PointColors = that.PointColors;
 		PointWidths = that.PointWidths;
@@ -92,9 +83,6 @@ StreakLineClass & StreakLineClass::operator = (const StreakLineClass &that)
 	return * this;
 }
 
-//StreakLineClass::~StreakLineClass()
-//{
-//}
 
 
 
@@ -127,7 +115,6 @@ void StreakLineClass::Set_Locs( unsigned int num_points, Vector3 *locs )
 		PointLocations.Add(locs[i],num_points);
 	}
 
-	Invalidate_Cached_Bounding_Volumes();
 }
 
 void StreakLineClass::Set_Widths( unsigned int num_points, float *widths )
@@ -188,7 +175,6 @@ void StreakLineClass::Set_LocsWidthsColors( unsigned int num_points,
 	}
 
 
-	Invalidate_Cached_Bounding_Volumes();
 }
 
 
@@ -218,7 +204,6 @@ void StreakLineClass::Set_Point_Location(unsigned int point_idx, const Vector3 &
 	if (point_idx < (unsigned int)PointLocations.Count()) {
 		PointLocations[point_idx] = location;
 	}
-	Invalidate_Cached_Bounding_Volumes();
 }
 
 // Get object-space location of a given point (if position beyond end of
@@ -339,7 +324,6 @@ void StreakLineClass::Set_Width(float width)
 	LineRenderer.Set_Width(MAX(width, 0.0f));
 	StreakRenderer.Set_Width(MAX(width, 0.0f));
 
-	Invalidate_Cached_Bounding_Volumes();
 }
 
 void StreakLineClass::Set_Color(const Vector3 &color)
@@ -358,7 +342,6 @@ void StreakLineClass::Set_Noise_Amplitude(float amplitude)
 {
 	LineRenderer.Set_Noise_Amplitude(WWMath::Fabsf_Legacy(amplitude));
 
-	Invalidate_Cached_Bounding_Volumes();
 }
 
 void StreakLineClass::Set_Merge_Abort_Factor(float factor)
@@ -370,7 +353,6 @@ void StreakLineClass::Set_Subdivision_Levels(unsigned int levels)
 {
 	MaxSubdivisionLevels = MIN(levels, MAX_SEGLINE_SUBDIV_LEVELS);
 
-	Invalidate_Cached_Bounding_Volumes();
 }
 
 void StreakLineClass::Set_Texture_Mapping_Mode(SegLineRendererClass::TextureMapMode mode)
@@ -409,50 +391,15 @@ void StreakLineClass::Set_End_Caps(int onoff)
 	LineRenderer.Set_End_Caps(onoff);
 }
 
-/*
-** RenderObjClass interface:
-*/
-
-RenderObjClass * StreakLineClass::Clone() const
+void StreakLineClass::Render(RenderInfoClass &rinfo)
 {
-	return NEW_REF( StreakLineClass, (*this));
-}
-
-int StreakLineClass::Get_Num_Polys() const
-{
-	int subdivision_factor = 1 << LineRenderer.Get_Current_Subdivision_Level();
-	return 2 * (PointLocations.Count() - 1) * subdivision_factor;
-}
-
-void StreakLineClass::Render(RenderInfoClass & rinfo)
-{
-	if (Is_Not_Hidden_At_All() == false) {
-		return ;
-	}
-
-	// Process texture reductions:
-//	if (LineRenderer.Peek_Texture()) LineRenderer.Peek_Texture()->Process_Reduction();
-
-	unsigned int sort_level = SORT_LEVEL_NONE;
-
-	if (!WW3D::Is_Sorting_Enabled())
-		sort_level=Get_Shader().Guess_Sort_Level();
-
-	if (WW3D::Are_Static_Sort_Lists_Enabled() && sort_level!=SORT_LEVEL_NONE) {
-
-		WW3D::Add_To_Static_Sort_List(this, sort_level);
-
+	if (!PointColors.Count() || !PointWidths.Count())
+	{
+		Render_Seg_Line(rinfo);
 	}
 	else
 	{
-		if ( !PointColors.Count() || !PointWidths.Count() )
-		{
-			Render_Seg_Line(rinfo);
-		}
-		else
-		{
-			Render_Streak_Line(rinfo);
-		}
+		Render_Streak_Line(rinfo);
 	}
 }
 
@@ -532,101 +479,6 @@ void StreakLineClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 	}
 }
 
-void StreakLineClass::Prepare_LOD(CameraClass &camera)
-{
-	// Find the maximum screen dimension of the object in pixels
-	NormalizedScreenArea = Get_Screen_Size(camera);
-
-//	// Find and set texture reduction factor
-//   Set_Texture_Reduction_Factor(Calculate_Texture_Reduction_Factor(NormalizedScreenArea));
-
-	// Ensure subdivision level is legal
-	unsigned int lvl = LineRenderer.Get_Current_Subdivision_Level();
-	lvl = MIN(lvl, MaxSubdivisionLevels);
-	LineRenderer.Set_Current_Subdivision_Level(lvl);
-
-	// Prepare LOD processing if the line has subdivision enabled:
-	if (MaxSubdivisionLevels > 0) {
-		// Add myself to the LOD optimizer:
-		PredictiveLODOptimizerClass::Add_Object(this);
-	} else {
-		// Not added to optimizer, need to add cost
-		PredictiveLODOptimizerClass::Add_Cost(Get_Cost());
-	}
-}
-
-void StreakLineClass::Increment_LOD()
-{
-	unsigned int lvl = LineRenderer.Get_Current_Subdivision_Level();
-
-	lvl = MIN(lvl+1,MaxSubdivisionLevels);
-
-	LineRenderer.Set_Current_Subdivision_Level(lvl);
-}
-
-void StreakLineClass::Decrement_LOD()
-{
-	int lvl = LineRenderer.Get_Current_Subdivision_Level();
-	if (lvl == 0) return;
-	LineRenderer.Set_Current_Subdivision_Level(lvl-1);
-}
-
-float StreakLineClass::Get_Cost() const
-{
-	return Get_Num_Polys();
-}
-
-float StreakLineClass::Get_Value() const
-{
-	// If we are at the minimum LOD, we must return AT_MIN_LOD.
-	if (LineRenderer.Get_Current_Subdivision_Level() == 0) {
-		return AT_MIN_LOD;
-	} else {
-		float polycount = (float)Get_Num_Polys();
-		float benefit_factor = 1.0f - (0.5f / (polycount * polycount));
-		return (benefit_factor * NormalizedScreenArea) / Get_Cost();
-	}
-}
-
-float StreakLineClass::Get_Post_Increment_Value() const
-{
-	// If we are at the maximum LOD, we must return AT_MIN_LOD.
-	if (LineRenderer.Get_Current_Subdivision_Level() == MaxSubdivisionLevels) {
-		return AT_MAX_LOD;
-	} else {
-		// Assumption: each subdivision level doubles polycount
-		float polycount = 2.0f * (float)Get_Num_Polys();
-		float benefit_factor = 1.0f - (0.5f / (polycount * polycount));
-		// Assumption: Cost() == polycount
-		return (benefit_factor * NormalizedScreenArea) / polycount;
-	}
-}
-
-void StreakLineClass::Set_LOD_Level(int lod)
-{
-	lod = MAX(0, lod);
-	lod = MIN(lod, (int)MaxSubdivisionLevels);
-
-	LineRenderer.Set_Current_Subdivision_Level((unsigned int)lod);
-}
-
-int StreakLineClass::Get_LOD_Level() const
-{
-	return (int) LineRenderer.Get_Current_Subdivision_Level();
-}
-
-int StreakLineClass::Get_LOD_Count() const
-{
-	return (int)MaxSubdivisionLevels;
-}
-/*
-void StreakLineClass::Set_Texture_Reduction_Factor(float trf)
-{
-	if (LineRenderer.Peek_Texture()) LineRenderer.Peek_Texture()->Set_Reduction_Factor(trf);
-}*/
-
-
-
 void StreakLineClass::Render_Seg_Line(RenderInfoClass & rinfo)
 {
 	// Line must have at least two points to be valid
@@ -639,7 +491,7 @@ void StreakLineClass::Render_Seg_Line(RenderInfoClass & rinfo)
 
 	LineRenderer.Render(
 		rinfo,
-		Transform,
+		Matrix3D(1),
 		PointLocations.Count(),
 		&(PointLocations[0]),
 		bounding_sphere
@@ -665,16 +517,9 @@ void StreakLineClass::Render_Streak_Line(RenderInfoClass & rinfo)
 	Get_Obj_Space_Bounding_Sphere(bounding_sphere);
 
 
-//	StreakRenderer.Render(
-//		rinfo,
-//		Transform,
-//		PointLocations.Count(),
-//		&(PointLocations[0]),
-//		bounding_sphere
-//		);
 	StreakRenderer.RenderStreak(
 		rinfo,
-		Transform,
+		Matrix3D(1),
 		PointLocations.Count(),
 		&(PointLocations[0]),
 		&(PointColors[0]),
@@ -683,57 +528,3 @@ void StreakLineClass::Render_Streak_Line(RenderInfoClass & rinfo)
 		Personalities
 		);
 }
-
-
-bool StreakLineClass::Cast_Ray(RayCollisionTestClass & raytest)
-{
-	if ((Get_Collision_Type() & raytest.CollisionType) == 0) return false;
-
-	bool retval = false;
-
-	//
-	//	Check each line segment against the ray
-	//
-	float fraction = 1.0F;
-	for (uint32 index = 1; index < (unsigned int)PointLocations.Count(); index ++)
-	{
-#ifdef ALLOW_TEMPORARIES
-		Vector3 curr_start	= Transform * PointLocations[index-1];
-		Vector3 curr_end		= Transform * PointLocations[index];
-		LineSegClass line_seg (curr_start, curr_end);
-#else
-		Vector3 curr[2];
-		Transform.mulVector3Array(&PointLocations[index-1], curr, 2);
-		LineSegClass line_seg(curr[0], curr[1]);
-#endif
-
-		Vector3 p0;
-		Vector3 p1;
-		if (raytest.Ray.Find_Intersection (line_seg, &p0, &fraction, &p1, nullptr)) {
-
-			//
-			//	Determine if the ray was close enough to this line to be
-			// considered intersecting
-			//
-			float dist = (p0 - p1).Length ();
-			if (dist <= LineRenderer.Get_Width() && fraction >= 0 && fraction < raytest.Result->Fraction) {
-			//if (dist <= Width && fraction < raytest.Result->Fraction) {
-				retval = true;
-				break;
-			}
-		}
-	}
-
-	//
-	//	Fill in the raytest structure if we were successfull
-	//
-	if (retval) {
-		raytest.Result->Fraction		= fraction;
-		raytest.Result->SurfaceType	= SURFACE_TYPE_DEFAULT;
-		raytest.CollidedRenderObj		= this;
-	}
-
-	return retval;
-}
-
-
