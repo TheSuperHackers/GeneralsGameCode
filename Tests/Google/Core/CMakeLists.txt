@@ -6,6 +6,7 @@ set(COREI_GOOGLETEST_SRC
     GameEngine/Common/FileSystemTestFixture.h
     GameEngine/Common/INITest.cpp
     GameEngine/GameClient/DisplayStringDummyTest.cpp
+    GameEngine/GameLogic/PathfindTieBreakingTest.cpp
     GameEngineDevice/StdDevice/Common/StdLocalFileSystemTest.cpp
     Libraries/Compression/CompressionManagerTest.cpp
     Libraries/WWVegas/WW3D2/TextureAtlasTest.cpp

@@ -560,7 +560,7 @@ void PathfindCell::forwardInsertionSort(PathfindCellList& list)
 	}
 
 	// If the node needs inserting before the current list head
-	if (m_info->m_totalCost < list.m_head->m_info->m_totalCost) {
+	if (hasHigherPriority(m_info, list.m_head->m_info)) {
 		m_info->m_prevOpen = nullptr;
 		list.m_head->m_info->m_prevOpen = this->m_info;
 		m_info->m_nextOpen = list.m_head->m_info;
@@ -570,7 +570,7 @@ void PathfindCell::forwardInsertionSort(PathfindCellList& list)
 
 	// Traverse the list to find correct position
 	PathfindCell* current = list.m_head;
-	while (current->m_info->m_nextOpen && current->m_info->m_nextOpen->m_totalCost <= m_info->m_totalCost) {
+	while (current->m_info->m_nextOpen && !hasHigherPriority(m_info, current->m_info->m_nextOpen)) {
 		current = current->getNextOpen();
 	}
 
@@ -606,7 +606,7 @@ void PathfindCell::reverseInsertionSort(PathfindCellList& list)
 	}
 
 	// If the node needs inserting after the current list tail
-	if (m_info->m_totalCost >= list.m_tail->m_info->m_totalCost) {
+	if (!hasHigherPriority(m_info, list.m_tail->m_info)) {
 		m_info->m_prevOpen = list.m_tail->m_info;
 		list.m_tail->m_info->m_nextOpen = this->m_info;
 		m_info->m_nextOpen = nullptr;
@@ -616,7 +616,7 @@ void PathfindCell::reverseInsertionSort(PathfindCellList& list)
 
 	// Traverse the list to find correct position
 	PathfindCell* current = list.m_tail;
-	while (current->m_info->m_prevOpen && current->m_info->m_prevOpen->m_totalCost > m_info->m_totalCost) {
+	while (current->m_info->m_prevOpen && hasHigherPriority(m_info, current->m_info->m_prevOpen)) {
 		current = current->getPrevOpen();
 	}
 
