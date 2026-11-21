@@ -237,6 +237,12 @@ Bool AIGuardMachine::lookForInnerTarget()
 	PartitionFilter *filters[16];
 	Int count = 0;
 
+	// TheSuperHackers @performance arcticdolphin 13/10/2026 Test the area first, it is cheap and rejects nearly everything.
+	if (area)
+	{
+		filters[count++] = &f3;
+	}
+
 	filters[count++] = &f1;
 	filters[count++] = &f2;
 	filters[count++] = &filterMapStatus;
@@ -249,7 +255,6 @@ Bool AIGuardMachine::lookForInnerTarget()
 		if (TheGameLogic->getFrame()>checkFrame) {
 			return false;
 		}
-		filters[count++] = &f3;
 		visionRange = area->getRadius();
 		area->getCenterPoint(&pos);
 	}
