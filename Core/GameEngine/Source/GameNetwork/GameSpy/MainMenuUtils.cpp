@@ -34,6 +34,7 @@
 #include <fcntl.h>
 
 //#include "Common/Registry.h"
+#include "Common/OptionPreferences.h"
 #include "Common/UserPreferences.h"
 #include "Common/version.h"
 #include "GameClient/GameText.h"
@@ -44,6 +45,13 @@
 #include "GameClient/ShellHooks.h"
 
 #include "gamespy/ghttp/ghttp.h"
+// Must follow ghttp.h: gsavailable.h uses gsi_char without including gsplatform.h.
+#include "gamespy/gsavailable.h"
+#include "gamespy/chat/chat.h"
+#include "gamespy/gp/gp.h"
+#include "gamespy/gstats/gstats.h"
+#include "gamespy/qr2/qr2.h"
+#include "gamespy/serverbrowsing/sb_internal.h"
 
 #include "GameNetwork/DownloadManager.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"
@@ -59,6 +67,61 @@
 
 static Bool checkingForPatchBeforeGameSpy = FALSE;
 static Int checksLeftBeforeOnline = 0;
+
+// GameSpy connects when this reaches GSIACAvailable. GSIACWaiting means a check is running.
+static GSIACResult availableCheckResult = GSIACUnavailable;
+
+static const char *getGameSpyGameName()
+{
+#if RTS_GENERALS
+	return "ccgenerals";
+#elif RTS_ZEROHOUR
+	return "ccgenzh";
+#else
+#error "No GameSpy gamename defined for this build target"
+#endif
+}
+
+static char s_gameSpyServer[64] = "";
+static UnsignedShort s_gameSpyChatPort = 0;
+
+// TheSuperHackers @feature Override all GameSpy services to the host defined in Options.ini or default.
+static void setGameSpyServerHosts()
+{
+	OptionPreferences pref;
+	strlcpy(s_gameSpyServer, pref.getGameSpyServer().str(), ARRAY_SIZE(s_gameSpyServer));
+	s_gameSpyChatPort = pref.getGameSpyChatPort();
+	DEBUG_LOG(("GameSpy server is %s, chat port %d", s_gameSpyServer, s_gameSpyChatPort));
+
+	strlcpy(GSIACHostname, s_gameSpyServer, ARRAY_SIZE(GSIACHostname));
+	strlcpy(qr2_hostname, s_gameSpyServer, ARRAY_SIZE(qr2_hostname));
+	SBOverrideMasterServer = s_gameSpyServer;
+	strlcpy(GPConnectionManagerHostname, s_gameSpyServer, ARRAY_SIZE(GPConnectionManagerHostname));
+	strlcpy(GPSearchManagerHostname, s_gameSpyServer, ARRAY_SIZE(GPSearchManagerHostname));
+	strlcpy(StatsServerHostname, s_gameSpyServer, ARRAY_SIZE(StatsServerHostname));
+}
+
+const char *GetGameSpyServer()
+{
+	return s_gameSpyServer;
+}
+
+UnsignedShort GetGameSpyChatPort()
+{
+	return s_gameSpyChatPort;
+}
+
+// Override for peerchat connect to redirect it to the GameSpy server host and chat port.
+extern "C" CHAT GameSpyChatConnectSecure(const char * /*serverAddress*/, int /*port*/, const char *nick,
+	const char *name, const char *gamename, const char *secretKey, chatGlobalCallbacks *callbacks,
+	chatNickErrorCallback nickErrorCallback, chatFillInUserCallback fillInUserCallback,
+	chatConnectCallback connectCallback, void *param, CHATBool blocking)
+{
+	DEBUG_LOG(("Connecting to GameSpy chat server %s:%d", s_gameSpyServer, s_gameSpyChatPort));
+	return chatConnectSecureA(s_gameSpyServer, s_gameSpyChatPort, nick, name, gamename, secretKey, callbacks,
+		nickErrorCallback, fillInUserCallback, connectCallback, param, blocking);
+}
+
 static Int timeThroughOnline = 0; // used to avoid having old callbacks cause problems
 static Bool mustDownloadPatch = FALSE;
 static Bool cantConnectBeforeOnline = FALSE;
@@ -82,6 +145,7 @@ enum {
 
 static void startOnline();
 static void reallyStartPatchCheck();
+void CancelPatchCheckCallbackAndReopenDropdown();
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -215,6 +279,14 @@ static void startOnline()
 	}
 
 	TheScriptEngine->signalUIInteract(TheShellHookNames[SHELL_SCRIPT_HOOK_MAIN_MENU_ONLINE_SELECTED]);
+
+	if (availableCheckResult != GSIACAvailable)
+	{
+		MessageBoxOk(TheGameText->fetch("GUI:GSErrorTitle"),
+			TheGameText->fetch("GUI:GSDisconReason4"),
+			CancelPatchCheckCallbackAndReopenDropdown);
+		return;
+	}
 
 	DEBUG_ASSERTCRASH( !TheGameSpyBuddyMessageQueue, ("TheGameSpyBuddyMessageQueue exists!") );
 	DEBUG_ASSERTCRASH( !TheGameSpyPeerMessageQueue, ("TheGameSpyPeerMessageQueue exists!") );
@@ -480,7 +552,7 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 	// we need to download the MOTD again
 	std::string gameURL, mapURL;
 	std::string configURL, motdURL;
-	FormatURLFromRegistry(gameURL, mapURL, configURL, motdURL);
+	FormatURLFromRegistry(gameURL, mapURL, configURL, motdURL, s_gameSpyServer);
 	ghttpGet( configURL.c_str(), GHTTPFalse, configCallback, param );
 
 	return GHTTPTrue;
@@ -555,6 +627,11 @@ void CancelPatchCheckCallbackAndReopenDropdown()
 void CancelPatchCheckCallback()
 {
 	s_asyncDNSLookupInProgress = FALSE;
+	if (availableCheckResult == GSIACWaiting)
+	{
+		GSICancelAvailableCheck();
+		availableCheckResult = GSIACUnavailable;
+	}
 	HandleCanceledDownload(FALSE); // don't dropdown
 	checkingForPatchBeforeGameSpy = FALSE;
 	checksLeftBeforeOnline = 0;
@@ -689,24 +766,18 @@ static GHTTPBool numPlayersOnlineCallback( GHTTPRequest request, GHTTPResult res
 
 void CheckOverallStats()
 {
-#if RTS_GENERALS
-	const char *const url = "http://gamestats.gamespy.com/ccgenerals/display.html";
-#elif RTS_ZEROHOUR
-	const char *const url = "http://gamestats.gamespy.com/ccgenzh/display.html";
-#endif
-	ghttpGet(url, GHTTPFalse, overallStatsCallback, nullptr);
+	AsciiString url;
+	url.format("http://%s/%s/display.html", s_gameSpyServer, getGameSpyGameName());
+	ghttpGet(url.str(), GHTTPFalse, overallStatsCallback, nullptr);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 void CheckNumPlayersOnline()
 {
-#if RTS_GENERALS
-	const char *const url = "http://launch.gamespyarcade.com/software/launch/arcadecount2.dll?svcname=ccgenerals";
-#elif RTS_ZEROHOUR
-	const char *const url = "http://launch.gamespyarcade.com/software/launch/arcadecount2.dll?svcname=ccgenzh";
-#endif
-	ghttpGet(url, GHTTPFalse, numPlayersOnlineCallback, nullptr);
+	AsciiString url;
+	url.format("http://%s/software/launch/arcadecount2.dll?svcname=%s", s_gameSpyServer, getGameSpyGameName());
+	ghttpGet(url.str(), GHTTPFalse, numPlayersOnlineCallback, nullptr);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -730,7 +801,7 @@ DWORD WINAPI asyncGethostbynameThreadFunc( void * szName )
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-int asyncGethostbyname(char * szName)
+int asyncGethostbyname(const char * szName)
 {
 	static int            stat = 0;
 	static unsigned long  threadid;
@@ -739,7 +810,8 @@ int asyncGethostbyname(char * szName)
 	{
 		/* Kick off gethostname thread */
 		s_asyncDNSThreadDone = FALSE;
-		s_asyncDNSThreadHandle = CreateThread( nullptr, 0, asyncGethostbynameThreadFunc, szName, 0, &threadid );
+		s_asyncDNSThreadHandle = CreateThread( nullptr, 0, asyncGethostbynameThreadFunc,
+			const_cast<char *>(szName), 0, &threadid );
 
 		if( s_asyncDNSThreadHandle == nullptr )
 		{
@@ -774,8 +846,7 @@ void HTTPThinkWrapper()
 {
 	if (s_asyncDNSLookupInProgress)
 	{
-		Char hostname[] = "servserv.generals.ea.com";
-		Int ret = asyncGethostbyname(hostname);
+		Int ret = asyncGethostbyname(s_gameSpyServer);
 		switch(ret)
 		{
 		case LOOKUP_FAILED:
@@ -785,6 +856,26 @@ void HTTPThinkWrapper()
 		case LOOKUP_SUCCEEDED:
 			reallyStartPatchCheck();
 			break;
+		}
+	}
+
+	if (availableCheckResult == GSIACWaiting)
+	{
+		availableCheckResult = GSIAvailableCheckThink();
+		if (availableCheckResult != GSIACWaiting)
+		{
+			--checksLeftBeforeOnline;
+			DEBUG_ASSERTCRASH(checksLeftBeforeOnline>=0, ("Too many callbacks"));
+			if (onlineCancelWindow && checksLeftBeforeOnline == 0)
+			{
+				TheWindowManager->winDestroy(onlineCancelWindow);
+				onlineCancelWindow = nullptr;
+			}
+
+			DEBUG_LOG(("Availability check returned %d", availableCheckResult));
+
+			if (checksLeftBeforeOnline == 0)
+				startOnline();
 		}
 	}
 
@@ -822,6 +913,8 @@ void StopAsyncDNSCheck()
 
 void StartPatchCheck()
 {
+	setGameSpyServerHosts();
+
 	checkingForPatchBeforeGameSpy = TRUE;
 	cantConnectBeforeOnline = FALSE;
 	timeThroughOnline++;
@@ -831,8 +924,7 @@ void StartPatchCheck()
 		TheGameText->fetch("GUI:CheckingForPatches"), CancelPatchCheckCallbackAndReopenDropdown);
 
 	s_asyncDNSLookupInProgress = TRUE;
-	Char hostname[] = "servserv.generals.ea.com";
-	Int ret = asyncGethostbyname(hostname);
+	Int ret = asyncGethostbyname(s_gameSpyServer);
 	switch(ret)
 	{
 	case LOOKUP_FAILED:
@@ -849,12 +941,15 @@ void StartPatchCheck()
 
 static void reallyStartPatchCheck()
 {
-	checksLeftBeforeOnline = 4;
+	checksLeftBeforeOnline = 5; // patch, map, config and MOTD requests, and the availability check
+
+	availableCheckResult = GSIACWaiting;
+	GSIStartAvailableCheck(getGameSpyGameName());
 
 	std::string gameURL, mapURL;
 	std::string configURL, motdURL;
 
-	FormatURLFromRegistry(gameURL, mapURL, configURL, motdURL);
+	FormatURLFromRegistry(gameURL, mapURL, configURL, motdURL, s_gameSpyServer);
 
 	// check for a patch first
 	DEBUG_LOG(("Game patch check: [%s]", gameURL.c_str()));

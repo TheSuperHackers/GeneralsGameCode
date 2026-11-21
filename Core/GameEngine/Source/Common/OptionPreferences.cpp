@@ -180,6 +180,28 @@ void OptionPreferences::setOnlineIPAddress(UnsignedInt IP)
 	(*this)["GameSpyIPAddress"] = tmp;
 }
 
+AsciiString OptionPreferences::getGameSpyServer() const
+{
+	OptionPreferences::const_iterator it = find("GameSpyServer");
+	if (it == end())
+		return RTS_GAMESPY_SERVER_NAME;
+
+	return it->second;
+}
+
+UnsignedShort OptionPreferences::getGameSpyChatPort() const
+{
+	const UnsignedShort defaultPort = 6667;
+	OptionPreferences::const_iterator it = find("GameSpyChatPort");
+	if (it == end())
+		return defaultPort;
+
+	Int port = atoi(it->second.str());
+	if (port <= 0 || port > 65535)
+		return defaultPort;
+	return port;
+}
+
 Bool OptionPreferences::getArchiveReplaysEnabled() const
 {
 	OptionPreferences::const_iterator it = find("ArchiveReplays");

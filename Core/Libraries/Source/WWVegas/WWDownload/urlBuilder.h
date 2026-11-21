@@ -19,4 +19,4 @@
 #pragma once
 
 void FormatURLFromRegistry( std::string& gamePatchURL, std::string& mapPatchURL,
-													 std::string& configURL, std::string& motdURL );
+													 std::string& configURL, std::string& motdURL, const char *serverHost );

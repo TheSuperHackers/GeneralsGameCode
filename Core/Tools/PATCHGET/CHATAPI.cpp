@@ -449,7 +449,7 @@ static void StartPatchCheck()
 	std::string gameURL, mapURL;
 	std::string configURL, motdURL;
 
-	FormatURLFromRegistry(gameURL, mapURL, configURL, motdURL);
+	FormatURLFromRegistry(gameURL, mapURL, configURL, motdURL, "servserv.generals.ea.com");
 
 	// check for a patch first
 	checksLeft = 2;

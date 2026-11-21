@@ -47,6 +47,7 @@
 #include "GameNetwork/GameSpyOverlay.h"
 #include "GameNetwork/NAT.h"
 #include "GameNetwork/NetworkInterface.h"
+#include "GameNetwork/networkutil.h"
 
 
 // GameSpyGameSlot -------------------------------------------
@@ -67,370 +68,42 @@ GameSpyGameSlot::GameSpyGameSlot()
 }
 
 // Helper Functions ----------------------------------------
-/*
-** Function definitions for the MIB-II entry points.
-*/
 
-BOOL (__stdcall *SnmpExtensionInitPtr)(IN DWORD dwUpTimeReference, OUT HANDLE *phSubagentTrapEvent, OUT AsnObjectIdentifier *pFirstSupportedRegion);
-BOOL (__stdcall *SnmpExtensionQueryPtr)(IN BYTE bPduType, IN OUT RFC1157VarBindList *pVarBindList, OUT AsnInteger32 *pErrorStatus, OUT AsnInteger32 *pErrorIndex);
-LPVOID (__stdcall *SnmpUtilMemAllocPtr)(IN DWORD bytes);
-VOID (__stdcall *SnmpUtilMemFreePtr)(IN LPVOID pMem);
-
-typedef struct tConnInfoStruct {
-	unsigned int State;
-	unsigned long LocalIP;
-	unsigned short LocalPort;
-	unsigned long RemoteIP;
-	unsigned short RemotePort;
-} ConnInfoStruct;
-
-/***********************************************************************************************
- * Get_Local_Chat_Connection_Address -- Which address are we using to talk to the chat server? *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Ptr to address to return local address                                            *                                                                                             *
- *                                                                                             *
- * OUTPUT:   True if success                                                                   *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/27/00 3:24PM ST : Created                                                              *
- *=============================================================================================*/
+// TheSuperHackers @bugfix Fix a heap corruption crash after login. Finds the local address that talks
+// to the chat server with a UDP socket that is bound like the chat socket. localIP is in network byte order.
 Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverPort, UnsignedInt& localIP)
 {
-	//return false;
-	/*
-	** Local defines.
-	*/
-	enum {
-		CLOSED = 1,
-		LISTENING,
-		SYN_SENT,
-		SEN_RECEIVED,
-		ESTABLISHED,
-		FIN_WAIT,
-		FIN_WAIT2,
-		CLOSE_WAIT,
-		LAST_ACK,
-		CLOSING,
-		TIME_WAIT,
-		DELETE_TCB
-	};
+	const UnsignedInt serverIP = ResolveIP(serverName);
+	if (serverIP == 0)
+		return false;
 
-	enum {
-		tcpConnState = 1,
-		tcpConnLocalAddress,
-		tcpConnLocalPort,
-		tcpConnRemAddress,
-		tcpConnRemPort
-	};
+	SOCKET sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (sock == INVALID_SOCKET)
+		return false;
 
+	struct sockaddr_in address;
+	memset(&address, 0, sizeof(address));
+	address.sin_family = AF_INET;
+	address.sin_addr.s_addr = htonl(chatGetLocalIP());
 
-	/*
-	** Locals.
-	*/
-	unsigned char serverAddress[4];
-	unsigned char remoteAddress[4];
-	HANDLE trap_handle;
-	AsnObjectIdentifier first_supported_region;
-	std::vector<ConnInfoStruct> connectionVector;
-	int last_field;
-	int index;
-	AsnInteger error_status;
-	AsnInteger error_index;
-	int conn_entry_type_index;
-	int conn_entry_type;
-	Bool found;
-
-	/*
-	** Statics.
-	*/
-	static char _conn_state[][32] = {
-		"?",
-		"CLOSED",
-		"LISTENING",
-		"SYN_SENT",
-		"SEN_RECEIVED",
-		"ESTABLISHED",
-		"FIN_WAIT",
-		"FIN_WAIT2",
-		"CLOSE_WAIT",
-		"LAST_ACK",
-		"CLOSING",
-		"TIME_WAIT",
-		"DELETE_TCB"
-	};
-
-	DEBUG_LOG(("Finding local address used to talk to the chat server"));
-	DEBUG_LOG(("Current chat server name is %s", serverName.str()));
-	DEBUG_LOG(("Chat server port is %d", serverPort));
-
-	/*
-	** Get the address of the chat server.
-	*/
-	DEBUG_LOG( ("About to call gethostbyname"));
-	struct hostent *host_info = gethostbyname(serverName.str());
-
-	if (!host_info) {
-		DEBUG_LOG( ("gethostbyname failed! Error code %d", WSAGetLastError()));
-		return(false);
-	}
-
-	memcpy(serverAddress, &host_info->h_addr_list[0][0], 4);
-	unsigned long temp = *((unsigned long*)(&serverAddress[0]));
-	temp = ntohl(temp);
-	*((unsigned long*)(&serverAddress[0])) = temp;
-
-	DEBUG_LOG(("Host address is %d.%d.%d.%d", serverAddress[3], serverAddress[2], serverAddress[1], serverAddress[0]));
-
-	/*
-	** Load the MIB-II SNMP DLL.
-	*/
-	DEBUG_LOG(("About to load INETMIB1.DLL"));
-
-	HINSTANCE mib_ii_dll = LoadLibrary("inetmib1.dll");
-	if (mib_ii_dll == nullptr) {
-		DEBUG_LOG(("Failed to load INETMIB1.DLL"));
-		return(false);
-	}
-
-	DEBUG_LOG(("About to load SNMPAPI.DLL"));
-
-	HINSTANCE snmpapi_dll = LoadLibrary("snmpapi.dll");
-	if (snmpapi_dll == nullptr) {
-		DEBUG_LOG(("Failed to load SNMPAPI.DLL"));
-		FreeLibrary(mib_ii_dll);
-		return(false);
-	}
-
-	/*
-	** Get the function pointers into the .dll
-	*/
-	SnmpExtensionInitPtr = (int (__stdcall *)(unsigned long,void ** ,AsnObjectIdentifier *)) GetProcAddress(mib_ii_dll, "SnmpExtensionInit");
-	SnmpExtensionQueryPtr = (int (__stdcall *)(unsigned char,SnmpVarBindList *,long *,long *)) GetProcAddress(mib_ii_dll, "SnmpExtensionQuery");
-	SnmpUtilMemAllocPtr = (void *(__stdcall *)(unsigned long)) GetProcAddress(snmpapi_dll, "SnmpUtilMemAlloc");
-	SnmpUtilMemFreePtr = (void (__stdcall *)(void *)) GetProcAddress(snmpapi_dll, "SnmpUtilMemFree");
-	if (SnmpExtensionInitPtr == nullptr || SnmpExtensionQueryPtr == nullptr || SnmpUtilMemAllocPtr == nullptr || SnmpUtilMemFreePtr == nullptr) {
-		DEBUG_LOG(("Failed to get proc addresses for linked functions"));
-		FreeLibrary(snmpapi_dll);
-		FreeLibrary(mib_ii_dll);
-		return(false);
-	}
-
-
-	RFC1157VarBindList *bind_list_ptr = (RFC1157VarBindList *) SnmpUtilMemAllocPtr(sizeof(RFC1157VarBindList));
-	RFC1157VarBind *bind_ptr = (RFC1157VarBind *) SnmpUtilMemAllocPtr(sizeof(RFC1157VarBind));
-
-	/*
-	** OK, here we go. Try to initialise the .dll
-	*/
-	DEBUG_LOG(("About to init INETMIB1.DLL"));
-	int ok = SnmpExtensionInitPtr(GetCurrentTime(), &trap_handle, &first_supported_region);
-
-	if (!ok) {
-		/*
-		** Aw crap.
-		*/
-		DEBUG_LOG(("Failed to init the .dll"));
-		SnmpUtilMemFreePtr(bind_list_ptr);
-		SnmpUtilMemFreePtr(bind_ptr);
-		FreeLibrary(snmpapi_dll);
-		FreeLibrary(mib_ii_dll);
-		return(false);
-	}
-
-	/*
-	** Name of mib_ii object we want to query. See RFC 1213.
-	**
-	** iso.org.dod.internet.mgmt.mib-2.tcp.tcpConnTable.TcpConnEntry.tcpConnState
-	**  1   3   6      1      2     1   6        13          1             1
-	*/
-	unsigned int mib_ii_name[] = {1,3,6,1,2,1,6,13,1,1};
-	unsigned int *mib_ii_name_ptr = (unsigned int *) SnmpUtilMemAllocPtr(sizeof(mib_ii_name));
-	memcpy(mib_ii_name_ptr, mib_ii_name, sizeof(mib_ii_name));
-
-	/*
-	** Get the index of the conn entry data.
-	*/
-	conn_entry_type_index = ARRAY_SIZE(mib_ii_name) - 1;
-
-	/*
-	** Set up the bind list.
-	*/
-	bind_ptr->name.idLength = ARRAY_SIZE(mib_ii_name);
-	bind_ptr->name.ids = mib_ii_name;
-	bind_list_ptr->list = bind_ptr;
-	bind_list_ptr->len = 1;
-
-
-	/*
-	** We start with the tcpConnLocalAddress field.
-	*/
-	last_field = 1;
-
-	/*
-	** First connection.
-	*/
-	index = 0;
-
-	/*
-	** Suck out that tcp connection info....
-	*/
-	while (true) {
-
-		if (!SnmpExtensionQueryPtr(SNMP_PDU_GETNEXT, bind_list_ptr, &error_status, &error_index)) {
-		//if (!SnmpExtensionQueryPtr(ASN_RFC1157_GETNEXTREQUEST, bind_list_ptr, &error_status, &error_index)) {
-			DEBUG_LOG(("SnmpExtensionQuery returned false"));
-			SnmpUtilMemFreePtr(bind_list_ptr);
-			SnmpUtilMemFreePtr(bind_ptr);
-			FreeLibrary(snmpapi_dll);
-			FreeLibrary(mib_ii_dll);
-			return(false);
-		}
-
-		/*
-		** If this is something new we aren't looking for then we are done.
-		*/
-		if (bind_ptr->name.idLength < ARRAY_SIZE(mib_ii_name)) {
-			break;
-		}
-
-		/*
-		** Get the type of info we are looking at. See RFC1213.
-		**
-		** 1 = tcpConnState
-		** 2 = tcpConnLocalAddress
-		** 3 = tcpConnLocalPort
-		** 4 = tcpConnRemAddress
-		** 5 = tcpConnRemPort
-		**
-		** tcpConnState is one of the following...
-		**
-		**   1  closed
-		**   2  listen
-		**   3  synSent
-		**   4  synReceived
-		**   5  established
-		**   6  finWait1
-		**   7  finWait2
-		**   8  closeWait
-		**   9  lastAck
-		**   10 closing
-		**   11 timeWait
-		**   12 deleteTCB
-		*/
-		conn_entry_type = bind_ptr->name.ids[conn_entry_type_index];
-
-		if (last_field != conn_entry_type) {
-			index = 0;
-			last_field = conn_entry_type;
-		}
-
-		switch (conn_entry_type) {
-
-			/*
-			** 1. First field in the entry. Need to create a new connection info struct
-			** here to store this connection in.
-			*/
-			case tcpConnState:
-			{
-				ConnInfoStruct new_conn;
-				new_conn.State = bind_ptr->value.asnValue.number;
-				connectionVector.push_back(new_conn);
-				break;
-			}
-
-			/*
-			** 2. Local address field.
-			*/
-			case tcpConnLocalAddress:
-				DEBUG_ASSERTCRASH(index < connectionVector.size(), ("Bad connection index"));
-				connectionVector[index].LocalIP = *((unsigned long*)bind_ptr->value.asnValue.address.stream);
-				index++;
-				break;
-
-			/*
-			** 3. Local port field.
-			*/
-			case tcpConnLocalPort:
-				DEBUG_ASSERTCRASH(index < connectionVector.size(), ("Bad connection index"));
-				connectionVector[index].LocalPort = bind_ptr->value.asnValue.number;
-				//connectionVector[index]->LocalPort = ntohs(connectionVector[index]->LocalPort);
-				index++;
-				break;
-
-			/*
-			** 4. Remote address field.
-			*/
-			case tcpConnRemAddress:
-				DEBUG_ASSERTCRASH(index < connectionVector.size(), ("Bad connection index"));
-				connectionVector[index].RemoteIP = *((unsigned long*)bind_ptr->value.asnValue.address.stream);
-				index++;
-				break;
-
-			/*
-			** 5. Remote port field.
-			*/
-			case tcpConnRemPort:
-				DEBUG_ASSERTCRASH(index < connectionVector.size(), ("Bad connection index"));
-				connectionVector[index].RemotePort = bind_ptr->value.asnValue.number;
-				//connectionVector[index]->RemotePort = ntohs(connectionVector[index]->RemotePort);
-				index++;
-				break;
+	// connect() on a UDP socket sends nothing, but it makes the system choose the local address.
+	Bool found = false;
+	if (bind(sock, (struct sockaddr *)&address, sizeof(address)) == 0)
+	{
+		address.sin_addr.s_addr = htonl(serverIP);
+		address.sin_port = htons(serverPort);
+		int addressLength = sizeof(address);
+		if (connect(sock, (struct sockaddr *)&address, sizeof(address)) == 0
+			&& getsockname(sock, (struct sockaddr *)&address, &addressLength) == 0)
+		{
+			localIP = address.sin_addr.s_addr;
+			found = true;
+			DEBUG_LOG(("Using address 0x%8.8X to talk to chat server %s", localIP, serverName.str()));
 		}
 	}
 
-	SnmpUtilMemFreePtr(bind_list_ptr);
-	SnmpUtilMemFreePtr(bind_ptr);
-	SnmpUtilMemFreePtr(mib_ii_name_ptr);
-
-	DEBUG_LOG(("Got %d connections in list, parsing...", connectionVector.size()));
-
-	/*
-	** Right, we got the lot. Lets see if any of them have the same address as the chat
-	** server we think we are talking to.
-	*/
-	found = false;
-	for (size_t i=0; i<connectionVector.size(); ++i) {
-		ConnInfoStruct connection = connectionVector[i];
-
-		temp = ntohl(connection.RemoteIP);
-		memcpy(remoteAddress, (unsigned char*)&temp, 4);
-
-		/*
-		** See if this connection has the same address as our server.
-		*/
-		if (!found && memcmp(remoteAddress, serverAddress, 4) == 0) {
-			DEBUG_LOG(("Found connection with same remote address as server"));
-
-			if (serverPort == 0 || serverPort == (unsigned int)connection.RemotePort) {
-
-				DEBUG_LOG(("Connection has same port"));
-				/*
-				** Make sure the connection is current.
-				*/
-				if (connection.State == ESTABLISHED) {
-					DEBUG_LOG(("Connection is ESTABLISHED"));
-					localIP = connection.LocalIP;
-					found = true;
-				} else {
-					DEBUG_LOG(("Connection is not ESTABLISHED - skipping"));
-				}
-			} else {
-				DEBUG_LOG(("Connection has different port. Port is %d, looking for %d", connection.RemotePort, serverPort));
-			}
-		}
-	}
-
-	if (found) {
-		DEBUG_LOG(("Using address 0x%8.8X to talk to chat server", localIP));
-	}
-
-	FreeLibrary(snmpapi_dll);
-	FreeLibrary(mib_ii_dll);
-	return(found);
+	closesocket(sock);
+	return found;
 }
 
 // GameSpyGameSlot ----------------------------------------
