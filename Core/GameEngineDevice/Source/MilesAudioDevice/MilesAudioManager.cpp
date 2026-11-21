@@ -65,7 +65,6 @@
 
 #include "Common/file.h"
 
-#include <Utility/interlocked_adapter.h>
 #include "MilesLoader.h"
 
 #include <dsound.h>
@@ -1083,12 +1082,15 @@ void MilesAudioManager::releasePlayingAudio( PlayingAudio *playing )
 void MilesAudioManager::stopPlayingAudio( PlayingAudio *playing )
 {
 	// Advance from Playing to Stopping
-	InterlockedCompareExchange(reinterpret_cast<volatile long*>(&playing->m_status), PS_Stopping, PS_Playing);
+	PlayingStatus status = PS_Playing;
+	playing->m_status.compare_exchange_strong(status, PS_Stopping);
 	// Advance from Stopping to Stopped
-	const long prevStatus = InterlockedCompareExchange(reinterpret_cast<volatile long*>(&playing->m_status), PS_Stopped, PS_Stopping);
-	if (prevStatus != PS_Stopping) {
+	status = PS_Stopping;
+	if (!playing->m_status.compare_exchange_strong(status, PS_Stopped))
+	{
 		return;
 	}
+
 	releaseMilesHandles(playing);
 	playing->m_rerequestOnNextUpdate = false;
 }
@@ -1598,7 +1600,8 @@ void MilesAudioManager::notifyOfAudioCompletion( UnsignedInt handle, UnsignedInt
 	}
 
 	// it will be cleaned up on the next frame update
-	InterlockedCompareExchange(reinterpret_cast<volatile long*>(&playing->m_status), PS_Stopping, PS_Playing);
+	PlayingStatus status = PS_Playing;
+	playing->m_status.compare_exchange_strong(status, PS_Stopping);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -2741,7 +2744,8 @@ Bool MilesAudioManager::startNextLoop( PlayingAudio *playing )
 
 		if (playing->m_audioEventRTS->getDelay() > MSEC_PER_LOGICFRAME_REAL) {
 			playing->m_rerequestOnNextUpdate = true;
-			InterlockedCompareExchange(reinterpret_cast<volatile long*>(&playing->m_status), PS_Stopping, PS_Playing);
+			PlayingStatus status = PS_Playing;
+			playing->m_status.compare_exchange_strong(status, PS_Stopping);
 			return true;
 		}
 
