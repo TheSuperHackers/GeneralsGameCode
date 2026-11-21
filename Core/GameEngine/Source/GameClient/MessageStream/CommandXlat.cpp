@@ -2541,6 +2541,15 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 	}
 }
 
+//-------------------------------------------------------------------------------------------------
+struct DrawableIsNotLocallyControlled
+{
+	Bool operator()(const Drawable* draw) const
+	{
+		return !(draw->getObject() && draw->getObject()->isLocallyControlled());
+	}
+};
+
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -3859,17 +3868,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		{
 			// weed out unit responses for things we don't own.
 			DrawableList listOfUnits = *TheInGameUI->getAllSelectedDrawables();
-			for (DrawableListIt it = listOfUnits.begin(); it != listOfUnits.end(); /* empty */) {
-				Drawable *draw = *it;
-				if (draw->getObject() && draw->getObject()->isLocallyControlled()) {
-					// This thing can emit a unit response.
-					++it;
-					continue;
-				} else {
-					// remove it.
-					it = listOfUnits.erase(it);
-				}
-			}
+			std::erase_if(listOfUnits, DrawableIsNotLocallyControlled());
 			if (!listOfUnits.empty()) {
 				pickAndPlayUnitVoiceResponse( &listOfUnits, GameMessage::MSG_CREATE_SELECTED_GROUP );
 			}

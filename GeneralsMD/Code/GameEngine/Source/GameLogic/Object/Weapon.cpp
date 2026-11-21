@@ -1233,17 +1233,22 @@ void WeaponTemplate::trimOldHistoricDamage() const
 #endif
 
 //-------------------------------------------------------------------------------------------------
+struct HistoricDamageHasTriggerId
+{
+	explicit HistoricDamageHasTriggerId(UnsignedInt triggerId) : m_triggerId(triggerId) {}
+
+	Bool operator()(const HistoricWeaponDamageInfo& info) const
+	{
+		return info.triggerId == m_triggerId;
+	}
+
+	UnsignedInt m_triggerId;
+};
+
+//-------------------------------------------------------------------------------------------------
 void WeaponTemplate::trimTriggeredHistoricDamage() const
 {
-	HistoricWeaponDamageList::iterator it = m_historicDamage.begin();
-
-	while (it != m_historicDamage.end())
-	{
-		if (it->triggerId == m_historicDamageTriggerId)
-			it = m_historicDamage.erase(it);
-		else
-			++it;
-	}
+	std::erase_if(m_historicDamage, HistoricDamageHasTriggerId(m_historicDamageTriggerId));
 }
 
 //-------------------------------------------------------------------------------------------------
