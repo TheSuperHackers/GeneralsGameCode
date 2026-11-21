@@ -43,7 +43,7 @@ class W3DParticleSystemManager : public ParticleSystemManager
 
 public:
 	W3DParticleSystemManager();
-	virtual ~W3DParticleSystemManager() override;
+	virtual ~W3DParticleSystemManager() override = default;
 
 	virtual void doParticles(RenderInfoClass &rinfo) override;
 	virtual void queueParticleRender() override;
@@ -61,10 +61,10 @@ private:
 	PointGroupClass m_pointGroup;							///< the point group that contains all of the particles
 	StreakLineClass m_streakLine;							///< the streak class that contains all of the streaks
 	W3DTerrainParticles m_terrainParticles;			///< the terrain-conforming particles renderer
-	ShareBufferClass<Vector3> *m_posBuffer;			///< array of particle positions
-	ShareBufferClass<Vector4> *m_RGBABuffer;		///< array of particle color and alpha
-	ShareBufferClass<float> *m_sizeBuffer;			///< array of particle sizes
-	ShareBufferClass<uint8> *m_angleBuffer;			///< array of particle orientations
+	RefCountPtr<ShareBufferClass<Vector3>/**/> m_posBuffer;			///< array of particle positions
+	RefCountPtr<ShareBufferClass<Vector4>/**/> m_RGBABuffer;		///< array of particle color and alpha
+	RefCountPtr<ShareBufferClass<float>/**/> m_sizeBuffer;			///< array of particle sizes
+	RefCountPtr<ShareBufferClass<uint8>/**/> m_angleBuffer;			///< array of particle orientations
 	AABoxClass m_currentBoundingBox;
 
 	ParticleSystemInfo::ParticleShaderType m_batchShaderType;

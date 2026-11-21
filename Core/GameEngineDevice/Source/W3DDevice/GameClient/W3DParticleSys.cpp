@@ -49,26 +49,14 @@ W3DParticleSystemManager::W3DParticleSystemManager()
 	m_batchParticleAlignment = ParticleSystemInfo::PARTICLE_ALIGNMENT_BILLBOARD;
 	m_batchShaderType = ParticleSystemInfo::INVALID_SHADER;
 
-	m_posBuffer = nullptr;
-	m_RGBABuffer = nullptr;
-	m_sizeBuffer = nullptr;
-	m_angleBuffer = nullptr;
 	m_readyToRender = false;
 
 	m_onScreenParticleCount = 0;
 
-	m_posBuffer = NEW_REF( ShareBufferClass<Vector3>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_posBuffer") );
-	m_RGBABuffer = NEW_REF( ShareBufferClass<Vector4>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_RGBABuffer") );
-	m_sizeBuffer = NEW_REF( ShareBufferClass<float>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_sizeBuffer") );
-	m_angleBuffer = NEW_REF( ShareBufferClass<uint8>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_angleBuffer") );
-}
-
-W3DParticleSystemManager::~W3DParticleSystemManager()
-{
-	REF_PTR_RELEASE(m_posBuffer);
-	REF_PTR_RELEASE(m_RGBABuffer);
-	REF_PTR_RELEASE(m_sizeBuffer);
-	REF_PTR_RELEASE(m_angleBuffer);
+	m_posBuffer.Assign_No_Add_Ref(NEW_REF( ShareBufferClass<Vector3>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_posBuffer") ));
+	m_RGBABuffer.Assign_No_Add_Ref(NEW_REF( ShareBufferClass<Vector4>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_RGBABuffer") ));
+	m_sizeBuffer.Assign_No_Add_Ref(NEW_REF( ShareBufferClass<float>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_sizeBuffer") ));
+	m_angleBuffer.Assign_No_Add_Ref(NEW_REF( ShareBufferClass<uint8>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_angleBuffer") ));
 }
 
 /**
@@ -352,7 +340,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 
 			/// @todo Use both QUADS and TRIS for particles
 			m_pointGroup.Set_Point_Mode( PointGroupClass::QUADS );
-			m_pointGroup.Set_Arrays( m_posBuffer, m_RGBABuffer, nullptr, m_sizeBuffer, m_angleBuffer, nullptr, pointCount );
+			m_pointGroup.Set_Arrays( m_posBuffer.Peek(), m_RGBABuffer.Peek(), nullptr, m_sizeBuffer.Peek(), m_angleBuffer.Peek(), nullptr, pointCount );
 			m_pointGroup.Set_Billboard(sys->getParticleAlignment() == ParticleSystemInfo::PARTICLE_ALIGNMENT_BILLBOARD);
 
 			/// @todo Support animated texture particles
@@ -445,7 +433,7 @@ void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, Unsign
 		{
 			m_terrainParticles.setTexture(m_batchTexture.Peek());
 			m_terrainParticles.setShader( shader );
-			m_terrainParticles.setArrays( m_posBuffer, m_RGBABuffer, m_sizeBuffer, m_angleBuffer, pointCount );
+			m_terrainParticles.setArrays( m_posBuffer.Peek(), m_RGBABuffer.Peek(), m_sizeBuffer.Peek(), m_angleBuffer.Peek(), pointCount );
 			m_terrainParticles.setBoundingBox( m_currentBoundingBox );
 			m_terrainParticles.render();
 		}
@@ -455,7 +443,7 @@ void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, Unsign
 			m_pointGroup.Set_Shader(shader);
 			m_pointGroup.Set_Flag(PointGroupClass::TRANSFORM, true);
 			m_pointGroup.Set_Point_Mode(PointGroupClass::QUADS);
-			m_pointGroup.Set_Arrays(m_posBuffer, m_RGBABuffer, nullptr, m_sizeBuffer, m_angleBuffer, nullptr, pointCount);
+			m_pointGroup.Set_Arrays(m_posBuffer.Peek(), m_RGBABuffer.Peek(), nullptr, m_sizeBuffer.Peek(), m_angleBuffer.Peek(), nullptr, pointCount);
 			m_pointGroup.Set_Billboard(m_batchParticleAlignment == ParticleSystemInfo::PARTICLE_ALIGNMENT_BILLBOARD);
 			m_pointGroup.Set_Point_Frame(0);
 			m_pointGroup.Render(rinfo);
