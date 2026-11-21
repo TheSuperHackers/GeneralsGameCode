@@ -179,7 +179,8 @@ protected:
 	void	Internal_Add_Quad_Colors( unsigned long color );
 	void	Internal_Add_Quad_VColors( unsigned long color1, unsigned long color2 );
 	void	Internal_Add_Quad_HColors( unsigned long color1, unsigned long color2 );
-	void	Internal_Add_Quad_Indicies( int start_vert_index, bool backfaced = false );
+	void	Internal_Flush_If_Full( int vertex_count, int index_count );
+	void	Internal_Add_Quad_Indicies( bool backfaced = false );
 };
 
 

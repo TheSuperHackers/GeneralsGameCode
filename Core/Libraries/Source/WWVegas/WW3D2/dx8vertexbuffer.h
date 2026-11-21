@@ -142,6 +142,8 @@ class DynamicVBAccessClass
 	void Allocate_Sorting_Dynamic_Buffer();
 	void Allocate_DX8_Dynamic_Buffer();
 public:
+	enum { MAX_VERTEX_COUNT = 0xffff }; ///< vertex_count is an unsigned short
+
 	// Type parameter can be either BUFFER_TYPE_DYNAMIC_DX8 or BUFFER_TYPE_DYNAMIC_SORTING.
 
 	// Note: Even though the constructor takes fvf as a parameter, currently the
