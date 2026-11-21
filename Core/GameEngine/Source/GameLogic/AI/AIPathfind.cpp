@@ -2284,7 +2284,8 @@ struct ExamineCellsStruct
 /*static*/ Int Pathfinder::examineCellsCallback(Pathfinder* pathfinder, PathfindCell* from, PathfindCell* to, Int to_x, Int to_y, void* userData)
 {
 	ExamineCellsStruct* d = (ExamineCellsStruct*)userData;
-	if (d->thePathfinder->m_isTunneling) return 1; // abort.
+	// TheSuperHackers @performance Mauller/Caball009 21/11/2026 The caller excludes tunneling; assert the invariant instead of rechecking it in release builds.
+	DEBUG_ASSERTCRASH(!d->thePathfinder->m_isTunneling, ("Line-of-sight expansion must not run while tunneling."));
 	if (from && to) {
 			if (!d->thePathfinder->validMovementPosition( d->isCrusher, d->theLoco->getValidSurfaces(), to, from )) {
 				return 1;
