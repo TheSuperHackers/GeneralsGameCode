@@ -30,7 +30,6 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include "Common/Player.h"
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/PreorderCreate.h"
@@ -58,14 +57,8 @@ void PreorderCreate::onCreate()
 //-------------------------------------------------------------------------------------------------
 void PreorderCreate::onBuildComplete()
 {
-	if (getObject()->getControllingPlayer()->didPlayerPreorder())
-	{
-		getObject()->setModelConditionState( MODELCONDITION_PREORDER );
-	}
-	else
-	{
-		getObject()->clearModelConditionState( MODELCONDITION_PREORDER );
-	}
+	// TheSuperHackers @tweak Preorder is no longer supported. Behave as if the player did not preorder.
+	getObject()->clearModelConditionState( MODELCONDITION_PREORDER );
 }
 
 // ------------------------------------------------------------------------------------------------

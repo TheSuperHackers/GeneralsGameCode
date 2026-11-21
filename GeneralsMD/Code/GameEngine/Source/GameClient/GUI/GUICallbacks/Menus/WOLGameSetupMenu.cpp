@@ -1571,7 +1571,6 @@ static void fillPlayerInfo(const PeerResponse *resp, PlayerInfo *info)
 	info->m_locale		= resp->locale.c_str();
 	info->m_rankPoints= resp->player.rankPoints;
 	info->m_side			= resp->player.side;
-	info->m_preorder	= resp->player.preorder;
 }
 
 //-------------------------------------------------------------------------------------------------

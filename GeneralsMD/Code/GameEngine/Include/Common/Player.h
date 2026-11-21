@@ -622,8 +622,6 @@ public:
 	Bool isPlayerDead() const; // Favor !isPlayerActive() - this is used so OCLs don't give us stuff after death.
 	Bool isPlayerActive() const; // Player is alive and not observer. !isPlayerActive() is synonymous with observing.
 
-	Bool didPlayerPreorder() const { return m_isPreorder; }
-
 	/// Grab the scorekeeper so we can score up in here!
 	ScoreKeeper* getScoreKeeper() { return &m_scoreKeeper; }
 
@@ -792,7 +790,6 @@ private:
 	Bool									m_canBuildUnits;		///< whether the current player is allowed to build units
 	Bool									m_canBuildBase;			///< whether the current player is allowed to build Base buildings
 	Bool									m_observer;
-	Bool									m_isPreorder;
 	Real									m_skillPointsModifier;	///< Multiplied by skill points before they are applied
 
 	Bool									m_listInScoreScreen;	///< should this player be listed in the score screen or not.
