@@ -44,11 +44,26 @@
 
 //-------------------------------------------------------------------------------------------------
 
+static ShaderClass getParticleShader(ParticleSystemInfo::ParticleShaderType shaderType)
+{
+	switch (shaderType)
+	{
+		case ParticleSystemInfo::ADDITIVE:
+			return ShaderClass::_PresetAdditiveSpriteShader;
+		case ParticleSystemInfo::ALPHA:
+			return ShaderClass::_PresetAlphaSpriteShader;
+		case ParticleSystemInfo::ALPHA_TEST:
+			return ShaderClass::_PresetATestSpriteShader;
+		case ParticleSystemInfo::MULTIPLY:
+			return ShaderClass::_PresetMultiplicativeSpriteShader;
+		default:
+			return ShaderClass();
+	}
+}
 
 W3DParticleSystemManager::W3DParticleSystemManager()
 {
 	m_batchParticleAlignment = ParticleSystemInfo::PARTICLE_ALIGNMENT_BILLBOARD;
-	m_batchShaderType = ParticleSystemInfo::INVALID_SHADER;
 
 	m_pointGroup = nullptr;
 	m_streakLine = nullptr;
@@ -219,8 +234,10 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		RefCountPtr<TextureClass> texture;
 		texture.Assign_No_Add_Ref(W3DDisplay::m_assetManager->Get_Texture(sys->getParticleTypeName().str()));
 
+		const ShaderClass shader = getParticleShader(sys->getShaderType());
+
 		const Bool canBatch = sys->isUsingParticles();
-		const Bool batchDone = finishedBatch(*sys, texture);
+		const Bool batchDone = finishedBatch(*sys, texture, shader);
 		if (!canBatch || batchDone)
 		{
 			flushParticleBatch(rinfo, pointCount);
@@ -229,7 +246,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		// setup a new particle batch texture if prior batch was flushed.
 		if (canBatch && m_batchTexture == nullptr)
 		{
-			initializeBatch(*sys, texture);
+			initializeBatch(*sys, texture, shader);
 		}
 
 		UnsignedInt startCount = pointCount;
@@ -284,7 +301,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 				// This prevents particles being dropped. Bank the stats first as the flush resets count to 0.
 				m_onScreenParticleCount += (pointCount - startCount);
 				flushParticleBatch(rinfo, pointCount);
-				initializeBatch(*sys, texture);
+				initializeBatch(*sys, texture, shader);
 				startCount = 0;
 			}
 		}
@@ -302,21 +319,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 			m_streakLine->Reset_Line();
 
 			m_streakLine->Set_Texture( texture.Peek() );
-			switch( sys->getShaderType() )
-			{
-				case ParticleSystemInfo::ADDITIVE:
-					m_streakLine->Set_Shader( ShaderClass::_PresetAdditiveSpriteShader );
-					break;
-				case ParticleSystemInfo::ALPHA:
-					m_streakLine->Set_Shader( ShaderClass::_PresetAlphaSpriteShader );
-					break;
-				case ParticleSystemInfo::ALPHA_TEST:
-					m_streakLine->Set_Shader( ShaderClass::_PresetATestSpriteShader );
-					break;
-				case ParticleSystemInfo::MULTIPLY:
-					m_streakLine->Set_Shader( ShaderClass::_PresetMultiplicativeSpriteShader );
-					break;
-			}
+			m_streakLine->Set_Shader(shader);
 
 			//UPDATE THE STREAK'S ARRAYS
 			m_streakLine->Set_LocsWidthsColors(
@@ -345,7 +348,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		else if (sys->isUsingStreak() && (pointCount == 1))
 		{
 			m_onScreenParticleCount += (pointCount - startCount);
-			initializeBatch(*sys, texture);
+			initializeBatch(*sys, texture, shader);
 			flushParticleBatch(rinfo, pointCount);
 			startCount = 0;
 		}
@@ -354,22 +357,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		{
 			m_pointGroup->Set_Texture( texture.Peek() );
 			m_pointGroup->Set_Flag( PointGroupClass::TRANSFORM, true );	// transform to screen space
-
-			switch( sys->getShaderType() )
-			{
-				case ParticleSystemInfo::ADDITIVE:
-					m_pointGroup->Set_Shader( ShaderClass::_PresetAdditiveSpriteShader );
-					break;
-				case ParticleSystemInfo::ALPHA:
-					m_pointGroup->Set_Shader( ShaderClass::_PresetAlphaSpriteShader );
-					break;
-				case ParticleSystemInfo::ALPHA_TEST:
-					m_pointGroup->Set_Shader( ShaderClass::_PresetATestSpriteShader );
-					break;
-				case ParticleSystemInfo::MULTIPLY:
-					m_pointGroup->Set_Shader( ShaderClass::_PresetMultiplicativeSpriteShader );
-					break;
-			}
+			m_pointGroup->Set_Shader(shader);
 
 			/// @todo Use both QUADS and TRIS for particles
 			m_pointGroup->Set_Point_Mode( PointGroupClass::QUADS );
@@ -427,17 +415,17 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 	}
 }
 
-Bool W3DParticleSystemManager::finishedBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture)
+Bool W3DParticleSystemManager::finishedBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture, const ShaderClass& shader)
 {
 	return texture.Peek() != m_batchTexture.Peek() ||
-		system.getShaderType() != m_batchShaderType ||
+		shader.Get_Bits() != m_batchShader.Get_Bits() ||
 		system.getParticleAlignment() != m_batchParticleAlignment;
 }
 
-void W3DParticleSystemManager::initializeBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture)
+void W3DParticleSystemManager::initializeBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture, const ShaderClass& shader)
 {
 	m_batchTexture = texture;
-	m_batchShaderType = system.getShaderType();
+	m_batchShader = shader;
 	m_batchParticleAlignment = system.getParticleAlignment();
 }
 
@@ -445,27 +433,10 @@ void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, Unsign
 {
 	if (pointCount > 0)
 	{
-		ShaderClass shader;
-		switch (m_batchShaderType)
-		{
-			case ParticleSystemInfo::ADDITIVE:
-				shader = ShaderClass::_PresetAdditiveSpriteShader;
-				break;
-			case ParticleSystemInfo::ALPHA:
-				shader = ShaderClass::_PresetAlphaSpriteShader;
-				break;
-			case ParticleSystemInfo::ALPHA_TEST:
-				shader = ShaderClass::_PresetATestSpriteShader;
-				break;
-			case ParticleSystemInfo::MULTIPLY:
-				shader = ShaderClass::_PresetMultiplicativeSpriteShader;
-				break;
-		}
-
 		if (m_batchParticleAlignment == ParticleSystemInfo::PARTICLE_ALIGNMENT_CONFORMING)
 		{
 			m_terrainParticles->setTexture(m_batchTexture.Peek());
-			m_terrainParticles->setShader( shader );
+			m_terrainParticles->setShader( m_batchShader );
 			m_terrainParticles->setArrays( m_posBuffer, m_RGBABuffer, m_sizeBuffer, m_angleBuffer, pointCount );
 			m_terrainParticles->setBoundingBox( m_currentBoundingBox );
 			m_terrainParticles->render();
@@ -473,7 +444,7 @@ void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, Unsign
 		else // draw regular point group
 		{
 			m_pointGroup->Set_Texture(m_batchTexture.Peek());
-			m_pointGroup->Set_Shader(shader);
+			m_pointGroup->Set_Shader(m_batchShader);
 			m_pointGroup->Set_Flag(PointGroupClass::TRANSFORM, true);
 			m_pointGroup->Set_Point_Mode(PointGroupClass::QUADS);
 			m_pointGroup->Set_Arrays(m_posBuffer, m_RGBABuffer, nullptr, m_sizeBuffer, m_angleBuffer, nullptr, pointCount);
@@ -487,5 +458,5 @@ void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, Unsign
 
 	m_batchTexture.Clear();
 	m_batchParticleAlignment = ParticleSystemInfo::PARTICLE_ALIGNMENT_BILLBOARD;
-	m_batchShaderType = ParticleSystemInfo::INVALID_SHADER;
+	m_batchShader = ShaderClass();
 }

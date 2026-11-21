@@ -52,8 +52,8 @@ public:
 	virtual Int getOnScreenParticleCount() override { return m_onScreenParticleCount; }
 
 private:
-	Bool finishedBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture);
-	void initializeBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture);
+	Bool finishedBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture, const ShaderClass& shader);
+	void initializeBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture, const ShaderClass& shader);
 	void flushParticleBatch(RenderInfoClass& rinfo, UnsignedInt& pointCount);
 
 	enum { MAX_POINTS_PER_GROUP = 512 };
@@ -68,7 +68,7 @@ private:
 	ShareBufferClass<uint8> *m_angleBuffer;			///< array of particle orientations
 	AABoxClass m_currentBoundingBox;
 
-	ParticleSystemInfo::ParticleShaderType m_batchShaderType;
+	ShaderClass m_batchShader;									///< the shader used for batched particle draws
 	Bool m_readyToRender;											///< if true, it is OK to render
 	ParticleSystemInfo::ParticleAlignmentType m_batchParticleAlignment;
 };
