@@ -430,6 +430,12 @@ AsciiString TheThingTemplateBeingParsedName;
 
 	thingTemplate->validate();
 
+	// TheSuperHackers @bugfix DrGoldFish 14/10/2026 Resolves references in map object overrides.
+	if( ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES )
+	{
+		thingTemplate->resolveNames();
+	}
+
 #if defined(RTS_DEBUG) || defined(DEBUG_CRASHING)
 	TheThingTemplateBeingParsedName.clear();
 #endif
