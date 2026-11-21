@@ -586,6 +586,36 @@ void INI::parseUnsignedInt( INI* ini, void * /*instance*/, void *store, const vo
 }
 
 //-------------------------------------------------------------------------------------------------
+/** Parse integer, clamp it to the range 0 to the maximum in 'userData' and assign at location 'store' */
+//-------------------------------------------------------------------------------------------------
+void INI::parseIntClamped( INI* ini, void* /*instance*/, void* store, const void* userData )
+{
+	const Int maxValue = (Int)(intptr_t)userData;
+	const Int value = scanInt(ini->getNextToken());
+	const Int clampedValue = clamp<Int>(0, value, maxValue);
+
+	if( clampedValue != value )
+		DEBUG_LOG(( "INI::parseIntClamped - Clamping %d to %d in '%s' line %d", value, clampedValue, ini->getFilename().str(), ini->getLineNum() ));
+
+	*(Int*)store = clampedValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+/** Parse unsigned integer, clamp it to the maximum in 'userData' and assign at location 'store' */
+//-------------------------------------------------------------------------------------------------
+void INI::parseUnsignedIntClamped( INI* ini, void* /*instance*/, void* store, const void* userData )
+{
+	const UnsignedInt maxValue = (UnsignedInt)(uintptr_t)userData;
+	const UnsignedInt value = scanUnsignedInt(ini->getNextToken());
+	const UnsignedInt clampedValue = min<UnsignedInt>(value, maxValue);
+
+	if( clampedValue != value )
+		DEBUG_LOG(( "INI::parseUnsignedIntClamped - Clamping %u to %u in '%s' line %d", value, clampedValue, ini->getFilename().str(), ini->getLineNum() ));
+
+	*(UnsignedInt*)store = clampedValue;
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Parse real from buffer and assign at location 'store' */
 //-------------------------------------------------------------------------------------------------
 void INI::parseReal( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ )
