@@ -46,6 +46,7 @@
 #include "dx8polygonrenderer.h"
 #include "camera.h"
 #include "dx8renderer.h"
+#include "Renderer.h"
 #include "WWLib/hashtemplate.h"
 #include <Utility/bit_adapter.h>
 
@@ -621,7 +622,7 @@ void GapFillerClass::Shrink_Buffers()
 
 void MeshModelClass::Init_For_NPatch_Rendering()
 {
-	if (!DX8Wrapper::Get_Current_Caps()->Support_NPatches()) return;
+	if (!Renderer::Supports_NPatches()) return;
 	if (!Get_Flag(MeshGeometryClass::ALLOW_NPATCHES)) return;
 	if (GapFiller) return;
 

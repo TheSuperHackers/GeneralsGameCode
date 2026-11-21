@@ -1625,12 +1625,12 @@ void DrawObject::setRampFeedbackParms(const Coord3D *start, const Coord3D *end, 
 /** Render draws into the current 3d context. */
 void DrawObject::Render(RenderInfoClass & rinfo)
 {
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Apply_Render_State_Changes();
 
-	DX8Wrapper::Set_Material(m_vertexMaterialClass);
-	DX8Wrapper::Set_Shader(m_shaderClass);
-	DX8Wrapper::Set_Texture(0, nullptr);
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Set_Material(m_vertexMaterialClass);
+	Renderer::Set_Shader(m_shaderClass);
+	Renderer::Set_Texture(0, nullptr);
+	Renderer::Apply_Render_State_Changes();
 	Int count=0;
 	Int i;
 	curHighlight++;
@@ -1679,10 +1679,10 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 
 			if (count&1) {
 				updateVB(m_vertexBufferTile1, pMapObj->getColor(), doArrow, doDiamond);
-				DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile1);
+				Renderer::Set_Vertex_Buffer(m_vertexBufferTile1);
 			} else {
 				updateVB(m_vertexBufferTile2, pMapObj->getColor(), doArrow, doDiamond);
-				DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile2);
+				Renderer::Set_Vertex_Buffer(m_vertexBufferTile2);
 			}
 			count++;
 			///@todo - remove the istree stuff, or get the info from the thing template.  jba.
@@ -1698,24 +1698,24 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 			}
 
 			Renderer::Set_Transform(RenderTransform_World,tm);
-			DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
+			Renderer::Set_Index_Buffer(m_indexBuffer,0);
 
 			if (isTree) {
-				DX8Wrapper::Draw_Triangles(	NUM_TRI*3,polyCount, 0,	(m_numTriangles*3));
+				Renderer::Draw_Triangles(	NUM_TRI*3,polyCount, 0,	(m_numTriangles*3));
 			} else {
-				DX8Wrapper::Draw_Triangles(	0,polyCount, 0,	(m_numTriangles*3));
+				Renderer::Draw_Triangles(	0,polyCount, 0,	(m_numTriangles*3));
 			}
 		}
 	}
 
-	DX8Wrapper::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
-	DX8Wrapper::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
+	Renderer::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
+	Renderer::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
 
 	if (m_drawPolygonAreas) {
 		Int selected;
 		for (selected = 0; selected < 2; selected++) {
 			for (PolygonTrigger *pTrig=PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
-				DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
+				Renderer::Set_Index_Buffer(m_indexBuffer,0);
 				Bool polySelected = PolygonTool::isSelected(pTrig);
 				if (polySelected && !selected) continue;
 				if (!polySelected && selected) continue;
@@ -1740,10 +1740,10 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 					}
 					if (count&1) {
 						updateVB(m_vertexBufferTile1, color, ARROW, DIAMOND);
-						DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile1);
+						Renderer::Set_Vertex_Buffer(m_vertexBufferTile1);
 					} else {
 						updateVB(m_vertexBufferTile2, color, ARROW, DIAMOND);
-						DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile2);
+						Renderer::Set_Vertex_Buffer(m_vertexBufferTile2);
 					}
 					count++;
 
@@ -1756,25 +1756,25 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 						polyCount -= NUM_ARROW_TRI+NUM_SELECT_TRI;
 					}
 
-					DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
+					Renderer::Set_Index_Buffer(m_indexBuffer,0);
 					Renderer::Set_Transform(RenderTransform_World,tm);
-					DX8Wrapper::Draw_Triangles(	0,polyCount, 0,	(m_numTriangles*3));
+					Renderer::Draw_Triangles(	0,polyCount, 0,	(m_numTriangles*3));
 				}
 				Renderer::Set_Transform(RenderTransform_World,Transform);
-				DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile1);
+				Renderer::Set_Vertex_Buffer(m_vertexBufferTile1);
 				updatePolygonVB(pTrig, polySelected, polySelected && PolygonTool::isSelectedOpen());
- 				DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
+ 				Renderer::Set_Vertex_Buffer(m_vertexFeedback);
 				if (m_feedbackIndexCount>0) {
-					DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
-					DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
+					Renderer::Set_Index_Buffer(m_indexFeedback,0);
+					Renderer::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
 				}
 			}
-			DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
+			Renderer::Set_Index_Buffer(m_indexBuffer,0);
 		}
 	}
 
-	DX8Wrapper::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
-	DX8Wrapper::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
+	Renderer::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
+	Renderer::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
 
  	if (BuildListTool::isActive()) for (i=0; i<TheSidesList->getNumSides(); i++) {
 		SidesInfo *pSide = TheSidesList->getSideInfo(i);
@@ -1794,10 +1794,10 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 			const Int GREEN = 0x00FF00; // GREEN in BGR.
 			if (count&1) {
 				updateVB(m_vertexBufferTile1, GREEN, true, false);
-				DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile1);
+				Renderer::Set_Vertex_Buffer(m_vertexBufferTile1);
 			} else {
 				updateVB(m_vertexBufferTile2, GREEN, true, false);
-				DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile2);
+				Renderer::Set_Vertex_Buffer(m_vertexBufferTile2);
 			}
 			count++;
 // ok to here.
@@ -1811,108 +1811,108 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 			}
 
 #if 1
-			DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
+			Renderer::Set_Index_Buffer(m_indexBuffer,0);
 			Renderer::Set_Transform(RenderTransform_World,tmXX);
-			DX8Wrapper::Draw_Triangles(	0,polyCountA, 0,	(m_numTriangles*3));
+			Renderer::Draw_Triangles(	0,polyCountA, 0,	(m_numTriangles*3));
 #endif
 		}
 	}
 
-	DX8Wrapper::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
-	DX8Wrapper::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
+	Renderer::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
+	Renderer::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
 
 	Renderer::Set_Transform(RenderTransform_World,Transform);
 
 	if (m_drawWaypoints) {
 		updateWaypointVB();
 		if (m_feedbackIndexCount>0) {
- 			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
-			DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
-			DX8Wrapper::Set_Shader(m_shaderClass);
-			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
+ 			Renderer::Set_Vertex_Buffer(m_vertexFeedback);
+			Renderer::Set_Index_Buffer(m_indexFeedback,0);
+			Renderer::Set_Shader(m_shaderClass);
+			Renderer::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
 //			DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
  //			DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferWater);
 		}
 	}
 
-	DX8Wrapper::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
-	DX8Wrapper::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
+	Renderer::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
+	Renderer::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
 
 #if 1
 	if (m_meshFeedback) {
 		updateMeshVB();
 		if (m_feedbackIndexCount>0) {
- 			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
-			DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
-			DX8Wrapper::Set_Shader(SC_OPAQUE_Z);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
-			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
+ 			Renderer::Set_Vertex_Buffer(m_vertexFeedback);
+			Renderer::Set_Index_Buffer(m_indexFeedback,0);
+			Renderer::Set_Shader(SC_OPAQUE_Z);
+			Renderer::Set_Fill_Mode(RenderFillMode_Wireframe);
+			Renderer::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
 		}
 	} else if (m_toolWantsFeedback && !m_disableFeedback) {
 		updateFeedbackVB();
 		if (m_feedbackIndexCount>0) {
- 			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
-			DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
-			DX8Wrapper::Set_Shader(ShaderClass::_PresetAlpha2DShader);
-			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
+ 			Renderer::Set_Vertex_Buffer(m_vertexFeedback);
+			Renderer::Set_Index_Buffer(m_indexFeedback,0);
+			Renderer::Set_Shader(ShaderClass::_PresetAlpha2DShader);
+			Renderer::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
 		}
 	}
 #endif
 
-	DX8Wrapper::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
-	DX8Wrapper::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
+	Renderer::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
+	Renderer::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
 
 #if 1
 	if (m_rampFeedback) {
 		updateRampVB();
 		if (m_feedbackIndexCount>0) {
- 			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
-			DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
-			DX8Wrapper::Set_Shader(SC_OPAQUE_Z);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_WIREFRAME);	// we want a solid ramp
+ 			Renderer::Set_Vertex_Buffer(m_vertexFeedback);
+			Renderer::Set_Index_Buffer(m_indexFeedback,0);
+			Renderer::Set_Shader(SC_OPAQUE_Z);
+			Renderer::Set_Fill_Mode(RenderFillMode_Wireframe);	// we want a solid ramp
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_LIGHTING, FALSE);				// disable lighting
-			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
+			Renderer::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
 		}
 	}
 #endif
 
-	DX8Wrapper::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
-	DX8Wrapper::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
+	Renderer::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
+	Renderer::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
 
 #if 1
 	if (m_boundaryFeedback) {
 		updateBoundaryVB();
 		if (m_feedbackIndexCount>0) {
- 			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
-			DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
-			DX8Wrapper::Set_Shader(m_shaderClass);
+ 			Renderer::Set_Vertex_Buffer(m_vertexFeedback);
+			Renderer::Set_Index_Buffer(m_indexFeedback,0);
+			Renderer::Set_Shader(m_shaderClass);
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_CULLMODE, D3DCULL_NONE);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_SOLID);	// we want a solid ramp
+			Renderer::Set_Fill_Mode(RenderFillMode_Solid);	// we want a solid ramp
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_LIGHTING, FALSE);				// disable lighting
-			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
+			Renderer::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
 		}
 	}
 #endif
 
-	DX8Wrapper::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
-	DX8Wrapper::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
+	Renderer::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
+	Renderer::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
 
 
 	if (m_ambientSoundFeedback) {
 		updateAmbientSoundVB();
 		if (m_feedbackIndexCount>0) {
- 			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
-			DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
-			DX8Wrapper::Set_Shader(m_shaderClass);
+ 			Renderer::Set_Vertex_Buffer(m_vertexFeedback);
+			Renderer::Set_Index_Buffer(m_indexFeedback,0);
+			Renderer::Set_Shader(m_shaderClass);
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_CULLMODE, D3DCULL_NONE);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_SOLID);	// we want a solid ramp
+			Renderer::Set_Fill_Mode(RenderFillMode_Solid);	// we want a solid ramp
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_LIGHTING, FALSE);				// disable lighting
-			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
+			Renderer::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
 		}
 	}
 
-	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
- 	DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferWater);
+	Renderer::Set_Index_Buffer(m_indexBuffer,0);
+ 	Renderer::Set_Vertex_Buffer(m_vertexBufferWater);
 
 	if (m_waterDrawObject) {
 		m_waterDrawObject->renderWater();
