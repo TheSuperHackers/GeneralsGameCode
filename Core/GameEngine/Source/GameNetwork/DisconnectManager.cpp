@@ -35,6 +35,15 @@
 #include "GameNetwork/GameSpy/PingThread.h"
 #include "GameNetwork/GameSpy/GSConfig.h"
 
+#if !RETAIL_COMPATIBLE_NETWORKING
+static const UnsignedInt LEAVE_NOTICE_FRAME = 0xFFFFFFFF;
+
+static const time_t LEFT_PLAYER_SCREEN_WAIT_TIME = 200;
+
+// a leave notice of another player only counts once the player itself sent no keepalive for this long
+static const time_t LEAVE_NOTICE_QUIET_TIME = 3000;
+#endif
+
 
 DisconnectManager::DisconnectManager()
 {
@@ -43,17 +52,34 @@ DisconnectManager::DisconnectManager()
 	m_lastFrame = 0;
 	m_lastFrameTime = 0;
 	m_lastKeepAliveSendTime = 0;
+	for (i = 0; i < MAX_SLOTS; ++i) {
+		m_destroySent[i] = FALSE;
+	}
 	m_haveNotifiedOtherPlayersOfCurrentFrame = FALSE;
 	m_timeOfDisconnectScreenOn = 0;
 
 	for( i = 0; i < MAX_SLOTS; ++i) {
 		m_packetRouterFallback[i] = 0;
+#if RETAIL_COMPATIBLE_NETWORKING
+		m_relayFrame[i] = 0;
+		m_relayTo[i] = 0;
+#else
+		m_heldRemovalFrom[i] = -1;
+		m_heldRemovalFrame[i] = 0;
+#endif
 	}
 
 	m_packetRouterTimeout = 0;
 	for( i = 0; i < MAX_SLOTS -1; ++i) {
 		m_playerTimeouts[i] = 0;
+#if !RETAIL_COMPATIBLE_NETWORKING
+		m_playerLeft[i] = FALSE;
+		m_ownLeaveReceived[i] = FALSE;
+#endif
 	}
+#if !RETAIL_COMPATIBLE_NETWORKING
+	m_leftPlayerHold = FALSE;
+#endif
 
 	for( i = 0; i < MAX_SLOTS; ++i) {
 		for (Int j = 0; j < MAX_SLOTS; ++j) {
@@ -86,7 +112,22 @@ void DisconnectManager::init() {
 	for (i = 0; i < MAX_SLOTS; ++i) {
 		m_disconnectFrames[i] = 0;
 		m_disconnectFramesReceived[i] = FALSE;
+#if RETAIL_COMPATIBLE_NETWORKING
+		m_relayFrame[i] = 0;
+		m_relayTo[i] = 0;
+#else
+		m_heldRemovalFrom[i] = -1;
+		m_heldRemovalFrame[i] = 0;
+#endif
+		m_destroySent[i] = FALSE;
 	}
+#if !RETAIL_COMPATIBLE_NETWORKING
+	for (i = 0; i < MAX_SLOTS - 1; ++i) {
+		m_playerLeft[i] = FALSE;
+		m_ownLeaveReceived[i] = FALSE;
+	}
+	m_leftPlayerHold = FALSE;
+#endif
 
 	m_pingFrame = 0;
 	m_pingsSent = 0;
@@ -103,7 +144,14 @@ void DisconnectManager::update(ConnectionManager *conMgr) {
 	// the last one we had the commands ready for.
 	if (TheGameLogic->getFrame() == m_lastFrame) {
 		time_t curTime = timeGetTime();
-		if ((curTime - m_lastFrameTime) > TheGlobalData->m_networkDisconnectTime) {
+		time_t waitTime = TheGlobalData->m_networkDisconnectTime;
+#if !RETAIL_COMPATIBLE_NETWORKING
+		// the removal of a player that has left runs from the disconnect screen, so a hold brings the screen up at once
+		if ((m_leftPlayerHold == TRUE) && (waitTime > LEFT_PLAYER_SCREEN_WAIT_TIME)) {
+			waitTime = LEFT_PLAYER_SCREEN_WAIT_TIME;
+		}
+#endif
+		if ((curTime - m_lastFrameTime) > waitTime) {
 			if (m_disconnectState == DISCONNECTSTATETYPE_SCREENOFF) {
 				turnOnScreen(conMgr);
 			}
@@ -112,6 +160,12 @@ void DisconnectManager::update(ConnectionManager *conMgr) {
 	} else {
 		nextFrame(TheGameLogic->getFrame(), conMgr);
 	}
+
+#if RETAIL_COMPATIBLE_NETWORKING
+	sendPendingRelays(conMgr);
+#else
+	processHeldRemovals(conMgr);
+#endif
 
 	if (m_disconnectState != DISCONNECTSTATETYPE_SCREENOFF) {
 		updateDisconnectStatus(conMgr);
@@ -204,6 +258,18 @@ void DisconnectManager::updateDisconnectStatus(ConnectionManager *conMgr) {
 			if (slot != -1) {
 				time_t curTime = timeGetTime();
 				time_t newTime = TheGlobalData->m_networkPlayerTimeoutTime - (curTime - m_playerTimeouts[slot]);
+#if !RETAIL_COMPATIBLE_NETWORKING
+				if (hasPlayerLeft(slot) == TRUE) {
+					newTime = -1;
+				}
+				if (m_playerLeft[slot] == TRUE) {
+					// a player that has left is removed on a frame agreed with everyone, so the frames are synced up right away
+					if (m_haveNotifiedOtherPlayersOfCurrentFrame == FALSE) {
+						TheNetwork->notifyOthersOfCurrentFrame();
+						m_haveNotifiedOtherPlayersOfCurrentFrame = TRUE;
+					}
+				}
+#endif
 
 // if someone is more than 2/3 timed out, lets get our frame numbers sync'd up.  Also if someone is voted out
 // lets do the same thing.
@@ -306,15 +372,130 @@ void DisconnectManager::processDisconnectKeepAlive(NetCommandMsg *msg, Connectio
 	Int slot = translatedSlotPosition(cmdMsg->getPlayerID(), conMgr->getLocalPlayerID());
 	if (slot != -1) {
 		resetPlayerTimeout(slot);
+#if !RETAIL_COMPATIBLE_NETWORKING
+		// a player that is still around undoes a leave notice of another player, its own leave is final
+		if (m_ownLeaveReceived[slot] == FALSE) {
+			m_playerLeft[slot] = FALSE;
+		}
+#endif
 	}
 }
 
 void DisconnectManager::processDisconnectPlayer(NetCommandMsg *msg, ConnectionManager *conMgr) {
 	NetDisconnectPlayerCommandMsg *cmdMsg = (NetDisconnectPlayerCommandMsg *)msg;
 	DEBUG_LOG(("DisconnectManager::processDisconnectPlayer - Got disconnect player command from player %d.  Disconnecting player %d on frame %d", msg->getPlayerID(), cmdMsg->getDisconnectSlot(), cmdMsg->getDisconnectFrame()));
+	const Int slot = cmdMsg->getDisconnectSlot();
+	if ((slot < MAX_SLOTS) && (slot != (Int)conMgr->getLocalPlayerID()) && (conMgr->isPlayerConnected(slot) == FALSE)) {
+		DEBUG_LOG(("DisconnectManager::processDisconnectPlayer - player %d is already disconnected", slot));
+		return;
+	}
+	// a disconnect player command is always sent directly, so it has to come from the address of the player it claims to be from
+	if (conMgr->getCurrentSenderSlot() != (Int)msg->getPlayerID()) {
+		DEBUG_LOG(("DisconnectManager::processDisconnectPlayer - command of player %d did not come from its address, ignored", msg->getPlayerID()));
+		return;
+	}
+
+#if !RETAIL_COMPATIBLE_NETWORKING
+	// TheSuperHackers @bugfix arcticdolphin 27/10/2026 A player that leaves is removed by the acting packet router on one frame for everyone instead of on the frame each player got the leave on.
+	if ((slot < MAX_SLOTS) && ((msg->getPlayerID() == (UnsignedInt)slot) || (cmdMsg->getDisconnectFrame() == LEAVE_NOTICE_FRAME))) {
+		Int transSlot = translatedSlotPosition(slot, conMgr->getLocalPlayerID());
+		if (transSlot != -1) {
+			m_playerLeft[transSlot] = TRUE;
+			if (msg->getPlayerID() == (UnsignedInt)slot) {
+				m_ownLeaveReceived[transSlot] = TRUE;
+			}
+		}
+
+		// everyone that got the leave from the leaver tells the others, so all of them pick the same acting packet router
+		if (msg->getPlayerID() == (UnsignedInt)slot) {
+			NetDisconnectPlayerCommandMsg *noticeMsg = newInstance(NetDisconnectPlayerCommandMsg);
+			noticeMsg->setDisconnectSlot(slot);
+			noticeMsg->setDisconnectFrame(LEAVE_NOTICE_FRAME);
+			noticeMsg->setPlayerID(conMgr->getLocalPlayerID());
+			if (DoesCommandRequireACommandID(noticeMsg->getNetCommandType())) {
+				noticeMsg->setID(GenerateNextCommandID());
+			}
+			conMgr->sendLocalCommandDirect(noticeMsg, (UnsignedByte)(0xff & ~(1 << conMgr->getLocalPlayerID()) & ~(1 << slot)));
+			noticeMsg->detach();
+		}
+		return;
+	}
+
+	// a router being removed may have timed out on the sender first, so the next router in line can remove it
+	if ((Int)msg->getPlayerID() != getActingPacketRouterSlot(conMgr, slot)) {
+		DEBUG_LOG(("DisconnectManager::processDisconnectPlayer - player %d is not the acting packet router, removal of player %d held", msg->getPlayerID(), slot));
+		// the removal of a router ahead of the sender can still be on its way, so this one waits for it
+		if (slot < MAX_SLOTS) {
+			m_heldRemovalFrom[slot] = (Int)msg->getPlayerID();
+			m_heldRemovalFrame[slot] = cmdMsg->getDisconnectFrame();
+		}
+		return;
+	}
+#endif
+
 	DEBUG_ASSERTCRASH(TheGameLogic->getFrame() == cmdMsg->getDisconnectFrame(), ("disconnecting player on the wrong frame!!!"));
-	disconnectPlayer(cmdMsg->getDisconnectSlot(), conMgr);
+	disconnectPlayer(slot, conMgr);
+
+#if RETAIL_COMPATIBLE_NETWORKING
+	// TheSuperHackers @bugfix arcticdolphin 12/10/2026 A player that quits from the disconnect screen sends no destroy command, so every player that stays sends it.
+	if (msg->getPlayerID() == (UnsignedInt)slot) {
+		sendPlayerDestruct(slot, conMgr);
+	}
+
+	// a leave that some players did not get would wait for a disconnect command that only the packet router sends, so the next router passes it on
+	if (msg->getPlayerID() == (UnsignedInt)slot && isLocalPlayerNextPacketRouter(conMgr) == TRUE && TheGameLogic->getFrame() == cmdMsg->getDisconnectFrame()) {
+		m_relayFrame[slot] = cmdMsg->getDisconnectFrame();
+		m_relayTo[slot] = 0;
+		for (Int i = 0; i < MAX_SLOTS; ++i) {
+			if ((i != slot) && (i != (Int)conMgr->getLocalPlayerID()) && (conMgr->isPlayerConnected(i) == TRUE)) {
+				m_relayTo[slot] |= (UnsignedByte)(1 << i);
+			}
+		}
+	}
+#endif
 }
+
+#if RETAIL_COMPATIBLE_NETWORKING
+void DisconnectManager::sendPendingRelays(ConnectionManager *conMgr) {
+	for (Int slot = 0; slot < MAX_SLOTS; ++slot) {
+		if (m_relayTo[slot] == 0) {
+			continue;
+		}
+		if (isLocalPlayerNextPacketRouter(conMgr) == FALSE) {
+			m_relayTo[slot] = 0;
+			continue;
+		}
+		UnsignedByte sendTo = 0;
+		for (Int i = 0; i < MAX_SLOTS; ++i) {
+			const UnsignedByte bit = (UnsignedByte)(1 << i);
+			if ((m_relayTo[slot] & bit) == 0) {
+				continue;
+			}
+			if (conMgr->isPlayerConnected(i) == FALSE) {
+				m_relayTo[slot] &= (UnsignedByte)~bit;
+			}
+			// A leave is applied on the frame its receiver is on, so it only goes to a player that reported being stalled on the frame of the leave.
+			else if ((m_disconnectFramesReceived[i] == TRUE) && (m_disconnectFrames[i] == m_relayFrame[slot])) {
+				sendTo |= bit;
+				m_relayTo[slot] &= (UnsignedByte)~bit;
+			}
+		}
+		if (sendTo == 0) {
+			continue;
+		}
+		DEBUG_LOG(("DisconnectManager::sendPendingRelays - passing on the leave of player %d on frame %d to mask %X", slot, m_relayFrame[slot], sendTo));
+		NetDisconnectPlayerCommandMsg *relayMsg = newInstance(NetDisconnectPlayerCommandMsg);
+		relayMsg->setDisconnectSlot(slot);
+		relayMsg->setDisconnectFrame(m_relayFrame[slot]);
+		relayMsg->setPlayerID(conMgr->getLocalPlayerID());
+		if (DoesCommandRequireACommandID(relayMsg->getNetCommandType())) {
+			relayMsg->setID(GenerateNextCommandID());
+		}
+		conMgr->sendLocalCommand(relayMsg, sendTo);
+		relayMsg->detach();
+	}
+}
+#endif
 
 void DisconnectManager::processPacketRouterQuery(NetCommandMsg *msg, ConnectionManager *conMgr) {
 	NetPacketRouterQueryCommandMsg *cmdMsg = (NetPacketRouterQueryCommandMsg *)msg;
@@ -452,6 +633,13 @@ void DisconnectManager::nextFrame(UnsignedInt frame, ConnectionManager *conMgr) 
 }
 
 void DisconnectManager::allCommandsReady(UnsignedInt frame, ConnectionManager *conMgr, Bool waitForPacketRouter) {
+#if !RETAIL_COMPATIBLE_NETWORKING
+		// a player that has left is removed on the highest frame anyone reached, so nobody runs past it while that player is still connected
+		m_leftPlayerHold = (isLeftPlayerConnected(conMgr) == TRUE) && (frame >= getMaxDisconnectFrame(conMgr));
+		if (m_leftPlayerHold == TRUE) {
+			return;
+		}
+#endif
 		if (m_disconnectState != DISCONNECTSTATETYPE_SCREENOFF) {
 			DEBUG_LOG(("DisconnectManager::allCommandsReady - setting screen state to off."));
 
@@ -470,6 +658,11 @@ void DisconnectManager::allCommandsReady(UnsignedInt frame, ConnectionManager *c
 }
 
 Bool DisconnectManager::allowedToContinue() {
+#if !RETAIL_COMPATIBLE_NETWORKING
+	if (m_leftPlayerHold == TRUE) {
+		return FALSE;
+	}
+#endif
 	if (m_disconnectState != DISCONNECTSTATETYPE_SCREENOFF) {
 		return FALSE;
 	}
@@ -606,7 +799,7 @@ void DisconnectManager::sendDisconnectCommand(Int slot, ConnectionManager *conMg
 		return;
 	}
 
-	UnsignedInt disconnectFrame = getMaxDisconnectFrame();
+	UnsignedInt disconnectFrame = getMaxDisconnectFrame(conMgr);
 
 	// Need to do the NetDisconnectPlayerCommandMsg creation and sending here.
 	NetDisconnectPlayerCommandMsg *msg = newInstance(NetDisconnectPlayerCommandMsg);
@@ -683,6 +876,59 @@ Bool DisconnectManager::allOnSameFrame(ConnectionManager *conMgr) {
 	return retval;
 }
 
+#if !RETAIL_COMPATIBLE_NETWORKING
+Int DisconnectManager::getActingPacketRouterSlot(ConnectionManager *conMgr, Int removedSlot) {
+	UnsignedInt localSlot = conMgr->getLocalPlayerID();
+	UnsignedInt packetRouterSlot = conMgr->getPacketRouterSlot();
+	Int transSlot = translatedSlotPosition(packetRouterSlot, localSlot);
+	while ((transSlot != -1) && ((isPlayerInGame(transSlot, conMgr) == FALSE) || ((Int)packetRouterSlot == removedSlot))) {
+		packetRouterSlot = conMgr->getNextPacketRouterSlot(packetRouterSlot);
+		if (packetRouterSlot >= MAX_SLOTS) {
+			return -1;
+		}
+		transSlot = translatedSlotPosition(packetRouterSlot, localSlot);
+	}
+	return (Int)packetRouterSlot;
+}
+
+Bool DisconnectManager::hasPlayerLeft(Int slot) {
+	if (m_ownLeaveReceived[slot] == TRUE) {
+		return TRUE;
+	}
+	// a false notice can't remove a player that is still around, it keeps sending keepalives
+	return (m_playerLeft[slot] == TRUE) && ((timeGetTime() - m_playerTimeouts[slot]) > LEAVE_NOTICE_QUIET_TIME);
+}
+
+Bool DisconnectManager::isLeftPlayerConnected(ConnectionManager *conMgr) {
+	for (Int i = 0; i < MAX_SLOTS; ++i) {
+		Int transSlot = translatedSlotPosition(i, conMgr->getLocalPlayerID());
+		if ((transSlot != -1) && (m_playerLeft[transSlot] == TRUE) && (conMgr->isPlayerConnected(i) == TRUE)) {
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+void DisconnectManager::processHeldRemovals(ConnectionManager *conMgr) {
+	for (Int slot = 0; slot < MAX_SLOTS; ++slot) {
+		const Int from = m_heldRemovalFrom[slot];
+		if (from == -1) {
+			continue;
+		}
+		if ((conMgr->isPlayerConnected(slot) == FALSE) || (conMgr->isPlayerConnected(from) == FALSE)) {
+			m_heldRemovalFrom[slot] = -1;
+			continue;
+		}
+		if ((from == getActingPacketRouterSlot(conMgr, slot)) && (TheGameLogic->getFrame() == m_heldRemovalFrame[slot])) {
+			DEBUG_LOG(("DisconnectManager::processHeldRemovals - player %d is the acting packet router now, removing player %d", from, slot));
+			m_heldRemovalFrom[slot] = -1;
+			disconnectPlayer(slot, conMgr);
+		}
+	}
+}
+
+#endif
+
 Bool DisconnectManager::isLocalPlayerNextPacketRouter(ConnectionManager *conMgr) {
 	UnsignedInt localSlot = conMgr->getLocalPlayerID();
 	UnsignedInt packetRouterSlot = conMgr->getPacketRouterSlot();
@@ -712,6 +958,12 @@ Bool DisconnectManager::hasPlayerTimedOut(Int slot) {
 		return FALSE;
 	}
 
+#if !RETAIL_COMPATIBLE_NETWORKING
+	if (hasPlayerLeft(slot) == TRUE) {
+		return TRUE;
+	}
+#endif
+
 	time_t newTime = TheGlobalData->m_networkPlayerTimeoutTime - (timeGetTime() - m_playerTimeouts[slot]);
 	if (newTime <= 0) {
 		return TRUE;
@@ -723,6 +975,11 @@ Bool DisconnectManager::hasPlayerTimedOut(Int slot) {
 // this function assumes that we are the packet router. (or at least that
 // we will be after everyone is getting disconnected)
 void DisconnectManager::sendPlayerDestruct(Int slot, ConnectionManager *conMgr) {
+	if ((slot < 0) || (slot >= MAX_SLOTS) || m_destroySent[slot]) {
+		return;
+	}
+	m_destroySent[slot] = TRUE;
+
 	UnsignedShort currentID = 0;
 	if (DoesCommandRequireACommandID(NETCOMMANDTYPE_DESTROYPLAYER))
 	{
@@ -750,15 +1007,38 @@ Bool DisconnectManager::isPlayerVotedOut(Int slot, ConnectionManager *conMgr) {
 	}
 	Int transSlot = untranslatedSlotPosition(slot, conMgr->getLocalPlayerID());
 	Int numVotes = countVotesForPlayer(transSlot);
-	if (numVotes >= (conMgr->getNumPlayers() - 1)) {
+	Int numVoters = conMgr->getNumPlayers() - 1;
+#if !RETAIL_COMPATIBLE_NETWORKING
+	// a player that has left is on its way out, it is not needed as a voter and its vote does not count
+	for (Int i = 0; i < MAX_SLOTS; ++i) {
+		Int leftSlot = translatedSlotPosition(i, conMgr->getLocalPlayerID());
+		if ((i != transSlot) && (leftSlot != -1) && (hasPlayerLeft(leftSlot) == TRUE) && (conMgr->isPlayerConnected(i) == TRUE)) {
+			--numVoters;
+			if ((m_playerVotes[transSlot][i].vote == TRUE) && (m_playerVotes[transSlot][i].frame == TheGameLogic->getFrame())) {
+				--numVotes;
+			}
+		}
+	}
+	if (numVoters < 1) {
+		numVoters = 1;
+	}
+#endif
+	if (numVotes >= numVoters) {
 		return TRUE;
 	}
 	return FALSE;
 }
 
-UnsignedInt DisconnectManager::getMaxDisconnectFrame() {
+UnsignedInt DisconnectManager::getMaxDisconnectFrame(ConnectionManager *conMgr) {
 	UnsignedInt retval = 0;
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
+#if !RETAIL_COMPATIBLE_NETWORKING
+		// a player that has left reports the frame it stopped on, which the others may never reach
+		Int transSlot = translatedSlotPosition(i, conMgr->getLocalPlayerID());
+		if ((transSlot != -1) && (m_playerLeft[transSlot] == TRUE)) {
+			continue;
+		}
+#endif
 		if (m_disconnectFrames[i] > retval) {
 			retval = m_disconnectFrames[i];
 		}
