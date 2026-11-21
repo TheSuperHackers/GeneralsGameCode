@@ -31,6 +31,8 @@
 #include "Common/FramePacer.h"
 #include "Common/GameEngine.h"
 #include "Common/ReplaySimulation.h"
+#include "GameNetwork/NetworkAutoStart.h"
+#include "GameNetwork/LANAPICallbacks.h"
 
 
 /**
@@ -54,6 +56,19 @@ Int GameMain()
 		// run it
 		TheGameEngine->execute();
 	}
+
+#if defined(RTS_DEBUG)
+	if (NetworkAutoStart::hasFailed())
+	{
+		if (TheLAN != nullptr && TheLAN->GetMyGame() != nullptr)
+		{
+			TheLAN->RequestGameLeave();
+		}
+		delete TheLAN;
+		TheLAN = nullptr;
+		exitcode = 1;
+	}
+#endif
 
 	// since execute() returned, we are exiting the game
 	delete TheFramePacer;

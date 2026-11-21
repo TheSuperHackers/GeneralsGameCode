@@ -67,6 +67,46 @@ void dumpBufferToLog(const void *vBuf, Int len, const char *fname, Int line)
 
 #endif // DEBUG_LOGGING
 
+Bool ParseIPv4Address(const AsciiString &address, UnsignedInt &result)
+{
+	const char *cursor = address.str();
+	result = 0;
+	for (Int octet = 0; octet < 4; ++octet)
+	{
+		if (*cursor < '0' || *cursor > '9')
+		{
+			return false;
+		}
+
+		UnsignedInt value = 0;
+		do
+		{
+			value = value * 10 + (*cursor - '0');
+			if (value > 255)
+			{
+				return false;
+			}
+			++cursor;
+		} while (*cursor >= '0' && *cursor <= '9');
+
+		result = (result << 8) | value;
+		if (octet + 1 < 4)
+		{
+			if (*cursor != '.')
+			{
+				return false;
+			}
+			++cursor;
+		}
+		else if (*cursor != '\0')
+		{
+			return false;
+		}
+	}
+
+	return result != 0 && result != INADDR_BROADCAST;
+}
+
 /**
  * ResolveIP turns a string ("games2.westwood.com", or "192.168.0.1") into
  * a 32-bit unsigned integer.
