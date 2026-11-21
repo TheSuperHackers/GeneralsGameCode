@@ -810,6 +810,7 @@ protected:
 			LabelType_MoneyPerMinute,
 			LabelType_Rank,
 			LabelType_Xp,
+			LabelType_ActionsPerMinute,
 
 			LabelType_Count
 		};
@@ -821,6 +822,7 @@ protected:
 			ValueType_MoneyPerMinute,
 			ValueType_Rank,
 			ValueType_Xp,
+			ValueType_ActionsPerMinute,
 			ValueType_Name,
 
 			ValueType_Count

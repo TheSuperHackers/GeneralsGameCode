@@ -45,6 +45,7 @@
 #pragma once
 
 #include "Common/AcademyStats.h"
+#include "Common/ActionsPerMinute.h"
 #include "Common/Debug.h"
 #include "Common/Energy.h"
 #include "Common/GameType.h"
@@ -235,6 +236,10 @@ public:
 	/// return the Player's Money sub-object
 	Money *getMoney() { return &m_money; }
 	const Money *getMoney() const { return &m_money; }
+
+	/// return the Player's actions per minute tracker
+	ActionsPerMinute *getActionsPerMinute() { return &m_actionsPerMinute; }
+	const ActionsPerMinute *getActionsPerMinute() const { return &m_actionsPerMinute; }
 
 	UnsignedInt getSupplyBoxValue();///< Many things can affect the value of a crate, but at heart it is a GlobalData ratio.
 
@@ -749,6 +754,7 @@ private:
 	AsciiString									m_baseSide;											///< the base side, GLA, USA, or China
 	PlayerType									m_playerType;									///< human/computer control
 	Money												m_money;											///< Player's current wealth
+	ActionsPerMinute						m_actionsPerMinute;				///< Player's command rate, informational only (not saved or CRC'd)
 	Upgrade*										m_upgradeList;								///< list of all upgrades this player has
 	Int													m_radarCount;									///< # of facilities that have a radar under the players control
 	Int													m_disableProofRadarCount;			///< # of disable proof radars.  A disable proof one will be in both refcounts
