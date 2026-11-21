@@ -328,15 +328,15 @@ private:
 };
 
 #ifdef USE_BROADCAST_KEYS
-const char* PeerThreadClass::s_keys[5] = {
+const char* PeerThreadClass::s_keys[NumKeys] = {
 	"b_locale",
 	"b_wins",
 	"b_losses",
 	"b_points",
 	"b_side"
 };
-char PeerThreadClass::s_valueBuffers[5][20] = { "", "", "", "", "" };
-const char* PeerThreadClass::s_values[5] = {
+char PeerThreadClass::s_valueBuffers[NumKeys][ValBufSize] = { "", "", "", "", "" };
+const char* PeerThreadClass::s_values[NumKeys] = {
 	s_valueBuffers[0],
 	s_valueBuffers[1],
 	s_valueBuffers[2],
@@ -405,8 +405,8 @@ void PeerThreadClass::pushStatsToRoom(PEER peer)
 		s_keys[2], s_values[2],
 		s_keys[3], s_values[3],
 		s_keys[4], s_values[4]));
-	peerSetRoomKeys(peer, GroupRoom, m_loginName.c_str(), 5, s_keys, s_values);
-	peerSetRoomKeys(peer, StagingRoom, m_loginName.c_str(), 5, s_keys, s_values);
+	peerSetRoomKeys(peer, GroupRoom, m_loginName.c_str(), NumKeys, s_keys, s_values);
+	peerSetRoomKeys(peer, StagingRoom, m_loginName.c_str(), NumKeys, s_keys, s_values);
 }
 
 void getRoomKeysCallback(PEER peer, PEERBool success, RoomType roomType, const char *nick, int num, char **keys, char **values, void *param);
@@ -1496,22 +1496,22 @@ void PeerThreadClass::Thread_Function()
 
 					// Testing alternate way to push stats
 #ifdef USE_BROADCAST_KEYS
-					snprintf(s_valueBuffers[0], 20, "%d", incomingRequest.statsToPush.locale);
-					snprintf(s_valueBuffers[1], 20, "%d", incomingRequest.statsToPush.wins);
-					snprintf(s_valueBuffers[2], 20, "%d", incomingRequest.statsToPush.losses);
-					snprintf(s_valueBuffers[3], 20, "%d", incomingRequest.statsToPush.rankPoints);
-					snprintf(s_valueBuffers[4], 20, "%d", incomingRequest.statsToPush.side);
+					snprintf(s_valueBuffers[0], ValBufSize, "%d", incomingRequest.statsToPush.locale);
+					snprintf(s_valueBuffers[1], ValBufSize, "%d", incomingRequest.statsToPush.wins);
+					snprintf(s_valueBuffers[2], ValBufSize, "%d", incomingRequest.statsToPush.losses);
+					snprintf(s_valueBuffers[3], ValBufSize, "%d", incomingRequest.statsToPush.rankPoints);
+					snprintf(s_valueBuffers[4], ValBufSize, "%d", incomingRequest.statsToPush.side);
 					pushStatsToRoom(peer);
 #else
-					const char *keys[5] = {
+					const char *keys[] = {
 						"locale",
 						"wins",
 						"losses",
 						"points",
 						"side"
 					};
-					char valueStrings[5][20];
-					char *values[5] = {
+					char valueStrings[ARRAY_SIZE(keys)][20];
+					char *values[ARRAY_SIZE(keys)] = {
 						valueStrings[0],
 						valueStrings[1],
 						valueStrings[2],
@@ -1523,11 +1523,11 @@ void PeerThreadClass::Thread_Function()
 					snprintf(values[2], 20, "%d", incomingRequest.statsToPush.losses);
 					snprintf(values[3], 20, "%d", incomingRequest.statsToPush.rankPoints);
 					snprintf(values[4], 20, "%d", incomingRequest.statsToPush.side);
-					peerSetGlobalKeys(peer, 5, (const char **)keys, (const char **)values);
+					peerSetGlobalKeys(peer, ARRAY_SIZE(keys), (const char **)keys, (const char **)values);
 					peerSetGlobalWatchKeys(peer, GroupRoom,   0, nullptr, PEERFalse);
 					peerSetGlobalWatchKeys(peer, StagingRoom, 0, nullptr, PEERFalse);
-					peerSetGlobalWatchKeys(peer, GroupRoom,   5, keys, PEERTrue);
-					peerSetGlobalWatchKeys(peer, StagingRoom, 5, keys, PEERTrue);
+					peerSetGlobalWatchKeys(peer, GroupRoom,   ARRAY_SIZE(keys), keys, PEERTrue);
+					peerSetGlobalWatchKeys(peer, StagingRoom, ARRAY_SIZE(keys), keys, PEERTrue);
 #endif
 				}
 				break;

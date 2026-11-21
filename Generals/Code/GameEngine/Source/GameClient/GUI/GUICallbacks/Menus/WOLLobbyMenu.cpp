@@ -451,8 +451,7 @@ static Int insertPlayerInListbox(const PlayerInfo& info, Color color)
 
 	const Image *rankImg = LookupSmallRankImage(currentSide, currentRank);
 
-	Int index = GadgetListBoxAddEntryImage(listboxLobbyPlayers, nullptr, -1, 0, w, h);
-	GadgetListBoxAddEntryImage(listboxLobbyPlayers, rankImg, index, 1, w, h);
+	Int index = GadgetListBoxAddEntryImage(listboxLobbyPlayers, rankImg, -1, 1, w, h);
 	GadgetListBoxAddEntryText(listboxLobbyPlayers, uStr, color, index, 2);
 
 	return index;

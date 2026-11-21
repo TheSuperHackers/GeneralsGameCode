@@ -37,7 +37,7 @@ class Thing;
 
 //-------------------------------------------------------------------------------------------------
 /** PreorderCreate
-	* TheSuperHackers @info Preorder is no longer supported. This module remains for compatibility with retail data. */
+	* TheSuperHackers @info Preorder is no longer supported. This module remains because the game data still uses it. */
 //-------------------------------------------------------------------------------------------------
 class PreorderCreate : public CreateModule
 {
