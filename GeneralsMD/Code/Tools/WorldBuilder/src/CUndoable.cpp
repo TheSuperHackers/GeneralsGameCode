@@ -378,9 +378,7 @@ void MoveInfo::SetZOffset(CWorldBuilderDoc *pDoc, Real z)
 void MoveInfo::SetThingTemplate(CWorldBuilderDoc *pDoc, const ThingTemplate* thing)
 {
 	m_newThing = thing;
-	if (thing && thing != m_oldThing) {
-		m_newName = thing->getName();
-	}
+	m_newName = thing->getName();
 	DoMove(pDoc);
 }
 
