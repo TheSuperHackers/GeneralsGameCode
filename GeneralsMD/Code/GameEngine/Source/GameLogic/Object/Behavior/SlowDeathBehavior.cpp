@@ -185,6 +185,19 @@ Int SlowDeathBehavior::getProbabilityModifier( const DamageInfo *damageInfo ) co
 	return max( getSlowDeathBehaviorModuleData()->m_probabilityModifier + overkillModifier, 1 );
 }
 
+Bool SlowDeathBehavior::isDieApplicable(const DamageInfo *damageInfo) const
+{
+	if (!getSlowDeathBehaviorModuleData()->m_dieMuxData.isDieApplicable(getObject(), damageInfo))
+		return false;
+
+#if !RETAIL_COMPATIBLE_CRC
+	if (damageInfo->in.m_enterSecondLife != canEnterSecondLife())
+		return false;
+#endif
+
+	return true;
+}
+
 //-------------------------------------------------------------------------------------------------
 static void calcRandomForce(Real minMag, Real maxMag, Real minPitch, Real maxPitch, Coord3D& force)
 {
@@ -490,23 +503,13 @@ void SlowDeathBehavior::onDie( const DamageInfo *damageInfo )
 	// deselect this unit for all players.
 	TheGameLogic->deselectObject(obj, PLAYERMASK_ALL, TRUE);
 
-	Int total = 0;
-	BehaviorModule** update = obj->getBehaviorModules();
-	for (; *update; ++update)
-	{
-		SlowDeathBehaviorInterface* sdu = (*update)->getSlowDeathBehaviorInterface();
-		if (sdu != nullptr && sdu->isDieApplicable(damageInfo))
-		{
-			total += sdu->getProbabilityModifier( damageInfo );
-		}
-	}
+	const Int total = computeTotalSlowDeathProbability(obj, damageInfo);
 	DEBUG_ASSERTCRASH(total > 0, ("Hmm, this is wrong"));
-
 
 	// this returns a value from 1...total, inclusive
 	Int roll = GameLogicRandomValue(1, total);
 
-	for (/* UpdateModuleInterface** */ update = obj->getBehaviorModules(); *update; ++update)
+	for (BehaviorModule** update = obj->getBehaviorModules(); *update; ++update)
 	{
 		SlowDeathBehaviorInterface* sdu = (*update)->getSlowDeathBehaviorInterface();
 		if (sdu != nullptr && sdu->isDieApplicable(damageInfo))
@@ -521,6 +524,24 @@ void SlowDeathBehavior::onDie( const DamageInfo *damageInfo )
 	}
 
 	DEBUG_CRASH(("We should never get here"));
+}
+
+
+// ------------------------------------------------------------------------------------------------
+Int SlowDeathBehavior::computeTotalSlowDeathProbability(const Object *obj, const DamageInfo *damageInfo)
+{
+	Int total = 0;
+
+	for (BehaviorModule** update = obj->getBehaviorModules(); *update; ++update)
+	{
+		SlowDeathBehaviorInterface* sdu = (*update)->getSlowDeathBehaviorInterface();
+		if (sdu != nullptr && sdu->isDieApplicable(damageInfo))
+		{
+			total += sdu->getProbabilityModifier( damageInfo );
+		}
+	}
+
+	return total;
 }
 
 // ------------------------------------------------------------------------------------------------
