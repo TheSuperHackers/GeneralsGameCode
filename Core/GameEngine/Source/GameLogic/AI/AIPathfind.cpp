@@ -2323,7 +2323,6 @@ struct ExamineCellsStruct
 				return 1; //abort.
 			}
 
-			UnsignedInt newCostSoFar = from->getCostSoFar() + 0.5f*COST_ORTHOGONAL;
 			if (to->getType() == PathfindCell::CELL_CLIFF ) {
 				return 1;
 			}
@@ -2337,6 +2336,9 @@ struct ExamineCellsStruct
  				return 1;
 			}
 			to->setBlockedByAlly(false);
+
+			// TheSuperHackers @performance Mauller/Caball009 21/11/2026 Defer the candidate cost until cliff and allocation checks have passed.
+			UnsignedInt newCostSoFar = from->getCostSoFar() + 0.5f*COST_ORTHOGONAL;
 			// check if this neighbor cell is already on the open (waiting to be tried)
 			// or closed (already tried) lists
 			if ( to->hasInfo() && (to->getOpen() || to->getClosed()) )
@@ -2428,6 +2430,15 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 		for( int i=0; i<numNeighbors; i++ )
 		{
 			neighborFlags[i] = false;
+
+			// TheSuperHackers @performance Mauller/Caball009 21/11/2026 Reject blocked diagonal steps before looking up the neighboring cell.
+			if (i>=firstDiagonal) {
+				// make sure one of the adjacent sides is open.
+				if (!neighborFlags[adjacent[i-4]] && !neighborFlags[adjacent[i-3]]) {
+					continue;
+				}
+			}
+
 			// determine neighbor cell to try
 			newCellCoord.x = parentCell->getXIndex() + delta[i].x;
 			newCellCoord.y = parentCell->getYIndex() + delta[i].y;
@@ -2447,13 +2458,6 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 			// or closed (already tried) lists
 			if ( newCell->hasInfo() && (newCell->getOpen() || newCell->getClosed()) )
 				continue;
-
-			if (i>=firstDiagonal) {
-				// make sure one of the adjacent sides is open.
-				if (!neighborFlags[adjacent[i-4]] && !neighborFlags[adjacent[i-3]]) {
-					continue;
-				}
-			}
 
 			// do the gravity check here
 			if ( locomotorSet.isDownhillOnly() )
