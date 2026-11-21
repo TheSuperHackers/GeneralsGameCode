@@ -323,11 +323,12 @@ public:
 	virtual void Apply_New_Surface(IDirect3DBaseTexture8* tex, bool initialized, bool disable_auto_invalidation = false) override;	// If the parameter is true, the texture will be flagged as initialised
 
 	// Get the surface of one of the mipmap levels (defaults to highest-resolution one)
-	SurfaceClass *Get_Surface_Level(unsigned int level = 0);
+	SurfaceClass *Get_Surface_Level(unsigned int level = 0) const;
 	IDirect3DSurface8 *Get_D3D_Surface_Level(unsigned int level = 0);
 	void Get_Level_Description( SurfaceClass::SurfaceDescription & desc, unsigned int level = 0 );
 
 	TextureFilterClass& Get_Filter() { return Filter; }
+	const TextureFilterClass& Get_Filter() const { return Filter; }
 
 	WW3DFormat Get_Texture_Format() const { return TextureFormat; }
 
