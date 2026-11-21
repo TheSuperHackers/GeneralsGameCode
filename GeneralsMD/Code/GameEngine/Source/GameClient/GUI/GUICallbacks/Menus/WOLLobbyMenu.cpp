@@ -453,11 +453,9 @@ static Int insertPlayerInListbox(const PlayerInfo& info, Color color)
 	}
 	*/
 
-	// TheSuperHackers @info The Officer's Club image is only used to size the list box images.
-	const Image *sizeImg = TheMappedImageCollection->findImageByName("OfficersClubsmall");
-	Int w = (sizeImg)?sizeImg->getImageWidth():10;
-	//Int h = (sizeImg)?sizeImg->getImageHeight():10;
-	w = min(GadgetListBoxGetColumnWidth(listboxLobbyPlayers, 0), w);
+	// TheSuperHackers @refactor The list box image size was taken from the 26x26 Officer's Club image. The small rank images are 26x26 too.
+	const Int imageSize = 26;
+	Int w = min(GadgetListBoxGetColumnWidth(listboxLobbyPlayers, 0), imageSize);
 	Int h = w;
 
 	const Image *rankImg = LookupSmallRankImage(currentSide, currentRank);
