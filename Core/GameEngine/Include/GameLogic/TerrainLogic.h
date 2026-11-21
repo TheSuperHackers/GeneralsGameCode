@@ -205,6 +205,11 @@ public:
 	void setBridgeObjectID( ObjectID id ) { m_bridgeInfo.bridgeObjectID = id; }
 	void setTowerObjectID( ObjectID id, BridgeTowerType which ) { m_bridgeInfo.towerObjectID[ which ] = id; }
 
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_PATHFINDING
+private:
+	Bool isPointOnBridge2(const Coord3D& pos, Bool specialInit, Coord3D& out) const;
+#endif
+
 };
 
 //-------------------------------------------------------------------------------------------------
