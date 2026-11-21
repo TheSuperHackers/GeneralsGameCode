@@ -50,7 +50,11 @@
 #include "GameClient/GameWindow.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/InGameUI.h"
+#include "GameClient/Keyboard.h"
 #include "GameClient/AnimateWindowManager.h"
+
+// TheSuperHackers @feature How many units a shift click queues or cancels at once.
+static const Int SHIFT_CLICK_BATCH_SIZE = 5;
 
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
@@ -440,14 +444,28 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 			}
 
-			// get a new production id to assign to this
-			ProductionID productionID = pu->requestUniqueUnitID();
+			// TheSuperHackers @feature Shift queues a batch instead of a single unit.
+			Int unitsToQueue = 1;
+			if( TheKeyboard && TheKeyboard->isShift() )
+				unitsToQueue = SHIFT_CLICK_BATCH_SIZE;
 
-			// create a message to build this thing
+			for( Int queued = 0; queued < unitsToQueue; ++queued )
+			{
+				// Re-check every time round. canMakeUnit covers money, queue space, parking and
+				// per player unit caps, and each unit we just queued moves those. Stop quietly
+				// once we can no longer build -- the first unit already reported any problem.
+				if( queued > 0 && TheBuildAssistant->canMakeUnit( factory, whatToBuild ) != CANMAKE_OK )
+					break;
 
-			GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_QUEUE_UNIT_CREATE );
-			msg->appendIntegerArgument( whatToBuild->getTemplateID() );
-			msg->appendIntegerArgument( productionID );
+				// get a new production id to assign to this
+				ProductionID productionID = pu->requestUniqueUnitID();
+
+				// create a message to build this thing
+
+				GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_QUEUE_UNIT_CREATE );
+				msg->appendIntegerArgument( whatToBuild->getTemplateID() );
+				msg->appendIntegerArgument( productionID );
+			}
 
 			break;
 
@@ -491,6 +509,29 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 			// send a message to cancel that particular production entry
 			GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_CANCEL_UNIT_CREATE );
 			msg->appendIntegerArgument( productionIDToCancel );
+
+			// TheSuperHackers @feature Shift cancels a batch: the clicked entry plus the newest
+			// queued units. The queue is displayed oldest to newest, so the extra cancels walk
+			// from the tail towards the clicked slot - taking the most recently queued entries
+			// first and leaving whatever is closest to completion alone for as long as
+			// possible. Deliberately not filtered by template: the point of the batch is to
+			// clear what was just queued, whatever it was. Only unit entries are taken, so an
+			// upgrade sitting in the queue is never swept up.
+			if( TheKeyboard && TheKeyboard->isShift() )
+			{
+				Int cancelled = 1;
+				for( Int j = MAX_BUILD_QUEUE_BUTTONS - 1; j > i && cancelled < SHIFT_CLICK_BATCH_SIZE; --j )
+				{
+					if( m_queueData[ j ].control == nullptr )
+						continue;
+					if( m_queueData[ j ].type != PRODUCTION_UNIT )
+						continue;
+
+					msg = TheMessageStream->appendMessage( GameMessage::MSG_CANCEL_UNIT_CREATE );
+					msg->appendIntegerArgument( m_queueData[ j ].productionID );
+					++cancelled;
+				}
+			}
 
 			break;
 
