@@ -35,9 +35,9 @@
 #include "internal_cmd.h"
 #include "internal_result.h"
 #include <windows.h>
+#include <Utility/atomic_adapter.h>
 
 #if !(defined(_MSC_VER) && _MSC_VER < 1300)
-#include <atomic>
 #include <Utility/intrin_compat.h>
 #endif
 
@@ -48,67 +48,33 @@ class ProfileFastCS
 
 	static HANDLE testEvent;
 
+	std::atomic_flag Flag;
+
+	void ThreadSafeSetFlag()
+	{
+		while (Flag.test_and_set(std::memory_order_acq_rel))
+		{
 #if defined(_MSC_VER) && _MSC_VER < 1300
-	volatile unsigned m_Flag;
-
-	void ThreadSafeSetFlag()
-	{
-		volatile unsigned& nFlag=m_Flag;
-
-		#define ts_lock _emit 0xF0
-		DASSERT(((unsigned)&nFlag % 4) == 0);
-
-		__asm {
-			mov ebx, [nFlag]
-			ts_lock
-			bts dword ptr [ebx], 0
-			jc The_Bit_Was_Previously_Set_So_Try_Again
-		}
-		return;
-
-	The_Bit_Was_Previously_Set_So_Try_Again:
-    // can't use SwitchToThread() here because Win9X doesn't have it!
-    if (testEvent)
-		  ::WaitForSingleObject(testEvent,1);
-		__asm {
-			mov ebx, [nFlag]
-			ts_lock
-			bts dword ptr [ebx], 0
-			jc  The_Bit_Was_Previously_Set_So_Try_Again
-		}
-	}
-
-	void ThreadSafeClearFlag()
-	{
-		m_Flag=0;
-	}
-
-public:
-	ProfileFastCS():
-    m_Flag(0)
-  {
-  }
+			// VC6 has no atomic wait, so the thread waits on testEvent for a moment, if it exists, before it tries again.
+			// can't use SwitchToThread() here because Win9X doesn't have it!
+			if (testEvent)
+				::WaitForSingleObject(testEvent,1);
 #else
-
-	std::atomic_flag Flag{};
-
-	void ThreadSafeSetFlag()
-	{
-		while (Flag.test_and_set(std::memory_order_acq_rel)) {
 			Flag.wait(true, std::memory_order_relaxed);
+#endif
 		}
 	}
 
 	void ThreadSafeClearFlag()
 	{
 		Flag.clear(std::memory_order_release);
+#if !(defined(_MSC_VER) && _MSC_VER < 1300)
 		Flag.notify_one();
+#endif
 	}
 
 public:
 	ProfileFastCS() {}
-
-#endif
 
 	class Lock
 	{

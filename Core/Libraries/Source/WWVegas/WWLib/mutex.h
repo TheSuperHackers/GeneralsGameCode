@@ -20,10 +20,7 @@
 
 #include "always.h"
 #include "thread.h"
-
-#if !(defined(_MSC_VER) && _MSC_VER < 1300)
-#include <atomic>
-#endif
+#include <Utility/atomic_adapter.h>
 
 // Always use mutex or critical section when accessing the same data from multiple threads!
 
@@ -115,20 +112,13 @@ public:
 
 class FastCriticalSectionClass
 {
-#if defined(_MSC_VER) && _MSC_VER < 1300
-	// TheSuperHackers @info Mauller 30/03/2025 Added volatile to prevent reordering of critical sections if inlined
-	volatile unsigned Flag;
-#else
-	std::atomic_flag Flag{};
-#endif
+	std::atomic_flag Flag;
 
 public:
 	// Name can (and usually should) be nullptr. Use name only if you wish to create a globally unique mutex
 	FastCriticalSectionClass()
-#if defined(_MSC_VER) && _MSC_VER < 1300
-		: Flag(0)
-#endif
-	{}
+	{
+	}
 
 	class LockClass
 	{
@@ -146,59 +136,26 @@ public:
 
 	private:
 
-    void lock() {
+		void lock()
+		{
+			while (cs.Flag.test_and_set(std::memory_order_acq_rel))
+			{
 #if defined(_MSC_VER) && _MSC_VER < 1300
-		  volatile unsigned& nFlag=cs.Flag;
-
-		  #define ts_lock _emit 0xF0
-		  assert(((unsigned)&nFlag % 4) == 0);
-
-      // I'm terribly sorry for these emits in here but
-      // VC won't inline any functions that have labels in them...
-
-      // Had to remove the emits back to normal
-      // ASM statements because sometimes the jump
-      // would be 1 byte off....
-
-		  __asm
-		  {
-		    mov ebx, [nFlag]
-		    ts_lock
-		    bts dword ptr [ebx], 0
-		    jnc BitSet
-		  }
-      //__asm _emit 0x73
-      //__asm _emit 0x0f
-
-		  The_Bit_Was_Previously_Set_So_Try_Again:
-		    ThreadClass::Switch_Thread();
-		  __asm
-		  {
-		    mov ebx, [nFlag]
-		    ts_lock
-		    bts dword ptr [ebx], 0
-		    jc  The_Bit_Was_Previously_Set_So_Try_Again
-		  }
-      //__asm _emit 0x72
-      //__asm _emit 0xf1
-
-      BitSet:
-        ;
+				// VC6 has no atomic wait, so the thread sleeps for a moment before it tries again.
+				ThreadClass::Switch_Thread();
 #else
-        while (cs.Flag.test_and_set(std::memory_order_acq_rel)) {
-            cs.Flag.wait(true, std::memory_order_relaxed);
-        }
+				cs.Flag.wait(true, std::memory_order_relaxed);
 #endif
-    }
+			}
+		}
 
-    void unlock() {
-#if defined(_MSC_VER) && _MSC_VER < 1300
-      cs.Flag=0;
-#else
-      cs.Flag.clear(std::memory_order_release);
-      cs.Flag.notify_one();
+		void unlock()
+		{
+			cs.Flag.clear(std::memory_order_release);
+#if !(defined(_MSC_VER) && _MSC_VER < 1300)
+			cs.Flag.notify_one();
 #endif
-    }
+		}
 
 		LockClass &operator=(const LockClass&);
     LockClass(const LockClass&);

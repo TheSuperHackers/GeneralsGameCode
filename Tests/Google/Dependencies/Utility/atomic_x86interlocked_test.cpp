@@ -803,4 +803,48 @@ TEST(AtomicX86Interlocked, WaitingThreadSeesStore)
 	EXPECT_EQ(seen.load(), 2);
 }
 
+// The flag starts cleared, and test_and_set returns the state from before, as with the standard class.
+TEST(AtomicX86Interlocked, FlagMatchesStdAtomicFlag)
+{
+	x86asm::atomic_flag ours;
+	std::atomic_flag theirs;
+	EXPECT_EQ(ours.test(), theirs.test());
+
+	for (int i = 0; i < 3; ++i)
+	{
+		EXPECT_EQ(ours.test_and_set(x86asm::memory_order_acq_rel), theirs.test_and_set(std::memory_order_acq_rel));
+		EXPECT_EQ(ours.test(x86asm::memory_order_relaxed), theirs.test(std::memory_order_relaxed));
+		EXPECT_EQ(ours.test_and_set(), theirs.test_and_set());
+		ours.clear(x86asm::memory_order_release);
+		theirs.clear(std::memory_order_release);
+		EXPECT_EQ(ours.test(), theirs.test());
+	}
+
+	EXPECT_EQ(sizeof(x86asm::atomic_flag), sizeof(std::atomic_flag));
+	EXPECT_EQ(alignof(x86asm::atomic_flag), alignof(std::atomic_flag));
+}
+
+// The flag as the spin locks of the game use it.
+TEST(AtomicX86Interlocked, FlagSpinLockExcludesThreads)
+{
+	x86asm::atomic_flag lock;
+	long count = 0;
+
+	interlocked_test::runThreads([&](int)
+	{
+		for (int i = 0; i < interlocked_test::ThreadIterations; ++i)
+		{
+			while (lock.test_and_set(x86asm::memory_order_acq_rel))
+			{
+			}
+
+			++count;
+			lock.clear(x86asm::memory_order_release);
+		}
+	});
+
+	EXPECT_EQ(count, static_cast<long>(interlocked_test::ThreadCount) * interlocked_test::ThreadIterations);
+	EXPECT_FALSE(lock.test());
+}
+
 #endif

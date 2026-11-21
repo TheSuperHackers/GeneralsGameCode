@@ -536,3 +536,37 @@ typedef atomic<size_t> atomic_size_t;
 typedef atomic<ptrdiff_t> atomic_ptrdiff_t;
 typedef atomic<intmax_t> atomic_intmax_t;
 typedef atomic<uintmax_t> atomic_uintmax_t;
+
+
+// The VC6 std::atomic_flag compatible class. It has the size of a long, like the class of the Microsoft standard
+// library, and its constructor clears it, like the standard class does since C++20.
+class atomic_flag
+{
+public:
+	atomic_flag()
+		: m_flag(0)
+	{
+	}
+
+	// Returns whether the flag was set before.
+	bool test_and_set(memory_order = memory_order_seq_cst)
+	{
+		return m_flag.exchange(1) != 0;
+	}
+
+	void clear(memory_order = memory_order_seq_cst)
+	{
+		m_flag.store(0);
+	}
+
+	bool test(memory_order = memory_order_seq_cst) const
+	{
+		return m_flag.load() != 0;
+	}
+
+private:
+	atomic_flag(const atomic_flag&) FUNCTION_DELETE;
+	atomic_flag& operator=(const atomic_flag&) FUNCTION_DELETE;
+
+	atomic<long> m_flag;
+};
