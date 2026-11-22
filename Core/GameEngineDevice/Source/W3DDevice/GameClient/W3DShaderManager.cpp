@@ -1196,7 +1196,6 @@ class ShroudTextureShader : public W3DShaderInterface
 	virtual Int init() override;			///<perform any one time initialization and validation
 	virtual void reset() override;		///<do any custom resetting necessary to bring W3D in sync.
 	Int m_stageOfSet;
-	Bool m_isOverlay;
 } shroudTextureShader;
 
 ///List of different shroud shader implementations in order of preference
@@ -1216,49 +1215,9 @@ Int ShroudTextureShader::init()
 	return TRUE;
 }
 
-//We need to scale so shroud texel stretches over one full terrain cell.  Each texel
-//is 1/128 the size of full texture. (assuming 128x128 vid-mem texture).
-static RenderWorldProjection getShroudProjection(W3DShroud *shroud)
-{
-	//We need to make all world coordinates be relative to the heightmap data origin since that
-	//is where the shroud begins.
-	Real width=shroud->getCellWidth();
-	Real height=shroud->getCellHeight();
-
-	RenderWorldProjection projection;
-	projection.offset_x = 0;
-	projection.offset_y = 0;
-	if (TheTerrainRenderObject->getMap())
-	{
-		//subtract origin position from all coordinates.  Origin is shifted by 1 cell width/height to allow for unused border texels.
-		projection.offset_x = -(float)shroud->getDrawOriginX() + width;
-		projection.offset_y = -(float)shroud->getDrawOriginY() + height;
-	}
-	projection.scale_x = 1.0f/(width*shroud->getTextureWidth());
-	projection.scale_y = 1.0f/(height*shroud->getTextureHeight());
-	return projection;
-}
-
 //Setup a texture projection in the given stage that applies our shroud.
 Int ShroudTextureShader::set(Int stage)
 {
-	W3DShroud *shroud = TheTerrainRenderObject->getShroud();
-	m_isOverlay = stage == 0 && shroud != nullptr;
-#if defined(RTS_DEBUG)
-	if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
-		m_isOverlay = false;
-#endif
-	// TheSuperHackers @refactor bobtista 19/11/2026 The renderer backend draws the stage 0 shroud overlay.
-	if (m_isOverlay)
-	{
-		RenderProjectedOverlay overlay;
-		overlay.texture = W3DShaderManager::getShaderTexture(0);	//shroud always stored in texture 0
-		overlay.projection = getShroudProjection(shroud);
-		Renderer::Begin_Projected_Overlay(overlay);
-		m_stageOfSet=stage;
-		return TRUE;
-	}
-
 	//force WW3D2 system to set it's states so it won't later overwrite our custom settings.
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 	Renderer::Set_Material(vmat);
@@ -1278,23 +1237,22 @@ Int ShroudTextureShader::set(Int stage)
 	}
 	Renderer::Apply_Render_State_Changes();
 
-	DX8Wrapper::Set_DX8_Texture_Stage_State(stage,  D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEPOSITION);
-	DX8Wrapper::Set_DX8_Texture_Stage_State(stage,  D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC,D3DCMP_EQUAL);
+	Renderer::Set_Texture_Coord_Source(stage, RenderTexcoordSource_CameraSpacePosition);
+	Renderer::Set_Texture_Transform_Count(stage, 2);
+	Renderer::Set_Depth_Compare(RenderCompare_Equal);
 
 	//We need to scale so shroud texel stretches over one full terrain cell.  Each texel
 	//is 1/128 the size of full texture. (assuming 128x128 vid-mem texture).
-	if (shroud != nullptr)
+	W3DShroud *shroud;
+	if ((shroud=TheTerrainRenderObject->getShroud()) != nullptr)
 	{
 		///@todo: All this code really only need to be done once per camera/view.  Find a way to optimize it out.
-		D3DXMATRIX curView;
-		DX8Wrapper::_Get_DX8_Transform(D3DTS_VIEW, curView);
+		Matrix4x4 curView;
+		Renderer::Get_Transform(RenderTransform_View, curView);
 
-		D3DXMATRIX inv;
-		float det;
-		D3DXMatrixInverse(&inv, &det, &curView);
+		Matrix4x4 inv = curView.Inverse();
 
-		D3DXMATRIX scale,offset;
+		Matrix4x4 scale,offset;
 
 		//We need to make all world coordinates be relative to the heightmap data origin since that
 		//is where the shroud begins.
@@ -1311,13 +1269,19 @@ Int ShroudTextureShader::set(Int stage)
 			yoffset = -(float)shroud->getDrawOriginY() + height;
 		}
 
-		D3DXMatrixTranslation(&offset, xoffset, yoffset,0);
+		offset.Init(	1.0f,	0.0f,	0.0f,	xoffset,
+							0.0f,	1.0f,	0.0f,	yoffset,
+							0.0f,	0.0f,	1.0f,	0.0f,
+							0.0f,	0.0f,	0.0f,	1.0f );
 
 		width = 1.0f/(width*shroud->getTextureWidth());
 		height = 1.0f/(height*shroud->getTextureHeight());
-		D3DXMatrixScaling(&scale, width, height, 1);
-		curView = (inv * offset) * scale;
-		DX8Wrapper::_Set_DX8_Transform((D3DTRANSFORMSTATETYPE )(D3DTS_TEXTURE0+stage), curView);
+		scale.Init(	width,	0.0f,		0.0f,	0.0f,
+						0.0f,		height,	0.0f,	0.0f,
+						0.0f,		0.0f,		1.0f,	0.0f,
+						0.0f,		0.0f,		0.0f,	1.0f );
+		curView = scale * (offset * inv);
+		Renderer::Set_Texture_Transform(stage, curView);
 	}
 	m_stageOfSet=stage;
 	return TRUE;
@@ -1325,16 +1289,10 @@ Int ShroudTextureShader::set(Int stage)
 
 void ShroudTextureShader::reset()
 {
-	if (m_isOverlay)
-	{
-		Renderer::End_Projected_Overlay();
-		return;
-	}
-
 	Renderer::Set_Texture(m_stageOfSet,nullptr);
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC,D3DCMP_LESSEQUAL);
-	DX8Wrapper::Set_DX8_Texture_Stage_State(m_stageOfSet,  D3DTSS_TEXCOORDINDEX, m_stageOfSet);
-	DX8Wrapper::Set_DX8_Texture_Stage_State(m_stageOfSet,  D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);
+	Renderer::Set_Depth_Compare(RenderCompare_LessEqual);
+	Renderer::Set_Texture_Coord_Source(m_stageOfSet, RenderTexcoordSource_MeshUV, m_stageOfSet);
+	Renderer::Set_Texture_Transform_Count(m_stageOfSet, 0);
 }
 
 ///Shroud layer rendering shader

@@ -60,20 +60,24 @@ enum RenderTransform
     RenderTransform_Projection
 };
 
-// Maps world XY to texture UV as uv = (xy + offset) * scale.
-struct RenderWorldProjection
+enum RenderTexcoordSource
 {
-    float offset_x;
-    float offset_y;
-    float scale_x;
-    float scale_y;
+    RenderTexcoordSource_MeshUV,
+    RenderTexcoordSource_CameraSpaceNormal,
+    RenderTexcoordSource_CameraSpacePosition,
+    RenderTexcoordSource_CameraSpaceReflection
 };
 
-// A texture projected onto drawn geometry by its world position.
-struct RenderProjectedOverlay
+enum RenderCompare
 {
-    TextureClass * texture;
-    RenderWorldProjection projection;
+    RenderCompare_Never,
+    RenderCompare_Less,
+    RenderCompare_Equal,
+    RenderCompare_LessEqual,
+    RenderCompare_Greater,
+    RenderCompare_NotEqual,
+    RenderCompare_GreaterEqual,
+    RenderCompare_Always
 };
 
 // The interface holds only the methods that callers route through. The rest of
@@ -128,6 +132,9 @@ public:
     static void Set_Material(const VertexMaterialClass * material);
     static void Set_Texture(unsigned stage, TextureBaseClass * texture);
     static void Apply_Render_State_Changes();
+    // Overrides the depth test of the applied shader. The shader state cache does not
+    // track the override, so the caller restores the previous depth test.
+    static void Set_Depth_Compare(RenderCompare compare);
 
     static void Set_Vertex_Buffer(const VertexBufferClass * vb, unsigned stream = 0);
     static void Set_Vertex_Buffer(const DynamicVBAccessClass & vba);
@@ -146,6 +153,9 @@ public:
     static void Set_Transform(RenderTransform transform, const Matrix3D & m);
     static void Get_Transform(RenderTransform transform, Matrix4x4 & m);
     static void Set_Texture_Transform(unsigned stage, const Matrix4x4 & m);
+    static void Set_Texture_Coord_Source(unsigned stage, RenderTexcoordSource source, unsigned uv_array_index = 0);
+    // A coord_count of 0 disables the texture transform of the stage.
+    static void Set_Texture_Transform_Count(unsigned stage, unsigned coord_count);
     static void Set_World_Identity();
     static void Set_View_Identity();
     static void Set_Projection_Transform_With_Z_Bias(const Matrix4x4 & matrix, float znear, float zfar);
@@ -155,10 +165,4 @@ public:
     static void Set_Light(unsigned index, const LightClass & light);
     static void Clear_Light(unsigned index);
     static void Set_Fog(bool enable, const Vector3 & color, float start, float end);
-
-    // Until End_Projected_Overlay is called, drawing multiplies the framebuffer color
-    // by the overlay texture sampled at the geometry's world position.
-    // Only fragments whose depth matches the depth buffer are affected.
-    static void Begin_Projected_Overlay(const RenderProjectedOverlay & overlay);
-    static void End_Projected_Overlay();
 };

@@ -17,9 +17,8 @@
 */
 
 // TheSuperHackers @refactor bobtista 08/10/2026 DX8 definition of the Renderer
-// methods. Init and Shutdown own the DX8Wrapper lifecycle. Most rendering methods
-// are one-line trampolines to the existing DX8Wrapper static API. The effect
-// passes set the DX8 states of their effect.
+// methods. Init and Shutdown own the DX8Wrapper lifecycle. The rendering methods
+// are one-line trampolines to the existing DX8Wrapper static API.
 
 #include "WW3D2/Renderer.h"
 
@@ -27,12 +26,50 @@
 #include "WW3D2/formconv.h"
 #include "WWMath/vector3.h"
 #include "WW3D2/lightenvironment.h"
-#include "WW3D2/shader.h"
-#include "WW3D2/vertmaterial.h"
 #include "WWDebug/wwdebug.h"
 #include "Lib/BaseType.h"
 
-#include <d3dx8math.h>
+static unsigned To_D3D_Texcoord_Index(RenderTexcoordSource source)
+{
+    switch (source)
+    {
+    case RenderTexcoordSource_MeshUV:
+        return D3DTSS_TCI_PASSTHRU;
+    case RenderTexcoordSource_CameraSpaceNormal:
+        return D3DTSS_TCI_CAMERASPACENORMAL;
+    case RenderTexcoordSource_CameraSpacePosition:
+        return D3DTSS_TCI_CAMERASPACEPOSITION;
+    case RenderTexcoordSource_CameraSpaceReflection:
+        return D3DTSS_TCI_CAMERASPACEREFLECTIONVECTOR;
+    }
+    WWASSERT(0);
+    return D3DTSS_TCI_PASSTHRU;
+}
+
+static D3DCMPFUNC To_D3D_Compare(RenderCompare compare)
+{
+    switch (compare)
+    {
+    case RenderCompare_Never:
+        return D3DCMP_NEVER;
+    case RenderCompare_Less:
+        return D3DCMP_LESS;
+    case RenderCompare_Equal:
+        return D3DCMP_EQUAL;
+    case RenderCompare_LessEqual:
+        return D3DCMP_LESSEQUAL;
+    case RenderCompare_Greater:
+        return D3DCMP_GREATER;
+    case RenderCompare_NotEqual:
+        return D3DCMP_NOTEQUAL;
+    case RenderCompare_GreaterEqual:
+        return D3DCMP_GREATEREQUAL;
+    case RenderCompare_Always:
+        return D3DCMP_ALWAYS;
+    }
+    WWASSERT(0);
+    return D3DCMP_LESSEQUAL;
+}
 
 static D3DTRANSFORMSTATETYPE To_D3D_Transform(RenderTransform transform)
 {
@@ -265,6 +302,11 @@ void Renderer::Apply_Render_State_Changes()
     DX8Wrapper::Apply_Render_State_Changes();
 }
 
+void Renderer::Set_Depth_Compare(RenderCompare compare)
+{
+    DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC, To_D3D_Compare(compare));
+}
+
 void Renderer::Set_Vertex_Buffer(const VertexBufferClass * vb, unsigned stream)
 {
     DX8Wrapper::Set_Vertex_Buffer(vb, stream);
@@ -326,6 +368,17 @@ void Renderer::Set_Texture_Transform(unsigned stage, const Matrix4x4 & m)
     DX8Wrapper::Set_Transform(static_cast<D3DTRANSFORMSTATETYPE>(D3DTS_TEXTURE0 + stage), m);
 }
 
+void Renderer::Set_Texture_Coord_Source(unsigned stage, RenderTexcoordSource source, unsigned uv_array_index)
+{
+    DX8Wrapper::Set_DX8_Texture_Stage_State(stage, D3DTSS_TEXCOORDINDEX, To_D3D_Texcoord_Index(source) | uv_array_index);
+}
+
+void Renderer::Set_Texture_Transform_Count(unsigned stage, unsigned coord_count)
+{
+    const unsigned flags = coord_count == 0 ? D3DTTFF_DISABLE : coord_count;
+    DX8Wrapper::Set_DX8_Texture_Stage_State(stage, D3DTSS_TEXTURETRANSFORMFLAGS, flags);
+}
+
 void Renderer::Get_Transform(RenderTransform transform, Matrix4x4 & m)
 {
     DX8Wrapper::Get_Transform(To_D3D_Transform(transform), m);
@@ -369,40 +422,4 @@ void Renderer::Clear_Light(unsigned index)
 void Renderer::Set_Fog(bool enable, const Vector3 & color, float start, float end)
 {
     DX8Wrapper::Set_Fog(enable, color, start, end);
-}
-
-void Renderer::Begin_Projected_Overlay(const RenderProjectedOverlay & overlay)
-{
-    VertexMaterialClass * material = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-    DX8Wrapper::Set_Material(material);
-    REF_PTR_RELEASE(material);
-    DX8Wrapper::Set_Texture(0, overlay.texture);
-    DX8Wrapper::Set_Shader(ShaderClass::_PresetMultiplicativeSpriteShader);
-    DX8Wrapper::Apply_Render_State_Changes();
-
-    DX8Wrapper::Set_DX8_Texture_Stage_State(0, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEPOSITION);
-    DX8Wrapper::Set_DX8_Texture_Stage_State(0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
-    DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC, D3DCMP_EQUAL);
-
-    D3DXMATRIX view;
-    DX8Wrapper::_Get_DX8_Transform(D3DTS_VIEW, view);
-
-    D3DXMATRIX inverse_view;
-    float determinant;
-    D3DXMatrixInverse(&inverse_view, &determinant, &view);
-
-    D3DXMATRIX offset;
-    D3DXMATRIX scale;
-    D3DXMatrixTranslation(&offset, overlay.projection.offset_x, overlay.projection.offset_y, 0);
-    D3DXMatrixScaling(&scale, overlay.projection.scale_x, overlay.projection.scale_y, 1);
-    const D3DXMATRIX texture = (inverse_view * offset) * scale;
-    DX8Wrapper::_Set_DX8_Transform(D3DTS_TEXTURE0, texture);
-}
-
-void Renderer::End_Projected_Overlay()
-{
-    DX8Wrapper::Set_Texture(0, nullptr);
-    DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
-    DX8Wrapper::Set_DX8_Texture_Stage_State(0, D3DTSS_TEXCOORDINDEX, 0);
-    DX8Wrapper::Set_DX8_Texture_Stage_State(0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);
 }
