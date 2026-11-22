@@ -1717,7 +1717,7 @@ void DX8TextureCategoryClass::Render()
 		//DX8Wrapper::Set_Material(material);
 		//REF_PTR_RELEASE(material);
 		Renderer::Apply_Render_State_Changes();
-		DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND,D3DBLEND_DESTCOLOR);
+		Renderer::Set_Blend_Factors(RenderBlend_DestColor, RenderBlend_SrcColor);
 	}
 
 

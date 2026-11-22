@@ -2900,7 +2900,7 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 	//In additive blending we need to use the alpha at the edges of river to darken
 	//rgb instead.
 	if (TheWaterTransparency->m_additiveBlend)
-		DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
+		Renderer::Set_Blend_Factors(RenderBlend_SrcAlpha, RenderBlend_One);
 
 	if (m_riverWaterPixelShader) DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(m_riverWaterPixelShader);
  	DWORD cull;
@@ -2921,7 +2921,7 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 
 	//restore blend mode to what W3D expects.
 	if (TheWaterTransparency->m_additiveBlend)
-		DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND, D3DBLEND_ONE );
+		Renderer::Set_Blend_Factors(RenderBlend_One, RenderBlend_One);
 
 	DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_CULLMODE, cull);
 
@@ -3262,9 +3262,14 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 
 	//If video card supports it and it's enabled, feather the water edge using destination alpha
 	if (Renderer::Get_Back_Buffer_Format() == WW3D_FORMAT_A8R8G8B8 && TheGlobalData->m_showSoftWaterEdge && TheWaterTransparency->m_transparentWaterDepth !=0)
-	{		DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND, D3DBLEND_DESTALPHA );
-			if (!TheWaterTransparency->m_additiveBlend)
-				DX8Wrapper::Set_DX8_Render_State(D3DRS_DESTBLEND, D3DBLEND_INVDESTALPHA );
+	{		if (!TheWaterTransparency->m_additiveBlend)
+			{
+				Renderer::Set_Blend_Factors(RenderBlend_DestAlpha, RenderBlend_InvDestAlpha);
+			}
+			else
+			{
+				Renderer::Set_Blend_Factors(RenderBlend_DestAlpha, RenderBlend_One);
+			}
 	}
 
 
