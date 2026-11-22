@@ -3785,6 +3785,12 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 	PathfindLayerEnum layer = TheTerrainLogic->getLayerForDestination(from);
 	PathfindCell *parentCell = getClippedCell( layer,&clipFrom );
 	if (!parentCell) {
+#if RETAIL_COMPATIBLE_PATHFINDING
+		if (s_useFixedPathfinding)
+#endif
+		{
+			goalCell->releaseInfo();
+		}
 		return nullptr;
 	}
 
@@ -4767,8 +4773,11 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 					cleanOpenAndClosedLists();
 					parentCell->releaseInfo();
 					goalCell->releaseInfo();
+					return MAX_COST;
 				}
+#if RETAIL_COMPATIBLE_PATHFINDING
  				return cellCount;
+#endif
 			}
 			cellCount++;
 
@@ -6782,15 +6791,7 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 
 	}
 	if (startNode == originalPath->getLastNode()) {
-#if RETAIL_COMPATIBLE_PATHFINDING
-		if (!s_useFixedPathfinding) {
-			cleanOpenAndClosedLists();
-		}
-		else
-#endif
-		{
-			parentCell->releaseInfo();
-		}
+		cleanOpenAndClosedLists();
 		return nullptr; // no open nodes.
 	}
 	PathfindCell *candidateGoal;
@@ -6802,7 +6803,7 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 		if (s_useFixedPathfinding)
 #endif
 		{
-			parentCell->releaseInfo();
+			cleanOpenAndClosedLists();
 		}
 		return nullptr;
 	}
@@ -7000,10 +7001,13 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 
 	// determine goal cell
 	PathfindCell *goalCell = getCell( LAYER_GROUND, victimCellNdx.x, victimCellNdx.y );
-	if (!goalCell)
-		return nullptr;
-
- 	if (!goalCell->allocateInfo(victimCellNdx)) {
+	if (!goalCell || !goalCell->allocateInfo(victimCellNdx)) {
+#if RETAIL_COMPATIBLE_PATHFINDING
+		if (s_useFixedPathfinding)
+#endif
+		{
+			parentCell->releaseInfo();
+		}
 		return nullptr;
 	}
 
