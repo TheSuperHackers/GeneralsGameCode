@@ -59,7 +59,7 @@ static D3DFILLMODE To_D3D_Fill_Mode(RenderFillMode mode)
     return D3DFILL_SOLID;
 }
 
-static unsigned int To_D3D_Color_Write_Mask(unsigned int mask)
+static unsigned int To_D3D_Color_Write_Mask(RenderColorWriteMask mask)
 {
     WWASSERT((mask & ~(RenderColorWrite_RGB | RenderColorWrite_Alpha)) == 0);
     unsigned int d3dMask = 0;
@@ -303,7 +303,7 @@ void Renderer::Set_Fill_Mode(RenderFillMode mode)
     DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE, To_D3D_Fill_Mode(mode));
 }
 
-void Renderer::Set_Color_Write_Mask(unsigned int mask)
+void Renderer::Set_Color_Write_Mask(RenderColorWriteMask mask)
 {
     DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE, To_D3D_Color_Write_Mask(mask));
 }

@@ -67,7 +67,8 @@ enum RenderFillMode
     RenderFillMode_Solid
 };
 
-enum RenderColorWrite
+typedef unsigned int RenderColorWriteMask;
+enum RenderColorWriteMask_ CPP_11(: RenderColorWriteMask)
 {
     RenderColorWrite_None = 0,
     RenderColorWrite_Red = 1 << 0,
@@ -131,7 +132,7 @@ public:
     static void Apply_Render_State_Changes();
 
     static void Set_Fill_Mode(RenderFillMode mode);
-    static void Set_Color_Write_Mask(unsigned int mask);
+    static void Set_Color_Write_Mask(RenderColorWriteMask mask);
 
     static void Set_Vertex_Buffer(const VertexBufferClass * vb, unsigned stream = 0);
     static void Set_Vertex_Buffer(const DynamicVBAccessClass & vba);
