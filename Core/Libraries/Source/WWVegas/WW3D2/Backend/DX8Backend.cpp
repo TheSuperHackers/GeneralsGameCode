@@ -371,7 +371,7 @@ void Renderer::Set_Fog(bool enable, const Vector3 & color, float start, float en
     DX8Wrapper::Set_Fog(enable, color, start, end);
 }
 
-void Renderer::Begin_Shroud_Overlay(const RenderShroudOverlay & overlay)
+void Renderer::Begin_Projected_Overlay(const RenderProjectedOverlay & overlay)
 {
     VertexMaterialClass * material = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
     DX8Wrapper::Set_Material(material);
@@ -399,7 +399,7 @@ void Renderer::Begin_Shroud_Overlay(const RenderShroudOverlay & overlay)
     DX8Wrapper::_Set_DX8_Transform(D3DTS_TEXTURE0, texture);
 }
 
-void Renderer::End_Shroud_Overlay()
+void Renderer::End_Projected_Overlay()
 {
     DX8Wrapper::Set_Texture(0, nullptr);
     DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);

@@ -69,8 +69,8 @@ struct RenderWorldProjection
     float scale_y;
 };
 
-// The terrain shroud multiplied onto drawn geometry.
-struct RenderShroudOverlay
+// A texture projected onto drawn geometry by its world position.
+struct RenderProjectedOverlay
 {
     TextureClass * texture;
     RenderWorldProjection projection;
@@ -156,8 +156,9 @@ public:
     static void Clear_Light(unsigned index);
     static void Set_Fog(bool enable, const Vector3 & color, float start, float end);
 
-    // Draws until End_Shroud_Overlay multiply the frame by the shroud at the drawn world position.
-    // Only pixels at the depth already in the depth buffer change.
-    static void Begin_Shroud_Overlay(const RenderShroudOverlay & overlay);
-    static void End_Shroud_Overlay();
+    // Until End_Projected_Overlay is called, drawing multiplies the framebuffer color
+    // by the overlay texture sampled at the geometry's world position.
+    // Only fragments whose depth matches the depth buffer are affected.
+    static void Begin_Projected_Overlay(const RenderProjectedOverlay & overlay);
+    static void End_Projected_Overlay();
 };

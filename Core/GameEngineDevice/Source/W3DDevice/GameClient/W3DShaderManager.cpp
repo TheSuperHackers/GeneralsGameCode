@@ -1251,10 +1251,10 @@ Int ShroudTextureShader::set(Int stage)
 	// TheSuperHackers @refactor bobtista 19/11/2026 The renderer backend draws the stage 0 shroud overlay.
 	if (m_isOverlay)
 	{
-		RenderShroudOverlay overlay;
+		RenderProjectedOverlay overlay;
 		overlay.texture = W3DShaderManager::getShaderTexture(0);	//shroud always stored in texture 0
 		overlay.projection = getShroudProjection(shroud);
-		Renderer::Begin_Shroud_Overlay(overlay);
+		Renderer::Begin_Projected_Overlay(overlay);
 		m_stageOfSet=stage;
 		return TRUE;
 	}
@@ -1327,7 +1327,7 @@ void ShroudTextureShader::reset()
 {
 	if (m_isOverlay)
 	{
-		Renderer::End_Shroud_Overlay();
+		Renderer::End_Projected_Overlay();
 		return;
 	}
 
