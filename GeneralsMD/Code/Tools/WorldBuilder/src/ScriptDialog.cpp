@@ -38,7 +38,6 @@
 #include "EditGroup.h"
 #include "EditParameter.h"
 #include "ExportScriptsOptions.h"
-#include "LayersList.h"
 #include "Common/ThingFactory.h"
 #include "WaypointOptions.h"
 #include "Common/UnicodeString.h"
@@ -1561,14 +1560,11 @@ void ScriptDialog::OnLoad()
 		}
 		PolygonTrigger *pTrig;
 		PolygonTrigger *pNextTrig;
-		TheLayersList->disableUpdates();
 		for (pTrig=m_firstTrigger; pTrig; pTrig = pNextTrig) {
 			pNextTrig = pTrig->getNext();
 			pTrig->setNextPoly(nullptr);
 			PolygonTrigger::addPolygonTrigger(pTrig);
-			TheLayersList->addPolygonTriggerToLayersList(pTrig, pTrig->getLayerName());
 		}
-		TheLayersList->enableUpdates();
 
 		ScriptList *scripts[MAX_PLAYER_COUNT];
 		Int count = ScriptList::getReadScripts(scripts);
