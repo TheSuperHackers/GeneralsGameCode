@@ -1263,11 +1263,11 @@ void renderStenciledPlayerColor( UnsignedInt color, UnsignedInt stencilRef, Bool
     v[2].color = color;
     v[3].color = color;
 
-	DX8Wrapper::Set_Shader(PlayerColorShader);
+	Renderer::Set_Shader(PlayerColorShader);
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vmat);
+	Renderer::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);
-	DX8Wrapper::Apply_Render_State_Changes();	//force update all render states
+	Renderer::Apply_Render_State_Changes();	//force update all render states
 
 	LPDIRECT3DDEVICE8 m_pDev=DX8Wrapper::_Get_D3D_Device8();
 
@@ -1304,9 +1304,8 @@ void renderStenciledPlayerColor( UnsignedInt color, UnsignedInt stencilRef, Bool
 		else
 		{
 			//device does not support disabling writes to color buffer so fake it through alpha blending
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHABLENDENABLE, TRUE);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND, D3DBLEND_ZERO );
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_DESTBLEND, D3DBLEND_ONE );
+			Renderer::Set_Alpha_Blend_Enable(true);
+			Renderer::Set_Blend_Factors(RenderBlend_Zero, RenderBlend_One);
 		}
 	}
 	else
@@ -1320,9 +1319,8 @@ void renderStenciledPlayerColor( UnsignedInt color, UnsignedInt stencilRef, Bool
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_STENCILFAIL,  D3DSTENCILOP_KEEP );
 
 		//Make occluded pixels transparent
-		DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHABLENDENABLE, TRUE);
-		DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
-		DX8Wrapper::Set_DX8_Render_State(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
+		Renderer::Set_Alpha_Blend_Enable(true);
+		Renderer::Set_Blend_Factors(RenderBlend_SrcAlpha, RenderBlend_InvSrcAlpha);
 	}
 
 	if (DX8Wrapper::_Is_Triangle_Draw_Enabled())
@@ -1330,9 +1328,8 @@ void renderStenciledPlayerColor( UnsignedInt color, UnsignedInt stencilRef, Bool
 
 	// turn off the stencil buffer
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_STENCILENABLE, FALSE );
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHABLENDENABLE, FALSE);	//restore shader state
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND, D3DBLEND_ONE );
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_DESTBLEND, D3DBLEND_ZERO );
+	Renderer::Set_Alpha_Blend_Enable(false);	//restore shader state
+	Renderer::Set_Blend_Factors(RenderBlend_One, RenderBlend_Zero);
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC, D3DCMP_ALWAYS);
 
 	if (oldColorWriteEnable != 0x12345678)

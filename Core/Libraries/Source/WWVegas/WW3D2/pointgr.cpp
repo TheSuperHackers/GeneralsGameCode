@@ -522,9 +522,9 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 	Renderer::Set_Transform(RenderTransform_World,identity);
 	Renderer::Set_Transform(RenderTransform_View,identity);
 
-	DX8Wrapper::Set_Material(PointMaterial);
-	DX8Wrapper::Set_Shader(Shader);
-	DX8Wrapper::Set_Texture(0,Texture);
+	Renderer::Set_Material(PointMaterial);
+	Renderer::Set_Shader(Shader);
+	Renderer::Set_Texture(0,Texture);
 
 	// Enable sorting if the primitives are translucent and alpha testing is not enabled.
 	// TheSuperHackers @bugfix stephanmeesters 30/06/2026 However, do not apply sorting to ground-aligned particles.
@@ -580,8 +580,8 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 			}
 		}
 
-		DX8Wrapper::Set_Index_Buffer (indexbuffer, 0);
-		DX8Wrapper::Set_Vertex_Buffer (PointVerts);
+		Renderer::Set_Index_Buffer (indexbuffer, 0);
+		Renderer::Set_Vertex_Buffer (PointVerts);
 
 		if ( sort )
 		{
@@ -589,7 +589,7 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 		}
 		else
 		{
-			DX8Wrapper::Draw_Triangles (0, delta / verticesperprimitive, 0, delta);
+			Renderer::Draw_Triangles (0, delta / verticesperprimitive, 0, delta);
 		}
 
 		current+=delta;
@@ -1407,9 +1407,9 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 		Renderer::Set_Transform(RenderTransform_World,identity);
 		Renderer::Set_Transform(RenderTransform_View,identity);
 
-		DX8Wrapper::Set_Material(PointMaterial);
-		DX8Wrapper::Set_Shader(Shader);
-		DX8Wrapper::Set_Texture(0,Texture);
+		Renderer::Set_Material(PointMaterial);
+		Renderer::Set_Shader(Shader);
+		Renderer::Set_Texture(0,Texture);
 
 		// Enable sorting if the primitives are translucent and alpha testing is not enabled.
 		// TheSuperHackers @info Volumetric particles, both billboarded and ground-aligned, must have sorting enabled to
@@ -1464,8 +1464,8 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 				}
 			}
 
-			DX8Wrapper::Set_Index_Buffer (indexbuffer, 0);
-			DX8Wrapper::Set_Vertex_Buffer (PointVerts);
+			Renderer::Set_Index_Buffer (indexbuffer, 0);
+			Renderer::Set_Vertex_Buffer (PointVerts);
 
 			/// @todo lorenzen sez: precompute these params, above
 
@@ -1473,7 +1473,7 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 			if ( sort )
 					SortingRendererClass::Insert_Triangles (0, delta / verticesperprimitive, 0, delta);
 			else
-				DX8Wrapper::Draw_Triangles (0, delta / verticesperprimitive, 0, delta);
+				Renderer::Draw_Triangles (0, delta / verticesperprimitive, 0, delta);
 
 
 			current+=delta;

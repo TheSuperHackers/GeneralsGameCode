@@ -27,6 +27,7 @@
 #include "WWMath/vector3.h"
 #include "WW3D2/lightenvironment.h"
 #include "WWDebug/wwdebug.h"
+#include "Lib/BaseType.h"
 
 static D3DTRANSFORMSTATETYPE To_D3D_Transform(RenderTransform transform)
 {
@@ -41,6 +42,56 @@ static D3DTRANSFORMSTATETYPE To_D3D_Transform(RenderTransform transform)
     }
     WWASSERT(0);
     return D3DTS_WORLD;
+}
+
+static D3DBLEND To_D3D_Blend(RenderBlend blend)
+{
+    switch (blend)
+    {
+    case RenderBlend_Zero:
+        return D3DBLEND_ZERO;
+    case RenderBlend_One:
+        return D3DBLEND_ONE;
+    case RenderBlend_SrcColor:
+        return D3DBLEND_SRCCOLOR;
+    case RenderBlend_InvSrcColor:
+        return D3DBLEND_INVSRCCOLOR;
+    case RenderBlend_SrcAlpha:
+        return D3DBLEND_SRCALPHA;
+    case RenderBlend_InvSrcAlpha:
+        return D3DBLEND_INVSRCALPHA;
+    case RenderBlend_DestAlpha:
+        return D3DBLEND_DESTALPHA;
+    case RenderBlend_InvDestAlpha:
+        return D3DBLEND_INVDESTALPHA;
+    case RenderBlend_DestColor:
+        return D3DBLEND_DESTCOLOR;
+    case RenderBlend_InvDestColor:
+        return D3DBLEND_INVDESTCOLOR;
+    case RenderBlend_SrcAlphaSat:
+        return D3DBLEND_SRCALPHASAT;
+    }
+    WWASSERT(0);
+    return D3DBLEND_ONE;
+}
+
+static D3DBLENDOP To_D3D_Blend_Op(RenderBlendOp op)
+{
+    switch (op)
+    {
+    case RenderBlendOp_Add:
+        return D3DBLENDOP_ADD;
+    case RenderBlendOp_Subtract:
+        return D3DBLENDOP_SUBTRACT;
+    case RenderBlendOp_RevSubtract:
+        return D3DBLENDOP_REVSUBTRACT;
+    case RenderBlendOp_Min:
+        return D3DBLENDOP_MIN;
+    case RenderBlendOp_Max:
+        return D3DBLENDOP_MAX;
+    }
+    WWASSERT(0);
+    return D3DBLENDOP_ADD;
 }
 
 static bool Initialized = false;
@@ -135,6 +186,51 @@ WW3DFormat Renderer::Get_Back_Buffer_Format()
     return DX8Wrapper::getBackBufferFormat();
 }
 
+bool Renderer::Supports_Texture_Format(WW3DFormat format)
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(format);
+}
+
+bool Renderer::Supports_DXTC()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_DXTC();
+}
+
+bool Renderer::Supports_Dot3()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_Dot3();
+}
+
+bool Renderer::Supports_Point_Sprites()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_PointSprites();
+}
+
+bool Renderer::Supports_NPatches()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_NPatches();
+}
+
+bool Renderer::Supports_Bump_Envmap()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_Bump_Envmap();
+}
+
+bool Renderer::Supports_Bump_Envmap_Luminance()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_Bump_Envmap_Luminance();
+}
+
+bool Renderer::Supports_ZBias()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_ZBias();
+}
+
+int Renderer::Get_Max_Textures_Per_Pass()
+{
+    return DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();
+}
+
 void Renderer::Set_Gamma(float gamma, float bright, float contrast, bool calibrate, bool uselimit)
 {
     DX8Wrapper::Set_Gamma(gamma, bright, contrast, calibrate, uselimit);
@@ -179,6 +275,103 @@ void Renderer::Invalidate_Cached_Render_States()
     DX8Wrapper::Invalidate_Cached_Render_States();
 }
 
+void Renderer::Set_Render_Target_With_Z(TextureClass * texture, ZTextureClass * ztexture)
+{
+    DX8Wrapper::Set_Render_Target_With_Z(texture, ztexture);
+}
+
+void Renderer::Set_Default_Render_Target()
+{
+    DX8Wrapper::Set_Render_Target(static_cast<IDirect3DSurface8 *>(nullptr));
+}
+
+bool Renderer::Is_Render_To_Texture()
+{
+    return DX8Wrapper::Is_Render_To_Texture();
+}
+
+void Renderer::Set_Shader(const ShaderClass & shader)
+{
+    DX8Wrapper::Set_Shader(shader);
+}
+
+void Renderer::Set_Material(const VertexMaterialClass * material)
+{
+    DX8Wrapper::Set_Material(material);
+}
+
+void Renderer::Set_Texture(unsigned stage, TextureBaseClass * texture)
+{
+    DX8Wrapper::Set_Texture(stage, texture);
+}
+
+void Renderer::Apply_Render_State_Changes()
+{
+    DX8Wrapper::Apply_Render_State_Changes();
+}
+
+void Renderer::Set_Alpha_Blend_Enable(bool enable)
+{
+    DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHABLENDENABLE, enable ? TRUE : FALSE);
+}
+
+void Renderer::Set_Blend_Factors(RenderBlend src, RenderBlend dest)
+{
+    DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND, To_D3D_Blend(src));
+    DX8Wrapper::Set_DX8_Render_State(D3DRS_DESTBLEND, To_D3D_Blend(dest));
+}
+
+void Renderer::Set_Blend_Op(RenderBlendOp op)
+{
+    DX8Wrapper::Set_DX8_Render_State(D3DRS_BLENDOP, To_D3D_Blend_Op(op));
+}
+
+void Renderer::Set_Vertex_Buffer(const VertexBufferClass * vb, unsigned stream)
+{
+    DX8Wrapper::Set_Vertex_Buffer(vb, stream);
+}
+
+void Renderer::Set_Vertex_Buffer(const DynamicVBAccessClass & vba)
+{
+    DX8Wrapper::Set_Vertex_Buffer(vba);
+}
+
+void Renderer::Set_Index_Buffer(const IndexBufferClass * ib, unsigned int index_base_offset)
+{
+    DX8Wrapper::Set_Index_Buffer(ib, check_cast<unsigned short>(index_base_offset));
+}
+
+void Renderer::Set_Index_Buffer(const DynamicIBAccessClass & iba, unsigned int index_base_offset)
+{
+    DX8Wrapper::Set_Index_Buffer(iba, check_cast<unsigned short>(index_base_offset));
+}
+
+void Renderer::Set_Index_Buffer_Index_Offset(unsigned offset)
+{
+    DX8Wrapper::Set_Index_Buffer_Index_Offset(offset);
+}
+
+void Renderer::Draw_Triangles(unsigned buffer_type, unsigned int start_index, unsigned int polygon_count,
+                              unsigned int min_vertex_index, unsigned int vertex_count)
+{
+    DX8Wrapper::Draw_Triangles(buffer_type, check_cast<unsigned short>(start_index), check_cast<unsigned short>(polygon_count),
+                               check_cast<unsigned short>(min_vertex_index), check_cast<unsigned short>(vertex_count));
+}
+
+void Renderer::Draw_Triangles(unsigned int start_index, unsigned int polygon_count,
+                              unsigned int min_vertex_index, unsigned int vertex_count)
+{
+    DX8Wrapper::Draw_Triangles(check_cast<unsigned short>(start_index), check_cast<unsigned short>(polygon_count),
+                               check_cast<unsigned short>(min_vertex_index), check_cast<unsigned short>(vertex_count));
+}
+
+void Renderer::Draw_Strip(unsigned int start_index, unsigned int polygon_count,
+                          unsigned int min_vertex_index, unsigned int vertex_count)
+{
+    DX8Wrapper::Draw_Strip(check_cast<unsigned short>(start_index), check_cast<unsigned short>(polygon_count),
+                           check_cast<unsigned short>(min_vertex_index), check_cast<unsigned short>(vertex_count));
+}
+
 void Renderer::Set_Transform(RenderTransform transform, const Matrix4x4 & m)
 {
     DX8Wrapper::Set_Transform(To_D3D_Transform(transform), m);
@@ -187,6 +380,11 @@ void Renderer::Set_Transform(RenderTransform transform, const Matrix4x4 & m)
 void Renderer::Set_Transform(RenderTransform transform, const Matrix3D & m)
 {
     DX8Wrapper::Set_Transform(To_D3D_Transform(transform), m);
+}
+
+void Renderer::Set_Texture_Transform(unsigned stage, const Matrix4x4 & m)
+{
+    DX8Wrapper::Set_Transform(static_cast<D3DTRANSFORMSTATETYPE>(D3DTS_TEXTURE0 + stage), m);
 }
 
 void Renderer::Get_Transform(RenderTransform transform, Matrix4x4 & m)

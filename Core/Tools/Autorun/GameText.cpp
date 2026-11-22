@@ -47,7 +47,9 @@
 #include <Lib/BaseType.h>
 #include "GameText.h"
 
+#undef DEBUG_LOG
 #define DEBUG_LOG(x)
+#undef DEBUG_ASSERTCRASH
 #define DEBUG_ASSERTCRASH(x, y)
 
 //#include <Common/Language.h>

@@ -41,6 +41,7 @@
 #include <d3d8.h>
 #include <d3dx8core.h>
 #include "dx8wrapper.h"
+#include "Renderer.h"
 #include "WWLib/TARGA.h"
 #include <WWLib/nstrdup.h>
 #include "w3d_file.h"
@@ -682,7 +683,7 @@ TextureClass::TextureClass
 		// If requesting bumpmap format that isn't available we'll just return the surface in whatever color
 		// format the texture file is in. (This is illegal case, the format support should always be queried
 		// before creating a bump texture!)
-		if (!DX8Wrapper::Is_Initted() || !DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(TextureFormat))
+		if (!DX8Wrapper::Is_Initted() || !Renderer::Supports_Texture_Format(TextureFormat))
 		{
 			TextureFormat=WW3D_FORMAT_UNKNOWN;
 		}
@@ -1115,14 +1116,14 @@ TextureClass* Load_Texture(ChunkLoadClass & cload)
 
 				case W3DTEXTURE_TYPE_BUMPMAP:
 				{
-					if (DX8Wrapper::Is_Initted() && DX8Wrapper::Get_Current_Caps()->Support_Bump_Envmap())
+					if (DX8Wrapper::Is_Initted() && Renderer::Supports_Bump_Envmap())
 					{
 						// No mipmaps to bumpmap for now
 						mipcount=MIP_LEVELS_1;
 
-						if (DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(WW3D_FORMAT_U8V8)) format=WW3D_FORMAT_U8V8;
-						else if (DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(WW3D_FORMAT_X8L8V8U8)) format=WW3D_FORMAT_X8L8V8U8;
-						else if (DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(WW3D_FORMAT_L6V5U5)) format=WW3D_FORMAT_L6V5U5;
+						if (Renderer::Supports_Texture_Format(WW3D_FORMAT_U8V8)) format=WW3D_FORMAT_U8V8;
+						else if (Renderer::Supports_Texture_Format(WW3D_FORMAT_X8L8V8U8)) format=WW3D_FORMAT_X8L8V8U8;
+						else if (Renderer::Supports_Texture_Format(WW3D_FORMAT_L6V5U5)) format=WW3D_FORMAT_L6V5U5;
 					}
 					break;
 				}
@@ -1427,7 +1428,7 @@ CubeTextureClass::CubeTextureClass
 		// If requesting bumpmap format that isn't available we'll just return the surface in whatever color
 		// format the texture file is in. (This is illegal case, the format support should always be queried
 		// before creating a bump texture!)
-		if (!DX8Wrapper::Is_Initted() || !DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(TextureFormat))
+		if (!DX8Wrapper::Is_Initted() || !Renderer::Supports_Texture_Format(TextureFormat))
 		{
 			TextureFormat=WW3D_FORMAT_UNKNOWN;
 		}
@@ -1712,7 +1713,7 @@ VolumeTextureClass::VolumeTextureClass
 		// If requesting bumpmap format that isn't available we'll just return the surface in whatever color
 		// format the texture file is in. (This is illegal case, the format support should always be queried
 		// before creating a bump texture!)
-		if (!DX8Wrapper::Is_Initted() || !DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(TextureFormat))
+		if (!DX8Wrapper::Is_Initted() || !Renderer::Supports_Texture_Format(TextureFormat))
 		{
 			TextureFormat=WW3D_FORMAT_UNKNOWN;
 		}
