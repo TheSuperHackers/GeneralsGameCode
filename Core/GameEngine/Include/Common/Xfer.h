@@ -109,6 +109,10 @@ enum XferOptions CPP_11(: UnsignedInt)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 typedef Int XferBlockSize;
 
+// TheSuperHackers @bugfix alviss7 22/11/2026 Unicode strings are length prefixed with a single
+// byte, so they never hold more than 255 code units plus the terminator.
+const Int MAX_XFER_UNICODE_STRING_LEN = 256;
+
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class Xfer

@@ -228,8 +228,19 @@ void XferLoad::xferUnicodeString( UnicodeString *unicodeStringData )
 	const Int MAX_XFER_LOAD_STRING_BUFFER = 1024;
 	static WideChar buffer[ MAX_XFER_LOAD_STRING_BUFFER ];
 
+	// TheSuperHackers @bugfix alviss7 22/11/2026 Reads unicode strings as 2 byte UTF-16 code units
+	// instead of the native WideChar. wchar_t is 2 bytes on Windows but 4 bytes on the Unix targets,
+	// so reading sizeof( WideChar ) consumed twice the bytes the string occupies, which truncated
+	// the text to every second character and desynchronized every following read in the file.
 	if( len > 0 )
-		xferUser( buffer, sizeof( WideChar ) * len );
+	{
+
+		UnsignedShort fileBuffer[ MAX_XFER_UNICODE_STRING_LEN ];
+		xferUser( fileBuffer, sizeof( UnsignedShort ) * len );
+		for( Int i = 0; i < len; ++i )
+			buffer[ i ] = (WideChar)fileBuffer[ i ];
+
+	}
 	buffer[ len ] = 0;  // terminate
 
 	// save into unicode string

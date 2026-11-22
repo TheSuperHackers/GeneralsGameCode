@@ -331,8 +331,19 @@ void XferSave::xferUnicodeString( UnicodeString *unicodeStringData )
 	xferUnsignedByte( &len );
 
 	// save string data
+	// TheSuperHackers @bugfix alviss7 22/11/2026 Writes unicode strings as 2 byte UTF-16 code units
+	// instead of the native WideChar. wchar_t is 2 bytes on Windows but 4 bytes on the Unix targets,
+	// so writing sizeof( WideChar ) made the save file layout platform dependent.
 	if( len > 0 )
-		xferUser( (void *)unicodeStringData->str(), sizeof( WideChar ) * len );
+	{
+
+		UnsignedShort buffer[ MAX_XFER_UNICODE_STRING_LEN ];
+		const WideChar *source = unicodeStringData->str();
+		for( Int i = 0; i < len; ++i )
+			buffer[ i ] = (UnsignedShort)source[ i ];
+		xferUser( buffer, sizeof( UnsignedShort ) * len );
+
+	}
 
 }
 
