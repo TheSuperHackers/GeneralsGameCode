@@ -36,6 +36,7 @@
 #include "W3DDevice/GameClient/W3DSnow.h"
 #include "W3DDevice/GameClient/W3DTerrainParticles.h"
 #include "WW3D2/camera.h"
+#include "WW3D2/textureatlas.h"
 
 
 //------------------------------------------------------------------------------ Performance Timers
@@ -44,8 +45,26 @@
 
 //-------------------------------------------------------------------------------------------------
 
-static ShaderClass getParticleShader(ParticleSystemInfo::ParticleShaderType shaderType)
+static Bool canUseTextureAtlas(const ParticleSystem& system)
 {
+	return system.isUsingParticles() && system.getParticleAlignment() != ParticleSystemInfo::PARTICLE_ALIGNMENT_CONFORMING;
+}
+
+static Bool usesSharedBlendMode(ParticleSystemInfo::ParticleShaderType shaderType, Bool useTextureAtlas)
+{
+	return useTextureAtlas && (shaderType == ParticleSystemInfo::ALPHA || shaderType == ParticleSystemInfo::ADDITIVE);
+}
+
+static ShaderClass getParticleShader(ParticleSystemInfo::ParticleShaderType shaderType, Bool sharedBlend)
+{
+	// The shared blend mode can be used for both additive and alpha particles.
+	if (sharedBlend)
+	{
+		ShaderClass shader = ShaderClass::_PresetAlphaSpriteShader;
+		shader.Set_Src_Blend_Func(ShaderClass::SRCBLEND_ONE);
+		return shader;
+	}
+
 	switch (shaderType)
 	{
 		case ParticleSystemInfo::ADDITIVE:
@@ -59,6 +78,24 @@ static ShaderClass getParticleShader(ParticleSystemInfo::ParticleShaderType shad
 		default:
 			return ShaderClass();
 	}
+}
+
+static Vector4 getVertexColor(const RGBColor& color, Real alpha, ParticleSystemInfo::ParticleShaderType shaderType, Bool sharedBlendMode)
+{
+	if (sharedBlendMode)
+	{
+		if (shaderType == ParticleSystemInfo::ADDITIVE)
+		{
+			return Vector4(color.red, color.green, color.blue, 0.0f);
+		}
+		if (shaderType == ParticleSystemInfo::ALPHA)
+		{
+			alpha = clamp(0.0f, alpha, 1.0f);
+			return Vector4(clamp(0.0f, color.red, 1.0f) * alpha, clamp(0.0f, color.green, 1.0f) * alpha, clamp(0.0f, color.blue, 1.0f) * alpha, alpha);
+		}
+	}
+
+	return Vector4(color.red, color.green, color.blue, alpha);
 }
 
 W3DParticleSystemManager::W3DParticleSystemManager()
@@ -80,6 +117,7 @@ W3DParticleSystemManager::W3DParticleSystemManager()
 	//m_streakLine = nullptr;
 	m_streakLine = NEW StreakLineClass();
 	m_terrainParticles = NEW W3DTerrainParticles();
+	m_textureAtlas = NEW TextureAtlasClass();
 
 	m_posBuffer = NEW_REF( ShareBufferClass<Vector3>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_posBuffer") );
 	m_RGBABuffer = NEW_REF( ShareBufferClass<Vector4>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_RGBABuffer") );
@@ -100,11 +138,19 @@ W3DParticleSystemManager::~W3DParticleSystemManager()
 
 	delete m_terrainParticles;
 	m_terrainParticles = nullptr;
+	delete m_textureAtlas;
+	m_textureAtlas = nullptr;
 
 	REF_PTR_RELEASE(m_posBuffer);
 	REF_PTR_RELEASE(m_RGBABuffer);
 	REF_PTR_RELEASE(m_sizeBuffer);
 	REF_PTR_RELEASE(m_angleBuffer);
+}
+
+void W3DParticleSystemManager::reset()
+{
+	ParticleSystemManager::reset();
+	m_textureAtlas->Reset();
 }
 
 /**
@@ -234,7 +280,25 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		RefCountPtr<TextureClass> texture;
 		texture.Assign_No_Add_Ref(W3DDisplay::m_assetManager->Get_Texture(sys->getParticleTypeName().str()));
 
-		const ShaderClass shader = getParticleShader(sys->getShaderType());
+		// TheSuperHackers @performance stephanmeesters 21/11/2026 Find or insert the texture into a common texture atlas
+		// so that particles with different textures can join the same batch. Secondly, a shared blend mode is used such that
+		// both additive and alpha particles can join the same batch. To this end, alpha particles must use a premultiplied alpha texture.
+		const ParticleSystemInfo::ParticleShaderType shaderType = sys->getShaderType();
+		RectClass uvRect(0.0f, 0.0f, 1.0f, 1.0f);
+		Bool useTextureAtlas = FALSE;
+		if (canUseTextureAtlas(*sys) && texture.Peek() != nullptr)
+		{
+			const TextureAtlasClass::TextureLocation location = m_textureAtlas->Find_Or_Insert(*texture.Peek(), shaderType == ParticleSystemInfo::ALPHA);
+			if (location.page != nullptr)
+			{
+				texture = location.page;
+				uvRect = location.uvRect;
+				useTextureAtlas = TRUE;
+			}
+		}
+
+		const Bool useSharedBlendMode = usesSharedBlendMode(shaderType, useTextureAtlas);
+		const ShaderClass shader = getParticleShader(shaderType, useSharedBlendMode);
 
 		const Bool canBatch = sys->isUsingParticles();
 		const Bool batchDone = finishedBatch(*sys, texture, shader);
@@ -257,7 +321,6 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		Vector4 *RGBAArray = m_RGBABuffer->Get_Array();
 		uint8 *angleArray = m_angleBuffer->Get_Array();
 		const Coord3D *pos;
-		const RGBColor *color;
 		Real psize;
 
 
@@ -282,12 +345,9 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 
 			sizeArray[pointCount] = psize;
 
-			color = p->getColor();
-			RGBAArray[pointCount].X = color->red;
-			RGBAArray[pointCount].Y = color->green;
-			RGBAArray[pointCount].Z = color->blue;
-			RGBAArray[pointCount].W = p->getAlpha();
+			RGBAArray[pointCount] = getVertexColor(*p->getColor(), p->getAlpha(), shaderType, useSharedBlendMode);
 
+			m_uvRects[pointCount] = uvRect;
 			angleArray[pointCount] = (uint8)(p->getAngle() * 255.0f / (2.0f * PI));
 
 			if (++pointCount == MAX_POINTS_PER_GROUP)
@@ -450,6 +510,7 @@ void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, Unsign
 			m_pointGroup->Set_Arrays(m_posBuffer, m_RGBABuffer, nullptr, m_sizeBuffer, m_angleBuffer, nullptr, pointCount);
 			m_pointGroup->Set_Billboard(m_batchParticleAlignment == ParticleSystemInfo::PARTICLE_ALIGNMENT_BILLBOARD);
 			m_pointGroup->Set_Point_Frame(0);
+			m_pointGroup->Set_Texture_UV_Rects(m_uvRects);
 			m_pointGroup->Render(rinfo);
 		}
 

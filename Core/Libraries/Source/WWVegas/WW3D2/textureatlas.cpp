@@ -146,10 +146,10 @@ TextureAtlasClass::TextureLocation TextureAtlasClass::Pack_Texture(const Texture
 	TextureLocation location;
 	constexpr const float scale = 1.0f / TextureAtlas::PAGE_SIZE;
 	location.page = Pages[pageIndex].texture.Peek();
-	location.uvRect.Set((x + TextureAtlas::PADDING) * scale,
-	                    (y + TextureAtlas::PADDING) * scale,
-	                    (x + TextureAtlas::PADDING + width) * scale,
-	                    (y + TextureAtlas::PADDING + height) * scale);
+	location.uvRect = RectClass((x + TextureAtlas::PADDING) * scale,
+	                             (y + TextureAtlas::PADDING) * scale,
+	                             (x + TextureAtlas::PADDING + width) * scale,
+	                             (y + TextureAtlas::PADDING + height) * scale);
 	return location;
 }
 

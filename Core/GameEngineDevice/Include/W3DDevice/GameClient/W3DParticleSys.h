@@ -34,6 +34,7 @@
 #include "WWLib/bittype.h"
 
 class W3DTerrainParticles;
+class TextureAtlasClass;
 
 //=============================================================================
 /** W3D implementation of the game display which is responsible for creating
@@ -50,6 +51,7 @@ public:
 	virtual void queueParticleRender() override;
 	///< returns the number of particles shown on screen per frame
 	virtual Int getOnScreenParticleCount() override { return m_onScreenParticleCount; }
+	virtual void reset() override;
 
 private:
 	Bool finishedBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture, const ShaderClass& shader);
@@ -66,6 +68,8 @@ private:
 	ShareBufferClass<Vector4> *m_RGBABuffer;		///< array of particle color and alpha
 	ShareBufferClass<float> *m_sizeBuffer;			///< array of particle sizes
 	ShareBufferClass<uint8> *m_angleBuffer;			///< array of particle orientations
+	TextureAtlasClass *m_textureAtlas;						///< the texture atlas that contains textures of particles
+	RectClass m_uvRects[MAX_POINTS_PER_GROUP];		///< array of particle UV texture coordinates
 	AABoxClass m_currentBoundingBox;
 
 	ShaderClass m_batchShader;									///< the shader used for batched particle draws
