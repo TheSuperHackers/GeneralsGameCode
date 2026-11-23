@@ -30,25 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 14                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   GridCullSystemClass::clamp_indices_to_grid -- constrains indices to be a valid location   *
- *   GridCullSystemClass::map_point_to_cell -- determines which cell  the point is in          *
- *   GridCullSystemClass::map_point_to_address -- determines the address of a point in the gri *
- *   GridCullSystemClass::map_indices_to_address -- computes the address for given index tripl *
- *   GridCullSystemClass::total_cell_count -- returns the total number of cells in the grid    *
- *   GridCullSystemClass::compute_box -- computes the bounding box for a grid cell             *
- *   GridCullSystemClass::compute_box -- computes bounding box for a range of grid cells       *
- *   GridCullSystemClass::init_volume -- inits volume to contain the given range               *
- *   GridCullSystemClass::init_volume -- inits volume to contain the given line segment        *
- *   GridCullSystemClass::init_volume -- inits volume to contain the given box                 *
- *   GridCullSystemClass::init_volume -- inits volume to contain the given oriented box        *
- *   GridCullSystemClass::init_volume -- inits volume to contain the given frustum             *
- *   GridCullSystemClass::VolumeStruct::VolumeStruct -- constructor                            *
- *   GridCullSystemClass::VolumeStruct::VolumeStruct -- constructor                            *
- *   GridCullSystemClass::VolumeStruct::Is_Leaf -- check if volume is a leaf                   *
- *   GridCullSystemClass::VolumeStruct::Is_Empty -- check if volume is empty (or invalid)      *
- *   GridCullSystemClass::VolumeStruct::Split -- split this volume                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -278,18 +259,6 @@ private:
 
 
 
-/***********************************************************************************************
- * GridCullSystemClass::clamp_indices_to_grid -- constrains indices to be a valid location     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/30/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void GridCullSystemClass::clamp_indices_to_grid(int * i,int * j,int * k)
 {
 	if (*i < 0) *i = 0;
@@ -301,18 +270,6 @@ WWINLINE void GridCullSystemClass::clamp_indices_to_grid(int * i,int * j,int * k
 }
 
 
-/***********************************************************************************************
- * GridCullSystemClass::map_point_to_cell -- determines which cell  the point is in            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/30/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE bool GridCullSystemClass::map_point_to_cell(const Vector3 & pt,int & set_i,int & set_j,int & set_k)
 {
 	Vector3 dp = pt - Origin;
@@ -329,18 +286,6 @@ WWINLINE bool GridCullSystemClass::map_point_to_cell(const Vector3 & pt,int & se
 }
 
 
-/***********************************************************************************************
- * GridCullSystemClass::map_point_to_address -- determines the address of a point in the grid  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/30/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE bool GridCullSystemClass::map_point_to_address(const Vector3 & pt,int &set_address)
 {
 	int i,j,k;
@@ -356,54 +301,18 @@ WWINLINE bool GridCullSystemClass::map_point_to_address(const Vector3 & pt,int &
 }
 
 
-/***********************************************************************************************
- * GridCullSystemClass::map_indices_to_address -- computes the address for given index triplet *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/30/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE int GridCullSystemClass::map_indices_to_address(int i,int j,int k)
 {
 	return i + j*CellCount[0] + k*CellCount[0]*CellCount[1];
 }
 
 
-/***********************************************************************************************
- * GridCullSystemClass::total_cell_count -- returns the total number of cells in the grid      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/30/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE int GridCullSystemClass::total_cell_count()
 {
 	return CellCount[0] * CellCount[1] * CellCount[2];
 }
 
 
-/***********************************************************************************************
- * GridCullSystemClass::compute_box -- computes the bounding box for a grid cell               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/30/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void	GridCullSystemClass::compute_box(int i,int j,int k,AABoxClass * set_box)
 {
 	WWASSERT(set_box != nullptr);
@@ -424,18 +333,6 @@ WWINLINE void	GridCullSystemClass::compute_box(int i,int j,int k,AABoxClass * se
 }
 
 
-/***********************************************************************************************
- * GridCullSystemClass::compute_box -- computes bounding box for a range of grid cells         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/30/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void	GridCullSystemClass::compute_box(const GridCullSystemClass::VolumeStruct & vol, AABoxClass * set_box)
 {
 	WWASSERT(set_box != nullptr);
@@ -458,18 +355,6 @@ WWINLINE void	GridCullSystemClass::compute_box(const GridCullSystemClass::Volume
 }
 
 
-/***********************************************************************************************
- * GridCullSystemClass::init_volume -- inits volume to contain the given range                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/30/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void GridCullSystemClass::init_volume
 (
 	const Vector3 &		bound_min,
@@ -503,18 +388,6 @@ WWINLINE void GridCullSystemClass::init_volume
 }
 
 
-/***********************************************************************************************
- * GridCullSystemClass::init_volume -- inits volume to contain the given line segment          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/30/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void GridCullSystemClass::init_volume(const LineSegClass & line,VolumeStruct * set_volume)
 {
 	Vector3 min_pt,max_pt;
@@ -528,36 +401,12 @@ WWINLINE void GridCullSystemClass::init_volume(const LineSegClass & line,VolumeS
 }
 
 
-/***********************************************************************************************
- * GridCullSystemClass::init_volume -- inits volume to contain the given box                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/30/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void GridCullSystemClass::init_volume(const AABoxClass & box,VolumeStruct * set_volume)
 {
 	init_volume(box.Center - box.Extent,box.Center + box.Extent,set_volume);
 }
 
 
-/***********************************************************************************************
- * GridCullSystemClass::init_volume -- inits volume to contain the given oriented box          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/30/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void GridCullSystemClass::init_volume(const OBBoxClass & box,VolumeStruct * set_volume)
 {
 	Vector3 aaextent;
@@ -566,52 +415,17 @@ WWINLINE void GridCullSystemClass::init_volume(const OBBoxClass & box,VolumeStru
 }
 
 
-/***********************************************************************************************
- * GridCullSystemClass::init_volume -- inits volume to contain the given frustum               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/30/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void GridCullSystemClass::init_volume(const FrustumClass & frustum,VolumeStruct * set_volume)
 {
 	init_volume(frustum.Get_Bound_Min(),frustum.Get_Bound_Max(),set_volume);
 }
 
 
-/***********************************************************************************************
- * GridCullSystemClass::VolumeStruct::VolumeStruct -- constructor                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 WWINLINE GridCullSystemClass::VolumeStruct::VolumeStruct()
 {
 }
 
 
-/***********************************************************************************************
- * GridCullSystemClass::VolumeStruct::VolumeStruct -- constructor                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/30/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE GridCullSystemClass::VolumeStruct::VolumeStruct(int i0,int j0,int k0,int i1,int j1,int k1)
 {
 	Min[0] = i0;
@@ -626,54 +440,19 @@ WWINLINE GridCullSystemClass::VolumeStruct::VolumeStruct(int i0,int j0,int k0,in
 }
 
 
-/***********************************************************************************************
- * GridCullSystemClass::VolumeStruct::Is_Leaf -- check if volume is a leaf                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/30/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE bool GridCullSystemClass::VolumeStruct::Is_Leaf() const
 {
 	return ((Max[0]-Min[0] == 1) && (Max[1]-Min[1] == 1) && (Max[2]-Min[2] == 1));
 }
 
 
-/***********************************************************************************************
- * GridCullSystemClass::VolumeStruct::Is_Empty -- check if volume is empty (or invalid)        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/30/2000  gth : Created.                                                                 *
- *=============================================================================================*/
+// Also returns true for an invalid volume.
 WWINLINE bool GridCullSystemClass::VolumeStruct::Is_Empty() const
 {
 	return ((Max[0]-Min[0] <= 0) || (Max[1]-Min[1] <= 0) || (Max[2]-Min[2] <= 0));
 }
 
 
-/***********************************************************************************************
- * GridCullSystemClass::VolumeStruct::Split -- split this volume                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/30/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void GridCullSystemClass::VolumeStruct::Split(VolumeStruct & v0,VolumeStruct & v1) const
 {
 	// find the longest dimension

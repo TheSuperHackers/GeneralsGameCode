@@ -32,10 +32,6 @@
  *                                                                                             *
  *                    $Revision:: 27                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   WWMemoryLogClass::Allocate_Memory -- allocates memory                                     *
- *   WWMemoryLogClass::Release_Memory -- frees memory                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "WWLib/always.h"
@@ -557,23 +553,7 @@ MemLogClass * WWMemoryLogClass::Get_Log()
 }
 
 
-/***********************************************************************************************
- * WWMemoryLogClass::Release_Log -- Free the memory used by WWMemoryLogClass so it doesn't leak*
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: Called as part of _onexit processing                                              *
- *                                                                                             *
- *           It's messy, but I assume there's a reason it's not statically allocated...        *
- *           OK, now I get it                                                                  *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/13/2001 8:55PM ST : Created                                                             *
- *=============================================================================================*/
+// WARNING: Called as part of _onexit processing.
 void WWMemoryLogClass::Release_Log()
 {
 	MemLogMutexLockClass lock;
@@ -625,22 +605,9 @@ struct MemoryLogStruct
 
 
 
-/***********************************************************************************************
- * WWMemoryLogClass::Allocate_Memory -- allocates memory                                       *
- *                                                                                             *
- *    This function adds a header to the memory allocated so that when the memory is freed     *
- *    the proper memory category size can be decremented.  The application using this logging  *
- *    system should call this function from inside its overloaded 'new' operator.              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/29/2001  gth : Created.                                                                 *
- *=============================================================================================*/
+// Adds a header to the memory allocated so that when the memory is freed the proper memory category
+// size can be decremented. The application using this logging system should call this function from
+// inside its overloaded 'new' operator.
 void * WWMemoryLogClass::Allocate_Memory(size_t size)
 {
 	AllocateCount++;
@@ -689,21 +656,8 @@ void * WWMemoryLogClass::Allocate_Memory(size_t size)
 }
 
 
-/***********************************************************************************************
- * WWMemoryLogClass::Release_Memory -- frees memory                                            *
- *                                                                                             *
- *    This function checks for a wwmemlog header and decrements the relevant memory category.  *
- *    It should be called in the application's custom delete operator.                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/29/2001  gth : Created.                                                                 *
- *=============================================================================================*/
+// Checks for a wwmemlog header and decrements the relevant memory category. It should be called in
+// the application's custom delete operator.
 void WWMemoryLogClass::Release_Memory(void *ptr)
 {
 	FreeCount++;

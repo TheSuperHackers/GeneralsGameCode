@@ -33,42 +33,6 @@
  *                    $Revision:: 38                                      $*
  *                                                                         *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
- *-------------------------------------------------------------------------*
- * Functions:                                                              *
- *   PointGroupClass::PointGroupClass -- PointGroupClass CTor.             *
- *   PointGroupClass::~PointGroupClass -- PointGroupClass DTor.            *
- *   PointGroupClass::operator = -- PointGroupClass assignment operator.   *
- *   PointGroupClass::Set_Arrays -- Set point location/color/enable arrays.*
- *   PointGroupClass::Set_Point_Size -- Set default point size.            *
- *   PointGroupClass::Get_Point_Size -- Get default point size.            *
- *   PointGroupClass::Set_Point_Color -- Set default point color.          *
- *   PointGroupClass::Get_Point_Color -- Get default point color.          *
- *   PointGroupClass::Set_Point_Alpha -- Set default point alpha.          *
- *   PointGroupClass::Get_Point_Alpha -- Get default point alpha.          *
- *   PointGroupClass::Set_Point_Orientation -- Set default point orientatio*
- *   PointGroupClass::Get_Point_Orientation -- Get default point orientatio*
- *   PointGroupClass::Set_Point_Frame -- Set default point frame.          *
- *   PointGroupClass::Get_Point_Frame -- Get default point frame.          *
- *   PointGroupClass::Set_Point_Mode -- Set point rendering method.        *
- *   PointGroupClass::Get_Point_Mode -- Get point rendering method.        *
- *   PointGroupClass::Set_Flag -- Set given flag to on or off.             *
- *   PointGroupClass::Get_Flag -- Get current value (on/off) of given flag.*
- *   PointGroupClass::Set_Texture -- Set texture used.                     *
- *   PointGroupClass::Get_Texture -- Get texture used.                     *
- *   PointGroupClass::Set_Shader -- Set shader used.                       *
- *   PointGroupClass::Get_Shader -- Get shader used.                       *
- *   PointGroupClass::Set_Billboard -- Set whether to billboard.           *
- *   PointGroupClass::Get_Billboard -- Get whether to billboard.           *
- *   PointGroupClass::Get_Discrete_Orientation_Count_Log2 -- what it says  *
- *   PointGroupClass::Set_Discrete_Orientation_Count_Log2 -- what it says. *
- *   PointGroupClass::Get_Frame_Row_Column_Count_Log2 -- what it says      *
- *   PointGroupClass::Set_Frame_Row_Column_Count_Log2 -- what it says.     *
- *   PointGroupClass::Get_Polygon_Count -- Get estimated polygon count.    *
- *   PointGroupClass::Render -- draw point group.                          *
- *   PointGroupClass::vInstance -- Create instance of class.               *
- *   PointGroupClass::sGetClassName -- Get name of class.                  *
- *   PointGroupClass::Update_Arrays -- Update all arrays used in rendering *
- *   PointGroupClass::Peek_Texture -- Peeks texture                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include "pointgr.h"
 #include "vertmaterial.h"
@@ -132,18 +96,6 @@ VectorClass<Vector2>			VertexUV;		// vertex texture coords
 DX8IndexBufferClass			*Tris, *Quads;						// Index buffers.
 SortingIndexBufferClass		*SortingTris, *SortingQuads;	// Sorting index buffers.
 
-/**************************************************************************
- * PointGroupClass::PointGroupClass -- PointGroupClass CTor.              *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   11/17/1998 NH  : Created.                                            *
- *========================================================================*/
 PointGroupClass::PointGroupClass() :
 	PointLoc(nullptr),
 	PointDiffuse(nullptr),
@@ -169,18 +121,6 @@ PointGroupClass::PointGroupClass() :
 {
 }
 
-/**************************************************************************
- * PointGroupClass::~PointGroupClass -- PointGroupClass DTor.             *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   11/17/1998 NH  : Created.                                            *
- *========================================================================*/
 PointGroupClass::~PointGroupClass()
 {
 	if (PointLoc) {
@@ -213,18 +153,6 @@ PointGroupClass::~PointGroupClass()
 	}
 }
 
-/**************************************************************************
- * PointGroupClass::operator = -- PointGroupClass assignment operator.    *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   11/17/1998 NH  : Created.                                            *
- *========================================================================*/
 PointGroupClass & PointGroupClass::operator = (const PointGroupClass & that)
 {
 	if (this != &that) {
@@ -234,29 +162,10 @@ PointGroupClass & PointGroupClass::operator = (const PointGroupClass & that)
 }
 
 
-/**************************************************************************
- * PointGroupClass::Set_Arrays -- Set point location/color/enable arrays. *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * NOTES:	colors, alphas, APT, sizes, orientations and frames are       *
- *          optional. active_point_count can also be used with a nullptr apt.*
- *          In this case active_point_count is ignored if it is -1        *
- *          (default value) and otherwise it indicates the first N active *
- *          points in the arrays.                                         *
- *          The view plane rectangle may optionally be passed as well -   *
- *				this is only used in SCREENSPACE mode.                        *
- *                                                                        *
- * HISTORY:                                                               *
- *   11/17/1998 NH  : Created.                                            *
- *   08/25/1999 NH  : Alphas added.                                       *
- *   06/28/2000 NH  : Orientations and frames added.                      *
- *   02/08/2001 HY  : Upgraded to DX8                                     *
- *========================================================================*/
+// Colors, alphas, APT, sizes, orientations and frames are optional. active_point_count can also be
+// used with a nullptr apt. In this case active_point_count is ignored if it is -1 (default value)
+// and otherwise it indicates the first N active points in the arrays. The view plane rectangle may
+// optionally be passed as well - this is only used in SCREENSPACE mode.
 void PointGroupClass::Set_Arrays(
 	ShareBufferClass<Vector3> *locs,
 	ShareBufferClass<Vector4> *diffuse,
@@ -300,236 +209,88 @@ void PointGroupClass::Set_Arrays(
 	VPYMax = vpymax;
 }
 
-/**************************************************************************
- * PointGroupClass::Set_Point_Size -- Set default point size.             *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS: This size is ignored if a size array is present.             *
- *                                                                        *
- * HISTORY:                                                               *
- *   11/17/1998 NH  : Created.                                            *
- *========================================================================*/
+// WARNING: This size is ignored if a size array is present.
 void PointGroupClass::Set_Point_Size(float size)
 {
 	DefaultPointSize = size;
 }
 
 
-/**************************************************************************
- * PointGroupClass::Get_Point_Size -- Get default point size.             *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS: This size is ignored if a size array is present.             *
- *                                                                        *
- * HISTORY:                                                               *
- *   11/17/1998 NH  : Created.                                            *
- *========================================================================*/
+// WARNING: This size is ignored if a size array is present.
 float PointGroupClass::Get_Point_Size()
 {
 	return DefaultPointSize;
 }
 
 
-/**************************************************************************
- * PointGroupClass::Set_Point_Color -- Set default point color.           *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS: This color is ignored if a color array is present.           *
- *                                                                        *
- * HISTORY:                                                               *
- *   04/20/1999 NH  : Created.                                            *
- *========================================================================*/
+// WARNING: This color is ignored if a color array is present.
 void PointGroupClass::Set_Point_Color(Vector3 color)
 {
 	DefaultPointColor = color;
 }
 
-/**************************************************************************
- * PointGroupClass::Get_Point_Color -- Get default point color.           *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS: This color is ignored if a color array is present.           *
- *                                                                        *
- * HISTORY:                                                               *
- *   04/20/1999 NH  : Created.                                            *
- *========================================================================*/
+// WARNING: This color is ignored if a color array is present.
 Vector3 PointGroupClass::Get_Point_Color()
 {
 	return DefaultPointColor;
 }
 
-/**************************************************************************
- * PointGroupClass::Set_Point_Alpha -- Set default point alpha.           *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS: This alpha is ignored if an alpha array is present.          *
- *                                                                        *
- * HISTORY:                                                               *
- *   08/25/1999 NH  : Created.                                            *
- *========================================================================*/
+// WARNING: This alpha is ignored if an alpha array is present.
 void PointGroupClass::Set_Point_Alpha(float alpha)
 {
 	DefaultPointAlpha = alpha;
 }
 
 
-/**************************************************************************
- * PointGroupClass::Get_Point_Alpha -- Get default point alpha.           *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS: This alpha is ignored if an alpha array is present.          *
- *                                                                        *
- * HISTORY:                                                               *
- *   08/25/1999 NH  : Created.                                            *
- *========================================================================*/
+// WARNING: This alpha is ignored if an alpha array is present.
 float PointGroupClass::Get_Point_Alpha()
 {
 	return DefaultPointAlpha;
 }
 
 
-/**************************************************************************
- * PointGroupClass::Set_Point_Orientation -- Set default point orientation*
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS: This is ignored if an orientation array is present.          *
- *                                                                        *
- * NOTE: No need to ensure value in valid range - it will be masked later.*
- *                                                                        *
- * HISTORY:                                                               *
- *   06/28/2000 NH  : Created.                                            *
- *========================================================================*/
+// No need to ensure value in valid range - it will be masked later.
+// WARNING: This is ignored if an orientation array is present.
 void PointGroupClass::Set_Point_Orientation(unsigned char orientation)
 {
 	DefaultPointOrientation = orientation;
 }
 
 
-/**************************************************************************
- * PointGroupClass::Get_Point_Orientation -- Get default point orientation*
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS: This is ignored if an orientation array is present.          *
- *                                                                        *
- * HISTORY:                                                               *
- *   06/28/2000 NH  : Created.                                            *
- *========================================================================*/
+// WARNING: This is ignored if an orientation array is present.
 unsigned char PointGroupClass::Get_Point_Orientation()
 {
 	return DefaultPointOrientation;
 }
 
 
-/**************************************************************************
- * PointGroupClass::Set_Point_Frame -- Set default point frame.           *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS: This frame is ignored if an frame array is present.          *
- *                                                                        *
- * NOTE: No need to ensure value in valid range - it will be masked later.*
- *                                                                        *
- * HISTORY:                                                               *
- *   06/28/2000 NH  : Created.                                            *
- *========================================================================*/
+// No need to ensure value in valid range - it will be masked later.
+// WARNING: This frame is ignored if a frame array is present.
 void PointGroupClass::Set_Point_Frame(unsigned char frame)
 {
 	DefaultPointFrame = frame;
 }
 
 
-/**************************************************************************
- * PointGroupClass::Get_Point_Frame -- Get default point frame.           *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS: This frame is ignored if an frame array is present.          *
- *                                                                        *
- * HISTORY:                                                               *
- *   06/28/2000 NH  : Created.                                            *
- *========================================================================*/
+// WARNING: This frame is ignored if a frame array is present.
 unsigned char PointGroupClass::Get_Point_Frame()
 {
 	return DefaultPointFrame;
 }
 
 
-/**************************************************************************
- * PointGroupClass::Set_Point_Mode -- Set point rendering method.         *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   11/17/1998 NH  : Created.                                            *
- *========================================================================*/
 void PointGroupClass::Set_Point_Mode(PointModeEnum mode)
 {
 	PointMode = mode;
 }
 
 
-/**************************************************************************
- * PointGroupClass::Get_Point_Mode -- Get point rendering method.         *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   11/17/1998 NH  : Created.                                            *
- *========================================================================*/
 PointGroupClass::PointModeEnum PointGroupClass::Get_Point_Mode()
 {
 	return PointMode;
 }
 
 
-/**************************************************************************
- * Set_Flag -- PointGroupClass::Set given flag to on or off.              *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   11/17/1998 NH  : Created.                                            *
- *========================================================================*/
 void PointGroupClass::Set_Flag(FlagsType flag, bool onoff)
 {
 	if (onoff) Flags|=1<<flag;
@@ -537,54 +298,16 @@ void PointGroupClass::Set_Flag(FlagsType flag, bool onoff)
 		Flags&=~(1<<flag);
 }
 
-/**************************************************************************
- * PointGroupClass::Get_Flag -- Get current value (on/off) of given flag. *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   11/17/1998 NH  : Created.                                            *
- *========================================================================*/
 int PointGroupClass::Get_Flag(FlagsType flag)
 {
 	return (Flags>>flag) & 0x1;
 }
 
-/**************************************************************************
- * PointGroupClass::Set_Texture -- Set texture used.                      *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   11/17/1998 NH  : Created.                                            *
- *   02/08/2001 HY  : Upgraded to DX8                                     *
- *========================================================================*/
 void PointGroupClass::Set_Texture(TextureClass* texture)
 {
 	REF_PTR_SET(Texture,texture);
 }
 
-/**************************************************************************
- * PointGroupClass::Get_Texture -- Get texture used.                      *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   11/17/1998 NH  : Created.                                            *
- *   02/08/2001 HY  : Upgraded to DX8                                     *
- *========================================================================*/
 TextureClass * PointGroupClass::Get_Texture()
 {
 	if (Texture) Texture->Add_Ref();
@@ -592,153 +315,47 @@ TextureClass * PointGroupClass::Get_Texture()
 }
 
 
-/***********************************************************************************************
- * PointGroupClass::Peek_Texture -- Peeks texture                                              *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/12/2001  hy : Created.                                                                  *
- *=============================================================================================*/
 TextureClass * PointGroupClass::Peek_Texture()
 {
 	return Texture;
 }
 
-/**************************************************************************
- * PointGroupClass::Set_Shader -- Set shader used.                        *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:	the primary gradient will be set to MODULATE/DISABLE in    *
- * 				the shader depending on whether a color or alpha array was *
- * 				passed in Set_Point_Arrays. also, texturing will be        *
- * 				enabled or disabled dependent on whether a non-null        *
- * 				texture was set.                                           *
- *					these will override the primary gradient/texturing         *
- *					settings in the given shader.                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   11/17/1998 NH  : Created.                                            *
- *   02/08/2001 HY  : Upgraded to DX8                                     *
- *========================================================================*/
+// WARNING: The primary gradient will be set to MODULATE/DISABLE in the shader depending on whether
+// a color or alpha array was passed in Set_Point_Arrays. Also, texturing will be enabled or
+// disabled dependent on whether a non-null texture was set. These will override the primary
+// gradient/texturing settings in the given shader.
 void PointGroupClass::Set_Shader(ShaderClass shader)
 {
 	Shader = shader;
 }
 
 
-/**************************************************************************
- * PointGroupClass::Get_Shader -- Get shader used.                        *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   11/17/1998 NH  : Created.                                            *
- *   02/08/2001 HY  : Upgraded to DX8                                     *
- *========================================================================*/
 ShaderClass PointGroupClass::Get_Shader()
 {
 	return Shader;
 }
 
-/**************************************************************************
- * PointGroupClass::Set_Billboard -- Set whether to Billboard.            *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   04/25/2002 JM  : Created.                                            *
- *========================================================================*/
 void PointGroupClass::Set_Billboard(bool shouldBillboard)
 {
 	Billboard = shouldBillboard;
 }
 
-/**************************************************************************
- * PointGroupClass::Get_Billboard -- Get whether to Billboard.            *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   04/25/2002 JM  : Created.                                            *
- *========================================================================*/
 bool PointGroupClass::Get_Billboard()
 {
 	return Billboard;
 }
 
-/**************************************************************************
- * PointGroupClass::Get_Frame_Row_Column_Count_Log2 -- what it says       *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   06/28/2000 NH  : Created.                                            *
- *   02/08/2001 HY  : Upgraded to DX8                                     *
- *========================================================================*/
 unsigned char PointGroupClass::Get_Frame_Row_Column_Count_Log2()
 {
 	return FrameRowColumnCountLog2;
 }
 
 
-/**************************************************************************
- * PointGroupClass::Set_Frame_Row_Column_Count_Log2 -- what it says.      *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   06/28/2000 NH  : Created.                                            *
- *   02/08/2001 HY  : Upgraded to DX8                                     *
- *========================================================================*/
 void PointGroupClass::Set_Frame_Row_Column_Count_Log2(unsigned char frccl2)
 {
 	FrameRowColumnCountLog2 = MIN(frccl2, 4);
 }
 
-/**************************************************************************
- * PointGroupClass::Get_Polygon_Count -- Get estimated polygon count.     *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   11/18/1998 NH  : Created.                                            *
- *   02/08/2001 HY  : Upgraded to DX8                                     *
- *========================================================================*/
 int PointGroupClass::Get_Polygon_Count()
 {
 	switch (PointMode) {
@@ -754,19 +371,6 @@ int PointGroupClass::Get_Polygon_Count()
 	return 0;
 }
 
-/**************************************************************************
- * PointGroupClass::Render -- draw point group.                           *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   12/10/1998 NH  : Created.                                            *
- *   02/08/2001 HY  : Upgraded to DX8                                     *
- *========================================================================*/
 static SimpleVecClass<unsigned long> remap;
 void PointGroupClass::Render(RenderInfoClass &rinfo)
 {
@@ -1001,18 +605,6 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 
 
 
-/**************************************************************************
- * PointGroupClass::Update_Arrays -- Update all arrays used in rendering  *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   11/17/1998 NH  : Created.                                            *
- *========================================================================*/
 void PointGroupClass::Update_Arrays(
 	Vector3 *point_loc,
 	Vector4 *point_diffuse,
@@ -1441,18 +1033,7 @@ void PointGroupClass::Update_Arrays(
 }
 
 
-/**************************************************************************
- * PointGroupClass::_Init -- Create static data.                          *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   06/28/2000 NH  : Created.                                            *
- *========================================================================*/
+// Create static data.
 void PointGroupClass::_Init()
 {
 	int i, j;
@@ -1605,18 +1186,7 @@ void PointGroupClass::_Init()
 }
 
 
-/**************************************************************************
- * PointGroupClass::_Shutdown -- Destroy static data.                     *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   06/28/2000 NH  : Created.                                            *
- *========================================================================*/
+// Destroy static data.
 void PointGroupClass::_Shutdown()
 {
 	for (int i = 0; i < 5; i++) {
@@ -1639,24 +1209,10 @@ void PointGroupClass::_Shutdown()
 
 
 
-/**************************************************************************
- * PointGroupClass::RenderVolumeParticles -- draw a point group.sandwich  *
- *                                                                        *
- *	This is a specialized renderer. It will draw the particle repeatedly  *
- *  while attenuating opacity appropriately, and bumping the z-position.  *
- *  This is actually done by cloning the particle over and over at        *
- *  successively closer positions to the camera. Very Slow!               *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:      USE SPARINGLY, IT IS EXPENSIVE!!!!!                     *
- *                                                                        *
- * HISTORY:                                                               *
- *   12/03/2002	Mark Lorenzen		Created.                                  *
- *																		                                    *
- *========================================================================*/
+// Draw a point group sandwich. This is a specialized renderer. It will draw the particle repeatedly
+// while attenuating opacity appropriately, and bumping the z-position. This is actually done by
+// cloning the particle over and over at successively closer positions to the camera. Very Slow!
+// WARNING: USE SPARINGLY, IT IS EXPENSIVE!!!!!
 #define DEFAULT_VOLUME_PARTICLE_DEPTH ( 1 )
 #define MAX_VOLUME_PARTICLE_DEPTH ( 16 )
 void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int depth )

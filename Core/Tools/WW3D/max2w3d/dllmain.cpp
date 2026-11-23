@@ -31,14 +31,6 @@
  *                                                                                             *
  *                  Last Update : June 9, 1997 [GH]                                            *
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   DllMain -- Entry point for the dll                                                        *
- *   LibDescription -- Returns description of this library                                     *
- *   LibNumberClasses -- Returns number of classes in this library                             *
- *   LibClassDesc -- Returns a ClassDesc for the specified class                               *
- *   LibVersion -- Returns the version number of this library                                  *
- *   GetString -- Gets a string out of the resources                                           *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -68,18 +60,6 @@ static W3dClassDesc		W3d_Export_Class_Descriptor;
 
 
 
-/***********************************************************************************************
- * DllMain -- Entry point for the dll                                                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/09/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 BOOL WINAPI DllMain(HINSTANCE	hinstDLL,ULONG /*fdwReason*/,LPVOID /*lpvReserved*/)
 {
 	AppInstance = hinstDLL;
@@ -95,53 +75,17 @@ BOOL WINAPI DllMain(HINSTANCE	hinstDLL,ULONG /*fdwReason*/,LPVOID /*lpvReserved*
 }
 
 
-/***********************************************************************************************
- * LibDescription -- Returns description of this library                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/09/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 DLLEXPORT const TCHAR * LibDescription()
 {
 	return  Get_String(IDS_LIB_DESCRIPTION);
 }
 
-/***********************************************************************************************
- * LibNumberClasses -- Returns number of classes in this library                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/09/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 DLLEXPORT int LibNumberClasses()
 {
 	return 8;
 }
 
 
-/***********************************************************************************************
- * LibClassDesc -- Returns a ClassDesc for the specified class                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/09/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 DLLEXPORT ClassDesc * LibClassDesc(int i)
 {
 	switch(i)
@@ -161,36 +105,12 @@ DLLEXPORT ClassDesc * LibClassDesc(int i)
 }
 
 
-/***********************************************************************************************
- * LibVersion -- Returns the version number of this library                                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/09/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 DLLEXPORT ULONG LibVersion()
 {
 	return VERSION_3DSMAX;
 }
 
 
-/***********************************************************************************************
- * Get_String -- Gets a string out of the resources                                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/09/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 TCHAR * Get_String( int id )
 {
 	static TCHAR buf[256];

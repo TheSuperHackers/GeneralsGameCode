@@ -86,20 +86,7 @@ char DebugFile	[ MAX_PATH ] = { '\0' };
 
 #ifdef RTS_DEBUG
 
-/****************************************************************************
- * MSG -- Write Message to Debug file with line and filename.				*
- *																			*
- * INPUT:		int line       --	line where message originated.			*
- *				char *filename -- file where message originated.			*
- *				char *fmt      -- variable argument list.					*
- *																			*
- * OUTPUT:		none.														*
- *																			*
- * WARNINGS:	none.														*
- *																			*
- * HISTORY:																	*
- *   08/19/1998   MML : Created.											*
- *==========================================================================*/
+// Write Message to Debug file with line and filename.
 
 void Msg( int line, const char *filename, const char *fmt, ... )
 {
@@ -156,20 +143,7 @@ void Msg( int line, const char *filename, const char *fmt, ... )
 }
 
 
-/****************************************************************************
- * MSG -- Write Message to Debug file with line and filename.				*
- *																			*
- * INPUT:		int		line		--	line where message originated.	   	*
- *				unichar *filename	-- file where message originated.	   	*
- *				unichar *fmt		-- variable argument list. 				*
- *																			*
- * OUTPUT:		none.														*
- *																			*
- * WARNINGS:	none.														*
- *																			*
- * HISTORY:																	*
- *   08/19/1998   MML : Created.											*
- *==========================================================================*/
+// Write Message to Debug file with line and filename.
 
 void Msg( int line, const char *filename, const unichar *fmt, UINT codepage, ... )
 {
@@ -243,19 +217,6 @@ void Msg( int line, const char *filename, const unichar *fmt, UINT codepage, ...
 
 }
 
-
-/***************************************************************************
- * DELETE_MSG_FILE -- Delete the Debug file.							   *
- *                                                                         *
- * INPUT:         none.													   *
- *                                                                         *
- * OUTPUT:        none.													   *
- *                                                                         *
- * WARNINGS:      none.                                                    *
- *                                                                         *
- * HISTORY:                                                                *
- *   08/19/1998   MML : Created.                                           *
- *=========================================================================*/
 
 //----------------------------------------------------------------------
 // Delete_Msg_File

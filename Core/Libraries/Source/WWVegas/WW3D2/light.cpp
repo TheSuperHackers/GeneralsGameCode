@@ -30,27 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 8                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   LightClass::LightClass -- Constructor                                                     *
- *   LightClass::LightClass -- copy constructor                                                *
- *   LightClass::operator == -- assignment operator                                            *
- *   LightClass::~LightClass -- destructor                                                     *
- *   LightClass::Clone -- virtual copy constructor                                             *
- *   LightClass::Get_Attenuation_Range -- returns a dist beyond which the light is attenuated  *
- *   LightClass::Get_Obj_Space_Bounding_Sphere -- returns the object space bounding sphere     *
- *   LightClass::Get_Obj_Space_Bounding_Box -- returns the object space bounding box           *
- *   LightClass::Vertex_Processor_Push -- pushes the light into the GERD                       *
- *   LightClass::Vertex_Processor_Pop -- pops the light from the GERD                          *
- *   LightClass::Set_Transform -- sets transform and marks srLight transform as dirty.         *
- *   LightClass::Set_Position -- sets position and marks srLight transform as dirty.           *
- *   LightClass::Notify_Added -- lights add themselves to the VP list when added               *
- *   LightClass::Notify_Removed -- lights remove themselves from the VP list when removed      *
- *   LightClass::Load_W3D -- Initialize this light from a W3D file                             *
- *   LightClass::Save_W3D -- Save this light's settings into a W3D file                        *
- *   LightImpClass::LightImpClass -- constructor                                               *
- *   LightImpClass::Process_Push -- exposes the "push" process for an srLight                  *
- *   LightImpClass::Process_Pop -- exposes the "pop" process for an srLight                    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "light.h"
@@ -65,19 +44,6 @@
 
 
 
-/***********************************************************************************************
- * LightClass::LightClass -- Constructor                                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- * type - type of light to create.                                                             *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 LightClass::LightClass(LightType type) :
 	Type(type),
 	Flags(0),
@@ -103,18 +69,6 @@ LightClass::LightClass(LightType type) :
 }
 
 
-/***********************************************************************************************
- * LightClass::LightClass -- copy constructor                                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 LightClass::LightClass(const LightClass & src) :
 	Type(src.Type),
 	Flags(src.Flags),
@@ -135,18 +89,6 @@ LightClass::LightClass(const LightClass & src) :
 }
 
 
-/***********************************************************************************************
- * LightClass::operator == -- assignment operator                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 LightClass & LightClass::operator = (const LightClass & that)
 {
 	if (this != &that) {
@@ -172,53 +114,18 @@ LightClass & LightClass::operator = (const LightClass & that)
 }
 
 
-/***********************************************************************************************
- * LightClass::~LightClass -- destructor                                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 LightClass::~LightClass()
 {
 }
 
 
-/***********************************************************************************************
- * LightClass::Clone -- virtual copy constructor                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 RenderObjClass * LightClass::Clone() const
 {
 	return W3DNEW LightClass(*this);
 }
 
 
-/***********************************************************************************************
- * LightClass::Notify_Added -- lights add themselves to the VP list when added                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/26/99    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Lights add themselves to the VP list when added.
 void LightClass::Notify_Added(SceneClass * scene)
 {
 	RenderObjClass::Notify_Added(scene);
@@ -226,18 +133,7 @@ void LightClass::Notify_Added(SceneClass * scene)
 }
 
 
-/***********************************************************************************************
- * LightClass::Notify_Removed -- lights remove themselves from the VP list when removed        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/26/99    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Lights remove themselves from the VP list when removed.
 void LightClass::Notify_Removed(SceneClass * scene)
 {
 	scene->Unregister(this,SceneClass::LIGHT);
@@ -246,18 +142,6 @@ void LightClass::Notify_Removed(SceneClass * scene)
 
 
 
-/***********************************************************************************************
- * LightClass::Get_Obj_Space_Bounding_Sphere -- returns the object space bounding sphere       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void LightClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
 	sphere.Center.Set(0,0,0);
@@ -265,18 +149,6 @@ void LightClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 }
 
 
-/***********************************************************************************************
- * LightClass::Get_Obj_Space_Bounding_Box -- returns the object space bounding box             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/8/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void LightClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 {
 	float r = Get_Attenuation_Range();
@@ -285,18 +157,6 @@ void LightClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 }
 
 
-/***********************************************************************************************
- * LightClass::Load_W3D -- Initialize this light from a W3D file                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/23/99    GTH : Created.                                                                 *
- *=============================================================================================*/
 WW3DErrorType LightClass::Load_W3D(ChunkLoadClass & cload)
 {
 	W3dLightStruct lightinfo;
@@ -364,18 +224,6 @@ WW3DErrorType LightClass::Load_W3D(ChunkLoadClass & cload)
 }
 
 
-/***********************************************************************************************
- * LightClass::Save_W3D -- Save this light's settings into a W3D file                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   9/23/99    GTH : Created.                                                                 *
- *=============================================================================================*/
 WW3DErrorType LightClass::Save_W3D(ChunkSaveClass & csave)
 {
 	csave.Begin_Chunk(W3D_CHUNK_LIGHT);

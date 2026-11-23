@@ -30,12 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   LZWPipe::Flush -- Flushes any partially accumulated block.                                *
- *   LZWPipe::LZWPipe -- Constructor for the LZO processor pipe.                               *
- *   LZWPipe::Put -- Send some data through the LZO processor pipe.                            *
- *   LZWPipe::~LZWPipe -- Deconstructor for the LZO pipe object.                               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -47,23 +41,6 @@
 #include	<string.h>
 
 
-/***********************************************************************************************
- * LZOPipe::LZOPipe -- Constructor for the LZO processor pipe.                                 *
- *                                                                                             *
- *    This will initialize the LZOPipe object so that it is prepared for compression or        *
- *    decompression as indicated.                                                              *
- *                                                                                             *
- * INPUT:   decrypt  -- Should decompression be performed?                                     *
- *                                                                                             *
- *          blocksize-- The size of the data blocks to process.                                *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/04/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
 LZOPipe::LZOPipe(CompControl control, int blocksize) :
 		Control(control),
 		Counter(0),
@@ -78,20 +55,6 @@ LZOPipe::LZOPipe(CompControl control, int blocksize) :
 }
 
 
-/***********************************************************************************************
- * LZOPipe::~LZOPipe -- Deconstructor for the LZO pipe object.                                 *
- *                                                                                             *
- *    This will free any buffers it may have allocated.                                        *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/04/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
 LZOPipe::~LZOPipe()
 {
 	delete [] Buffer;
@@ -102,25 +65,9 @@ LZOPipe::~LZOPipe()
 }
 
 
-/***********************************************************************************************
- * LZOPipe::Put -- Send some data through the LZO processor pipe.                              *
- *                                                                                             *
- *    This routine will take the data requested and process it (decompression or compression). *
- *    It does this by accumulating the necessary bytes to make a whole block. Then the block   *
- *    is processed and the entire contents are flushed to the next pipe segment in the chain.  *
- *                                                                                             *
- * INPUT:   source   -- Pointer to the data to be fed to this LZO processor.                   *
- *                                                                                             *
- *          length   -- The number of bytes received.                                          *
- *                                                                                             *
- * OUTPUT:  Returns with the actual number of bytes output at the far distant final link in    *
- *          the pipe chain.                                                                    *
- *                                                                                             *
- * WARNINGS:   The compression process may be slow as well as consuming two buffers.           *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/04/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Accumulates the necessary bytes to make a whole block. Then the block is processed and the entire
+// contents are flushed to the next pipe segment in the chain.
+// WARNING: The compression process may be slow as well as consuming two buffers.
 int LZOPipe::Put(void const * source, int slen)
 {
 	if (source == nullptr || slen < 1) {
@@ -243,25 +190,10 @@ int LZOPipe::Put(void const * source, int slen)
 }
 
 
-/***********************************************************************************************
- * LZOPipe::Flush -- Flushes any partially accumulated block.                                  *
- *                                                                                             *
- *    This routine is called when any buffered data must be flushed out the pipe. For the      *
- *    compression process, this will generate the sub-sized compressed block. For              *
- *    decompression, this routine should not have any data in the buffer. In such a case, it   *
- *    means that the data source was prematurely truncated. In such a case, just dump the      *
- *    accumulated data through the pipe.                                                       *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  Returns with the actual number of data bytes output to the distant final link in   *
- *          the pipe chain.                                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/04/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Flushes any partially accumulated block. For the compression process, this will generate the
+// sub-sized compressed block. For decompression, this routine should not have any data in the
+// buffer. In such a case, it means that the data source was prematurely truncated, and the
+// accumulated data is just dumped through the pipe.
 int LZOPipe::Flush()
 {
 	assert(Buffer != nullptr);

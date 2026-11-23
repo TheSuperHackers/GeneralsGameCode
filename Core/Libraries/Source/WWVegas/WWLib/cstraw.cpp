@@ -30,36 +30,14 @@
  *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   CacheStraw::Get -- Fetch data from the data source.                                       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
 #include	"cstraw.h"
 
 
-/***********************************************************************************************
- * CacheStraw::Get -- Fetch data from the data source.                                         *
- *                                                                                             *
- *    This will supply the data quantity requested. It performs a regulating influence on the  *
- *    data requests passed through it. The data is requested from the next straw in the        *
- *    chain such that the data stream is requested in chunks. This serves to lessen the        *
- *    impact of multiple small data requests.                                                  *
- *                                                                                             *
- * INPUT:   source   -- Pointer to the buffer to hold the data.                                *
- *                                                                                             *
- *          slen     -- The number of data bytes requested.                                    *
- *                                                                                             *
- * OUTPUT:  Returns with the number of data bytes stored into the buffer specified. If this    *
- *          number is less than that requested, it indicates that the data source has been     *
- *          exhausted.                                                                         *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/10/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// The data is requested from the next straw in the chain such that the data stream is requested in
+// chunks. This serves to lessen the impact of multiple small data requests.
 int CacheStraw::Get(void * source, int slen)
 {
 	int total = 0;

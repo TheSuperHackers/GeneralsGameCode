@@ -30,10 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 6                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   Make_Identifier -- Creates a temporary string identifer.                                  *
- *   WindowsVersionInfo::WindowsVersionInfo -- Windows Version Info constructor.               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #define  STRICT
@@ -55,22 +51,9 @@ WindowsVersionInfo WinVersion;
 
 
 
-/***********************************************************************************************
- * WindowsVersionInfo::WindowsVersionInfo -- Windows Version Info constructor.                 *
- *                                                                                             *
- *    This routine will examine the system to determine the OS, version, and patch level of    *
- *    the current OS.                                                                          *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   Don't try and use this class until after WinMain, because it won't be           *
- *             initialized until all the global objects have been constructed.                 *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *  04/09/98 jdl : Created.                                                                    *
- *=============================================================================================*/
+// Examines the system to determine the OS, version, and patch level of the current OS.
+// WARNING: Don't try and use this class until after WinMain, because it won't be initialized until
+// all the global objects have been constructed.
 WindowsVersionInfo::WindowsVersionInfo() :
 	WindowsVersion(0),
 	MajorVersionNumber(0),
@@ -256,18 +239,7 @@ WindowsVersionInfo::WindowsVersionInfo() :
 #endif
 }
 
-/***********************************************************************************************
- * WindowsVersionInfo::Version_String -- Get the version number in human readable form         *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Ptr to string containing version info                                             *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/30/99 10:29PM ST : Created                                                              *
- *=============================================================================================*/
+// Get the version number in human readable form.
 char *WindowsVersionInfo::Version_String()
 {
 	static char _ver95[]   	= {"Windows 95 "};
@@ -304,42 +276,11 @@ char *WindowsVersionInfo::Version_String()
 	return (version);
 }
 
-/***************************************************************************
- * WindowsVersionClass::Version_Name -- returns version # as char string	*
- *																									*
- * INPUT:																						*
- *		none.																						*
- *																									*
- * OUTPUT:																						*
- *		ptr to name																				*
- *																									*
- * WARNINGS:																					*
- *		none.																						*
- *																									*
- * HISTORY:																						*
- *   10/30/1995 BRR : Created.															*
- *=========================================================================*/
 
 char * WindowsVersionInfo::Version_Name()
 {
 	return ( VersionName );
 }
-
-/****************************************************************************
- * WindowsVersionClass::Meets_Minimum_Version_Requirements					*
- *																			*
- * INPUT:																	*
- *		none.																*
- *																			*
- * OUTPUT:																	*
- *		ptr to name															*
- *																			*
- * WARNINGS:																*
- *		none.																*
- *																			*
- * HISTORY:																	*
- *   10/30/1995 BRR : Created.												*
- *==========================================================================*/
 
 bool WindowsVersionInfo::Meets_Minimum_Version_Requirements	()
 {

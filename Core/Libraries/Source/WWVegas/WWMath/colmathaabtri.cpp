@@ -30,20 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 19                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   aabtri_separation_test -- test the projected extents for separation                       *
- *   aabtri_check_axis -- project the aab and tri onto an arbitrary axis                       *
- *   aabtri_check_cross_axis -- projects aab and tri onto a "cross" axis                       *
- *   aabtri_check_basis_axis -- projects the aab and tri onto a basis axis                     *
- *   aabtri_check_normal_axis -- project the box and tri onto the tri-normal                   *
- *   eval_side -- returns -1,0,+1 depending on the sign of val and side                        *
- *   aabtri_compute_contact_normal -- computes the normal of the collision                     *
- *   CollisionMath::Collide -- collide an aabox into a triangle                                *
- *   aabtri_intersect_cross_axis -- intersection check for a "cross-product" axis              *
- *   aabtri_intersect_basis_axis -- intersection check for a basis axis                        *
- *   aabtri_intersect_normal_axis -- intersection check for the triangle normal                *
- *   CollisionMath::Intersection_Test -- Intersection check for an AABox and a triangle        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -182,22 +168,8 @@ private:
 
 static BTCollisionStruct CollisionContext;
 
-/***********************************************************************************************
- * aabtri_separation_test -- test the projected extents for separation                         *
- *                                                                                             *
- * Once the extents are projected onto the axis, this function contains                        *
- * the logic that determines the allowed fraction.                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/8/99     GTH : Created.                                                                 *
- *   7/12/99    GTH : Converted original OBBox code to AABox                                   *
- *=============================================================================================*/
+// Test the projected extents for separation. Once the extents are projected onto the axis, this
+// function contains the logic that determines the allowed fraction.
 static inline bool aabtri_separation_test
 (
 	float lp,float leb0,float leb1
@@ -249,22 +221,8 @@ static inline bool aabtri_separation_test
 }
 
 
-/***********************************************************************************************
- * aabtri_check_axis -- project the aab and tri onto an arbitrary axis                         *
- *                                                                                             *
- * projects the box and the triangle onto the given axis and calls                             *
- * obbtri_separation_test.  return true if separation was detected                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/8/99     GTH : Created.                                                                 *
- *   7/12/99    GTH : converted to AABox                                                       *
- *=============================================================================================*/
+// Project the aab and tri onto an arbitrary axis and call aabtri_separation_test. Returns true if
+// separation was detected.
 static inline bool aabtri_check_axis()
 {
 	float		dist;						// separation along the axis
@@ -303,22 +261,9 @@ static inline bool aabtri_check_axis()
 }
 
 
-/***********************************************************************************************
- * aabtri_check_cross_axis -- projects aab and tri onto a "cross" axis                         *
- *                                                                                             *
- * Assumes that the axis given is one generated from a cross product of one of the edge and    *
- * basis vectors.  In this case, the box extent can be optimized and only two triangle verts   *
- * need to be checked.                                                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/8/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Projects aab and tri onto a "cross" axis. Assumes that the axis given is one generated from a
+// cross product of one of the edge and basis vectors. In this case, the box extent can be optimized
+// and only two triangle verts need to be checked.
 static inline bool aabtri_check_cross_axis
 (
 	float						dp,
@@ -357,22 +302,8 @@ static inline bool aabtri_check_cross_axis
 }
 
 
-/***********************************************************************************************
- * aabtri_check_basis_axis -- projects the aab and tri onto a basis axis                       *
- *                                                                                             *
- * Projects the box and triangle onto an axis that is assumed to be a basis                    *
- * vector from the box.  In this case, we can skip a dot-product and use the                   *
- * corresponding extent of the box (which is passed in as leb0).                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/8/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Projects the aab and tri onto a basis axis from the box. In this case, we can skip a dot-product
+// and use the corresponding extent of the box (which is passed in as leb0).
 static inline bool aabtri_check_basis_axis
 (
 	float leb0,
@@ -413,21 +344,7 @@ static inline bool aabtri_check_basis_axis
 }
 
 
-/***********************************************************************************************
- * aabtri_check_normal_axis -- project the box and tri onto the tri-normal                     *
- *                                                                                             *
- * Projects the box and triangle onto an axis that is assumed to be the normal                 *
- * vector from the triangle.  In this case, the triangle extents are zero.                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/8/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Project the box and tri onto the tri-normal. In this case, the triangle extents are zero.
 static inline bool aabtri_check_normal_axis()
 {
 	float		dist;						// separation along the axis
@@ -459,18 +376,7 @@ static inline bool aabtri_check_normal_axis()
 	return aabtri_separation_test(/*CollisionContext,*/lp,leb0,leb1);
 }
 
-/***********************************************************************************************
- * eval_side -- returns -1,0,+1 depending on the sign of val and side                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/8/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Returns -1,0,+1 depending on the sign of val and side.
 static inline float eval_side(float val,int side)
 {
 	if (val > 0.0f) {
@@ -482,18 +388,6 @@ static inline float eval_side(float val,int side)
 	}
 }
 
-/***********************************************************************************************
- * aabtri_compute_contact_normal -- computes the normal of the collision                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/8/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 static inline void aabtri_compute_contact_normal
 (
 	Vector3 &						set_norm
@@ -578,18 +472,6 @@ inline void VERIFY_CROSS(const Vector3 & a, const Vector3 & b,const Vector3 & cr
 #endif
 }
 
-/***********************************************************************************************
- * CollisionMath::Collide -- collide an aabox into a triangle                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/8/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 bool CollisionMath::Collide
 (
 	const AABoxClass &		box,
@@ -899,20 +781,7 @@ private:
 static AABTIntersectStruct IntersectContext;
 
 
-/***********************************************************************************************
- * aabtri_intersect_cross_axis -- intersection check for a "cross-product" axis                *
- *                                                                                             *
- * axis being checked is a cross product between a triangle edge and a box basis vector        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/4/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Axis being checked is a cross product between a triangle edge and a box basis vector.
 static inline bool aabtri_intersect_cross_axis
 (
 	Vector3 &					axis,
@@ -941,20 +810,7 @@ static inline bool aabtri_intersect_cross_axis
 }
 
 
-/***********************************************************************************************
- * aabtri_intersect_basis_axis -- intersection check for a basis axis                          *
- *                                                                                             *
- * axis being checked is one of the basis vectors for the box                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/4/99     GTH : Created.                                                                 *
- *=============================================================================================*/
+// Axis being checked is one of the basis vectors for the box.
 static inline bool aabtri_intersect_basis_axis
 (
 	Vector3 &					axis,
@@ -986,20 +842,6 @@ static inline bool aabtri_intersect_basis_axis
 }
 
 
-/***********************************************************************************************
- * aabtri_intersect_normal_axis -- intersection check for the triangle normal                  *
- *                                                                                             *
- * axis being checked is the triangle's normal                                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/4/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 static inline bool aabtri_intersect_normal_axis
 (
 	Vector3 &					axis
@@ -1026,18 +868,6 @@ static inline bool aabtri_intersect_normal_axis
 }
 
 
-/***********************************************************************************************
- * CollisionMath::Intersection_Test -- Intersection check for an AABox and a triangle          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/20/00    gth : copied from OBBox version and removed some Dot-products                  *
- *=============================================================================================*/
 bool CollisionMath::Intersection_Test(const AABoxClass & box,const TriClass & tri)
 {
 	Vector3 axis;

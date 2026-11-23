@@ -33,18 +33,6 @@
  *                    $Revision:: 8                                                           $*
  *                                                                                             *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   DecalSystemClass::DecalSystemClass -- Constructor                                         *
- *   DecalSystemClass::~DecalSystemClass -- Destructor                                         *
- *   DecalSystemClass::Lock_Decal_Generator -- returns a DecalGenerator                        *
- *   DecalSystemClass::Unlock_Decal_Generator -- Destroys the decal generator                  *
- *   DecalSystemClass::Generate_Unique_Global_Decal_Id -- Generates a unique id for a decal    *
- *   DecalGeneratorClass::DecalGeneratorClass -- Constructor                                   *
- *   DecalGeneratorClass::~DecalGeneratorClass -- Destructor                                   *
- *   DecalGeneratorClass::Add_Mesh -- Meshes that generate a decal should add themselves       *
- *   DecalGeneratorClass::Get_Mesh_List -- returns the list of meshes                          *
- *   DecalGeneratorClass::Set_Mesh_Transform -- sets the current mesh coordinate system        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "decalsys.h"
@@ -62,50 +50,16 @@ uint32 DecalSystemClass::DecalIDGenerator = 0;
 ** DecalSystemClass Implementation
 */
 
-/***********************************************************************************************
- * DecalSystemClass::DecalSystemClass -- Constructor                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 DecalSystemClass::DecalSystemClass()
 {
 }
 
 
-/***********************************************************************************************
- * DecalSystemClass::~DecalSystemClass -- Destructor                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 DecalSystemClass::~DecalSystemClass()
 {
 }
 
 
-/***********************************************************************************************
- * DecalSystemClass::Lock_Decal_Generator -- returns a DecalGenerator                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 DecalGeneratorClass * DecalSystemClass::Lock_Decal_Generator()
 {
 	DecalGeneratorClass * gen = W3DNEW DecalGeneratorClass(Generate_Decal_Id(), this);
@@ -113,40 +67,15 @@ DecalGeneratorClass * DecalSystemClass::Lock_Decal_Generator()
 }
 
 
-/***********************************************************************************************
- * DecalSystemClass::Unlock_Decal_Generator -- Destroys the decal generator                    *
- *                                                                                             *
- * Derived classes may take a record of the results of the generator here.  Then they can      *
- * put a cap on the total number of decals in the system or whatever...                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// Derived classes may take a record of the results of the generator here. Then they can put a cap
+// on the total number of decals in the system or whatever...
 void DecalSystemClass::Unlock_Decal_Generator(DecalGeneratorClass * generator)
 {
 	delete generator;
 }
 
 
-/***********************************************************************************************
- * DecalSystemClass::Generate_Unique_Global_Decal_Id -- Generates a unique id for a decal      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * Hopefully you won't use more than 4 billion decals at one time...                           *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: Hopefully you won't use more than 4 billion decals at one time...
 uint32 DecalSystemClass::Generate_Unique_Global_Decal_Id()
 {
 	return DecalIDGenerator++;
@@ -157,18 +86,6 @@ uint32 DecalSystemClass::Generate_Unique_Global_Decal_Id()
 ** DecalGeneratorClass Implementation
 */
 
-/***********************************************************************************************
- * DecalGeneratorClass::DecalGeneratorClass -- Constructor                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 DecalGeneratorClass::DecalGeneratorClass(uint32 id,DecalSystemClass * system) :
 	DecalID(id),
 	System(system),
@@ -183,39 +100,14 @@ DecalGeneratorClass::DecalGeneratorClass(uint32 id,DecalSystemClass * system) :
 }
 
 
-/***********************************************************************************************
- * DecalGeneratorClass::~DecalGeneratorClass -- Destructor                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 DecalGeneratorClass::~DecalGeneratorClass()
 {
 	REF_PTR_RELEASE(Material);
 }
 
 
-/***********************************************************************************************
- * DecalGeneratorClass::Add_Mesh -- Meshes that generate a decal should add themselves         *
- *                                                                                             *
- * This adds a mesh to the internal list.  All meshes that actually add a decal should add     *
- * themselves to this list so that the DecalSystem can keep track of them.                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// All meshes that actually add a decal should add themselves to this list so that the DecalSystem
+// can keep track of them.
 void DecalGeneratorClass::Add_Mesh(RenderObjClass * mesh)
 {
 	WWASSERT(mesh->Class_ID() == RenderObjClass::CLASSID_MESH);
@@ -223,41 +115,15 @@ void DecalGeneratorClass::Add_Mesh(RenderObjClass * mesh)
 }
 
 
-/***********************************************************************************************
- * DecalGeneratorClass::Get_Mesh_List -- returns the list of meshes                            *
- *                                                                                             *
- * This is the list of meshes which generated decals for this "logical decal"                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// This is the list of meshes which generated decals for this "logical decal".
 NonRefRenderObjListClass & DecalGeneratorClass::Get_Mesh_List()
 {
 	return MeshList;
 }
 
 
-/***********************************************************************************************
- * DecalGeneratorClass::Set_Mesh_Transform -- sets the current mesh coordinate system          *
- *                                                                                             *
- * The coordinate system of the mesh is needed in order to compute texture coordinates for     *
- * the decal polygons.                                                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// Sets the current mesh coordinate system. The coordinate system of the mesh is needed in order to
+// compute texture coordinates for the decal polygons.
 void DecalGeneratorClass::Set_Mesh_Transform(const Matrix3D & mesh_transform)
 {
 	/*

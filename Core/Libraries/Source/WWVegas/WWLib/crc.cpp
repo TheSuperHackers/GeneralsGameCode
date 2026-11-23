@@ -30,34 +30,16 @@
  *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   CRCEngine::operator() -- Submits one byte of data to the CRC engine.                      *
- *   CRCEngine::operator() -- Submits an arbitrary data block to the CRC engine.               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
 #include "CRC.h"
 
 
-/***********************************************************************************************
- * CRCEngine::operator() -- Submits one byte of data to the CRC engine.                        *
- *                                                                                             *
- *    This routine will take the specified byte of data and submit it to the CRC engine        *
- *    for processing. This routine is designed to be as fast as possible since the typical     *
- *    use of this routine is to feed one of presumably many byte sized chunks of data to the   *
- *    CRC engine.                                                                              *
- *                                                                                             *
- * INPUT:   datum -- One byte of data to submit to the CRC engine.                             *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   If possible, use the buffer/size operator to submit data rather than repeated   *
- *             calls to this routine.                                                          *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// This routine is designed to be as fast as possible since the typical use of this routine is to
+// feed one of presumably many byte sized chunks of data to the CRC engine.
+// WARNING: If possible, use the buffer/size operator to submit data rather than repeated calls to
+// this routine.
 void CRCEngine::operator() (char datum)
 {
 	StagingBuffer.Buffer[Index++] = datum;
@@ -70,24 +52,6 @@ void CRCEngine::operator() (char datum)
 }
 
 
-/***********************************************************************************************
- * CRCEngine::operator() -- Submits an arbitrary data block to the CRC engine.                 *
- *                                                                                             *
- *    This routine will submit the specified block to the CRC engine. The block can be of      *
- *    arbitrary length.                                                                        *
- *                                                                                             *
- * INPUT:   buffer   -- Pointer to the buffer that contains the data. The buffer will not      *
- *                      be modified.                                                           *
- *                                                                                             *
- *          length   -- The length of the buffer (in bytes).                                   *
- *                                                                                             *
- * OUTPUT:  Returns with the current CRC value accumulated so far.                             *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
 long CRCEngine::operator() (void const * buffer, int length)
 {
 	if (buffer != nullptr && length > 0)  {

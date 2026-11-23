@@ -34,8 +34,6 @@
  *                                                                                             *
  * 06/27/02 KM Texture class abstraction																			*
  * 08/05/02 KM Texture class redesign (revisited)
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "textureloader.h"

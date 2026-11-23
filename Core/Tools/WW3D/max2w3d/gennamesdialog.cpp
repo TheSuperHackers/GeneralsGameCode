@@ -32,16 +32,6 @@
  *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   GenNamesDialogClass::GenNamesDialogClass -- Constructor                                   *
- *   GenNamesDialogClass::~GenNamesDialogClass -- Destructor                                   *
- *   GenNamesDialogClass::Get_Options -- Get_Options                                           *
- *   GenNamesDialogClass::Ok_To_Exit -- verifies that the input is valid                       *
- *   GenNamesDialogClass::Toggle_Name_Assignment -- toggles the controls related to name assig *
- *   GenNamesDialogClass::Toggle_Collision_Bits_Assignment -- toggles the controls related to  *
- *   GenNamesDialogClass::Dialog_Proc -- windows dialog proc                                   *
- *   _gen_names_dialog_proc -- dialog proc that "thunks" to the class's dialog proc            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -60,17 +50,6 @@ static BOOL CALLBACK _gen_names_dialog_proc(HWND Hwnd,UINT message,WPARAM wParam
 **********************************************************************************************/
 
 
-/***********************************************************************************************
- * GenNamesDialogClass::GenNamesDialogClass -- Constructor                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 GenNamesDialogClass::GenNamesDialogClass(Interface * maxinterface) :
 	Hwnd(nullptr),
 	Options(nullptr),
@@ -80,41 +59,12 @@ GenNamesDialogClass::GenNamesDialogClass(Interface * maxinterface) :
 }
 
 
-/***********************************************************************************************
- * GenNamesDialogClass::~GenNamesDialogClass -- Destructor                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/10/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 GenNamesDialogClass::~GenNamesDialogClass()
 {
 	ReleaseISpinner(NameIndexSpin);
 }
 
 
-/***********************************************************************************************
- * GenNamesDialogClass::Get_Options -- Get_Options                                             *
- *                                                                                             *
- *    presents the dialog to the user and records his selections into the passed-in options    *
- *    structure.                                                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- * options - pointer to a OptionsStruct to store the users input in.                           *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- * true - user pressed ok and entered valid input                                              *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/10/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 bool GenNamesDialogClass::Get_Options(OptionsStruct * options)
 {
 	Options = options;
@@ -137,19 +87,6 @@ bool GenNamesDialogClass::Get_Options(OptionsStruct * options)
 }
 
 
-/***********************************************************************************************
- * GenNamesDialogClass::Ok_To_Exit -- verifies that the input is valid                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- * true - dialog contains valid input                                                          *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/10/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 bool GenNamesDialogClass::Ok_To_Exit()
 {
 	if (IsDlgButtonChecked(Hwnd,IDC_ASSIGN_NAMES_CHECK) == BST_CHECKED) {
@@ -170,18 +107,6 @@ bool GenNamesDialogClass::Ok_To_Exit()
 }
 
 
-/***********************************************************************************************
- * GenNamesDialogClass::Toggle_Name_Assignment -- toggles the controls related to name assignm *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/10/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 void GenNamesDialogClass::Toggle_Name_Assignment()
 {
 	bool onoff = (IsDlgButtonChecked(Hwnd,IDC_ASSIGN_NAMES_CHECK) == BST_CHECKED);
@@ -193,18 +118,6 @@ void GenNamesDialogClass::Toggle_Name_Assignment()
 }
 
 
-/***********************************************************************************************
- * GenNamesDialogClass::Toggle_Collision_Bits_Assignment -- toggles the controls related to co *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/10/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 void GenNamesDialogClass::Toggle_Collision_Bits_Assignment()
 {
 	bool onoff = (IsDlgButtonChecked(Hwnd,IDC_ASSIGN_COLLISION_BITS_CHECK) == BST_CHECKED);
@@ -216,18 +129,6 @@ void GenNamesDialogClass::Toggle_Collision_Bits_Assignment()
 }
 
 
-/***********************************************************************************************
- * GenNamesDialogClass::Dialog_Proc -- windows dialog proc                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/10/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 bool GenNamesDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM)
 {
 	switch (message )	{
@@ -326,18 +227,7 @@ bool GenNamesDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARA
 }
 
 
-/***********************************************************************************************
- * _gen_names_dialog_proc -- dialog proc that "thunks" to the class's dialog proc              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/10/2000 gth : Created.                                                                 *
- *=============================================================================================*/
+// Dialog proc that "thunks" to the class's dialog proc.
 static BOOL CALLBACK _gen_names_dialog_proc(HWND hwnd,UINT message,WPARAM wparam,LPARAM lparam)
 {
 	static GenNamesDialogClass * dialog = nullptr;

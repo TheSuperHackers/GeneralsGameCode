@@ -31,36 +31,6 @@
  *                                                                                             *
  *                  Last Update : February 24, 1997 [GH]                                       *
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   Scalar Division Operator -- Divide a vector by a scalar                                   *
- *   Scalar Multiply Operator -- Multiply a vector by a scalar                                 *
- *   Vector Addition Operator -- Add two vectors                                               *
- *   Vector Subtraction Operator -- Subtract two vectors                                       *
- *   Vector Inner Product Operator -- Compute the inner or dot product                         *
- *   Vector Equality Operator -- Determine if two vectors are identical                        *
- *   Vector Inequality Operator -- Determine if two vectors are identical                      *
- *   Equal_Within_Epsilon -- Determine if two vectors are identical within                     *
- *   Cross_Product -- compute the cross product of two vectors                                 *
- *   Vector3::Normalize -- Normalizes the vector.                                              *
- *   Vector3::Length -- Returns the length of the vector                                       *
- *   Vector3::Length2 -- Returns the square of the length of the vector                        *
- *   Vector3::Quick_Length -- returns a quick approximation of the length                      *
- *   Swap -- swap two Vector3's                                                                *
- *   Lerp -- linearly interpolate two Vector3's by an interpolation factor.                    *
- *   Lerp -- linearly interpolate two Vector3's without return-by-value                        *
- *   Vector3::Add -- Add two vector3's without return-by-value                                 *
- *   Vector3::Subtract -- Subtract two vector3's without return-by-value                       *
- *   Vector3::Update_Min -- sets each component of the vector to the min of this and a         *
- *   Vector3::Update_Max -- Sets each component of the vector to the max of this and a         *
- *   Vector3::Scale -- scale this vector by 3 independent scale factors                        *
- *   Vector3::Rotate_X -- rotates this vector around the X axis                                *
- *   Vector3::Rotate_X -- Rotates this vector around the x axis                                *
- *   Vector3::Rotate_Y -- Rotates this vector around the y axis                                *
- *   Vector3::Rotate_Y -- Rotates this vector around the Y axis                                *
- *   Vector3::Rotate_Z -- Rotates this vector around the Z axis                                *
- *   Vector3::Rotate_Z -- Rotates this vector around the Z axis                                *
- *   Vector3::Is_Valid -- Verifies that each component of this vector is a valid float         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -191,18 +161,6 @@ public:
 };
 
 
-/**************************************************************************
- * Scalar Multiply Operator -- Multiply a vector by a scalar              *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   02/24/1997 GH  : Created.                                            *
- *========================================================================*/
 WWINLINE Vector3 operator * (const Vector3 &a,float k)
 {
 	return Vector3((a.X * k),(a.Y * k),(a.Z * k));
@@ -213,35 +171,12 @@ WWINLINE Vector3 operator * (float k, const Vector3 &a)
 	return Vector3((a.X * k),(a.Y * k),(a.Z * k));
 }
 
-/**************************************************************************
- * Scalar Division Operator -- Divide a vector by a scalar                *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *========================================================================*/
 WWINLINE Vector3 operator / (const Vector3 &a,float k)
 {
 	float ook = 1.0f/k;
 	return Vector3((a.X * ook),(a.Y * ook),(a.Z * ook));
 }
 
-/**************************************************************************
- * Vector Addition Operator -- Add two vectors                            *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   02/24/1997 GH  : Created.                                            *
- *========================================================================*/
 WWINLINE Vector3 operator + (const Vector3 &a,const Vector3 &b)
 {
 	return Vector3(
@@ -251,18 +186,6 @@ WWINLINE Vector3 operator + (const Vector3 &a,const Vector3 &b)
 						);
 }
 
-/**************************************************************************
- * Vector Subtraction Operator -- Subtract two vectors                    *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   02/24/1997 GH  : Created.                                            *
- *========================================================================*/
 WWINLINE Vector3 operator - (const Vector3 &a,const Vector3 &b)
 {
 	return Vector3(
@@ -272,17 +195,6 @@ WWINLINE Vector3 operator - (const Vector3 &a,const Vector3 &b)
 						);
 }
 
-/**************************************************************************
- * Vector Inner Product -- Compute the inner or dot product of two vector *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *========================================================================*/
 WWINLINE float operator * (const Vector3 &a,const Vector3 &b)
 {
 	return	a.X*b.X +
@@ -298,49 +210,16 @@ WWINLINE float Vector3::Dot_Product(const Vector3 &a,const Vector3 &b)
 }
 
 
-/**************************************************************************
- * Vector Equality Operator -- Determine if two vectors are identical     *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *========================================================================*/
 WWINLINE bool operator == (const Vector3 &a,const Vector3 &b)
 {
 	return ( (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z));
 }
 
-/**************************************************************************
- * Vector Inequality Operator -- Determine if two vectors are identical   *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *========================================================================*/
 WWINLINE bool operator != (const Vector3 &a,const Vector3 &b)
 {
 	return ( (a.X != b.X) || (a.Y != b.Y) || (a.Z != b.Z));
 }
 
-/**************************************************************************
- * Equal_Within_Epsilon -- Determine if two vectors are identical within e*
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *========================================================================*/
 WWINLINE bool Equal_Within_Epsilon(const Vector3 &a,const Vector3 &b,float epsilon)
 {
    return(	(WWMath::Fabsf_Legacy(a.X - b.X) < epsilon) &&
@@ -349,17 +228,6 @@ WWINLINE bool Equal_Within_Epsilon(const Vector3 &a,const Vector3 &b,float epsil
 }
 
 
-/**************************************************************************
- * Cross_Product -- compute the cross product of two vectors              *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *========================================================================*/
 #ifdef ALLOW_TEMPORARIES
 WWINLINE Vector3 Vector3::Cross_Product(const Vector3 &a,const Vector3 &b)
 {
@@ -403,17 +271,6 @@ WWINLINE float Vector3::Cross_Product_Z(const Vector3 &a,const Vector3 &b)
    return a.X * b.Y - a.Y * b.X;
 }
 
-/**************************************************************************
- * Vector3::Normalize -- Normalizes the vector.                           *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *========================================================================*/
 WWINLINE void Vector3::Normalize()
 {
 	float len2 = Length2();
@@ -439,51 +296,19 @@ WWINLINE Vector3 Normalize(const Vector3 & vec)
 }
 #endif
 
-/**************************************************************************
- * Vector3::Length -- Returns the length of the vector                    *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *========================================================================*/
 WWINLINE float Vector3::Length() const
 {
 	return WWMath::Sqrt(Length2());
 }
 
-/**************************************************************************
- * Vector3::Length2 -- Returns the square of the length of the vector     *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *========================================================================*/
+// Returns the square of the length of the vector.
 WWINLINE float Vector3::Length2() const
 {
 	return X*X + Y*Y + Z*Z;
 }
 
 
-/***********************************************************************************************
- * Vector3::Quick_Length -- returns a quick approximation of the length                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/15/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Returns a quick approximation of the length.
 WWINLINE float Vector3::Quick_Length() const
 {
 	// this method of approximating the length comes from Graphics Gems 1 and
@@ -501,18 +326,6 @@ WWINLINE float Vector3::Quick_Length() const
 }
 
 
-/***********************************************************************************************
- * Swap -- swap two Vector3's                                                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void Swap(Vector3 & a,Vector3 & b)
 {
 	Vector3 tmp(a);
@@ -520,18 +333,6 @@ WWINLINE void Swap(Vector3 & a,Vector3 & b)
 	b = tmp;
 }
 
-/***********************************************************************************************
- * Lerp -- linearly interpolate two Vector3's without return-by-value                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/99   gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void Vector3::Lerp(const Vector3 & a, const Vector3 & b, float alpha,Vector3 * set_result)
 {
 	assert(set_result != nullptr);
@@ -550,18 +351,6 @@ WWINLINE Vector3 Vector3::Lerp(const Vector3 & a, const Vector3 & b, float alpha
 }
 #endif
 
-/***********************************************************************************************
- * Vector3::Add -- Add two vector3's without return-by-value                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/99   gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void Vector3::Add(const Vector3 &a,const Vector3 &b,Vector3 * set_result)
 {
 	assert(set_result != nullptr);
@@ -571,18 +360,6 @@ WWINLINE void Vector3::Add(const Vector3 &a,const Vector3 &b,Vector3 * set_resul
 }
 
 
-/***********************************************************************************************
- * Vector3::Subtract -- Subtract two vector3's without return-by-value                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/99   gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void Vector3::Subtract(const Vector3 &a,const Vector3 &b,Vector3 * set_result)
 {
 	assert(set_result != nullptr);
@@ -592,18 +369,7 @@ WWINLINE void Vector3::Subtract(const Vector3 &a,const Vector3 &b,Vector3 * set_
 }
 
 
-/***********************************************************************************************
- * Vector3::Update_Min -- sets each component of the vector to the min of this and a           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/99   gth : Created.                                                                 *
- *=============================================================================================*/
+// Sets each component of the vector to the min of this and a.
 WWINLINE void Vector3::Update_Min(const Vector3 & a)
 {
 	if (a.X < X) X = a.X;
@@ -612,18 +378,7 @@ WWINLINE void Vector3::Update_Min(const Vector3 & a)
 }
 
 
-/***********************************************************************************************
- * Vector3::Update_Max -- Sets each component of the vector to the max of this and a           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/99   gth : Created.                                                                 *
- *=============================================================================================*/
+// Sets each component of the vector to the max of this and a.
 WWINLINE void Vector3::Update_Max(const Vector3 & a)
 {
 	if (a.X > X) X = a.X;
@@ -631,18 +386,8 @@ WWINLINE void Vector3::Update_Max(const Vector3 & a)
 	if (a.Z > Z) Z = a.Z;
 }
 
-/***********************************************************************************************
- * Vector3::Cap_To_Absolute_Of -- Sets each component of the vector to no larger than the -ve or +ve of*
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/29/99   wst : Created.                                                                 *
- *=============================================================================================*/
+// Sets each component of the vector to no larger than the -ve or +ve of the corresponding component
+// of a.
 WWINLINE void Vector3::Cap_Absolute_To(const Vector3 & a)
 {
 	if (X > 0)
@@ -674,18 +419,6 @@ WWINLINE void Vector3::Cap_Absolute_To(const Vector3 & a)
 
 }
 
-/***********************************************************************************************
- * Vector3::Scale -- scale this vector by 3 independent scale factors                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/99   gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void Vector3::Scale(const Vector3 & scale)
 {
 	X *= scale.X;
@@ -694,36 +427,12 @@ WWINLINE void Vector3::Scale(const Vector3 & scale)
 }
 
 
-/***********************************************************************************************
- * Vector3::Rotate_X -- rotates this vector around the X axis                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/99   gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void Vector3::Rotate_X(float angle)
 {
 	Rotate_X(WWMath::Sinf(angle),WWMath::Cosf(angle));
 }
 
 
-/***********************************************************************************************
- * Vector3::Rotate_X -- Rotates this vector around the x axis                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/99   gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void Vector3::Rotate_X(float s_angle,float c_angle)
 {
 	float tmp_y = Y;
@@ -734,36 +443,12 @@ WWINLINE void Vector3::Rotate_X(float s_angle,float c_angle)
 }
 
 
-/***********************************************************************************************
- * Vector3::Rotate_Y -- Rotates this vector around the y axis                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/99   gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void Vector3::Rotate_Y(float angle)
 {
 	Rotate_Y(WWMath::Sinf(angle),WWMath::Cosf(angle));
 }
 
 
-/***********************************************************************************************
- * Vector3::Rotate_Y -- Rotates this vector around the Y axis                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/99   gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void Vector3::Rotate_Y(float s_angle,float c_angle)
 {
 	float tmp_x = X;
@@ -774,36 +459,12 @@ WWINLINE void Vector3::Rotate_Y(float s_angle,float c_angle)
 }
 
 
-/***********************************************************************************************
- * Vector3::Rotate_Z -- Rotates this vector around the Z axis                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/99   gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void Vector3::Rotate_Z(float angle)
 {
 	Rotate_Z(WWMath::Sinf(angle),WWMath::Cosf(angle));
 }
 
 
-/***********************************************************************************************
- * Vector3::Rotate_Z -- Rotates this vector around the Z axis                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/99   gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE void Vector3::Rotate_Z(float s_angle,float c_angle)
 {
 	float tmp_x = X;
@@ -814,18 +475,6 @@ WWINLINE void Vector3::Rotate_Z(float s_angle,float c_angle)
 }
 
 
-/***********************************************************************************************
- * Vector3::Is_Valid -- Verifies that each component of this vector is a valid float           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/99   gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE bool Vector3::Is_Valid() const
 {
 	return (WWMath::Is_Valid_Float(X) && WWMath::Is_Valid_Float(Y) && WWMath::Is_Valid_Float(Z));
@@ -856,15 +505,7 @@ WWINLINE float Vector3::Find_Z_At_Y(float y, const Vector3 &p1, const Vector3 &p
 	return(p1.Z + ((y - p1.Y) * ((p2.Z - p1.Z) / (p2.Y - p1.Y))));
 }
 
-/***********************************************************************************************
- * Vector3::Distance -- Accurate distance calculation.                                         *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/29/1999MLL: Created.                                                                   *
- *=============================================================================================*/
+// Accurate distance calculation.
 WWINLINE float Vector3::Distance(const Vector3 &p1, const Vector3 &p2)
 {
 	Vector3	temp;
@@ -872,15 +513,7 @@ WWINLINE float Vector3::Distance(const Vector3 &p1, const Vector3 &p2)
 	return (temp.Length());
 }
 
-/***********************************************************************************************
- * Vector3::Quick_Distance -- Fast but inaccurate distance calculation.                        *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/29/1999MLL: Created.                                                                   *
- *=============================================================================================*/
+// Fast but inaccurate distance calculation.
 WWINLINE float Vector3::Quick_Distance(const Vector3 &p1, const Vector3 &p2)
 {
 	Vector3	temp;
@@ -888,15 +521,6 @@ WWINLINE float Vector3::Quick_Distance(const Vector3 &p1, const Vector3 &p2)
 	return (temp.Quick_Length());
 }
 
-/***********************************************************************************************
- * Vector3::Convert_To_ABGR -- Converts to SR packed color				.                         *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/29/1999MLL: Created.                                                                   *
- *=============================================================================================*/
 WWINLINE unsigned long	Vector3::Convert_To_ABGR() const
 {
 	return (unsigned(255)<<24) |
@@ -905,15 +529,6 @@ WWINLINE unsigned long	Vector3::Convert_To_ABGR() const
 			 (unsigned(X*255.0f));
 }
 
-/***********************************************************************************************
- * Vector3::Convert_To_ARGB -- Converts to packed color				.                         *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/29/1999MLL: Created.                                                                   *
- *=============================================================================================*/
 WWINLINE unsigned long	Vector3::Convert_To_ARGB() const
 {
 	return (unsigned(255)<<24) |

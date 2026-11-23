@@ -32,18 +32,7 @@
 IGROptionsClass *OnlineOptions = nullptr;
 
 
-/*********************************************************************************************
- * IGROptions::Init -- Class initializer. Reads from the registry										*
- *                                                                                           *
- * INPUT:   None																										*
- *                                                                                           *
- * OUTPUT:  bool; Did we read everything OK?																	*
- *                                                                                           *
- * WARNINGS:   none                                                                          *
- *                                                                                           *
- * HISTORY:                                                                                  *
- *   07/05/00 JeffB: Initial coding																				*
- *===========================================================================================*/
+// Reads the options from the registry.
 bool IGROptionsClass::Init()
 {
 	int	size;
@@ -84,69 +73,21 @@ bool IGROptionsClass::Init()
 	return ( valid );
 }
 
-/***********************************************************************************************
- * IGROptions::Is_Auto_Login_Allowed -- Set the passed options in the registry			   *
- *                                                                                             *
- * INPUT:   None													                           *
- *                                                                                             *
- * OUTPUT:  bool; Is the option set															   *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/05/00 JeffB: Initial coding					                                           *
- *=============================================================================================*/
 bool IGROptionsClass::Is_Auto_Login_Allowed()
 {
 	return(( options & IGR_NO_AUTO_LOGIN ) == 0 );
 }
 
-/***********************************************************************************************
- * IGROptions::Is_Storing_Nicks_Allowed -- Set the passed options in the registry			   *
- *                                                                                             *
- * INPUT:   None													                           *
- *                                                                                             *
- * OUTPUT:  bool; Is the option set															   *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/05/00 JeffB: Initial coding					                                           *
- *=============================================================================================*/
 bool IGROptionsClass::Is_Storing_Nicks_Allowed()
 {
 	return(( options & IGR_NEVER_STORE_NICKS ) == 0 );
 }
 
-/***********************************************************************************************
- * IGROptions::Is_Running_Reg_App_Allowed -- Set the passed options in the registry			   *
- *                                                                                             *
- * INPUT:   None													                           *
- *                                                                                             *
- * OUTPUT:  bool; Is the option set															   *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/05/00 JeffB: Initial coding					                                           *
- *=============================================================================================*/
 bool IGROptionsClass::Is_Running_Reg_App_Allowed()
 {
 	return(( options & IGR_NEVER_RUN_REG_APP ) == 0 );
 }
 
-/*********************************************************************************************
- * IGROptions::Set_Options -- Set the passed options in the registry									*
- *																															*
- * INPUT:		Options to set																						*
- *																															*
- * OUTPUT:		bool; Did we set the options successfully													*
- *                                                                                           *
- * WARNINGS:   none                                                                          *
- *                                                                                           *
- * HISTORY:                                                                                  *
- *   07/05/00 JeffB: Initial coding																				*
- *===========================================================================================*/
 bool IGROptionsClass::Set_Options( IGROptionsType options )
 {
 	bool	ReturnValue = false;

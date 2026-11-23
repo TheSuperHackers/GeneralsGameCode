@@ -30,25 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 13                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   RawFileClass::Bias -- Bias a file with a specific starting position and length.           *
- *   RawFileClass::Close -- Perform a closure of the file.                                     *
- *   RawFileClass::Create -- Creates an empty file.                                            *
- *   RawFileClass::Delete -- Deletes the file object from the disk.                            *
- *   RawFileClass::Error -- Handles displaying a file error message.                           *
- *   RawFileClass::Get_Date_Time -- Gets the date and time the file was last modified.         *
- *   RawFileClass::Is_Available -- Checks to see if the specified file is available to open.   *
- *   RawFileClass::Open -- Assigns name and opens file in one operation.                       *
- *   RawFileClass::Open -- Opens the file object with the rights specified.                    *
- *   RawFileClass::RawFileClass -- Simple constructor for a file object.                       *
- *   RawFileClass::Raw_Seek -- Performs a seek on the unbiased file                            *
- *   RawFileClass::Read -- Reads the specified number of bytes into a memory buffer.           *
- *   RawFileClass::Seek -- Reposition the file pointer as indicated.                           *
- *   RawFileClass::Set_Date_Time -- Sets the date and time the file was last modified.         *
- *   RawFileClass::Set_Name -- Manually sets the name for a file object.                       *
- *   RawFileClass::Size -- Determines size of file (in bytes).                                 *
- *   RawFileClass::Write -- Writes the specified data to the buffer specified.                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 // TheSuperHackers @build feliwir 11/04/2025 We removed Win32 API here and use plain C
@@ -122,22 +103,8 @@
 #endif
 
 
-/***********************************************************************************************
- * RawFileClass::RawFileClass -- Default constructor for a file object.                        *
- *                                                                                             *
- *    This constructs a null file object. A null file object has no file handle or filename    *
- *    associated with it. In order to use a file object created in this fashion it must be     *
- *    assigned a name and then opened.                                                         *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
+// A null file object has no file handle or filename associated with it. In order to use a file
+// object created in this fashion it must be assigned a name and then opened.
 RawFileClass::RawFileClass() :
 	Rights(READ),
 	BiasStart(0),
@@ -151,91 +118,28 @@ RawFileClass::RawFileClass() :
 
 
 
-/***********************************************************************************************
- * RawFileClass::Is_Open -- Checks to see if the file is open or not.                          *
- *                                                                                             *
- *    Use this routine to determine if the file is open. It returns true if it is.             *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  bool; Is the file open?                                                            *
- *                                                                                             *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
 bool RawFileClass::Is_Open() const
 {
 	return(Handle != NULL_HANDLE);
 }
 
-/***********************************************************************************************
- * RawFileClass::Error -- Handles displaying a file error message.                             *
- *                                                                                             *
- *    Display an error message as indicated. If it is allowed to retry, then pressing a key    *
- *    will return from this function. Otherwise, it will exit the program with "exit()".       *
- *                                                                                             *
- * INPUT:   error    -- The error number (same as the DOSERR.h error numbers).                 *
- *                                                                                             *
- *          canretry -- Can this routine exit normally so that retrying can occur? If this is  *
- *                      false, then the program WILL exit in this routine.                     *
- *                                                                                             *
- *          filename -- Optional filename to report with this error. If no filename is         *
- *                      supplied, then no filename is listed in the error message.             *
- *                                                                                             *
- * OUTPUT:  none, but this routine might not return at all if the "canretry" parameter is      *
- *          false or the player pressed ESC.                                                   *
- *                                                                                             *
- * WARNINGS:   This routine may not return at all. It handles being in text mode as well as    *
- *             if in a graphic mode.                                                           *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/17/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
+// The error number is the same as the DOSERR.h error numbers. If it is allowed to retry, then
+// pressing a key will return from this function. Otherwise, it will exit the program with "exit()".
+// WARNING: This routine may not return at all. It handles being in text mode as well as if in a
+// graphic mode.
 void RawFileClass::Error(int, int, char const * )
 {
 }
 
-/***********************************************************************************************
- * RawFileClass::Transfer_Block_Size											                          *
- *                                                                                             *
- *	This function returns the largest size a low level DOS read or write may						  *
- *	perform. Larger file transfers are performed in chunks of this size or less.					  *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Returns the largest size a low level DOS read or write may perform. Larger file transfers are
+// performed in chunks of this size or less.
 int RawFileClass::Transfer_Block_Size()
 {
 	return (int)((unsigned)UINT_MAX)-16L;
 }
 
-/***********************************************************************************************
- * RawFileClass::RawFileClass -- Simple constructor for a file object.                         *
- *                                                                                             *
- *    This constructor is called when a file object is created with a supplied filename, but   *
- *    not opened at the same time. In this case, an assumption is made that the supplied       *
- *    filename is a constant string. A duplicate of the filename string is not created since   *
- *    it would be wasteful in that case.                                                       *
- *                                                                                             *
- * INPUT:   filename -- The filename to assign to this file object.                            *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/17/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
+// The file is not opened. An assumption is made that the supplied filename is a constant string. A
+// duplicate of the filename string is not created since it would be wasteful in that case.
 RawFileClass::RawFileClass(char const * filename) :
 	Rights(0),
 	BiasStart(0),
@@ -247,85 +151,25 @@ RawFileClass::RawFileClass(char const * filename) :
 {
 }
 
-/***********************************************************************************************
- * RawFileClass::~RawFileClass -- Default deconstructor for a file object.                     *
- *                                                                                             *
- *    This constructs a null file object. A null file object has no file handle or filename    *
- *    associated with it. In order to use a file object created in this fashion it must be     *
- *    assigned a name and then opened.                                                         *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
 RawFileClass::~RawFileClass()
 {
 	Reset ();
 }
 
-/***********************************************************************************************
- * RawFileClass::Reset -- Closes the file handle and resets the object's state.
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/10/1999 PDS : Created.                                                                 *
- *=============================================================================================*/
+// Closes the file handle and resets the object's state.
 void RawFileClass::Reset()
 {
 	Close();
 	Filename = "";
 }
 
-/***********************************************************************************************
- * RawFileClass::File_Name -- Returns with the filename associate with the file object.        *
- *                                                                                             *
- *    Use this routine to determine what filename is associated with this file object. If no   *
- *    filename has yet been assigned, then this routing will return null.                      *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  Returns with a pointer to the file name associated with this file object or nullptr   *
- *          if one doesn't exist.                                                              *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/1994 JLB : Created.                                                                 *
- *   11/25/2001 Jani: Note that this is virtual function and thus can't be inlined. Is there a *
- *					 reason for it to be virtual?																	  *
- *=============================================================================================*/
+// This is a virtual function and thus can't be inlined.
 char const * RawFileClass::File_Name() const
 {
 	return(Filename);
 }
 
-/***********************************************************************************************
- * RawFileClass::Set_Name -- Manually sets the name for a file object.                         *
- *                                                                                             *
- *    This routine will set the name for the file object to the name specified. Setting the	  *
- *		name in this fashion doesn't affect the closed or opened state									  *
- *    of the file.                                                                             *
- *                                                                                             *
- * INPUT:   filename -- The filename to assign to this file object.                            *
- *                                                                                             *
- * OUTPUT:  pointer to filename.																					  *
- *                                                                                             *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/17/1994 JLB : Created.                                                                 *
- *	  11/25/2001 Jani : Changed the name storage from strdup to StringClass to benefit from our *
- *							  Fast memory allocation system.
- *=============================================================================================*/
+// Setting the name in this fashion doesn't affect the closed or opened state of the file.
 char const * RawFileClass::Set_Name(char const * filename)
 {
 	Bias(0);
@@ -348,27 +192,9 @@ char const * RawFileClass::Set_Name(char const * filename)
 }
 
 
-/***********************************************************************************************
- * RawFileClass::Open -- Assigns name and opens file in one operation.                         *
- *                                                                                             *
- *    This routine will assign the specified filename to the file object and open it at the    *
- *    same time. If the file object was already open, then it will be closed first. If the     *
- *    file object was previously assigned a filename, then it will be replaced with the new    *
- *    name. Typically, this routine is used when an anonymous file object has been crated and  *
- *    now it needs to be assigned a name and opened.                                           *
- *                                                                                             *
- * INPUT:   filename -- The filename to assign to this file object.                            *
- *                                                                                             *
- *          rights   -- The open file access rights to use.                                    *
- *                                                                                             *
- * OUTPUT:  bool; Was the file opened? The return value of this is moot, since the open file   *
- *          is designed to never return unless it succeeded.                                   *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/17/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
+// If the file object was already open, then it will be closed first. If the file object was
+// previously assigned a filename, then it will be replaced with the new name. The open is designed
+// to never return unless it succeeded.
 int RawFileClass::Open(char const * filename, int rights)
 {
 	Set_Name(filename);
@@ -376,24 +202,8 @@ int RawFileClass::Open(char const * filename, int rights)
 }
 
 
-/***********************************************************************************************
- * RawFileClass::Open -- Opens the file object with the rights specified.                      *
- *                                                                                             *
- *    This routine is used to open the specified file object with the access rights indicated. *
- *    This only works if the file has already been assigned a filename. It is guaranteed, by   *
- *    the error handler, that this routine will always return with success.                    *
- *                                                                                             *
- * INPUT:   rights   -- The file access rights to use when opening this file. This is a        *
- *                      combination of READ and/or WRITE bit flags.                            *
- *                                                                                             *
- * OUTPUT:  bool; Was the file opened successfully? This will always return true by reason of  *
- *          the error handler.                                                                 *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/17/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
+// This only works if the file has already been assigned a filename. It is guaranteed, by the error
+// handler, that this routine will always return with success.
 int RawFileClass::Open(int rights)
 {
 	Close();
@@ -473,23 +283,10 @@ int RawFileClass::Open(int rights)
 }
 
 
-/***********************************************************************************************
- * RawFileClass::Is_Available -- Checks to see if the specified file is available to open.     *
- *                                                                                             *
- *    This routine will examine the disk system to see if the specified file can be opened     *
- *    or not. Use this routine before opening a file in order to make sure that is available   *
- *    or to perform other necessary actions.                                                   *
- *                                                                                             *
- * INPUT:   force -- Should this routine keep retrying until the file becomes available? If    *
- *                   in this case it doesn't become available, then the program will abort.    *
- *                                                                                             *
- * OUTPUT:  bool; Is the file available to be opened?                                          *
- *                                                                                             *
- * WARNINGS:   Depending on the parameter passed in, this routine may never return.            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Use this routine before opening a file in order to make sure that it is available or to perform
+// other necessary actions.
+// WARNING: If forced is true, this routine keeps retrying until the file becomes available, and it
+// may never return. If it doesn't become available, then the program will abort.
 bool RawFileClass::Is_Available(int forced)
 {
 	if (Filename.Is_Empty()) return(false);
@@ -539,20 +336,7 @@ bool RawFileClass::Is_Available(int forced)
 }
 
 
-/***********************************************************************************************
- * RawFileClass::Close -- Perform a closure of the file.                                       *
- *                                                                                             *
- *    Close the file object. In the rare case of an error, handle it as appropriate.           *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   Some rare error conditions may cause this routine to abort the program.         *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: Some rare error conditions may cause this routine to abort the program.
 void RawFileClass::Close()
 {
 	/*
@@ -579,28 +363,8 @@ void RawFileClass::Close()
 }
 
 
-/***********************************************************************************************
- * RawFileClass::Read -- Reads the specified number of bytes into a memory buffer.             *
- *                                                                                             *
- *    This routine will read the specified number of bytes and place the data into the buffer  *
- *    indicated. It is legal to call this routine with a request for more bytes than are in    *
- *    the file. This condition can result in fewer bytes being read than requested. Determine  *
- *    this by examining the return value.                                                      *
- *                                                                                             *
- * INPUT:   buffer   -- Pointer to the buffer to read data into. If nullptr is passed, no read    *
- *                      is performed.                                                          *
- *                                                                                             *
- *          size     -- The number of bytes to read. If nullptr is passed, then no read is        *
- *                      performed.                                                             *
- *                                                                                             *
- * OUTPUT:  Returns with the number of bytes read into the buffer. If this number is less      *
- *          than requested, it indicates that the file has been exhausted.                     *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
+// If buffer or size is null, no read is performed. It is legal to request more bytes than are in
+// the file, in which case fewer bytes are read.
 int RawFileClass::Read(void * buffer, int size)
 {
 	long	bytesread = 0;			// Running count of the number of bytes read into the buffer.
@@ -660,24 +424,9 @@ int RawFileClass::Read(void * buffer, int size)
 }
 
 
-/***********************************************************************************************
- * RawFileClass::Write -- Writes the specified data to the buffer specified.                   *
- *                                                                                             *
- *    This routine will write the data specified to the file.                                  *
- *                                                                                             *
- * INPUT:   buffer   -- The buffer that holds the data to write.                               *
- *                                                                                             *
- *          size     -- The number of bytes to write to the file.                              *
- *                                                                                             *
- * OUTPUT:  Returns with the number of bytes written to the file. This routine catches the     *
- *          case of a disk full condition, so this routine will always return with the number  *
- *          matching the size request.                                                         *
- *                                                                                             *
- * WARNINGS:   A fatal file condition could cause this routine to never return.                *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
+// A disk full condition is caught, so this routine will always return with the number matching the
+// size request.
+// WARNING: A fatal file condition could cause this routine to never return.
 int RawFileClass::Write(void const * buffer, int size)
 {
 	long	byteswritten = 0;
@@ -728,27 +477,8 @@ int RawFileClass::Write(void const * buffer, int size)
 }
 
 
-/***********************************************************************************************
- * RawFileClass::Seek -- Reposition the file pointer as indicated.                             *
- *                                                                                             *
- *    Use this routine to move the filepointer to the position indicated. It can move either   *
- *    relative to current position or absolute from the beginning or ending of the file. This  *
- *    routine will only return if it successfully performed the seek.                          *
- *                                                                                             *
- * INPUT:   pos   -- The position to seek to. This is interpreted as relative to the position  *
- *                   indicated by the "dir" parameter.                                         *
- *                                                                                             *
- *          dir   -- The relative position to relate the seek to. This can be either SEEK_SET  *
- *                   for the beginning of the file, SEEK_CUR for the current position, or      *
- *                   SEEK_END for the end of the file.                                         *
- *                                                                                             *
- * OUTPUT:  This routine returns the position that the seek ended up at.                       *
- *                                                                                             *
- * WARNINGS:   If there was a file error, then this routine might never return.                *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
+// This routine will only return if it successfully performed the seek.
+// WARNING: If there was a file error, then this routine might never return.
 int RawFileClass::Seek(int pos, int dir)
 {
 
@@ -802,22 +532,9 @@ int RawFileClass::Seek(int pos, int dir)
 }
 
 
-/***********************************************************************************************
- * RawFileClass::Size -- Determines size of file (in bytes).                                   *
- *                                                                                             *
- *    Use this routine to determine the size of the file. The file must exist or this is an    *
- *    error condition.                                                                         *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  Returns with the number of bytes in the file.                                      *
- *                                                                                             *
- * WARNINGS:   This routine handles error conditions and will not return unless the file       *
- *             exists and can successfully be queried for file length.                         *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
+// The file must exist or this is an error condition.
+// WARNING: This routine handles error conditions and will not return unless the file exists and can
+// successfully be queried for file length.
 int RawFileClass::Size()
 {
 	int size = 0;
@@ -871,22 +588,9 @@ int RawFileClass::Size()
 }
 
 
-/***********************************************************************************************
- * RawFileClass::Create -- Creates an empty file.                                              *
- *                                                                                             *
- *    This routine will create an empty file from the file object. The file object's filename  *
- *    must already have been assigned before this routine will function.                       *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  bool; Was the file successfully created? This routine will always return true.     *
- *                                                                                             *
- * WARNINGS:   A fatal error condition could occur with this routine. Especially if the disk   *
- *             is full or a read-only media was selected.                                      *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
+// The file object's filename must already have been assigned before this routine will function.
+// WARNING: A fatal error condition could occur with this routine. Especially if the disk is full or
+// a read-only media was selected.
 int RawFileClass::Create()
 {
 	Close();
@@ -908,23 +612,7 @@ int RawFileClass::Create()
 }
 
 
-/***********************************************************************************************
- * RawFileClass::Delete -- Deletes the file object from the disk.                              *
- *                                                                                             *
- *    This routine will delete the file object from the disk. If the file object doesn't       *
- *    exist, then this routine will return as if it had succeeded (since the effect is the     *
- *    same).                                                                                   *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  bool; Was the file deleted? If the file was already missing, the this value will   *
- *                be false.                                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Returns false if the file was already missing.
 int RawFileClass::Delete()
 {
 	/*
@@ -971,22 +659,6 @@ int RawFileClass::Delete()
 	return(true);
 }
 
-/***********************************************************************************************
- * RawFileClass::Get_Date_Time -- Gets the date and time the file was last modified.           *
- *                                                                                             *
- *    Use this routine to get the date and time of the file.                                   *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  Returns with the file date and time as a long.                                     *
- *          Use the YEAR(long), MONTH(),....                                                   *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/14/1995 DRD : Created.                                                                 *
- *   07/13/1996 JLB : Handles win32 method.                                                    *
- *=============================================================================================*/
 unsigned long RawFileClass::Get_Date_Time()
 {
 	// Return value
@@ -1014,21 +686,6 @@ unsigned long RawFileClass::Get_Date_Time()
 }
 
 
-/***********************************************************************************************
- * RawFileClass::Set_Date_Time -- Sets the date and time the file was last modified.           *
- *                                                                                             *
- *    Use this routine to set the date and time of the file.                                   *
- *                                                                                             *
- * INPUT:   the file date and time as a long                                                   *
- *                                                                                             *
- * OUTPUT:  successful or not if the file date and time was changed.                           *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/14/1995 DRD : Created.                                                                 *
- *   07/13/1996 JLB : Handles win 32 method                                                    *
- *=============================================================================================*/
 bool RawFileClass::Set_Date_Time(unsigned long datetime)
 {
 	DEBUG_ASSERTLOG(false, ("Set_Date_Time is not implemented"));
@@ -1036,27 +693,8 @@ bool RawFileClass::Set_Date_Time(unsigned long datetime)
 }
 
 
-/***********************************************************************************************
- * RawFileClass::Bias -- Bias a file with a specific starting position and length.             *
- *                                                                                             *
- *    This will bias a file by giving it an artificial starting position and length. By        *
- *    using this routine, it is possible to 'fool' the file into ignoring a header and         *
- *    trailing extra data. An example of this would be a file inside of a mixfile.             *
- *                                                                                             *
- * INPUT:   start    -- The starting offset that will now be considered the start of the       *
- *                      file.                                                                  *
- *                                                                                             *
- *          length   -- The forced length of the file. For files that are opened for write,    *
- *                      this serves as the artificial constraint on the file's length. For     *
- *                      files opened for read, this limits the usable file size.               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// By using this routine, it is possible to 'fool' the file into ignoring a header and trailing
+// extra data. An example of this would be a file inside of a mixfile.
 void RawFileClass::Bias(int start, int length)
 {
 	if (start == 0) {
@@ -1082,24 +720,9 @@ void RawFileClass::Bias(int start, int length)
 }
 
 
-/***********************************************************************************************
- * RawFileClass::Raw_Seek -- Performs a seek on the unbiased file                              *
- *                                                                                             *
- *    This will perform a seek on the file as if it were unbiased. This is in spite of any     *
- *    bias setting the file may have. The ability to perform a raw seek in this fasion is      *
- *    necessary to maintain the bias ability.                                                  *
- *                                                                                             *
- * INPUT:   pos   -- The position to seek the file relative to the "dir" parameter.            *
- *                                                                                             *
- *          dir   -- The origin of the seek operation.                                         *
- *                                                                                             *
- * OUTPUT:  Returns with the new position of the seek operation.                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/04/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Performs a seek on the file as if it were unbiased, in spite of any bias setting the file may
+// have. The ability to perform a raw seek in this fashion is necessary to maintain the bias
+// ability.
 int RawFileClass::Raw_Seek(int pos, int dir)
 {
 	/*
@@ -1129,18 +752,6 @@ int RawFileClass::Raw_Seek(int pos, int dir)
 	return(pos);
 }
 
-/***********************************************************************************************
- * RawFileClass::Attach -- Provides a file handle for the class to use.
- *                                                                                             *
- * INPUT:   handle   -- the Win32 file handle.
- *                                                                                             *
- * OUTPUT:
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/10/1999 PDS : Created.                                                                 *
- *=============================================================================================*/
 void RawFileClass::Attach (void *handle, int rights)
 {
 	Reset ();
@@ -1154,18 +765,7 @@ void RawFileClass::Attach (void *handle, int rights)
 	Handle = (FILE *)handle;
 }
 
-/***********************************************************************************************
- * RawFileClass::Detach -- Removes the file handle from the object without closing the handle.
- *                                                                                             *
- * INPUT
- *                                                                                             *
- * OUTPUT:
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/10/1999 PDS : Created.                                                                 *
- *=============================================================================================*/
+// Does not close the handle.
 void RawFileClass::Detach ()
 {
 	Rights = 0;

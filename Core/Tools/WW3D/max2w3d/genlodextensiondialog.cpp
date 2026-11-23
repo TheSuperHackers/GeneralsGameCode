@@ -32,13 +32,6 @@
  *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   GenLodExtensionDialogClass::GenLodExtensionDialogClass -- Constructor                     *
- *   GenLodExtensionDialogClass::~GenLodExtensionDialogClass -- Destructor                     *
- *   GenLodExtensionDialogClass::Get_Options -- Presents the dialog, gets user input           *
- *   GenLodExtensionDialogClass::Dialog_Proc -- Windows message handling                       *
- *   _gen_lod_ext_dialog_proc -- windows dialog proc                                           *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -55,17 +48,6 @@
 **********************************************************************************************/
 
 
-/***********************************************************************************************
- * GenLodExtensionDialogClass::GenLodExtensionDialogClass -- Constructor                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 GenLodExtensionDialogClass::GenLodExtensionDialogClass(Interface * maxinterface) :
 	Hwnd(nullptr),
 	Options(nullptr),
@@ -75,36 +57,12 @@ GenLodExtensionDialogClass::GenLodExtensionDialogClass(Interface * maxinterface)
 }
 
 
-/***********************************************************************************************
- * GenLodExtensionDialogClass::~GenLodExtensionDialogClass -- Destructor                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/10/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 GenLodExtensionDialogClass::~GenLodExtensionDialogClass()
 {
 	ReleaseISpinner(LodIndexSpin);
 }
 
 
-/***********************************************************************************************
- * GenLodExtensionDialogClass::Get_Options -- Presents the dialog, gets user input             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/10/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 bool GenLodExtensionDialogClass::Get_Options(OptionsStruct * options)
 {
 	Options = options;
@@ -127,18 +85,6 @@ bool GenLodExtensionDialogClass::Get_Options(OptionsStruct * options)
 }
 
 
-/***********************************************************************************************
- * GenLodExtensionDialogClass::Dialog_Proc -- Windows message handling                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/10/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 bool GenLodExtensionDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM)
 {
 	switch (message )	{
@@ -175,18 +121,6 @@ bool GenLodExtensionDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wPara
 }
 
 
-/***********************************************************************************************
- * _gen_lod_ext_dialog_proc -- windows dialog proc                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/10/2000 gth : Created.                                                                 *
- *=============================================================================================*/
 static BOOL CALLBACK _gen_lod_ext_dialog_proc(HWND hwnd,UINT message,WPARAM wparam,LPARAM lparam)
 {
 	static GenLodExtensionDialogClass * dialog = nullptr;

@@ -30,10 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 7                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   LZOCompressor::Compress -- compress a buffer using LZO                                    *
- *   LZOCompressor::Decompress -- decompress a buffer using LZO                                *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "lzo.h"
@@ -52,18 +48,6 @@ static CriticalSectionClass mutex;
 #define	BUFFER_OVERRUN_TEST_VALUE	((char)0x7d)
 
 
-/***********************************************************************************************
- * LZOCompressor::Compress -- compress a buffer using LZO                                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/19/99    GTH : Created.                                                                 *
- *=============================================================================================*/
 int LZOCompressor::Compress
 (
 	const lzo_byte * in,
@@ -89,18 +73,6 @@ int LZOCompressor::Compress
 }
 
 
-/***********************************************************************************************
- * LZOCompressor::Decompress -- decompress a buffer using LZO                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/19/99    GTH : Created.                                                                 *
- *=============================================================================================*/
 int LZOCompressor::Decompress
 (
 	const lzo_byte * in,

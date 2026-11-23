@@ -30,12 +30,6 @@
  *                                                                         *
  *                    $Revision:: 5                                       $*
  *                                                                         *
- *-------------------------------------------------------------------------*
- * Functions:                                                              *
- *   PredictiveLODOptimizerClass::Clear -- clear object list and total cost*
- *   PredictiveLODOptimizerClass::Add_Object -- adds object to list, cost  *
- *   PredictiveLODOptimizerClass::Optimize_LODs -- does LOD optimization   *
- *   PredictiveLODOptimizerClass::Free -- releases all memory used.        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "predlod.h"
@@ -182,18 +176,6 @@ LODHeapNode	*		PredictiveLODOptimizerClass::VisibleObjArray2;
 int					PredictiveLODOptimizerClass::VisibleObjArraySize;
 
 
-/**************************************************************************
- * PredictiveLODOptimizerClass::Clear -- clear object list and total cost *
- *                                                                        *
- * INPUT:	                                                              *
- *                                                                        *
- * OUTPUT:	                                                              *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   03/12/1999 NH  : Created.                                            *
- *========================================================================*/
 void PredictiveLODOptimizerClass::Clear()
 {
 	if (ObjectArray) {
@@ -211,18 +193,7 @@ void PredictiveLODOptimizerClass::Clear()
 }
 
 
-/**************************************************************************
- * PredictiveLODOptimizerClass::Add_Object -- adds object to list, cost   *
- *                                                                        *
- * INPUT:	                                                              *
- *                                                                        *
- * OUTPUT:	                                                              *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   03/12/1999 NH  : Created.                                            *
- *========================================================================*/
+// Also adds the cost of the object to the total cost.
 void PredictiveLODOptimizerClass::Add_Object(RenderObjClass *robj)
 {
 	// If array present but too small, free it and copy it to new array.
@@ -253,27 +224,10 @@ void PredictiveLODOptimizerClass::Add_Object(RenderObjClass *robj)
 }
 
 
-/**************************************************************************
- * PredictiveLODOptimizerClass::Optimize_LODs -- does LOD optimization    *
- *                                                                        *
- * INPUT:	float max_cost - the upper bound on the total scene Cost.     *
- *                                                                        *
- * OUTPUT:	none.                                                         *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   12/08/1997 NH  : Created.                                            *
- *   04/23/1997 NH  : Ported to SR 1.3.                                   *
- *   03/12/1999 NH  : Moved to PredictiveLODOptimizerClass.               *
- *                                                                        *
- * COMMENTS:                                                              *
- *   This function implements the algorithm outlined in "Adaptive         *
- *   Display Algorithm for Interactive Frame Rates During Visualization   *
- *   of Complex Virtual Environments", Thomas Funkhouser & Carlo Sequin,  *
- *   SIGGRAPH '93 Proceedings, pp. 247-253.                               *
- *   Modifications have been made to support screensize clamping of LODs. *
- *========================================================================*/
+// This function implements the algorithm outlined in "Adaptive Display Algorithm for Interactive
+// Frame Rates During Visualization of Complex Virtual Environments", Thomas Funkhouser & Carlo
+// Sequin, SIGGRAPH '93 Proceedings, pp. 247-253. Modifications have been made to support screensize
+// clamping of LODs.
 void PredictiveLODOptimizerClass::Optimize_LODs(float max_cost)
 {
 	if (!ObjectArray || NumObjects == 0) return;
@@ -365,18 +319,6 @@ void PredictiveLODOptimizerClass::Optimize_LODs(float max_cost)
 }
 
 
-/**************************************************************************
- * PredictiveLODOptimizerClass::Free -- releases all memory used.         *
- *                                                                        *
- * INPUT:	                                                              *
- *                                                                        *
- * OUTPUT:	                                                              *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   03/12/1999 NH  : Created.                                            *
- *========================================================================*/
 void PredictiveLODOptimizerClass::Free()
 {
 	Clear();

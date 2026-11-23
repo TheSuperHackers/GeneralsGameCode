@@ -32,13 +32,6 @@
  *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   RenderObjectRecyclerClass::Reset -- reset the cache                                       *
- *   RenderObjectRecyclerClass::Get_Render_Object -- Create/Re-use a render object             *
- *   RenderObjectRecyclerClass::Return_Render_Object -- Return a render object to the cache    *
- *   RenderObjectRecyclerClass::Insert_Inactive_Model -- Internally add a render object to the *
- *   RenderObjectRecyclerClass::Reset_Model -- resets a render object so it can be re-used     *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "renderobjectrecycler.h"
@@ -48,36 +41,13 @@
 #include "WWMath/matrix3d.h"
 
 
-/***********************************************************************************************
- * RenderObjectRecyclerClass::Reset -- reset the pool                                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/25/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 void RenderObjectRecyclerClass::Reset()
 {
 	InactiveModels.Reset_List();
 }
 
 
-/***********************************************************************************************
- * RenderObjectRecyclerClass::Get_Render_Object -- Create/Re-use a render object               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/25/2001  gth : Created.                                                                 *
- *=============================================================================================*/
+// Creates a new render object or re-uses one from the pool.
 RenderObjClass * RenderObjectRecyclerClass::Get_Render_Object(const char * name,const Matrix3D & tm)
 {
 	RefRenderObjListIterator it(&InactiveModels);
@@ -111,54 +81,19 @@ RenderObjClass * RenderObjectRecyclerClass::Get_Render_Object(const char * name,
 }
 
 
-/***********************************************************************************************
- * RenderObjectRecyclerClass::Return_Render_Object -- Return a render object to the pool       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/25/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 void RenderObjectRecyclerClass::Return_Render_Object(RenderObjClass * obj)
 {
 	Insert_Inactive_Model(obj);
 }
 
 
-/***********************************************************************************************
- * RenderObjectRecyclerClass::Insert_Inactive_Model -- Internally add a render object to the po*
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/25/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 void RenderObjectRecyclerClass::Insert_Inactive_Model(RenderObjClass * obj)
 {
 	WWASSERT(obj != nullptr);
 	InactiveModels.Add(obj);
 }
 
-/***********************************************************************************************
- * RenderObjectRecyclerClass::Reset_Model -- resets a render object so it can be re-used       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/8/2001   gth : Created.                                                                 *
- *=============================================================================================*/
+// Resets the render object so it can be re-used.
 void RenderObjectRecyclerClass::Reset_Model(RenderObjClass * model)
 {
 	/*

@@ -30,35 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 4                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   AABTreeClass::AABTreeClass -- Constructor                                                 *
- *   AABTreeClass::AABTreeClass -- Constructor                                                 *
- *   AABTreeClass::AABTreeClass -- copy constructor                                            *
- *   AABTreeClass::~AABTreeClass -- Destructor                                                 *
- *   AABTreeClass::operator =  -- assignment operator                                          *
- *   AABTreeClass::Reset -- reset this tree, releases all allocated resources                  *
- *   AABTreeClass::Build_Tree_Recursive -- Initializes this tree from the given builder        *
- *   AABTreeClass::Set_Mesh -- set the mesh pointer                                            *
- *   AABTreeClass::Generate_APT -- Generate an active poly table for the mesh                  *
- *   AABTreeClass::Generate_OBBox_APT_Recursive -- recursively generate the apt                *
- *   AABTreeClass::Cast_Ray_Recursive -- Internal implementation of Cast_Ray                   *
- *   AABTreeClass::Cast_Semi_Infinite_Axis_Aligned_Ray_Recursive -- Internal implementation    *
- *   AABTreeClass::Cast_AABox_Recursive -- internal implementation of Cast_AABox               *
- *   AABTreeClass::Cast_OBBox_Recursive -- Internal implementation of Cast_OBBox               *
- *   AABTreeClass::Intersect_OBBox_Recursive -- internal implementation of Intersect_OBBox     *
- *   AABTreeClass::Cast_Ray_To_Polys -- cast the ray to polys in the given node                *
- *   AABTreeClass::Cast_Semi_Infinite_Axis_Aligned_Ray_To_Polys -- cast ray to polys in the nod*
- *   AABTreeClass::Cast_AABox_To_Polys -- cast aabox to polys in the given node                *
- *   AABTreeClass::Cast_OBBox_To_Polys -- cast obbox to polys in the given node                *
- *   AABTreeClass::Intersect_OBBox_With_Polys -- Test polys for intersection                   *
- *   AABTreeClass::Update_Bounding_Boxes_Recursive -- recompute the bounding boxes             *
- *   AABTreeClass::Update_Min_Max -- updates min and max given a polygon index                 *
- *   AABTreeClass::Load_W3D -- Load a W3D description of an AABTree                            *
- *   AABTreeClass::Read_Poly_Indices -- load the polygon index array                           *
- *   AABTreeClass::Read_Nodes -- Load the node array                                           *
- *   AABTreeClass::Generate_APT -- generate an apt from a box and viewdir                      *
- *   AABTreeClass::Generate_OBBox_APT_Recursive -- recurse, generate the apt for a box and vie *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -75,17 +46,6 @@
 
 
 
-/***********************************************************************************************
- * AABTreeClass::AABTreeClass -- Constructor                                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 AABTreeClass::AABTreeClass() :
 	NodeCount(0),
 	Nodes(nullptr),
@@ -95,21 +55,6 @@ AABTreeClass::AABTreeClass() :
 {
 }
 
-/***********************************************************************************************
- * AABTreeClass::AABTreeClass -- Constructor                                                   *
- *                                                                                             *
- *  Builds an AABTree from the contents of an AABTreeBuilderClass.                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/19/98    GTH : Created.                                                                 *
- *   5/23/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 AABTreeClass::AABTreeClass(AABTreeBuilderClass * builder)
 {
 	NodeCount = builder->Node_Count();
@@ -123,18 +68,6 @@ AABTreeClass::AABTreeClass(AABTreeBuilderClass * builder)
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::AABTreeClass -- copy constructor                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/22/99    GTH : Created.                                                                 *
- *=============================================================================================*/
 AABTreeClass::AABTreeClass(const AABTreeClass & that) :
 	NodeCount(0),
 	Nodes(nullptr),
@@ -145,35 +78,11 @@ AABTreeClass::AABTreeClass(const AABTreeClass & that) :
 	*this = that;
 }
 
-/***********************************************************************************************
- * AABTreeClass::~AABTreeClass -- Destructor                                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 AABTreeClass::~AABTreeClass()
 {
 	Reset();
 }
 
-/***********************************************************************************************
- * AABTreeClass::operator =  -- assignment operator                                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/22/99    GTH : Created.                                                                 *
- *=============================================================================================*/
 AABTreeClass & AABTreeClass::operator = (const AABTreeClass & that)
 {
 	Reset();
@@ -196,18 +105,6 @@ AABTreeClass & AABTreeClass::operator = (const AABTreeClass & that)
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::Reset -- reset this tree, releases all allocated resources                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/22/99    GTH : Created.                                                                 *
- *=============================================================================================*/
 void AABTreeClass::Reset()
 {
 	NodeCount = 0;
@@ -221,18 +118,6 @@ void AABTreeClass::Reset()
 	Mesh = nullptr;
 }
 
-/***********************************************************************************************
- * AABTreeClass::Scale - uniform scale																			  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/17/02    Jani : Created.                                                                *
- *=============================================================================================*/
 void AABTreeClass::Scale(float f)
 {
 	for (int i=0;i<NodeCount;++i) {
@@ -242,18 +127,6 @@ void AABTreeClass::Scale(float f)
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::Build_Tree_Recursive -- Initializes this tree from the given builder          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/19/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 void AABTreeClass::Build_Tree_Recursive(AABTreeBuilderClass::CullNodeStruct * node,int & curpolyindex)
 {
 	/*
@@ -299,37 +172,13 @@ void AABTreeClass::Build_Tree_Recursive(AABTreeBuilderClass::CullNodeStruct * no
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::Set_Mesh -- set the mesh pointer                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/22/99    GTH : Created.                                                                 *
- *=============================================================================================*/
 void AABTreeClass::Set_Mesh(MeshGeometryClass * mesh)
 {
 	Mesh = mesh;
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::Generate_APT -- Generate an active poly table for the mesh                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- * box - oriented box to cull the mesh against (in the mesh's coordinate system!!!)            *
- * apt - vector of ints to fill the apt into                                                   *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
+// Generate an active poly table for the mesh.
 void AABTreeClass::Generate_APT(const OBBoxClass & box,SimpleDynVecClass<uint32> & apt)
 {
 	OBBoxAPTContextStruct context(box,apt);
@@ -338,20 +187,6 @@ void AABTreeClass::Generate_APT(const OBBoxClass & box,SimpleDynVecClass<uint32>
 
 
 
-/***********************************************************************************************
- * AABTreeClass::Generate_OBBox_APT_Recursive -- recursively generate the apt                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- * node - current node in the recursion                                                        *
- * context - structure containing the results/current state                                    *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/25/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void AABTreeClass::Generate_OBBox_APT_Recursive(CullNodeStruct * node,OBBoxAPTContextStruct & context)
 {
 	/*
@@ -408,21 +243,8 @@ void AABTreeClass::Generate_OBBox_APT_Recursive(CullNodeStruct * node,OBBoxAPTCo
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::Generate_APT -- generate an apt from a box and viewdir                        *
- *                                                                                             *
- * Indices of the polys which intersect the box and are not backfacing to the given viewdir    *
- * will be added to the passed in apt.                                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/10/2001  gth : Created.                                                                 *
- *=============================================================================================*/
+// Indices of the polys which intersect the box and are not backfacing to the given viewdir will be
+// added to the passed in apt.
 void AABTreeClass::Generate_APT
 (
 	const OBBoxClass & box,
@@ -435,18 +257,6 @@ void AABTreeClass::Generate_APT
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::Generate_OBBox_APT_Recursive -- recurse, generate the apt for a box and viewd *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/10/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 void AABTreeClass::Generate_OBBox_APT_Recursive(CullNodeStruct * node, OBBoxRayAPTContextStruct & context)
 {
 	/*
@@ -506,20 +316,6 @@ void AABTreeClass::Generate_OBBox_APT_Recursive(CullNodeStruct * node, OBBoxRayA
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::Cast_Ray_Recursive -- Internal implementation of Cast_Ray                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- * raytest - contains all of the ray test information                                          *
- * node - current cull node being processed                                                    *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool AABTreeClass::Cast_Ray_Recursive(CullNodeStruct * node,RayCollisionTestClass & raytest)
 {
 	/*
@@ -546,24 +342,8 @@ bool AABTreeClass::Cast_Ray_Recursive(CullNodeStruct * node,RayCollisionTestClas
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::Cast_Semi_Infinite_Axis_Aligned_Ray_Recursive -- Internal implementation      *
- *                                                                                             *
- * INPUT:                                                                                      *
- * node - current cull node being processed                                                    *
- * start_point - starting point                                                                *
- * axis_r - the axis along which the ray is projected                                          *
- * axis_1, axis_2 - the other two axes                                                         *
- * direction - 0 means the ray goes toward the negative axis, 1 means positive.                *
- * flags - reference bitfield for result flags (ray hit edge, start point embedded in tri, etc)*
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   8/30/00    NH : Created.                                                                  *
- *=============================================================================================*/
+// The direction 0 means the ray goes toward the negative axis, 1 means positive. The flags are a
+// reference bitfield for result flags (ray hit edge, start point embedded in tri, etc).
 int AABTreeClass::Cast_Semi_Infinite_Axis_Aligned_Ray_Recursive(CullNodeStruct * node,
 	const Vector3 & start_point, int axis_r, int axis_1, int axis_2, int direction,
 	unsigned char & flags)
@@ -608,20 +388,6 @@ int AABTreeClass::Cast_Semi_Infinite_Axis_Aligned_Ray_Recursive(CullNodeStruct *
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::Cast_AABox_Recursive -- internal implementation of Cast_AABox                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- * boxtest - contains description of the collision operation to be performed                   *
- * node - current cull node being processed                                                    *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool AABTreeClass::Cast_AABox_Recursive(CullNodeStruct * node,AABoxCollisionTestClass & boxtest)
 {
 	/*
@@ -648,20 +414,6 @@ bool AABTreeClass::Cast_AABox_Recursive(CullNodeStruct * node,AABoxCollisionTest
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::Cast_OBBox_Recursive -- Internal implementation of Cast_OBBox                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- * boxtest - contains description of the collision test to be performed                        *
- * node - current cull node being processed                                                    *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool AABTreeClass::Cast_OBBox_Recursive(CullNodeStruct * node,OBBoxCollisionTestClass & boxtest)
 {
 	/*
@@ -688,18 +440,6 @@ bool AABTreeClass::Cast_OBBox_Recursive(CullNodeStruct * node,OBBoxCollisionTest
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::Intersect_OBBox_Recursive -- internal implementation of Intersect_OBBox       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/20/00    gth : Created.                                                                 *
- *=============================================================================================*/
 bool AABTreeClass::Intersect_OBBox_Recursive(AABTreeClass::CullNodeStruct * node,OBBoxIntersectionTestClass & test)
 {
 	/*
@@ -724,18 +464,6 @@ bool AABTreeClass::Intersect_OBBox_Recursive(AABTreeClass::CullNodeStruct * node
 	return res;
 }
 
-/***********************************************************************************************
- * AABTreeClass::Cast_Ray_To_Polys -- cast the ray to polys in the given node                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool AABTreeClass::Cast_Ray_To_Polys(CullNodeStruct * node,RayCollisionTestClass & raytest)
 {
 	if (node->Get_Poly_Count() > 0) {
@@ -784,24 +512,8 @@ bool AABTreeClass::Cast_Ray_To_Polys(CullNodeStruct * node,RayCollisionTestClass
 	return false;
 }
 
-/***********************************************************************************************
- * AABTreeClass::Cast_Semi_Infinite_Axis_Aligned_Ray_To_Polys -- cast ray to polys in the node *
- *                                                                                             *
- * INPUT:                                                                                      *
- * node - current cull node being processed                                                    *
- * start_point - starting point                                                                *
- * axis_r - the axis along which the ray is projected                                          *
- * axis_1, axis_2 - the other two axes                                                         *
- * direction - 0 means the ray goes toward the negative axis, 1 means positive.                *
- * flags - reference bitfield for result flags (ray hit edge, start point embedded in tri, etc)*
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   8/30/00    NH : Created.                                                                  *
- *=============================================================================================*/
+// The direction 0 means the ray goes toward the negative axis, 1 means positive. The flags are a
+// reference bitfield for result flags (ray hit edge, start point embedded in tri, etc).
 int AABTreeClass::Cast_Semi_Infinite_Axis_Aligned_Ray_To_Polys(CullNodeStruct * node,
 	const Vector3 & start_point, int axis_r, int axis_1, int axis_2, int direction,
 	unsigned char & flags)
@@ -839,18 +551,6 @@ int AABTreeClass::Cast_Semi_Infinite_Axis_Aligned_Ray_To_Polys(CullNodeStruct * 
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::Cast_AABox_To_Polys -- cast aabox to polys in the given node                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool AABTreeClass::Cast_AABox_To_Polys(CullNodeStruct * node,AABoxCollisionTestClass & boxtest)
 {
 	if (node->Get_Poly_Count() > 0) {
@@ -900,18 +600,6 @@ bool AABTreeClass::Cast_AABox_To_Polys(CullNodeStruct * node,AABoxCollisionTestC
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::Cast_OBBox_To_Polys -- cast obbox to polys in the given node                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool AABTreeClass::Cast_OBBox_To_Polys(CullNodeStruct * node,OBBoxCollisionTestClass & boxtest)
 {
 	int polycount = node->Get_Poly_Count();
@@ -964,18 +652,6 @@ bool AABTreeClass::Cast_OBBox_To_Polys(CullNodeStruct * node,OBBoxCollisionTestC
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::Intersect_OBBox_With_Polys -- Test polys for intersection                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/20/00    gth : Created.                                                                 *
- *=============================================================================================*/
 bool AABTreeClass::Intersect_OBBox_With_Polys
 (
 	CullNodeStruct * node,
@@ -1021,21 +697,8 @@ bool AABTreeClass::Intersect_OBBox_With_Polys
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::Update_Bounding_Boxes_Recursive -- recompute the bounding boxes               *
- *                                                                                             *
- * Typically this function will be used when you have modified the mesh slightly and you need  *
- * to update the bounding boxes but you want to keep the structure of the tree.                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/22/99    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Typically this function will be used when you have modified the mesh slightly and you need to
+// update the bounding boxes but you want to keep the structure of the tree.
 void AABTreeClass::Update_Bounding_Boxes_Recursive(CullNodeStruct * node)
 {
 	node->Min.Set(100000.0f,100000.0f,100000.0f);
@@ -1097,18 +760,6 @@ void AABTreeClass::Update_Bounding_Boxes_Recursive(CullNodeStruct * node)
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::Update_Min_Max -- updates min and max given a polygon index                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/22/99    GTH : Created.                                                                 *
- *=============================================================================================*/
 void AABTreeClass::Update_Min_Max(int poly_index,Vector3 & min,Vector3 & max)
 {
 	for (int vert_index = 0; vert_index < 3; vert_index++) {
@@ -1127,18 +778,6 @@ void AABTreeClass::Update_Min_Max(int poly_index,Vector3 & min,Vector3 & max)
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::Load_W3D -- Load a W3D description of an AABTree                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/22/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 void AABTreeClass::Load_W3D(ChunkLoadClass & cload)
 {
 	Reset();
@@ -1170,36 +809,12 @@ void AABTreeClass::Load_W3D(ChunkLoadClass & cload)
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::Read_Poly_Indices -- load the polygon index array                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/22/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 void AABTreeClass::Read_Poly_Indices(ChunkLoadClass & cload)
 {
 	cload.Read(PolyIndices,sizeof(uint32) * PolyCount);
 }
 
 
-/***********************************************************************************************
- * AABTreeClass::Read_Nodes -- Load the node array                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/22/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 void AABTreeClass::Read_Nodes(ChunkLoadClass & cload)
 {
 	W3dMeshAABTreeNode w3dnode;

@@ -29,8 +29,6 @@
  *                  Last Update : April 22, 1996 [PWG]                     *
  *                                                                         *
  *  Actual member function for the field class.                            *
- *-------------------------------------------------------------------------*
- * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include <string.h>
 #include <sys/types.h>
@@ -225,16 +223,6 @@ char *FieldClass::Get_ID()
 return(ID);
 }
 
-/**************************************************************************
- * PACKETCLASS::HOST_TO_NET_FIELD -- Converts host field to net format    *
- *                                                                        *
- * INPUT:    FIELD   * to the data field we need to convert               *
- *                                                                        *
- * OUTPUT:     none                                                       *
- *                                                                        *
- * HISTORY:                                                               *
- *   04/22/1996 PWG : Created.                                            *
- *========================================================================*/
 void FieldClass::Host_To_Net()
 {
   //
@@ -271,16 +259,6 @@ void FieldClass::Host_To_Net()
   Size      = htons(Size);
 }
 
-/**************************************************************************
- * PACKETCLASS::NET_TO_HOST_FIELD -- Converts net field to host format    *
- *                                                                        *
- * INPUT:    FIELD   * to the data field we need to convert               *
- *                                                                        *
- * OUTPUT:     none                                                       *
- *                                                                        *
- * HISTORY:                                                               *
- *   04/22/1996 PWG : Created.                                            *
- *========================================================================*/
 void FieldClass::Net_To_Host()
 {
   //

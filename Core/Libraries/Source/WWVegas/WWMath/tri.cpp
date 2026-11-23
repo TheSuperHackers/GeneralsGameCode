@@ -30,10 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 8                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   TriClass::Find_Dominant_Plane -- returns indices of the axes of the dominant plane        *
- *   TriClass::Contains_Point -- performs 2D point-in-triangle test.                           *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "tri.h"
@@ -128,18 +124,6 @@ static inline void find_dominant_plane(const TriClass & tri, int * axis1,int * a
 
 
 
-/***********************************************************************************************
- * TriClass::Find_Dominant_Plane -- returns indices of the axes of the dominant plane          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/24/99    GTH : Created.                                                                 *
- *=============================================================================================*/
 void TriClass::Find_Dominant_Plane(int * axis1,int * axis2) const
 {
 	/*
@@ -184,20 +168,9 @@ void TriClass::Find_Dominant_Plane(int * axis1,int * axis2) const
 }
 
 
-/***********************************************************************************************
- * TriClass::Contains_Point -- performs 2D point-in-triangle test.                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * Assumes that the point is in the plane of the triangle... use this after you've intersected *
- * a ray with the plane of the triangle.                                                       *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/24/99    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Performs a 2D point-in-triangle test.
+// WARNING: Assumes that the point is in the plane of the triangle... use this after you've
+// intersected a ray with the plane of the triangle.
 bool TriClass::Contains_Point(const Vector3 & ipoint) const
 {
 #if 0

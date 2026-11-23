@@ -31,27 +31,12 @@
  *                                                                                             *
  *                  Last Update : June 9, 1997 [GH]                                            *
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   VisibleSelectedINodeFilter::Accept_Node -- Accepts Visible and selected inodes            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
 #include "nodefilt.h"
 
 
-/***********************************************************************************************
- * VisibleSelectedINodeFilter::Accept_Node -- Accepts Visible and selected inodes              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/13/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 BOOL VisibleSelectedINodeFilter::Accept_Node(INode * node, TimeValue time)
 {
 	if (!node->IsHidden() && node->Selected()) {

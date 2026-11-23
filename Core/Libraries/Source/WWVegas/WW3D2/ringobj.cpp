@@ -30,44 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 27                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   RingRenderObjClass::RingRenderObjClass -- Constructor                                     *
- *   RingRenderObjClass::RingRenderObjClass -- Constructor - init from a definition            *
- *   RingRenderObjClass::RingRenderObjClass -- Copy constructor                                *
- *   RingRenderObjClass::~RingRenderObjClass -- destructor                                     *
- *   RingRenderObjClass::operator -- assignment operator												     *
- *   RingRenderObjClass::Get_Num_Polys -- returns number of polygons									  *
- *   RingRenderObjClass::Get_Name -- returns name															  *
- *   RingRenderObjClass::Set_Name -- sets the name                                             *
- *   RingRenderObjClass::Set_Color -- Sets the color of the Ring                               *
- *   RingRenderObjClass::Init_Ring_Render_System -- global initialization needed for Ring		  *
- *   RingRenderObjClass::Shutdown_Ring_Render_System -- cleanup Ring render system				  *
- *   RingRenderObjClass::Set_Ring_Display_Mask -- Sets global display mask for all Ringes		  *
- *   RingRenderObjClass::Get_Ring_Display_Mask -- returns the display mask							  *
- *   RingRenderObjClass::update_mesh_data -- Updates vertex positions, etc                     *
- *   RingRenderObjClass::render_Ring -- submits the Ring to the GERD									  *
- *   RingRenderObjClass::vis_render_Ring -- submits Ring to the GERD for VIS						  *
- *   RingRenderObjClass::RingRenderObjClass -- constructor												  *
- *   RingRenderObjClass::RingRenderObjClass -- Constructor - init from a definition				  *
- *   RingRenderObjClass::RingRenderObjClass -- copy constructor										  *
- *   RingRenderObjClass::RingRenderObjClass -- Constructor from a wwmath aaRing					  *
- *   RingRenderObjClass::operator -- assignment operator                                       *
- *   RingRenderObjClass::Clone -- clones the Ring															  *
- *   RingRenderObjClass::Class_ID -- returns the class-id for AARing's								  *
- *   RingRenderObjClass::Render -- render this Ring														  *
- *   RingRenderObjClass::Special_Render -- special render this Ring (vis)							  *
- *   RingRenderObjClass::Set_Transform -- set the transform for this Ring							  *
- *   RingRenderObjClass::Set_Position -- Set the position of this Ring								  *
- *   RingRenderObjClass::update_cached_Ring -- update the world-space version of this Ring	  *
- *   RingRenderObjClass::Cast_Ray -- cast a ray against this Ring										  *
- *   RingRenderObjClass::Cast_AARing -- cast an AARing against this Ring							  *
- *   RingRenderObjClass::Cast_OBRing -- cast an OBRing against this Ring							  *
- *   RingRenderObjClass::Get_Obj_Space_Bounding_Sphere -- return the object-space bounding sper*
- *   RingRenderObjClass::Get_Obj_Space_Bounding_Box -- returns the obj-space bounding box      *
- *   RingRenderObjClass::Scale -- scales ring uniformly.                                       *
- *   RingRenderObjClass::Scale -- scales ring non-uniformly.                                   *
- *   RingRenderObjClass::Update_Cached_Bounding_Volumes -- Updates world-space bounding volum  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -154,18 +116,6 @@ float RingLODCosts[RING_NUM_LOD + 1];	// RING_NUM_LOD doesn't include the null L
 */
 
 
-/***********************************************************************************************
- * RingRenderObjClass::RingRenderObjClass -- Constructor                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 RingRenderObjClass::RingRenderObjClass()
 	:	anim_time (0.0F),
 		IsAnimating(false),
@@ -197,18 +147,6 @@ RingRenderObjClass::RingRenderObjClass()
 	calculate_value_array(1.0f, Value);
 }
 
-/***********************************************************************************************
- * RingRenderObjClass::RingRenderObjClass -- Constructor - init from a definition          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 RingRenderObjClass::RingRenderObjClass(const W3dRingStruct & def)
 	:	anim_time (0.0F),
 		IsAnimating(false),
@@ -248,18 +186,6 @@ RingRenderObjClass::RingRenderObjClass(const W3dRingStruct & def)
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::RingRenderObjClass -- Copy constructor                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 RingRenderObjClass::RingRenderObjClass(const RingRenderObjClass & src)
 	:	anim_time (0.0F),
 		IsAnimating(false),
@@ -291,18 +217,6 @@ RingRenderObjClass::RingRenderObjClass(const RingRenderObjClass & src)
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::~RingRenderObjClass -- destructor                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/7/2001   gth : Created.                                                                 *
- *=============================================================================================*/
 RingRenderObjClass::~RingRenderObjClass()
 {
 	REF_PTR_RELEASE(RingMaterial);
@@ -310,18 +224,6 @@ RingRenderObjClass::~RingRenderObjClass()
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::operator -- assignment operator                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 RingRenderObjClass & RingRenderObjClass::operator = (const RingRenderObjClass & that)
 {
 	if (this != &that) {
@@ -353,18 +255,6 @@ RingRenderObjClass & RingRenderObjClass::operator = (const RingRenderObjClass & 
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Generate_Shared_Mesh_Arrays  -- Generates mesh LOD arrays.				  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/08/00    pds : Created.                                                                *
- *=============================================================================================*/
 void RingRenderObjClass::Generate_Shared_Mesh_Arrays ()
 {
 	// Generate shared Mesh Arrays
@@ -402,18 +292,6 @@ void RingRenderObjClass::calculate_value_array(float screen_area, float *values)
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Init_Material -- Sets up the material and default shader for the Ring.*
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/08/00    pds : Created.                                                                *
- *=============================================================================================*/
 void RingRenderObjClass::Init_Material ()
 {
 	REF_PTR_RELEASE (RingMaterial);
@@ -433,71 +311,23 @@ void RingRenderObjClass::Init_Material ()
 
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Get_Num_Polys -- returns number of polygons                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 int RingRenderObjClass::Get_Num_Polys() const
 {
 	return RingLODCosts[CurrentLOD];
 }
 
-/***********************************************************************************************
- * RingRenderObjClass::Set_Texture						                                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void RingRenderObjClass::Set_Texture(TextureClass *tf)
 {
 	REF_PTR_SET(RingTexture,tf);
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Get_Name -- returns name                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 const char * RingRenderObjClass::Get_Name() const
 {
 	return Name;
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Set_Name -- sets the name                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void RingRenderObjClass::Set_Name(const char * name)
 {
 	WWASSERT(name != nullptr);
@@ -505,18 +335,7 @@ void RingRenderObjClass::Set_Name(const char * name)
 	(void)nameLen; WWASSERT(nameLen < ARRAY_SIZE(Name));
 }
 
-/***********************************************************************************************
- * RingRenderObjClass::render_ring -- submits the box to the GERD                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// Submits the ring to the GERD.
 void RingRenderObjClass::render_ring(RenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent)
 {
 	// Should never get here with null LOD
@@ -599,74 +418,25 @@ void RingRenderObjClass::render_ring(RenderInfoClass & rinfo,const Vector3 & cen
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::vis_render_ring -- submits box to the GERD for VIS                      *
- *                                                                                             *
- * this renders the ring with the specified VIS-ID.                                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// Submits the ring to the GERD for VIS. This renders the ring with the specified VIS-ID.
 void RingRenderObjClass::vis_render_ring(SpecialRenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent)
 {
 	WWASSERT(0);
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Clone -- clones the ring                                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 RenderObjClass * RingRenderObjClass::Clone() const
 {
 	return W3DNEW RingRenderObjClass(*this);
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Class_ID -- returns the class-id for Rings's                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 int RingRenderObjClass::Class_ID() const
 {
 	return RenderObjClass::CLASSID_RING;
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Render -- render this ring                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void RingRenderObjClass::Render(RenderInfoClass & rinfo)
 {
 	// null LOD
@@ -734,18 +504,7 @@ void RingRenderObjClass::Render(RenderInfoClass & rinfo)
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Get_Default_Color - get the default (or first frame) value				  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/13/2000    pds : Created.                                                               *
- *=============================================================================================*/
+// Get the default (or first frame) value.
 Vector3 RingRenderObjClass::Get_Default_Color() const
 {
 	Vector3 value;
@@ -760,18 +519,7 @@ Vector3 RingRenderObjClass::Get_Default_Color() const
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Get_Default_Alpha - get the default (or first frame) value				  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/13/2000    pds : Created.                                                               *
- *=============================================================================================*/
+// Get the default (or first frame) value.
 float RingRenderObjClass::Get_Default_Alpha() const
 {
 	float  value;
@@ -786,18 +534,7 @@ float RingRenderObjClass::Get_Default_Alpha() const
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Get_Default_Inner_Scale - get the default (or first frame) value		  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/13/2000    pds : Created.                                                               *
- *=============================================================================================*/
+// Get the default (or first frame) value.
 Vector2 RingRenderObjClass::Get_Default_Inner_Scale() const
 {
 	Vector2 value;
@@ -812,18 +549,7 @@ Vector2 RingRenderObjClass::Get_Default_Inner_Scale() const
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Get_Default_Outer_Scale - get the default (or first frame) value		  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/13/2000    pds : Created.                                                               *
- *=============================================================================================*/
+// Get the default (or first frame) value.
 Vector2 RingRenderObjClass::Get_Default_Outer_Scale() const
 {
 	Vector2 value;
@@ -838,18 +564,6 @@ Vector2 RingRenderObjClass::Get_Default_Outer_Scale() const
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Special_Render -- special render this box (vis)                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
-, *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void RingRenderObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 {
 	Matrix3D temp(1);
@@ -863,18 +577,6 @@ void RingRenderObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Set_Transform -- set the transform for this box                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void RingRenderObjClass::Set_Transform(const Matrix3D &m)
 {
 	RenderObjClass::Set_Transform(m);
@@ -882,18 +584,6 @@ void RingRenderObjClass::Set_Transform(const Matrix3D &m)
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Set_Position -- Set the position of this box                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void RingRenderObjClass::Set_Position(const Vector3 &v)
 {
 	RenderObjClass::Set_Position(v);
@@ -901,18 +591,6 @@ void RingRenderObjClass::Set_Position(const Vector3 &v)
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::update_cached_box -- update the world-space version of this box        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void RingRenderObjClass::update_cached_box()
 {
 	CachedBox.Center = Transform.Get_Translation() + ObjSpaceCenter;
@@ -920,18 +598,6 @@ void RingRenderObjClass::update_cached_box()
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Get_Obj_Space_Bounding_Ring -- return the object-space bounding sphe *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void RingRenderObjClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
 	sphere.Center = ObjSpaceCenter;
@@ -939,18 +605,6 @@ void RingRenderObjClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) con
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Get_Obj_Space_Bounding_Box -- returns the obj-space bounding box       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void RingRenderObjClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 {
 	box.Center = ObjSpaceCenter;
@@ -1021,18 +675,6 @@ int RingRenderObjClass::Calculate_Cost_Value_Arrays(float screen_area, float *va
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Scale -- scales ring uniformly.                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/01/02    NH : Created.                                                                  *
- *=============================================================================================*/
 void RingRenderObjClass::Scale(float scale)
 {
 	if (scale == 1.0f) return;
@@ -1056,18 +698,6 @@ void RingRenderObjClass::Scale(float scale)
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Scale -- scales ring non-uniformly.                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/01/02    NH : Created.                                                                  *
- *=============================================================================================*/
 void RingRenderObjClass::Scale(float scalex, float scaley, float scalez)
 {
 	// Scale default values
@@ -1097,18 +727,7 @@ void RingRenderObjClass::Scale(float scalex, float scaley, float scalez)
 }
 
 
-/***********************************************************************************************
- * RingRenderObjClass::Update_On_Visibility -- Either starts or stops the animation based on vis*
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/04/00    pds : Created.                                                                 *
- *=============================================================================================*/
+// Either starts or stops the animation based on visibility.
 void RingRenderObjClass::Update_On_Visibility()
 {
 	// Simply start or stop the animation based on
@@ -1120,18 +739,6 @@ void RingRenderObjClass::Update_On_Visibility()
 	}
 }
 
-/***********************************************************************************************
- * RingRenderObjClass::animate	-- Update Current Display state										  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/07/00    jga : Created.                                                                 *
- *=============================================================================================*/
 void RingRenderObjClass::animate()
 {
 	if (Is_Animating ()) {
@@ -1377,18 +984,6 @@ RingLoaderClass _RingLoader;
 // Vertices are ordered as such
 //  center, followed by outer ring
 //
-/***********************************************************************************************
- * RingMeshClass::RingMeshClass -- Constructor                                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/07/00    jga : Created.                                                                 *
- *=============================================================================================*/
 RingMeshClass::RingMeshClass(float radius, int slices):
 Radius(radius),
 Slices(slices),
@@ -1406,18 +1001,6 @@ OuterScale (1.0F, 1.0F)
 	Generate(radius, slices);
 }
 
-/***********************************************************************************************
- * RingMeshClass::RingMeshClass -- Constructor                                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/07/00    jga : Created.                                                                 *
- *=============================================================================================*/
 RingMeshClass::RingMeshClass():
 Radius(0.0f),
 Slices(0),
@@ -1493,18 +1076,6 @@ void RingMeshClass::Scale (const Vector2 &inner_scale, const Vector2 &outer_scal
 }
 
 
-/***********************************************************************************************
- * RingMeshClass::Generate - Create Ring Geometry                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/07/00    jga : Created.                                                                 *
- *=============================================================================================*/
 void RingMeshClass::Generate(float radius, int slices)
 {
 	Free ();
@@ -1576,35 +1147,11 @@ void RingMeshClass::Generate(float radius, int slices)
 }
 
 
-/***********************************************************************************************
- * RingMeshClass::~RingMeshClass -- Destructor                                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/07/00    jga : Created.                                                                 *
- *=============================================================================================*/
 RingMeshClass::~RingMeshClass()
 {
 	Free();
 }
 
-/***********************************************************************************************
- * RingMeshClass::Free - Release Memory, that the ring mesh is using                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/07/00    jga : Created.                                                                 *
- *=============================================================================================*/
 void RingMeshClass::Free()
 {
 

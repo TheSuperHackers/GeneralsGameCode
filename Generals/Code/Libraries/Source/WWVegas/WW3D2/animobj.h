@@ -30,12 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 4                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   Animatable3DObjClass::Base_Update -- animation update function for the base pose          *
- *   Animatable3DObjClass::Anim_Update -- Update function for a single animation               *
- *   Animatable3DObjClass::Blend_Update -- update function for a blend of two animations       *
- *   Animatable3DObjClass::Combo_Update -- Animation update for a combination of anims         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -215,18 +209,6 @@ protected:
 
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Base_Update -- animation update function for the base pose            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/2/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 inline void Animatable3DObjClass::Base_Update(const Matrix3D & root)
 {
 	/*
@@ -239,18 +221,6 @@ inline void Animatable3DObjClass::Base_Update(const Matrix3D & root)
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Anim_Update -- Update function for a single animation                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/2/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 inline void Animatable3DObjClass::Anim_Update(const Matrix3D & root,HAnimClass * motion,float frame)
 {
 	/*
@@ -268,18 +238,6 @@ inline void Animatable3DObjClass::Anim_Update(const Matrix3D & root,HAnimClass *
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Blend_Update -- update function for a blend of two animations         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/2/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 inline void Animatable3DObjClass::Blend_Update
 (
 	const Matrix3D &	root,
@@ -300,18 +258,6 @@ inline void Animatable3DObjClass::Blend_Update
 }
 
 
-/***********************************************************************************************
- * Animatable3DObjClass::Combo_Update -- Animation update for a combination of anims           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/2/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 inline void Animatable3DObjClass::Combo_Update( const Matrix3D & root, HAnimComboClass *anim )
 {
 	if (HTree) {

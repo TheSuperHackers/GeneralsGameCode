@@ -31,8 +31,6 @@
  *                                                                                             *
  *                    $Revision:: 3                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -41,114 +39,38 @@
 #include "w3dexp.h"
 #include "dllmain.h"
 
-/***********************************************************************************************
- * W3dClassDesc::Create -- Creates a W3dExportClass object                                     *
- *                                                                                             *
- * MAX calls this method when it needs a pointer to a new instance of the plug-in class.		  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/09/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// MAX calls this method when it needs a pointer to a new instance of the plug-in class.
 void * W3dClassDesc::Create(BOOL)
 {
 	return new W3dExportClass;
 }
 
-/***********************************************************************************************
- * W3dClassDesc::IsPublic -- Controls if the plug-in shows up in lists from the user to choose *
- *                                                                                             *
- * Controls if the plug-in shows up in lists from the user to choose from.							  *
- * 																														  *
- * INPUT: none																											  *
- * 																														  *
- * OUTPUT: true!																										  *
- * 																														  *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/09/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Controls if the plug-in shows up in lists from the user to choose from.
 int W3dClassDesc::IsPublic()
 {
 	return 1;
 }
 
-/***********************************************************************************************
- * W3dClassDesc::ClassName -- returns the name of the class                                    *
- *                                                                                             *
- * This method returns the name of the class.  This name appears in the button for the			  *
- * plug-in in the MAX user interface.																			  *
- *                                                                                             *
- * INPUT: none																											  *
- * 																														  *
- * OUTPUT: Name of the class																						  *
- * 																														  *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/09/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// This method returns the name of the class. This name appears in the button for the plug-in in the
+// MAX user interface.
 const TCHAR * W3dClassDesc::ClassName()
 {
 	return Get_String(IDS_W3D_SHORT_DESCRIPTION);
 }
 
-/***********************************************************************************************
- * W3dClassDesc::SuperClassID -- returns the SuperClassID of the plug-in.                      *
- *                                                                                             *
- * INPUT: none																											  *
- * 																														  *
- * OUTPUT: The SuperClassID of the plug-in.																	  *
- * 																														  *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/09/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 SClass_ID W3dClassDesc::SuperClassID()
 {
 	return SCENE_EXPORT_CLASS_ID;
 }
 
-/***********************************************************************************************
- * W3dClassDesc::ClassID -- Returns the class ID                                               *
- *                                                                                             *
- * This method must return the unique ID for the object.  If two ClassIDs conflict, the		  *
- * system will only load the first one it finds.  The ClassID consists of two unsigned 32-bit  *
- * quantities.																											  *
- * 																														  *
- * INPUT: none																											  *
- * 																														  *
- * OUTPUT: The unique ClassID of the plug-in.																  *
- * 																														  *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/09/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// This method must return the unique ID for the object. If two ClassIDs conflict, the system will
+// only load the first one it finds. The ClassID consists of two unsigned 32-bit quantities.
 Class_ID	W3dClassDesc::ClassID()
 {
 	return W3D_EXPORTER_CLASS_ID;
 }
 
-/***********************************************************************************************
- * W3dClassDesc::Category -- returns a string describing the category a plug-in fits into      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/09/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Returns a string describing the category a plug-in fits into.
 const TCHAR * W3dClassDesc::Category()
 {
 	return Get_String(IDS_SCENE_EXPORT);

@@ -32,10 +32,6 @@
  *                                                                                             *
  *                    $Revision:: 8                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   CollisionMath::Overlap_Test -- test overlap between an AABox and a point                  *
- *   CollisionMath::Overlap_Test -- Tests overlap between two AABoxes                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -46,18 +42,6 @@
 #include "lineseg.h"
 
 
-/***********************************************************************************************
- * CollisionMath::Overlap_Test -- test overlap between an AABox and a point                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/14/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,const Vector3 & point)
 {
 	if (WWMath::Fabsf_Legacy(point.X - box.Center.X) > box.Extent.X) return POS;
@@ -67,18 +51,6 @@ WWINLINE CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass
 	return NEG;
 }
 
-/***********************************************************************************************
- * CollisionMath::Overlap_Test -- Tests overlap between two AABoxes                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/19/99   gth : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,const AABoxClass & box2)
 {
 	Vector3 dc;

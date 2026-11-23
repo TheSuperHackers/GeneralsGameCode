@@ -30,9 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 3                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   Pick_Random_Number -- Picks a random number between two values (inclusive).               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -187,28 +184,8 @@ class Random4Class {
 };
 
 
-/***********************************************************************************************
- * Pick_Random_Number -- Picks a random number between two values (inclusive).                 *
- *                                                                                             *
- *    This is a utility template that works with one of the random number classes. Given a     *
- *    random number generator, this routine will return with a value that lies between the     *
- *    minimum and maximum values specified (subject to the bit precision limitations of the    *
- *    random number generator itself).                                                         *
- *                                                                                             *
- * INPUT:   generator   -- Reference to the random number generator to use for the pick        *
- *                         process.                                                            *
- *                                                                                             *
- *          minval      -- The minimum legal return value (inclusive).                         *
- *                                                                                             *
- *          maxval      -- The maximum legal return value (inclusive).                         *
- *                                                                                             *
- * OUTPUT:  Returns with a random number between the minval and maxval (inclusive).            *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/23/1997 JLB : Created.                                                                 *
- *=============================================================================================*/
+// The range is inclusive, subject to the bit precision limitations of the random number generator
+// itself.
 template<class T>
 int Pick_Random_Number(T & generator, int minval, int maxval)
 {

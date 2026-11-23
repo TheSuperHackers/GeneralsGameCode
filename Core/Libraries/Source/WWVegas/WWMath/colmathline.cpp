@@ -30,8 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 10                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -372,18 +370,7 @@ bool CollisionMath::Collide(const LineSegClass & line,const OBBoxClass & box,Cas
 
 
 
-/***********************************************************************************************
- * Test_Aligned_Box -- used as the guts of the Box intersection tests                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/20/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Used as the guts of the Box intersection tests.
 inline bool Test_Aligned_Box(BoxTestStruct * test)
 {
 	int i;

@@ -33,38 +33,6 @@
  *                    $Revision:: 24                                                          $*
  *                                                                                             *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   SphereRenderObjClass::SphereRenderObjClass -- Constructor                                 *
- *   SphereRenderObjClass::SphereRenderObjClass -- Constructor - init from a definition        *
- *   SphereRenderObjClass::SphereRenderObjClass -- Copy constructor                            *
- *   SphereRenderObjClass::operator -- assignment operator                                     *
- *   SphereRenderObjClass::Get_Num_Polys -- returns number of polygons                         *
- *   SphereRenderObjClass::Get_Name -- returns name                                            *
- *   SphereRenderObjClass::Set_Name -- sets the name                                           *
- *   SphereRenderObjClass::render_Sphere -- submits the Sphere to the GERD                     *
- *   SphereRenderObjClass::vis_render_Sphere -- submits Sphere to the GERD for VIS             *
- *   SphereRenderObjClass::SphereRenderObjClass -- constructor                                 *
- *   SphereRenderObjClass::SphereRenderObjClass -- Constructor - init from a definition        *
- *   SphereRenderObjClass::SphereRenderObjClass -- copy constructor                            *
- *   SphereRenderObjClass::SphereRenderObjClass -- Constructor from a wwmath aaSphere          *
- *   SphereRenderObjClass::operator -- assignment operator                                     *
- *   SphereRenderObjClass::Clone -- clones the Sphere                                          *
- *   SphereRenderObjClass::Class_ID -- returns the class-id for AASphere's                     *
- *   SphereRenderObjClass::Render -- render this Sphere                                        *
- *   SphereRenderObjClass::Special_Render -- special render this Sphere (vis)                  *
- *   SphereRenderObjClass::Set_Transform -- set the transform for this Sphere                  *
- *   SphereRenderObjClass::Set_Position -- Set the position of this Sphere                     *
- *   SphereRenderObjClass::update_cached_Sphere -- update the world-space version of this Spher*
- *   SphereRenderObjClass::Cast_Ray -- cast a ray against this Sphere                          *
- *   SphereRenderObjClass::Cast_AASphere -- cast an AASphere against this Sphere               *
- *   SphereRenderObjClass::Cast_OBSphere -- cast an OBSphere against this Sphere               *
- *   SphereRenderObjClass::Intersect_AASphere -- intersect this Sphere with an AASphere        *
- *   SphereRenderObjClass::Intersect_OBSphere -- Intersect this Sphere with an OBSphere        *
- *   SphereRenderObjClass::Get_Obj_Space_Bounding_Sphere -- return the object-space bounding sp*
- *   SphereRenderObjClass::Get_Obj_Space_Bounding_Sphere -- returns the obj-space bounding Sphe*
- *   SphereRenderObjClass::Scale -- scales sphere uniformly.                                   *
- *   SphereRenderObjClass::Scale -- scales sphere non-uniformly.                               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -102,18 +70,6 @@ float SphereLODCosts[SPHERE_NUM_LOD + 1];	// SPHERE_NUM_LOD doesn't include the 
 ** SphereRenderObjClass Implementation
 */
 
-/***********************************************************************************************
- * SphereRenderObjClass::SphereRenderObjClass -- Constructor                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 SphereRenderObjClass::SphereRenderObjClass()
 	:	anim_time (0.0F),
 		IsAnimating (true),
@@ -144,18 +100,6 @@ SphereRenderObjClass::SphereRenderObjClass()
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::SphereRenderObjClass -- Constructor - init from a definition          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 SphereRenderObjClass::SphereRenderObjClass(const W3dSphereStruct & def)
 	:	anim_time (0.0F),
 		IsAnimating (true),
@@ -194,18 +138,6 @@ SphereRenderObjClass::SphereRenderObjClass(const W3dSphereStruct & def)
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::SphereRenderObjClass -- Copy constructor                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 SphereRenderObjClass::SphereRenderObjClass(const SphereRenderObjClass & src)
 	:	anim_time (0.0F),
 		IsAnimating (true),
@@ -239,18 +171,6 @@ SphereRenderObjClass::~SphereRenderObjClass()
 	REF_PTR_RELEASE(SphereMaterial);
 }
 
-/***********************************************************************************************
- * SphereRenderObjClass::operator -- assignment operator                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 SphereRenderObjClass & SphereRenderObjClass::operator = (const SphereRenderObjClass & that)
 {
 	if (this != &that) {
@@ -280,18 +200,6 @@ SphereRenderObjClass & SphereRenderObjClass::operator = (const SphereRenderObjCl
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Generate_Shared_Mesh_Arrays  -- Generates mesh LOD arrays.				  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/08/00    pds : Created.                                                                *
- *=============================================================================================*/
 void SphereRenderObjClass::Generate_Shared_Mesh_Arrays (const AlphaVectorStruct &alphavector)
 {
 	// Generate shared Mesh Arrays
@@ -332,18 +240,6 @@ void SphereRenderObjClass::calculate_value_array(float screen_area, float *value
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Init_Material -- Sets up the material and default shader for the sphere.*
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/08/00    pds : Created.                                                                *
- *=============================================================================================*/
 void SphereRenderObjClass::Init_Material ()
 {
 	REF_PTR_RELEASE (SphereMaterial);
@@ -367,72 +263,24 @@ void SphereRenderObjClass::Init_Material ()
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Get_Num_Polys -- returns number of polygons                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 int SphereRenderObjClass::Get_Num_Polys() const
 {
 	return SphereLODCosts[CurrentLOD];
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Set_Texture					                                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void SphereRenderObjClass::Set_Texture(TextureClass *tf)
 {
 	REF_PTR_SET(SphereTexture,tf);
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Get_Name -- returns name                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 const char * SphereRenderObjClass::Get_Name() const
 {
 	return Name;
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Set_Name -- sets the name                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void SphereRenderObjClass::Set_Name(const char * name)
 {
 	WWASSERT(name != nullptr);
@@ -441,19 +289,6 @@ void SphereRenderObjClass::Set_Name(const char * name)
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::render_sphere                                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/01/00    jga : Created.                                                                 *
- *   2/19/01    HY  : upgraded to DX8                                                          *
- *=============================================================================================*/
 void SphereRenderObjClass::render_sphere()
 {
 	// Should never get here with null LOD
@@ -530,73 +365,24 @@ void SphereRenderObjClass::render_sphere()
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::vis_render_sphere -- submits box to the GERD for VIS                  *
- *                                                                                             *
- * this renders the sphere with the specified VIS-ID.                                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// Submits sphere to the GERD for VIS. This renders the sphere with the specified VIS-ID.
 void SphereRenderObjClass::vis_render_sphere(SpecialRenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent)
 {
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Clone -- clones the box                                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 RenderObjClass * SphereRenderObjClass::Clone() const
 {
 	return W3DNEW SphereRenderObjClass(*this);
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Class_ID -- returns the class-id for sphere's                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 int SphereRenderObjClass::Class_ID() const
 {
 	return RenderObjClass::CLASSID_SPHERE;
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Render -- render this box                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void SphereRenderObjClass::Render(RenderInfoClass & rinfo)
 {
 	// null LOD
@@ -683,18 +469,6 @@ void SphereRenderObjClass::Render(RenderInfoClass & rinfo)
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Special_Render -- special render this box (vis)                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void SphereRenderObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 {
 	Matrix3D temp(1);
@@ -708,18 +482,6 @@ void SphereRenderObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Set_Transform -- set the transform for this box                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void SphereRenderObjClass::Set_Transform(const Matrix3D &m)
 {
 	RenderObjClass::Set_Transform(m);
@@ -727,18 +489,6 @@ void SphereRenderObjClass::Set_Transform(const Matrix3D &m)
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Set_Position -- Set the position of this box                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void SphereRenderObjClass::Set_Position(const Vector3 &v)
 {
 	RenderObjClass::Set_Position(v);
@@ -746,18 +496,6 @@ void SphereRenderObjClass::Set_Position(const Vector3 &v)
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::update_cached_box -- update the world-space version of this box        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void SphereRenderObjClass::update_cached_box()
 {
 	CachedBox.Center = Transform.Get_Translation() + ObjSpaceCenter;
@@ -765,36 +503,12 @@ void SphereRenderObjClass::update_cached_box()
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Get_Obj_Space_Bounding_Sphere -- return the object-space bounding sphe *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void SphereRenderObjClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
 	sphere.Init(ObjSpaceCenter,ObjSpaceExtent.Length());
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Get_Obj_Space_Bounding_Box -- returns the obj-space bounding box       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void SphereRenderObjClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 {
 	box.Init(ObjSpaceCenter,ObjSpaceExtent);
@@ -864,18 +578,6 @@ int SphereRenderObjClass::Calculate_Cost_Value_Arrays(float screen_area, float *
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Scale -- scales sphere uniformly.                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/01/02    NH : Created.                                                                  *
- *=============================================================================================*/
 void SphereRenderObjClass::Scale(float scale)
 {
 	if (scale == 1.0f) return;
@@ -893,18 +595,6 @@ void SphereRenderObjClass::Scale(float scale)
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Scale -- scales sphere non-uniformly.                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   7/01/02    NH : Created.                                                                  *
- *=============================================================================================*/
 void SphereRenderObjClass::Scale(float scalex, float scaley, float scalez)
 {
 	// Scale default value
@@ -927,18 +617,6 @@ void SphereRenderObjClass::Scale(float scalex, float scaley, float scalez)
 
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Update_Cached_Bounding_Volumes -- Updates world-space bounding volumes *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void SphereRenderObjClass::Update_Cached_Bounding_Volumes() const
 {
 	CachedBoundingBox.Extent.X = ObjSpaceExtent.X * CurrentScale.X;
@@ -952,18 +630,7 @@ void SphereRenderObjClass::Update_Cached_Bounding_Volumes() const
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Get_Default_Color - get the default (or first frame) value				  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/13/2000    pds : Created.                                                               *
- *=============================================================================================*/
+// Get the default (or first frame) value.
 Vector3 SphereRenderObjClass::Get_Default_Color() const
 {
 	Vector3 value;
@@ -978,18 +645,7 @@ Vector3 SphereRenderObjClass::Get_Default_Color() const
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Get_Default_Alpha - get the default (or first frame) value				  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/13/2000    pds : Created.                                                               *
- *=============================================================================================*/
+// Get the default (or first frame) value.
 float SphereRenderObjClass::Get_Default_Alpha() const
 {
 	float  value;
@@ -1004,18 +660,7 @@ float SphereRenderObjClass::Get_Default_Alpha() const
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Get_Default_Scale - get the default (or first frame) value				  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/13/2000    pds : Created.                                                               *
- *=============================================================================================*/
+// Get the default (or first frame) value.
 Vector3 SphereRenderObjClass::Get_Default_Scale() const
 {
 	Vector3 value;
@@ -1030,18 +675,7 @@ Vector3 SphereRenderObjClass::Get_Default_Scale() const
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Get_Default_Vector - get the default (or first frame) value			  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/13/2000    pds : Created.                                                               *
- *=============================================================================================*/
+// Get the default (or first frame) value.
 AlphaVectorStruct SphereRenderObjClass::Get_Default_Vector() const
 {
 	AlphaVectorStruct value;
@@ -1056,18 +690,7 @@ AlphaVectorStruct SphereRenderObjClass::Get_Default_Vector() const
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::Update_On_Visibility	-- Either starts or stops the animation based on visibility*
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/04/00    pds : Created.                                                                 *
- *=============================================================================================*/
+// Either starts or stops the animation based on visibility.
 void SphereRenderObjClass::Update_On_Visibility()
 {
 	// Simply start or stop the animation based on
@@ -1080,18 +703,6 @@ void SphereRenderObjClass::Update_On_Visibility()
 }
 
 
-/***********************************************************************************************
- * SphereRenderObjClass::animate	-- Update Current Display state										  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/07/00    jga : Created.                                                                 *
- *=============================================================================================*/
 void SphereRenderObjClass::animate ()
 {
 	if (Is_Animating ()) {
@@ -1330,18 +941,6 @@ SphereLoaderClass _SphereLoader;
 // Vertices are ordered as such
 //  North Pole, stack 1, stack 2, stack x..., SouthPole
 //
-/***********************************************************************************************
- * SphereMeshClass::SphereMeshClass -- Constructor for SphereMesh Geometry							  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/07/00    jga : Created.                                                                 *
- *=============================================================================================*/
 SphereMeshClass::SphereMeshClass(float radius, int slices, int stacks):
 Radius(radius),
 Slices(slices),
@@ -1367,18 +966,6 @@ inverse_alpha(false)
 
 }
 
-/***********************************************************************************************
- * SphereMeshClass::SphereMeshClass -- Constructor for SphereMesh Geometry							  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/07/00    jga : Created.                                                                 *
- *=============================================================================================*/
 SphereMeshClass::SphereMeshClass():
 Radius(0.0f),
 Slices(0),
@@ -1402,19 +989,8 @@ inverse_alpha(false)
 
 
 
-/***********************************************************************************************
- * SphereMeshClass::Set_Alpha_Vector -- Unit Direction Vector, for Alpha hole effects			  *
- *                                                                                             *
- * INPUT: vector4 v   ; Unit Vector pointing into the sphere in object space                   *
- *        .W =  Intensity  ; Percent Effect                                                    *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/07/00    jga : Created.                                                                 *
- *=============================================================================================*/
+// Unit Direction Vector, for Alpha hole effects. The vector points into the sphere in object space,
+// W is the intensity in percent effect.
 void	SphereMeshClass::Set_Alpha_Vector (const AlphaVectorStruct &v, bool inverse, bool is_additive, bool force)
 {
 	//
@@ -1468,18 +1044,6 @@ void	SphereMeshClass::Set_Alpha_Vector (const AlphaVectorStruct &v, bool inverse
 }
 
 
-/***********************************************************************************************
- * SphereMeshClass::Generate -- Alloc Memory, and Generate Geometry, for the SphereMesh		  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/07/00    jga : Created.                                                                 *
- *=============================================================================================*/
 void SphereMeshClass::Generate(float radius, int slices, int stacks)
 {
 	// compute # of vertices
@@ -1682,14 +1246,6 @@ void SphereMeshClass::Generate(float radius, int slices, int stacks)
 
 
 
-/***********************************************************************************************
- * SphereMeshClass::~SphereMeshClass -- Destructor                                             *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/07/00    jga : Created.                                                                 *
- *=============================================================================================*/
 SphereMeshClass::~SphereMeshClass()
 {
 
@@ -1698,18 +1254,6 @@ SphereMeshClass::~SphereMeshClass()
 }
 
 
-/***********************************************************************************************
- * SphereMeshClass::Free Memory used by geometry for the SphereMesh                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/07/00    jga : Created.                                                                 *
- *=============================================================================================*/
 void SphereMeshClass::Free()
 {
 	delete [] vtx;
