@@ -43,6 +43,8 @@
 
 #include "Utility/endian_compat.h"
 
+#include <vector>
+
 
 static const char BIGFileIdentifier[] = { 'B', 'I', 'G', 'F' };
 
