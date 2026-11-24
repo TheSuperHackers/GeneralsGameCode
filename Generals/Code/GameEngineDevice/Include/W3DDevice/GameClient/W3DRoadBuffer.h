@@ -59,6 +59,7 @@
 #include "Lib/BaseType.h"
 #include "Common/GameType.h"
 #include "Common/AsciiString.h"
+#include <algorithm>
 
 //-----------------------------------------------------------------------------
 //           Forward References

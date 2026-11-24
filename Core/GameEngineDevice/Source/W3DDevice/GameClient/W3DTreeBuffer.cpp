@@ -89,6 +89,7 @@ enum
 #include "WW3D2/mesh.h"
 #include "WW3D2/meshmdl.h"
 #include "d3dx8tex.h"
+#include <algorithm>
 
 
 // If TEST_AND_BLEND is defined, it will do an alpha test and blend.  Otherwise just alpha test. jba. [5/30/2003]

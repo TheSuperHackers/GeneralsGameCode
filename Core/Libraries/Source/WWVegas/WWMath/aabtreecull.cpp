@@ -39,6 +39,7 @@
 #include "sphere.h"
 #include "colmath.h"
 #include "colmathinlines.h"
+#include <algorithm>
 
 
 

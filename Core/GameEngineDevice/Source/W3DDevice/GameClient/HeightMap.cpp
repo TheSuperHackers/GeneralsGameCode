@@ -89,6 +89,7 @@
 #include "W3DDevice/GameClient/W3DCustomScene.h"
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
+#include <algorithm>
 
 
 #define no_OPTIMIZED_HEIGHTMAP_LIGHTING	01

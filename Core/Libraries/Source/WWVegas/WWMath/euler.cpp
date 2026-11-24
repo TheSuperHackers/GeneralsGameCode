@@ -42,6 +42,7 @@
 
 #include "euler.h"
 #include <float.h>
+#include <algorithm>
 
 
 /*********************************************************************

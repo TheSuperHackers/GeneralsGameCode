@@ -62,6 +62,7 @@
 #include "WWLib/uarray.h"
 #include <stdlib.h>
 #include <assert.h>
+#include <algorithm>
 
 
 const float EPSILON = 0.0001f;

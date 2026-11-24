@@ -32,6 +32,7 @@
 #include "Common/TerrainTypes.h"
 #include "W3DDevice/GameClient/TerrainTex.h"
 #include "W3DDevice/GameClient/HeightMap.h"
+#include <algorithm>
 
 TerrainMaterial *TerrainMaterial::m_staticThis = nullptr;
 
