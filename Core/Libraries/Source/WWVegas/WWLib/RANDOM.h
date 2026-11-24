@@ -37,6 +37,8 @@
 
 #pragma once
 
+#include <algorithm>
+
 // "unreferenced inline function has been removed" Yea, so what?
 #pragma warning(disable : 4514)
 
