@@ -31,32 +31,6 @@
  *                                                                                             *
  *                  Last Update : 10/26/1999997 [GH]                                           *
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   GameMtl::GameMtl -- constructor                                                           *
- *   GameMtl::~GameMtl -- destructor                                                           *
- *   GameMtl::ClassID -- returns the max ClassID of the material plugin                        *
- *   GameMtl::SuperClassID -- returns the super class ID                                       *
- *   GameMtl::GetClassName -- returns the name of this plugin clas                             *
- *   GameMtl::NumSubs -- returns the number of sub animations                                  *
- *   GameMtl::SubAnimName -- returns the name of the i'th sub animation                        *
- *   GameMtl::SubAnim -- returns the i'th sub-anim                                             *
- *   GameMtl::Clone -- clones this material                                                    *
- *   GameMtl::NotifyRefChanged -- NotifyRefChanged handler                                     *
- *   GameMtl::SetReference -- set the i'th reference                                           *
- *   GameMtl::GetReference -- returnst the i'th reference                                      *
- *   GameMtl::NumSubTexmaps -- returns the number of texture maps in this material             *
- *   GameMtl::SetSubTexmap -- set the i'th texture map                                         *
- *   GameMtl::GetSubTexmap -- returns the i'th texture map                                     *
- *   GameMtl::CreateParamDlg -- creates the material editor dialog box                         *
- *   GameMtl::Notify_Changed -- someone has changed this material                              *
- *   GameMtl::Reset -- reset this material to default settings                                 *
- *   GameMtl::Update -- time has changed                                                       *
- *   GameMtl::Validity -- return the validity of the material at time t                        *
- *   GameMtl::Requirements -- what requirements does this material have?                       *
- *   GameMtl::Load -- loading from a MAX file                                                  *
- *   GameMtl::Save -- Saving into a MAX file                                                   *
- *   GameMtl::Shade -- evaluate the material for the renderer.                                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "gamemtl.h"
@@ -748,18 +722,6 @@ Color scale(const Color& a, const Color& b)
 	return Color(a.r * b.r, a.g * b.g, a.b * b.b);
 }
 
-/***********************************************************************************************
- * GameMtl::GameMtl -- constructor                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 GameMtl::GameMtl(BOOL loading)
 {
 	MaterialDialog = nullptr;
@@ -797,17 +759,6 @@ GameMtl::GameMtl(BOOL loading)
 }
 
 
-/***********************************************************************************************
- * GameMtl::~GameMtl -- destructor                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 GameMtl::~GameMtl()
 {
 	for (int pass=0; pass<W3dMaterialClass::MAX_PASSES; ++pass) {
@@ -821,126 +772,42 @@ GameMtl::~GameMtl()
 }
 
 
-/***********************************************************************************************
- * GameMtl::ClassID -- returns the max ClassID of the material plugin                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 Class_ID GameMtl::ClassID()
 {
 	return GameMaterialClassID;
 }
 
 
-/***********************************************************************************************
- * GameMtl::SuperClassID -- returns the super class ID                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 SClass_ID GameMtl::SuperClassID()
 {
 	return MATERIAL_CLASS_ID;
 }
 
 
-/***********************************************************************************************
- * GameMtl::GetClassName -- returns the name of this plugin clas                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void GameMtl::GetClassName(TSTR& s)
 {
 	s = Get_String(IDS_GAMEMTL);
 }
 
 
-/***********************************************************************************************
- * GameMtl::NumSubs -- returns the number of sub animations                                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 int GameMtl::NumSubs()
 {
 	return 0;
 }
 
 
-/***********************************************************************************************
- * GameMtl::SubAnimName -- returns the name of the i'th sub animation                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 TSTR GameMtl::SubAnimName(int i)
 {
 	return _T("");
 }
 
 
-/***********************************************************************************************
- * GameMtl::SubAnim -- returns the i'th sub-anim                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 Animatable* GameMtl::SubAnim(int i)
 {
 	return nullptr;
 }
 
 
-/***********************************************************************************************
- * GameMtl::Clone -- clones this material                                                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 RefTargetHandle GameMtl::Clone(RemapDir &remap)
 {
 	DebugPrint("GameMtl::Clone\n");
@@ -989,18 +856,6 @@ RefTargetHandle GameMtl::Clone(RemapDir &remap)
 }
 
 
-/***********************************************************************************************
- * GameMtl::NotifyRefChanged -- NotifyRefChanged handler                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 RefResult GameMtl::NotifyRefChanged
 (
 	Interval					changeInt,
@@ -1053,18 +908,6 @@ RefResult GameMtl::NotifyRefChanged
 }
 
 
-/***********************************************************************************************
- * GameMtl::SetReference -- set the i'th reference                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void GameMtl::SetReference(int i, RefTargetHandle rtarg)
 {
 	assert(i < REF_COUNT);
@@ -1098,18 +941,6 @@ void GameMtl::SetReference(int i, RefTargetHandle rtarg)
 }
 
 
-/***********************************************************************************************
- * GameMtl::GetReference -- returnst the i'th reference                                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 RefTargetHandle GameMtl::GetReference(int i)
 {
 	if (i == REF_MAPS) {
@@ -1136,36 +967,12 @@ RefTargetHandle GameMtl::GetReference(int i)
 }
 
 
-/***********************************************************************************************
- * GameMtl::NumSubTexmaps -- returns the number of texture maps in this material               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 int GameMtl::NumSubTexmaps()
 {
 	return (W3dMaterialClass::MAX_PASSES * W3dMaterialClass::MAX_STAGES) + 1;
 }
 
 
-/***********************************************************************************************
- * GameMtl::SetSubTexmap -- set the i'th texture map                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void GameMtl::SetSubTexmap(int i, Texmap * m)
 {
 	ReplaceReference(REF_TEXTURE + i, m);
@@ -1183,18 +990,6 @@ void GameMtl::SetSubTexmap(int i, Texmap * m)
 }
 
 
-/***********************************************************************************************
- * GameMtl::GetSubTexmap -- returns the i'th texture map                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 Texmap * GameMtl::GetSubTexmap(int i)
 {
 	if (i == DISPLACEMENT_INDEX) {
@@ -1208,18 +1003,7 @@ Texmap * GameMtl::GetSubTexmap(int i)
 }
 
 
-/***********************************************************************************************
- * GameMtl::CreateParamDlg -- creates the material editor dialog box                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
+// Creates the material editor dialog box.
 ParamDlg * GameMtl::CreateParamDlg(HWND hwnd_mtl_edit, IMtlParams *imp)
 {
 	GameMtlDlg *dlg = new GameMtlDlg(hwnd_mtl_edit, imp, this);
@@ -1228,18 +1012,6 @@ ParamDlg * GameMtl::CreateParamDlg(HWND hwnd_mtl_edit, IMtlParams *imp)
 }
 
 
-/***********************************************************************************************
- * GameMtl::Notify_Changed -- someone has changed this material                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void GameMtl::Notify_Changed()
 {
 	NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
@@ -1249,18 +1021,6 @@ void GameMtl::Notify_Changed()
 }
 
 
-/***********************************************************************************************
- * GameMtl::Reset -- reset this material to default settings                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void GameMtl::Reset()
 {
 	DebugPrint("GameMtl::Reset()\n");
@@ -1336,18 +1096,7 @@ void GameMtl::Reset()
 }
 
 
-/***********************************************************************************************
- * GameMtl::Update -- time has changed                                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
+// Time has changed.
 void GameMtl::Update(TimeValue t, Interval &ivalid)
 {
 	// This function is called by the system prior to rendering
@@ -1358,36 +1107,12 @@ void GameMtl::Update(TimeValue t, Interval &ivalid)
 }
 
 
-/***********************************************************************************************
- * GameMtl::Validity -- return the validity of the material at time t                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 Interval GameMtl::Validity(TimeValue t)
 {
 	return FOREVER;
 }
 
 
-/***********************************************************************************************
- * GameMtl::Requirements -- what requirements does this material have?                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 ULONG GameMtl::Requirements(int subMtlNum)
 {
 	ULONG req = 0;
@@ -1407,18 +1132,6 @@ ULONG GameMtl::Requirements(int subMtlNum)
 }
 
 
-/***********************************************************************************************
- * GameMtl::Load -- loading from a MAX file                                                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 IOResult GameMtl::Load(ILoad *iload)
 {
 	ULONG nb;
@@ -1643,18 +1356,6 @@ IOResult GameMtl::Load(ILoad *iload)
 }
 
 
-/***********************************************************************************************
- * GameMtl::Save -- Saving into a MAX file                                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 IOResult GameMtl::Save(ISave *isave)
 {
 	IOResult res;
@@ -1724,19 +1425,8 @@ IOResult GameMtl::Save(ISave *isave)
 }
 
 
-/***********************************************************************************************
- * GameMtl::Shade -- evaluate the material for the renderer.                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- * This function could use a little work.  It doesn't always produce correct results.          *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
+// Evaluate the material for the renderer.
+// WARNING: This function could use a little work. It doesn't always produce correct results.
 void GameMtl::Shade(ShadeContext& sc)
 {
 	if (gbufID) sc.SetGBufferID(gbufID);

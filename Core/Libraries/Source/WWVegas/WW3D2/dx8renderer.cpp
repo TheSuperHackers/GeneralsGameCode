@@ -33,8 +33,6 @@
  *                    $Revision:: 111                                                         $*
  *                                                                                             *
  * 06/27/02 KM Changes to max texture stage caps																*
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 //#define ENABLE_CATEGORY_LOG
@@ -1805,7 +1803,7 @@ void DX8TextureCategoryClass::Render()
 		LightEnvironmentClass * lenv = mesh->Get_Lighting_Environment();
 		if (lenv != nullptr) {
 			SNAPSHOT_SAY(("LightEnvironment, lights: %d",lenv->Get_Light_Count()));
-			DX8Wrapper::Set_Light_Environment(lenv);
+			Renderer::Set_Light_Environment(lenv);
 		}
 		else {
 			SNAPSHOT_SAY(("No light environment"));

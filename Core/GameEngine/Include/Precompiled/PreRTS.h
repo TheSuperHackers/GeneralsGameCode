@@ -40,14 +40,10 @@ class STLSpecialAlloc;
 // PLEASE DO NOT ABUSE WINDOWS OR IT WILL BE REMOVED ENTIRELY. :-)
 //--------------------------------------------------------------------------------- System Includes
 
-// TheSuperHackers @build JohnsterID 05/01/2026 Add ATL compatibility for MinGW-w64 builds
-#if defined(__GNUC__) && defined(_WIN32)
-    #include <Utility/atl_compat.h>
-#endif
-#include <atlbase.h>
 #include <windows.h>
 
 #include <assert.h>
+#include <Utility/cmath_adapter.h>
 #include <ctype.h>
 #include <direct.h>
 #include <excpt.h>

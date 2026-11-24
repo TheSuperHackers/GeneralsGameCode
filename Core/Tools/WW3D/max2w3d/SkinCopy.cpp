@@ -30,13 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 3                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   find_skin_binding -- Find the "WWSkin Binding" modifier on this object.                   *
- *   find_skin_wsm -- Finds the node for the WWSkin WSM used by this object.                   *
- *   get_skin_wsm_obj -- Gets the SkinWSMObjectClass from a WWSkin WSM node.                   *
- *   duplicate_wsm -- Duplicates a WWSkin WSM                                                  *
- *   find_equivalent_node -- Searches a hierarchy for an object equivalent to the given one.   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 /*
@@ -217,18 +210,7 @@ Value *find_skin_node_in_tree (INode *root)
 }
 
 
-/***********************************************************************************************
- * find_skin_binding -- Find the "WWSkin Binding" modifier on this object.                     *
- *                                                                                             *
- * INPUT: The skinned object.                                                                  *
- *                                                                                             *
- * OUTPUT: The skin modifier, or null if one doesn't exist.                                    *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/19/1999 AJA : Created.                                                                 *
- *=============================================================================================*/
+// Finds the "WWSkin Binding" modifier.
 SkinModifierClass *find_skin_binding (INode *skinned_obj)
 {
 	// WWSkin Binding ties us to a space warp, so search the node's
@@ -253,18 +235,7 @@ SkinModifierClass *find_skin_binding (INode *skinned_obj)
 }
 
 
-/***********************************************************************************************
- * find_skin_wsm -- Finds the node for the WWSkin WSM used by this object.                     *
- *                                                                                             *
- * INPUT: The node of an object with a WWSkin Binding.                                         *
- *                                                                                             *
- * OUTPUT: The node of the WWSkin WSM referenced by the given object.                          *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/1999 AJA : Created.                                                                 *
- *=============================================================================================*/
+// Finds the node for the WWSkin WSM used by this object.
 INode *find_skin_wsm (INode *skinned_obj)
 {
 	// Find the skin modifier on this object.
@@ -286,18 +257,6 @@ INode *find_skin_wsm (INode *skinned_obj)
 }
 
 
-/***********************************************************************************************
- * get_skin_wsm_obj -- Gets the SkinWSMObjectClass from a WWSkin WSM node.                     *
- *                                                                                             *
- * INPUT: The node for the WWSkin WSM's representation in the scene.                           *
- *                                                                                             *
- * OUTPUT: The SkinWSMObjectClass.                                                             *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/1999 AJA : Created.                                                                 *
- *=============================================================================================*/
 SkinWSMObjectClass *get_skin_wsm_obj (INode *wsm_node)
 {
 	// We need a valid node.
@@ -327,22 +286,8 @@ SkinWSMObjectClass *get_skin_wsm_obj (INode *wsm_node)
 }
 
 
-/***********************************************************************************************
- * duplicate_wsm -- Duplicates a WWSkin WSM                                                    *
- *                                                                                             *
- * INPUT: wsm_node - INode of the WWSkin WSM object.                                           *
- *        tree - The root of a tree containing equivalents of the bones in the WWSkin used     *
- *               by skinned_obj. The bone names must be the same (after being processed by     *
- *					  Set_W3D_Name()                                                                *
- *                                                                                             *
- * OUTPUT: The node of the newly duplicated WWSkin WSM.                                        *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/1999 AJA : Created.                                                                 *
- *   11/3/1999  AJA : Changed first argument from skinned_obj to wsm_node.                     *
- *=============================================================================================*/
+// The tree is the root of a tree containing equivalents of the bones in the WWSkin used by the
+// skinned object. The bone names must be the same (after being processed by Set_W3D_Name()).
 INode *duplicate_wsm (INode *wsm_node, INode *tree)
 {
 	SkinWSMObjectClass *wsm_obj = get_skin_wsm_obj(wsm_node);
@@ -380,19 +325,7 @@ INode *duplicate_wsm (INode *wsm_node, INode *tree)
 }
 
 
-/***********************************************************************************************
- * find_equivalent_node -- Searches a hierarchy for an object equivalent to the given one.     *
- *                                                                                             *
- * INPUT: source - The node to search for an equivalent of.                                    *
- *        tree - The hierarchy to search in.                                                   *
- *                                                                                             *
- * OUTPUT: The equivalent node, or null if none was found.                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/19/1999 AJA : Created.                                                                 *
- *=============================================================================================*/
+// Searches a hierarchy for an object equivalent to the given one.
 INode *find_equivalent_node (INode *source, INode *tree, bool name_is_valid)
 {
 	// We need a valid source and tree.

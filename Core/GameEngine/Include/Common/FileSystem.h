@@ -181,7 +181,7 @@ public:
 
 	/// Appends the native separator to nonempty paths unless either separator is already at the end.
 	/// Existing separators are not converted.
-	static void appendPathSeparator(AsciiString& path);
+	static void ensureTrailingPathSeparatorInPath(AsciiString& path);
 
 	/// Writes the key form of a path: lowercase ascii with every run of separators as one backslash,
 	/// except that on Windows the separator pair at the start of a UNC or device path stays a pair.

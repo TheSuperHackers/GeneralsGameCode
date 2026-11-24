@@ -33,10 +33,6 @@
  *                    $Revision:: 12                                                          $*
  *                                                                                             *
  * 06/27/02 KM Z Format support																						*
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- * Vector4_to_Color - converts a vector4 to the format in format                               *
- * Color_to_Vector4 - converts a color in the format described in format to a Vector4          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once

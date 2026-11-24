@@ -30,10 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 3                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *  wwGetAbsolutePath  -- Returns the absolute path based on a relative one.                   *
- *  wwInputBox  -- Retrive a string from the user in a nice friendly manner.                   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -59,20 +55,8 @@ def_visible_primitive(get_absolute_path,	"wwGetAbsolutePath");
 def_visible_primitive(input_box,				"wwInputBox");
 
 
-/***********************************************************************************************
- * get_absolute_path_cf -- Returns the absolute path based on a relative one.                  *
- *                                                                                             *
- * wwGetAbsolutePath - Usage: wwGetAbsolutePath <relative_path> <context>                      *
- *                                                                                             *
- * INPUT: A string containing a relative path, and its context.                                *
- *                                                                                             *
- * OUTPUT: The equivalent absolute path.                                                       *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/4/1999  AJA : Created.                                                                 *
- *=============================================================================================*/
+// Returns the absolute path based on a relative one.
+// Usage: wwGetAbsolutePath <relative_path> <context>
 Value * get_absolute_path_cf (Value **arg_list, int count)
 {
 	// We want an array as an argument
@@ -95,19 +79,9 @@ Value * get_absolute_path_cf (Value **arg_list, int count)
 }
 
 
-/***********************************************************************************************
- * input_box_cf -- Retrive a string from the user in a nice friendly manner.                   *
- *                                                                                             *
- * wwInputBox - Usage: wwInputBox [caption:'caption'] [label:'label'] [value:'value']          *
- *                                                                                             *
- * INPUT: Three optional named arguments. If they are not given values, defaults are used.     *
- *                                                                                             *
- * OUTPUT: Returns the string entered by the user.                                             *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
+// Retrieve a string from the user in a nice friendly manner. The three named arguments are
+// optional. If they are not given values, defaults are used.
+// Usage: wwInputBox [caption:'caption'] [label:'label'] [value:'value']
 Value * input_box_cf (Value **arg_list, int count)
 {
 	// Create the input box (but don't show it yet).

@@ -111,14 +111,11 @@ public:
 
 	virtual Bool isModuleForPower( const SpecialPowerTemplate *specialPowerTemplate ) const override;	///< is this module for the specified special power
 	virtual Bool isReady() const override; 						///< is this special power available now
-//  This is the althernate way to one-at-a-time BlackLotus' specials; we'll keep it commented her until Dustin decides, or until 12/10/02
-//	Bool isBusy() const { return FALSE; }
 
 	virtual Real getPercentReady() const override;		///< get the percent ready (1.0 = ready now, 0.5 = half charged up etc.)
 
 	virtual UnsignedInt getReadyFrame() const override;		///< get the frame at which we are ready
 	virtual AsciiString getPowerName() const override;
-	void syncReadyFrameToStatusQuo();
 
 	virtual const SpecialPowerTemplate* getSpecialPowerTemplate() const override;
 	virtual ScienceType getRequiredScience() const override;
@@ -172,6 +169,7 @@ protected:
 	void createViewObject( const Coord3D *location );
 	void resolveSpecialPower();
 	void aboutToDoSpecialPower( const Coord3D *location );
+	Bool canDoSpecialPower() const; ///< Different to isReady()
 
 	UnsignedInt m_availableOnFrame;			///< on this frame, this special power is available
 	Int m_pausedCount;									///< Reference count of sources pausing me

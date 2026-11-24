@@ -51,6 +51,7 @@
 #include "GameClient/Water.h"
 #include "GameLogic/TerrainLogic.h"
 #include "Common/FramePacer.h"
+#include "Common/GameState.h"
 #include "Common/GlobalData.h"
 #include "Common/UnicodeString.h"
 #include "Common/file.h"
@@ -1009,6 +1010,11 @@ void WaterTracksRenderSystem::loadTracks()
 		return;
 
 	AsciiString fileName=TheTerrainLogic->getSourceFilename();
+	// TheSuperHackers @bugfix bobtista 11/10/2026 A save game embeds only the .map file, so load the .wak file of the original map.
+	if (TheGameState->isInSaveDirectory(fileName))
+	{
+		fileName = TheGameState->getPristineMapName();
+	}
 	FileSystem::removeExtension(fileName);
 	fileName.concat(".wak");
 

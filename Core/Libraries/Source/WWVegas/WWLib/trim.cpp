@@ -30,8 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 4                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
@@ -41,21 +39,7 @@
 #include	<wctype.h>
 #endif // _UNIX
 
-/***********************************************************************************************
- * strtrim -- Trim leading and trailing white space off of string.                             *
- *                                                                                             *
- *    This routine will remove the leading and trailing whitespace from the string specified.  *
- *    The string is modified in place.                                                         *
- *                                                                                             *
- * INPUT:   buffer   -- Pointer to the string to be trimmed.                                   *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/06/1997 JLB : Created.                                                                 *
- *=============================================================================================*/
+// The string is modified in place.
 char* strtrim(char* buffer)
 {
 	if (buffer) {

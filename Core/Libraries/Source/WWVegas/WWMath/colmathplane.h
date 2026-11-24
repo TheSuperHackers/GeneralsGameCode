@@ -32,11 +32,6 @@
  *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   get_far_extent -- gets extents of a box projected onto an axis                            *
- *   CollisionMath::Overlap_Test -- Tests overlap between a plane and a point                  *
- *   CollisionMath::Overlap_Test -- Tests overlap between a plane and an AABox                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -51,18 +46,7 @@
 ** It is not automatically included in order to reduce file dependencies...
 */
 
-/***********************************************************************************************
- * get_far_extent -- gets extents of a box projected onto an axis                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/29/2000  gth : Created.                                                                 *
- *=============================================================================================*/
+// Gets extents of a box projected onto an axis.
 inline void get_far_extent(const Vector3 & normal,const Vector3 & extent,Vector3 * posfarpt)
 {
 	if (WWMath::Fast_Is_Float_Positive(normal.X)) {
@@ -85,18 +69,6 @@ inline void get_far_extent(const Vector3 & normal,const Vector3 & extent,Vector3
 }
 
 
-/***********************************************************************************************
- * CollisionMath::Overlap_Test -- Tests overlap between a plane and a point                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/29/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 inline
 CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const PlaneClass & plane,const Vector3 & point)
@@ -112,18 +84,6 @@ CollisionMath::Overlap_Test(const PlaneClass & plane,const Vector3 & point)
 }
 
 
-/***********************************************************************************************
- * CollisionMath::Overlap_Test -- Tests overlap between a plane and an AABox                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/29/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 inline
 CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const PlaneClass & plane,const AABoxClass & box)

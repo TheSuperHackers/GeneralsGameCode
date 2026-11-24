@@ -38,22 +38,6 @@
 
 
 
-/***************************************************************************
- * Add_CRC -- Adds a value to a CRC                                        *
- *                                                                         *
- * INPUT:                                                                  *
- *    crc      ptr to crc                                                  *
- *    val      value to add                                                *
- *                                                                         *
- * OUTPUT:                                                                 *
- *    none                                                                 *
- *                                                                         *
- * WARNINGS:                                                               *
- *    none                                                                 *
- *                                                                         *
- * HISTORY:                                                                *
- *   05/09/1995 BRR : Created.                                             *
- *=========================================================================*/
 void Add_CRC(unsigned long *crc, unsigned char val)
 {
 	int hibit;
@@ -116,23 +100,7 @@ void Build_Packet_CRC(unsigned char *buf, int len)
 }
 
 
-/***********************************************************************************************
- * Passes_CRC_Check -- Checks the CRC for a packet                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    ptr to packet                                                                     *
- *                                                                                             *
- * OUTPUT:   true if packet passes CRC check                                                   *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/5/99  1:26PM ST : Created                                                              *
- *   1/9/2001 2:21PM MDC: Ripped from RA2 (WinsockInterfaceClass in wsproto.cpp/queue.cpp)     *
- *  1/31/2001 4:30PM MDC: Converted to network-byte-order so Sparc boxes can talk with Intels. *
- *   2/1/2001 4:07PM MDC: Converted back to Intel order to avoid messing with C&C packets      *
- *=============================================================================================*/
+// Uses Intel byte order to avoid messing with C&C packets.
 bool Passes_CRC_Check(unsigned char *buf, int len)
 {
 	if (len < 5)

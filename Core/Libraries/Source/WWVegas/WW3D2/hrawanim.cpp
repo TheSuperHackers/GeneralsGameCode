@@ -32,22 +32,6 @@
  *                                                                                             *
  *                    $Revision:: 5                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   HRawAnimClass::HRawAnimClass -- constructor                                                     *
- *   HRawAnimClass::~HRawAnimClass -- Destructor                                                     *
- *   HRawAnimClass::Free -- De-allocates all memory in use                                        *
- *   HRawAnimClass::Load -- Loads hierarchy animation from a file                                 *
- *   HRawAnimClass::read_channel -- Reads in a single channel of motion                           *
- *   HRawAnimClass::add_channel -- Adds a motion channel to the animation                         *
- *   HRawAnimClass::Get_Translation -- returns the translation vector for the given frame         *
- *   HRawAnimClass::Get_Orientation -- returns a quaternion for the orientation of the pivot      *
- *   HRawAnimClass::Get_XRotation -- Returns the X euler angle for the given pivot, frame         *
- *   HRawAnimClass::Get_YRotation -- returns the Y Euler angle for the given pivot, frame         *
- *   HRawAnimClass::Get_ZRotation -- returns the Z Euler angle for the given pivot, frame         *
- *   HRawAnimClass::read_bit_channel -- read a bit channel from the file                          *
- *   HRawAnimClass::add_bit_channel -- install a bit channel into the animation                   *
- *   HRawAnimClass::Get_Visibility -- return visibility state for given pivot/frame               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "hrawanim.h"
@@ -56,17 +40,6 @@
 #include "assetmgr.h"
 #include "htree.h"
 
-/***********************************************************************************************
- * NodeMotionStruct::NodeMotionStruct -- constructor                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 NodeMotionStruct::NodeMotionStruct() :
 	X(nullptr),
 	Y(nullptr),
@@ -80,18 +53,6 @@ NodeMotionStruct::NodeMotionStruct() :
 }
 
 
-/***********************************************************************************************
- * NodeMotionStruct::~NodeMotionStruct -- destructor                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/23/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 NodeMotionStruct::~NodeMotionStruct()
 {
 	delete X;
@@ -105,18 +66,6 @@ NodeMotionStruct::~NodeMotionStruct()
 }
 
 
-/***********************************************************************************************
- * HRawAnimClass::HRawAnimClass -- constructor                                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 HRawAnimClass::HRawAnimClass() :
 	NumFrames(0),
 	NumNodes(0),
@@ -128,36 +77,12 @@ HRawAnimClass::HRawAnimClass() :
 }
 
 
-/***********************************************************************************************
- * HRawAnimClass::~HRawAnimClass -- Destructor                                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 HRawAnimClass::~HRawAnimClass()
 {
 	Free();
 }
 
 
-/***********************************************************************************************
- * HRawAnimClass::Free -- De-allocates all memory in use                                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 void HRawAnimClass::Free()
 {
 	delete[] NodeMotion;
@@ -165,18 +90,6 @@ void HRawAnimClass::Free()
 }
 
 
-/***********************************************************************************************
- * HRawAnimClass::Load -- Loads hierarchy animation from a file                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 int HRawAnimClass::Load_W3D(ChunkLoadClass & cload)
 {
 	bool pre30 = false;
@@ -293,18 +206,6 @@ Error:
 
 }
 
-/***********************************************************************************************
- * HRawAnimClass::read_channel -- Reads in a single channel of motion                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 bool HRawAnimClass::read_channel(ChunkLoadClass & cload,MotionChannelClass * * newchan,bool pre30)
 {
 	MotionChannelClass* channel = W3DNEW MotionChannelClass;
@@ -325,18 +226,6 @@ bool HRawAnimClass::read_channel(ChunkLoadClass & cload,MotionChannelClass * * n
 	}
 }
 
-/***********************************************************************************************
- * HRawAnimClass::add_channel -- Adds a motion channel to the animation                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 void HRawAnimClass::add_channel(MotionChannelClass * newchan)
 {
 	int idx = newchan->Get_Pivot();
@@ -375,18 +264,6 @@ void HRawAnimClass::add_channel(MotionChannelClass * newchan)
 }
 
 
-/***********************************************************************************************
- * HRawAnimClass::read_bit_channel -- read a bit channel from the file                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool HRawAnimClass::read_bit_channel(ChunkLoadClass & cload,BitChannelClass * * newchan,bool pre30)
 {
 	BitChannelClass* channel = W3DNEW BitChannelClass;
@@ -408,18 +285,6 @@ bool HRawAnimClass::read_bit_channel(ChunkLoadClass & cload,BitChannelClass * * 
 }
 
 
-/***********************************************************************************************
- * HRawAnimClass::add_bit_channel -- install a bit channel into the animation                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void HRawAnimClass::add_bit_channel(BitChannelClass * newchan)
 {
 	int idx = newchan->Get_Pivot();
@@ -432,18 +297,6 @@ void HRawAnimClass::add_bit_channel(BitChannelClass * newchan)
 	}
 }
 
-/***********************************************************************************************
- * HRawAnimClass::Get_Translation -- returns the translation vector for the given fr              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 void HRawAnimClass::Get_Translation(Vector3& trans, int pividx, float frame ) const
 {
 	struct NodeMotionStruct * motion = &NodeMotion[pividx];
@@ -497,18 +350,6 @@ void HRawAnimClass::Get_Translation(Vector3& trans, int pividx, float frame ) co
 	Vector3::Lerp( trans0, trans1, ratio, &trans );
 }
 
-/***********************************************************************************************
- * HRawAnimClass::Get_Orientation -- returns a quaternion for the orientation of the              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 void HRawAnimClass::Get_Orientation(Quaternion& q, int pividx,float frame) const
 {
 //	int frame0 = (int)frame;
@@ -576,18 +417,6 @@ void HRawAnimClass::Get_Orientation(Quaternion& q, int pividx,float frame) const
 #endif
 }
 
-/***********************************************************************************************
- * HRawAnimClass::Get_Transform -- returns the transform matrix for the given frame            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 void HRawAnimClass::Get_Transform(Matrix3D& mtx, int pividx, float frame ) const
 {
 	struct NodeMotionStruct * motion = &NodeMotion[pividx];
@@ -649,18 +478,6 @@ void HRawAnimClass::Get_Transform(Matrix3D& mtx, int pividx, float frame ) const
 	mtx.Set_Translation(trans);
 }
 
-/***********************************************************************************************
- * HRawAnimClass::Get_Visibility -- return visibility state for given pivot/frame                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool HRawAnimClass::Get_Visibility(int pividx,float frame)
 {
 	if (NodeMotion[pividx].Vis != nullptr) {
@@ -672,18 +489,6 @@ bool HRawAnimClass::Get_Visibility(int pividx,float frame)
 }
 
 
-/***********************************************************************************************
- * HRawAnimClass::Is_Node_Motion_Present -- return true if there is motion defined for this frame *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/23/99    EHC : Created.                                                                 *
- *=============================================================================================*/
 bool HRawAnimClass::Is_Node_Motion_Present(int pividx)
 {
 	WWASSERT((pividx >= 0) && (pividx < NumNodes));

@@ -36,9 +36,6 @@
  * 06/27/02 KM Render to shadow buffer texture support														*
  * 06/27/02 KM Shader system updates																				*
  * 08/05/02 KM Texture class redesign
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   DX8Wrapper::_Update_Texture -- Copies a texture from system memory to video memory        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 //#define CREATE_DX8_MULTI_THREADED
@@ -51,7 +48,6 @@
 #endif
 
 #include "dx8wrapper.h"
-#include "dx8webbrowser.h"
 #include "dx8fvf.h"
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
@@ -1679,21 +1675,13 @@ void DX8Wrapper::Begin_Scene()
 {
 	DX8_THREAD_ASSERT();
 
-#if ENABLE_EMBEDDED_BROWSER
-	DX8WebBrowser::Update();
-#endif
-
 	DX8CALL(BeginScene());
-
-	DX8WebBrowser::Update();
 }
 
 void DX8Wrapper::End_Scene(bool flip_frames)
 {
 	DX8_THREAD_ASSERT();
 	DX8CALL(EndScene());
-
-	DX8WebBrowser::Render(0);
 
 	if (flip_frames) {
 		DX8_Assert();
@@ -2895,21 +2883,7 @@ IDirect3DSurface8 * DX8Wrapper::_Create_DX8_Surface(const char *filename_)
 }
 
 
-/***********************************************************************************************
- * DX8Wrapper::_Update_Texture -- Copies a texture from system memory to video memory          *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/26/2001  hy : Created.                                                                  *
- *=============================================================================================*/
+// Copies a texture from system memory to video memory.
 void DX8Wrapper::_Update_Texture(TextureClass *system, TextureClass *video)
 {
 	WWASSERT(system);

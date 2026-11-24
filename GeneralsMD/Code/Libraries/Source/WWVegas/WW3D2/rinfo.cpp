@@ -33,8 +33,6 @@
  *                    $Revision:: 15                                                          $*
  *                                                                                             *
  * 06/27/02 KM Render to shadow buffer texture support														*
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -139,8 +137,7 @@ RenderInfoClass::RINFO_OVERRIDE_FLAGS & RenderInfoClass::Current_Override_Flags(
 SpecialRenderInfoClass::SpecialRenderInfoClass(CameraClass & cam,int render_type) :
 	RenderInfoClass(cam),
 	RenderType(render_type),
-	VisRasterizer(nullptr),
-	BWRenderer(nullptr)
+	VisRasterizer(nullptr)
 {
 }
 

@@ -30,9 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   Base64Straw::Get -- Fetch data and convert it to/from base 64 encoding.                   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
@@ -40,25 +37,8 @@
 #include	"base64.h"
 
 
-/***********************************************************************************************
- * Base64Straw::Get -- Fetch data and convert it to/from base 64 encoding.                     *
- *                                                                                             *
- *    This routine will fetch the number of bytes requested and perform any conversion as      *
- *    necessary upon the data. The nature of Base 64 encoding means that the data will         *
- *    increase in size by 30% when encoding and decrease in like manner when decoding.         *
- *                                                                                             *
- * INPUT:   source   -- The buffer to hold the processed data.                                 *
- *                                                                                             *
- *          length   -- The number of bytes requested.                                         *
- *                                                                                             *
- * OUTPUT:  Returns with the number of bytes stored into the buffer. If the number is less     *
- *          than requested, then this indicates that the data stream has been exhausted.       *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/03/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// The nature of Base 64 encoding means that the data will increase in size by 30% when encoding and
+// decrease in like manner when decoding.
 int Base64Straw::Get(void * source, int slen)
 {
 	int total = 0;

@@ -47,7 +47,6 @@ static PoolSizeRec PoolSizes[] =
 	{ "CommandButton", 300, 16 },
 	{ "CommandSet", 256, 16 },
 	{ "DisplayString", 32, 32 },
-	{ "WebBrowserURL", 16, 16 },
 	{ "Drawable", 4096, 32 },
 	{ "Image", 2048, 32 },
 	{ "ParticlePool", 4096, 256 },

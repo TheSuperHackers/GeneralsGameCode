@@ -31,16 +31,6 @@
  *                                                                                             *
  *                    $Revision:: 6                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   MotionChannelClass::MotionChannelClass -- constructor                                     *
- *   MotionChannelClass::~MotionChannelClass -- destructor                                     *
- *   MotionChannelClass::Free -- de-allocates all memory in use                                *
- *   MotionChannelClass::Load -- loads a motion channel from a file                            *
- *   BitChannelClass::BitChannelClass -- Constructor for BitChannelClass                       *
- *   BitChannelClass::~BitChannelClass -- Destructor for BitChannelClass                       *
- *   BitChannelClass::Free -- Free all "external" memory in use                                *
- *   BitChannelClass::Load -- Read a bit channel from a w3d chunk                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -51,6 +41,7 @@
 #include "WWMath/wwmath.h"
 #include "WWMath/quat.h"
 #include <Utility/bit_adapter.h>
+#include <Utility/cmath_adapter.h>
 //#include <Windows.h>
 // Static Table, for Adaptive Delta Decompressor
 #define FILTER_TABLE_SIZE (256)
@@ -78,18 +69,6 @@ static float filtertable[FILTER_TABLE_SIZE] = {
 };
 static bool table_valid = false;
 
-/***********************************************************************************************
- * MotionChannelClass::MotionChannelClass -- constructor                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 MotionChannelClass::MotionChannelClass() :
 	PivotIdx(0),
 	Type(0),
@@ -103,35 +82,11 @@ MotionChannelClass::MotionChannelClass() :
 {
 }
 
-/***********************************************************************************************
- * MotionChannelClass::~MotionChannelClass -- destructor                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 MotionChannelClass::~MotionChannelClass()
 {
 	Free();
 }
 
-/***********************************************************************************************
- * MotionChannelClass::Free -- de-allocates all memory in use                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 void MotionChannelClass::Free()
 {
 	delete[] CompressedData;
@@ -142,18 +97,6 @@ void MotionChannelClass::Free()
 }
 
 
-/***********************************************************************************************
- * MotionChannelClass::Load -- loads a motion channel from a file                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 bool MotionChannelClass::Load_W3D(ChunkLoadClass & cload)
 {
 	int size = cload.Cur_Chunk_Length();
@@ -193,17 +136,6 @@ bool MotionChannelClass::Load_W3D(ChunkLoadClass & cload)
 
 
 
-/***********************************************************************************************
- * BitChannelClass::BitChannelClass -- Constructor for BitChannelClass                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 BitChannelClass::BitChannelClass() :
 	PivotIdx(0),
 	Type(0),
@@ -215,36 +147,13 @@ BitChannelClass::BitChannelClass() :
 }
 
 
-/***********************************************************************************************
- * BitChannelClass::~BitChannelClass -- Destructor for BitChannelClass                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 BitChannelClass::~BitChannelClass()
 {
 	Free();
 }
 
 
-/***********************************************************************************************
- * BitChannelClass::Free -- Free all "external" memory in use                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Free all "external" memory in use.
 void BitChannelClass::Free()
 {
 	delete[] Bits;
@@ -252,18 +161,6 @@ void BitChannelClass::Free()
 }
 
 
-/***********************************************************************************************
- * BitChannelClass::Load -- Read a bit channel from a w3d chunk                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool BitChannelClass::Load_W3D(ChunkLoadClass & cload)
 {
 	Free();
@@ -305,18 +202,6 @@ bool BitChannelClass::Load_W3D(ChunkLoadClass & cload)
 }
 
 
-/***********************************************************************************************
- * TimeCodedMotionChannelClass::TimeCodedMotionChannelClass -- constructor                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 TimeCodedMotionChannelClass::TimeCodedMotionChannelClass() :
 	PivotIdx(0),
 	Type(0),
@@ -329,35 +214,11 @@ TimeCodedMotionChannelClass::TimeCodedMotionChannelClass() :
 {
 }
 
-/***********************************************************************************************
- * MotionChannelClass::~MotionChannelClass -- destructor                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 TimeCodedMotionChannelClass::~TimeCodedMotionChannelClass()
 {
 	Free();
 }
 
-/***********************************************************************************************
- * TimeCodedMotionChannelClass::Free -- de-allocates all memory in use                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 void TimeCodedMotionChannelClass::Free()
 {
 	delete[] Data;
@@ -365,18 +226,6 @@ void TimeCodedMotionChannelClass::Free()
 }
 
 
-/***********************************************************************************************
- * TimeCodedMotionChannelClass::Load -- loads a motion channel from a file                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 bool TimeCodedMotionChannelClass::Load_W3D(ChunkLoadClass & cload)
 {
 	int size = cload.Cur_Chunk_Length();
@@ -407,18 +256,6 @@ bool TimeCodedMotionChannelClass::Load_W3D(ChunkLoadClass & cload)
 }
 
 
-/***********************************************************************************************
- * TimeCodedMotionChannelClass::Get_Vector -- returns the vector for the specified frame #              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 void	TimeCodedMotionChannelClass::Get_Vector(float32 frame,float * setvec)
 {
 
@@ -526,18 +363,6 @@ Quaternion TimeCodedMotionChannelClass::Get_QuatVector(float32 frame)
 
 
 
-/***********************************************************************************************
- * TimeCodedMotionChannelClass::binary_search_index / returns packet index 				        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   01/27/2000 JGA  : Created.                                                                *
- *=============================================================================================*/
 // New version that uses a binary search, and no cache
 uint32 TimeCodedMotionChannelClass::binary_search_index(uint32 timecode)
 {
@@ -596,18 +421,6 @@ uint32 TimeCodedMotionChannelClass::binary_search_index(uint32 timecode)
 }
 
 
-/***********************************************************************************************
- * TimeCodedMotionChannelClass::get_index / returns packet index												       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   01/27/2000 JGA  : Created.                                                                *
- *=============================================================================================*/
 uint32 TimeCodedMotionChannelClass::get_index(uint32 timecode)
 {
 	assert(CachedIdx <= LastTimeCodeIdx);
@@ -637,18 +450,7 @@ uint32 TimeCodedMotionChannelClass::get_index(uint32 timecode)
 
 }
 
-/***********************************************************************************************
- * TimeCodedMotionChannelClass::set_identity -- returns an "identity" vector (not really...hmm...)      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
+// Returns an "identity" vector (not really...hmm...).
 void TimeCodedMotionChannelClass::set_identity(float * setvec)
 {
 	if (Type == ANIM_CHANNEL_Q) {
@@ -666,17 +468,6 @@ void TimeCodedMotionChannelClass::set_identity(float * setvec)
 }
 
 
-/***********************************************************************************************
- * TimeCodedBitChannelClass::TimeCodedBitChannelClass -- Constructor for BitChannelClass                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 TimeCodedBitChannelClass::TimeCodedBitChannelClass() :
 	PivotIdx(0),
 	Type(0),
@@ -687,36 +478,13 @@ TimeCodedBitChannelClass::TimeCodedBitChannelClass() :
 }
 
 
-/***********************************************************************************************
- * TimeCodedBitChannelClass::~TimeCodedBitChannelClass -- Destructor for BitChannelClass                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 TimeCodedBitChannelClass::~TimeCodedBitChannelClass()
 {
 	Free();
 }
 
 
-/***********************************************************************************************
- * TimeCodedBitChannelClass::Free -- Free all "external" memory in use                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Free all "external" memory in use.
 void TimeCodedBitChannelClass::Free()
 {
 	delete[] Bits;
@@ -724,18 +492,6 @@ void TimeCodedBitChannelClass::Free()
 }
 
 
-/***********************************************************************************************
- * TimeCodedBitChannelClass::Load -- Read a bit channel from a w3d chunk                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool TimeCodedBitChannelClass::Load_W3D(ChunkLoadClass & cload)
 {
 	Free();
@@ -775,18 +531,6 @@ bool TimeCodedBitChannelClass::Load_W3D(ChunkLoadClass & cload)
 }
 
 
-/***********************************************************************************************
- * TimeCodedBitChannelClass::Get_Bit -- Lookup a bit in the bit channel                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/21/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 int TimeCodedBitChannelClass::Get_Bit(int frame)
 {
 	assert(frame >= 0);
@@ -827,18 +571,6 @@ int TimeCodedBitChannelClass::Get_Bit(int frame)
 // Begin Adaptive Delta
 
 
-/***********************************************************************************************
- * AdaptiveDeltaMotionChannelClass::AdaptiveDeltaMotionChannelClass -- constructor                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/18/2000 JGA : Created.                                                                 *
- *=============================================================================================*/
 AdaptiveDeltaMotionChannelClass::AdaptiveDeltaMotionChannelClass() :
 	PivotIdx(0),
 	Type(0),
@@ -868,35 +600,11 @@ AdaptiveDeltaMotionChannelClass::AdaptiveDeltaMotionChannelClass() :
 
 }
 
-/***********************************************************************************************
- * MotionChannelClass::~MotionChannelClass -- destructor                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/18/1000 JGA : Created.                                                                 *
- *=============================================================================================*/
 AdaptiveDeltaMotionChannelClass::~AdaptiveDeltaMotionChannelClass()
 {
 	Free();
 }
 
-/***********************************************************************************************
- * AdaptiveDeltaMotionChannelClass::Free -- de-allocates all memory in use                                  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/18/2000 JGA  : Created.                                                                 *
- *=============================================================================================*/
 void AdaptiveDeltaMotionChannelClass::Free()
 {
 	delete[] Data;
@@ -907,18 +615,6 @@ void AdaptiveDeltaMotionChannelClass::Free()
 }
 
 
-/***********************************************************************************************
- * AdaptiveDeltaMotionChannelClass::Load -- loads a motion channel from a file                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/18/2000 JGA : Created.                                                                 *
- *=============================================================================================*/
 bool AdaptiveDeltaMotionChannelClass::Load_W3D(ChunkLoadClass & cload)
 {
 	int size = cload.Cur_Chunk_Length();
@@ -950,18 +646,6 @@ bool AdaptiveDeltaMotionChannelClass::Load_W3D(ChunkLoadClass & cload)
 }
 
 
-/***********************************************************************************************
- * AdaptiveDeltaMotionChannelClass::decompress																  *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/23/2000 JGA  : Created.                                                                *
- *=============================================================================================*/
 #define PACKET_SIZE (9)
 void AdaptiveDeltaMotionChannelClass::decompress(uint32 frame_idx, float *outdata)
 {
@@ -1116,18 +800,6 @@ void AdaptiveDeltaMotionChannelClass::decompress(uint32 src_idx, float *srcdata,
 }
 
 
-/***********************************************************************************************
- * AdaptiveDeltaMotionChannelClass::getframe returns decompressed data for frame/vectorindex   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/18/2000 JGA  : Created.                                                                 *
- *=============================================================================================*/
 float AdaptiveDeltaMotionChannelClass::getframe(uint32 frame_idx, uint32 vector_idx)
 {
 	// Make sure frame_idx is valid
@@ -1192,18 +864,6 @@ float AdaptiveDeltaMotionChannelClass::getframe(uint32 frame_idx, uint32 vector_
 
 }
 
-/***********************************************************************************************
- * AdaptiveDeltaMotionChannelClass::Get_Vector -- returns the vector for the specified frame # *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   02/18/2000 JGA  : Created.                                                                 *
- *=============================================================================================*/
 void	AdaptiveDeltaMotionChannelClass::Get_Vector(float32 frame,float * setvec)
 {
 
@@ -1264,7 +924,9 @@ return;
 	int i=0;
 	for (;i<count;i++) {
 		float value=Data[i];
-		if (_isnan(value)) value=0.0f;
+		if (std::isnan(value))
+			value=0.0f;
+
 		if (value>100000.0f) value=0.0f;
 		if (value<-100000.0f) value=0.0f;
 		Data[i]=value;

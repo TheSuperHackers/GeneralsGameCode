@@ -30,9 +30,6 @@
  *                                                                         *
  *                    $Revision:: 6                                       $*
  *                                                                         *
- *-------------------------------------------------------------------------*
- * Functions:                                                              *
- *   nstrdup -- duplicates a string using new[]                            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -40,18 +37,7 @@
 #include "nstrdup.h"
 //#include "../app/main/gnew.h"
 
-/**************************************************************************
- * nstrdup -- duplicates a string using new[]                             *
- *                                                                        *
- * INPUT:                                                                 *
- *                                                                        *
- * OUTPUT:                                                                *
- *                                                                        *
- * WARNINGS:                                                              *
- *                                                                        *
- * HISTORY:                                                               *
- *   02/03/1998 PWG : Created.                                            *
- *========================================================================*/
+// Uses new[].
 char * nstrdup(const char *str)
 {
 	if(str == nullptr) return nullptr;

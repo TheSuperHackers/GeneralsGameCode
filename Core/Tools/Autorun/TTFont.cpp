@@ -30,19 +30,6 @@
  *																								*
  *                     Revision: 01																*
  *																								*
- *----------------------------------------------------------------------------------------------*
- * Functions:																					*
- *   TTFontClass::TTFontClass -- Constructor for a font class object.							*
- *   TTFontClass::Char_Pixel_Width -- Fetch the pixel width of the character specified.			*
- *	 TTFontClass::Find_Text_VLength -- Finds length of text in pixels							*
- *   TTFontClass::Get_Height -- Fetch the normalized height of the nominal font character.		*
- *   TTFontClass::Get_Width -- Get normalized width of the nominal font character.				*
- *   TTFontClass::Print -- Print text to the surface specified.									*
- *   TTFontClass::Raw_Height -- Fetch the height of the font.									*
- *   TTFontClass::Raw_Width -- Fetch the raw width of a character.								*
- *   TTFontClass::Set_XSpacing -- Set the X spacing override value.								*
- *   TTFontClass::Set_YSpacing -- Set the vertical (Y) spacing override value.					*
- *   TTFontClass::String_Pixel_Width -- Determines the width of the string in pixels.			*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 
@@ -101,22 +88,7 @@ unsigned long INDIGO_COLOR		  			= RGB(  90,   2, 253 );
 unsigned long VIOLET_COLOR		  			= RGB( 128,   0, 255 );
 
 
-/************************************************************************************
- * TTFontClass::TTFontClass -- Constructor for a font class object.					*
- *																					*
- *	This constructs a font object as it is based upon the true type windows fonts.	*
- *																					*
- * INPUT:   char *filename -- True Type Windows font file to open.					*
- *			char *facename -- It's face name.										*
- *          int   height   -- The height requested.									*
- *																					*
- * OUTPUT:		none																*
- *																					*
- * WARNINGS:	none																*
- *                                                                                  *
- * HISTORY:                                                                         *
- *   08/24/1999 MML : Created.                                                      *
- *==================================================================================*/
+// This constructs a font object as it is based upon the true type windows fonts.
 TTFontClass::TTFontClass(
 	HDC		hdc,
 	char *filename,
@@ -268,22 +240,8 @@ TTFontClass::TTFontClass(
 }
 
 
-/***********************************************************************************************
- * TTFontClass::Char_Pixel_Width -- Fetch the pixel width of the character specified.          *
- *                                                                                             *
- *    This will return with the pixel width of the character specified.                        *
- *                                                                                             *
- * INPUT:   c  -- The character to determine the pixel width for.                              *
- *                                                                                             *
- * OUTPUT:  Returns with the pixel width of the character.                                     *
- *                                                                                             *
- * WARNINGS:   The return width is the screen real estate width which may differ from the      *
- *             actual pixels of the character. This difference is controlled by the font       *
- *             X spacing.                                                                      *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/26/1997 JLB : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: The return width is the screen real estate width which may differ from the actual pixels
+// of the character. This difference is controlled by the font X spacing.
 
 int TTFontClass::Char_Pixel_Width( HDC hdc, UINT c ) const
 {
@@ -302,27 +260,10 @@ int TTFontClass::Char_Pixel_Width( HDC hdc, UINT c ) const
 	return( abc.abcA + abc.abcB + abc.abcC );
 }
 
-/************************************************************************************************
- * TTFontClass::Char_Pixel_Width -- Fetch the pixel width of the character specified.
- *
- *    This will return with the pixel width of the character specified.
- *
- * INPUT:  		HDC hdc		  		-- must be passed in from calling function.
- *				char const * string	-- the pointer to the character in the string.
- *				int *num_bytes		-- return number of bytes this character has: 1 or 2.
- *
- * OUTPUT:		Returns with the pixel width of the character.
- *
- * WARNINGS:	The return width is the screen real estate width which may differ from the
- *				actual pixels of the character. This difference is controlled by the font
- *				X spacing.
- *
- * NOTE:		This is function determines if the character is a double-byte or single-byte
- *				character, then calls the standard Char_Pixel_Width.
- *
- * HISTORY:
- *   05/26/1997 JLB : Created.
- *==============================================================================================*/
+// Determines if the character is a double-byte or single-byte character, then calls the standard
+// Char_Pixel_Width. The number of bytes of the character (1 or 2) is returned in num_bytes.
+// WARNING: The return width is the screen real estate width which may differ from the actual pixels
+// of the character. This difference is controlled by the font X spacing.
 //
 // [OYO]	Supports DBCS ( multi-byte characters ).
 //
@@ -360,21 +301,7 @@ int TTFontClass::Char_Pixel_Width ( HDC hdc, char const * string, int *num_bytes
 }
 
 
-/************************************************************************************************
- * TTFontClass::String_Pixel_Width -- Determines the width of the string in pixels.				*
- *																								*
- *    This routine is used to determine how many pixels wide the string will be if it were		*
- *    printed.																					*
- *																								*
- * INPUT:		string   -- The string to convert into its pixel width.							*
- *																								*
- * OUTPUT:		Returns with the number of pixels the string would span if it were printed.		*
- *																								*
- * WARNINGS:	This routine does not take into account clipping.								*
- *                                   															*
- * HISTORY:																						*
- *   05/26/1997 JLB : Created.																	*
- *==============================================================================================*/
+// WARNING: This routine does not take into account clipping.
 
 int TTFontClass::String_Pixel_Width( HDC hdc, char const * string ) const
 {
@@ -481,18 +408,8 @@ void TTFontClass::String_Pixel_Bounds( HDC hdc, const char* string, Rect& bounds
 	bounds.Height	= height;
 }
 
-/***********************************************************************************************
- * TTFontClass::Get_Double_Byte_Char -- Get the first character even if DBSC.
- *
- * INPUT:   char * -- string to look at.
- *
- * OUTPUT:  Returns with the normalized width of the character in the font.
- *
- * WARNINGS:	I added this function based on code provided by Ikeda-san.
- *
- * HISTORY:
- *   06/05/2000 MML : Created.
- *=============================================================================================*/
+// Gets the first character even if it is a double-byte character.
+// WARNING: I added this function based on code provided by Ikeda-san.
 //
 // [OYO]	Supports DBCS ( multi-byte characters ).
 //
@@ -542,62 +459,22 @@ UINT TTFontClass::Get_Double_Byte_Char	( const char *string, int *num_bytes ) co
 }
 
 
-/***********************************************************************************************
- * TTFontClass::Get_Width -- Get normalized width of the nominal font character.               *
- *                                                                                             *
- *    This routine is used to fetch the width of the widest character in the font but the      *
- *    width has been biased according to any X spacing override present.                       *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  Returns with the normalized width of the widest character in the font.             *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/26/1997 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Get normalized width of the nominal font character. This is the width of the widest character in
+// the font but the width has been biased according to any X spacing override present.
 int TTFontClass::Get_Width() const
 {
 	return( MaxCharWidth - Overhang );
 }
 
-/***********************************************************************************************
- * TTFontClass::Get_Height -- Fetch the normalized height of the nominal font character.       *
- *                                                                                             *
- *    This will return the height of the font but the returned height will be adjusted by any  *
- *    Y spacing override present.                                                              *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  Returns with the height of the font normalized by any spacing overrides.           *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/26/1997 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Fetch the normalized height of the nominal font character. The returned height will be adjusted
+// by any Y spacing override present.
 int TTFontClass::Get_Height() const
 {
 	return( Height );
 }
 
-/***********************************************************************************************
- * TTFontClass::Set_XSpacing -- Set the X spacing override value.                              *
- *                                                                                             *
- *    Use this routine to control the horizontal spacing override for this font. If the value  *
- *    is negative, the font becomes compressed. If the value is positive, then the font        *
- *    becomes expanded.                                                                        *
- *                                                                                             *
- * INPUT:   x  -- The X spacing override to use for this font.                                 *
- *                                                                                             *
- * OUTPUT:  Returns with the old X spacing override value.                                     *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/26/1997 JLB : Created.                                                                 *
- *=============================================================================================*/
+// If the value is negative, the font becomes compressed. If the value is positive, then the font
+// becomes expanded.
 int TTFontClass::Set_XSpacing( HDC hdc, int x )
 {
 //	HGDIOBJ old_object;
@@ -613,22 +490,9 @@ int TTFontClass::Set_XSpacing( HDC hdc, int x )
 }
 
 
-/***********************************************************************************************
- * TTFontClass::Set_YSpacing -- Set the vertical (Y) spacing override value.                   *
- *                                                                                             *
- *    Use this routine to control the "line spacing" of a font. If the Y spacing is negative   *
- *    then the font becomes closer to the line above it. If value is positive, then more       *
- *    space occurs between lines.                                                              *
- *                                                                                             *
- * INPUT:   y  -- The Y spacing override to use for this font.                                 *
- *                                                                                             *
- * OUTPUT:  Returns with the old Y spacing override value.                                     *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/26/1997 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Use this routine to control the "line spacing" of a font. If the Y spacing is negative then the
+// font becomes closer to the line above it. If value is positive, then more space occurs between
+// lines.
 int TTFontClass::Set_YSpacing( int y )
 {
 	FontYSpacing = y;
@@ -636,29 +500,9 @@ int TTFontClass::Set_YSpacing( int y )
 }
 
 
-/***********************************************************************************************
- * TTFontClass::Print -- Print text to the surface specified.  WCHAR Version.		           *
- *                                                                                             *
- *    This displays text to the surface specified and with the attributes specified.           *
- *                                                                                             *
- * INPUT:   string   -- The string to display to the surface.                                  *
- *          surface  -- The surface to display the text upon.                                  *
- *          cliprect -- The clipping rectangle that both clips the text and biases the print   *
- *                      location to.                                                           *
- *          point    -- The draw position for the upper left corner of the first character.    *
- *          convert  -- The pixel convert object that is used to draw the correct colors to    *
- *                      the destination surface.                                               *
- *          remap    -- Auxiliary remap table for font colors.                                 *
- *                                                                                             *
- * OUTPUT:  Returns with the point where the next print should begin if it is to smoothly      *
- *          continue where this print operation left off.                                      *
- *                                                                                             *
- * WARNINGS: There are two separate drawing routines; one for old fonts and one for new fonts. *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/26/1997 JLB : Created.                                                                 *
- *	  06/20/1887 BNA : Modified to handle new fonts.														  *
- *=============================================================================================*/
+// Print text to the surface specified. WCHAR version. Returns the point where the next print should
+// begin if it is to smoothly continue where this print operation left off.
+// WARNING: There are two separate drawing routines; one for old fonts and one for new fonts.
 
 #ifdef RTS_RELEASE
 
@@ -772,29 +616,9 @@ Point2D TTFontClass::Print(
 
 #endif // RTS_RELEASE
 
-/***********************************************************************************************
- * TTFontClass::Print -- Print text to the surface specified.  CHAR version.                   *
- *                                                                                             *
- *    This displays text to the surface specified and with the attributes specified.           *
- *                                                                                             *
- * INPUT:   string   -- The string to display to the surface.                                  *
- *          surface  -- The surface to display the text upon.                                  *
- *          cliprect -- The clipping rectangle that both clips the text and biases the print   *
- *                      location to.                                                           *
- *          point    -- The draw position for the upper left corner of the first character.    *
- *          convert  -- The pixel convert object that is used to draw the correct colors to    *
- *                      the destination surface.                                               *
- *          remap    -- Auxiliary remap table for font colors.                                 *
- *                                                                                             *
- * OUTPUT:  Returns with the point where the next print should begin if it is to smoothly      *
- *          continue where this print operation left off.                                      *
- *                                                                                             *
- * WARNINGS: There are two separate drawing routines; one for old fonts and one for new fonts. *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/26/1997 JLB : Created.                                                                 *
- *	  06/20/1887 BNA : Modified to handle new fonts.														  *
- *=============================================================================================*/
+// Print text to the surface specified. CHAR version. Returns the point where the next print should
+// begin if it is to smoothly continue where this print operation left off.
+// WARNING: There are two separate drawing routines; one for old fonts and one for new fonts.
 
 Point2D TTFontClass::Print(
 	HDC hdc,
@@ -1022,17 +846,6 @@ Point2D TTFontClass::Print(
 	return( point );
 }
 
-/***************************************************************************
- * TTFontClass::FIND_TEXT_VLENGTH -- Finds length of text in pixels        *
- *                                                                         *
- * INPUT:	BYTE *string - the strength to find the vertical length of 	   *
- *          int width    - the width of the region to fit it in        	   *
- *                                                                     	   *
- * OUTPUT:  int -- the number of pixels it takes up veritcally.        	   *
- *                                                                         *
- * HISTORY:                                                                *
- *   09/27/1994 PWG : Created.                                             *
- *=========================================================================*/
 //
 // [OYO]	Supports DBCS ( multi-byte characters ).
 //
@@ -1189,18 +1002,6 @@ int TTFontClass::Find_Text_VLength( HDC hdc, char *str, int width )
 	return( lines );
 }
 
-/***********************************************************************************************
- * FontManagerClass::FontManagerClass -- Constructor for FontManager class.                    *
- *                                                                                             *
- * INPUT:		none.                                                                          *
- *                                                                                             *
- * OUTPUT:  	none                                                                           *
- *                                                                                             *
- * WARNINGS:	none                                                                           *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/26/1998 MML : Created.                                                                 *
- *=============================================================================================*/
 FontManagerClass::FontManagerClass ( HDC hdc )
 {
 	//--------------------------------------------------------------------------
@@ -1382,18 +1183,6 @@ FontManagerClass::FontManagerClass ( HDC hdc )
 	assert( TTLicenseFontPtr		!= nullptr );
 }
 
-/***********************************************************************************************
- * FontManagerClass::~FontManagerClass -- Destructor for FontManager class.                    *
- *                                                                                             *
- * INPUT:		none.                                                                          *
- *                                                                                             *
- * OUTPUT:  	none                                                                           *
- *                                                                                             *
- * WARNINGS:	none																		   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/26/1998 MML : Created.                                                                 *
- *=============================================================================================*/
 FontManagerClass::~FontManagerClass ()
 {
 	delete TTButtonFontPtr;
@@ -1404,21 +1193,7 @@ FontManagerClass::~FontManagerClass ()
 }
 
 
-/***********************************************************************************************
- * Font_From_TPF -- Convert flags into a font pointer.                                         *
- *                                                                                             *
- *    This routine will examine the specified flags and return with a pointer to the font      *
- *    that the flags represent.                                                                *
- *                                                                                             *
- * INPUT:   flags -- The flags to convert into a font pointer.                                 *
- *                                                                                             *
- * OUTPUT:  Returns with a font pointer that matches the flags.                                *
- *                                                                                             *
- * WARNINGS:   If no match could be found, a default font pointer is returned.                 *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/26/1997 JLB : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: If no match could be found, a default font pointer is returned.
 TTFontClass * Font_From_TPF ( TextPrintType flags )
 {
 	TTFontClass *fontptr= nullptr;
@@ -1440,22 +1215,6 @@ TTFontClass * Font_From_TPF ( TextPrintType flags )
 	return( fontptr );
 }
 
-
-/************************************************************************************************
- * Is_True_Type_Font -- Convert flags into a font pointer.										*
- *																								*
- *    This routine will examine the specified flags and return with a pointer to the font		*
- *    that the flags represent.																	*
- *																								*
- * INPUT:   flags -- The flags to convert into a font pointer.									*
- *																								*
- * OUTPUT:  Returns with a font pointer that matches the flags.									*
- *																								*
- * WARNINGS:   If no match could be found, a default font pointer is returned.					*
- *																								*
- * HISTORY:																						*
- *   05/26/1997 JLB : Created.																	*
- *==============================================================================================*/
 
 bool Is_True_Type_Font( TextPrintType flags )
 {

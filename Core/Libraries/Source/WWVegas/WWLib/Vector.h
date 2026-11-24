@@ -30,25 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 49                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   VectorClass<T>::VectorClass -- Constructor for vector class.                              *
- *   VectorClass<T>::~VectorClass -- Default destructor for vector class.                      *
- *   VectorClass<T>::VectorClass -- Copy constructor for vector object.                        *
- *   VectorClass<T>::operator = -- The assignment operator.                                    *
- *   VectorClass<T>::operator == -- Equality operator for vector objects.                      *
- *   VectorClass<T>::Clear -- Frees and clears the vector.                                     *
- *   VectorClass<T>::Resize -- Changes the size of the vector.                                 *
- *   DynamicVectorClass<T>::DynamicVectorClass -- Constructor for dynamic vector.              *
- *   DynamicVectorClass<T>::Resize -- Changes the size of a dynamic vector.                    *
- *   DynamicVectorClass<T>::Add -- Add an element to the vector.                               *
- *   DynamicVectorClass<T>::Delete -- Remove the specified object from the vector.             *
- *   DynamicVectorClass<T>::Delete -- Deletes the specified index from the vector.             *
- *   VectorClass<T>::ID -- Pointer based conversion to index number.                           *
- *   VectorClass<T>::ID -- Finds object ID based on value.                                     *
- *   DynamicVectorClass<T>::ID -- Find matching value in the dynamic vector.                   *
- *   DynamicVectorClass<T>::Uninitialized_Add -- Add an empty place to the vector.             *
- *   DynamicVectorClass<T>::Insert -- insert an object at the desired index                    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -131,26 +112,8 @@ class VectorClass
 };
 
 
-/***********************************************************************************************
- * VectorClass<T>::VectorClass -- Constructor for vector class.                                *
- *                                                                                             *
- *    This constructor for the vector class is passed the initial size of the vector and an    *
- *    optional pointer to a preallocated block of memory that the vector will be placed in.    *
- *    If this optional pointer is nullptr (or not provided), then the vector is allocated out     *
- *    of free store (with the "new" operator).                                                 *
- *                                                                                             *
- * INPUT:   size  -- The number of elements to initialize this vector to.                      *
- *                                                                                             *
- *          array -- Optional pointer to a previously allocated memory block to hold the       *
- *                   vector.                                                                   *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/10/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
+// The vector is placed in the optional preallocated memory block. If this pointer is nullptr (or
+// not provided), then the vector is allocated out of free store (with the "new" operator).
 template<class T>
 VectorClass<T>::VectorClass(int size, T const * array) :
 	Vector(nullptr),
@@ -173,21 +136,6 @@ VectorClass<T>::VectorClass(int size, T const * array) :
 }
 
 
-/***********************************************************************************************
- * VectorClass<T>::~VectorClass -- Default destructor for vector class.                        *
- *                                                                                             *
- *    This is the default destructor for the vector class. It will deallocate any memory       *
- *    that it may have allocated.                                                              *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/10/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
 template<class T>
 VectorClass<T>::~VectorClass()
 {
@@ -195,21 +143,6 @@ VectorClass<T>::~VectorClass()
 }
 
 
-/***********************************************************************************************
- * VectorClass<T>::VectorClass -- Copy constructor for vector object.                          *
- *                                                                                             *
- *    This is the copy constructor for the vector class. It will duplicate the provided        *
- *    vector into the new vector being created.                                                *
- *                                                                                             *
- * INPUT:   vector   -- Reference to the vector to use as a copy.                              *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/10/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
 template<class T>
 VectorClass<T>::VectorClass(VectorClass<T> const & vec) :
 	Vector(0),
@@ -221,21 +154,6 @@ VectorClass<T>::VectorClass(VectorClass<T> const & vec) :
 }
 
 
-/***********************************************************************************************
- * VectorClass<T>::operator = -- The assignment operator.                                      *
- *                                                                                             *
- *    This the the assignment operator for vector objects. It will alter the existing lvalue   *
- *    vector to duplicate the rvalue one.                                                      *
- *                                                                                             *
- * INPUT:   vec   -- The rvalue vector to copy into the lvalue one.                            *
- *                                                                                             *
- * OUTPUT:  Returns with reference to the newly copied vector.                                 *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/10/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
 template<class T>
 VectorClass<T> & VectorClass<T>::operator =(VectorClass<T> const & vec)
 {
@@ -259,22 +177,6 @@ VectorClass<T> & VectorClass<T>::operator =(VectorClass<T> const & vec)
 }
 
 
-/***********************************************************************************************
- * VectorClass<T>::operator == -- Equality operator for vector objects.                        *
- *                                                                                             *
- *    This operator compares two vectors for equality. It does this by performing an object    *
- *    by object comparison between the two vectors.                                            *
- *                                                                                             *
- * INPUT:   vector   -- The right vector expression.                                           *
- *                                                                                             *
- * OUTPUT:  bool; Are the two vectors essentially equal? (do they contain comparable elements  *
- *                in the same order?)                                                          *
- *                                                                                             *
- * WARNINGS:   The equality operator must exist for the objects that this vector contains.     *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/10/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
 template<class T>
 bool VectorClass<T>::operator == (VectorClass<T> const & vec) const
 {
@@ -290,24 +192,10 @@ bool VectorClass<T>::operator == (VectorClass<T> const & vec) const
 }
 
 
-/***********************************************************************************************
- * VectorClass<T>::ID -- Pointer based conversion to index number.                             *
- *                                                                                             *
- *    Use this routine to convert a pointer to an element in the vector back into the index    *
- *    number of that object. This routine ONLY works with actual pointers to object within     *
- *    the vector. For "equivalent" object index number (such as with similar integral values)  *
- *    then use the "by value" index number ID function.                                        *
- *                                                                                             *
- * INPUT:   pointer  -- Pointer to an actual object in the vector.                             *
- *                                                                                             *
- * OUTPUT:  Returns with the index number for the object pointed to by the parameter.          *
- *                                                                                             *
- * WARNINGS:   This routine is only valid for actual pointers to object that exist within      *
- *             the vector. All other object pointers will yield undefined results.             *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/13/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
+// For "equivalent" object index number (such as with similar integral values) then use the "by
+// value" index number ID function.
+// WARNING: This routine is only valid for actual pointers to object that exist within the vector.
+// All other object pointers will yield undefined results.
 template<class T>
 inline int VectorClass<T>::ID(T const * ptr)
 {
@@ -316,22 +204,8 @@ inline int VectorClass<T>::ID(T const * ptr)
 }
 
 
-/***********************************************************************************************
- * VectorClass<T>::ID -- Finds object ID based on value.                                       *
- *                                                                                             *
- *    Use this routine to find the index value of an object with equivalent value in the       *
- *    vector. Typical use of this would be for integral types.                                 *
- *                                                                                             *
- * INPUT:   object   -- Reference to the object that is to be looked up in the vector.         *
- *                                                                                             *
- * OUTPUT:  Returns with the index number of the object that is equivalent to the one          *
- *          specified. If no matching value could be found then -1 is returned.                *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/13/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Finds an object with equivalent value. Typical use of this would be for integral types. Returns
+// -1 if no matching value could be found.
 template<class T>
 int VectorClass<T>::ID(T const & object)
 {
@@ -346,22 +220,8 @@ int VectorClass<T>::ID(T const & object)
 }
 
 
-/***********************************************************************************************
- * VectorClass<T>::Clear -- Frees and clears the vector.                                       *
- *                                                                                             *
- *    Use this routine to reset the vector to an empty (non-allocated) state. A vector will    *
- *    free all allocated memory when this routine is called. In order for the vector to be     *
- *    useful after this point, the Resize function must be called to give it element space.    *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/10/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
+// In order for the vector to be useful after this point, the Resize function must be called to give
+// it element space.
 template<class T>
 void VectorClass<T>::Clear()
 {
@@ -374,25 +234,8 @@ void VectorClass<T>::Clear()
 }
 
 
-/***********************************************************************************************
- * VectorClass<T>::Resize -- Changes the size of the vector.                                   *
- *                                                                                             *
- *    This routine is used to change the size (usually to increase) the size of a vector. This *
- *    is the only way to increase the vector's working room (number of elements).              *
- *                                                                                             *
- * INPUT:   newsize  -- The desired size of the vector.                                        *
- *                                                                                             *
- *          array    -- Optional pointer to a previously allocated memory block that the       *
- *                      array will be located in. If this parameter is not supplied, then      *
- *                      the array will be allocated from free store.                           *
- *                                                                                             *
- * OUTPUT:  bool; Was the array resized successfully?                                          *
- *                                                                                             *
- * WARNINGS:   Failure to succeed could be the result of running out of memory.                *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/10/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
+// This is the only way to increase the vector's working room (number of elements). The vector is
+// placed in the optional preallocated memory block, or else allocated from free store.
 template<class T>
 bool VectorClass<T>::Resize(int newsize, T const * array)
 {
@@ -565,26 +408,8 @@ class DynamicVectorClass : public VectorClass<T>
 };
 
 
-/***********************************************************************************************
- * DynamicVectorClass<T>::DynamicVectorClass -- Constructor for dynamic vector.                *
- *                                                                                             *
- *    This is the normal constructor for the dynamic vector class. It is similar to the normal *
- *    vector class constructor. The vector is initialized to contain the number of elements    *
- *    specified in the "size" parameter. The memory is allocated from free store unless the    *
- *    optional array parameter is provided. In this case it will place the vector at the       *
- *    memory location specified.                                                               *
- *                                                                                             *
- * INPUT:   size  -- The maximum number of objects allowed in this vector.                     *
- *                                                                                             *
- *          array -- Optional pointer to the memory area to place the vector at.               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/10/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
+// The memory is allocated from free store unless the optional array parameter is provided. In this
+// case it will place the vector at the memory location specified.
 template<class T>
 DynamicVectorClass<T>::DynamicVectorClass(unsigned size, T const * array)
 	: VectorClass<T>(size, array)
@@ -594,25 +419,9 @@ DynamicVectorClass<T>::DynamicVectorClass(unsigned size, T const * array)
 }
 
 
-/***********************************************************************************************
- * DynamicVectorClass<T>::Resize -- Changes the size of a dynamic vector.                      *
- *                                                                                             *
- *    Use this routine to change the size of the vector. The size changed is the maximum       *
- *    number of allocated objects within this vector. If a memory buffer is provided, then     *
- *    the vector will be located there. Otherwise, the memory will be allocated out of free    *
- *    store.                                                                                   *
- *                                                                                             *
- * INPUT:   newsize  -- The desired maximum size of this vector.                               *
- *                                                                                             *
- *          array    -- Optional pointer to a previously allocated memory array.               *
- *                                                                                             *
- * OUTPUT:  bool; Was vector successfully resized according to specifications?                 *
- *                                                                                             *
- * WARNINGS:   Failure to resize the vector could be the result of lack of free store.         *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/10/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Changes the maximum number of allocated objects within this vector. If a memory buffer is
+// provided, then the vector will be located there. Otherwise, the memory will be allocated out of
+// free store.
 template<class T>
 bool DynamicVectorClass<T>::Resize(int newsize, T const * array)
 {
@@ -624,24 +433,8 @@ bool DynamicVectorClass<T>::Resize(int newsize, T const * array)
 }
 
 
-/***********************************************************************************************
- * DynamicVectorClass<T>::ID -- Find matching value in the dynamic vector.                     *
- *                                                                                             *
- *    Use this routine to find a matching object (by value) in the vector. Unlike the base     *
- *    class ID function of similar name, this one restricts the scan to the current number     *
- *    of valid objects.                                                                        *
- *                                                                                             *
- * INPUT:   object   -- A reference to the object that a match is to be found in the           *
- *                      vector.                                                                *
- *                                                                                             *
- * OUTPUT:  Returns with the index number of the object that is equivalent to the one          *
- *          specified. If no equivalent object could be found then -1 is returned.             *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/13/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Unlike the base class ID function of similar name, this one restricts the scan to the current
+// number of valid objects. Returns -1 if no equivalent object could be found.
 template<class T>
 int DynamicVectorClass<T>::ID(T const & object)
 {
@@ -652,23 +445,8 @@ int DynamicVectorClass<T>::ID(T const & object)
 }
 
 
-/***********************************************************************************************
- * DynamicVectorClass<T>::Add -- Add an element to the vector.                                 *
- *                                                                                             *
- *    Use this routine to add an element to the vector. The vector will automatically be       *
- *    resized to accommodate the new element IF the vector was allocated previously and the    *
- *    growth rate is not zero.                                                                 *
- *                                                                                             *
- * INPUT:   object   -- Reference to the object that will be added to the vector.              *
- *                                                                                             *
- * OUTPUT:  bool; Was the object added successfully? If so, the object is added to the end     *
- *                of the vector.                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/10/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
+// The vector will automatically be resized to accommodate the new element IF the vector was
+// allocated previously and the growth rate is not zero.
 template<class T>
 bool DynamicVectorClass<T>::Add(T const & object)
 {
@@ -700,21 +478,6 @@ bool DynamicVectorClass<T>::Add(T const & object)
 }
 
 
-/***********************************************************************************************
- * DynamicVectorClass<T>::Add_Head -- Adds element to head of the list.                        *
- *                                                                                             *
- *    This routine will add the specified element to the head of the vector. If necessary,     *
- *    the vector will be expanded accordingly.                                                 *
- *                                                                                             *
- * INPUT:   object   -- Reference to the object to add to the head of this vector.             *
- *                                                                                             *
- * OUTPUT:  bool; Was the object added without error?                                          *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/21/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
 template<class T>
 bool DynamicVectorClass<T>::Add_Head(T const & object)
 {
@@ -752,18 +515,6 @@ bool DynamicVectorClass<T>::Add_Head(T const & object)
 
 
 
-/***********************************************************************************************
- * DynamicVectorClass<T>::Insert -- insert an object at the desired index                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/27/99    GTH : Created.                                                                 *
- *=============================================================================================*/
 template<class T>
 bool DynamicVectorClass<T>::Insert(int index,T const & object)
 {
@@ -802,22 +553,9 @@ bool DynamicVectorClass<T>::Insert(int index,T const & object)
 }
 
 
-/***********************************************************************************************
- * DynamicVectorClass<T>::Delete -- Remove the specified object from the vector.               *
- *                                                                                             *
- *    This routine will delete the object referenced from the vector. All objects in the       *
- *    vector that follow the one deleted will be moved "down" to fill the hole.                *
- *                                                                                             *
- * INPUT:   object   -- Reference to the object in this vector that is to be deleted.          *
- *                                                                                             *
- * OUTPUT:  bool; Was the object deleted successfully? This should always be true.             *
- *                                                                                             *
- * WARNINGS:   Do no pass a reference to an object that is NOT part of this vector. The        *
- *             results of this are undefined and probably catastrophic.                        *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/10/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
+// All objects in the vector that follow the one deleted will be moved "down" to fill the hole.
+// WARNING: Do not pass a reference to an object that is NOT part of this vector. The results of
+// this are undefined and probably catastrophic.
 template<class T>
 bool DynamicVectorClass<T>::Delete(T const & object)
 {
@@ -829,23 +567,8 @@ bool DynamicVectorClass<T>::Delete(T const & object)
 }
 
 
-/***********************************************************************************************
- * DynamicVectorClass<T>::Delete -- Deletes the specified index from the vector.               *
- *                                                                                             *
- *    Use this routine to delete the object at the specified index from the objects in the     *
- *    vector. This routine will move all the remaining objects "down" in order to fill the     *
- *    hole.                                                                                    *
- *                                                                                             *
- * INPUT:   index -- The index number of the object in the vector that is to be deleted.       *
- *                                                                                             *
- * OUTPUT:  bool; Was the object index deleted successfully? Failure might mean that the index *
- *                specified was out of bounds.                                                 *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/10/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
+// All the remaining objects are moved "down" in order to fill the hole. Returns false if the index
+// is out of bounds.
 template<class T>
 bool DynamicVectorClass<T>::Delete(int index)
 {
@@ -899,25 +622,12 @@ void DynamicVectorClass<T>::Delete_All()
 }
 
 
-/***********************************************************************************************
- * DynamicVectorClass<T>::Uninitialized_Add -- Add an empty place to the vector.               *
- *                                                                                             *
- *    To avoid copying when creating an object and adding it to the vector, use this and       *
- *    immediately fill the area that the return value points to with a valid object (by hand   *
- *    for a struct or by using placement new for a class object).                              *
- *    This function does everything Add does except copying an object into the new space,      *
- *    thus leaving an uninitialized area of memory.                                            *
- *                                                                                             *
- * INPUT:   none.                                                                              *
- *                                                                                             *
- * OUTPUT:  T *; Points to the empty space where the new object is to be created. (If the      *
- *               space was not added successfully, returns nullptr).                              *
- *                                                                                             *
- * WARNINGS:   If memory area is left uninitialized, Very Bad Things will happen.              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/04/1998 NH : Created.                                                                  *
- *=============================================================================================*/
+// To avoid copying when creating an object and adding it to the vector, use this and immediately
+// fill the area that the return value points to with a valid object (by hand for a struct or by
+// using placement new for a class object). This function does everything Add does except copying an
+// object into the new space, thus leaving an uninitialized area of memory. Returns nullptr if the
+// space could not be added.
+// WARNING: If memory area is left uninitialized, Very Bad Things will happen.
 template<class T>
 T * DynamicVectorClass<T>::Uninitialized_Add()
 {

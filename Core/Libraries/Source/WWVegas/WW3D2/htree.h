@@ -31,8 +31,6 @@
  *                                                                                             *
  *                    $Revision:: 6                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -182,18 +180,6 @@ WWINLINE bool HTreeClass::Get_Visibility(int pivot) const
 	return Pivot[pivot].IsVisible;
 }
 
-/***********************************************************************************************
- * HTreeClass::Get_Transform -- returns the transformation for the desired pivot               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/11/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WWINLINE const Matrix3D & HTreeClass::Get_Transform(int pivot) const
 {
 	assert(pivot >= 0);

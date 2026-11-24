@@ -30,8 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 64                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
@@ -967,8 +965,7 @@ WWINLINE double WWMath::Inverse_Lerp(double a, double b, float v)
 
 WWINLINE bool WWMath::Is_Valid_Float(float x)
 {
-	unsigned long * plong = (unsigned long *)(&x);
-	unsigned long exponent = ((*plong) & 0x7F800000) >> (32-9);
+	unsigned int exponent = (std::bit_cast<unsigned int>(x) & 0x7F800000) >> (32-9);
 
 	// if exponent is 0xFF, this is a NAN
 	if (exponent == 0xFF) {
@@ -979,8 +976,8 @@ WWINLINE bool WWMath::Is_Valid_Float(float x)
 
 WWINLINE bool WWMath::Is_Valid_Double(double x)
 {
-	unsigned long * plong = (unsigned long *)(&x) + 1;
-	unsigned long exponent = ((*plong) & 0x7FF00000) >> (32-12);
+	unsigned int high = (unsigned int)(std::bit_cast<unsigned __int64>(x) >> 32);
+	unsigned int exponent = (high & 0x7FF00000) >> (32-12);
 
 	// if exponent is 0x7FF, this is a NAN
 	if (exponent == 0x7FF) {

@@ -31,59 +31,6 @@
  *                                                                                             *
  *                  Last Update : June 12, 1997 [GH]                                           *
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   MeshClass::MeshClass -- Constructor for MeshClass                                         *
- *   MeshClass::MeshClass -- Copy Constructor for MeshClass                                    *
- *	  MeshClass::operator == -- assignment operator for MeshClass                               *
- *   MeshClass::~MeshClass -- destructor                                                       *
- *   MeshClass::Contains -- Determines whether mesh contains a (worldspace) point.             *
- *   MeshClass::Free -- Releases all memory/assets in use by this mesh                         *
- *   MeshClass::Clone -- Creates a clone of this mesh                                          *
- *   MeshClass::Get_Name -- returns the name of the mesh                                       *
- *   MeshClass::Set_Name -- sets the name of this mesh                                         *
- *   MeshClass::Get_W3D_Flags -- access to the W3D flags                                       *
- *   MeshClass::Get_User_Text -- access to the text buffer                                     *
- *   MeshClass::Scale -- Scales the mesh                                                       *
- *   MeshClass::Scale -- Scales the mesh                                                       *
- *   MeshClass::Init -- Init the mesh from a MeshBuilder object                                *
- *   MeshClass::Load -- creates a mesh out of a mesh chunk in a .w3d file                      *
- *   MeshClass::Cast_Ray -- compute a ray intersection with this mesh                          *
- *   MeshClass::Cast_AABox -- cast an AABox against this mesh                                  *
- *   MeshClass::Cast_OBBox -- Cast an obbox against this mesh                                  *
- *   MeshClass::Intersect_AABox -- test for intersection with given AABox                      *
- *   MeshClass::Intersect_OBBox -- test for intersection with the given OBBox                  *
- *   MeshClass::Generate_Culling_Tree -- Generates a hierarchical culling tree for the mesh    *
- *   MeshClass::Direct_Load -- read the w3d file directly into this mesh object                *
- *   MeshClass::read_chunks -- read all of the chunks from the .wtm file                       *
- *	  MeshClass::read_vertices -- reads the vertex chunk                                        *
- *   MeshClass::read_texcoords -- read in the texture coordinates chunk                        *
- *   MeshClass::install_texture_coordinates -- installs the given u-v's in each channel that is*
- *   MeshClass::read_vertex_normals -- reads a surrender normal chunk from the wtm file        *
- *   MeshClass::read_v3_materials -- Reads in version 3 materials.                             *
- *   MeshClass::read_map -- Reads definition of a texture map from the file                    *
- *   MeshClass::read_triangles -- read the triangles chunk                                     *
- *   MeshClass::read_per_tri_materials -- read the material indices for each triangle          *
- *   MeshClass::read_user_text -- read in the user text chunk                                  *
- *   MeshClass::read_vertex_colors -- read in the vertex colors chunk                          *
- *   MeshClass::read_vertex_influences -- read in the vertex influences chunk                  *
- *   MeshClass::Get_Material_Info -- returns a pointer to the material info                    *
- *   MeshClass::Create_Decal -- creates a decal on this mesh                                   *
- *   MeshClass::Delete_Decal -- removes a decal from this mesh                                 *
- *   MeshClass::Get_Num_Polys -- returns the number of polys (tris) in this mesh               *
- *   MeshClass::Render -- renders this mesh                                                    *
- *   MeshClass::Special_Render -- special render function for meshes                           *
- *   MeshClass::update_skin -- deforms the mesh                                                *
- *   MeshClass::clone_materials -- clone the materials for this mesh                           *
- *   MeshClass::install_materials -- transfers the materials into the mesh                     *
- *   MeshClass::Get_Model -- user access to the mesh model                                     *
- *   MeshClass::Get_Obj_Space_Bounding_Sphere -- returns obj-space bounding sphere             *
- *   MeshClass::Get_Obj_Space_Bounding_Box -- returns the obj-space bounding box               *
- *   MeshClass::Get_Deformed_Vertices -- Gets the deformed vertices for a skin                 *
- *   MeshClass::Get_Deformed_Vertices -- Gets the deformed vertices for a skin                 *
- *   MeshClass::Render_Material_Pass -- Render a procedural material pass for this mesh        *
- *   MeshClass::Replace_VertexMaterial -- Replaces existing vertex material with a new one. Wi *
- *   MeshClass::Make_Unique -- Makes mesh unique in the renderer, but still shares system ram  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "mesh.h"
@@ -143,20 +90,6 @@ static SimpleDynVecClass<uint32> temp_apt;
 static DynamicVectorClass<Vector3>	_TempVertexBuffer;
 
 
-/***********************************************************************************************
- * MeshClass::MeshClass -- Constructor for MeshClass                                           *
- *                                                                                             *
- *    Initializes an empty mesh class                                                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/6/98     GTH : Created.                                                                 *
- *=============================================================================================*/
 MeshClass::MeshClass() :
 	Model(nullptr),
 	DecalMesh(nullptr),
@@ -172,19 +105,6 @@ MeshClass::MeshClass() :
 }
 
 
-/***********************************************************************************************
- * MeshClass::MeshClass -- Copy Constructor for MeshClass                                      *
- *                                                                                             *
- *    Creates a mesh which is a copy of the given mesh                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 MeshClass::MeshClass(const MeshClass & that) :
 	RenderObjClass(that),
 	Model(nullptr),
@@ -202,18 +122,6 @@ MeshClass::MeshClass(const MeshClass & that) :
 }
 
 
-/***********************************************************************************************
- * operator == -- assignment operator for MeshClass                                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/6/98     GTH : Created.                                                                 *
- *=============================================================================================*/
 MeshClass & MeshClass::operator = (const MeshClass & that)
 {
 	if (this != &that) {
@@ -231,37 +139,14 @@ MeshClass & MeshClass::operator = (const MeshClass & that)
 }
 
 
-/***********************************************************************************************
- * MeshClass::~MeshClass -- destructor                                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/6/98     GTH : Created.                                                                 *
- *=============================================================================================*/
 MeshClass::~MeshClass()
 {
 	Free();
 }
 
 
-/***********************************************************************************************
- * MeshClass::Contains -- Determines whether mesh contains a (worldspace) point.               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS: Assumes mesh is a closed manifold - results are undefined otherwise               *
- *           This function will NOT work for skins                                             *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   8/30/00     NH : Created.                                                                 *
- *=============================================================================================*/
+// The point is in world space. This function will NOT work for skins.
+// WARNING: Assumes mesh is a closed manifold - results are undefined otherwise.
 bool MeshClass::Contains(const Vector3 &point)
 {
 	// Transform point to object space and pass on to model
@@ -271,18 +156,6 @@ bool MeshClass::Contains(const Vector3 &point)
 }
 
 
-/***********************************************************************************************
- * MeshClass::Free -- Releases all memory/assets in use by this mesh                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/6/98     GTH : Created.                                                                 *
- *=============================================================================================*/
 void MeshClass::Free()
 {
 	REF_PTR_RELEASE(Model);
@@ -290,107 +163,35 @@ void MeshClass::Free()
 }
 
 
-/***********************************************************************************************
- * MeshClass::Clone -- Creates a clone of this mesh                                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/6/98     GTH : Created.                                                                 *
- *=============================================================================================*/
 RenderObjClass * MeshClass::Clone() const
 {
 	return NEW_REF( MeshClass, (*this));
 }
 
 
-/***********************************************************************************************
- * MeshClass::Get_Name -- returns the name of the mesh                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/15/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 const char * MeshClass::Get_Name() const
 {
 	return Model->Get_Name();
 }
 
 
-/***********************************************************************************************
- * MeshClass::Set_Name -- sets the name of this mesh                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/9/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 void MeshClass::Set_Name(const char * name)
 {
 	Model->Set_Name(name);
 }
 
-/***********************************************************************************************
- * MeshClass::Get_W3D_Flags -- access to the W3D flags                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/15/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 uint32 MeshClass::Get_W3D_Flags()
 {
 	return Model->W3dAttributes;
 }
 
 
-/***********************************************************************************************
- * MeshClass::Get_User_Text -- access to the text buffer                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/15/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 const char * MeshClass::Get_User_Text() const
 {
 	return Model->Get_User_Text();
 }
 
 
-/***********************************************************************************************
- * MeshClass::Get_Material_Info -- returns a pointer to the material info                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/20/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 MaterialInfoClass * MeshClass::Get_Material_Info()
 {
 	if (Model) {
@@ -403,18 +204,6 @@ MaterialInfoClass * MeshClass::Get_Material_Info()
 }
 
 
-/***********************************************************************************************
- * MeshClass::Get_Model -- user access to the mesh model                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/4/99     GTH : Created.                                                                 *
- *=============================================================================================*/
 MeshModelClass * MeshClass::Get_Model()
 {
 	if (Model != nullptr) {
@@ -423,17 +212,6 @@ MeshModelClass * MeshClass::Get_Model()
 	return Model;
 }
 
-/***********************************************************************************************
- * MeshClass::Scale -- Scales the mesh                                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *=============================================================================================*/
 void MeshClass::Scale(float scale)
 {
 	if (scale==1.0f) return;
@@ -452,19 +230,6 @@ void MeshClass::Scale(float scale)
 }
 
 
-/***********************************************************************************************
- * MeshClass::Scale -- Scales the mesh                                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/6/98     GTH : Created.                                                                 *
- *   12/8/98    GTH : Modified the box scaling to use the non-uniform parameters               *
- *=============================================================================================*/
 void MeshClass::Scale(float scalex, float scaley, float scalez)
 {
 	// scale the surrender mesh model
@@ -484,18 +249,7 @@ void MeshClass::Scale(float scalex, float scaley, float scalez)
 }
 
 
-/***********************************************************************************************
- * MeshClass::Get_Deformed_Vertices -- Gets the deformed vertices for a skin                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/4/2001   gth : Created.                                                                 *
- *=============================================================================================*/
+// Gets the deformed vertices for a skin.
 void	MeshClass::Get_Deformed_Vertices(Vector3 *dst_vert, Vector3 *dst_norm)
 {
 	WWASSERT(Model->Get_Flag(MeshGeometryClass::SKIN));
@@ -503,18 +257,7 @@ void	MeshClass::Get_Deformed_Vertices(Vector3 *dst_vert, Vector3 *dst_norm)
 }
 
 
-/***********************************************************************************************
- * MeshClass::Get_Deformed_Vertices -- Gets the deformed vertices for a skin                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/4/2001   gth : Created.                                                                 *
- *=============================================================================================*/
+// Gets the deformed vertices for a skin.
 void MeshClass::Get_Deformed_Vertices(Vector3 *dst_vert)
 {
 	WWASSERT(Model->Get_Flag(MeshGeometryClass::SKIN));
@@ -524,18 +267,6 @@ void MeshClass::Get_Deformed_Vertices(Vector3 *dst_vert)
 	Model->get_deformed_vertices(dst_vert,Container->Get_HTree());
 }
 
-/***********************************************************************************************
- * MeshClass::Create_Decal -- creates a decal on this mesh                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void MeshClass::Create_Decal(DecalGeneratorClass * generator)
 {
 	WWMEMLOG(MEM_GEOMETRY);
@@ -599,18 +330,6 @@ void MeshClass::Create_Decal(DecalGeneratorClass * generator)
 }
 
 
-/***********************************************************************************************
- * MeshClass::Delete_Decal -- removes a decal from this mesh                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/26/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void MeshClass::Delete_Decal(uint32 decal_id)
 {
 	if (DecalMesh != nullptr) {
@@ -619,18 +338,6 @@ void MeshClass::Delete_Decal(uint32 decal_id)
 }
 
 
-/***********************************************************************************************
- * MeshClass::Get_Num_Polys -- returns the number of polys (tris) in this mesh                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/6/98     GTH : Created.                                                                 *
- *=============================================================================================*/
 int MeshClass::Get_Num_Polys() const
 {
 	if (Model) {
@@ -644,18 +351,6 @@ int MeshClass::Get_Num_Polys() const
 }
 
 
-/***********************************************************************************************
- * MeshClass::Render -- renders this mesh                                                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/10/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void MeshClass::Render(RenderInfoClass & rinfo)
 {
 	WWPROFILE("Mesh::Render");
@@ -808,18 +503,6 @@ void MeshClass::Render(RenderInfoClass & rinfo)
 }
 
 
-/***********************************************************************************************
- * MeshClass::Render_Material_Pass -- Render a procedural material pass for this mesh          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/4/2001   gth : Created.                                                                 *
- *=============================================================================================*/
 void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass * ib)
 {
 	//Added to allow dynamic opacity on additional render passed
@@ -828,7 +511,7 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 	Vector3 oldEmissive(-1,-1,-1);
 
 	if (LightEnvironment != nullptr) {
-		DX8Wrapper::Set_Light_Environment(LightEnvironment);
+		Renderer::Set_Light_Environment(LightEnvironment);
 	}
 
 	if (Model->Get_Flag(MeshModelClass::SKIN)) {
@@ -1012,21 +695,10 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 }
 
 
-/***********************************************************************************************
- * MeshClass::Special_Render -- special render function for meshes                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/10/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 void MeshClass::Special_Render(SpecialRenderInfoClass & rinfo)
 {
-	if ((Is_Not_Hidden_At_All() == false) && (rinfo.RenderType != SpecialRenderInfoClass::RENDER_SHADOW)) {
+	if (Is_Not_Hidden_At_All() == false)
+	{
 		return;
 	}
 
@@ -1059,14 +731,6 @@ void MeshClass::Special_Render(SpecialRenderInfoClass & rinfo)
 		}
 		rinfo.VisRasterizer->Enable_Two_Sided_Rendering(false);
 	}
-
-	if (rinfo.RenderType == SpecialRenderInfoClass::RENDER_SHADOW) {
-		const HTreeClass * htree = nullptr;
-		if (Container!=nullptr) {
-			htree = Container->Get_HTree();
-		}
-		Model->Shadow_Render(rinfo,Transform,htree);
-	}
 }
 
 void MeshClass::Replace_Texture(TextureClass* texture,TextureClass* new_texture)
@@ -1075,42 +739,13 @@ void MeshClass::Replace_Texture(TextureClass* texture,TextureClass* new_texture)
 }
 
 
-/***********************************************************************************************
- * MeshClass::Replace_VertexMaterial -- Replaces existing vertex material with a new one. Will *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/2/2001   hy : Created.                                                                  *
- *=============================================================================================*/
 void MeshClass::Replace_VertexMaterial(VertexMaterialClass* vmat,VertexMaterialClass* new_vmat)
 {
 	Model->Replace_VertexMaterial(vmat,new_vmat);
 }
 
 
-/***********************************************************************************************
- * MeshClass::Make_Unique -- Makes mesh unique in the renderer, but still shares system ram ge *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/2/2001   hy : Created.                                                                  *
- *=============================================================================================*/
+// Makes mesh unique in the renderer, but still shares system ram geometry.
 void MeshClass::Make_Unique(bool force_meshmdl_clone)
 {
 	// Usually we will not clone the mesh model if it is already unique - force_meshmdl_clone will
@@ -1124,18 +759,6 @@ void MeshClass::Make_Unique(bool force_meshmdl_clone)
 	REF_PTR_RELEASE(newmesh);
 }
 
-/***********************************************************************************************
- * MeshClass::Load -- creates a mesh out of a mesh chunk in a .w3d file                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- * 																														  *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   06/12/1997 GH  : Created.                                                                 *
- *=============================================================================================*/
 WW3DErrorType MeshClass::Load_W3D(ChunkLoadClass & cload)
 {
 	Vector3 boxmin,boxmax;
@@ -1204,18 +827,6 @@ WW3DErrorType MeshClass::Load_W3D(ChunkLoadClass & cload)
 }
 
 
-/***********************************************************************************************
- * MeshClass::Cast_Ray -- compute a ray intersection with this mesh                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/17/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool MeshClass::Cast_Ray(RayCollisionTestClass & raytest)
 {
 	if ((Get_Collision_Type() & raytest.CollisionType) == 0) return false;
@@ -1260,18 +871,6 @@ bool MeshClass::Cast_Ray(RayCollisionTestClass & raytest)
 }
 
 
-/***********************************************************************************************
- * MeshClass::Cast_AABox -- cast an AABox against this mesh                                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/17/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool MeshClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;
@@ -1290,18 +889,6 @@ bool MeshClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * Cast_OBBox -- Cast an obbox against this mesh                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/17/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 bool MeshClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;
@@ -1334,22 +921,8 @@ bool MeshClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * MeshClass::Intersect_AABox -- test for intersection with given AABox                        *
- *                                                                                             *
- * The AAbox given is assumed to be in world space.  Since meshes aren't generally in world    *
- * space, the test must be transformed into our local coordinate system (which turns it into   *
- * an OBBox...)                                                                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// The AAbox given is assumed to be in world space. Since meshes aren't generally in world space,
+// the test must be transformed into our local coordinate system (which turns it into an OBBox...).
 bool MeshClass::Intersect_AABox(AABoxIntersectionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;
@@ -1362,21 +935,8 @@ bool MeshClass::Intersect_AABox(AABoxIntersectionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * MeshClass::Intersect_OBBox -- test for intersection with the given OBBox                    *
- *                                                                                             *
- * The given OBBox is assumed to be in world space so we need to transform it into the mesh's  *
- * local coordinate system.                                                                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
+// The given OBBox is assumed to be in world space so we need to transform it into the mesh's local
+// coordinate system.
 bool MeshClass::Intersect_OBBox(OBBoxIntersectionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;
@@ -1389,18 +949,6 @@ bool MeshClass::Intersect_OBBox(OBBoxIntersectionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * MeshClass::Get_Obj_Space_Bounding_Sphere -- returns obj-space bounding sphere               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void MeshClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
 	if (Model) {
@@ -1412,18 +960,6 @@ void MeshClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 }
 
 
-/***********************************************************************************************
- * MeshClass::Get_Obj_Space_Bounding_Box -- returns the obj-space bounding box                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/19/00    gth : Created.                                                                 *
- *=============================================================================================*/
 void MeshClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 {
 	if (Model) {
@@ -1434,36 +970,12 @@ void MeshClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 }
 
 
-/***********************************************************************************************
- * MeshClass::Generate_Culling_Tree -- Generates a hierarchical culling tree for the mesh      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/18/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void MeshClass::Generate_Culling_Tree()
 {
 	Model->Generate_Culling_Tree();
 }
 
 
-/***********************************************************************************************
- * MeshClass::Add_Dependencies_To_List -- Add dependent files to the list.                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/18/99    PDS : Created.                                                                 *
- *=============================================================================================*/
 void MeshClass::Add_Dependencies_To_List
 (
 	DynamicVectorClass<StringClass> &file_list,
@@ -1500,18 +1012,6 @@ void MeshClass::Add_Dependencies_To_List
 }
 
 
-/***********************************************************************************************
- * MeshClass::Update_Cached_Bounding_Volumes -- default collision sphere.                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/14/2001    NH : Created.                                                                *
- *=============================================================================================*/
 void MeshClass::Update_Cached_Bounding_Volumes() const
 {
 	Get_Obj_Space_Bounding_Sphere(CachedBoundingSphere);

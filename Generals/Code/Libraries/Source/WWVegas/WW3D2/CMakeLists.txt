@@ -19,8 +19,6 @@ set(WW3D2_SRC
     #bmp2d.h
 #    boxrobj.cpp
 #    boxrobj.h
-    #bwrender.cpp
-    #bwrender.h
     camera.cpp
     camera.h
     #classid.h
@@ -58,8 +56,6 @@ set(WW3D2_SRC
     #dx8texman.h
 #    dx8vertexbuffer.cpp
 #    dx8vertexbuffer.h
-    #dx8webbrowser.cpp
-    #dx8webbrowser.h
 #    dx8wrapper.cpp
 #    dx8wrapper.h
     #dynamesh.cpp

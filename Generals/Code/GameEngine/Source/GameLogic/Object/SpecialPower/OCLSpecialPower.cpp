@@ -143,7 +143,7 @@ OCLSpecialPower::~OCLSpecialPower()
 //-------------------------------------------------------------------------------------------------
 void OCLSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
 {
-	if (getObject()->isDisabled())
+	if (!canDoSpecialPower())
 		return;
 
 	// sanity
@@ -209,7 +209,7 @@ void OCLSpecialPower::doSpecialPowerAtObject( Object *obj, UnsignedInt commandOp
 // ------------------------------------------------------------------------------------------------
 void OCLSpecialPower::doSpecialPower( UnsignedInt commandOptions )
 {
-	if (getObject()->isDisabled())
+	if (!canDoSpecialPower())
 		return;
 
 	Coord3D creationCoord;

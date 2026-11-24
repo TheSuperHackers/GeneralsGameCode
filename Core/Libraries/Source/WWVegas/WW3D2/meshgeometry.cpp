@@ -32,56 +32,6 @@
  *                                                                                             *
  *                    $Revision:: 14                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   MeshGeometryClass::MeshGeometryClass -- Constructor                                       *
- *   MeshGeometryClass::MeshGeometryClass -- Copy Constructor                                  *
- *    -- assignment operator                                                                   *
- *   MeshGeometryClass::~MeshGeometryClass -- destructor                                       *
- *   MeshGeometryClass::Reset_Geometry -- releases current resources and allocates space if ne *
- *   MeshGeometryClass::Get_Name -- returns the name                                           *
- *   MeshGeometryClass::Set_Name -- set the name of this model                                 *
- *   MeshGeometryClass::Get_User_Text -- get the user-text buffer                              *
- *   MeshGeometryClass::Set_User_Text -- set the user text buffer                              *
- *   MeshGeometryClass::Get_Bounding_Box -- get the bounding box                               *
- *   MeshGeometryClass::Get_Bounding_Sphere -- get the bounding sphere                         *
- *   MeshGeometryClass::Generate_Rigid_APT -- generate active polygon table                    *
- *   MeshGeometryClass::Generate_Skin_APT -- generate an active polygon table                  *
- *   MeshGeometryClass::Contains -- test if the mesh contains the given point                  *
- *   MeshGeometryClass::Cast_Ray -- compute a ray intersection with this mesh                  *
- *   MeshGeometryClass::Cast_AABox -- cast an AABox against this mesh                          *
- *   MeshGeometryClass::Cast_OBBox -- Cast an obbox against this mesh                          *
- *   MeshGeometryClass::Intersect_OBBox -- test for intersection with the given OBBox          *
- *   MeshGeometryClass::Cast_World_Space_AABox -- test for intersection with a worldspace AABox*
- *   MeshGeometryClass::cast_semi_infinite_axis_aligned_ray -- casts an axis aligned ray       *
- *   MeshGeometryClass::cast_aabox_identity -- aligned aabox test                              *
- *   MeshGeometryClass::cast_aabox_z90 -- aabox test which is rotated about z by 90            *
- *   MeshGeometryClass::cast_aabox_z180 -- aabox test which is rotated about z by 180          *
- *   MeshGeometryClass::cast_aabox_z270 -- aabox test which is rotated about z by 270          *
- *   MeshGeometryClass::cast_ray_brute_force -- brute force ray-cast                           *
- *   MeshGeometryClass::cast_aabox_brute_force -- brute force aabox cast                       *
- *   MeshGeometryClass::cast_obbox_brute_force -- brute force obbox cast                       *
- *   MeshGeometryClass::intersect_obbox_brute_force -- brute force intersection check          *
- *   MeshGeometryClass::Compute_Plane_Equations -- Recalculates the plane equations            *
- *   MeshGeometryClass::Compute_Vertex_Normals -- recompute the vertex normals                 *
- *   MeshGeometryClass::Compute_Bounds -- recomputes the bounding volumes                      *
- *   MeshGeometryClass::get_vert_normals -- get the vertex normal array                        *
- *   MeshGeometryClass::Get_Vertex_Normal_Array -- validates and returns the vertex normal arr *
- *   MeshGeometryClass::get_planes -- get the plane array memory (internal)                    *
- *   MeshGeometryClass::Get_Plane_Array -- validates and returns the array of plane equations  *
- *   MeshGeometryClass::Compute_Plane -- compute the plane equation of a single poly           *
- *   MeshGeometryClass::Generate_Culling_Tree -- Generate an AABTree for this mesh             *
- *   MeshGeometryClass::Load_W3D -- Load a mesh from a w3d                                     *
- *   MeshGeometryClass::read_chunks -- read w3d chunks                                         *
- *   MeshGeometryClass::read_vertices -- read the vertex chunk from a W3D file                 *
- *   MeshGeometryClass::read_vertex_normals -- read the vertex normals chunk from a w3d file   *
- *   MeshGeometryClass::read_triangles -- read the triangles chunk from a w3d file             *
- *   MeshGeometryClass::read_user_text -- read the user text chunk from a w3d file             *
- *   MeshGeometryClass::read_vertex_influences -- read the vertex influences chunk from a w3d  *
- *   MeshGeometryClass::read_vertex_shade_indices -- read the vertex shade indices chunk       *
- *   MeshGeometryClass::read_aabtree -- read the AABTree chunk from a w3d file                 *
- *   MeshGeometryClass::Generate_APT -- generate an apt for a box and view direction           *
- *   MeshGeometryClass::Generate_Rigid_APT -- generate an apt using backface culling           *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -97,9 +47,6 @@
 #include "w3d_file.h"
 #include "WWMath/vp.h"
 #include "htree.h"
-#include "WWMath/matrix4.h"
-#include "rinfo.h"
-#include "camera.h"
 
 
 #if (OPTIMIZE_PLANEEQ_RAM)
@@ -112,18 +59,6 @@ static SimpleVecClass<Vector3> _VNormArray(1024);
 #endif
 
 
-/***********************************************************************************************
- * MeshGeometryClass::MeshGeometryClass -- Constructor                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 MeshGeometryClass::MeshGeometryClass() :
 	MeshName(nullptr),
 	UserText(nullptr),
@@ -148,18 +83,6 @@ MeshGeometryClass::MeshGeometryClass() :
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::MeshGeometryClass -- Copy Constructor                                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 MeshGeometryClass::MeshGeometryClass(const MeshGeometryClass & that) :
 	MeshName(nullptr),
 	UserText(nullptr),
@@ -185,18 +108,6 @@ MeshGeometryClass::MeshGeometryClass(const MeshGeometryClass & that) :
 }
 
 
-/***********************************************************************************************
- *  -- assignment operator                                                                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 MeshGeometryClass & MeshGeometryClass::operator = (const MeshGeometryClass & that)
 {
 	if (this != &that) {
@@ -234,36 +145,13 @@ MeshGeometryClass & MeshGeometryClass::operator = (const MeshGeometryClass & tha
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::~MeshGeometryClass -- destructor                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 MeshGeometryClass::~MeshGeometryClass()
 {
 	Reset_Geometry(0,0);
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Reset_Geometry -- releases current resources and allocates space if need *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
+// Releases current resources and allocates space if needed.
 void MeshGeometryClass::Reset_Geometry(int polycount,int vertcount)
 {
 	// Release everything we have and reset to initial state
@@ -304,18 +192,6 @@ void MeshGeometryClass::Reset_Geometry(int polycount,int vertcount)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Get_Name -- returns the name                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 const char * MeshGeometryClass::Get_Name() const
 {
 	if (MeshName) {
@@ -325,18 +201,6 @@ const char * MeshGeometryClass::Get_Name() const
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Set_Name -- set the name of this model                                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 void MeshGeometryClass::Set_Name(const char * newname)
 {
 	if (MeshName) {
@@ -349,18 +213,6 @@ void MeshGeometryClass::Set_Name(const char * newname)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Get_User_Text -- get the user-text buffer                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 const char * MeshGeometryClass::Get_User_Text()
 {
 	if (UserText) {
@@ -370,18 +222,6 @@ const char * MeshGeometryClass::Get_User_Text()
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Set_User_Text -- set the user text buffer                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 void MeshGeometryClass::Set_User_Text(char * usertext)
 {
 	if (UserText) {
@@ -394,18 +234,6 @@ void MeshGeometryClass::Set_User_Text(char * usertext)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Get_Bounding_Box -- get the bounding box                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 void MeshGeometryClass::Get_Bounding_Box(AABoxClass * set_box)
 {
 	WWASSERT(set_box != nullptr);
@@ -414,18 +242,6 @@ void MeshGeometryClass::Get_Bounding_Box(AABoxClass * set_box)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Get_Bounding_Sphere -- get the bounding sphere                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 void MeshGeometryClass::Get_Bounding_Sphere(SphereClass * set_sphere)
 {
 	WWASSERT(set_sphere != nullptr);
@@ -434,18 +250,7 @@ void MeshGeometryClass::Get_Bounding_Sphere(SphereClass * set_sphere)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Generate_Rigid_APT -- generate an apt using backface culling             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/10/2001  gth : Created.                                                                 *
- *=============================================================================================*/
+// Generate an apt using backface culling.
 void MeshGeometryClass::Generate_Rigid_APT(const Vector3 & view_dir, SimpleDynVecClass<uint32> & apt)
 {
 	const Vector4 * norms = Get_Plane_Array();
@@ -461,20 +266,6 @@ void MeshGeometryClass::Generate_Rigid_APT(const Vector3 & view_dir, SimpleDynVe
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Generate_Rigid_APT -- generate active polygon table                      *
- *                                                                                             *
- *    This function will cull the mesh against the specified volume                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 void MeshGeometryClass::Generate_Rigid_APT(const OBBoxClass & local_box, SimpleDynVecClass<uint32> & apt)
 {
 	if (CullTree != nullptr) {
@@ -503,18 +294,6 @@ void MeshGeometryClass::Generate_Rigid_APT(const OBBoxClass & local_box, SimpleD
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Generate_APT -- generate an apt for a box and view direction             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   5/10/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 void MeshGeometryClass::Generate_Rigid_APT(const OBBoxClass & local_box,const Vector3 & viewdir,SimpleDynVecClass<uint32> & apt)
 {
 	if (CullTree != nullptr) {
@@ -544,20 +323,6 @@ void MeshGeometryClass::Generate_Rigid_APT(const OBBoxClass & local_box,const Ve
 	}
 }
 
-/***********************************************************************************************
- * MeshGeometryClass::Generate_Skin_APT -- generate an active polygon table                    *
- *                                                                                             *
- *    This function culls the mesh against the specified volume                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 void MeshGeometryClass::Generate_Skin_APT(const OBBoxClass & world_box, SimpleDynVecClass<uint32> & apt, const Vector3 *world_vertex_locs)
 {
 	WWASSERT(world_vertex_locs);
@@ -585,18 +350,6 @@ void MeshGeometryClass::Generate_Skin_APT(const OBBoxClass & world_box, SimpleDy
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Contains -- test if the mesh contains the given point                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 bool MeshGeometryClass::Contains(const Vector3 &point)
 {
 	// To determine whether the mesh contains a point, we will use the parity method (cast a
@@ -629,18 +382,6 @@ bool MeshGeometryClass::Contains(const Vector3 &point)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Cast_Ray -- compute a ray intersection with this mesh                    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/2001  NH : Created.                                                                   *
- *=============================================================================================*/
 bool MeshGeometryClass::Cast_Ray(RayCollisionTestClass & raytest)
 {
 	bool hit = false;
@@ -655,18 +396,6 @@ bool MeshGeometryClass::Cast_Ray(RayCollisionTestClass & raytest)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Cast_AABox -- cast an AABox against this mesh                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/2001  NH : Created.                                                                   *
- *=============================================================================================*/
 bool MeshGeometryClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 {
 	bool hit = false;
@@ -681,18 +410,6 @@ bool MeshGeometryClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Cast_OBBox -- Cast an obbox against this mesh                            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/2001  NH : Created.                                                                   *
- *=============================================================================================*/
 bool MeshGeometryClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 {
 	bool hit = false;
@@ -707,18 +424,6 @@ bool MeshGeometryClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Intersect_OBBox -- test for intersection with the given OBBox            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/2001  NH : Created.                                                                   *
- *=============================================================================================*/
 bool MeshGeometryClass::Intersect_OBBox(OBBoxIntersectionTestClass & boxtest)
 {
 	bool hit = false;
@@ -733,18 +438,6 @@ bool MeshGeometryClass::Intersect_OBBox(OBBoxIntersectionTestClass & boxtest)
 }
 
 
-/***********************************************************************************************
- *   MeshGeometryClass::Cast_World_Space_AABox -- test for intersection with a worldspace AABox*
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/2001  NH : Created.                                                                   *
- *=============================================================================================*/
 bool MeshGeometryClass::Cast_World_Space_AABox(AABoxCollisionTestClass & boxtest, const Matrix3D &transform)
 {
 	/*
@@ -810,20 +503,7 @@ bool MeshGeometryClass::Cast_World_Space_AABox(AABoxCollisionTestClass & boxtest
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::cast_semi_infinite_axis_aligned_ray -- casts an axis aligned ray         *
- *                                                                                             *
- *    This function is used by the 'Contains' function                                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
+// This function is used by the 'Contains' function.
 int MeshGeometryClass::cast_semi_infinite_axis_aligned_ray(const Vector3 & start_point, int axis_dir,
 	unsigned char & flags)
 {
@@ -875,18 +555,6 @@ int MeshGeometryClass::cast_semi_infinite_axis_aligned_ray(const Vector3 & start
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::cast_aabox_identity -- aligned aabox test                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/2001  NH : Created.                                                                   *
- *=============================================================================================*/
 bool MeshGeometryClass::cast_aabox_identity(AABoxCollisionTestClass & boxtest, const Vector3 & translation)
 {
 	// transform the test into the mesh's coordinate system
@@ -902,18 +570,6 @@ bool MeshGeometryClass::cast_aabox_identity(AABoxCollisionTestClass & boxtest, c
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::cast_aabox_z90 -- aabox test which is rotated about z by 90              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/2001  NH : Created.                                                                   *
- *=============================================================================================*/
 bool MeshGeometryClass::cast_aabox_z90(AABoxCollisionTestClass & boxtest, const Vector3 & translation)
 {
 	// transform the test into the mesh's coordinate system
@@ -941,18 +597,6 @@ bool MeshGeometryClass::cast_aabox_z90(AABoxCollisionTestClass & boxtest, const 
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::cast_aabox_z180 -- aabox test which is rotated about z by 180            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/2001  NH : Created.                                                                   *
- *=============================================================================================*/
 bool MeshGeometryClass::cast_aabox_z180(AABoxCollisionTestClass & boxtest, const Vector3 & translation)
 {
 	// transform the test into the meshes coordinate system
@@ -979,18 +623,6 @@ bool MeshGeometryClass::cast_aabox_z180(AABoxCollisionTestClass & boxtest, const
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::cast_aabox_z270 -- aabox test which is rotated about z by 270            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/2001  NH : Created.                                                                   *
- *=============================================================================================*/
 bool MeshGeometryClass::cast_aabox_z270(AABoxCollisionTestClass & boxtest, const Vector3 & translation)
 {
 	// transform the test into the mesh's coordinate system
@@ -1018,20 +650,7 @@ bool MeshGeometryClass::cast_aabox_z270(AABoxCollisionTestClass & boxtest, const
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::intersect_obbox_brute_force -- brute force intersection check            *
- *                                                                                             *
- *    This function gets used if the mesh does not have a CullTree                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/2001  NH : Created.                                                                   *
- *=============================================================================================*/
+// This function gets used if the mesh does not have a CullTree.
 bool MeshGeometryClass::intersect_obbox_brute_force(OBBoxIntersectionTestClass & localtest)
 {
 	TriClass tri;
@@ -1066,20 +685,7 @@ bool MeshGeometryClass::intersect_obbox_brute_force(OBBoxIntersectionTestClass &
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::cast_ray_brute_force -- brute force ray-cast                             *
- *                                                                                             *
- * This function gets used if the mesh does not have a CullTree                                *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/2001  NH : Created.                                                                   *
- *=============================================================================================*/
+// This function gets used if the mesh does not have a CullTree.
 bool MeshGeometryClass::cast_ray_brute_force(RayCollisionTestClass & raytest)
 {
 	int srtri;
@@ -1121,20 +727,7 @@ bool MeshGeometryClass::cast_ray_brute_force(RayCollisionTestClass & raytest)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::cast_aabox_brute_force -- brute force aabox cast                         *
- *                                                                                             *
- *    This function gets used only if the mesh doesn't have a CullTree                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/2001  NH : Created.                                                                   *
- *=============================================================================================*/
+// This function gets used only if the mesh doesn't have a CullTree.
 bool MeshGeometryClass::cast_aabox_brute_force(AABoxCollisionTestClass & boxtest)
 {
 	/*
@@ -1179,20 +772,7 @@ bool MeshGeometryClass::cast_aabox_brute_force(AABoxCollisionTestClass & boxtest
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::cast_obbox_brute_force -- brute force obbox cast                         *
- *                                                                                             *
- *    This function gets used only if the mesh doesn't have a CullTree                         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/1/2001  NH : Created.                                                                   *
- *=============================================================================================*/
+// This function gets used only if the mesh doesn't have a CullTree.
 bool MeshGeometryClass::cast_obbox_brute_force(OBBoxCollisionTestClass & boxtest)
 {
 	/*
@@ -1237,20 +817,8 @@ bool MeshGeometryClass::cast_obbox_brute_force(OBBoxCollisionTestClass & boxtest
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Compute_Plane_Equations -- Recalculates the plane equations              *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *    This function should not normally be needed during run-time.                             *
- *    The array pointer must point to enough memory to hold a plane equation per polygon       *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: This function should not normally be needed during run-time. The array pointer must
+// point to enough memory to hold a plane equation per polygon.
 void MeshGeometryClass::Compute_Plane_Equations(Vector4 * peq)
 {
 	WWASSERT(peq!=nullptr);
@@ -1274,20 +842,8 @@ void MeshGeometryClass::Compute_Plane_Equations(Vector4 * peq)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Compute_Vertex_Normals -- recompute the vertex normals                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *    This function should not normally be needed during run-time.                             *
- *		The array pointer must point to an array of Vector3's of size NumVerts                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: This function should not normally be needed during run-time. The array pointer must
+// point to an array of Vector3's of size NumVerts.
 void MeshGeometryClass::Compute_Vertex_Normals(Vector3 * vnorm)
 {
 	WWASSERT(vnorm != nullptr);
@@ -1357,19 +913,7 @@ void MeshGeometryClass::Compute_Vertex_Normals(Vector3 * vnorm)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Compute_Bounds -- recomputes the bounding volumes                        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *    This function should not normally be needed during run-time.                             *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: This function should not normally be needed during run-time.
 void MeshGeometryClass::Compute_Bounds(Vector3 * verts)
 {
 	BoundBoxMin.Set(0,0,0);
@@ -1396,18 +940,6 @@ void MeshGeometryClass::Compute_Bounds(Vector3 * verts)
 
 
 
-/***********************************************************************************************
- * MeshGeometryClass::get_vert_normals -- get the vertex normal array                          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/14/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 Vector3 * MeshGeometryClass::get_vert_normals()
 {
 #if (OPTIMIZE_VNORM_RAM)
@@ -1420,18 +952,6 @@ Vector3 * MeshGeometryClass::get_vert_normals()
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Get_Vertex_Normal_Array -- validates and returns the vertex normal array *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/14/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 const Vector3 * MeshGeometryClass::Get_Vertex_Normal_Array()
 {
 #if (OPTIMIZE_VNORM_RAM)
@@ -1447,18 +967,6 @@ const Vector3 * MeshGeometryClass::Get_Vertex_Normal_Array()
 
 
 
-/***********************************************************************************************
- * MeshGeometryClass::get_planes -- get the plane array memory (internal)                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/14/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 Vector4 * MeshGeometryClass::get_planes(bool create)
 {
 #if (OPTIMIZE_PLANEEQ_RAM)
@@ -1476,18 +984,7 @@ Vector4 * MeshGeometryClass::get_planes(bool create)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Get_Plane_Array -- validates and returns the array of plane equations    *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/14/2001  gth : Created.                                                                 *
- *=============================================================================================*/
+// Validates the array of plane equations before returning it.
 const Vector4 * MeshGeometryClass::Get_Plane_Array(bool create)
 {
 #if (OPTIMIZE_PLANEEQ_RAM)
@@ -1503,18 +1000,6 @@ const Vector4 * MeshGeometryClass::Get_Plane_Array(bool create)
 #endif
 }
 
-/***********************************************************************************************
- * MeshGeometryClass::Compute_Plane -- compute the plane equation of a single poly             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/14/2001  gth : Created.                                                                 *
- *=============================================================================================*/
 void MeshGeometryClass::Compute_Plane(int pidx,PlaneClass * set_plane) const
 {
 	WWASSERT(pidx >= 0);
@@ -1526,19 +1011,7 @@ void MeshGeometryClass::Compute_Plane(int pidx,PlaneClass * set_plane) const
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Generate_Culling_Tree -- Generate an AABTree for this mesh               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *    This function should not normally be needed during run-time.                             *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
+// WARNING: This function should not normally be needed during run-time.
 void MeshGeometryClass::Generate_Culling_Tree()
 {
 	WWMEMLOG(MEM_CULLINGDATA);
@@ -1553,21 +1026,8 @@ void MeshGeometryClass::Generate_Culling_Tree()
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::Load_W3D -- Load a mesh from a w3d file                                  *
- *                                                                                             *
- *    This function will extract just the geometry information from a W3D mesh.  It must       *
- *    be completely replaced by any derived classes that want to handle all of the chunks.     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
+// This function will extract just the geometry information from a W3D mesh. It must be completely
+// replaced by any derived classes that want to handle all of the chunks.
 WW3DErrorType MeshGeometryClass::Load_W3D(ChunkLoadClass & cload)
 {
 	/*
@@ -1690,21 +1150,8 @@ Error:
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::read_chunks -- read w3d chunks                                           *
- *                                                                                             *
- *    Again, derived classes must replace this function with one that handles all of their     *
- *    chunks in addition to calling to this class for the individual chunks that it handles.   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
+// Again, derived classes must replace this function with one that handles all of their chunks in
+// addition to calling to this class for the individual chunks that it handles.
 WW3DErrorType MeshGeometryClass::read_chunks(ChunkLoadClass & cload)
 {
 	/*
@@ -1766,18 +1213,6 @@ WW3DErrorType MeshGeometryClass::read_chunks(ChunkLoadClass & cload)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::read_vertices -- read the vertex chunk from a W3D file                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WW3DErrorType MeshGeometryClass::read_vertices(ChunkLoadClass & cload)
 {
 	W3dVectorStruct vert;
@@ -1799,18 +1234,6 @@ WW3DErrorType MeshGeometryClass::read_vertices(ChunkLoadClass & cload)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::read_vertex_normals -- read the vertex normals chunk from a w3d file     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WW3DErrorType MeshGeometryClass::read_vertex_normals(ChunkLoadClass & cload)
 {
 	W3dVectorStruct norm;
@@ -1829,18 +1252,6 @@ WW3DErrorType MeshGeometryClass::read_vertex_normals(ChunkLoadClass & cload)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::read_triangles -- read the triangles chunk from a w3d file               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WW3DErrorType MeshGeometryClass::read_triangles(ChunkLoadClass & cload)
 {
 	W3dTriStruct tri;
@@ -1878,18 +1289,6 @@ WW3DErrorType MeshGeometryClass::read_triangles(ChunkLoadClass & cload)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::read_user_text -- read the user text chunk from a w3d file               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WW3DErrorType MeshGeometryClass::read_user_text(ChunkLoadClass & cload)
 {
 	unsigned int textlen = cload.Cur_Chunk_Length();
@@ -1917,18 +1316,6 @@ WW3DErrorType MeshGeometryClass::read_user_text(ChunkLoadClass & cload)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::read_vertex_influences -- read the vertex influences chunk from a w3d fi *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WW3DErrorType MeshGeometryClass::read_vertex_influences(ChunkLoadClass & cload)
 {
 	W3dVertInfStruct vinf;
@@ -1948,18 +1335,6 @@ WW3DErrorType MeshGeometryClass::read_vertex_influences(ChunkLoadClass & cload)
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::read_vertex_shade_indices -- read the vertex shade indices chunk         *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WW3DErrorType MeshGeometryClass::read_vertex_shade_indices(ChunkLoadClass & cload)
 {
 	uint32 * shade_index = get_shade_indices(true);
@@ -1975,18 +1350,6 @@ WW3DErrorType MeshGeometryClass::read_vertex_shade_indices(ChunkLoadClass & cloa
 }
 
 
-/***********************************************************************************************
- * MeshGeometryClass::read_aabtree -- read the AABTree chunk from a w3d file                   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
 WW3DErrorType MeshGeometryClass::read_aabtree(ChunkLoadClass &cload)
 {
 	REF_PTR_RELEASE(CullTree);
@@ -2086,42 +1449,5 @@ void MeshGeometryClass::get_deformed_vertices(Vector3 *dst_vert, Vector3 *dst_no
 		mytm.Set_Translation(Vector3(0.0f,0.0f,0.0f));
 		VectorProcessorClass::Transform(dst_norm+vi,src_norm+vi,mytm,cnt-vi);
 		vi=cnt;
-	}
-}
-
-// Destination pointers MUST point to arrays large enough to hold all vertices
-void MeshGeometryClass::get_deformed_screenspace_vertices(Vector4 *dst_vert,const RenderInfoClass & rinfo,const Matrix3D & mesh_transform,const HTreeClass * htree)
-{
-	Matrix4x4 prj = rinfo.Camera.Get_Projection_Matrix() * rinfo.Camera.Get_View_Matrix() * mesh_transform;
-
-	Vector3 * src_vert = Vertex->Get_Array();
-	int vertex_count=Get_Vertex_Count();
-
-	if (Get_Flag(SKIN) && VertexBoneLink && htree) {
-		uint16 * bonelink = VertexBoneLink->Get_Array();
-		for (int vi = 0; vi < vertex_count;) {
-			int idx=bonelink[vi];
-
-			Matrix4x4 tm = prj * htree->Get_Transform(idx);
-
-			// Count equal matrices (the vertices should be pre-sorted by matrices they use)
-			int cnt = vi;
-			for (; cnt < vertex_count; cnt++) if (idx!=bonelink[cnt]) break;
-
-			// Transform to screenspace (x,y,z,w)
-			VectorProcessorClass::Transform(
-				dst_vert+vi,
-				src_vert+vi,
-				tm,
-				cnt-vi);
-
-			vi=cnt;
-		}
-	} else {
-		VectorProcessorClass::Transform(
-			dst_vert,
-			src_vert,
-			prj,
-			vertex_count);
 	}
 }

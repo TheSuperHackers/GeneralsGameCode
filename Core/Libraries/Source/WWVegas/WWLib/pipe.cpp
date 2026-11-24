@@ -30,12 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   Pipe::Put_To -- Connect a pipe to flow data into from this pipe.                          *
- *   Pipe::Flush -- Flush all pending data out the pipe.                                       *
- *   Pipe::Put -- Feed some data through the pipe.                                             *
- *   Pipe::~Pipe -- Destructor for pipe class object.                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -44,21 +38,8 @@
 #include	<stddef.h>
 
 
-/***********************************************************************************************
- * Pipe::~Pipe -- Destructor for pipe class object.                                            *
- *                                                                                             *
- *    This destructor will unlink itself from any other pipes that it may be chained to. In    *
- *    the process, it will flush any output it may have pending.                               *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/03/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Unlinks itself from any other pipes that it may be chained to. In the process, it will flush any
+// output it may have pending.
 Pipe::~Pipe()
 {
 	if (ChainTo != nullptr) {
@@ -73,21 +54,7 @@ Pipe::~Pipe()
 }
 
 
-/***********************************************************************************************
- * Pipe::Put_To -- Connect a pipe to flow data into from this pipe.                            *
- *                                                                                             *
- *    This routine will link two pipes together. The specified pipe will be fed data from      *
- *    this pipe.                                                                               *
- *                                                                                             *
- * INPUT:   pipe  -- Pointer to the pipe that data will flow to.                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/03/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// The specified pipe will be fed data from this pipe.
 void Pipe::Put_To(Pipe * pipe)
 {
 	if (ChainTo != pipe) {
@@ -109,24 +76,7 @@ void Pipe::Put_To(Pipe * pipe)
 }
 
 
-/***********************************************************************************************
- * Pipe::Put -- Feed some data through the pipe.                                               *
- *                                                                                             *
- *    Use this to force feed data through the pipe. It is guaranteed to accept data as fast    *
- *    as you can supply it.                                                                    *
- *                                                                                             *
- * INPUT:   source   -- Pointer to the data to feed to this routine.                           *
- *                                                                                             *
- *          length   -- The number of bytes of data to submit.                                 *
- *                                                                                             *
- * OUTPUT:  Returns with the number of bytes actually output at the other far distant final    *
- *          end of the pipe.                                                                   *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/03/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// It is guaranteed to accept data as fast as you can supply it.
 int Pipe::Put(void const * source, int length)
 {
 	if (ChainTo != nullptr) {
@@ -136,24 +86,8 @@ int Pipe::Put(void const * source, int length)
 }
 
 
-/***********************************************************************************************
- * Pipe::Flush -- Flush all pending data out the pipe.                                         *
- *                                                                                             *
- *    Then the pipe needs to be flushed, this routine will be called. Since pipe segments      *
- *    might have internal staging buffer for the data, this routine is necessary to force      *
- *    all staging buffers to be clear. This routine is called when the pipe is being           *
- *    destroyed.                                                                               *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  Returns with the number of bytes output at the far distant final end of the pipe   *
- *          chain.                                                                             *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/03/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
+// Since pipe segments might have internal staging buffer for the data, this routine is necessary to
+// force all staging buffers to be clear. This routine is called when the pipe is being destroyed.
 int Pipe::Flush()
 {
 	if (ChainTo != nullptr) {

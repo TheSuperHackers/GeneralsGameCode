@@ -34,8 +34,6 @@
  *                                                                                             *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  * 08/05/02 KM Texture class redesign
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "WWLib/always.h"

@@ -30,28 +30,6 @@
  *                                                                                             *
  *                    $Revision:: 22                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   SceneClass::SceneClass -- constructor                                                     *
- *   SceneClass::~SceneClass -- destructor                                                     *
- *   SceneClass::Render -- preps the scene for rendering, derived classes should override      *
- *   SceneClass::Add_Render_Object -- base add function                                        *
- *   SceneClass::Remove_Render_Object -- base remove function                                  *
- *   SceneClass::Set_Depth_Cue -- set the depth cue values                                     *
- *   SceneClass::Set_Fog_Range -- set the fog range                                            *
- *   SceneClass::Get_Fog_Range -- get the fog range                                            *
- *   SceneClass::Render -- preps the scene for rendering, derived classes should add functional*
- *   SimpleSceneClass -- Constructor                                                           *
- *   SimpleSceneClass::~SimpleSceneClass -- destructor                                         *
- *   SimpleSceneClass::Add_Render_Object -- add a render object to the scene                   *
- *   SimpleSceneClass::Remove_Render_Object -- remove a render object from this scene          *
- *   SimpleSceneClass::Visiblity_Check -- set the visibility status of the render objects      *
- *   SimpleSceneClass::Render -- internal scene rendering function                             *
- *   SimpleSceneClass::Render -- Render this scene                                             *
- *   SimpleSceneClass::Create_Iterator -- create an iterator for this scene                    *
- *   SimpleSceneClass::Destroy_Iterator -- destroy an iterater of this scene                   *
- *   SimpleSceneClass::Compute_Point_Visibility -- returns visibility of a point               *
- *   SimpleSceneClass::Remove_All_Render_Objects -- Removes all render objects from the scene  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -92,18 +70,6 @@ protected:
 };
 
 
-/***********************************************************************************************
- * SceneClass::SceneClass -- constructor                                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/10/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 SceneClass::SceneClass() :
 	AmbientLight(0.5f,0.5f,0.5f),
 	PolyRenderMode(FILL),
@@ -116,82 +82,31 @@ SceneClass::SceneClass() :
 }
 
 
-/***********************************************************************************************
- * SceneClass::~SceneClass -- destructor                                                       *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/10/98   GTH : Created.                                                                 *
- *=============================================================================================*/
 SceneClass::~SceneClass()
 {
 }
 
-/***********************************************************************************************
- * SceneClass::Add_Render_Object -- base add function                                          *
- *                                                                                             *
- * This function only sets the render object's scene pointer and calls the notify method.      *
- * Derived classes must add the functionality of actually storing a pointer to the object      *
- * and doing something with it :)                                                              *
- *                                                                                             *
- * INPUT:                                                                                      *
- * obj - pointer to the object to add                                                          *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/25/99    GTH : Created.                                                                 *
- *=============================================================================================*/
+// This function only sets the render object's scene pointer and calls the notify method. Derived
+// classes must add the functionality of actually storing a pointer to the object and doing
+// something with it :).
 void SceneClass::Add_Render_Object(RenderObjClass * obj)
 {
 	obj->Notify_Added(this);
 }
 
 
-/***********************************************************************************************
- * SceneClass::Remove_Render_Object -- base remove function                                    *
- *                                                                                             *
- * Similar to the add function; concrete derived classes must override and actually remove     *
- * the object...                                                                               *
- *                                                                                             *
- * INPUT:                                                                                      *
- * obj - pointer to the object to remove                                                       *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/25/99    GTH : Created.                                                                 *
- *=============================================================================================*/
+// Similar to the add function; concrete derived classes must override and actually remove the
+// object...
 void SceneClass::Remove_Render_Object(RenderObjClass * obj)
 {
 	obj->Notify_Removed(this);
 }
 
 
-/***********************************************************************************************
- * SceneClass::Render -- preps the scene for rendering, derived classes should add functionalit*
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/10/98   GTH : Created.                                                                 *
- *=============================================================================================*/
+// Preps the scene for rendering, derived classes should add functionality.
 void SceneClass::Render(RenderInfoClass & rinfo)
 {
-	DX8Wrapper::Set_Fog(FogEnabled, FogColor, FogStart, FogEnd);
+	Renderer::Set_Fog(FogEnabled, FogColor, FogStart, FogEnd);
 
 	if (Get_Extra_Pass_Polygon_Mode()==EXTRA_PASS_DISABLE) {
 		Customized_Render(rinfo);
@@ -222,57 +137,17 @@ void SceneClass::Render(RenderInfoClass & rinfo)
 }
 
 
-/***********************************************************************************************
- * SimpleSceneClass -- Constructor                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/24/98    GTH : Created.                                                                 *
- *   9/10/99    GTH : Created.                                                                 *
- *=============================================================================================*/
 SimpleSceneClass::SimpleSceneClass() :
    Visibility_Checked(false)
 {
 
 }
 
-/***********************************************************************************************
- * SimpleSceneClass::~SimpleSceneClass -- destructor                                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 SimpleSceneClass::~SimpleSceneClass()
 {
 	Remove_All_Render_Objects();
 }
 
-/***********************************************************************************************
- * SimpleSceneClass::Remove_All_Render_Objects -- Removes all render objects from the scene    *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   8/27/2001  hy : Created.                                                                  *
- *=============================================================================================*/
 void SimpleSceneClass::Remove_All_Render_Objects()
 {
 	RenderObjClass * obj;
@@ -282,18 +157,6 @@ void SimpleSceneClass::Remove_All_Render_Objects()
 	}
 }
 
-/***********************************************************************************************
- * SimpleSceneClass::Add_Render_Object -- add a render object to the scene                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void SimpleSceneClass::Add_Render_Object(RenderObjClass * obj)
 {
 	SceneClass::Add_Render_Object(obj);
@@ -301,18 +164,6 @@ void SimpleSceneClass::Add_Render_Object(RenderObjClass * obj)
 }
 
 
-/***********************************************************************************************
- * SimpleSceneClass::Remove_Render_Object -- remove a render object from this scene            *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/24/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void SimpleSceneClass::Remove_Render_Object(RenderObjClass * obj)
 {
 	SceneClass::Remove_Render_Object(obj);
@@ -354,19 +205,7 @@ void SimpleSceneClass::Unregister(RenderObjClass * obj,RegType for_what)
 
 
 
-/***********************************************************************************************
- * SimpleSceneClass::Visiblity_Check -- set the visibility status of the render objects        *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/24/98    GTH : Created.                                                                 *
- *   4/13/98    NH : Added non-trivial checking (sphere vs. frustum).                          *
- *=============================================================================================*/
+// Checks the bounding sphere of each render object against the frustum.
 void SimpleSceneClass::Visibility_Check(CameraClass * camera)
 {
 	RefRenderObjListIterator it(&RenderList);
@@ -393,21 +232,8 @@ void SimpleSceneClass::Visibility_Check(CameraClass * camera)
 }
 
 
-/***********************************************************************************************
- * SimpleSceneClass::Compute_Point_Visibility -- returns visibility of a point                 *
- *                                                                                             *
- *    This function is used by the default dazzle behavior.  SimpleSceneClass's implementation *
- *    casts a ray against every object in the scene to see if the dazzle is occluded.          *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   6/13/2001  gth : Created.                                                                 *
- *=============================================================================================*/
+// This function is used by the default dazzle behavior. SimpleSceneClass's implementation casts a
+// ray against every object in the scene to see if the dazzle is occluded.
 float SimpleSceneClass::Compute_Point_Visibility
 (
 	RenderInfoClass & rinfo,
@@ -432,20 +258,7 @@ float SimpleSceneClass::Compute_Point_Visibility
 }
 
 
-/***********************************************************************************************
- * SimpleSceneClass::Render -- Render this scene                                               *
- *                                                                                             *
- * passes the gerd and camera to all render objects for rendering...                           *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/10/98   GTH : Created.                                                                 *
- *=============================================================================================*/
+// Passes the gerd and camera to all render objects for rendering...
 void SimpleSceneClass::Customized_Render(RenderInfoClass & rinfo)
 {
 //	SceneClass::Render(rinfo);
@@ -470,16 +283,16 @@ void SimpleSceneClass::Customized_Render(RenderInfoClass & rinfo)
 	// derived classes should use light environment
 	WWASSERT(rinfo.light_environment==nullptr);
 	// Turn off lights in case we have none
-	DX8Wrapper::Set_Light(0,nullptr);
-	DX8Wrapper::Set_Light(1,nullptr);
-	DX8Wrapper::Set_Light(2,nullptr);
-	DX8Wrapper::Set_Light(3,nullptr);
+	Renderer::Clear_Light(0);
+	Renderer::Clear_Light(1);
+	Renderer::Clear_Light(2);
+	Renderer::Clear_Light(3);
 	int count=0;
 	for (it.First(&LightList); !it.Is_Done(); it.Next())
 	{
 		if (count<4)
 		{
-			DX8Wrapper::Set_Light(count,*(LightClass*)it.Peek_Obj());
+			Renderer::Set_Light(count,*(LightClass*)it.Peek_Obj());
 		} else
 		{
 			// Simple scene only supports 4 global lights
@@ -522,18 +335,6 @@ void SimpleSceneClass::Post_Render_Processing(RenderInfoClass& rinfo)
 	}
 }
 
-/***********************************************************************************************
- * SimpleSceneClass::Create_Iterator -- create an iterator for this scene                      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/27/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 SceneIterator * SimpleSceneClass::Create_Iterator(bool onlyvisible)
 {
 	SimpleSceneIterator * it = W3DNEW SimpleSceneIterator(&RenderList,onlyvisible);
@@ -541,18 +342,6 @@ SceneIterator * SimpleSceneClass::Create_Iterator(bool onlyvisible)
 }
 
 
-/***********************************************************************************************
- * SimpleSceneClass::Destroy_Iterator -- destroy an iterater of this scene                     *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/27/98    GTH : Created.                                                                 *
- *=============================================================================================*/
 void SimpleSceneClass::Destroy_Iterator(SceneIterator * it)
 {
 	delete it;

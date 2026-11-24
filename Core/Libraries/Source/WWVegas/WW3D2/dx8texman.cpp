@@ -33,13 +33,6 @@
  *                    $Revision:: 4                                                           $*
  *                                                                                             *
  * 06/27/02 KM Texture class abstraction																			*
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   DX8TextureManagerClass::Shutdown -- Shuts down the texture manager                        *
- *   DX8TextureManagerClass::Add -- Adds a texture to be managed                               *
- *   DX8TextureManagerClass::Remove -- Removes a texture from being managed                    *
- *   DX8TextureManagerClass::Release_Textures -- Releases the internal d3d texture             *
- *   DX8TextureManagerClass::Recreate_Textures -- Reallocates lost textures                    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -55,22 +48,6 @@
 TextureTrackerList DX8TextureManagerClass::Managed_Textures;
 
 
-/***********************************************************************************************
- * DX8TextureManagerClass::Shutdown -- Shuts down the texture manager                          *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/25/2001  hy : Created.                                                                  *
- *   5/16/2002  km : Added depth stencil texture tracking and abstraction                      *
- *=============================================================================================*/
 void DX8TextureManagerClass::Shutdown()
 {
 	while (!Managed_Textures.Is_Empty())
@@ -80,22 +57,6 @@ void DX8TextureManagerClass::Shutdown()
 	}
 }
 
-/***********************************************************************************************
- * DX8TextureManagerClass::Add -- Adds a texture to be managed                                 *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/25/2001  hy : Created.                                                                  *
- *   5/16/2002  km : Added depth stencil texture tracking and abstraction                      *
- *=============================================================================================*/
 void DX8TextureManagerClass::Add(TextureTrackerClass *track)
 {
 	// this function should only be called by the texture constructor
@@ -103,22 +64,6 @@ void DX8TextureManagerClass::Add(TextureTrackerClass *track)
 }
 
 
-/***********************************************************************************************
- * DX8TextureManagerClass::Remove -- Removes a texture from being managed                      *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/25/2001  hy : Created.                                                                  *
- *   5/16/2002  km : Added depth stencil texture tracking and abstraction                      *
- *=============================================================================================*/
 void DX8TextureManagerClass::Remove(TextureBaseClass *tex)
 {
 	// this function should only be called by the texture destructor
@@ -138,22 +83,6 @@ void DX8TextureManagerClass::Remove(TextureBaseClass *tex)
 }
 
 
-/***********************************************************************************************
- * DX8TextureManagerClass::Release_Textures -- Releases the internal d3d texture               *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/25/2001  hy : Created.                                                                  *
- *   5/16/2002  km : Added depth stencil texture tracking and abstraction                      *
- *=============================================================================================*/
 void DX8TextureManagerClass::Release_Textures()
 {
 	TextureTrackerListIterator it(&Managed_Textures);
@@ -167,22 +96,7 @@ void DX8TextureManagerClass::Release_Textures()
 }
 
 
-/***********************************************************************************************
- * DX8TextureManagerClass::Recreate_Textures -- Reallocates lost textures                      *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/25/2001  hy : Created.                                                                  *
- *   5/16/2002  km : Added depth stencil texture tracking and abstraction                      *
- *=============================================================================================*/
+// Reallocates lost textures.
 void DX8TextureManagerClass::Recreate_Textures()
 {
 	TextureTrackerListIterator it(&Managed_Textures);

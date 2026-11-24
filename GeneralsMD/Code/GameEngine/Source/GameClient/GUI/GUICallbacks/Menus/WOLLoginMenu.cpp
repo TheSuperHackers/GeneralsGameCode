@@ -67,15 +67,9 @@
 
 #include "GameNetwork/GameSpyOverlay.h"
 
-#include "GameNetwork/WOLBrowser/WebBrowser.h"
-
-
 #ifdef ALLOW_NON_PROFILED_LOGIN
 Bool GameSpyUseProfiles = false;
 #endif // ALLOW_NON_PROFILED_LOGIN
-
-static Bool webBrowserActive = FALSE;
-static Bool useWebBrowserForTOS = FALSE;
 
 static Bool isShuttingDown = false;
 static Bool buttonPushed = false;
@@ -737,14 +731,6 @@ void WOLLoginMenuShutdown( WindowLayout *layout, void *userData )
 	isShuttingDown = true;
 	loggedInOK = false;
 	TheWindowManager->clearTabList();
-	if (webBrowserActive)
-	{
-		if (TheWebBrowser != nullptr)
-		{
-			TheWebBrowser->closeBrowserWindow(listboxTOS);
-		}
-		webBrowserActive = FALSE;
-	}
 
 	// if we are shutting down for an immediate pop, skip the animations
 	Bool popImmediate = *(Bool *)userData;
@@ -1432,49 +1418,40 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 				else if ( controlID == buttonTOSID )
 				{
 					parentTOS->winHide(FALSE);
-					useWebBrowserForTOS = FALSE;//loginPref->getBool("UseTOSBrowser", TRUE);
-					if (useWebBrowserForTOS && (TheWebBrowser != nullptr))
+					// The terms of service are a UTF-8 text file.
+					GadgetListBoxReset(listboxTOS);
+					AsciiString fileName;
+					fileName.format("Data\\%s\\TOS.txt", GetRegistryLanguage().str());
+					File *theFile = TheFileSystem->openFile(fileName.str(), File::READ);
+					if (theFile)
 					{
-						TheWebBrowser->createBrowserWindow("TermsOfService", listboxTOS);
-						webBrowserActive = TRUE;
-					}
-					else
-					{
-						// Okay, no web browser.  This means we're looking at a UTF-8 text file.
-						GadgetListBoxReset(listboxTOS);
-						AsciiString fileName;
-						fileName.format("Data\\%s\\TOS.txt", GetRegistryLanguage().str());
-						File *theFile = TheFileSystem->openFile(fileName.str(), File::READ);
-						if (theFile)
+						Int size = theFile->size();
+
+						char *fileBuf = new char[size];
+						Color tosColor = GameMakeColor(255, 255, 255, 255);
+
+						Int bytesRead = theFile->read(fileBuf, size);
+						if (bytesRead == size && size > 2)
 						{
-							Int size = theFile->size();
-
-							char *fileBuf = new char[size];
-							Color tosColor = GameMakeColor(255, 255, 255, 255);
-
-							Int bytesRead = theFile->read(fileBuf, size);
-							if (bytesRead == size && size > 2)
+							fileBuf[size-1] = 0; // just to be safe
+							AsciiString asciiBuf = fileBuf+2;
+							AsciiString asciiLine;
+							while (asciiBuf.nextToken(&asciiLine, "\r\n"))
 							{
-								fileBuf[size-1] = 0; // just to be safe
-								AsciiString asciiBuf = fileBuf+2;
-								AsciiString asciiLine;
-								while (asciiBuf.nextToken(&asciiLine, "\r\n"))
-								{
-									UnicodeString uniLine;
-									uniLine = UnicodeString(MultiByteToWideCharSingleLine(asciiLine.str()).c_str());
-									uniLine.trimEnd();
-									DEBUG_LOG(("adding TOS line: [%ls]", uniLine.str()));
-									GadgetListBoxAddEntryText(listboxTOS, uniLine, tosColor, -1);
-								}
-
+								UnicodeString uniLine;
+								uniLine = UnicodeString(MultiByteToWideCharSingleLine(asciiLine.str()).c_str());
+								uniLine.trimEnd();
+								DEBUG_LOG(("adding TOS line: [%ls]", uniLine.str()));
+								GadgetListBoxAddEntryText(listboxTOS, uniLine, tosColor, -1);
 							}
 
-							delete[] fileBuf;
-							fileBuf = nullptr;
-
-							theFile->close();
-							theFile = nullptr;
 						}
+
+						delete[] fileBuf;
+						fileBuf = nullptr;
+
+						theFile->close();
+						theFile = nullptr;
 					}
 					EnableLoginControls( FALSE );
 					buttonBack->winEnable(FALSE);
@@ -1485,18 +1462,10 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 					EnableLoginControls( TRUE );
 
 					parentTOS->winHide(TRUE);
-					if (useWebBrowserForTOS && (TheWebBrowser != nullptr))
-					{
-						if (listboxTOS != nullptr)
-						{
-							TheWebBrowser->closeBrowserWindow(listboxTOS);
-						}
-					}
 
 					OptionPreferences optionPref;
 					optionPref["SawTOS"] = "yes";
 					optionPref.write();
-					webBrowserActive = FALSE;
 					buttonBack->winEnable(TRUE);
 				}
 				break;

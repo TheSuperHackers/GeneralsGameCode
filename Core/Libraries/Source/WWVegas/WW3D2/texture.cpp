@@ -34,9 +34,6 @@
  *                                                                                             *
  * 06/27/02 KM Texture class abstraction																			*
  * 08/05/02 KM Texture class redesign (revisited)
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- *   FileListTextureClass::Load_Frame_Surface -- Load source texture                           *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "texture.h"
@@ -971,7 +968,7 @@ void TextureClass::Apply(unsigned int stage)
 //! Get surface from mip level
 /*!
 */
-SurfaceClass *TextureClass::Get_Surface_Level(unsigned int level)
+SurfaceClass *TextureClass::Get_Surface_Level(unsigned int level) const
 {
 	if (!Peek_D3D_Texture())
 	{

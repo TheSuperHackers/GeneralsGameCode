@@ -40,9 +40,6 @@
 
 int		BufferedFileClass::_DesiredBufferSize	=	1024*16;
 
-/***********************************************************************************************
- * BufferedFileClass::BufferedFileClass -- Default constructor for a file object.              *
- *=============================================================================================*/
 BufferedFileClass::BufferedFileClass() :
 	RawFileClass(),
 	Buffer( nullptr ),
@@ -52,9 +49,6 @@ BufferedFileClass::BufferedFileClass() :
 {
 }
 
-/***********************************************************************************************
- * BufferedFileClass::BufferedFileClass -- Simple constructor for a file object.                         *
- *=============================================================================================*/
 BufferedFileClass::BufferedFileClass(char const * filename) :
 	RawFileClass( filename ),
 	Buffer( nullptr ),
@@ -64,17 +58,11 @@ BufferedFileClass::BufferedFileClass(char const * filename) :
 {
 }
 
-/***********************************************************************************************
- * BufferedFileClass::~BufferedFileClass -- Default deconstructor for a file object.                     *
- *=============================================================================================*/
 BufferedFileClass::~BufferedFileClass()
 {
 	Reset_Buffer();
 }
 
-/***********************************************************************************************
- * BufferedFileClass::Close -- Perform a closure of the file.                                       *
- *=============================================================================================*/
 void BufferedFileClass::Close()
 {
 	BASECLASS::Close();
@@ -83,28 +71,8 @@ void BufferedFileClass::Close()
 }
 
 
-/***********************************************************************************************
- * BufferedFileClass::Read -- Reads the specified number of bytes into a memory buffer.             *
- *                                                                                             *
- *    This routine will read the specified number of bytes and place the data into the buffer  *
- *    indicated. It is legal to call this routine with a request for more bytes than are in    *
- *    the file. This condition can result in fewer bytes being read than requested. Determine  *
- *    this by examining the return value.                                                      *
- *                                                                                             *
- * INPUT:   buffer   -- Pointer to the buffer to read data into. If nullptr is passed, no read    *
- *                      is performed.                                                          *
- *                                                                                             *
- *          size     -- The number of bytes to read. If nullptr is passed, then no read is        *
- *                      performed.                                                             *
- *                                                                                             *
- * OUTPUT:  Returns with the number of bytes read into the buffer. If this number is less      *
- *          than requested, it indicates that the file has been exhausted.                     *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
+// If buffer or size is null, no read is performed. It is legal to request more bytes than are in
+// the file, in which case fewer bytes are read.
 int BufferedFileClass::Read(void * buffer, int size)
 {
 	int read = 0;
@@ -167,24 +135,9 @@ int BufferedFileClass::Read(void * buffer, int size)
 }
 
 
-/***********************************************************************************************
- * BufferedFileClass::Write -- Writes the specified data to the buffer specified.                   *
- *                                                                                             *
- *    This routine will write the data specified to the file.                                  *
- *                                                                                             *
- * INPUT:   buffer   -- The buffer that holds the data to write.                               *
- *                                                                                             *
- *          size     -- The number of bytes to write to the file.                              *
- *                                                                                             *
- * OUTPUT:  Returns with the number of bytes written to the file. This routine catches the     *
- *          case of a disk full condition, so this routine will always return with the number  *
- *          matching the size request.                                                         *
- *                                                                                             *
- * WARNINGS:   A fatal file condition could cause this routine to never return.                *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
+// A disk full condition is caught, so this routine will always return with the number matching the
+// size request.
+// WARNING: A fatal file condition could cause this routine to never return.
 int BufferedFileClass::Write(void const * buffer, int size)
 {
 	if ( BufferSize != 0 ) {
@@ -195,27 +148,8 @@ int BufferedFileClass::Write(void const * buffer, int size)
 }
 
 
-/***********************************************************************************************
- * BufferedFileClass::Seek -- Reposition the file pointer as indicated.                             *
- *                                                                                             *
- *    Use this routine to move the filepointer to the position indicated. It can move either   *
- *    relative to current position or absolute from the beginning or ending of the file. This  *
- *    routine will only return if it successfully performed the seek.                          *
- *                                                                                             *
- * INPUT:   pos   -- The position to seek to. This is interpreted as relative to the position  *
- *                   indicated by the "dir" parameter.                                         *
- *                                                                                             *
- *          dir   -- The relative position to relate the seek to. This can be either SEEK_SET  *
- *                   for the beginning of the file, SEEK_CUR for the current position, or      *
- *                   SEEK_END for the end of the file.                                         *
- *                                                                                             *
- * OUTPUT:  This routine returns the position that the seek ended up at.                       *
- *                                                                                             *
- * WARNINGS:   If there was a file error, then this routine might never return.                *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/18/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
+// This routine will only return if it successfully performed the seek.
+// WARNING: If there was a file error, then this routine might never return.
 int BufferedFileClass::Seek(int pos, int dir)
 {
 	if ( (dir != SEEK_CUR) || (pos < 0) ) {
