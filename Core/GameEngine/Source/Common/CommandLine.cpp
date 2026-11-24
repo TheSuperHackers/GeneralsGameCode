@@ -486,7 +486,7 @@ Int parseDataDir(char* args[], int num)
 		if (dataDir.isNotEmpty())
 		{
 			// The archive loader appends the file mask straight to the folder, so it needs the separator.
-			FileSystem::appendPathSeparator(dataDir);
+			FileSystem::ensureTrailingPathSeparatorInPath(dataDir);
 			TheWritableGlobalData->m_dataDirs.push_back(dataDir);
 		}
 
