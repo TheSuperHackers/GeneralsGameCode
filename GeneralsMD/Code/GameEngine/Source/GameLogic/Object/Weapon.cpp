@@ -76,6 +76,7 @@
 #include "GameLogic/Module/PhysicsUpdate.h"
 #include "GameLogic/Module/SpawnBehavior.h"
 #include "GameLogic/TerrainLogic.h"
+#include <Utility/erase_adapter.h>
 
 #define RATIONALIZE_ATTACK_RANGE
 #define ATTACK_RANGE_IS_2D

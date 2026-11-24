@@ -47,6 +47,7 @@
 #include "GameLogic/AI.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
+#include <Utility/erase_adapter.h>
 
 
 // addObject //////////////////////////////////////////////////////////////////////////////////////

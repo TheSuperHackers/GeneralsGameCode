@@ -32,6 +32,7 @@
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "GameLogic/GameLogic.h"
+#include <Utility/erase_adapter.h>
 
 
 //-------------------------------------------------------------------------------------------------

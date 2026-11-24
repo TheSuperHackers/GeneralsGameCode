@@ -45,6 +45,7 @@
 #include "GameLogic/AIPathfind.h"
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Weapon.h"
+#include <Utility/erase_adapter.h>
 
 const Real BIGNUM = 99999.0f;
 

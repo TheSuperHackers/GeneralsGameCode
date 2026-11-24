@@ -40,6 +40,7 @@
 #include "GameLogic/Module/SupplyCenterDockUpdate.h"
 #include "GameLogic/Module/SupplyWarehouseDockUpdate.h"
 #include "GameLogic/Module/UpdateModule.h"
+#include <Utility/erase_adapter.h>
 
 ResourceGatheringManager::ResourceGatheringManager()
 {
