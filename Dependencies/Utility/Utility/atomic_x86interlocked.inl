@@ -538,8 +538,7 @@ typedef atomic<intmax_t> atomic_intmax_t;
 typedef atomic<uintmax_t> atomic_uintmax_t;
 
 
-// The VC6 std::atomic_flag compatible class. It has the size of a long, like the class of the Microsoft standard
-// library, and its constructor clears it, like the standard class does since C++20.
+// The VC6 std::atomic_flag compatible class.
 class atomic_flag
 {
 public:

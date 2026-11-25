@@ -55,7 +55,6 @@ class ProfileFastCS
 		while (Flag.test_and_set(std::memory_order_acq_rel))
 		{
 #if defined(_MSC_VER) && _MSC_VER < 1300
-			// VC6 has no atomic wait, so the thread waits on testEvent for a moment, if it exists, before it tries again.
 			// can't use SwitchToThread() here because Win9X doesn't have it!
 			if (testEvent)
 				::WaitForSingleObject(testEvent,1);
