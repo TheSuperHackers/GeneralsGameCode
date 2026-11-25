@@ -35,6 +35,8 @@
 #include "Common/Overridable.h"
 #include "Common/Science.h"
 #include "GameClient/Color.h"
+#include "GameClient/RadiusDecal.h"
+#include <deque>
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Drawable;
@@ -886,12 +888,25 @@ public:
 	// get method for list of commandbuttons
 	const CommandButton *getCommandButtons() { return m_commandButtons; }
 
+	// Built-in cursor IDs remain unchanged. Custom IDs start at RADIUSCURSOR_COUNT.
+	RadiusCursorType findCustomRadiusCursorType(const char* name) const;
+	const RadiusDecalTemplate* findCustomRadiusCursorTemplate(RadiusCursorType type) const;
+	RadiusDecalTemplate& defineCustomRadiusCursor(const char* name);
+
 protected:
 
 	ICoord2D m_defaultControlBarPosition;				///< Stored the original position of the control bar on the screen
 	ControlBarStages m_currentControlBarStage;
 
 	Bool m_UIDirty;																///< the context UI must be re-evaluated
+
+	struct CustomRadiusCursorDefinition
+	{
+		AsciiString name;
+		RadiusDecalTemplate decal;
+	};
+	// RadiusDecal holds a pointer to its template; deque preserves addresses on append.
+	std::deque<CustomRadiusCursorDefinition> m_customRadiusCursors;
 
 	CommandButton *m_commandButtons;							///< list of possible commands to have
 	CommandSet *m_commandSets;										///< list of all command sets defined
