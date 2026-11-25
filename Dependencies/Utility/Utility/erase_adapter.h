@@ -18,14 +18,13 @@
 
 // This file provides std::erase and std::erase_if for std::vector, std::list and std::deque. C++20 declares them in
 // each container header, so this file includes those headers on modern compilers. VC6 has no C++20 and gets function
-// templates that erase the matching elements one by one with the iterator that erase returns.
+// templates that move the kept elements to the front with std::remove_if and then erase the rest in one call.
 // Use them instead of writing a loop that erases the elements that equal a value or match a predicate.
 //
 // The VC6 functions differ from the standard functions in these points:
-// - They accept any container whose erase(iterator) returns the next iterator. They do not work on std::map, std::set
-//   and the other associative containers, because their erase(iterator) returns void in STLport.
-// - They erase each element on its own, so on a vector or deque they take quadratic time where the standard
-//   functions take linear time. The remaining elements keep their order, like with the standard functions.
+// - They accept any sequence container with erase(first, last). They do not work on std::map, std::set and the other
+//   associative containers.
+// - On a std::list they move elements by assignment where the standard function relinks the nodes.
 // - std::erase converts the value to the element type before it compares them.
 // - They return size_t instead of the size_type of the container.
 
@@ -33,6 +32,7 @@
 
 #if defined(_MSC_VER) && _MSC_VER < 1300
 
+#include <algorithm>
 #include <functional>
 #include <stddef.h>
 
@@ -41,22 +41,9 @@ namespace std
 template <class Container, class Predicate>
 inline size_t erase_if(Container& container, Predicate pred)
 {
-	size_t count = 0;
-	typename Container::iterator it = container.begin();
-	while (it != container.end())
-	{
-		if (pred(*it))
-		{
-			it = container.erase(it);
-			++count;
-		}
-		else
-		{
-			++it;
-		}
-	}
-
-	return count;
+	const size_t oldSize = container.size();
+	container.erase(std::remove_if(container.begin(), container.end(), pred), container.end());
+	return oldSize - container.size();
 }
 
 template <class Container, class T>
