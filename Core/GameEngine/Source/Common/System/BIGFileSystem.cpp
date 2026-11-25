@@ -92,18 +92,12 @@ void BIGFileSystem::init() {
 
 	// TheSuperHackers @feature CryoTheRenegade 17/10/2026 Load the -dataDir folders in the listed order.
 	// Files already in the tree are kept, so earlier folders take priority.
-	MAYBE_UNUSED Bool loadedDataDir = FALSE;
 	if (TheGlobalData != nullptr)
 	{
 		const std::vector<AsciiString>& dataDirs = TheGlobalData->m_dataDirs;
 		for (std::vector<AsciiString>::const_iterator it = dataDirs.begin(); it != dataDirs.end(); ++it)
 		{
-			// Log here, not during startup parsing, which runs before the debug log file is open.
-			if (loadArchiveFilesFromDirectory(*it, "*.big"))
-			{
-				loadedDataDir = TRUE;
-			}
-			else
+			if (!loadArchiveFilesFromDirectory(*it, "*.big"))
 			{
 				DEBUG_LOG(("Data dir '%s' has no .big files. Skipping it.", it->str()));
 			}
@@ -111,14 +105,11 @@ void BIGFileSystem::init() {
 	}
 
 #if RTS_ZEROHOUR
-    // load original Generals assets, unless the -dataDir folders provide them
-    if (!loadedDataDir)
-    {
-      AsciiString installPath;
-      GetStringFromGeneralsRegistry("", "InstallPath", installPath );
-      if (!installPath.isEmpty())
-        loadArchiveFilesFromDirectory(installPath, "*.big");
-    }
+    // load original Generals assets
+    AsciiString installPath;
+    GetStringFromGeneralsRegistry("", "InstallPath", installPath );
+    if (!installPath.isEmpty())
+      loadArchiveFilesFromDirectory(installPath, "*.big");
 #endif
 }
 

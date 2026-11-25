@@ -478,10 +478,9 @@ Int parseSetCwd(char *args[], int num)
 
 Int parseDataDir(char* args[], int num)
 {
-	// Each -dataDir "<dir>" adds one folder with lower priority .big files.
 	if (num > 1)
 	{
-		// An empty folder would reload the game folder and skip the Zero Hour registry fallback.
+		// An empty folder would load the game folder a second time.
 		AsciiString dataDir = args[1];
 		if (dataDir.isNotEmpty())
 		{
@@ -1218,7 +1217,7 @@ static CommandLineParam paramsForStartup[] =
 
 	// TheSuperHackers @feature CryoTheRenegade 17/10/2026
 	// Load .big files from this folder after the game folder. Repeat it for more folders. Earlier folders take priority.
-	// In Zero Hour, if these folders have .big files, the Generals InstallPath registry value is not used. Relative paths are resolved from the working directory.
+	// In Zero Hour, the Generals InstallPath registry folder loads after them. Relative paths are resolved from the working directory.
 	{ "-dataDir", parseDataDir },
 };
 
