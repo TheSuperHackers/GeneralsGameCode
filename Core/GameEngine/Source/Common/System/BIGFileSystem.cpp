@@ -261,6 +261,12 @@ Bool BIGFileSystem::loadArchiveFilesFromDirectory(AsciiString dir, AsciiString f
 		}
 #endif
 
+		// Skip archives that are already loaded. Opening one again would replace and leak the loaded one.
+		if (m_archiveFileMap.find(*it) != m_archiveFileMap.end()) {
+			it++;
+			continue;
+		}
+
 		ArchiveFile *archiveFile = openArchiveFile((*it).str());
 
 		if (archiveFile != nullptr) {
