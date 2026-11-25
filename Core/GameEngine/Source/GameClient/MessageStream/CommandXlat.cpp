@@ -92,6 +92,15 @@
 #include "WW3D2/ww3d.h"
 #include <Utility/erase_adapter.h>
 
+//-------------------------------------------------------------------------------------------------
+struct DrawableIsNotLocallyControlled
+{
+	Bool operator()(const Drawable* draw) const
+	{
+		return !(draw->getObject() && draw->getObject()->isLocallyControlled());
+	}
+};
+
 #if defined(RTS_DEBUG)
 /*non-static*/ Real TheSkateDistOverride = 0.0f;
 
@@ -2541,16 +2550,6 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 		return handleDefaultMoveCommand( draw, drawableInWay, pos, type );
 	}
 }
-
-//-------------------------------------------------------------------------------------------------
-struct DrawableIsNotLocallyControlled
-{
-	Bool operator()(const Drawable* draw) const
-	{
-		return !(draw->getObject() && draw->getObject()->isLocallyControlled());
-	}
-};
-
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
