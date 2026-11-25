@@ -261,8 +261,14 @@ Bool BIGFileSystem::loadArchiveFilesFromDirectory(AsciiString dir, AsciiString f
 		}
 #endif
 
-		// Skip archives that are already loaded. Opening one again would replace and leak the loaded one.
-		if (m_archiveFileMap.find(*it) != m_archiveFileMap.end()) {
+		// An archive that is already loaded is not opened again, which would replace and leak the loaded one.
+		// An overwrite still puts its files ahead of the files of the other archives.
+		ArchiveFileMap::iterator loaded = m_archiveFileMap.find(*it);
+		if (loaded != m_archiveFileMap.end()) {
+			if (overwrite) {
+				loadIntoDirectoryTree(loaded->second, TRUE);
+				actuallyAdded = TRUE;
+			}
 			it++;
 			continue;
 		}
