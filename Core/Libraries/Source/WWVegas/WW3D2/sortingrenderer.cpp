@@ -164,6 +164,7 @@ public:
 	unsigned short polygon_count;			// Polygon count to process (3 indices = one polygon)
 	unsigned short min_vertex_index;		// First index used in the vb
 	unsigned short vertex_count;			// Number of vertices used in vb
+	bool billboard_quads;
 };
 
 typedef std::list<SortingNodeStruct*> SortingNodeStructList;
@@ -214,7 +215,8 @@ void SortingRendererClass::Insert_Triangles(
 	unsigned short start_index,
 	unsigned short polygon_count,
 	unsigned short min_vertex_index,
-	unsigned short vertex_count)
+	unsigned short vertex_count,
+	bool billboard_quads)
 {
 	if (!WW3D::Is_Sorting_Enabled()) {
 		DX8Wrapper::Draw_Triangles(start_index,polygon_count,min_vertex_index,vertex_count);
@@ -240,6 +242,7 @@ void SortingRendererClass::Insert_Triangles(
 	state->polygon_count=polygon_count;
 	state->min_vertex_index=min_vertex_index;
 	state->vertex_count=vertex_count;
+	state->billboard_quads = billboard_quads;
 
 	if (bounding_sphere.Is_Valid())
 	{
@@ -300,6 +303,12 @@ void SortingRendererClass::Insert_Triangles(
 //
 // ----------------------------------------------------------------------------
 
+void SortingRendererClass::Insert_Quads(unsigned short quad_count, unsigned short vertex_count)
+{
+	WWASSERT(static_cast<unsigned>(quad_count) * 4 == vertex_count);
+	Insert_Triangles(SphereClass(), 0, quad_count * 2, 0, vertex_count, true);
+}
+
 void Release_Refs(SortingNodeStruct* state)
 {
 	int i;
@@ -316,6 +325,8 @@ void Release_Refs(SortingNodeStruct* state)
 
 static unsigned overlapping_node_count;
 static unsigned overlapping_polygon_count;
+static unsigned overlapping_entry_count;
+static constexpr unsigned short QUAD_ENTRY = 0xffffu;
 static unsigned overlapping_vertex_count;
 static const unsigned MAX_OVERLAPPING_NODES=4096;
 static SortingNodeStruct* overlapping_nodes[MAX_OVERLAPPING_NODES];
@@ -351,6 +362,7 @@ void SortingRendererClass::Insert_To_Sorting_Pool(SortingNodeStruct* state)
 	overlapping_nodes[overlapping_node_count]=state;
 	overlapping_vertex_count+=state->vertex_count;
 	overlapping_polygon_count+=state->polygon_count;
+	overlapping_entry_count += state->billboard_quads ? state->polygon_count / 2 : state->polygon_count;
 	overlapping_node_count++;
 }
 
@@ -413,7 +425,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 	SNAPSHOT_SAY(("SortingSystem - Flush"));
 
 	// Fill dynamic index buffer with sorting index buffer vertices
-	TempIndexStruct* tis=Get_Temp_Index_Array(overlapping_polygon_count);
+	TempIndexStruct* tis=Get_Temp_Index_Array(overlapping_entry_count);
 
 	unsigned vertexAllocCount = overlapping_vertex_count;
 	if (DynamicVBAccessClass::Get_Default_Vertex_Count() < DEFAULT_SORTING_VERTEX_COUNT)
@@ -465,6 +477,27 @@ void SortingRendererClass::Flush_Sorting_Pool()
 
 			const Matrix4x4 mtx=To_Matrix4x4(state->sorting_state.view)*To_Matrix4x4(state->sorting_state.world);
 
+			// Adapted from Reforged (Olcay Seygan and contributors): one depth entry per billboard quad.
+			if (state->billboard_quads)
+			{
+				for (unsigned q = 0; q < state->polygon_count / 2; ++q)
+				{
+					const auto *v = src_verts + q * 4;
+					auto &entry = tis[polygon_array_offset + q];
+					entry.tri = {static_cast<unsigned short>(q * 4 + (streamed ? 0u : vertex_array_offset)), 0, QUAD_ENTRY};
+					entry.idx = static_cast<unsigned short>(node_id);
+					entry.z = (mtx[2][0] * (v[0].x + v[1].x + v[2].x + v[3].x)
+						+ mtx[2][1] * (v[0].y + v[1].y + v[2].y + v[3].y)
+						+ mtx[2][2] * (v[0].z + v[1].z + v[2].z + v[3].z)) * 0.25f + mtx[2][3];
+					DEBUG_ASSERTCRASH(std::isfinite(entry.z), ("Quad has invalid center"));
+				}
+				if (!streamed)
+					state->min_vertex_index = vertex_array_offset;
+				polygon_array_offset += state->polygon_count / 2;
+				vertex_array_offset += state->vertex_count;
+				continue;
+			}
+
 			unsigned short* indices=nullptr;
 			SortingIndexBufferClass* index_buffer=static_cast<SortingIndexBufferClass*>(state->sorting_state.index_buffer);
 			WWASSERT(index_buffer);
@@ -486,7 +519,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 					const VertexFormatXYZNDUV2 *v2 = src_verts + idx2;
 					const VertexFormatXYZNDUV2 *v3 = src_verts + idx3;
 					unsigned array_index=i+polygon_array_offset;
-					WWASSERT(array_index<overlapping_polygon_count);
+					WWASSERT(array_index<overlapping_entry_count);
 					TempIndexStruct *tis_ptr = tis + array_index;
 					tis_ptr->tri.i = idx1 + (streamed ? 0u : vertex_array_offset);
 					tis_ptr->tri.j = idx2 + (streamed ? 0u : vertex_array_offset);
@@ -507,7 +540,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 					const VertexFormatXYZNDUV2 *v2 = src_verts + idx2;
 					const VertexFormatXYZNDUV2 *v3 = src_verts + idx3;
 					unsigned array_index=i+polygon_array_offset;
-					WWASSERT(array_index<overlapping_polygon_count);
+					WWASSERT(array_index<overlapping_entry_count);
 					TempIndexStruct *tis_ptr = tis + array_index;
 					tis_ptr->tri.i = idx1 + (streamed ? 0u : vertex_array_offset);
 					tis_ptr->tri.j = idx2 + (streamed ? 0u : vertex_array_offset);
@@ -528,97 +561,102 @@ void SortingRendererClass::Flush_Sorting_Pool()
 		}
 	}
 
-	Sort(tis, tis + overlapping_polygon_count);
+	Sort(tis, tis + overlapping_entry_count);
 
-	// TheSuperHackers @fix stephanmeesters 10/06/2026
-	// Split rendering into chunks to prevent a crash when exceeding the 16-bit index buffer limit.
-	constexpr const unsigned MAX_INDEX_CHUNK = 65535;
+	// Keep quads intact across both 16-bit index and vertex upload boundaries.
+	const unsigned vertexBudget = streamed && DEFAULT_SORTING_VERTEX_COUNT >= 4 && DEFAULT_SORTING_VERTEX_COUNT <= 65535u
+		? DEFAULT_SORTING_VERTEX_COUNT : 65535u;
 	unsigned chunkOffset = 0;
-	while (chunkOffset < overlapping_polygon_count)
+	while (chunkOffset < overlapping_entry_count)
 	{
-		unsigned chunkCount = overlapping_polygon_count - chunkOffset;
-		if (chunkCount * 3 > MAX_INDEX_CHUNK) {
-			chunkCount = MAX_INDEX_CHUNK / 3;
+		unsigned chunkEnd = chunkOffset, indexCount = 0, vertexCount = 0;
+		while (chunkEnd < overlapping_entry_count)
+		{
+			const bool quad = tis[chunkEnd].tri.k == QUAD_ENTRY;
+			const unsigned nextIndices = quad ? 6 : 3;
+			const unsigned nextVertices = quad ? 4 : 3;
+			if (indexCount + nextIndices > 65535u || (streamed && vertexCount + nextVertices > vertexBudget))
+				break;
+			indexCount += nextIndices;
+			vertexCount += nextVertices;
+			++chunkEnd;
 		}
-		// The streamed path duplicates vertices per triangle. Limit each upload to
-		// both 16-bit buffers and the configured vertex budget (when applicable).
-		if (streamed && DEFAULT_SORTING_VERTEX_COUNT > 2 && DEFAULT_SORTING_VERTEX_COUNT <= 65535u)
-			chunkCount = std::min(chunkCount, DEFAULT_SORTING_VERTEX_COUNT / 3);
-		const unsigned chunkEnd = chunkOffset + chunkCount;
+		WWASSERT(chunkEnd > chunkOffset);
 
 		std::optional<DynamicVBAccessClass> batchVb;
 		if (streamed)
 		{
-			batchVb.emplace(BUFFER_TYPE_DYNAMIC_DX8, dynamic_fvf_type, static_cast<unsigned short>(chunkCount * 3));
+			batchVb.emplace(BUFFER_TYPE_DYNAMIC_DX8, dynamic_fvf_type, static_cast<unsigned short>(vertexCount));
 			DynamicVBAccessClass::WriteLockClass lock(&*batchVb);
-			auto *vertices = static_cast<VertexFormatXYZNDUV2 *>(lock.Get_Formatted_Vertex_Array());
-			for (unsigned a = 0; a < chunkCount; ++a)
+			auto *vertices = lock.Get_Formatted_Vertex_Array();
+			unsigned cursor = 0;
+			for (unsigned a = chunkOffset; a < chunkEnd; ++a)
 			{
-				const auto &entry = tis[chunkOffset + a];
+				const auto &entry = tis[a];
 				const auto *src = nodeVertices[entry.idx];
-				vertices[a * 3] = src[entry.tri.i];
-				vertices[a * 3 + 1] = src[entry.tri.j];
-				vertices[a * 3 + 2] = src[entry.tri.k];
-			}
-		}
-
-		DynamicIBAccessClass dyn_ib_access(BUFFER_TYPE_DYNAMIC_DX8,chunkCount*3);
-		{
-			DynamicIBAccessClass::WriteLockClass lock(&dyn_ib_access);
-			ShortVectorIStruct* sorted_polygon_index_array=(ShortVectorIStruct*)lock.Get_Index_Array();
-
-			for (unsigned a=0;a<chunkCount;++a) {
-				if (streamed)
+				if (entry.tri.k == QUAD_ENTRY)
 				{
-					const auto first = static_cast<unsigned short>(a * 3);
-					sorted_polygon_index_array[a] = {first, static_cast<unsigned short>(first + 1), static_cast<unsigned short>(first + 2)};
+					for (unsigned v = 0; v < 4; ++v)
+						vertices[cursor++] = src[entry.tri.i + v];
 				}
 				else
-					sorted_polygon_index_array[a]=tis[chunkOffset + a].tri;
+				{
+					vertices[cursor++] = src[entry.tri.i];
+					vertices[cursor++] = src[entry.tri.j];
+					vertices[cursor++] = src[entry.tri.k];
+				}
 			}
 		}
 
-		// Set index buffer and render!
+		DynamicIBAccessClass dyn_ib_access(BUFFER_TYPE_DYNAMIC_DX8, static_cast<unsigned short>(indexCount));
+		{
+			DynamicIBAccessClass::WriteLockClass lock(&dyn_ib_access);
+			auto *indices = lock.Get_Index_Array();
+			unsigned vertexCursor = 0;
+			for (unsigned a = chunkOffset; a < chunkEnd; ++a)
+			{
+				const auto &entry = tis[a];
+				const bool quad = entry.tri.k == QUAD_ENTRY;
+				if (quad)
+				{
+					const unsigned first = streamed ? vertexCursor : entry.tri.i;
+					for (unsigned offset : {0u, 1u, 2u, 2u, 3u, 0u})
+						*indices++ = static_cast<unsigned short>(first + offset);
+				}
+				else
+				{
+					*indices++ = static_cast<unsigned short>(streamed ? vertexCursor : entry.tri.i);
+					*indices++ = static_cast<unsigned short>(streamed ? vertexCursor + 1 : entry.tri.j);
+					*indices++ = static_cast<unsigned short>(streamed ? vertexCursor + 2 : entry.tri.k);
+				}
+				vertexCursor += quad ? 4 : 3;
+			}
+		}
 
-		DX8Wrapper::Set_Index_Buffer(dyn_ib_access,0); // Override with this buffer (do something to prevent need for this!)
-		DX8Wrapper::Set_Vertex_Buffer(streamed ? *batchVb : *dyn_vb_access); // Override with this buffer (do something to prevent need for this!)
-
+		DX8Wrapper::Set_Index_Buffer(dyn_ib_access, 0);
+		DX8Wrapper::Set_Vertex_Buffer(streamed ? *batchVb : *dyn_vb_access);
 		DX8Wrapper::Apply_Render_State_Changes();
 
-		unsigned count_to_render=1;
-		unsigned start_index=0;
-		unsigned node_id=tis[chunkOffset].idx;
-		for (unsigned i=chunkOffset + 1;i<chunkEnd;++i) {
-			if (node_id!=tis[i].idx) {
-				SortingNodeStruct* state=overlapping_nodes[node_id];
-				Apply_Render_State(state->sorting_state);
-
-				DX8Wrapper::Draw_Triangles(
-					start_index*3,
-					count_to_render,
-					streamed ? start_index * 3 : state->min_vertex_index,
-					streamed ? count_to_render * 3 : state->vertex_count);
-
-				count_to_render=0;
-				start_index=i - chunkOffset;
-				node_id=tis[i].idx;
-			}
-			count_to_render++;	//keep track of number of polygons of same kind
-		}
-
-		// Render any remaining polygons...
-		if (count_to_render) {
-			SortingNodeStruct* state=overlapping_nodes[node_id];
+		unsigned a = chunkOffset, indexCursor = 0, vertexCursor = 0;
+		while (a < chunkEnd)
+		{
+			const unsigned nodeId = tis[a].idx;
+			const unsigned firstIndex = indexCursor;
+			const unsigned firstVertex = vertexCursor;
+			do
+			{
+				const bool quad = tis[a].tri.k == QUAD_ENTRY;
+				indexCursor += quad ? 6 : 3;
+				vertexCursor += quad ? 4 : 3;
+				++a;
+			} while (a < chunkEnd && tis[a].idx == nodeId);
+			SortingNodeStruct *state = overlapping_nodes[nodeId];
 			Apply_Render_State(state->sorting_state);
-
-			DX8Wrapper::Draw_Triangles(
-				start_index*3,
-				count_to_render,
-				streamed ? start_index * 3 : state->min_vertex_index,
-				streamed ? count_to_render * 3 : state->vertex_count);
+			DX8Wrapper::Draw_Triangles(firstIndex, (indexCursor - firstIndex) / 3,
+				streamed ? firstVertex : state->min_vertex_index,
+				streamed ? vertexCursor - firstVertex : state->vertex_count);
 		}
-
-		chunkOffset += chunkCount;
+		chunkOffset = chunkEnd;
 	}
 
 	// Release all references and return nodes back to the clean list for the frame...
@@ -629,6 +667,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 	}
 	overlapping_node_count=0;
 	overlapping_polygon_count=0;
+	overlapping_entry_count=0;
 	overlapping_vertex_count=0;
 
 	SNAPSHOT_SAY(("SortingSystem - Done flushing"));
