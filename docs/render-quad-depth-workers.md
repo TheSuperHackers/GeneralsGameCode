@@ -29,6 +29,8 @@ Run the same particle-heavy replay at the same speed, resolution, camera positio
 - `SortingRenderer::Flush` measures the complete sorting renderer flush.
 - `SortingRenderer/Worker-assisted quad batches` counts batches since game launch in which a worker finished at least one nonempty quad-depth job. It stays at zero in serial mode. A flat plot with workers configured means they did no work during that interval. A dense scene is needed to test the parallel path.
 
+For GFX 11c captures, the additional `SortingRenderer/Quads per batch` and `SortingRenderer/Nonempty quad jobs per batch` plots include serial batches, even when the initial dispatch gate is not met. Compare these distributions with the existing worker-assisted count. For controlled experiments only, set `GENERALS_RENDER_MIN_QUADS` to an integer from 256 to 65536 before launch (default 4096; missing or invalid values retain the default). The five-job gate and worker-count configuration are unchanged. Compare 4096, 2048, 1024 and 512 with the same replay segment and worker counts; use 0 workers as the serial reference. Do not lower the shipping default until matched measurements show a benefit.
+
 Compare frame time in the same replay window as well as time spent in the renderer. Keep the profiler connected in every run. The game's existing Tracy frame images can introduce periodic capture overhead. This profiling setup does not measure standalone GPU execution or change the worker defaults.
 
 Set `RTS_BUILD_OPTION_PROFILE_TRACY=OFF` and rebuild to remove the instrumentation from the executable. The diagnostics introduce no game-data or network format changes.
