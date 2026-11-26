@@ -50,6 +50,10 @@
 #include <algorithm>
 #include <list>
 #include <optional>
+#include <array>
+#include <bit>
+#include <cstdint>
+#include <limits>
 #include <vector>
 
 
@@ -190,6 +194,71 @@ static SortingNodeStruct* Get_Sorting_Struct()
 
 static TempIndexStruct* temp_index_array;
 static unsigned temp_index_array_count;
+
+// Adapted from Zero Hour Reforged (Olcay Seygan and contributors): stable
+// three-pass radix sort of depth keys. Keep the old sort for small pools.
+static std::vector<TempIndexStruct> depth_sort_scratch;
+
+static std::uint32_t Depth_Sort_Key(float depth)
+{
+	static_assert(sizeof(float) == sizeof(std::uint32_t));
+	static_assert(std::numeric_limits<float>::is_iec559);
+	const auto bits = std::bit_cast<std::uint32_t>(depth);
+	const auto magnitude = bits & 0x7fffffffu;
+	// Both signed zeroes compare equal, so keep their original relative order.
+	if (magnitude == 0)
+		return 0x80000000u;
+	return (bits & 0x80000000u) ? 0x7fffffffu - magnitude : 0x80000000u + magnitude;
+}
+
+static TempIndexStruct *Sort_By_Depth(TempIndexStruct *items, unsigned count)
+{
+	if (count < 256)
+	{
+		if (count > 1)
+			Sort(items, items + count);
+		return items;
+	}
+
+	constexpr unsigned bitsPerPass = 11;
+	constexpr unsigned buckets = 1u << bitsPerPass;
+	constexpr unsigned passes = 3;
+	std::array<std::array<unsigned, buckets>, passes> histogram{};
+	for (unsigned i = 0; i < count; ++i)
+	{
+		// Preserve the existing guarded comparison sort for malformed depths.
+		if (!std::isfinite(items[i].z))
+		{
+			Sort(items, items + count);
+			return items;
+		}
+		const auto key = Depth_Sort_Key(items[i].z);
+		for (unsigned pass = 0; pass < passes; ++pass)
+			++histogram[pass][(key >> (pass * bitsPerPass)) & (buckets - 1)];
+	}
+
+	depth_sort_scratch.resize(count);
+	TempIndexStruct *from = items;
+	TempIndexStruct *to = depth_sort_scratch.data();
+	for (unsigned pass = 0; pass < passes; ++pass)
+	{
+		auto &offsets = histogram[pass];
+		unsigned offset = 0;
+		for (auto &bucket : offsets)
+		{
+			const unsigned size = bucket;
+			bucket = offset;
+			offset += size;
+		}
+		for (unsigned i = 0; i < count; ++i)
+		{
+			const auto key = Depth_Sort_Key(from[i].z);
+			to[offsets[(key >> (pass * bitsPerPass)) & (buckets - 1)]++] = from[i];
+		}
+		std::swap(from, to);
+	}
+	return from;
+}
 
 static TempIndexStruct* Get_Temp_Index_Array(unsigned count)
 {
@@ -528,7 +597,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 		}
 	}
 
-	Sort(tis, tis + overlapping_polygon_count);
+	tis = Sort_By_Depth(tis, overlapping_polygon_count);
 
 	// TheSuperHackers @fix stephanmeesters 10/06/2026
 	// Split rendering into chunks to prevent a crash when exceeding the 16-bit index buffer limit.
@@ -719,4 +788,5 @@ void SortingRendererClass::Deinit()
 	delete[] temp_index_array;
 	temp_index_array=nullptr;
 	temp_index_array_count=0;
+	std::vector<TempIndexStruct>().swap(depth_sort_scratch);
 }

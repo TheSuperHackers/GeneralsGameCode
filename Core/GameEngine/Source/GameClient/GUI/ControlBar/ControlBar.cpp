@@ -75,6 +75,7 @@
 #include "GameClient/GadgetStaticText.h"
 #include "GameClient/GadgetTextEntry.h"
 #include "GameClient/InGameUI.h"
+#include <limits>
 #include "GameClient/WindowVideoManager.h"
 #include "GameClient/ControlBarResizer.h"
 #include "GameClient/GadgetListBox.h"
@@ -98,6 +99,85 @@ const Image* ControlBar::m_rankHeroicIcon		= nullptr;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
+// Preserve legacy names and IDs; resolve additional names against the optional INI registry.
+static void parseRadiusCursorType(INI* ini, void*, void* store, const void*)
+{
+	const char* name = ini->getNextToken();
+	for (Int i = 0; TheRadiusCursorNames[i] != nullptr; ++i)
+	{
+		if (stricmp(TheRadiusCursorNames[i], name) == 0)
+		{
+			*static_cast<RadiusCursorType*>(store) = static_cast<RadiusCursorType>(i);
+			return;
+		}
+	}
+
+	const RadiusCursorType type = TheControlBar ? TheControlBar->findCustomRadiusCursorType(name) : RADIUSCURSOR_NONE;
+	if (type == RADIUSCURSOR_NONE)
+	{
+		DEBUG_CRASH(("Unknown RadiusCursorType '%s'", name));
+		throw INI_INVALID_DATA;
+	}
+	*static_cast<RadiusCursorType*>(store) = type;
+}
+
+RadiusCursorType ControlBar::findCustomRadiusCursorType(const char* name) const
+{
+	for (std::size_t i = 0; i < m_customRadiusCursors.size(); ++i)
+	{
+		if (stricmp(m_customRadiusCursors[i].name.str(), name) == 0)
+			return static_cast<RadiusCursorType>(RADIUSCURSOR_COUNT + static_cast<Int>(i));
+	}
+	return RADIUSCURSOR_NONE;
+}
+
+const RadiusDecalTemplate* ControlBar::findCustomRadiusCursorTemplate(RadiusCursorType type) const
+{
+	if (type < RADIUSCURSOR_COUNT)
+		return nullptr;
+	const std::size_t index = static_cast<std::size_t>(static_cast<Int>(type) - RADIUSCURSOR_COUNT);
+	return index < m_customRadiusCursors.size() ? &m_customRadiusCursors[index].decal : nullptr;
+}
+
+RadiusDecalTemplate& ControlBar::defineCustomRadiusCursor(const char* name)
+{
+	// Reserved names are configured by their original fields in InGameUI.ini.
+	for (Int i = 0; TheRadiusCursorNames[i] != nullptr; ++i)
+	{
+		if (stricmp(TheRadiusCursorNames[i], name) == 0)
+		{
+			DEBUG_CRASH(("RadiusCursor '%s' is a reserved built-in name", name));
+			throw INI_INVALID_DATA;
+		}
+	}
+
+	const RadiusCursorType existing = findCustomRadiusCursorType(name);
+	if (existing != RADIUSCURSOR_NONE)
+		return m_customRadiusCursors[static_cast<Int>(existing) - RADIUSCURSOR_COUNT].decal;
+
+	if (m_customRadiusCursors.size() >= static_cast<std::size_t>((std::numeric_limits<Int>::max)() - RADIUSCURSOR_COUNT))
+		throw INI_INVALID_DATA;
+
+	m_customRadiusCursors.emplace_back();
+	m_customRadiusCursors.back().name = name;
+	return m_customRadiusCursors.back().decal;
+}
+
+void INI::parseRadiusCursorDefinition(INI* ini)
+{
+	const char* name = ini->getNextToken();
+	if (!TheControlBar)
+		throw INI_INVALID_PARAMS;
+
+	RadiusDecalTemplate& decal = TheControlBar->defineCustomRadiusCursor(name);
+	RadiusDecalTemplate::parseRadiusDecalTemplate(ini, TheControlBar, &decal, nullptr);
+	if (!decal.valid())
+	{
+		DEBUG_CRASH(("Custom RadiusCursor requires a Texture"));
+		throw INI_INVALID_DATA;
+	}
+}
+
 const FieldParse CommandButton::s_commandButtonFieldParseTable[] =
 {
 
@@ -117,7 +197,7 @@ const FieldParse CommandButton::s_commandButtonFieldParseTable[] =
 	{ "CursorName",						INI::parseAsciiString,			 nullptr, offsetof( CommandButton, m_cursorName ) },
 	{ "InvalidCursorName",		INI::parseAsciiString,       nullptr, offsetof( CommandButton, m_invalidCursorName ) },
 	{ "ButtonBorderType",			INI::parseLookupList,				 CommandButtonMappedBorderTypeNames, offsetof( CommandButton, m_commandButtonBorder ) },
-	{ "RadiusCursorType",			INI::parseIndexList,				 TheRadiusCursorNames, offsetof( CommandButton, m_radiusCursor ) },
+	{ "RadiusCursorType",			parseRadiusCursorType,				 nullptr, offsetof( CommandButton, m_radiusCursor ) },
 	{ "UnitSpecificSound",		INI::parseAudioEventRTS,		 nullptr, offsetof( CommandButton, m_unitSpecificSound ) },
 
 	{ nullptr,						nullptr,												 nullptr, 0 }
@@ -1064,6 +1144,8 @@ void ControlBar::init()
 {
 	INI ini;
 	m_sideSelectAnimateDown = FALSE;
+	// Optional custom radius cursor definitions must be available before command buttons.
+	ini.loadFileDirectory( "Data\\INI\\RadiusCursor", INI_LOAD_OVERWRITE, nullptr, INI::LoadFlags_SearchSubDirs );
 	// load the command buttons
 	ini.loadFileDirectory( "Data\\INI\\Default\\CommandButton", INI_LOAD_OVERWRITE, nullptr );
 	ini.loadFileDirectory( "Data\\INI\\CommandButton", INI_LOAD_OVERWRITE, nullptr );

@@ -1229,6 +1229,8 @@ InGameUI::InGameUI()
 //-------------------------------------------------------------------------------------------------
 InGameUI::~InGameUI()
 {
+	// Custom decal templates are owned by the ControlBar.
+	setRadiusCursorNone();
 	delete TheControlBar;
 	TheControlBar = nullptr;
 
@@ -1377,6 +1379,14 @@ void InGameUI::setRadiusCursor(RadiusCursorType cursorType, const SpecialPowerTe
 	if (cursorType == RADIUSCURSOR_NONE)
 		return;
 
+	const RadiusDecalTemplate* cursorTemplate = nullptr;
+	if (cursorType > RADIUSCURSOR_NONE && cursorType < RADIUSCURSOR_COUNT)
+		cursorTemplate = &m_radiusCursors[cursorType];
+	else if (TheControlBar)
+		cursorTemplate = TheControlBar->findCustomRadiusCursorTemplate(cursorType);
+	if (!cursorTemplate)
+		return;
+
 	Object* obj = nullptr;
 	if (m_pendingGUICommand && m_pendingGUICommand->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_COMMAND_CENTER)
 	{
@@ -1449,13 +1459,18 @@ void InGameUI::setRadiusCursor(RadiusCursorType cursorType, const SpecialPowerTe
 			radius = specPowTempl ? specPowTempl->getRadiusCursorRadius() : 0.0f;
 			break;
 
+		default:
+			// Additional named cursors are for special powers and superweapons.
+			if (cursorType >= RADIUSCURSOR_COUNT && specPowTempl)
+				radius = specPowTempl->getRadiusCursorRadius();
+			break;
 	}
 
 	if (radius <= 0.0f)
 		return;
 
 	Coord3D pos = { 0, 0, 0 };	// will be updated right away
-	m_radiusCursors[cursorType].createRadiusDecal(pos, radius, controller, m_curRadiusCursor);
+	cursorTemplate->createRadiusDecal(pos, radius, controller, m_curRadiusCursor);
 	m_curRcType = cursorType;
 
 	handleRadiusCursor();
@@ -5908,6 +5923,8 @@ void InGameUI::resetIdleWorker()
 
 void InGameUI::recreateControlBar()
 {
+	// Clear any decal before its custom template is destroyed.
+	setRadiusCursorNone();
 	destroyControlBar();
 	createControlBar();
 
