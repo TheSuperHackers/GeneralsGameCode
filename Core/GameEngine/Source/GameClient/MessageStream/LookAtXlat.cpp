@@ -420,7 +420,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 
 			const Real spin = msg->getArgument( 1 )->real;
 			const Real zoom = -spin * View::ZoomHeightPerSecond * m_cameraZoomSpeed;
-			TheTacticalView->userZoom(zoom);
+			TheTacticalView->userZoomAt(zoom, msg->getArgument(0)->pixel);
 
 			break;
 		}

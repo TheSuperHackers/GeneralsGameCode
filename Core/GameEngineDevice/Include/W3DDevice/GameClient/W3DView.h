@@ -214,6 +214,7 @@ public:
 	virtual void pitchCamera( Real finalPitch, Int milliseconds, Real easeIn, Real easeOut ) override;
 
 	virtual void zoom(Real height) override;
+	virtual void zoomAt(Real height, const ICoord2D &screen) override;
 	virtual void setHeightAboveGround(Real z) override;
 	virtual void setZoom(Real z) override;
 	virtual void setZoomToDefault() override;									///< Set zoom to default value
@@ -300,6 +301,11 @@ private:
 	Bool m_recalcCameraConstraintsAfterScrolling; ///< Recalculates the camera area constraints after the user has moved the camera
 	Bool m_recalcCamera; ///< Recalculates the camera transform in the next render update
 
+	bool m_cursorZoomActive = false;
+	Vector3 m_cursorZoomAnchor;
+	Vector3 m_cursorZoomRay; ///< View-space direction at the wheel event
+	Coord2D m_cursorZoomPivot; ///< Last pivot after applying the map constraints
+
 	Real getHeightAroundPos(Real x, Real y, Real terrainSampleSize = TERRAIN_SAMPLE_SIZE) const;
 	Real getCameraOffsetZ() const;
 	Real getDesiredHeight(Real x, Real y) const;
@@ -311,7 +317,9 @@ private:
 	void setCameraTransform(const Matrix3D &transform);
 	void buildCameraPosition(Vector3 &sourcePos, Vector3 &targetPos);
 	void buildCameraTransform(Matrix3D *transform, const Vector3 &sourcePos, const Vector3 &targetPos); ///< calculate (but do not set) the transform matrix of m_3DCamera, based on m_pos & m_angle
+	void adjustCameraPositionAboveTerrain(Vector3 &sourcePos, Vector3 &targetPos) const;
 	Bool zoomCameraToDesiredHeight();
+	void applyCursorZoomAnchor();
 	Bool movePivotToGround();
 	void updateCameraAreaConstraints();
 	void calcCameraAreaConstraints(); ///< Recalculates the camera area constraints

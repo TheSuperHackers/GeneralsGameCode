@@ -202,6 +202,8 @@ W3DView::~W3DView()
 //-------------------------------------------------------------------------------------------------
 void W3DView::setHeight(Int height)
 {
+	m_cursorZoomActive = false;
+
 	// extend View functionality
 	View::setHeight(height);
 
@@ -223,6 +225,8 @@ void W3DView::setHeight(Int height)
 //-------------------------------------------------------------------------------------------------
 void W3DView::setWidth(Int width)
 {
+	m_cursorZoomActive = false;
+
 	// extend View functionality
 	View::setWidth(width);
 
@@ -444,6 +448,33 @@ Bool W3DView::zoomCameraToDesiredHeight()
 		return true;
 	}
 	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+void W3DView::applyCursorZoomAnchor()
+{
+	Vector3 source, target;
+	buildCameraPosition(source, target);
+	adjustCameraPositionAboveTerrain(source, target);
+	Matrix3D transform;
+	transform.Look_At(source, target, 0);
+	const Vector3 ray = transform.Rotate_Vector(m_cursorZoomRay);
+
+	if (!(ray.Z < -0.0001f) || !(source.Z > m_cursorZoomAnchor.Z))
+	{
+		m_cursorZoomActive = false;
+		return;
+	}
+
+	// Intersect the new cursor ray with the original point's plane. Translating
+	// the camera in XY by the difference keeps that point under the same pixel.
+	const Real distance = (m_cursorZoomAnchor.Z - source.Z) / ray.Z;
+	const Vector3 underCursor = source + ray * distance;
+	const Coord2D pivot = {
+		m_pos.x + (m_cursorZoomAnchor.X - underCursor.X),
+		m_pos.y + (m_cursorZoomAnchor.Y - underCursor.Y)
+	};
+	setPosition2D(pivot);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -841,22 +872,24 @@ void W3DView::updateCameraTransform()
 	const Bool clipCameraAboveTerrain = true;
 #endif
 	if (clipCameraAboveTerrain)
-	{
-		// TheSuperHackers @fix Moves the camera above the terrain.
-		// Uses averaged terrain height sampling to reduce bumpy movements.
-		const Real minAcceptableCameraHeight = getHeightAroundPos(sourcePos.X, sourcePos.Y, MAP_XY_FACTOR) + NearZ;
-		if (sourcePos.Z < minAcceptableCameraHeight)
-		{
-			const Real repositionZ = minAcceptableCameraHeight - sourcePos.Z;
-			sourcePos.Z += repositionZ;
-			targetPos.Z += repositionZ;
-		}
-	}
+		adjustCameraPositionAboveTerrain(sourcePos, targetPos);
 
 	Matrix3D cameraTransform;
 	buildCameraTransform(&cameraTransform, sourcePos, targetPos);
 
 	setCameraTransform(cameraTransform);
+}
+
+void W3DView::adjustCameraPositionAboveTerrain(Vector3 &sourcePos, Vector3 &targetPos) const
+{
+	// Use averaged terrain height sampling to reduce bumpy movements.
+	const Real minAcceptableCameraHeight = getHeightAroundPos(sourcePos.X, sourcePos.Y, MAP_XY_FACTOR) + NearZ;
+	if (sourcePos.Z < minAcceptableCameraHeight)
+	{
+		const Real repositionZ = minAcceptableCameraHeight - sourcePos.Z;
+		sourcePos.Z += repositionZ;
+		targetPos.Z += repositionZ;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1011,6 +1044,7 @@ Coord3D W3DView::get3DCameraDirection() const
 //-------------------------------------------------------------------------------------------------
 void W3DView::set3DCameraLookAt(const Coord3D &pos, const Coord3D &dir, Real roll)
 {
+	m_cursorZoomActive = false;
 	Vector3 camPos(pos.x, pos.y, pos.z);
 	Vector3 camDir(dir.x, dir.y, dir.z);
 	Matrix3D transform;
@@ -1705,6 +1739,15 @@ void W3DView::update()
 	// is scrolling, to make the scrolling along the map border a pleasant experience. This behavior
 	// ensures that the view can reach and see all areas of the map, and especially the bottom map border.
 
+	if (m_cursorZoomActive && (!m_okToAdjustHeight || didScriptedMovement
+		|| !isCameraOverviewEnabled() || isUserControlLocked()
+		|| m_scrollAmount.lengthSqr() > FLT_EPSILON
+		|| m_cursorZoomPivot.x != m_pos.x || m_cursorZoomPivot.y != m_pos.y
+		|| m_shakeOffset.x != 0.0f || m_shakeOffset.y != 0.0f || CameraShakerSystem.IsCameraShaking()))
+	{
+		m_cursorZoomActive = false;
+	}
+
 	m_terrainHeightAtPivot = getHeightAroundPos(m_pos.x, m_pos.y);
 	m_currentHeightAboveGround = getCameraOffsetZ() * m_zoom - m_terrainHeightAtPivot;
 
@@ -1737,20 +1780,14 @@ void W3DView::update()
 			//    camera origin towards the look-at target. Visually this looks identical
 			//    to (1), but changes the pivot point which is important for the rotation
 			//    origin and map border collisions.
-			Bool isZoomingOrMovingPivot = false;
+			const Bool didZoom = zoomCameraToDesiredHeight();
+			const Bool didMovePivot = movePivotToGround();
 
-			if (zoomCameraToDesiredHeight())
+			if (didZoom || didMovePivot)
 			{
-				isZoomingOrMovingPivot = true;
-			}
+				if (m_cursorZoomActive)
+					applyCursorZoomAnchor();
 
-			if (movePivotToGround())
-			{
-				isZoomingOrMovingPivot = true;
-			}
-
-			if (isZoomingOrMovingPivot)
-			{
 				m_recalcCamera = true;
 
 				if (isScrolling)
@@ -1762,6 +1799,10 @@ void W3DView::update()
 				{
 					m_cameraAreaConstraintsValid = false;
 				}
+			}
+			else
+			{
+				m_cursorZoomActive = false;
 			}
 		}
 
@@ -1780,6 +1821,9 @@ void W3DView::update()
 	{
 		updateCameraAreaConstraints();
 	}
+
+	if (m_cursorZoomActive)
+		m_cursorZoomPivot = getPosition2D();
 
 	// (gth) C&C3 if m_isCameraSlaved then force the camera to update each frame
 	if (m_recalcCamera || m_isCameraSlaved)
@@ -2281,6 +2325,7 @@ void W3DView::forceRedraw()
 //-------------------------------------------------------------------------------------------------
 void W3DView::setAngle( Real radians )
 {
+	m_cursorZoomActive = false;
 	View::setAngle( radians );
 
 	stopDoingScriptedCamera();
@@ -2293,6 +2338,7 @@ void W3DView::setAngle( Real radians )
 //-------------------------------------------------------------------------------------------------
 void W3DView::setPitch( Real radians )
 {
+	m_cursorZoomActive = false;
 	View::setPitch( radians );
 
 	stopDoingScriptedCamera();
@@ -2317,6 +2363,7 @@ void W3DView::setDefaultPitch( Real radians )
 //-------------------------------------------------------------------------------------------------
 void W3DView::setAngleToDefault()
 {
+	m_cursorZoomActive = false;
 	View::setAngleToDefault();
 
 	m_recalcCamera = true;
@@ -2327,6 +2374,7 @@ void W3DView::setAngleToDefault()
 //-------------------------------------------------------------------------------------------------
 void W3DView::setPitchToDefault()
 {
+	m_cursorZoomActive = false;
 	View::setPitchToDefault();
 
 	m_FXPitch = 1.0f;
@@ -2373,6 +2421,37 @@ void W3DView::zoom(Real height)
 	onZoomChanged();
 }
 
+void W3DView::zoomAt(Real height, const ICoord2D &screen)
+{
+	const Real previousHeight = m_heightAboveGround;
+	const bool wasAnchored = m_cursorZoomActive;
+	zoom(height);
+
+	if (m_heightAboveGround == previousHeight)
+	{
+		m_cursorZoomActive = wasAnchored && isCameraOverviewEnabled();
+		return;
+	}
+
+	if (!isCameraOverviewEnabled() || !m_okToAdjustHeight || !m_3DCamera || !TheTerrainLogic
+		|| screen.x < m_originX || screen.x >= m_originX + getWidth()
+		|| screen.y < m_originY || screen.y >= m_originY + getHeight())
+	{
+		return;
+	}
+
+	Coord3D ground;
+	if (!screenToTerrain(&screen, &ground))
+		return;
+
+	m_cursorZoomAnchor.Set(ground.x, ground.y, ground.z);
+	const Matrix3D &camera = m_3DCamera->Get_Transform();
+	m_cursorZoomRay = camera.Inverse_Rotate_Vector(m_cursorZoomAnchor - camera.Get_Translation());
+	m_cursorZoomRay.Normalize();
+	m_cursorZoomPivot = getPosition2D();
+	m_cursorZoomActive = true;
+}
+
 void W3DView::setHeightAboveGround(Real z)
 {
 	View::setHeightAboveGround(z);
@@ -2381,6 +2460,7 @@ void W3DView::setHeightAboveGround(Real z)
 
 void W3DView::onZoomChanged()
 {
+	m_cursorZoomActive = false;
 	stopDoingScriptedCamera();
 	m_CameraArrivedAtWaypointOnPathFlag = false;
 	m_cameraAreaConstraintsValid = false;
@@ -2415,6 +2495,7 @@ void W3DView::setZoomToDefault()
 //-------------------------------------------------------------------------------------------------
 void W3DView::setFieldOfView( Real angle )
 {
+	m_cursorZoomActive = false;
 	View::setFieldOfView( angle );
 
 #if defined(RTS_DEBUG)
