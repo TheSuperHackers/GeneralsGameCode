@@ -22,13 +22,14 @@
 
 // D3D8's integer ZBIAS (0..16) pulls coplanar polygons toward the camera.
 // Keep depth testing enabled; never alter depth writes or the world position.
-// Only use the smallest nonzero bias, preserving an existing stronger bias.
+// Default to the smallest nonzero bias; callers may request a slightly larger
+// bias for coplanar scorch marks. Preserve any existing nonzero state.
 class ScopedTerrainDecalDepthBias
 {
 public:
-    ScopedTerrainDecalDepthBias()
+    explicit ScopedTerrainDecalDepthBias(unsigned bias = 1)
     {
-        if (!DX8Wrapper::_Get_D3D_Device8() ||
+        if (bias == 0 || bias > 16 || !DX8Wrapper::_Get_D3D_Device8() ||
             !DX8Wrapper::Get_Current_Caps()->Support_ZBias())
             return;
 
@@ -37,7 +38,7 @@ public:
         if (previous != 0)
             return;
 
-        DX8Wrapper::Set_DX8_Render_State(D3DRS_ZBIAS, 1);
+        DX8Wrapper::Set_DX8_Render_State(D3DRS_ZBIAS, bias);
         changed = true;
     }
 
