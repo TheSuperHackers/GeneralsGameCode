@@ -440,37 +440,72 @@ void W3DView::buildCameraTransform( Matrix3D *transform, const Vector3 &sourcePo
 Bool W3DView::zoomCameraToDesiredHeight()
 {
 	const Real desiredZoom = getDesiredZoom(m_pos.x, m_pos.y);
+	if (m_cursorZoomActive)
+		return zoomCameraToCursorHeight(desiredZoom);
+
 	const Real adjustZoom = desiredZoom - m_zoom;
 	if (fabs(adjustZoom) >= 0.001f)
 	{
 		const Real fpsRatio = TheFramePacer->getBaseOverUpdateFpsRatio();
 		const Real adjustFactor = std::min(TheGlobalData->m_cameraAdjustSpeed * fpsRatio, 1.0f);
-		const Real previousZoom = m_zoom;
 		m_zoom += adjustZoom * adjustFactor;
-
-		if (m_cursorZoomActive)
-		{
-			const Real offsetZ = getCameraOffsetZ();
-			const Real previousHeight = offsetZ * previousZoom - m_pos.z;
-			const Real currentHeight = offsetZ * m_zoom - m_pos.z;
-			if (previousHeight > 0.0f && currentHeight > 0.0f)
-			{
-				// Draw the selected point toward the optical axis as the zoom moves.
-				// Ratios compose across frames, including at different frame rates.
-				const Real ratio = std::min(previousHeight, currentHeight) / std::max(previousHeight, currentHeight);
-				const Real ratioSquared = ratio * ratio;
-				const Real keepOffset = ratioSquared * ratioSquared;
-				m_cursorZoomRay.X *= keepOffset;
-				m_cursorZoomRay.Y *= keepOffset;
-			}
-		}
 		return true;
 	}
 	return false;
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool W3DView::applyCursorZoomAnchor(Bool constrainToMap)
+Bool W3DView::zoomCameraToCursorHeight(Real desiredZoom)
+{
+	const Real error = m_zoom - desiredZoom;
+	const Real rate = 2.0f * std::min(TheGlobalData->m_cameraAdjustSpeed, 1.0f);
+	if (error == 0.0f || !(rate > 0.0f))
+	{
+		m_cursorZoomVelocity = 0.0f;
+		return false;
+	}
+
+	// Retain velocity between wheel events toward the same side of the target.
+	if (error * m_cursorZoomVelocity > 0.0f)
+		m_cursorZoomVelocity = 0.0f;
+
+	// Integrate a critically damped transition in units of the base frame time.
+	// Clamp the time step so the camera does not jump after a long frame.
+	const Real elapsed = TheFramePacer->getBaseOverUpdateFpsRatio(15.0f);
+	const Real decay = std::exp(-rate * elapsed);
+	const Real impulse = (m_cursorZoomVelocity + rate * error) * elapsed;
+	const Real remaining = (error + impulse) * decay;
+	const Real previousZoom = m_zoom;
+	constexpr Real finishDistance = 0.0001f;
+	if (fabs(remaining) <= finishDistance || remaining * error <= 0.0f)
+	{
+		m_zoom = desiredZoom;
+		m_cursorZoomVelocity = 0.0f;
+	}
+	else
+	{
+		m_zoom = desiredZoom + remaining;
+		m_cursorZoomVelocity = (m_cursorZoomVelocity - rate * impulse) * decay;
+	}
+
+	const Real offsetZ = getCameraOffsetZ();
+	const Real previousHeight = offsetZ * previousZoom - m_pos.z;
+	const Real currentHeight = offsetZ * m_zoom - m_pos.z;
+	if (previousHeight > 0.0f && currentHeight > 0.0f)
+	{
+		// Shift the selected point toward the optical axis according to this
+		// zoom step, so the camera position and height share the transition.
+		const Real ratio = std::min(previousHeight, currentHeight) / std::max(previousHeight, currentHeight);
+		const Real ratioSquared = ratio * ratio;
+		const Real keepOffset = ratioSquared * ratioSquared;
+		m_cursorZoomRay.X *= keepOffset;
+		m_cursorZoomRay.Y *= keepOffset;
+	}
+	return m_zoom != previousZoom;
+}
+
+//-------------------------------------------------------------------------------------------------
+void W3DView::applyCursorZoomAnchor(Bool constrainToMap)
 {
 	Vector3 source, target;
 	buildCameraPosition(source, target);
@@ -482,33 +517,18 @@ Bool W3DView::applyCursorZoomAnchor(Bool constrainToMap)
 	if (!(ray.Z < -0.0001f) || !(source.Z > m_cursorZoomAnchor.Z))
 	{
 		m_cursorZoomActive = false;
-		return false;
+		return;
 	}
 
 	// Intersect the adjusted ray with the selected point's plane, then translate
 	// the camera in XY to place the point at its intended screen position.
 	const Real distance = (m_cursorZoomAnchor.Z - source.Z) / ray.Z;
 	const Vector3 underCursor = source + ray * distance;
-	Coord2D pivot = {
+	const Coord2D pivot = {
 		m_pos.x + (m_cursorZoomAnchor.X - underCursor.X),
 		m_pos.y + (m_cursorZoomAnchor.Y - underCursor.Y)
 	};
-	if (constrainToMap)
-		pivot = clampCameraPosition(pivot);
-
-	const Coord2D delta = { pivot.x - m_pos.x, pivot.y - m_pos.y };
-	constexpr Real settleDistance = 0.5f;
-	if (delta.lengthSqr() <= settleDistance * settleDistance)
-		return false;
-
-	// Ease the horizontal movement independently of the wheel's zoom speed.
-	// Limit the time step so a stalled frame does not produce a catch-up jump.
-	const Real fpsRatio = TheFramePacer->getBaseOverUpdateFpsRatio(15.0f);
-	const Real step = 1.0f - std::pow(0.86f, fpsRatio);
-	const Coord2D next = { m_pos.x + delta.x * step, m_pos.y + delta.y * step };
-	setPosition2D(next);
-	m_recalcCamera = true;
-	return true;
+	setPosition2D(constrainToMap ? clampCameraPosition(pivot) : pivot);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1785,7 +1805,7 @@ void W3DView::update()
 	m_terrainHeightAtPivot = getHeightAroundPos(m_pos.x, m_pos.y);
 	m_currentHeightAboveGround = getCameraOffsetZ() * m_zoom - m_terrainHeightAtPivot;
 
-	Bool isZoomingOrMovingPivot = false;
+	Bool didZoom = false;
 	if (m_okToAdjustHeight)
 	{
 
@@ -1815,11 +1835,10 @@ void W3DView::update()
 			//    camera origin towards the look-at target. Visually this looks identical
 			//    to (1), but changes the pivot point which is important for the rotation
 			//    origin and map border collisions.
-			const Bool didZoom = zoomCameraToDesiredHeight();
+			didZoom = zoomCameraToDesiredHeight();
 			const Bool didMovePivot = movePivotToGround();
-			isZoomingOrMovingPivot = didZoom || didMovePivot;
 
-			if (isZoomingOrMovingPivot)
+			if (didZoom || didMovePivot)
 			{
 				m_recalcCamera = true;
 
@@ -1849,11 +1868,16 @@ void W3DView::update()
 	if (!didScriptedMovement)
 	{
 		const Bool constrainToMap = updateCameraAreaConstraints();
-		if (m_cursorZoomActive && !applyCursorZoomAnchor(constrainToMap) && !isZoomingOrMovingPivot)
-			m_cursorZoomActive = false;
-
 		if (m_cursorZoomActive)
-			m_cursorZoomPivot = getPosition2D();
+		{
+			if (didZoom)
+				applyCursorZoomAnchor(constrainToMap);
+
+			if (m_cursorZoomVelocity == 0.0f)
+				m_cursorZoomActive = false;
+			if (m_cursorZoomActive)
+				m_cursorZoomPivot = getPosition2D();
+		}
 	}
 
 	// (gth) C&C3 if m_isCameraSlaved then force the camera to update each frame
@@ -2455,7 +2479,8 @@ void W3DView::zoom(Real height)
 void W3DView::zoomAt(Real height, const ICoord2D &screen)
 {
 	const Real previousHeight = m_heightAboveGround;
-	const bool keepAnchor = m_cursorZoomActive
+	const bool wasAnchored = m_cursorZoomActive;
+	const bool keepAnchor = wasAnchored
 		&& screen.x == m_cursorZoomScreen.x && screen.y == m_cursorZoomScreen.y;
 	zoom(height);
 
@@ -2486,6 +2511,8 @@ void W3DView::zoomAt(Real height, const ICoord2D &screen)
 	m_cursorZoomRay.Normalize();
 	m_cursorZoomScreen = screen;
 	m_cursorZoomPivot = getPosition2D();
+	if (!wasAnchored)
+		m_cursorZoomVelocity = 0.0f;
 	m_cursorZoomActive = true;
 }
 
