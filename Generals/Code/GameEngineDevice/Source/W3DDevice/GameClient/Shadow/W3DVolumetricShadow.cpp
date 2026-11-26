@@ -1294,7 +1294,7 @@ void W3DVolumetricShadow::RenderDynamicMeshVolume(Int meshIndex, Int lightIndex,
 	//Get D3D Device used by W3D for quicker access.
 	LPDIRECT3DDEVICE8 m_pDev=DX8Wrapper::_Get_D3D_Device8();
 
-	if (!m_pDev)
+	if (!m_pDev || !shadowVertexBufferD3D || !shadowIndexBufferD3D)
 		return;
 
 
@@ -1305,15 +1305,18 @@ void W3DVolumetricShadow::RenderDynamicMeshVolume(Int meshIndex, Int lightIndex,
 	// is wrong here
 	//
 	assert( geometry );
+	if (!geometry)
+		return;
 
 	// get geometry requirements
 	numVerts = geometry->GetNumActiveVertex();
 	numPolys = geometry->GetNumActivePolygon();
-	numIndex = numPolys * 3;
-
-	// reject shadows with no data
-	if( numVerts == 0 || numPolys == 0 )
+	// Reforged (Olcay Seygan and contributors): reject an upload that cannot
+	// fit even an empty streaming buffer before multiplying the index count.
+	if (numVerts <= 0 || numPolys <= 0 ||
+		numVerts > SHADOW_VERTEX_SIZE || numPolys > SHADOW_INDEX_SIZE / 3)
 		return;
+	numIndex = numPolys * 3;
 
 
 	if (nShadowVertsInBuf > (SHADOW_VERTEX_SIZE-numVerts))	//check if room for model verts
@@ -1345,7 +1348,12 @@ void W3DVolumetricShadow::RenderDynamicMeshVolume(Int meshIndex, Int lightIndex,
 #endif
 	}
 
-	shadowVertexBufferD3D->Unlock();
+	const HRESULT vertexUnlock = shadowVertexBufferD3D->Unlock();
+	if (!pvVertices || vertexUnlock != D3D_OK)
+	{
+		nShadowVertsInBuf = SHADOW_VERTEX_SIZE;
+		return;
+	}
 
 	if (nShadowIndicesInBuf > (SHADOW_INDEX_SIZE-numIndex))	//check if room for model verts
 	{
@@ -1363,10 +1371,17 @@ void W3DVolumetricShadow::RenderDynamicMeshVolume(Int meshIndex, Int lightIndex,
 
 	if(pvIndices)
 	{
-		memcpy(pvIndices,geometry->GetPolygonIndex(0,(short *)pvIndices,3),numPolys*3*sizeof(short));
+		short firstPolygonIndices[3];
+		memcpy(pvIndices, geometry->GetPolygonIndex(0, firstPolygonIndices,3), numIndex * sizeof(short));
 	}
 
-	shadowIndexBufferD3D->Unlock();
+	const HRESULT indexUnlock = shadowIndexBufferD3D->Unlock();
+	if (!pvIndices || indexUnlock != D3D_OK)
+	{
+		nShadowVertsInBuf = SHADOW_VERTEX_SIZE;
+		nShadowIndicesInBuf = SHADOW_INDEX_SIZE;
+		return;
+	}
 
 	m_pDev->SetIndices(shadowIndexBufferD3D,nShadowStartBatchVertex);
 
