@@ -585,7 +585,10 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 
 		if ( sort )
 		{
-				SortingRendererClass::Insert_Triangles (0, delta / verticesperprimitive, 0, delta);
+				if (PointMode == QUADS)
+					SortingRendererClass::Insert_Quads(delta / 4, delta);
+				else
+					SortingRendererClass::Insert_Triangles(0, delta / verticesperprimitive, 0, delta);
 		}
 		else
 		{
