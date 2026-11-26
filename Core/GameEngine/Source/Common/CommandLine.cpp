@@ -1197,6 +1197,19 @@ static CommandLineParam paramsForStartup[] =
 	{ "-useCwd", parseUseCwd },
 };
 
+static bool cameraZoomTestEnabled = false;
+
+static Int parseCameraZoomTest(char *[], int)
+{
+	cameraZoomTestEnabled = true;
+	return 1;
+}
+
+bool CommandLine::isCameraZoomTestEnabled()
+{
+	return cameraZoomTestEnabled;
+}
+
 // These Params are parsed during Engine Init before INI data is loaded
 static CommandLineParam paramsForEngineInit[] =
 {
@@ -1225,6 +1238,7 @@ static CommandLineParam paramsForEngineInit[] =
 
 	// TheSuperHackers @feature xezon 03/08/2025 Force full viewport for 'Control Bar Pro' Addons like GenTool did it.
 	{ "-forcefullviewport", parseFullViewport },
+	{ "-testCameraZoom", parseCameraZoomTest },
 
 #if defined(RTS_DEBUG)
 	{ "-noaudio", parseNoAudio },

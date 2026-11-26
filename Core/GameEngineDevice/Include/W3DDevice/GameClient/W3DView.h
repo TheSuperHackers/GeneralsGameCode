@@ -213,6 +213,7 @@ public:
 	virtual void zoomCamera( Real finalZoom, Int milliseconds, Real easeIn, Real easeOut ) override;
 	virtual void pitchCamera( Real finalPitch, Int milliseconds, Real easeIn, Real easeOut ) override;
 
+	virtual void zoom(Real height) override;
 	virtual void setHeightAboveGround(Real z) override;
 	virtual void setZoom(Real z) override;
 	virtual void setZoomToDefault() override;									///< Set zoom to default value
@@ -315,6 +316,10 @@ private:
 	void updateCameraAreaConstraints();
 	void calcCameraAreaConstraints(); ///< Recalculates the camera area constraints
 	Real calcCameraAreaOffset(Real maxEdgeZ);
+	bool isCameraOverviewEnabled() const;
+	Real getCameraOverviewHeight(const Region3D &mapRegion, const Matrix3D &transform) const;
+	bool calcOverviewCameraArea(const Region3D &mapRegion, const Matrix3D &transform);
+	void onZoomChanged();
 	void clipCameraIntoAreaConstraints();
 	Bool isWithinCameraAreaConstraints() const;
 	Bool isWithinCameraHeightConstraints() const;
@@ -330,7 +335,7 @@ private:
 	void pitchCameraOneFrame();							///< Do one frame of a pitch camera movement.
 	void getAxisAlignedViewRegion(Region3D &axisAlignedRegion);	///< Find 3D Region enclosing all possible drawables.
 	void calcDeltaScroll(Coord2D &screenDelta);
-	bool getDesiredTerrainDrawSize(ICoord2D &dimensions) const;
+	bool getDesiredTerrainDrawSize(ICoord2D &dimensions, Vector2 &drawCenter, bool &useDrawCenter) const;
 	void updateTerrain();
 
 	// (gth) C&C3 animation controlled camera feature

@@ -31,7 +31,11 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include <cmath>
+#include <cstdlib>
+
 #include "Common/AudioSettings.h"
+#include "Common/CommandLine.h"
 #include "Common/GameAudio.h"
 #include "Common/GameLOD.h"
 #include "Common/GlobalData.h"
@@ -267,6 +271,27 @@ Real OptionPreferences::getScrollFactor()
 		factor = 1;
 
 	return factor/100.0f;
+}
+
+Real OptionPreferences::getDefaultCameraZoomSpeed()
+{
+	return CommandLine::isCameraZoomTestEnabled() ? 4.0f : 1.0f;
+}
+
+Real OptionPreferences::getCameraZoomSpeed() const
+{
+	const Real defaultSpeed = getDefaultCameraZoomSpeed();
+	const auto it = find("CameraZoomSpeed");
+	if (it == end())
+		return defaultSpeed;
+
+	const char *value = it->second.str();
+	char *endOfNumber = nullptr;
+	const Real speed = std::strtof(value, &endOfNumber);
+	if (endOfNumber == value || *endOfNumber != '\0' || !std::isfinite(speed) || speed <= 0.0f)
+		return defaultSpeed;
+
+	return clamp(0.25f, speed, 16.0f);
 }
 
 Bool OptionPreferences::getDrawScrollAnchor()
