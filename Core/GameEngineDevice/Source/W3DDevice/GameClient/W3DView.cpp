@@ -444,7 +444,25 @@ Bool W3DView::zoomCameraToDesiredHeight()
 	{
 		const Real fpsRatio = TheFramePacer->getBaseOverUpdateFpsRatio();
 		const Real adjustFactor = std::min(TheGlobalData->m_cameraAdjustSpeed * fpsRatio, 1.0f);
+		const Real previousZoom = m_zoom;
 		m_zoom += adjustZoom * adjustFactor;
+
+		if (m_cursorZoomActive)
+		{
+			const Real offsetZ = getCameraOffsetZ();
+			const Real previousHeight = offsetZ * previousZoom - m_pos.z;
+			const Real currentHeight = offsetZ * m_zoom - m_pos.z;
+			if (previousHeight > 0.0f && currentHeight > 0.0f)
+			{
+				// Draw the selected point toward the optical axis as the zoom moves.
+				// Ratios compose across frames, including at different frame rates.
+				const Real ratio = std::min(previousHeight, currentHeight) / std::max(previousHeight, currentHeight);
+				const Real ratioSquared = ratio * ratio;
+				const Real keepOffset = ratioSquared * ratioSquared;
+				m_cursorZoomRay.X *= keepOffset;
+				m_cursorZoomRay.Y *= keepOffset;
+			}
+		}
 		return true;
 	}
 	return false;
@@ -466,8 +484,8 @@ void W3DView::applyCursorZoomAnchor()
 		return;
 	}
 
-	// Intersect the new cursor ray with the original point's plane. Translating
-	// the camera in XY by the difference keeps that point under the same pixel.
+	// Intersect the adjusted ray with the selected point's plane, then translate
+	// the camera in XY to place the point at its intended screen position.
 	const Real distance = (m_cursorZoomAnchor.Z - source.Z) / ray.Z;
 	const Vector3 underCursor = source + ray * distance;
 	const Coord2D pivot = {
@@ -2424,14 +2442,9 @@ void W3DView::zoom(Real height)
 void W3DView::zoomAt(Real height, const ICoord2D &screen)
 {
 	const Real previousHeight = m_heightAboveGround;
-	const bool wasAnchored = m_cursorZoomActive;
+	const bool keepAnchor = m_cursorZoomActive
+		&& screen.x == m_cursorZoomScreen.x && screen.y == m_cursorZoomScreen.y;
 	zoom(height);
-
-	if (m_heightAboveGround == previousHeight)
-	{
-		m_cursorZoomActive = wasAnchored && isCameraOverviewEnabled();
-		return;
-	}
 
 	if (!isCameraOverviewEnabled() || !m_okToAdjustHeight || !m_3DCamera || !TheTerrainLogic
 		|| screen.x < m_originX || screen.x >= m_originX + getWidth()
@@ -2439,6 +2452,16 @@ void W3DView::zoomAt(Real height, const ICoord2D &screen)
 	{
 		return;
 	}
+
+	// Consecutive wheel events at the same pixel continue toward the selected point.
+	if (keepAnchor)
+	{
+		m_cursorZoomActive = true;
+		return;
+	}
+
+	if (m_heightAboveGround == previousHeight)
+		return;
 
 	Coord3D ground;
 	if (!screenToTerrain(&screen, &ground))
@@ -2448,6 +2471,7 @@ void W3DView::zoomAt(Real height, const ICoord2D &screen)
 	const Matrix3D &camera = m_3DCamera->Get_Transform();
 	m_cursorZoomRay = camera.Inverse_Rotate_Vector(m_cursorZoomAnchor - camera.Get_Translation());
 	m_cursorZoomRay.Normalize();
+	m_cursorZoomScreen = screen;
 	m_cursorZoomPivot = getPosition2D();
 	m_cursorZoomActive = true;
 }

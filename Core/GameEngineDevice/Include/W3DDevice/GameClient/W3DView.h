@@ -303,7 +303,8 @@ private:
 
 	bool m_cursorZoomActive = false;
 	Vector3 m_cursorZoomAnchor;
-	Vector3 m_cursorZoomRay; ///< View-space direction at the wheel event
+	Vector3 m_cursorZoomRay; ///< View-space direction of the selected point as it approaches the center
+	ICoord2D m_cursorZoomScreen; ///< Cursor position that selected the point
 	Coord2D m_cursorZoomPivot; ///< Last pivot after applying the map constraints
 
 	Real getHeightAroundPos(Real x, Real y, Real terrainSampleSize = TERRAIN_SAMPLE_SIZE) const;
