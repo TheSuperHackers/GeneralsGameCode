@@ -10,6 +10,21 @@ Set the process environment variable `GENERALS_RENDER_WORKERS` before starting t
 
 Build the Win32 Release target `z_generals`. Run the same particle-heavy replay twice at the same game time and camera angle, once with `GENERALS_RENDER_WORKERS=0` and once with `GENERALS_RENDER_WORKERS=4`. Compare transparency ordering while panning, rotating, and switching between normal zoom and overview. Return to the menu, replay the scene again, and verify clean game exit. For multiplayer, run the same build on both PCs and set different worker counts before launch.
 
+## Profile worker participation (GFX 11b)
+
+Build the Win32 Release target with `RTS_BUILD_OPTION_PROFILE_TRACY=ON`. For a local capture, use `TRACY_ON_DEMAND=ON`, `TRACY_ONLY_LOCALHOST=ON` and `TRACY_NO_BROADCAST=ON`. Use [Tracy 0.13.1](https://github.com/wolfpld/tracy/releases/tag/v0.13.1), the version pinned by the project's CMake configuration. Connect to the local game process before the replay segment you want to measure.
+
+Run the same particle-heavy replay at the same speed, resolution, camera position and zoom. Restart the game between runs with `GENERALS_RENDER_WORKERS` set to `0`, `4` and `8`. Compare the same interval after the scene has warmed up.
+
+- `SortingRenderer::PrepareDepthEntries` measures render-thread elapsed time for preparing each sorting batch, including the vertex buffer work and any wait for workers.
+- `SortingRenderer::FillQuadDepth` measures depth computation by billboard job on the render thread and on workers. Worker zones can overlap, so their durations do not add up to elapsed time.
+- `SortingRenderer::Flush` measures the complete sorting renderer flush.
+- `SortingRenderer/Worker-assisted quad batches` counts batches since game launch in which a worker finished at least one nonempty quad-depth job. It stays at zero in serial mode. A flat plot with workers configured means they did no work during that interval. A dense scene is needed to test the parallel path.
+
+Compare frame time in the same replay window as well as time spent in the renderer. Keep the profiler connected in every run. The game's existing Tracy frame images can introduce periodic capture overhead. This profiling setup does not measure standalone GPU execution or change the worker defaults.
+
+Set `RTS_BUILD_OPTION_PROFILE_TRACY=OFF` and rebuild to remove the instrumentation from the executable. The diagnostics introduce no game-data or network format changes.
+
 ## Validation
 
 - Win32 Release `z_generals` compiled and was installed for the Contra Invasion test.
