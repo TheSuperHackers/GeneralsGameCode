@@ -568,20 +568,23 @@ void CheckQuadDepth([[maybe_unused]] const QuadDepthJob &job)
 constexpr unsigned minParallelNodes = 5;
 constexpr unsigned minParallelQuads = 4096;
 constexpr unsigned maxRenderWorkers = 8;
+unsigned configuredQuadDepthWorkers = 0;
+
+std::optional<unsigned> ParseQuadDepthWorkers(const char *value)
+{
+	if (!value || !*value)
+		return std::nullopt;
+	char *end = nullptr;
+	const long requested = std::strtol(value, &end, 10);
+	if (end == value || *end)
+		return std::nullopt;
+	return static_cast<unsigned>(std::clamp(requested, 0L, static_cast<long>(maxRenderWorkers)));
+}
 
 unsigned QuadDepthWorkerCount()
 {
-	static const unsigned workerCount = [] {
-		const char *value = std::getenv("GENERALS_RENDER_WORKERS");
-		if (!value)
-			return 0u;
-		char *end = nullptr;
-		const long requested = std::strtol(value, &end, 10);
-		if (end == value || *end || requested <= 0)
-			return 0u;
-		return static_cast<unsigned>(std::min(requested, static_cast<long>(maxRenderWorkers)));
-	}();
-	return workerCount;
+	static const auto overrideCount = ParseQuadDepthWorkers(std::getenv("GENERALS_RENDER_WORKERS"));
+	return overrideCount.value_or(configuredQuadDepthWorkers);
 }
 
 class RenderQuadPool
@@ -720,6 +723,16 @@ void RunQuadDepthJobs(unsigned jobCount, unsigned quadCount)
 		CheckQuadDepth(quadDepthJobs[j]);
 }
 } // namespace
+
+void SortingRendererClass::ConfigureQuadDepthWorkers(const char *setting)
+{
+	const unsigned count = ParseQuadDepthWorkers(setting).value_or(maxRenderWorkers);
+	if (count != configuredQuadDepthWorkers)
+	{
+		quadDepthPool.reset();
+		configuredQuadDepthWorkers = count;
+	}
+}
 
 void SortingRendererClass::Flush_Sorting_Pool()
 {

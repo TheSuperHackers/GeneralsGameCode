@@ -52,6 +52,7 @@ public:
 	static void Deinit();
 
 	static void SetMinVertexBufferSize( unsigned val );
+	static void ConfigureQuadDepthWorkers(const char *setting);
 
 	static void _Enable_Triangle_Draw(bool enable) { _EnableTriangleDraw=enable; }
 	static bool _Is_Triangle_Draw_Enabled() { return _EnableTriangleDraw; }
