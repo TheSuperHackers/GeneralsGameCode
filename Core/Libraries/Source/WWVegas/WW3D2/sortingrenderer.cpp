@@ -658,7 +658,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 		}
 	}
 
-	tis = Sort_By_Depth(tis, overlapping_polygon_count);
+	tis = Sort_By_Depth(tis, overlapping_entry_count);
 
 	// Keep quads intact across both 16-bit index and vertex upload boundaries.
 	const unsigned vertexBudget = streamed && DEFAULT_SORTING_VERTEX_COUNT >= 4 && DEFAULT_SORTING_VERTEX_COUNT <= 65535u
