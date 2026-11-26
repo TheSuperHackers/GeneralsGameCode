@@ -302,6 +302,7 @@ private:
 	Bool m_recalcCamera; ///< Recalculates the camera transform in the next render update
 
 	bool m_cursorZoomActive = false;
+	bool m_cursorZoomHasAnchor = false;
 	Real m_cursorZoomVelocity = 0.0f;
 	Vector3 m_cursorZoomAnchor;
 	Vector3 m_cursorZoomRay; ///< View-space direction of the selected point as it approaches the center
@@ -329,7 +330,7 @@ private:
 	Real calcCameraAreaOffset(Real maxEdgeZ);
 	bool isCameraOverviewEnabled() const;
 	Real getCameraOverviewHeight(const Region3D &mapRegion, const Matrix3D &transform) const;
-	bool calcOverviewCameraArea(const Region3D &mapRegion, const Matrix3D &transform);
+	Real calcOverviewCameraArea(const Region3D &mapRegion, const Matrix3D &transform);
 	void onZoomChanged();
 	Coord2D clampCameraPosition(Coord2D pos) const;
 	Bool isWithinCameraAreaConstraints() const;
