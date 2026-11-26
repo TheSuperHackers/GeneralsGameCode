@@ -129,7 +129,9 @@ void W3DScorch::drawScorches(WorldHeightMap& map)
 
 	DX8Wrapper::Set_Texture(0, m_scorchTexture);
 	DX8Wrapper::Apply_Render_State_Changes();
-	const ScopedTerrainDecalDepthBias bias;
+	// A constant bias avoids depth-state transitions during continuous zoom.
+	// Use the extra step only for persistent terrain scorch marks.
+	const ScopedTerrainDecalDepthBias bias(2);
 	DX8Wrapper::Draw_Triangles(0, m_curNumScorchIndices / 3, 0, m_curNumScorchVertices);
 }
 
