@@ -37,7 +37,10 @@ public:
 		unsigned short start_index,
 		unsigned short polygon_count,
 		unsigned short min_vertex_index,
-		unsigned short vertex_count);
+		unsigned short vertex_count,
+		bool billboard_quads = false);
+
+	static void Insert_Quads(unsigned short quad_count, unsigned short vertex_count);
 
 	static void Insert_Triangles(
 		unsigned short start_index,
