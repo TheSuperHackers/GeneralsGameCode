@@ -320,16 +320,16 @@ private:
 	void buildCameraTransform(Matrix3D *transform, const Vector3 &sourcePos, const Vector3 &targetPos); ///< calculate (but do not set) the transform matrix of m_3DCamera, based on m_pos & m_angle
 	void adjustCameraPositionAboveTerrain(Vector3 &sourcePos, Vector3 &targetPos) const;
 	Bool zoomCameraToDesiredHeight();
-	void applyCursorZoomAnchor();
+	Bool applyCursorZoomAnchor(Bool constrainToMap);
 	Bool movePivotToGround();
-	void updateCameraAreaConstraints();
+	Bool updateCameraAreaConstraints();
 	void calcCameraAreaConstraints(); ///< Recalculates the camera area constraints
 	Real calcCameraAreaOffset(Real maxEdgeZ);
 	bool isCameraOverviewEnabled() const;
 	Real getCameraOverviewHeight(const Region3D &mapRegion, const Matrix3D &transform) const;
 	bool calcOverviewCameraArea(const Region3D &mapRegion, const Matrix3D &transform);
 	void onZoomChanged();
-	void clipCameraIntoAreaConstraints();
+	Coord2D clampCameraPosition(Coord2D pos) const;
 	Bool isWithinCameraAreaConstraints() const;
 	Bool isWithinCameraHeightConstraints() const;
 	virtual void setUserControlled(Bool value) override;

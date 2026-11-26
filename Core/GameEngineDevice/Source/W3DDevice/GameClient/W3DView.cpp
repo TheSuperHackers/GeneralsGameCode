@@ -33,6 +33,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////////////////////////
+#include <cmath>
 #include <stdlib.h>
 #include <windows.h>
 
@@ -469,7 +470,7 @@ Bool W3DView::zoomCameraToDesiredHeight()
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DView::applyCursorZoomAnchor()
+Bool W3DView::applyCursorZoomAnchor(Bool constrainToMap)
 {
 	Vector3 source, target;
 	buildCameraPosition(source, target);
@@ -481,18 +482,33 @@ void W3DView::applyCursorZoomAnchor()
 	if (!(ray.Z < -0.0001f) || !(source.Z > m_cursorZoomAnchor.Z))
 	{
 		m_cursorZoomActive = false;
-		return;
+		return false;
 	}
 
 	// Intersect the adjusted ray with the selected point's plane, then translate
 	// the camera in XY to place the point at its intended screen position.
 	const Real distance = (m_cursorZoomAnchor.Z - source.Z) / ray.Z;
 	const Vector3 underCursor = source + ray * distance;
-	const Coord2D pivot = {
+	Coord2D pivot = {
 		m_pos.x + (m_cursorZoomAnchor.X - underCursor.X),
 		m_pos.y + (m_cursorZoomAnchor.Y - underCursor.Y)
 	};
-	setPosition2D(pivot);
+	if (constrainToMap)
+		pivot = clampCameraPosition(pivot);
+
+	const Coord2D delta = { pivot.x - m_pos.x, pivot.y - m_pos.y };
+	constexpr Real settleDistance = 0.5f;
+	if (delta.lengthSqr() <= settleDistance * settleDistance)
+		return false;
+
+	// Ease the horizontal movement independently of the wheel's zoom speed.
+	// Limit the time step so a stalled frame does not produce a catch-up jump.
+	const Real fpsRatio = TheFramePacer->getBaseOverUpdateFpsRatio(15.0f);
+	const Real step = 1.0f - std::pow(0.86f, fpsRatio);
+	const Coord2D next = { m_pos.x + delta.x * step, m_pos.y + delta.y * step };
+	setPosition2D(next);
+	m_recalcCamera = true;
+	return true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -546,11 +562,11 @@ Bool W3DView::movePivotToGround()
 	return false;
 }
 
-void W3DView::updateCameraAreaConstraints()
+Bool W3DView::updateCameraAreaConstraints()
 {
 #if defined(RTS_DEBUG)
 	if (!TheGlobalData->m_useCameraConstraints)
-		return;
+		return false;
 #endif
 
 	if (!m_cameraAreaConstraintsValid)
@@ -560,9 +576,10 @@ void W3DView::updateCameraAreaConstraints()
 
 	if (m_cameraAreaConstraintsValid && !isWithinCameraAreaConstraints())
 	{
-		clipCameraIntoAreaConstraints();
+		setPosition2D(clampCameraPosition(getPosition2D()));
 		m_recalcCamera = true;
 	}
+	return m_cameraAreaConstraintsValid;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -755,14 +772,13 @@ Real W3DView::calcCameraAreaOffset(Real maxEdgeZ)
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DView::clipCameraIntoAreaConstraints()
+Coord2D W3DView::clampCameraPosition(Coord2D pos) const
 {
 	constexpr const Real eps = 0.1f;
-	Coord2D pos = getPosition2D();
 	const Real inset = isCameraOverviewEnabled() ? 0.0f : eps;
 	pos.x = clamp(m_cameraAreaConstraints.lo.x + inset, pos.x, m_cameraAreaConstraints.hi.x - inset);
 	pos.y = clamp(m_cameraAreaConstraints.lo.y + inset, pos.y, m_cameraAreaConstraints.hi.y - inset);
-	setPosition2D(pos);
+	return pos;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1769,6 +1785,7 @@ void W3DView::update()
 	m_terrainHeightAtPivot = getHeightAroundPos(m_pos.x, m_pos.y);
 	m_currentHeightAboveGround = getCameraOffsetZ() * m_zoom - m_terrainHeightAtPivot;
 
+	Bool isZoomingOrMovingPivot = false;
 	if (m_okToAdjustHeight)
 	{
 
@@ -1800,12 +1817,10 @@ void W3DView::update()
 			//    origin and map border collisions.
 			const Bool didZoom = zoomCameraToDesiredHeight();
 			const Bool didMovePivot = movePivotToGround();
+			isZoomingOrMovingPivot = didZoom || didMovePivot;
 
-			if (didZoom || didMovePivot)
+			if (isZoomingOrMovingPivot)
 			{
-				if (m_cursorZoomActive)
-					applyCursorZoomAnchor();
-
 				m_recalcCamera = true;
 
 				if (isScrolling)
@@ -1817,10 +1832,6 @@ void W3DView::update()
 				{
 					m_cameraAreaConstraintsValid = false;
 				}
-			}
-			else
-			{
-				m_cursorZoomActive = false;
 			}
 		}
 
@@ -1837,11 +1848,13 @@ void W3DView::update()
 
 	if (!didScriptedMovement)
 	{
-		updateCameraAreaConstraints();
-	}
+		const Bool constrainToMap = updateCameraAreaConstraints();
+		if (m_cursorZoomActive && !applyCursorZoomAnchor(constrainToMap) && !isZoomingOrMovingPivot)
+			m_cursorZoomActive = false;
 
-	if (m_cursorZoomActive)
-		m_cursorZoomPivot = getPosition2D();
+		if (m_cursorZoomActive)
+			m_cursorZoomPivot = getPosition2D();
+	}
 
 	// (gth) C&C3 if m_isCameraSlaved then force the camera to update each frame
 	if (m_recalcCamera || m_isCameraSlaved)
