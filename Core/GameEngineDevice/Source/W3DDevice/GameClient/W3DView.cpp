@@ -97,6 +97,7 @@
 #include "WW3D2/Renderer.h"
 
 #include "W3DDevice/GameClient/CameraShakeSystem.h"
+#include "Common/CommandLine.h"
 
 // 30 fps
 Real TheW3DFrameLengthInMsec = MSEC_PER_LOGICFRAME_REAL; // default is 33msec/frame == 30fps. but we may change it depending on sys config.
@@ -545,6 +546,12 @@ void W3DView::calcCameraAreaConstraints()
 		Matrix3D cameraTransform;
 		buildCameraTransform(&cameraTransform, sourcePos, targetPos);
 
+		if (isCameraOverviewEnabled() && calcOverviewCameraArea(mapRegion, cameraTransform))
+		{
+			m_cameraAreaConstraintsValid = true;
+			return;
+		}
+
 		Matrix3D prevCameraTransform = m_3DCamera->Get_Transform();
 		m_3DCamera->Set_Transform(cameraTransform);
 
@@ -562,6 +569,97 @@ void W3DView::calcCameraAreaConstraints()
 
 		m_cameraAreaConstraintsValid = true;
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+bool W3DView::isCameraOverviewEnabled() const
+{
+	return CommandLine::isCameraOverviewEnabled() && m_isUserControlled && m_zoomLimited
+		&& !m_useRealZoomCam && !m_isCameraSlaved && !m_scriptedState;
+}
+
+Real W3DView::getCameraOverviewHeight(const Region3D &mapRegion, const Matrix3D &transform) const
+{
+	const Real height = getCameraOffsetZ()*m_zoom - m_pos.z;
+	const Real halfWidth = (mapRegion.hi.x - mapRegion.lo.x)*0.5f;
+	const Real halfLength = (mapRegion.hi.y - mapRegion.lo.y)*0.5f;
+	if (height <= 0.0f || halfWidth <= 0.0f || halfLength <= 0.0f)
+		return m_maxHeightAboveGround;
+
+	Vector2 viewMin, viewMax;
+	m_3DCamera->Get_View_Plane(viewMin, viewMax);
+	const Vector3 right = transform.Get_X_Vector();
+	const Vector3 up = transform.Get_Y_Vector();
+	const Vector3 forward = -transform.Get_Z_Vector();
+	const Vector3 cameraOffset = transform.Get_Translation()
+		- Vector3(m_pos.x + m_shakeOffset.x, m_pos.y + m_shakeOffset.y, m_pos.z);
+	const Vector3 sideNormals[] = {
+		viewMin.X*forward - right, right - viewMax.X*forward,
+		viewMin.Y*forward - up, up - viewMax.Y*forward
+	};
+
+	// Find the smallest orbit height at which every side plane contains the map
+	// when the pivot is at its center. Include the map's range of terrain heights.
+	const Real centerZ = getHeightAroundPos((mapRegion.lo.x + mapRegion.hi.x)*0.5f,
+		(mapRegion.lo.y + mapRegion.hi.y)*0.5f);
+	Real requiredHeight = 0.0f;
+	for (const Vector3 &normal : sideNormals)
+	{
+		const Real clearancePerHeight = Vector3::Dot_Product(normal, cameraOffset)/height;
+		if (!(clearancePerHeight > 0.0f))
+			return m_maxHeightAboveGround;
+
+		const Real mapEdge = fabs(normal.X)*halfWidth + fabs(normal.Y)*halfLength
+			+ normal.Z*((normal.Z > 0.0f ? mapRegion.hi.z : mapRegion.lo.z) - centerZ);
+		requiredHeight = std::max(requiredHeight, mapEdge/clearancePerHeight);
+	}
+
+	// Leave a small margin for the camera's interpolation and terrain adjustment.
+	return std::max(m_maxHeightAboveGround, requiredHeight*1.04f);
+}
+
+bool W3DView::calcOverviewCameraArea(const Region3D &mapRegion, const Matrix3D &transform)
+{
+	const Real height = getCameraOffsetZ()*m_zoom - m_pos.z;
+	if (height <= m_maxHeightAboveGround)
+		return false;
+
+	const Real overviewHeight = getCameraOverviewHeight(mapRegion, transform);
+	// Use the legacy constraints at the legacy zoom and converge on the map
+	// center as the camera reaches the height needed to frame the entire map.
+	const Real remainingRange = WWMath::Clamp(
+		(overviewHeight - height)/std::max(overviewHeight - m_maxHeightAboveGround, 1.0f), 0.0f, 1.0f);
+	const Vector2 mapCenter((mapRegion.lo.x + mapRegion.hi.x)*0.5f, (mapRegion.lo.y + mapRegion.hi.y)*0.5f);
+
+	Vector2 viewMin, viewMax;
+	m_3DCamera->Get_View_Plane(viewMin, viewMax);
+	const Vector3 eye = transform.Get_Translation();
+	const Vector3 eyeOffset = eye - Vector3(m_pos.x + m_shakeOffset.x, m_pos.y + m_shakeOffset.y, m_pos.z);
+	const Vector3 forward = -transform.Get_Z_Vector();
+	Vector2 footprintMin(0.0f, 0.0f), footprintMax(0.0f, 0.0f);
+	for (Int i = 0; i < 4; ++i)
+	{
+		const Vector3 ray = forward + ((i & 1) ? viewMax.X : viewMin.X)*transform.Get_X_Vector()
+			+ ((i & 2) ? viewMax.Y : viewMin.Y)*transform.Get_Y_Vector();
+		// An upper ray can cross the horizon at low pitch. Leave that side
+		// of the map unconstrained by the footprint.
+		if (!(ray.Z < -0.0001f))
+			continue;
+		const Vector3 groundOffset = eyeOffset - ray*(eyeOffset.Z/ray.Z);
+		const Vector2 corner(groundOffset.X, groundOffset.Y);
+		footprintMin.Update_Min(corner);
+		footprintMax.Update_Max(corner);
+	}
+
+	m_cameraAreaConstraints.lo.x = mapCenter.X + remainingRange
+		*(std::min(mapCenter.X, mapRegion.lo.x - footprintMin.X) - mapCenter.X);
+	m_cameraAreaConstraints.hi.x = mapCenter.X + remainingRange
+		*(std::max(mapCenter.X, mapRegion.hi.x - footprintMax.X) - mapCenter.X);
+	m_cameraAreaConstraints.lo.y = mapCenter.Y + remainingRange
+		*(std::min(mapCenter.Y, mapRegion.lo.y - footprintMin.Y) - mapCenter.Y);
+	m_cameraAreaConstraints.hi.y = mapCenter.Y + remainingRange
+		*(std::max(mapCenter.Y, mapRegion.hi.y - footprintMax.Y) - mapCenter.Y);
+	return true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -612,8 +710,9 @@ void W3DView::clipCameraIntoAreaConstraints()
 {
 	constexpr const Real eps = 0.1f;
 	Coord2D pos = getPosition2D();
-	pos.x = clamp(m_cameraAreaConstraints.lo.x + eps, pos.x, m_cameraAreaConstraints.hi.x - eps);
-	pos.y = clamp(m_cameraAreaConstraints.lo.y + eps, pos.y, m_cameraAreaConstraints.hi.y - eps);
+	const Real inset = isCameraOverviewEnabled() ? 0.0f : eps;
+	pos.x = clamp(m_cameraAreaConstraints.lo.x + inset, pos.x, m_cameraAreaConstraints.hi.x - inset);
+	pos.y = clamp(m_cameraAreaConstraints.lo.y + inset, pos.y, m_cameraAreaConstraints.hi.y - inset);
 	setPosition2D(pos);
 }
 
@@ -621,6 +720,12 @@ void W3DView::clipCameraIntoAreaConstraints()
 Bool W3DView::isWithinCameraAreaConstraints() const
 {
 	const Coord3D &pos = getPosition();
+	if (isCameraOverviewEnabled())
+	{
+		// At maximum overview an axis may be locked to its midpoint.
+		return pos.x >= m_cameraAreaConstraints.lo.x && pos.x <= m_cameraAreaConstraints.hi.x
+			&& pos.y >= m_cameraAreaConstraints.lo.y && pos.y <= m_cameraAreaConstraints.hi.y;
+	}
 	return m_cameraAreaConstraints.containsWithin(pos.x, pos.y);
 }
 
@@ -628,7 +733,9 @@ Bool W3DView::isWithinCameraAreaConstraints() const
 Bool W3DView::isWithinCameraHeightConstraints() const
 {
 	const Bool isAboveMinHeight = m_currentHeightAboveGround >= m_minHeightAboveGround;
-	const Bool isBelowMaxHeight = m_currentHeightAboveGround <= m_maxHeightAboveGround;
+	const Real maxHeight = isCameraOverviewEnabled() ? std::max(m_maxHeightAboveGround, m_heightAboveGround)
+		: m_maxHeightAboveGround;
+	const Bool isBelowMaxHeight = m_currentHeightAboveGround <= maxHeight;
 	return isAboveMinHeight && (isBelowMaxHeight || !TheGlobalData->m_enforceMaxCameraHeight);
 }
 
@@ -779,6 +886,8 @@ void W3DView::updateCameraClipPlanes(const Matrix3D &transform)
 		center.X = (region.lo.x + region.hi.x) * 0.5f;
 		center.Y = (region.lo.y + region.hi.y) * 0.5f;
 		center.Z = minZ - 1.0f; // -1 to avoid Z clipping when looking straight down
+		if (CommandLine::isCameraOverviewEnabled() && camDir.Z > 0.0f)
+			center.Z = TheTerrainRenderObject->getMaxHeight() + 1.0f;
 
 		// Half extents
 		const Real dx = (region.hi.x - region.lo.x) * 0.5f;
@@ -816,6 +925,8 @@ void W3DView::updateCameraClipPlanes(const Matrix3D &transform)
 		}
 	}
 
+	if (CommandLine::isCameraOverviewEnabled())
+		farZ = std::max(farZ, NearZ + 1.0f);
 	m_3DCamera->Set_Clip_Planes(NearZ, farZ);
 }
 
@@ -2240,10 +2351,36 @@ void W3DView::setDefaultView(Real pitch, Real angle, Real maxHeight)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
+void W3DView::zoom(Real height)
+{
+	if (!isCameraOverviewEnabled() || !TheTerrainLogic || !TheTerrainRenderObject || !TheTerrainRenderObject->getMap())
+	{
+		View::zoom(height);
+		return;
+	}
+
+	Region3D mapRegion;
+	TheTerrainLogic->getExtent(&mapRegion);
+	Vector3 source, target;
+	buildCameraPosition(source, target);
+	Matrix3D transform;
+	buildCameraTransform(&transform, source, target);
+
+	const Real maxHeight = getCameraOverviewHeight(mapRegion, transform);
+	// Keep the normal wheel step near the ground and increase it at high zoom.
+	const Real scale = std::max(1.0f, m_heightAboveGround/std::max(m_maxHeightAboveGround, 1.0f));
+	m_heightAboveGround = clamp(m_minHeightAboveGround, m_heightAboveGround + height*scale, maxHeight);
+	onZoomChanged();
+}
+
 void W3DView::setHeightAboveGround(Real z)
 {
 	View::setHeightAboveGround(z);
+	onZoomChanged();
+}
 
+void W3DView::onZoomChanged()
+{
 	stopDoingScriptedCamera();
 	m_CameraArrivedAtWaypointOnPathFlag = false;
 	m_cameraAreaConstraintsValid = false;
@@ -2260,11 +2397,7 @@ void W3DView::setZoom(Real z)
 {
 	m_heightAboveGround = m_maxHeightAboveGround * z;
 	m_zoom = getDesiredZoom(m_pos.x, m_pos.y);
-
-	stopDoingScriptedCamera();
-	m_CameraArrivedAtWaypointOnPathFlag = false;
-	m_cameraAreaConstraintsValid = false;
-	m_recalcCamera = true;
+	onZoomChanged();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -2274,11 +2407,7 @@ void W3DView::setZoomToDefault()
 	// default zoom has to be max, otherwise players will just zoom to max always
 	m_heightAboveGround = m_maxHeightAboveGround;
 	m_zoom = getMaxZoom(m_pos.x, m_pos.y);
-
-	stopDoingScriptedCamera();
-	m_CameraArrivedAtWaypointOnPathFlag = false;
-	m_cameraAreaConstraintsValid = false;
-	m_recalcCamera = true;
+	onZoomChanged();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3700,37 +3829,113 @@ void W3DView::Add_Camera_Shake (const Coord3D & position,float radius,float dura
 	CameraShakerSystem.Add_Camera_Shake(vpos,radius,duration,power);
 }
 
-bool W3DView::getDesiredTerrainDrawSize(ICoord2D &dimensions) const
+bool W3DView::getDesiredTerrainDrawSize(ICoord2D &dimensions, Vector2 &drawCenter, bool &useDrawCenter) const
 {
-	if (TheGlobalData && TheGlobalData->m_drawEntireTerrain)
-	{
-		DEBUG_ASSERTCRASH(TheTerrainRenderObject != nullptr, ("TheTerrainRenderObject is null"));
-
-		if (const WorldHeightMap *heightMap = TheTerrainRenderObject->getMap())
-		{
-			dimensions.x = heightMap->getXExtent();
-			dimensions.y = heightMap->getYExtent();
-			return true;
-		}
-
+	useDrawCenter = false;
+	const WorldHeightMap *map = TheTerrainRenderObject->getMap();
+	if (!map)
 		return false;
-	}
 
-	const Real cameraPitch = asin(fabs(m_3DCamera->Get_Forward_Dir().Z));
+	// Keep the map-sized fallback for invalid camera data and footprints larger than the map.
+	dimensions.x = map->getXExtent();
+	dimensions.y = map->getYExtent();
+	if (TheGlobalData && TheGlobalData->m_drawEntireTerrain)
+		return true;
 
+	// TheSuperHackers @bugfix sailro 06/09/2026 Cover the visible terrain without yaw-dependent buffer
+	// reallocations. The two cached terrain height limits also cover valleys and nearby higher ground.
+	const Matrix3D &cameraTransform = m_3DCamera->Get_Transform();
+	const Vector3 cameraLocation = cameraTransform.Get_Translation();
+	const Real cameraPitch = asin(fabs(cameraTransform[2][2]));
+	ICoord2D minimumSize;
 	if (cameraPitch > ViewDefaultLowPitchRadians || !m_isUserControlled)
 	{
-		// TheSuperHackers @info The scripted camera always uses the regular draw sizes
-		// and uses terrain oversize if it needs to enlarge.
-		dimensions.x = WorldHeightMap::NORMAL_DRAW_WIDTH;
-		dimensions.y = WorldHeightMap::NORMAL_DRAW_HEIGHT;
+		minimumSize.x = WorldHeightMap::NORMAL_DRAW_WIDTH;
+		minimumSize.y = WorldHeightMap::NORMAL_DRAW_HEIGHT;
+	}
+	else
+	{
+		// TheSuperHackers @tweak xezon 31/12/2025 Increases visible terrain area when lowering the camera pitch.
+		// Note: The default camera pitch in Generals was 37.5, which we prefer to keep the normal draw size for.
+		minimumSize.x = WorldHeightMap::LOW_ANGLE_DRAW_WIDTH;
+		minimumSize.y = WorldHeightMap::LOW_ANGLE_DRAW_HEIGHT;
+	}
+
+	if (!CommandLine::isCameraOverviewEnabled())
+	{
+		dimensions = minimumSize;
 		return true;
 	}
 
-	// TheSuperHackers @tweak xezon 31/12/2025 Increases visible terrain area when lowering the camera pitch.
-	// Note: The default camera pitch in Generals was 37.5, which we prefer to keep the normal draw size for.
-	dimensions.x = WorldHeightMap::LOW_ANGLE_DRAW_WIDTH;
-	dimensions.y = WorldHeightMap::LOW_ANGLE_DRAW_HEIGHT;
+	const Real groundZ[2] = {
+		TheTerrainRenderObject->getMinHeight(),
+		std::min(TheTerrainRenderObject->getMaxHeight(), cameraLocation.Z)
+	};
+	if (!cameraLocation.Is_Valid() || cameraLocation.Z <= groundZ[0])
+		return true;
+
+	Vector2 viewPlaneMin, viewPlaneMax;
+	m_3DCamera->Get_View_Plane(viewPlaneMin, viewPlaneMax);
+	const Int planeCount = groundZ[0] < groundZ[1] ? 2 : 1;
+	Vector3 corners[8];
+	Vector2 footprintMin, footprintMax;
+	for (Int i = 0; i < 4; ++i)
+	{
+		const Vector3 ray((i & 1) ? viewPlaneMax.X : viewPlaneMin.X,
+			(i & 2) ? viewPlaneMax.Y : viewPlaneMin.Y, -1.0f);
+		const Real rayZ = cameraTransform[2][0]*ray.X + cameraTransform[2][1]*ray.Y - cameraTransform[2][2];
+		if (!(rayZ < 0.0f))
+		{
+			return true;
+		}
+
+		const Real inverseRayZ = 1.0f/rayZ;
+		for (Int plane = 0; plane < planeCount; ++plane)
+		{
+			Vector3 &corner = corners[plane*4 + i];
+			corner = ray * ((groundZ[plane] - cameraLocation.Z)*inverseRayZ);
+			if (!corner.Is_Valid())
+				return true;
+			const Vector2 offset(
+				cameraTransform[0][0]*corner.X + cameraTransform[0][1]*corner.Y + cameraTransform[0][2]*corner.Z,
+				cameraTransform[1][0]*corner.X + cameraTransform[1][1]*corner.Y + cameraTransform[1][2]*corner.Z);
+			if (i == 0 && plane == 0)
+				footprintMin = footprintMax = offset;
+			footprintMin.Update_Min(offset);
+			footprintMax.Update_Max(offset);
+		}
+	}
+
+	// The maximum pairwise XY distance bounds every rotated span. Compute it in camera space to avoid
+	// yaw-dependent rounding at allocation thresholds; remove the height difference between planes.
+	Real diameterSquared = 0.0f;
+	const Real worldBound = std::max(map->getXExtent(), map->getYExtent())*MAP_XY_FACTOR;
+	for (Int i = 0; i < planeCount*4; ++i)
+	{
+		for (Int j = 0; j < i; ++j)
+		{
+			const Vector3 delta = corners[i] - corners[j];
+			const Real deltaZ = groundZ[i/4] - groundZ[j/4];
+			const Real distanceSquared = delta.Length2() - deltaZ*deltaZ;
+			if (!(distanceSquared < worldBound*worldBound))
+				return true;
+			diameterSquared = std::max(diameterSquared, distanceSquared);
+		}
+	}
+
+	// CENTER_LIMIT permits two cells of origin drift per axis; nearest-cell centering adds half a cell.
+	const Int footprintTiles = (Int)ceil(WWMath::Sqrt(diameterSquared)/MAP_XY_FACTOR) + 5;
+	const Int blocks = (footprintTiles + VERTEX_BUFFER_TILE_LENGTH - 1)/VERTEX_BUFFER_TILE_LENGTH;
+	const Int drawSize = 1 + blocks*VERTEX_BUFFER_TILE_LENGTH;
+	dimensions.x = std::min(map->getXExtent(), std::max(minimumSize.x, drawSize));
+	dimensions.y = std::min(map->getYExtent(), std::max(minimumSize.y, drawSize));
+	if (dimensions.x > std::min(map->getXExtent(), minimumSize.x)
+		|| dimensions.y > std::min(map->getYExtent(), minimumSize.y))
+	{
+		drawCenter.Set(cameraLocation.X + (footprintMin.X + footprintMax.X)*0.5f,
+			cameraLocation.Y + (footprintMin.Y + footprintMax.Y)*0.5f);
+		useDrawCenter = true;
+	}
 	return true;
 }
 
@@ -3739,8 +3944,9 @@ void W3DView::updateTerrain()
 	DEBUG_ASSERTCRASH(TheTerrainRenderObject != nullptr, ("TheTerrainRenderObject is null"));
 
 	ICoord2D drawSize;
-
-	if (getDesiredTerrainDrawSize(drawSize))
+	Vector2 drawCenter;
+	bool useDrawCenter;
+	if (getDesiredTerrainDrawSize(drawSize, drawCenter, useDrawCenter))
 	{
 		TheTerrainRenderObject->setTerrainDrawSize(drawSize.x, drawSize.y);
 	}
@@ -3748,7 +3954,7 @@ void W3DView::updateTerrain()
 	RefRenderObjListIterator *it = W3DDisplay::m_3DScene->createLightsIterator();
 
 	const Vector3 cameraPivot(m_pos.x, m_pos.y, m_pos.z);
-	TheTerrainRenderObject->updateCenter(m_3DCamera, &cameraPivot, it);
+	TheTerrainRenderObject->updateCenter(m_3DCamera, &cameraPivot, it, useDrawCenter ? &drawCenter : nullptr);
 
 	if (it)
 	{

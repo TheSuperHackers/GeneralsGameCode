@@ -134,6 +134,7 @@ static const BlockParse theTypeTable[] =
 	{ "OnlineChatColors",               INI::parseOnlineChatColorDefinition },
 	{ "ParticleSystem",                 INI::parseParticleSystemDefinition },
 	{ "PlayerTemplate",                 INI::parsePlayerTemplateDefinition },
+	{ "RadiusCursor",                    INI::parseRadiusCursorDefinition },
 	{ "Rank",                           INI::parseRankDefinition },
 	{ "ReallyLowMHz",                   parseReallyLowMHz },
 	{ "Road",                           INI::parseTerrainRoadDefinition },

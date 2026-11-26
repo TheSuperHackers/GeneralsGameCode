@@ -1197,6 +1197,29 @@ static CommandLineParam paramsForStartup[] =
 	{ "-useCwd", parseUseCwd },
 };
 
+#if RTS_ZEROHOUR
+static bool cameraOverviewEnabled = true;
+#else
+static bool cameraOverviewEnabled = false;
+#endif
+
+static Int parseCameraOverviewEnabled(char *[], int)
+{
+	cameraOverviewEnabled = true;
+	return 1;
+}
+
+static Int parseCameraOverviewDisabled(char *[], int)
+{
+	cameraOverviewEnabled = false;
+	return 1;
+}
+
+bool CommandLine::isCameraOverviewEnabled()
+{
+	return cameraOverviewEnabled;
+}
+
 // These Params are parsed during Engine Init before INI data is loaded
 static CommandLineParam paramsForEngineInit[] =
 {
@@ -1225,6 +1248,8 @@ static CommandLineParam paramsForEngineInit[] =
 
 	// TheSuperHackers @feature xezon 03/08/2025 Force full viewport for 'Control Bar Pro' Addons like GenTool did it.
 	{ "-forcefullviewport", parseFullViewport },
+	{ "-testCameraZoom", parseCameraOverviewEnabled }, // Compatibility with the test launcher.
+	{ "-noCameraOverview", parseCameraOverviewDisabled },
 
 #if defined(RTS_DEBUG)
 	{ "-noaudio", parseNoAudio },

@@ -5483,7 +5483,10 @@ void TintEnvelope::play(const RGBColor *peak, UnsignedInt attackFrames, Unsigned
 	Vector3::Subtract(m_currentColor, m_peakColor, &delta);
 
 	if ( delta.Length() <= FADE_RATE_EPSILON ) // we are practically already at this color
+	{
+		m_currentColor = m_peakColor;
 		m_envState = ENVELOPE_STATE_SUSTAIN;
+	}
 
 }
 
@@ -5520,18 +5523,23 @@ void TintEnvelope::update()
 		}
 		case ( ENVELOPE_STATE_DECAY ) : // much more likely than attack
 		{
-			const Vector3 decayRate = m_decayRate * timeScale;
+			const Real currentLength = m_currentColor.Length();
+			const Real decaySpeed = m_decayRate.Length();
+			const Real decayStep = decaySpeed * timeScale;
 
-			if (decayRate.Length() > m_currentColor.Length() || m_currentColor.Length() <= FADE_RATE_EPSILON)
+			if (currentLength <= FADE_RATE_EPSILON || decaySpeed == 0.0f || decayStep >= currentLength)
 			{
-				// We are at rest
+				// Snap to neutral; no stale color may survive into the next attack.
+				m_currentColor.Set(0,0,0);
 				m_envState = ENVELOPE_STATE_REST;
 				m_affect = FALSE;
 			}
 			else
 			{
-				// Add the decayRate to the current color
-				Vector3::Add( decayRate, m_currentColor, &m_currentColor );
+				// The stored decay vector is based on the peak, not necessarily the
+				// current color (e.g. release during an attack from another tint).
+				// Keep its speed, but always move directly toward neutral.
+				m_currentColor = m_currentColor * (1.0f - decayStep / currentLength);
 				m_affect = TRUE;
 			}
 			break;
@@ -5542,9 +5550,10 @@ void TintEnvelope::update()
 			Vector3 delta;
 			Vector3::Subtract(m_currentColor, m_peakColor, &delta);
 
-			if (attackRate.Length() > delta.Length() || delta.Length() <= FADE_RATE_EPSILON)
+			if (attackRate.Length() >= delta.Length() || delta.Length() <= FADE_RATE_EPSILON)
 			{
-				// We are at the peak
+				// Snap to the exact peak even if this update crosses it.
+				m_currentColor = m_peakColor;
 				if ( m_sustainCounter )
 				{
 					m_envState = ENVELOPE_STATE_SUSTAIN;
