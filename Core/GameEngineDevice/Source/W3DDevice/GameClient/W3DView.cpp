@@ -86,6 +86,7 @@
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "W3DDevice/GameClient/W3DView.h"
+#include "W3DDevice/GameClient/OverviewDepthPrecision.h"
 #include "d3dx8math.h"
 #include "W3DDevice/GameClient/W3DShaderManager.h"
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
@@ -1036,7 +1037,37 @@ void W3DView::updateCameraClipPlanes(const Matrix3D &transform)
 
 	if (CommandLine::isCameraOverviewEnabled())
 		farZ = std::max(farZ, NearZ + 1.0f);
-	m_3DCamera->Set_Clip_Planes(NearZ, farZ);
+
+	Real nearZ = NearZ;
+	// Limit the adaptive plane to unlocked, user-controlled extended overview.
+	// The legacy near plane, scripted cameras and the existing far-plane policy
+	// remain unchanged. Use the actual pose, not the target zoom, during easing.
+	if (isCameraOverviewEnabled() && !isUserControlLocked() &&
+		getCameraLock() == INVALID_ID && TheTerrainRenderObject &&
+		TheTerrainRenderObject->getMap())
+	{
+		const Real excessHeight = getCameraOffsetZ() * m_zoom - m_pos.z - m_maxHeightAboveGround;
+		if (excessHeight > 0.0f)
+		{
+			Vector2 viewMin, viewMax;
+			m_3DCamera->Get_View_Plane(viewMin, viewMax);
+			const Vector3 forward = -transform.Get_Z_Vector();
+			const Vector3 right = transform.Get_X_Vector();
+			const Vector3 up = transform.Get_Y_Vector();
+			// View-plane corners are rays at camera-space Z=-1. Their vertical
+			// components bound the complete perspective near plane.
+			const Real downMin = -forward.Z
+				- std::max(right.Z * viewMin.X, right.Z * viewMax.X)
+				- std::max(up.Z * viewMin.Y, up.Z * viewMax.Y);
+			const Real downMax = -forward.Z
+				- std::min(right.Z * viewMin.X, right.Z * viewMax.X)
+				- std::min(up.Z * viewMin.Y, up.Z * viewMax.Y);
+			const Real clearance = transform.Get_Translation().Z - TheTerrainRenderObject->getMaxHeight();
+			nearZ = OverviewDepthPrecision::nearPlane(NearZ, farZ, excessHeight,
+				clearance, downMin, downMax);
+		}
+	}
+	m_3DCamera->Set_Clip_Planes(nearZ, farZ);
 }
 
 //-------------------------------------------------------------------------------------------------
