@@ -50,6 +50,7 @@
 #include <algorithm>
 #include <list>
 #include <optional>
+#include <cstring>
 #include <vector>
 
 
@@ -418,6 +419,33 @@ static void Apply_Render_State(RenderStateStruct& render_state)
 
 // ----------------------------------------------------------------------------
 
+// Conservative adaptation of Reforged's state-run grouping: only adjacent
+// unlit billboard entries with identical captured state can share a draw.
+// Never move an entry across another depth entry.
+static bool Same_Billboard_Run(const SortingNodeStruct *a, const SortingNodeStruct *b)
+{
+	if (a == b)
+		return true;
+	if (!a->billboard_quads || !b->billboard_quads)
+		return false;
+	const auto &x = a->sorting_state;
+	const auto &y = b->sorting_state;
+	if (x.shader.Get_Bits() != y.shader.Get_Bits() || x.material != y.material ||
+		!x.material || x.material->Get_Lighting())
+		return false;
+	if (std::memcmp(&x.world, &y.world, sizeof(x.world)) ||
+		std::memcmp(&x.view, &y.view, sizeof(x.view)))
+		return false;
+	const int textureCount = DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();
+	for (int i = 0; i < textureCount; ++i)
+	{
+		if (x.Textures[i] != y.Textures[i] ||
+			(x.Textures[i] && x.Textures[i]->Get_Pool() == TextureBaseClass::POOL_DEFAULT))
+			return false;
+	}
+	return true;
+}
+
 void SortingRendererClass::Flush_Sorting_Pool()
 {
 	if (!overlapping_node_count) return;
@@ -643,18 +671,26 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			const unsigned nodeId = tis[a].idx;
 			const unsigned firstIndex = indexCursor;
 			const unsigned firstVertex = vertexCursor;
+			SortingNodeStruct *state = overlapping_nodes[nodeId];
+			unsigned minVertex = state->min_vertex_index;
+			unsigned maxVertex = minVertex + state->vertex_count;
 			do
 			{
 				const bool quad = tis[a].tri.k == QUAD_ENTRY;
+				if (!streamed)
+				{
+					const auto *entryNode = overlapping_nodes[tis[a].idx];
+					minVertex = std::min(minVertex, static_cast<unsigned>(entryNode->min_vertex_index));
+					maxVertex = std::max(maxVertex, static_cast<unsigned>(entryNode->min_vertex_index) + entryNode->vertex_count);
+				}
 				indexCursor += quad ? 6 : 3;
 				vertexCursor += quad ? 4 : 3;
 				++a;
-			} while (a < chunkEnd && tis[a].idx == nodeId);
-			SortingNodeStruct *state = overlapping_nodes[nodeId];
+			} while (a < chunkEnd && Same_Billboard_Run(state, overlapping_nodes[tis[a].idx]));
 			Apply_Render_State(state->sorting_state);
 			DX8Wrapper::Draw_Triangles(firstIndex, (indexCursor - firstIndex) / 3,
-				streamed ? firstVertex : state->min_vertex_index,
-				streamed ? vertexCursor - firstVertex : state->vertex_count);
+				streamed ? firstVertex : minVertex,
+				streamed ? vertexCursor - firstVertex : maxVertex - minVertex);
 		}
 		chunkOffset = chunkEnd;
 	}
