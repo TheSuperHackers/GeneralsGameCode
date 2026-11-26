@@ -6,9 +6,32 @@ The change is in `Core/Libraries/Source/WWVegas/WW3D2/sortingrenderer.cpp` and a
 
 ## Enable and reproduce
 
-Set the process environment variable `GENERALS_RENDER_WORKERS` before starting the game. It accepts 1–8 additional workers, capped at 8. An unset value or zero selects the default serial path. A batch needs at least five billboard jobs and 4096 quads to qualify for parallel execution. Smaller batches and triangle depth calculations run on the render thread.
+The game defaults to eight additional render workers. To change the count for one PC, set `RenderWorkers` in its user-data `Options.ini` and restart the game. For Zero Hour, this is normally `Documents/Command and Conquer Generals Zero Hour Data/Options.ini`. The setting is read when the game's graphical display initializes.
+
+```ini
+RenderWorkers = 8
+```
+
+Use `0` for serial preparation or `1`–`8` for additional workers. Numeric values are clamped to that range. A missing or invalid setting uses eight. The process variable `GENERALS_RENDER_WORKERS` overrides the INI for A/B testing when it contains a valid integer, including zero. The render thread also performs work. A batch needs at least five billboard jobs and 4096 quads before workers are started or used. Smaller batches and triangle depth calculations run on the render thread.
+
+`Options.ini` is a local preference file. Game data INI, assets, saves, replays, and network formats are unchanged.
 
 Build the Win32 Release target `z_generals`. Run the same particle-heavy replay twice at the same game time and camera angle, once with `GENERALS_RENDER_WORKERS=0` and once with `GENERALS_RENDER_WORKERS=4`. Compare transparency ordering while panning, rotating, and switching between normal zoom and overview. Return to the menu, replay the scene again, and verify clean game exit. For multiplayer, run the same build on both PCs and set different worker counts before launch.
+
+## Profile worker participation (GFX 11b)
+
+Build the Win32 Release target with `RTS_BUILD_OPTION_PROFILE_TRACY=ON` and `TRACY_NO_CALLSTACK=ON`. The second option keeps the Win32 build compatible with the legacy `dbghelp.dll` shipped with the game, which lacks `SymLoadModuleEx`. The capture still includes zone timings, frame markers, and the worker plot. For a local capture, use `TRACY_ON_DEMAND=ON`, `TRACY_ONLY_LOCALHOST=ON` and `TRACY_NO_BROADCAST=ON`. Use [Tracy 0.13.1](https://github.com/wolfpld/tracy/releases/tag/v0.13.1), the version pinned by the project's CMake configuration. Connect to the local game process before the replay segment you want to measure.
+
+Run the same particle-heavy replay at the same speed, resolution, camera position and zoom. Restart the game between runs with `GENERALS_RENDER_WORKERS` set to `0`, `4` and `8`. Compare the same interval after the scene has warmed up.
+
+- `SortingRenderer::PrepareDepthEntries` measures render-thread elapsed time for preparing each sorting batch, including the vertex buffer work and any wait for workers.
+- `SortingRenderer::FillQuadDepth` measures depth computation by billboard job on the render thread and on workers. Worker zones can overlap, so their durations do not add up to elapsed time.
+- `SortingRenderer::Flush` measures the complete sorting renderer flush.
+- `SortingRenderer/Worker-assisted quad batches` counts batches since game launch in which a worker finished at least one nonempty quad-depth job. It stays at zero in serial mode. A flat plot with workers configured means they did no work during that interval. A dense scene is needed to test the parallel path.
+
+Compare frame time in the same replay window as well as time spent in the renderer. Keep the profiler connected in every run. The game's existing Tracy frame images can introduce periodic capture overhead. This profiling setup does not measure standalone GPU execution or change the worker defaults.
+
+Set `RTS_BUILD_OPTION_PROFILE_TRACY=OFF` and rebuild to remove the instrumentation from the executable. The diagnostics introduce no game-data or network format changes.
 
 ## Validation
 
@@ -19,4 +42,4 @@ Build the Win32 Release target `z_generals`. Run the same particle-heavy replay 
 
 ## Roll back
 
-Unset `GENERALS_RENDER_WORKERS` or set it to `0` and restart the game to use serial depth preparation. To restore the previous build entirely, restore its executable or revert the integration of PR #18 and rebuild.
+Set `RenderWorkers = 0`, clear any environment override, and restart the game to use serial depth preparation. You can also launch once with `GENERALS_RENDER_WORKERS=0`. To restore the previous build entirely, restore its executable or revert the applicable changes and rebuild.

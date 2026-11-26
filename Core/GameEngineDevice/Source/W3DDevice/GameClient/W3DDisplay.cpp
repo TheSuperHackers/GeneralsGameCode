@@ -46,6 +46,7 @@ static void drawFramerateBar();
 #include "Common/FramePacer.h"
 #include "Common/ThingFactory.h"
 #include "Common/GlobalData.h"
+#include "Common/OptionPreferences.h"
 #include "Common/PerfTimer.h"
 #include "Common/FileSystem.h"
 #include "Common/LocalFileSystem.h"
@@ -832,6 +833,10 @@ void W3DDisplay::init()
 
 	if (!TheGlobalData->m_headless)
 	{
+
+		const OptionPreferences options;
+		const AsciiString renderWorkers = options.getAsciiString("RenderWorkers", AsciiString::TheEmptyString);
+		SortingRendererClass::ConfigureQuadDepthWorkers(renderWorkers.str());
 
 		if (TheGlobalData->m_incrementalAGPBuf)
 		{

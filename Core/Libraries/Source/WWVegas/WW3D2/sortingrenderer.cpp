@@ -45,6 +45,7 @@
 #include "texture.h"
 #include "d3d8.h"
 #include "statistics.h"
+#include <Lib/Profile.h>
 #include <WWDebug/wwprofile.h>
 #include <Utility/cmath_adapter.h>
 #include <algorithm>
@@ -537,9 +538,13 @@ struct QuadDepthJob
 };
 
 QuadDepthJob quadDepthJobs[MAX_OVERLAPPING_NODES];
+#ifdef PROFILER_ENABLED
+std::int64_t workerAssistedBatches = 0;
+#endif
 
 void FillQuadDepth(const QuadDepthJob &job)
 {
+	PROFILER_SECTION_NAME("SortingRenderer::FillQuadDepth");
 	for (unsigned q = 0; q < job.count; ++q)
 	{
 		const auto *v = job.vertices + q * 4;
@@ -563,20 +568,23 @@ void CheckQuadDepth([[maybe_unused]] const QuadDepthJob &job)
 constexpr unsigned minParallelNodes = 5;
 constexpr unsigned minParallelQuads = 4096;
 constexpr unsigned maxRenderWorkers = 8;
+unsigned configuredQuadDepthWorkers = 0;
+
+std::optional<unsigned> ParseQuadDepthWorkers(const char *value)
+{
+	if (!value || !*value)
+		return std::nullopt;
+	char *end = nullptr;
+	const long requested = std::strtol(value, &end, 10);
+	if (end == value || *end)
+		return std::nullopt;
+	return static_cast<unsigned>(std::clamp(requested, 0L, static_cast<long>(maxRenderWorkers)));
+}
 
 unsigned QuadDepthWorkerCount()
 {
-	static const unsigned workerCount = [] {
-		const char *value = std::getenv("GENERALS_RENDER_WORKERS");
-		if (!value)
-			return 0u;
-		char *end = nullptr;
-		const long requested = std::strtol(value, &end, 10);
-		if (end == value || *end || requested <= 0)
-			return 0u;
-		return static_cast<unsigned>(std::min(requested, static_cast<long>(maxRenderWorkers)));
-	}();
-	return workerCount;
+	static const auto overrideCount = ParseQuadDepthWorkers(std::getenv("GENERALS_RENDER_WORKERS"));
+	return overrideCount.value_or(configuredQuadDepthWorkers);
 }
 
 class RenderQuadPool
@@ -589,15 +597,21 @@ class RenderQuadPool
 	unsigned count = 0, permits = 0, busy = 0;
 	bool stopping = false;
 	std::fenv_t environment{};
+#ifdef PROFILER_ENABLED
+	bool workerFilledQuads = false;
+#endif
 
-	void fill()
+	bool fill()
 	{
+		bool filledQuads = false;
 		for (;;)
 		{
 			const unsigned jobIndex = next.fetch_add(1, std::memory_order_relaxed);
 			if (jobIndex >= count)
-				break;
-			FillQuadDepth(quadDepthJobs[jobIndex]);
+				return filledQuads;
+			const auto &job = quadDepthJobs[jobIndex];
+			FillQuadDepth(job);
+			filledQuads |= job.count != 0;
 		}
 	}
 
@@ -615,10 +629,12 @@ class RenderQuadPool
 			}
 			// Each fork inherits the render caller's floating-point environment.
 			// If restoration fails, leave the work for the caller/other workers.
-			if (std::fesetenv(&environment) == 0)
-				fill();
+			[[maybe_unused]] const bool filledQuads = std::fesetenv(&environment) == 0 && fill();
 			{
 				std::lock_guard<std::mutex> lock(mutex);
+#ifdef PROFILER_ENABLED
+				workerFilledQuads |= filledQuads;
+#endif
 				--busy;
 			}
 			done.notify_one();
@@ -669,6 +685,9 @@ public:
 			count = jobCount;
 			next.store(0, std::memory_order_relaxed);
 			permits = workerCount;
+#ifdef PROFILER_ENABLED
+			workerFilledQuads = false;
+#endif
 		}
 		ready.notify_all();
 		fill();
@@ -676,6 +695,10 @@ public:
 			std::unique_lock<std::mutex> lock(mutex);
 			permits = 0;
 			done.wait(lock, [this] { return busy == 0; });
+#ifdef PROFILER_ENABLED
+			if (workerFilledQuads)
+				++workerAssistedBatches;
+#endif
 		}
 	}
 };
@@ -700,6 +723,16 @@ void RunQuadDepthJobs(unsigned jobCount, unsigned quadCount)
 		CheckQuadDepth(quadDepthJobs[j]);
 }
 } // namespace
+
+void SortingRendererClass::ConfigureQuadDepthWorkers(const char *setting)
+{
+	const unsigned count = ParseQuadDepthWorkers(setting).value_or(maxRenderWorkers);
+	if (count != configuredQuadDepthWorkers)
+	{
+		quadDepthPool.reset();
+		configuredQuadDepthWorkers = count;
+	}
+}
 
 void SortingRendererClass::Flush_Sorting_Pool()
 {
@@ -726,6 +759,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 	else
 		dyn_vb_access.emplace(BUFFER_TYPE_DYNAMIC_DX8, dynamic_fvf_type, static_cast<unsigned short>(vertexAllocCount));
 	{
+		PROFILER_SECTION_NAME("SortingRenderer::PrepareDepthEntries");
 		std::optional<DynamicVBAccessClass::WriteLockClass> lock;
 		VertexFormatXYZNDUV2 *dest_verts = nullptr;
 		if (!streamed)
@@ -857,6 +891,10 @@ void SortingRendererClass::Flush_Sorting_Pool()
 		}
 	}
 
+#ifdef PROFILER_ENABLED
+	PROFILER_PLOT("SortingRenderer/Worker-assisted quad batches", workerAssistedBatches);
+#endif
+
 	tis = Sort_By_Depth(tis, overlapping_entry_count);
 
 	// Keep quads intact across both 16-bit index and vertex upload boundaries.
@@ -983,6 +1021,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 void SortingRendererClass::Flush()
 {
 	WWPROFILE("SortingRenderer::Flush");
+	PROFILER_SECTION_NAME("SortingRenderer::Flush");
 	Matrix4x4 old_view;
 	Matrix4x4 old_world;
 	Renderer::Get_Transform(RenderTransform_View,old_view);
