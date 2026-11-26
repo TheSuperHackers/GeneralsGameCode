@@ -1119,10 +1119,6 @@ void W3DTreeBuffer::unitMoved(Object *unit)
 					treeNdx = m_trees[treeNdx].nextInPartition;
 					continue;	//  Tree is deleted. [7/11/2003]
 				}
-				if (m_trees[treeNdx].treeType>=m_numTreeTypes) {
-					treeNdx = m_trees[treeNdx].nextInPartition;
-					continue;
-				}
 				Coord3D delta;
 				delta.set(m_trees[treeNdx].location.X, m_trees[treeNdx].location.Y, m_trees[treeNdx].location.Z );
 				delta.sub(pos);
@@ -1275,11 +1271,13 @@ Int W3DTreeBuffer::addTreeType(const W3DTreeDrawModuleData *data)
 
 	m_treeTypes[m_numTreeTypes].m_mesh = nullptr;
 
+	const Int fallbackTreeType = m_numTreeTypes > 0 ? 0 : -1;
+
 	RenderObjClass *robj=WW3DAssetManager::Get_Instance()->Create_Render_Obj(data->m_modelName.str());
 
 	if (robj==nullptr) {
 		DEBUG_CRASH(("Unable to find model for tree %s", data->m_modelName.str()));
-		return 0;
+		return fallbackTreeType;
 	}
 	AABoxClass box;
 
@@ -1298,7 +1296,7 @@ Int W3DTreeBuffer::addTreeType(const W3DTreeDrawModuleData *data)
 
 	if (m_treeTypes[m_numTreeTypes].m_mesh==nullptr) {
 		DEBUG_CRASH(("Tree %s is not simple mesh. Tell artist to re-export. Don't Ignore!!!", data->m_modelName.str()));
-		return 0;
+		return fallbackTreeType;
 	}
 
 	Int numVertex = m_treeTypes[m_numTreeTypes].m_mesh->Peek_Model()->Get_Vertex_Count();
@@ -1900,7 +1898,7 @@ void W3DTreeBuffer::xfer( Xfer *xfer )
 		if (xfer->getXferMode() != XFER_LOAD) {
 			tree = m_trees[i];
 			treeType = m_trees[i].treeType;
-			if (treeType != DELETED_TREE_TYPE && treeType < m_numTreeTypes) {
+			if (treeType != DELETED_TREE_TYPE) {
 				modelName = m_treeTypes[treeType].m_data->m_modelName;
 				modelTexture = m_treeTypes[treeType].m_data->m_textureName;
 			}
