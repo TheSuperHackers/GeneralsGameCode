@@ -49,13 +49,21 @@
 #include <Utility/cmath_adapter.h>
 #include <algorithm>
 #include <list>
-#include <optional>
-#include <cstring>
 #include <array>
 #include <bit>
 #include <cstdint>
 #include <limits>
+#include <optional>
+#include <cstring>
 #include <vector>
+#include <atomic>
+#include <cfenv>
+#include <condition_variable>
+#include <cstdlib>
+#include <mutex>
+#include <new>
+#include <system_error>
+#include <thread>
 
 
 bool SortingRendererClass::_EnableTriangleDraw=true;
@@ -515,6 +523,184 @@ static bool Same_Billboard_Run(const SortingNodeStruct *a, const SortingNodeStru
 	return true;
 }
 
+// Render-only adaptation of Reforged's fork/join JobSystem. Workers only read
+// immutable CPU vertex data and write disjoint preallocated depth entries.
+// Opt in for A/B testing until the target's threading and FPU behavior are verified.
+namespace
+{
+struct QuadDepthJob
+{
+	const VertexFormatXYZNDUV2 *vertices;
+	TempIndexStruct *entries;
+	unsigned count, nodeId, vertexOffset;
+	float x, y, z, w;
+};
+
+QuadDepthJob quadDepthJobs[MAX_OVERLAPPING_NODES];
+
+void FillQuadDepth(const QuadDepthJob &job)
+{
+	for (unsigned q = 0; q < job.count; ++q)
+	{
+		const auto *v = job.vertices + q * 4;
+		auto &entry = job.entries[q];
+		entry.tri = {static_cast<unsigned short>(q * 4 + job.vertexOffset), 0, QUAD_ENTRY};
+		entry.idx = static_cast<unsigned short>(job.nodeId);
+		entry.z = (job.x * (v[0].x + v[1].x + v[2].x + v[3].x)
+			+ job.y * (v[0].y + v[1].y + v[2].y + v[3].y)
+			+ job.z * (v[0].z + v[1].z + v[2].z + v[3].z)) * 0.25f + job.w;
+	}
+}
+
+void CheckQuadDepth([[maybe_unused]] const QuadDepthJob &job)
+{
+#ifdef DEBUG_CRASHING
+	for (unsigned q = 0; q < job.count; ++q)
+		DEBUG_ASSERTCRASH(std::isfinite(job.entries[q].z), ("Quad has invalid center"));
+#endif
+}
+
+constexpr unsigned minParallelNodes = 5;
+constexpr unsigned minParallelQuads = 4096;
+constexpr unsigned maxRenderWorkers = 8;
+
+unsigned QuadDepthWorkerCount()
+{
+	static const unsigned workerCount = [] {
+		const char *value = std::getenv("GENERALS_RENDER_WORKERS");
+		if (!value)
+			return 0u;
+		char *end = nullptr;
+		const long requested = std::strtol(value, &end, 10);
+		if (end == value || *end || requested <= 0)
+			return 0u;
+		return static_cast<unsigned>(std::min(requested, static_cast<long>(maxRenderWorkers)));
+	}();
+	return workerCount;
+}
+
+class RenderQuadPool
+{
+	std::mutex mutex;
+	std::condition_variable ready, done;
+	std::array<std::thread, maxRenderWorkers> workers;
+	unsigned workerCount = 0;
+	std::atomic<unsigned> next{0};
+	unsigned count = 0, permits = 0, busy = 0;
+	bool stopping = false;
+	std::fenv_t environment{};
+
+	void fill()
+	{
+		for (;;)
+		{
+			const unsigned jobIndex = next.fetch_add(1, std::memory_order_relaxed);
+			if (jobIndex >= count)
+				break;
+			FillQuadDepth(quadDepthJobs[jobIndex]);
+		}
+	}
+
+	void worker()
+	{
+		for (;;)
+		{
+			{
+				std::unique_lock<std::mutex> lock(mutex);
+				ready.wait(lock, [this] { return stopping || permits != 0; });
+				if (stopping)
+					return;
+				--permits;
+				++busy;
+			}
+			// Each fork inherits the render caller's floating-point environment.
+			// If restoration fails, leave the work for the caller/other workers.
+			if (std::fesetenv(&environment) == 0)
+				fill();
+			{
+				std::lock_guard<std::mutex> lock(mutex);
+				--busy;
+			}
+			done.notify_one();
+		}
+	}
+
+public:
+	explicit RenderQuadPool(unsigned requested)
+	{
+		for (; workerCount < requested; ++workerCount)
+		{
+			try
+			{
+				workers[workerCount] = std::thread([this] { worker(); });
+			}
+			catch (const std::system_error &)
+			{
+				break;
+			}
+			catch (const std::bad_alloc &)
+			{
+				break;
+			}
+		}
+	}
+
+	~RenderQuadPool()
+	{
+		{
+			std::lock_guard<std::mutex> lock(mutex);
+			stopping = true;
+		}
+		ready.notify_all();
+		for (unsigned i = 0; i < workerCount; ++i)
+			workers[i].join();
+	}
+
+	void run(unsigned jobCount)
+	{
+		if (workerCount == 0 || std::fegetenv(&environment) != 0)
+		{
+			for (unsigned i = 0; i < jobCount; ++i)
+				FillQuadDepth(quadDepthJobs[i]);
+			return;
+		}
+		{
+			std::lock_guard<std::mutex> lock(mutex);
+			count = jobCount;
+			next.store(0, std::memory_order_relaxed);
+			permits = workerCount;
+		}
+		ready.notify_all();
+		fill();
+		{
+			std::unique_lock<std::mutex> lock(mutex);
+			permits = 0;
+			done.wait(lock, [this] { return busy == 0; });
+		}
+	}
+};
+
+std::optional<RenderQuadPool> quadDepthPool;
+
+void RunQuadDepthJobs(unsigned jobCount, unsigned quadCount)
+{
+	if (jobCount >= minParallelNodes && quadCount >= minParallelQuads)
+	{
+		if (!quadDepthPool)
+			quadDepthPool.emplace(QuadDepthWorkerCount());
+		quadDepthPool->run(jobCount);
+	}
+	else
+	{
+		for (unsigned j = 0; j < jobCount; ++j)
+			FillQuadDepth(quadDepthJobs[j]);
+	}
+
+	for (unsigned j = 0; j < jobCount; ++j)
+		CheckQuadDepth(quadDepthJobs[j]);
+}
+} // namespace
+
 void SortingRendererClass::Flush_Sorting_Pool()
 {
 	if (!overlapping_node_count) return;
@@ -548,6 +734,10 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			dest_verts = static_cast<VertexFormatXYZNDUV2 *>(lock->Get_Formatted_Vertex_Array());
 		}
 
+		const bool collectQuadDepthJobs = overlapping_node_count >= minParallelNodes
+			&& overlapping_entry_count >= minParallelQuads && QuadDepthWorkerCount() != 0;
+		unsigned quadJobCount = 0;
+		unsigned queuedQuadCount = 0;
 		unsigned polygon_array_offset=0;
 		unsigned vertex_array_offset=0;
 		for (unsigned node_id=0;node_id<overlapping_node_count;++node_id) {
@@ -577,20 +767,23 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			// Adapted from Reforged (Olcay Seygan and contributors): one depth entry per billboard quad.
 			if (state->billboard_quads)
 			{
-				for (unsigned q = 0; q < state->polygon_count / 2; ++q)
+				const unsigned quadCount = state->polygon_count / 2u;
+				const QuadDepthJob job{src_verts, tis + polygon_array_offset, quadCount,
+					node_id, streamed ? 0u : vertex_array_offset,
+					mtx[2][0], mtx[2][1], mtx[2][2], mtx[2][3]};
+				if (collectQuadDepthJobs)
 				{
-					const auto *v = src_verts + q * 4;
-					auto &entry = tis[polygon_array_offset + q];
-					entry.tri = {static_cast<unsigned short>(q * 4 + (streamed ? 0u : vertex_array_offset)), 0, QUAD_ENTRY};
-					entry.idx = static_cast<unsigned short>(node_id);
-					entry.z = (mtx[2][0] * (v[0].x + v[1].x + v[2].x + v[3].x)
-						+ mtx[2][1] * (v[0].y + v[1].y + v[2].y + v[3].y)
-						+ mtx[2][2] * (v[0].z + v[1].z + v[2].z + v[3].z)) * 0.25f + mtx[2][3];
-					DEBUG_ASSERTCRASH(std::isfinite(entry.z), ("Quad has invalid center"));
+					quadDepthJobs[quadJobCount++] = job;
+					queuedQuadCount += quadCount;
+				}
+				else
+				{
+					FillQuadDepth(job);
+					CheckQuadDepth(job);
 				}
 				if (!streamed)
 					state->min_vertex_index = vertex_array_offset;
-				polygon_array_offset += state->polygon_count / 2;
+				polygon_array_offset += quadCount;
 				vertex_array_offset += state->vertex_count;
 				continue;
 			}
@@ -655,6 +848,12 @@ void SortingRendererClass::Flush_Sorting_Pool()
 
 			polygon_array_offset+=state->polygon_count;
 			vertex_array_offset+=state->vertex_count;
+		}
+		if (quadJobCount != 0)
+		{
+			// Only CPU sorting pages are accessed by workers. Release the GPU lock before waking them.
+			lock.reset();
+			RunQuadDepthJobs(quadJobCount, queuedQuadCount);
 		}
 	}
 
@@ -836,6 +1035,8 @@ void SortingRendererClass::Flush()
 
 void SortingRendererClass::Deinit()
 {
+	quadDepthPool.reset();
+
 	//
 	//	Flush the sorted list
 	//
