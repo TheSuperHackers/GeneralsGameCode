@@ -108,6 +108,12 @@ static GameWindow *		checkDoubleClickAttackMove		= nullptr;
 
 static NameKeyType		sliderScrollSpeedID	= NAMEKEY_INVALID;
 static GameWindow *		sliderScrollSpeed		= nullptr;
+static GameWindow *sliderCameraZoomSpeed = nullptr;
+static GameWindow *labelCameraZoomSpeed = nullptr;
+
+constexpr Int CameraZoomStepsPerUnit = 4;
+enum class CameraZoomSpeedChange { None, Slider, Default };
+static CameraZoomSpeedChange cameraZoomSpeedChange = CameraZoomSpeedChange::None;
 
 static NameKeyType    checkLanguageFilterID = NAMEKEY_INVALID;
 static GameWindow *   checkLanguageFilter   = nullptr;
@@ -215,6 +221,30 @@ WindowLayout *OptionsLayout = nullptr;
 
 static OptionPreferences *pref = nullptr;
 
+static void showCameraZoomSpeed(Real speed)
+{
+	if (!labelCameraZoomSpeed)
+		return;
+
+	Bool exists;
+	UnicodeString label = TheGameText->fetch("GUI:CameraZoomSpeed", &exists);
+	if (!exists)
+		label = L"Zoom speed";
+
+	UnicodeString text;
+	text.format(L"%ls  %.2fx", label.str(), speed);
+	GadgetStaticTextSetText(labelCameraZoomSpeed, text);
+}
+
+static void setCameraZoomSpeedSlider(Real speed)
+{
+	if (sliderCameraZoomSpeed)
+	{
+		GadgetSliderSetPosition(sliderCameraZoomSpeed, Int(speed * CameraZoomStepsPerUnit + 0.5f));
+		showCameraZoomSpeed(speed);
+	}
+}
+
 static void setDefaults()
 {
 	constexpr const Bool ModifyDisplaySettings = FALSE;
@@ -268,7 +298,11 @@ static void setDefaults()
 //	// scroll speed val
 	Int scrollPos = (Int)(TheGlobalData->m_keyboardDefaultScrollFactor*100.0f);
 	GadgetSliderSetPosition( sliderScrollSpeed, scrollPos );
-
+	if (sliderCameraZoomSpeed)
+	{
+		cameraZoomSpeedChange = CameraZoomSpeedChange::Default;
+		setCameraZoomSpeedSlider(OptionPreferences::getDefaultCameraZoomSpeed());
+	}
 
 	Int valMin, valMax;
 
@@ -625,6 +659,17 @@ static void saveOptions()
 		(*pref)["ScrollFactor"] = prefString;
 	}
 
+	// Preserve the configured value when the menu is accepted without moving the slider.
+	if (sliderCameraZoomSpeed && cameraZoomSpeedChange != CameraZoomSpeedChange::None)
+	{
+		if (cameraZoomSpeedChange == CameraZoomSpeedChange::Default)
+			pref->erase("CameraZoomSpeed");
+		else
+			pref->setReal("CameraZoomSpeed", Real(GadgetSliderGetPosition(sliderCameraZoomSpeed)) / CameraZoomStepsPerUnit);
+
+		TheLookAtTranslator->setCameraZoomSpeed(pref->getCameraZoomSpeed());
+	}
+
 	//-------------------------------------------------------------------------------------------------
 	// draw scroll anchor
 	{
@@ -959,6 +1004,9 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	checkDoubleClickAttackMove   = TheWindowManager->winGetWindowFromId( nullptr, checkDoubleClickAttackMoveID );
 	sliderScrollSpeedID	   = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:SliderScrollSpeed" );
 	sliderScrollSpeed		   = TheWindowManager->winGetWindowFromId( nullptr,  sliderScrollSpeedID);
+	sliderCameraZoomSpeed = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("OptionsMenu.wnd:SliderCameraZoomSpeed"));
+	labelCameraZoomSpeed = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("OptionsMenu.wnd:CameraZoomSpeedLabel"));
+	cameraZoomSpeedChange = CameraZoomSpeedChange::None;
 	comboBoxAntiAliasingID = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:ComboBoxAntiAliasing" );
 	comboBoxAntiAliasing   = TheWindowManager->winGetWindowFromId( nullptr, comboBoxAntiAliasingID );
 	comboBoxResolutionID   = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:ComboBoxResolution" );
@@ -1372,6 +1420,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 		GadgetSliderSetPosition( sliderScrollSpeed, scrollPos );
 	}
 	DEBUG_LOG(("Scroll Speed %d", scrollPos));
+	setCameraZoomSpeedSlider(pref->getCameraZoomSpeed());
 
  	// set volume sliders
 
@@ -1432,6 +1481,9 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 void OptionsMenuShutdown( WindowLayout *layout, void *userData )
 {
+	sliderCameraZoomSpeed = nullptr;
+	labelCameraZoomSpeed = nullptr;
+
 /* moved into the back button stuff
 	if (pref)
 	{
@@ -1581,6 +1633,17 @@ WindowMsgHandledType OptionsMenuSystem( GameWindow *window, UnsignedInt msg,
 		}
 
 		//---------------------------------------------------------------------------------------------
+		case GSM_SLIDER_TRACK:
+		{
+			if (!ignoreSelected && sliderCameraZoomSpeed && (GameWindow *)mData1 == sliderCameraZoomSpeed)
+			{
+				cameraZoomSpeedChange = CameraZoomSpeedChange::Slider;
+				showCameraZoomSpeed(Real(GadgetSliderGetPosition(sliderCameraZoomSpeed)) / CameraZoomStepsPerUnit);
+				return MSG_HANDLED;
+			}
+			break;
+		}
+
 		case GBM_SELECTED:
 		{
 			if(ignoreSelected)

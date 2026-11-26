@@ -149,6 +149,7 @@ LookAtTranslator::LookAtTranslator() :
 
 	OptionPreferences prefs;
 	m_screenEdgeScrollMode = prefs.getScreenEdgeScrollMode();
+	m_cameraZoomSpeed = prefs.getCameraZoomSpeed();
 
 	DEBUG_ASSERTCRASH(!TheLookAtTranslator, ("Already have a LookAtTranslator - why do you need two?"));
 	TheLookAtTranslator = this;
@@ -418,7 +419,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			m_lastMouseMoveTimeMsec = timeGetTime();
 
 			const Real spin = msg->getArgument( 1 )->real;
-			const Real zoom = -spin * View::ZoomHeightPerSecond;
+			const Real zoom = -spin * View::ZoomHeightPerSecond * m_cameraZoomSpeed;
 			TheTacticalView->userZoom(zoom);
 
 			break;
