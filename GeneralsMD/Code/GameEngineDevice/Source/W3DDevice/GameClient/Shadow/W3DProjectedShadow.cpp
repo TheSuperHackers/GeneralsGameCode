@@ -37,6 +37,7 @@
 #include "WW3D2/camera.h"
 #include "WW3D2/light.h"
 #include "WW3D2/dx8wrapper.h"
+#include "WW3D2/ScopedTerrainDecalDepthBias.h"
 #include "WW3D2/Renderer.h"
 #include "WW3D2/hlod.h"
 #include "WW3D2/mesh.h"
@@ -822,6 +823,7 @@ void W3DProjectedShadowManager::flushDecals(W3DShadowTexture *texture, ShadowTyp
 	if (DX8Wrapper::_Is_Triangle_Draw_Enabled())
 	{
 		Debug_Statistics::Record_DX8_Polys_And_Vertices(nShadowDecalPolysInBatch,nShadowDecalVertsInBatch,ShaderClass::_PresetOpaqueShader);
+		const ScopedTerrainDecalDepthBias bias;
 		m_pDev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,0,nShadowDecalVertsInBatch,nShadowDecalStartBatchIndex,nShadowDecalPolysInBatch);
 	}
 
