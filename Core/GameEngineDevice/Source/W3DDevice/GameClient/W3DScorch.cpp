@@ -25,6 +25,7 @@
 #include "W3DDevice/GameClient/TerrainTex.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "WW3D2/dx8wrapper.h"
+#include "WW3D2/ScopedTerrainDecalDepthBias.h"
 
 W3DScorch::W3DScorch(bool deduplicateScorches)
   : m_vertexScorch(nullptr)
@@ -127,6 +128,8 @@ void W3DScorch::drawScorches(WorldHeightMap& map)
 	DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaShader);
 
 	DX8Wrapper::Set_Texture(0, m_scorchTexture);
+	DX8Wrapper::Apply_Render_State_Changes();
+	const ScopedTerrainDecalDepthBias bias;
 	DX8Wrapper::Draw_Triangles(0, m_curNumScorchIndices / 3, 0, m_curNumScorchVertices);
 }
 
