@@ -50,6 +50,12 @@ static SortingIndexBufferClass* _DynamicSortingIndexArray;
 static unsigned short _DynamicSortingIndexArraySize=0;
 static unsigned short _DynamicSortingIndexArrayOffset=0;
 
+// Adapted from Zero Hour Reforged (Olcay Seygan and contributors).
+// Keep a bounded number of retired CPU sorting pages for reuse after queued draws release them.
+static constexpr unsigned short SORTING_INDEX_ARRAY_CAPACITY = 65535;
+static constexpr int MAX_RETIRED_SORTING_INDEX_ARRAYS = 4;
+static SortingIndexBufferClass *_RetiredSortingIndexArrays[MAX_RETIRED_SORTING_INDEX_ARRAYS] = {};
+
 static bool _DynamicDX8IndexBufferInUse=false;
 static DX8IndexBufferClass* _DynamicDX8IndexBuffer=nullptr;
 static unsigned short _DynamicDX8IndexBufferSize=DEFAULT_IB_SIZE;
@@ -406,6 +412,8 @@ void DynamicIBAccessClass::_Deinit()
 
 	WWASSERT ((_DynamicSortingIndexArray == nullptr) || (_DynamicSortingIndexArray->Num_Refs() == 1));
 	REF_PTR_RELEASE(_DynamicSortingIndexArray);
+	for (auto &buffer : _RetiredSortingIndexArrays)
+		REF_PTR_RELEASE(buffer);
 	_DynamicSortingIndexArrayInUse=false;
 	_DynamicSortingIndexArraySize=0;
 	_DynamicSortingIndexArrayOffset=0;
@@ -510,17 +518,40 @@ void DynamicIBAccessClass::Allocate_Sorting_Dynamic_Buffer()
 	WWASSERT(!_DynamicSortingIndexArrayInUse);
 	_DynamicSortingIndexArrayInUse=true;
 
-	unsigned new_index_count=_DynamicSortingIndexArrayOffset+IndexCount;
-	WWASSERT(new_index_count<65536);
-	if (new_index_count>_DynamicSortingIndexArraySize) {
-		REF_PTR_RELEASE(_DynamicSortingIndexArray);
-		_DynamicSortingIndexArraySize=new_index_count;
-		if (_DynamicSortingIndexArraySize<DEFAULT_IB_SIZE) _DynamicSortingIndexArraySize=DEFAULT_IB_SIZE;
+	const unsigned newCount = static_cast<unsigned>(_DynamicSortingIndexArrayOffset) + IndexCount;
+	if (_DynamicSortingIndexArray && newCount > _DynamicSortingIndexArraySize)
+	{
+		// Transfer our owning reference; queued draw states may still hold references.
+		bool retained = false;
+		for (auto &buffer : _RetiredSortingIndexArrays)
+		{
+			if (!buffer)
+			{
+				buffer = _DynamicSortingIndexArray;
+				_DynamicSortingIndexArray = nullptr;
+				retained = true;
+				break;
+			}
+		}
+		if (!retained)
+			REF_PTR_RELEASE(_DynamicSortingIndexArray);
 	}
 
-	if (!_DynamicSortingIndexArray) {
-		_DynamicSortingIndexArray=NEW_REF(SortingIndexBufferClass,(_DynamicSortingIndexArraySize));
-		_DynamicSortingIndexArrayOffset=0;
+	if (!_DynamicSortingIndexArray)
+	{
+		for (auto &buffer : _RetiredSortingIndexArrays)
+		{
+			if (buffer && buffer->Num_Refs() == 1)
+			{
+				_DynamicSortingIndexArray = buffer;
+				buffer = nullptr;
+				break;
+			}
+		}
+		if (!_DynamicSortingIndexArray)
+			_DynamicSortingIndexArray = NEW_REF(SortingIndexBufferClass, (SORTING_INDEX_ARRAY_CAPACITY));
+		_DynamicSortingIndexArraySize = SORTING_INDEX_ARRAY_CAPACITY;
+		_DynamicSortingIndexArrayOffset = 0;
 	}
 
 	REF_PTR_SET(IndexBuffer,_DynamicSortingIndexArray);
