@@ -12,7 +12,7 @@ Build the Win32 Release target `z_generals`. Run the same particle-heavy replay 
 
 ## Profile worker participation (GFX 11b)
 
-Build the Win32 Release target with `RTS_BUILD_OPTION_PROFILE_TRACY=ON`. For a local capture, use `TRACY_ON_DEMAND=ON`, `TRACY_ONLY_LOCALHOST=ON` and `TRACY_NO_BROADCAST=ON`. Use [Tracy 0.13.1](https://github.com/wolfpld/tracy/releases/tag/v0.13.1), the version pinned by the project's CMake configuration. Connect to the local game process before the replay segment you want to measure.
+Build the Win32 Release target with `RTS_BUILD_OPTION_PROFILE_TRACY=ON` and `TRACY_NO_CALLSTACK=ON`. The second option keeps the Win32 build compatible with the legacy `dbghelp.dll` shipped with the game, which lacks `SymLoadModuleEx`. The capture still includes zone timings, frame markers, and the worker plot. For a local capture, use `TRACY_ON_DEMAND=ON`, `TRACY_ONLY_LOCALHOST=ON` and `TRACY_NO_BROADCAST=ON`. Use [Tracy 0.13.1](https://github.com/wolfpld/tracy/releases/tag/v0.13.1), the version pinned by the project's CMake configuration. Connect to the local game process before the replay segment you want to measure.
 
 Run the same particle-heavy replay at the same speed, resolution, camera position and zoom. Restart the game between runs with `GENERALS_RENDER_WORKERS` set to `0`, `4` and `8`. Compare the same interval after the scene has warmed up.
 
