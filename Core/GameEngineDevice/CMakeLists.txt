@@ -62,6 +62,7 @@ set(GAMEENGINEDEVICE_SRC
 #    Include/W3DDevice/GameClient/W3DScene.h
     Include/W3DDevice/GameClient/W3DShaderManager.h
 #    Include/W3DDevice/GameClient/W3DShadow.h
+    Include/W3DDevice/GameClient/W3DShadowVolumeStrips.h
 #    Include/W3DDevice/GameClient/W3DShroud.h
     Include/W3DDevice/GameClient/W3DSmudge.h
     Include/W3DDevice/GameClient/W3DSnow.h

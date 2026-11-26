@@ -53,6 +53,7 @@
 #include "Common/GlobalData.h"
 #include "Common/DrawModule.h"
 #include "W3DDevice/GameClient/W3DVolumetricShadow.h"
+#include "W3DDevice/GameClient/W3DShadowVolumeStrips.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "WW3D2/statistics.h"
 #include "GameLogic/TerrainLogic.h"
@@ -2855,10 +2856,9 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 	Geometry *shadowVolume;
 	Vector3 extrude2;  // the polypoints extruded from edge and light
 	Vector3 edgeVertex2;  // second edge of silhouette
-	Int i,k;
+	Int i;
 	Int vertexCount;
 	Int polygonCount;
-	Int indicesPerMesh;
 	W3DShadowGeometryMesh *geomMesh;
 
 	W3DBufferManager::W3DVertexBufferSlot *vbSlot;
@@ -2887,114 +2887,14 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 
 	}
 
-	//*****************************************************************************************/
-	//Do an initial pass through silhouette data to determine the actual vertex/polygon counts.
-	//This number can't be determined any other way since it depends on degree of vertex sharing
-	//in model.  We don't want to overallocate because vertex buffer space is limited.
-	//This pass is also used to sort the edges so they are all connected in strip order.
-	{
-		#ifdef RECORD_SHADOW_STRIP_STATS
-			Int numStrips=0;	//keeps track of number of strips generated.
-			Int stripLength=1;	//keeps track of segments in strip (each being 2 triangles).
-			Int maxStripLength=0;	//keeps track of longest strip generated.
-		#endif
+	const Int indicesPerMesh = m_numIndicesPerMesh[meshIndex];
+	if (!indicesPerMesh)
+		return;
 
-		// step through each of the silhouette pairs
-		vertexCount = 0;
-		polygonCount = 0;
-
-		indicesPerMesh=m_numIndicesPerMesh[meshIndex];
-		if (!indicesPerMesh)
-			return;	//nothing to draw
-
-		Short *silhouetteIndices=m_silhouetteIndex[meshIndex];
-
-		//Initialize first strip info
-		Short stripStartIndex=silhouetteIndices[ 0 ];
-		Short stripStartVertex=0;
-
-		vertexCount=2;
-		Int lastEdgeVertex2Index=0;
-		Int lastExtrude2Index=1;
-
-		for( i = 0; i < indicesPerMesh; i += 2 )
-		{
-			Short currentEdgeEnd=silhouetteIndices[i+1];
-
-			//look for edge connected to this one and move it next to this edge
-			//in index list.  Rendering edges back-to-back improves vertex cache usage.
-			for (k=i+2; k<indicesPerMesh; k+=2)
-				if (silhouetteIndices[k]==currentEdgeEnd)
-				{
-					//swap the two edges
-					std::swap(silhouetteIndices[i+2], silhouetteIndices[k]);
-					std::swap(silhouetteIndices[i+3], silhouetteIndices[k+1]);
-					break;
-				}
-
-			if (k >= indicesPerMesh)
-			{
-				//reached end of strip. Insert final edge.
-				//Check if last edge wraps around to start.
-				if (currentEdgeEnd == stripStartIndex)
-				{
-					//add end of strip that wraps around to start (forming closed cylinder/shape)
-					//
-					// add the polygon consisting of the two edge vertices and the
-					// first extruded point
-					//
-				}
-				else
-				{
-					//add end of strip.  Finishes the last 2 polygons.
-					lastEdgeVertex2Index=vertexCount;
-					lastExtrude2Index=vertexCount+1;
-					vertexCount += 2;
-				}
-
-				if ((i+2) >= indicesPerMesh)
-				{
-					//finished with all silhouette edges
-					polygonCount += 2;
-	#ifdef RECORD_SHADOW_STRIP_STATS
-					numStrips++;
-	#endif
-					break;	//reached end of all edges
-				}
-
-				lastEdgeVertex2Index=vertexCount;
-				lastExtrude2Index=vertexCount + 1;
-				//record start of new strip info
-				stripStartIndex=silhouetteIndices[ i+2 ];
-				stripStartVertex=lastEdgeVertex2Index;
-
-				vertexCount += 2;
-
-				polygonCount += 2;
-	#ifdef RECORD_SHADOW_STRIP_STATS
-				numStrips++;
-				stripLength=1;
-	#endif
-				continue;
-			}
-			else
-			{
-				//continue existing strip by adding extra vertex and extrusion
-
-				lastEdgeVertex2Index=vertexCount;
-				lastExtrude2Index=vertexCount+1;
-
-				vertexCount += 2;
-				polygonCount += 2;
-			}
-	#ifdef RECORD_SHADOW_STRIP_STATS
-			//Continuing strip.
-			stripLength++;
-			maxStripLength=__max(maxStripLength,stripLength);
-	#endif
-		}
-	}
-	//***********************************************************************************************
+	Short *silhouetteIndices = m_silhouetteIndex[meshIndex];
+	const ShadowVolumeStripLayout layout = PrepareShadowVolumeStrips(silhouetteIndices, indicesPerMesh);
+	vertexCount = layout.vertexCount;
+	polygonCount = layout.triangleCount;
 
 	DEBUG_ASSERTCRASH(m_shadowVolumeVB[ volumeIndex ][meshIndex] == nullptr,("Updating Existing Static Vertex Buffer Shadow"));
 	vbSlot=m_shadowVolumeVB[ volumeIndex ][meshIndex] = TheW3DBufferManager->getSlot(W3DBufferManager::VBM_FVF_XYZ,
@@ -3046,8 +2946,6 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 
 	shadowVolume->SetNumActivePolygon(polygonCount);
 	shadowVolume->SetNumActiveVertex(vertexCount);
-
-	Short *silhouetteIndices=m_silhouetteIndex[meshIndex];
 
 	//Initialize first strip info
 	Short stripStartIndex=silhouetteIndices[ 0 ];
