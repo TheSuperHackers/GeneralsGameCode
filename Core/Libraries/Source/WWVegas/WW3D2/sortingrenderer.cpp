@@ -581,8 +581,7 @@ std::optional<unsigned> ParseQuadDepthWorkers(const char *value)
 	return static_cast<unsigned>(std::clamp(requested, 0L, static_cast<long>(maxRenderWorkers)));
 }
 
-// Diagnostic override for controlled A/B captures. Preserve the existing
-// threshold unless an explicit, bounded integer is supplied.
+// Read the diagnostic override once per process for controlled comparisons.
 unsigned MinParallelQuads()
 {
 	static const unsigned threshold = [] {
@@ -775,6 +774,10 @@ void SortingRendererClass::Flush_Sorting_Pool()
 		nodeVertices.resize(overlapping_node_count);
 	else
 		dyn_vb_access.emplace(BUFFER_TYPE_DYNAMIC_DX8, dynamic_fvf_type, static_cast<unsigned short>(vertexAllocCount));
+#ifdef PROFILER_ENABLED
+	std::int64_t actualQuadCount = 0;
+	std::int64_t actualQuadJobs = 0;
+#endif
 	{
 		PROFILER_SECTION_NAME("SortingRenderer::PrepareDepthEntries");
 		std::optional<DynamicVBAccessClass::WriteLockClass> lock;
@@ -789,10 +792,6 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			&& overlapping_entry_count >= MinParallelQuads() && QuadDepthWorkerCount() != 0;
 		unsigned quadJobCount = 0;
 		unsigned queuedQuadCount = 0;
-#ifdef PROFILER_ENABLED
-		unsigned actualQuadCount = 0;
-		unsigned actualQuadJobs = 0;
-#endif
 		unsigned polygon_array_offset=0;
 		unsigned vertex_array_offset=0;
 		for (unsigned node_id=0;node_id<overlapping_node_count;++node_id) {
@@ -908,10 +907,6 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			polygon_array_offset+=state->polygon_count;
 			vertex_array_offset+=state->vertex_count;
 		}
-		#ifdef PROFILER_ENABLED
-		PROFILER_PLOT("SortingRenderer/Quads per batch", static_cast<std::int64_t>(actualQuadCount));
-		PROFILER_PLOT("SortingRenderer/Nonempty quad jobs per batch", static_cast<std::int64_t>(actualQuadJobs));
-		#endif
 		if (quadJobCount != 0)
 		{
 			// Only CPU sorting pages are accessed by workers. Release the GPU lock before waking them.
@@ -921,6 +916,9 @@ void SortingRendererClass::Flush_Sorting_Pool()
 	}
 
 #ifdef PROFILER_ENABLED
+	// Sample after releasing the vertex buffer lock and ending PrepareDepthEntries.
+	PROFILER_PLOT("SortingRenderer/Quads per batch", actualQuadCount);
+	PROFILER_PLOT("SortingRenderer/Nonempty quad jobs per batch", actualQuadJobs);
 	PROFILER_PLOT("SortingRenderer/Worker-assisted quad batches", workerAssistedBatches);
 #endif
 
