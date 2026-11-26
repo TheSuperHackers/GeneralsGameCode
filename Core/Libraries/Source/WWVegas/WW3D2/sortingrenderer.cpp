@@ -49,6 +49,8 @@
 #include <Utility/cmath_adapter.h>
 #include <algorithm>
 #include <list>
+#include <optional>
+#include <vector>
 
 
 bool SortingRendererClass::_EnableTriangleDraw=true;
@@ -418,11 +420,24 @@ void SortingRendererClass::Flush_Sorting_Pool()
 		vertexAllocCount = DEFAULT_SORTING_VERTEX_COUNT;	//make sure that we force the DX8 dynamic vertex buffer to maximum size
 	if (overlapping_vertex_count > vertexAllocCount)
 		vertexAllocCount = overlapping_vertex_count;
-	WWASSERT(DEFAULT_SORTING_VERTEX_COUNT == 1 || vertexAllocCount <= DEFAULT_SORTING_VERTEX_COUNT);
-	DynamicVBAccessClass dyn_vb_access(BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,vertexAllocCount/*overlapping_vertex_count*/);
+	// Reforged (Olcay Seygan and contributors): sort globally, then stream geometry
+	// in 16-bit-safe batches. Keep the original shared-vertex fast path for small pools.
+	const bool streamed = vertexAllocCount > 65535u ||
+		(DEFAULT_SORTING_VERTEX_COUNT != 1 && vertexAllocCount > DEFAULT_SORTING_VERTEX_COUNT);
+	std::optional<DynamicVBAccessClass> dyn_vb_access;
+	std::vector<const VertexFormatXYZNDUV2 *> nodeVertices;
+	if (streamed)
+		nodeVertices.resize(overlapping_node_count);
+	else
+		dyn_vb_access.emplace(BUFFER_TYPE_DYNAMIC_DX8, dynamic_fvf_type, static_cast<unsigned short>(vertexAllocCount));
 	{
-		DynamicVBAccessClass::WriteLockClass lock(&dyn_vb_access);
-		VertexFormatXYZNDUV2* dest_verts=(VertexFormatXYZNDUV2 *)lock.Get_Formatted_Vertex_Array();
+		std::optional<DynamicVBAccessClass::WriteLockClass> lock;
+		VertexFormatXYZNDUV2 *dest_verts = nullptr;
+		if (!streamed)
+		{
+			lock.emplace(&*dyn_vb_access);
+			dest_verts = static_cast<VertexFormatXYZNDUV2 *>(lock->Get_Formatted_Vertex_Array());
+		}
 
 		unsigned polygon_array_offset=0;
 		unsigned vertex_array_offset=0;
@@ -440,8 +455,13 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			// If you have a crash in here and "dest_verts" points to illegal memory area,
 			// it is because D3D is in illegal state, and the only known cure is rebooting.
 			// This illegal state is usually caused by Quake3-engine powered games such as MOHAA.
-			memcpy(dest_verts, src_verts, sizeof(VertexFormatXYZNDUV2)*state->vertex_count);
-			dest_verts += state->vertex_count;
+			if (streamed)
+				nodeVertices[node_id] = src_verts;
+			else
+			{
+				memcpy(dest_verts, src_verts, sizeof(VertexFormatXYZNDUV2)*state->vertex_count);
+				dest_verts += state->vertex_count;
+			}
 
 			const Matrix4x4 mtx=To_Matrix4x4(state->sorting_state.view)*To_Matrix4x4(state->sorting_state.world);
 
@@ -468,9 +488,9 @@ void SortingRendererClass::Flush_Sorting_Pool()
 					unsigned array_index=i+polygon_array_offset;
 					WWASSERT(array_index<overlapping_polygon_count);
 					TempIndexStruct *tis_ptr = tis + array_index;
-					tis_ptr->tri.i = idx1 + vertex_array_offset;
-					tis_ptr->tri.j = idx2 + vertex_array_offset;
-					tis_ptr->tri.k = idx3 + vertex_array_offset;
+					tis_ptr->tri.i = idx1 + (streamed ? 0u : vertex_array_offset);
+					tis_ptr->tri.j = idx2 + (streamed ? 0u : vertex_array_offset);
+					tis_ptr->tri.k = idx3 + (streamed ? 0u : vertex_array_offset);
 					tis_ptr->idx = node_id;
 					tis_ptr->z = (v1->z + v2->z + v3->z)/3.0f;
 					DEBUG_ASSERTCRASH((! std::isnan(tis_ptr->z) && std::isfinite(tis_ptr->z)), ("Triangle has invalid center"));
@@ -489,9 +509,9 @@ void SortingRendererClass::Flush_Sorting_Pool()
 					unsigned array_index=i+polygon_array_offset;
 					WWASSERT(array_index<overlapping_polygon_count);
 					TempIndexStruct *tis_ptr = tis + array_index;
-					tis_ptr->tri.i = idx1 + vertex_array_offset;
-					tis_ptr->tri.j = idx2 + vertex_array_offset;
-					tis_ptr->tri.k = idx3 + vertex_array_offset;
+					tis_ptr->tri.i = idx1 + (streamed ? 0u : vertex_array_offset);
+					tis_ptr->tri.j = idx2 + (streamed ? 0u : vertex_array_offset);
+					tis_ptr->tri.k = idx3 + (streamed ? 0u : vertex_array_offset);
 					tis_ptr->idx = node_id;
 					tis_ptr->z = (mtx[2][0]*(v1->x + v2->x + v3->x) +
 												mtx[2][1]*(v1->y + v2->y + v3->y) +
@@ -500,7 +520,8 @@ void SortingRendererClass::Flush_Sorting_Pool()
 				}
 			}
 
-			state->min_vertex_index=vertex_array_offset;
+			if (!streamed)
+				state->min_vertex_index=vertex_array_offset;
 
 			polygon_array_offset+=state->polygon_count;
 			vertex_array_offset+=state->vertex_count;
@@ -519,7 +540,27 @@ void SortingRendererClass::Flush_Sorting_Pool()
 		if (chunkCount * 3 > MAX_INDEX_CHUNK) {
 			chunkCount = MAX_INDEX_CHUNK / 3;
 		}
+		// The streamed path duplicates vertices per triangle. Limit each upload to
+		// both 16-bit buffers and the configured vertex budget (when applicable).
+		if (streamed && DEFAULT_SORTING_VERTEX_COUNT > 2 && DEFAULT_SORTING_VERTEX_COUNT <= 65535u)
+			chunkCount = std::min(chunkCount, DEFAULT_SORTING_VERTEX_COUNT / 3);
 		const unsigned chunkEnd = chunkOffset + chunkCount;
+
+		std::optional<DynamicVBAccessClass> batchVb;
+		if (streamed)
+		{
+			batchVb.emplace(BUFFER_TYPE_DYNAMIC_DX8, dynamic_fvf_type, static_cast<unsigned short>(chunkCount * 3));
+			DynamicVBAccessClass::WriteLockClass lock(&*batchVb);
+			auto *vertices = static_cast<VertexFormatXYZNDUV2 *>(lock.Get_Formatted_Vertex_Array());
+			for (unsigned a = 0; a < chunkCount; ++a)
+			{
+				const auto &entry = tis[chunkOffset + a];
+				const auto *src = nodeVertices[entry.idx];
+				vertices[a * 3] = src[entry.tri.i];
+				vertices[a * 3 + 1] = src[entry.tri.j];
+				vertices[a * 3 + 2] = src[entry.tri.k];
+			}
+		}
 
 		DynamicIBAccessClass dyn_ib_access(BUFFER_TYPE_DYNAMIC_DX8,chunkCount*3);
 		{
@@ -527,14 +568,20 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			ShortVectorIStruct* sorted_polygon_index_array=(ShortVectorIStruct*)lock.Get_Index_Array();
 
 			for (unsigned a=0;a<chunkCount;++a) {
-				sorted_polygon_index_array[a]=tis[chunkOffset + a].tri;
+				if (streamed)
+				{
+					const auto first = static_cast<unsigned short>(a * 3);
+					sorted_polygon_index_array[a] = {first, static_cast<unsigned short>(first + 1), static_cast<unsigned short>(first + 2)};
+				}
+				else
+					sorted_polygon_index_array[a]=tis[chunkOffset + a].tri;
 			}
 		}
 
 		// Set index buffer and render!
 
 		DX8Wrapper::Set_Index_Buffer(dyn_ib_access,0); // Override with this buffer (do something to prevent need for this!)
-		DX8Wrapper::Set_Vertex_Buffer(dyn_vb_access); // Override with this buffer (do something to prevent need for this!)
+		DX8Wrapper::Set_Vertex_Buffer(streamed ? *batchVb : *dyn_vb_access); // Override with this buffer (do something to prevent need for this!)
 
 		DX8Wrapper::Apply_Render_State_Changes();
 
@@ -549,8 +596,8 @@ void SortingRendererClass::Flush_Sorting_Pool()
 				DX8Wrapper::Draw_Triangles(
 					start_index*3,
 					count_to_render,
-					state->min_vertex_index,
-					state->vertex_count);
+					streamed ? start_index * 3 : state->min_vertex_index,
+					streamed ? count_to_render * 3 : state->vertex_count);
 
 				count_to_render=0;
 				start_index=i - chunkOffset;
@@ -567,8 +614,8 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			DX8Wrapper::Draw_Triangles(
 				start_index*3,
 				count_to_render,
-				state->min_vertex_index,
-				state->vertex_count);
+				streamed ? start_index * 3 : state->min_vertex_index,
+				streamed ? count_to_render * 3 : state->vertex_count);
 		}
 
 		chunkOffset += chunkCount;
