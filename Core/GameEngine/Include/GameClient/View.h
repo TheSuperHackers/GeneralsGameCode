@@ -208,6 +208,7 @@ public:
 	virtual Real getHeightAboveGround() { return m_heightAboveGround; }
 	virtual void setHeightAboveGround(Real z);
 	virtual void zoom( Real height ); ///< Zoom in/out, closer to the ground, limit to min, or farther away from the ground, limit to max
+	virtual void zoomAt(Real height, const ICoord2D &) { zoom(height); }
 	virtual void setZoomToDefault() { m_zoom  = 1.0f; } ///< Set zoom to default value
 	virtual void setOkToAdjustHeight( Bool val ) { m_okToAdjustHeight = val; }	///< Set this to adjust camera height
 
@@ -219,6 +220,7 @@ public:
 	Bool userSetDefaultPitch(Real radians)               { return doUserAction(&View::setDefaultPitch, radians); }
 	Bool userSetPitchToDefault()                         { return doUserAction(&View::setPitchToDefault); }
 	Bool userZoom(Real height)                           { return doUserAction(&View::zoom, height); }
+	Bool userZoomAt(Real height, const ICoord2D &screen)  { return doUserAction(&View::zoomAt, height, screen); }
 	Bool userSetZoom(Real z)                             { return doUserAction(&View::setZoom, z); }
 	Bool userSetZoomToDefault()                          { return doUserAction(&View::setZoomToDefault); }
 	Bool userSetFieldOfView(Real angle)                  { return doUserAction(&View::setFieldOfView, angle); }
@@ -290,25 +292,14 @@ protected:
 
 private:
 
-	template<typename Function>
-	Bool doUserAction(Function function)
+	template<typename Function, typename... Args>
+	Bool doUserAction(Function function, Args... args)
 	{
 		if (isUserControlLocked())
 			return false;
 		stopDoingScriptedCamera();
 		setUserControlled(true);
-		(this->*function)();
-		return true;
-	}
-
-	template<typename Function, typename Arg1>
-	Bool doUserAction(Function function, Arg1 arg1)
-	{
-		if (isUserControlLocked())
-			return false;
-		stopDoingScriptedCamera();
-		setUserControlled(true);
-		(this->*function)(arg1);
+		(this->*function)(args...);
 		return true;
 	}
 

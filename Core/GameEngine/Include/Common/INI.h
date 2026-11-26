@@ -237,6 +237,7 @@ public:
 	static void parseUpgradeDefinition( INI *ini );
 	static void parseMouseDefinition( INI* ini );
 	static void parseMouseCursorDefinition( INI* ini );
+	static void parseRadiusCursorDefinition( INI* ini );
 	static void parseAIDataDefinition( INI *ini );
 	static void parseSpecialPowerDefinition( INI *ini );
 	static void parseInGameUIDefinition( INI *ini );

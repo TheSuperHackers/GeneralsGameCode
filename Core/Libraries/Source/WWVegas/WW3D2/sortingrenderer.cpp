@@ -49,16 +49,21 @@
 #include <Utility/cmath_adapter.h>
 #include <algorithm>
 #include <list>
+#include <array>
+#include <bit>
+#include <cstdint>
+#include <limits>
 #include <optional>
 #include <cstring>
+#include <vector>
 #include <atomic>
 #include <cfenv>
 #include <condition_variable>
 #include <cstdlib>
 #include <mutex>
-#include <thread>
+#include <new>
 #include <system_error>
-#include <vector>
+#include <thread>
 
 
 bool SortingRendererClass::_EnableTriangleDraw=true;
@@ -199,6 +204,71 @@ static SortingNodeStruct* Get_Sorting_Struct()
 
 static TempIndexStruct* temp_index_array;
 static unsigned temp_index_array_count;
+
+// Adapted from Zero Hour Reforged (Olcay Seygan and contributors): stable
+// three-pass radix sort of depth keys. Keep the old sort for small pools.
+static std::vector<TempIndexStruct> depth_sort_scratch;
+
+static std::uint32_t Depth_Sort_Key(float depth)
+{
+	static_assert(sizeof(float) == sizeof(std::uint32_t));
+	static_assert(std::numeric_limits<float>::is_iec559);
+	const auto bits = std::bit_cast<std::uint32_t>(depth);
+	const auto magnitude = bits & 0x7fffffffu;
+	// Both signed zeroes compare equal, so keep their original relative order.
+	if (magnitude == 0)
+		return 0x80000000u;
+	return (bits & 0x80000000u) ? 0x7fffffffu - magnitude : 0x80000000u + magnitude;
+}
+
+static TempIndexStruct *Sort_By_Depth(TempIndexStruct *items, unsigned count)
+{
+	if (count < 256)
+	{
+		if (count > 1)
+			Sort(items, items + count);
+		return items;
+	}
+
+	constexpr unsigned bitsPerPass = 11;
+	constexpr unsigned buckets = 1u << bitsPerPass;
+	constexpr unsigned passes = 3;
+	std::array<std::array<unsigned, buckets>, passes> histogram{};
+	for (unsigned i = 0; i < count; ++i)
+	{
+		// Preserve the existing guarded comparison sort for malformed depths.
+		if (!std::isfinite(items[i].z))
+		{
+			Sort(items, items + count);
+			return items;
+		}
+		const auto key = Depth_Sort_Key(items[i].z);
+		for (unsigned pass = 0; pass < passes; ++pass)
+			++histogram[pass][(key >> (pass * bitsPerPass)) & (buckets - 1)];
+	}
+
+	depth_sort_scratch.resize(count);
+	TempIndexStruct *from = items;
+	TempIndexStruct *to = depth_sort_scratch.data();
+	for (unsigned pass = 0; pass < passes; ++pass)
+	{
+		auto &offsets = histogram[pass];
+		unsigned offset = 0;
+		for (auto &bucket : offsets)
+		{
+			const unsigned size = bucket;
+			bucket = offset;
+			offset += size;
+		}
+		for (unsigned i = 0; i < count; ++i)
+		{
+			const auto key = Depth_Sort_Key(from[i].z);
+			to[offsets[(key >> (pass * bitsPerPass)) & (buckets - 1)]++] = from[i];
+		}
+		std::swap(from, to);
+	}
+	return from;
+}
 
 static TempIndexStruct* Get_Temp_Index_Array(unsigned count)
 {
@@ -466,9 +536,9 @@ struct QuadDepthJob
 	float x, y, z, w;
 };
 
-static QuadDepthJob quadDepthJobs[MAX_OVERLAPPING_NODES];
+QuadDepthJob quadDepthJobs[MAX_OVERLAPPING_NODES];
 
-static void FillQuadDepth(const QuadDepthJob &job)
+void FillQuadDepth(const QuadDepthJob &job)
 {
 	for (unsigned q = 0; q < job.count; ++q)
 	{
@@ -482,11 +552,39 @@ static void FillQuadDepth(const QuadDepthJob &job)
 	}
 }
 
+void CheckQuadDepth([[maybe_unused]] const QuadDepthJob &job)
+{
+#ifdef DEBUG_CRASHING
+	for (unsigned q = 0; q < job.count; ++q)
+		DEBUG_ASSERTCRASH(std::isfinite(job.entries[q].z), ("Quad has invalid center"));
+#endif
+}
+
+constexpr unsigned minParallelNodes = 5;
+constexpr unsigned minParallelQuads = 4096;
+constexpr unsigned maxRenderWorkers = 8;
+
+unsigned QuadDepthWorkerCount()
+{
+	static const unsigned workerCount = [] {
+		const char *value = std::getenv("GENERALS_RENDER_WORKERS");
+		if (!value)
+			return 0u;
+		char *end = nullptr;
+		const long requested = std::strtol(value, &end, 10);
+		if (end == value || *end || requested <= 0)
+			return 0u;
+		return static_cast<unsigned>(std::min(requested, static_cast<long>(maxRenderWorkers)));
+	}();
+	return workerCount;
+}
+
 class RenderQuadPool
 {
 	std::mutex mutex;
 	std::condition_variable ready, done;
-	std::vector<std::thread> workers;
+	std::array<std::thread, maxRenderWorkers> workers;
+	unsigned workerCount = 0;
 	std::atomic<unsigned> next{0};
 	unsigned count = 0, permits = 0, busy = 0;
 	bool stopping = false;
@@ -496,11 +594,10 @@ class RenderQuadPool
 	{
 		for (;;)
 		{
-			const unsigned start = next.fetch_add(4, std::memory_order_relaxed);
-			if (start >= count)
+			const unsigned jobIndex = next.fetch_add(1, std::memory_order_relaxed);
+			if (jobIndex >= count)
 				break;
-			for (unsigned i = start; i < std::min(start + 4, count); ++i)
-				FillQuadDepth(quadDepthJobs[i]);
+			FillQuadDepth(quadDepthJobs[jobIndex]);
 		}
 	}
 
@@ -510,7 +607,7 @@ class RenderQuadPool
 		{
 			{
 				std::unique_lock<std::mutex> lock(mutex);
-				ready.wait(lock, [&]{ return stopping || permits != 0; });
+				ready.wait(lock, [this] { return stopping || permits != 0; });
 				if (stopping)
 					return;
 				--permits;
@@ -529,20 +626,22 @@ class RenderQuadPool
 	}
 
 public:
-	RenderQuadPool()
+	explicit RenderQuadPool(unsigned requested)
 	{
-		const char *value = std::getenv("GENERALS_RENDER_WORKERS");
-		if (!value)
-			return;
-		char *end = nullptr;
-		const long requested = std::strtol(value, &end, 10);
-		if (end == value || *end || requested <= 0)
-			return;
-		workers.reserve(static_cast<unsigned>(std::min(requested, 8L)));
-		for (long i = 0; i < std::min(requested, 8L); ++i)
+		for (; workerCount < requested; ++workerCount)
 		{
-			try { workers.emplace_back([this]{ worker(); }); }
-			catch (const std::system_error &) { break; }
+			try
+			{
+				workers[workerCount] = std::thread([this] { worker(); });
+			}
+			catch (const std::system_error &)
+			{
+				break;
+			}
+			catch (const std::bad_alloc &)
+			{
+				break;
+			}
 		}
 	}
 
@@ -553,13 +652,13 @@ public:
 			stopping = true;
 		}
 		ready.notify_all();
-		for (auto &thread : workers)
-			thread.join();
+		for (unsigned i = 0; i < workerCount; ++i)
+			workers[i].join();
 	}
 
-	void run(unsigned jobCount, unsigned entryCount)
+	void run(unsigned jobCount)
 	{
-		if (workers.empty() || jobCount <= 4 || entryCount < 4096 || std::fegetenv(&environment) != 0)
+		if (workerCount == 0 || std::fegetenv(&environment) != 0)
 		{
 			for (unsigned i = 0; i < jobCount; ++i)
 				FillQuadDepth(quadDepthJobs[i]);
@@ -569,24 +668,36 @@ public:
 			std::lock_guard<std::mutex> lock(mutex);
 			count = jobCount;
 			next.store(0, std::memory_order_relaxed);
-			permits = static_cast<unsigned>(workers.size());
+			permits = workerCount;
 		}
 		ready.notify_all();
 		fill();
 		{
 			std::unique_lock<std::mutex> lock(mutex);
 			permits = 0;
-			done.wait(lock, [&]{ return busy == 0; });
+			done.wait(lock, [this] { return busy == 0; });
 		}
 	}
 };
 
-static void RunQuadDepthJobs(unsigned count, unsigned entries)
+std::optional<RenderQuadPool> quadDepthPool;
+
+void RunQuadDepthJobs(unsigned jobCount, unsigned quadCount)
 {
-	if (count == 0)
-		return;
-	static RenderQuadPool pool;
-	pool.run(count, entries);
+	if (jobCount >= minParallelNodes && quadCount >= minParallelQuads)
+	{
+		if (!quadDepthPool)
+			quadDepthPool.emplace(QuadDepthWorkerCount());
+		quadDepthPool->run(jobCount);
+	}
+	else
+	{
+		for (unsigned j = 0; j < jobCount; ++j)
+			FillQuadDepth(quadDepthJobs[j]);
+	}
+
+	for (unsigned j = 0; j < jobCount; ++j)
+		CheckQuadDepth(quadDepthJobs[j]);
 }
 } // namespace
 
@@ -623,7 +734,10 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			dest_verts = static_cast<VertexFormatXYZNDUV2 *>(lock->Get_Formatted_Vertex_Array());
 		}
 
-		unsigned quadJobCount = 0, quadEntryCount = 0;
+		const bool collectQuadDepthJobs = overlapping_node_count >= minParallelNodes
+			&& overlapping_entry_count >= minParallelQuads && QuadDepthWorkerCount() != 0;
+		unsigned quadJobCount = 0;
+		unsigned queuedQuadCount = 0;
 		unsigned polygon_array_offset=0;
 		unsigned vertex_array_offset=0;
 		for (unsigned node_id=0;node_id<overlapping_node_count;++node_id) {
@@ -653,14 +767,23 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			// Adapted from Reforged (Olcay Seygan and contributors): one depth entry per billboard quad.
 			if (state->billboard_quads)
 			{
-				const unsigned quadCount = state->polygon_count / 2;
-				quadDepthJobs[quadJobCount++] = {src_verts, tis + polygon_array_offset,
-					quadCount, node_id, streamed ? 0u : vertex_array_offset,
+				const unsigned quadCount = state->polygon_count / 2u;
+				const QuadDepthJob job{src_verts, tis + polygon_array_offset, quadCount,
+					node_id, streamed ? 0u : vertex_array_offset,
 					mtx[2][0], mtx[2][1], mtx[2][2], mtx[2][3]};
-				quadEntryCount += quadCount;
+				if (collectQuadDepthJobs)
+				{
+					quadDepthJobs[quadJobCount++] = job;
+					queuedQuadCount += quadCount;
+				}
+				else
+				{
+					FillQuadDepth(job);
+					CheckQuadDepth(job);
+				}
 				if (!streamed)
 					state->min_vertex_index = vertex_array_offset;
-				polygon_array_offset += state->polygon_count / 2;
+				polygon_array_offset += quadCount;
 				vertex_array_offset += state->vertex_count;
 				continue;
 			}
@@ -726,15 +849,15 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			polygon_array_offset+=state->polygon_count;
 			vertex_array_offset+=state->vertex_count;
 		}
-		// The GPU lock must be released before waking render workers.
-		lock.reset();
-		RunQuadDepthJobs(quadJobCount, quadEntryCount);
-		for (unsigned j = 0; j < quadJobCount; ++j)
-			for (unsigned q = 0; q < quadDepthJobs[j].count; ++q)
-				DEBUG_ASSERTCRASH(std::isfinite(quadDepthJobs[j].entries[q].z), ("Quad has invalid center"));
+		if (quadJobCount != 0)
+		{
+			// Only CPU sorting pages are accessed by workers. Release the GPU lock before waking them.
+			lock.reset();
+			RunQuadDepthJobs(quadJobCount, queuedQuadCount);
+		}
 	}
 
-	Sort(tis, tis + overlapping_entry_count);
+	tis = Sort_By_Depth(tis, overlapping_entry_count);
 
 	// Keep quads intact across both 16-bit index and vertex upload boundaries.
 	const unsigned vertexBudget = streamed && DEFAULT_SORTING_VERTEX_COUNT >= 4 && DEFAULT_SORTING_VERTEX_COUNT <= 65535u
@@ -912,6 +1035,8 @@ void SortingRendererClass::Flush()
 
 void SortingRendererClass::Deinit()
 {
+	quadDepthPool.reset();
+
 	//
 	//	Flush the sorted list
 	//
@@ -939,4 +1064,5 @@ void SortingRendererClass::Deinit()
 	delete[] temp_index_array;
 	temp_index_array=nullptr;
 	temp_index_array_count=0;
+	std::vector<TempIndexStruct>().swap(depth_sort_scratch);
 }

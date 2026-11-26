@@ -53,6 +53,12 @@ static SortingVertexBufferClass* _DynamicSortingVertexArray=nullptr;
 static unsigned short _DynamicSortingVertexArraySize=0;
 static unsigned short _DynamicSortingVertexArrayOffset=0;
 
+// Adapted from Zero Hour Reforged (Olcay Seygan and contributors).
+// Keep a bounded number of retired CPU sorting pages for reuse after queued draws release them.
+static constexpr unsigned short SORTING_VERTEX_ARRAY_CAPACITY = 65535;
+static constexpr int MAX_RETIRED_SORTING_VERTEX_ARRAYS = 4;
+static SortingVertexBufferClass *_RetiredSortingVertexArrays[MAX_RETIRED_SORTING_VERTEX_ARRAYS] = {};
+
 static bool _DynamicDX8VertexBufferInUse=false;
 static DX8VertexBufferClass* _DynamicDX8VertexBuffer=nullptr;
 static unsigned short _DynamicDX8VertexBufferSize=DEFAULT_VB_SIZE;
@@ -754,6 +760,8 @@ void DynamicVBAccessClass::_Deinit()
 
 	WWASSERT ((_DynamicSortingVertexArray == nullptr) || (_DynamicSortingVertexArray->Num_Refs() == 1));
 	REF_PTR_RELEASE(_DynamicSortingVertexArray);
+	for (auto &buffer : _RetiredSortingVertexArrays)
+		REF_PTR_RELEASE(buffer);
 	WWASSERT(!_DynamicSortingVertexArrayInUse);
 	_DynamicSortingVertexArrayInUse=false;
 	_DynamicSortingVertexArraySize=0;
@@ -803,17 +811,40 @@ void DynamicVBAccessClass::Allocate_Sorting_Dynamic_Buffer()
 	WWASSERT(!_DynamicSortingVertexArrayInUse);
 	_DynamicSortingVertexArrayInUse=true;
 
-	unsigned new_vertex_count=_DynamicSortingVertexArrayOffset+VertexCount;
-	WWASSERT(new_vertex_count<65536);
-	if (new_vertex_count>_DynamicSortingVertexArraySize) {
-		REF_PTR_RELEASE(_DynamicSortingVertexArray);
-		_DynamicSortingVertexArraySize=new_vertex_count;
-		if (_DynamicSortingVertexArraySize<DEFAULT_VB_SIZE) _DynamicSortingVertexArraySize=DEFAULT_VB_SIZE;
+	const unsigned newCount = static_cast<unsigned>(_DynamicSortingVertexArrayOffset) + VertexCount;
+	if (_DynamicSortingVertexArray && newCount > _DynamicSortingVertexArraySize)
+	{
+		// Transfer our owning reference; queued draw states may still hold references.
+		bool retained = false;
+		for (auto &buffer : _RetiredSortingVertexArrays)
+		{
+			if (!buffer)
+			{
+				buffer = _DynamicSortingVertexArray;
+				_DynamicSortingVertexArray = nullptr;
+				retained = true;
+				break;
+			}
+		}
+		if (!retained)
+			REF_PTR_RELEASE(_DynamicSortingVertexArray);
 	}
 
-	if (!_DynamicSortingVertexArray) {
-		_DynamicSortingVertexArray=NEW_REF(SortingVertexBufferClass,(_DynamicSortingVertexArraySize));
-		_DynamicSortingVertexArrayOffset=0;
+	if (!_DynamicSortingVertexArray)
+	{
+		for (auto &buffer : _RetiredSortingVertexArrays)
+		{
+			if (buffer && buffer->Num_Refs() == 1)
+			{
+				_DynamicSortingVertexArray = buffer;
+				buffer = nullptr;
+				break;
+			}
+		}
+		if (!_DynamicSortingVertexArray)
+			_DynamicSortingVertexArray = NEW_REF(SortingVertexBufferClass, (SORTING_VERTEX_ARRAY_CAPACITY));
+		_DynamicSortingVertexArraySize = SORTING_VERTEX_ARRAY_CAPACITY;
+		_DynamicSortingVertexArrayOffset = 0;
 	}
 
 	REF_PTR_SET(VertexBuffer,_DynamicSortingVertexArray);

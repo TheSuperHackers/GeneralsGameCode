@@ -53,6 +53,8 @@
 #include "dx8fvf.h"
 #include "sortingrenderer.h"
 
+#include <cstring>
+
 // Upgraded to DX8 2/2/01 HY
 
 // static data members
@@ -561,6 +563,12 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 			unsigned char *vb=(unsigned char*)Lock.Get_Formatted_Vertex_Array();
 			const FVFInfoClass& fvfinfo=PointVerts.FVF_Info();
 
+			// Reforged (Olcay Seygan and contributors): reuse packed colors across vertices.
+			const unsigned defaultColor = current_diffuse ? 0u : DX8Wrapper::Convert_Color_Clamp(
+				Vector4(DefaultPointColor[0], DefaultPointColor[1], DefaultPointColor[2], DefaultPointAlpha));
+			const Vector4 *lastDiffuse = nullptr;
+			unsigned lastColor = defaultColor;
+
 			for (i = current; i < current + delta; i++)
 			{
 				/// @todo lorenzen sez: use pointer arithmetic throughout this block
@@ -569,12 +577,15 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 				// Copy Locations
 				*(Vector3*)(vb+fvfinfo.Get_Location_Offset())=VertexLoc[i];
 				if (current_diffuse) {
-					unsigned color=DX8Wrapper::Convert_Color_Clamp(VertexDiffuse[i]);
-					*(unsigned int*)(vb+fvfinfo.Get_Diffuse_Offset())=color;
+					const Vector4 *diffuse = &VertexDiffuse[i];
+					if (!lastDiffuse || std::memcmp(diffuse, lastDiffuse, sizeof(Vector4)) != 0) {
+						lastColor = DX8Wrapper::Convert_Color_Clamp(*diffuse);
+						lastDiffuse = diffuse;
+					}
+					*(unsigned int*)(vb+fvfinfo.Get_Diffuse_Offset()) = lastColor;
 				}
 				else
-					*(unsigned int*)(vb+fvfinfo.Get_Diffuse_Offset())=
-						DX8Wrapper::Convert_Color_Clamp(Vector4(DefaultPointColor[0],DefaultPointColor[1],DefaultPointColor[2],DefaultPointAlpha));
+					*(unsigned int*)(vb+fvfinfo.Get_Diffuse_Offset()) = defaultColor;
 				*(Vector2*)(vb+fvfinfo.Get_Tex_Offset(0))=VertexUV[i];
 				vb+=fvfinfo.Get_FVF_Size();
 			}
@@ -1447,6 +1458,12 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 				const FVFInfoClass& fvfinfo = PointVerts.FVF_Info();
 
 
+				// Reforged (Olcay Seygan and contributors): reuse packed colors across vertices.
+				const unsigned defaultColor = current_diffuse ? 0u : DX8Wrapper::Convert_Color_Clamp(
+					Vector4(DefaultPointColor[0], DefaultPointColor[1], DefaultPointColor[2], DefaultPointAlpha));
+				const Vector4 *lastDiffuse = nullptr;
+				unsigned lastColor = defaultColor;
+
 				for (i = current; i < current + delta; i++)
 				{
 					/// @todo lorenzen sez: use pointer arithmetic throughout this block
@@ -1456,12 +1473,15 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 					*(Vector3*)(vb+fvfinfo.Get_Location_Offset()) = VertexLoc[i];
 
 					if (current_diffuse) {
-						unsigned color=DX8Wrapper::Convert_Color_Clamp(VertexDiffuse[i]);
-						*(unsigned int*)(vb+fvfinfo.Get_Diffuse_Offset())=color;
+						const Vector4 *diffuse = &VertexDiffuse[i];
+						if (!lastDiffuse || std::memcmp(diffuse, lastDiffuse, sizeof(Vector4)) != 0) {
+							lastColor = DX8Wrapper::Convert_Color_Clamp(*diffuse);
+							lastDiffuse = diffuse;
+						}
+						*(unsigned int*)(vb+fvfinfo.Get_Diffuse_Offset()) = lastColor;
 					}
 					else
-						*(unsigned int*)(vb+fvfinfo.Get_Diffuse_Offset())=
-							DX8Wrapper::Convert_Color_Clamp(Vector4(DefaultPointColor[0],DefaultPointColor[1],DefaultPointColor[2],DefaultPointAlpha));
+						*(unsigned int*)(vb+fvfinfo.Get_Diffuse_Offset()) = defaultColor;
 					*(Vector2*)(vb+fvfinfo.Get_Tex_Offset(0))=VertexUV[i];
 					vb+=fvfinfo.Get_FVF_Size();
 				}

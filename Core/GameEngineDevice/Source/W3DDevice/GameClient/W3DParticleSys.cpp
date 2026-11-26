@@ -37,6 +37,8 @@
 #include "W3DDevice/GameClient/W3DTerrainParticles.h"
 #include "WW3D2/camera.h"
 
+#include <unordered_map>
+
 
 //------------------------------------------------------------------------------ Performance Timers
 //#include "Common/PerfMetrics.h"
@@ -157,6 +159,16 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 	// Number of particles/points being rendered.
 	UnsignedInt pointCount = 0;
 
+	// Adapted from Zero Hour Reforged (Olcay Seygan et al.), W3DParticleSys.cpp.
+	// Cache only for this render pass: no stale texture across reloads or device resets.
+	// Holding the AsciiString keeps its shared name buffer alive for the pointer key.
+	struct ParticleTextureEntry
+	{
+		AsciiString name;
+		RefCountPtr<TextureClass> texture;
+	};
+	std::unordered_map<const char *, ParticleTextureEntry> particleTextures;
+
 	ParticleSystemManager::ParticleSystemList &particleSysList = TheParticleSystemManager->getAllParticleSystems();
 	for( ParticleSystemManager::ParticleSystemListIt it = particleSysList.begin(); it != particleSysList.end(); ++it)
 	{
@@ -216,8 +228,26 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		// TheSuperHackers @performance Ronin/Mauller 09/08/2026 Implement batched rendering for similar particles.
 		// Particles with the same properties will now be batched onto a single texture surface before being drawn.
 		// If a different particle type appears before the batch is filled, the previous batch will be drawn first.
-		RefCountPtr<TextureClass> texture;
-		texture.Assign_No_Add_Ref(W3DDisplay::m_assetManager->Get_Texture(sys->getParticleTypeName().str()));
+		const AsciiString &textureName = sys->getParticleTypeName();
+		RefCountPtr<TextureClass> uncachedTexture;
+		const RefCountPtr<TextureClass> *textureRef = &uncachedTexture;
+		if (TheGlobalData->m_particleEdit)
+		{
+			// Preserve the editor's texture reload behavior.
+			uncachedTexture.Assign_No_Add_Ref(W3DDisplay::m_assetManager->Get_Texture(textureName.str()));
+		}
+		else
+		{
+			auto &entry = particleTextures[textureName.str()];
+			if (entry.texture == nullptr)
+			{
+				entry.name = textureName;
+				// Get_Texture returns an owning reference; a null result is retried.
+				entry.texture.Assign_No_Add_Ref(W3DDisplay::m_assetManager->Get_Texture(textureName.str()));
+			}
+			textureRef = &entry.texture;
+		}
+		const RefCountPtr<TextureClass> &texture = *textureRef;
 
 		const Bool canBatch = sys->isUsingParticles();
 		const Bool batchDone = finishedBatch(*sys, texture);
@@ -242,6 +272,8 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		const Coord3D *pos;
 		const RGBColor *color;
 		Real psize;
+		// Reforged: these properties belong to the system, not individual particles.
+		const UnsignedInt fieldParticleIncrement = (sys->getPriority() == AREA_EFFECT && sys->isFieldParticle()) ? 1 : 0;
 
 
 
@@ -254,7 +286,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 			pos = p->getPosition();
 			psize = p->getSize();
 
-			m_fieldParticleCount += ( sys->getPriority() == AREA_EFFECT && sys->isFieldParticle() );
+			m_fieldParticleCount += fieldParticleIncrement;
 
 			//@todo lorenzen sez: use pointer arithmetic for these arrays
 			personalities[pointCount] = p->getPersonality();

@@ -53,6 +53,7 @@ public:
 	Bool hasMouseMovedRecently();
 	void setCurrentPos( const ICoord2D& pos );
 	void setScreenEdgeScrollMode(ScreenEdgeScrollMode mode);
+	void setCameraZoomSpeed(Real speed) { m_cameraZoomSpeed = speed; }
 
 	void resetModes(); //Used when disabling input, so when we reenable it we aren't stuck in a mode.
 
@@ -72,6 +73,7 @@ private:
 	ICoord2D m_originalAnchor;
 	ICoord2D m_currentPos;
 	Real m_anchorAngle;
+	Real m_cameraZoomSpeed;
 	Bool m_isScrolling;				// set to true if we are in the act of RMB scrolling
 	Bool m_isRotating;					// set to true if we are in the act of MMB rotating
 	Bool m_isPitching;					// set to true if we are in the act of pitch rotation
