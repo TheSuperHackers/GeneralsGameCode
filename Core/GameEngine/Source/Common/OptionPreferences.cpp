@@ -275,7 +275,7 @@ Real OptionPreferences::getScrollFactor()
 
 Real OptionPreferences::getDefaultCameraZoomSpeed()
 {
-	return CommandLine::isCameraZoomTestEnabled() ? 4.0f : 1.0f;
+	return CommandLine::isCameraOverviewEnabled() ? 4.0f : 1.0f;
 }
 
 Real OptionPreferences::getCameraZoomSpeed() const

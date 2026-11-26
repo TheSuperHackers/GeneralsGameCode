@@ -574,7 +574,7 @@ void W3DView::calcCameraAreaConstraints()
 //-------------------------------------------------------------------------------------------------
 bool W3DView::isCameraOverviewEnabled() const
 {
-	return CommandLine::isCameraZoomTestEnabled() && m_isUserControlled && m_zoomLimited
+	return CommandLine::isCameraOverviewEnabled() && m_isUserControlled && m_zoomLimited
 		&& !m_useRealZoomCam && !m_isCameraSlaved && !m_scriptedState;
 }
 
@@ -886,7 +886,7 @@ void W3DView::updateCameraClipPlanes(const Matrix3D &transform)
 		center.X = (region.lo.x + region.hi.x) * 0.5f;
 		center.Y = (region.lo.y + region.hi.y) * 0.5f;
 		center.Z = minZ - 1.0f; // -1 to avoid Z clipping when looking straight down
-		if (CommandLine::isCameraZoomTestEnabled() && camDir.Z > 0.0f)
+		if (CommandLine::isCameraOverviewEnabled() && camDir.Z > 0.0f)
 			center.Z = TheTerrainRenderObject->getMaxHeight() + 1.0f;
 
 		// Half extents
@@ -925,7 +925,7 @@ void W3DView::updateCameraClipPlanes(const Matrix3D &transform)
 		}
 	}
 
-	if (CommandLine::isCameraZoomTestEnabled())
+	if (CommandLine::isCameraOverviewEnabled())
 		farZ = std::max(farZ, NearZ + 1.0f);
 	m_3DCamera->Set_Clip_Planes(NearZ, farZ);
 }
@@ -3861,7 +3861,7 @@ bool W3DView::getDesiredTerrainDrawSize(ICoord2D &dimensions, Vector2 &drawCente
 		minimumSize.y = WorldHeightMap::LOW_ANGLE_DRAW_HEIGHT;
 	}
 
-	if (!CommandLine::isCameraZoomTestEnabled())
+	if (!CommandLine::isCameraOverviewEnabled())
 	{
 		dimensions = minimumSize;
 		return true;
