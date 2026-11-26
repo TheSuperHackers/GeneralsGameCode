@@ -33,6 +33,16 @@ Compare frame time in the same replay window as well as time spent in the render
 
 Set `RTS_BUILD_OPTION_PROFILE_TRACY=OFF` and rebuild to remove the instrumentation from the executable. The diagnostics introduce no game-data or network format changes.
 
+## Compare batch thresholds (GFX 11c)
+
+The shared `sortingrenderer.cpp` records the actual billboard quad count and the number of nonempty quad jobs for each batch. `SortingRenderer/Quads per batch` and `SortingRenderer/Nonempty quad jobs per batch` include serial batches. Batches containing only triangles report zero. Samples are published after the vertex buffer is unlocked and the `PrepareDepthEntries` timing zone ends.
+
+Set `GENERALS_RENDER_MIN_QUADS` in the shell that launches the game to test thresholds from `256` to `65536`. Restart the game between runs. A missing, malformed, or out-of-range value uses `4096`. The same threshold is used when collecting candidate jobs and when dispatching work based on the actual quad count. The five-job requirement and worker settings still apply.
+
+Capture a particle-heavy part of a replay at normal speed with the same camera and graphics settings. Start with `RenderWorkers = 8` and compare `4096` with `512`. If worker-assisted batches increase at `512`, capture the same interval at `512` with `RenderWorkers = 0` to measure the serial baseline. Keep the profiler connected for every run. Compare frame times and `PrepareDepthEntries` alongside batch sizes and worker participation.
+
+Clear `GENERALS_RENDER_MIN_QUADS` and restart to restore the default threshold. A build with `RTS_BUILD_OPTION_PROFILE_TRACY=OFF` omits the counters and plots. Revert the GFX 11c source changes and rebuild to remove the threshold override as well.
+
 ## Validation
 
 - Win32 Release `z_generals` compiled and was installed for the Contra Invasion test.

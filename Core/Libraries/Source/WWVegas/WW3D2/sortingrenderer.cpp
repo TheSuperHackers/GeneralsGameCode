@@ -566,7 +566,7 @@ void CheckQuadDepth([[maybe_unused]] const QuadDepthJob &job)
 }
 
 constexpr unsigned minParallelNodes = 5;
-constexpr unsigned minParallelQuads = 4096;
+constexpr unsigned defaultMinParallelQuads = 4096;
 constexpr unsigned maxRenderWorkers = 8;
 unsigned configuredQuadDepthWorkers = 0;
 
@@ -579,6 +579,22 @@ std::optional<unsigned> ParseQuadDepthWorkers(const char *value)
 	if (end == value || *end)
 		return std::nullopt;
 	return static_cast<unsigned>(std::clamp(requested, 0L, static_cast<long>(maxRenderWorkers)));
+}
+
+// Read the diagnostic override once per process for controlled comparisons.
+unsigned MinParallelQuads()
+{
+	static const unsigned threshold = [] {
+		const char *value = std::getenv("GENERALS_RENDER_MIN_QUADS");
+		if (!value || !*value)
+			return defaultMinParallelQuads;
+		char *end = nullptr;
+		const long requested = std::strtol(value, &end, 10);
+		if (end == value || *end || requested < 256 || requested > 65536)
+			return defaultMinParallelQuads;
+		return static_cast<unsigned>(requested);
+	}();
+	return threshold;
 }
 
 unsigned QuadDepthWorkerCount()
@@ -707,7 +723,7 @@ std::optional<RenderQuadPool> quadDepthPool;
 
 void RunQuadDepthJobs(unsigned jobCount, unsigned quadCount)
 {
-	if (jobCount >= minParallelNodes && quadCount >= minParallelQuads)
+	if (jobCount >= minParallelNodes && quadCount >= MinParallelQuads())
 	{
 		if (!quadDepthPool)
 			quadDepthPool.emplace(QuadDepthWorkerCount());
@@ -758,6 +774,10 @@ void SortingRendererClass::Flush_Sorting_Pool()
 		nodeVertices.resize(overlapping_node_count);
 	else
 		dyn_vb_access.emplace(BUFFER_TYPE_DYNAMIC_DX8, dynamic_fvf_type, static_cast<unsigned short>(vertexAllocCount));
+#ifdef PROFILER_ENABLED
+	std::int64_t actualQuadCount = 0;
+	std::int64_t actualQuadJobs = 0;
+#endif
 	{
 		PROFILER_SECTION_NAME("SortingRenderer::PrepareDepthEntries");
 		std::optional<DynamicVBAccessClass::WriteLockClass> lock;
@@ -769,7 +789,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 		}
 
 		const bool collectQuadDepthJobs = overlapping_node_count >= minParallelNodes
-			&& overlapping_entry_count >= minParallelQuads && QuadDepthWorkerCount() != 0;
+			&& overlapping_entry_count >= MinParallelQuads() && QuadDepthWorkerCount() != 0;
 		unsigned quadJobCount = 0;
 		unsigned queuedQuadCount = 0;
 		unsigned polygon_array_offset=0;
@@ -802,6 +822,10 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			if (state->billboard_quads)
 			{
 				const unsigned quadCount = state->polygon_count / 2u;
+#ifdef PROFILER_ENABLED
+				actualQuadCount += quadCount;
+				actualQuadJobs += quadCount != 0;
+#endif
 				const QuadDepthJob job{src_verts, tis + polygon_array_offset, quadCount,
 					node_id, streamed ? 0u : vertex_array_offset,
 					mtx[2][0], mtx[2][1], mtx[2][2], mtx[2][3]};
@@ -892,6 +916,9 @@ void SortingRendererClass::Flush_Sorting_Pool()
 	}
 
 #ifdef PROFILER_ENABLED
+	// Sample after releasing the vertex buffer lock and ending PrepareDepthEntries.
+	PROFILER_PLOT("SortingRenderer/Quads per batch", actualQuadCount);
+	PROFILER_PLOT("SortingRenderer/Nonempty quad jobs per batch", actualQuadJobs);
 	PROFILER_PLOT("SortingRenderer/Worker-assisted quad batches", workerAssistedBatches);
 #endif
 
