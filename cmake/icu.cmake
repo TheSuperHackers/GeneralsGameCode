@@ -14,7 +14,8 @@ set(RTS_ICU_LINKED FALSE)
 set(RTS_ICU_DYNAMIC FALSE)
 
 if(NOT WIN32 OR RTS_BUILD_OPTION_TESTS)
-    find_package(ICU QUIET COMPONENTS uc OPTIONAL_COMPONENTS data)
+    # ICU 59 is the first to make UChar char16_t in C++, which unichar relies on outside Windows.
+    find_package(ICU 59 QUIET COMPONENTS uc OPTIONAL_COMPONENTS data)
 endif()
 
 if(WIN32)
@@ -30,7 +31,7 @@ elseif(ICU_FOUND)
     target_compile_definitions(deps_icu PUBLIC RTS_HAS_ICU)
     message(STATUS "ICU4C: linked via find_package")
 else()
-    message(FATAL_ERROR "ICU4C is required on non-Windows platforms. Install libicu or enable vcpkg.")
+    message(FATAL_ERROR "ICU4C 59 or newer is required on non-Windows platforms. Install libicu or enable vcpkg.")
 endif()
 
 add_feature_info(IcuLinked RTS_ICU_LINKED "Link ICU4C into the engine")
