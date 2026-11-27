@@ -2085,7 +2085,7 @@ if (_skip_drawobject_render) {
 
 	Renderer::Set_Material(m_vertexMaterialClass);
 	Renderer::Set_Shader(m_shaderClass);
-	DX8Wrapper::Set_Texture(0, nullptr);
+	Renderer::Set_Texture(0, nullptr);
 	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
 	Renderer::Apply_Render_State_Changes();
 	Int count=0;

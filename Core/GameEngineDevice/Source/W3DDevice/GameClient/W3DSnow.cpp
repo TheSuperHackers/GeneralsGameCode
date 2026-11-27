@@ -410,7 +410,7 @@ void W3DSnowManager::render(RenderInfoClass &rinfo)
 	if (!usePointSprites && !m_indexBuffer)
 		ReAcquireResources();
 
-	DX8Wrapper::Set_Texture(0,m_snowTexture);
+	Renderer::Set_Texture(0,m_snowTexture);
 
 	if (!usePointSprites)
 	{
