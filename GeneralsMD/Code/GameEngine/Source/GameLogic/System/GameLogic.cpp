@@ -3714,13 +3714,7 @@ void GameLogic::update()
 		Total_Load_3D_Assets=0;
 	#endif
 
-#ifdef RTS_PROFILE_LEGACY
-    Profile::StartRange("map_load");
-#endif
 		startNewGame( FALSE );
-#ifdef RTS_PROFILE_LEGACY
-    Profile::StopRange("map_load");
-#endif
 		m_startNewGame = FALSE;
 
 	#ifdef DUMP_PERF_STATS

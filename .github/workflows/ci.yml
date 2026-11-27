@@ -72,9 +72,6 @@ jobs:
           - preset: "vc6"
             tools: true
             extras: true
-          - preset: "vc6-profile"
-            tools: true
-            extras: true
           - preset: "vc6-debug"
             tools: true
             extras: true
@@ -103,16 +100,10 @@ jobs:
           - preset: "win32"
             tools: true
             extras: true
-          - preset: "win32-profile"
-            tools: true
-            extras: true
           - preset: "win32-debug"
             tools: true
             extras: true
           - preset: "win32-vcpkg"
-            tools: true
-            extras: true
-          - preset: "win32-vcpkg-profile"
             tools: true
             extras: true
           - preset: "win32-vcpkg-debug"
@@ -139,9 +130,6 @@ jobs:
       matrix:
         include:
           - preset: "vc6"
-            tools: true
-            extras: true
-          - preset: "vc6-profile"
             tools: true
             extras: true
           - preset: "vc6-debug"
@@ -172,9 +160,6 @@ jobs:
           - preset: "win32"
             tools: true
             extras: true
-          - preset: "win32-profile"
-            tools: true
-            extras: true
           - preset: "win32-debug"
             tools: true
             extras: true
@@ -182,9 +167,6 @@ jobs:
             tools: true
             extras: true
             ffmpeg: true
-          - preset: "win32-vcpkg-profile"
-            tools: true
-            extras: true
           - preset: "win32-vcpkg-debug"
             tools: true
             extras: true
@@ -268,7 +250,6 @@ jobs:
       preset: ${{ matrix.preset }}
     secrets: inherit
 
-  # Release preset only. mingw-w64-i686-profile is excluded because profiling uses MSVC inline assembly, which GCC does not compile.
   build-mingw-generals:
     name: Build Generals MinGW-w64
     needs: detect-changes

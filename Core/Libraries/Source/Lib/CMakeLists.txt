@@ -35,7 +35,6 @@ target_sources(core_libraries PRIVATE ${CORE_LIBRARIES_SRC})
 
 target_link_libraries(core_libraries PUBLIC
     deps_precompiled # Gives force included headers. Link early.
-    core_profile_legacy
     core_profile_tracy
 )
 

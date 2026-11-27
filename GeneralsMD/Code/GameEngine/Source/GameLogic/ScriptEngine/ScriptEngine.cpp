@@ -550,13 +550,6 @@ void ScriptEngine::init()
 	_initVTune();
 #endif
 
-#ifdef SPECIAL_SCRIPT_PROFILING
-#ifdef DEBUG_LOGGING
-	m_numFrames=0;
-	m_totalUpdateTime=0;
-	m_maxUpdateTime=0;
-#endif
-#endif
 
 	if (TheScriptActions) {
 		TheScriptActions->init();
@@ -5314,57 +5307,6 @@ void ScriptEngine::reset()
 	m_objectsShouldReceiveDifficultyBonus = TRUE;
 	m_ChooseVictimAlwaysUsesNormal = false;
 
-#ifdef SPECIAL_SCRIPT_PROFILING
-#ifdef DEBUG_LOGGING
-	if (m_numFrames > 1) {
-		DEBUG_LOG_RAW(("\n"));
-		DEBUG_LOG(("***SCRIPT ENGINE STATS %.0f frames:", m_numFrames));
-		DEBUG_LOG(("Avg time to update %.3f milliseconds", 1000*m_totalUpdateTime/m_numFrames));
-		DEBUG_LOG(("  Max time to update %.3f milliseconds.", m_maxUpdateTime*1000));
-	}
-	m_numFrames=0;
-	m_totalUpdateTime=0;
-	m_maxUpdateTime=0;
-
-	Int numToDump;
-	if (TheSidesList) {
-		for (numToDump=0; numToDump<10; numToDump++) {
-			Real maxTime = 0;
-			Script *maxScript = nullptr;
-			/* Run through scripts & set condition team names. */
-			for (i=0; i<TheSidesList->getNumSides(); i++) {
-				ScriptList *pSL = TheSidesList->getSideInfo(i)->getScriptList();
-				if (!pSL) continue;
-				if (pSL == nullptr) continue;
-				Script *pScr;
-				for (pScr = pSL->getScript(); pScr; pScr=pScr->getNext()) {
-					if (pScr->getConditionTime()>maxTime) {
-						maxTime = pScr->getConditionTime();
-						maxScript = pScr;
-					}
-				}
-				ScriptGroup *pGroup;
-				for (pGroup = pSL->getScriptGroup(); pGroup; pGroup=pGroup->getNext()) {
-					for (pScr = pGroup->getScript(); pScr; pScr=pScr->getNext()) {
-						if (pScr->getConditionTime()>maxTime) {
-							maxTime = pScr->getConditionTime();
-							maxScript = pScr;
-						}
-					}
-				}
-			}
-			if (maxScript) {
-				DEBUG_LOG(("   SCRIPT %s total time %f seconds,\n        evaluated %d times, avg execution %2.3f msec (Goal less than 0.05)",
-					maxScript->getName().str(),
-					maxScript->getConditionTime(), maxScript->getConditionCount(), 1000*maxScript->getConditionTime()/maxScript->getConditionCount()) );
-				maxScript->addToConditionTime(-2*maxTime); // reset to negative.
-			}
-
-		}
-		DEBUG_LOG(("***"));
-	}
-#endif
-#endif
 
 	_updateCurrentParticleCap();
 
@@ -5444,13 +5386,6 @@ void ScriptEngine::newMap()
 	}
 	m_endGameTimer = -1;
 	m_closeWindowTimer = -1;
-#ifdef SPECIAL_SCRIPT_PROFILING
-#ifdef DEBUG_LOGGING
-	m_numFrames=0;
-	m_totalUpdateTime=0;
-	m_maxUpdateTime=0;
-#endif
-#endif
 
 	m_completedVideo.clear();
 	m_testingSpeech.clear();
@@ -5501,24 +5436,6 @@ DECLARE_PERF_TIMER(ScriptEngine)
 void ScriptEngine::update()
 {
 	USE_PERF_TIMER(ScriptEngine)
-#ifdef SPECIAL_SCRIPT_PROFILING
-#ifdef DEBUG_LOGGING
-	__int64 startTime64;
-	double timeToUpdate=0.0f;
-	__int64 endTime64,freq64;
-	QueryPerformanceFrequency((LARGE_INTEGER *)&freq64);//LORENZEN'S NOTE_TO_SELF: USE THIS
-	QueryPerformanceCounter((LARGE_INTEGER *)&startTime64);//LORENZEN'S NOTE_TO_SELF: USE THIS
-/* dump out the named objects table.  For extremely intense debug only.  jba. :P
-	for (VecNamedRequestsIt it = m_namedObjects.begin(); it != m_namedObjects.end(); ++it) {
-		AsciiString name = it->first;
-		Object * obj = it->second;
-		if (obj && obj->getAIUpdateInterface())
-			DEBUG_LOG(("%s=%x('%s'), isDead%d", name.str(), obj, obj->getName().str(), obj->getAIUpdateInterface()->isDead()));
-	}
-	DEBUG_LOG(("\n"));
-*/
-#endif
-#endif
 	if (m_firstUpdate) {
 		createNamedCache();
 		particleEditorUpdate();
@@ -5620,16 +5537,6 @@ void ScriptEngine::update()
 	}
 #endif
 
-#ifdef SPECIAL_SCRIPT_PROFILING
-#ifdef DEBUG_LOGGING
-	QueryPerformanceCounter((LARGE_INTEGER *)&endTime64);//LORENZEN'S NOTE_TO_SELF: USE THIS
-	timeToUpdate = ((double)(endTime64-startTime64) / (double)(freq64));//LORENZEN'S NOTE_TO_SELF: USE THIS
-	m_numFrames++;
-	m_totalUpdateTime+=timeToUpdate;
-	if (timeToUpdate > m_maxUpdateTime) m_maxUpdateTime = timeToUpdate;
-	m_curUpdateTime = timeToUpdate;
-#endif
-#endif
 
 #ifdef DO_VTUNE_STUFF
 	_updateVTune();
@@ -5646,52 +5553,6 @@ AsciiString ScriptEngine::getStats(Real *curTimePtr, Real *script1Time, Real *sc
 	*script1Time = 0;
 	*script2Time = 0;
 	AsciiString msg = "Script Engine Profiling disabled.";
-#ifdef SPECIAL_SCRIPT_PROFILING
-#ifdef DEBUG_LOGGING
-	msg = "#1-";
-	*curTimePtr = (Real)m_curUpdateTime;
-	Int numToDump;
-	Int i;
-	if (TheSidesList) {
-		for (numToDump=0; numToDump<2; numToDump++) {
-			Real maxTime = 0;
-			Script *maxScript = nullptr;
-			/* Run through scripts & set condition team names. */
-			for (i=0; i<TheSidesList->getNumSides(); i++) {
-				ScriptList *pSL = TheSidesList->getSideInfo(i)->getScriptList();
-				if (!pSL) continue;
-				if (pSL == nullptr) continue;
-				Script *pScr;
-				for (pScr = pSL->getScript(); pScr; pScr=pScr->getNext()) {
-					if (pScr->getCurTime()>maxTime) {
-						maxTime = pScr->getCurTime();
-						maxScript = pScr;
-					}
-				}
-				ScriptGroup *pGroup;
-				for (pGroup = pSL->getScriptGroup(); pGroup; pGroup=pGroup->getNext()) {
-					for (pScr = pGroup->getScript(); pScr; pScr=pScr->getNext()) {
-						if (pScr->getCurTime()>maxTime) {
-							maxTime = pScr->getCurTime();
-							maxScript = pScr;
-						}
-					}
-				}
-			}
-			if (maxScript) {
-				if (numToDump == 0) {
-					*script1Time = maxTime;
-				}	else {
-					*script2Time = maxTime;
-					msg.concat(", #2-");
-				}
-				msg.concat(maxScript->getName());
-				maxScript->setCurTime(0); // reset to 0.
-			}
-		}
-	}
-#endif
-#endif
 	return msg;
 }
 
@@ -6972,13 +6833,6 @@ void ScriptEngine::executeScript( Script *pScript )
 		pScript->setFrameToEvaluate(TheGameLogic->getFrame()+delaySeconds*LOGICFRAMES_PER_SECOND);
 	}
 #ifdef DEBUG_LOGGING
-#ifdef SPECIAL_SCRIPT_PROFILING
-	__int64 startTime64;
-	Real timeToEvaluate=0.0f;
-	__int64 endTime64,freq64;
-	QueryPerformanceFrequency((LARGE_INTEGER *)&freq64);
-	QueryPerformanceCounter((LARGE_INTEGER *)&startTime64);
-#endif
 #endif
 
 	Team *pSavConditionTeam = m_conditionTeam;
@@ -7040,11 +6894,6 @@ void ScriptEngine::executeScript( Script *pScript )
 		}
 	}
 #ifdef DEBUG_LOGGING
-#ifdef SPECIAL_SCRIPT_PROFILING
-	QueryPerformanceCounter((LARGE_INTEGER *)&endTime64);
-	timeToEvaluate = ((Real)(endTime64-startTime64) / (Real)(freq64));
-	pScript->setCurTime(timeToEvaluate);
-#endif
 #endif
 
 	m_conditionTeam = pSavConditionTeam;

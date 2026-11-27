@@ -798,9 +798,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 {
 	Int exitcode = 1;
 
-#ifdef RTS_PROFILE_LEGACY
-  Profile::StartRange("init");
-#endif
 
 	try {
 
@@ -840,7 +837,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 
 // Force "splash image" to be loaded from a file, not a resource so same exe can be used in different localizations.
-#if defined(RTS_DEBUG) || defined RTS_PROFILE_LEGACY
+#if defined(RTS_DEBUG)
 
 			// check both localized directory and root dir
 		char filePath[_MAX_PATH];

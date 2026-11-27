@@ -89,9 +89,11 @@ binaries instead of re-compiling everything. Pull requests from forks restore fr
 
 ### Profiling
 
-Tracy profiling is supported in the CMake preset `win32-profile`.
-Use `tracy-profiler.exe` from [Tracy v0.13.1](https://github.com/wolfpld/tracy/releases/tag/v0.13.1).
-If you get an error when using Tracy, try removing `dbghelp.dll` from the game binary directory.
+Tracy profiling is supported in the profile CMake presets.
+Use `tracy-profiler.exe` from [Tracy v0.15.0](https://github.com/wolfpld/tracy/releases/tag/v0.15.0).
+
+> [!NOTE]
+> If you get an error when using Tracy, try removing `dbghelp.dll` from the game binary directory.
 
 ## Contributing
 

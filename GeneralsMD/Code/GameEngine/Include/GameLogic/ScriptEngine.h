@@ -47,9 +47,6 @@ class Player;
 class PolygonTrigger;
 class ObjectTypes;
 
-#ifdef RTS_PROFILE_LEGACY
-#define SPECIAL_SCRIPT_PROFILING
-#endif
 
 // Slightly odd place to put breeze info, but the breeze info is
 // set by script, so it's as good a place as any.  john a.
@@ -487,14 +484,6 @@ protected:
 
 	Bool							m_shownMPLocalDefeatWindow;
 
-#ifdef SPECIAL_SCRIPT_PROFILING
-#ifdef DEBUG_LOGGING
-	double						m_numFrames;
-	double						m_totalUpdateTime;
-	double						m_maxUpdateTime;
-	double						m_curUpdateTime;
-#endif
-#endif
 
 };
 
