@@ -134,6 +134,7 @@
             "inherits": "win32-vcpkg",
             "displayName": "Windows 32bit VCPKG Profile",
             "cacheVariables": {
+                "RTS_BUILD_OPTION_PROFILE_TRACY": "ON"
             }
         },
         {
@@ -178,6 +179,7 @@
             "hidden": false,
             "inherits": "mingw-w64-i686",
             "cacheVariables": {
+                "RTS_BUILD_OPTION_PROFILE_TRACY": "ON"
             }
         }
     ],
