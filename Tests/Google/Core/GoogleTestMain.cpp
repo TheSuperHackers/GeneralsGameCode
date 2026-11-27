@@ -46,23 +46,17 @@ class EngineCriticalSections
 public:
 	EngineCriticalSections()
 	{
-		TheAsciiStringCriticalSection = &m_asciiString;
-		TheUnicodeStringCriticalSection = &m_unicodeString;
 		TheDmaCriticalSection = &m_dma;
 		TheMemoryPoolCriticalSection = &m_memoryPool;
 	}
 
 	~EngineCriticalSections()
 	{
-		TheAsciiStringCriticalSection = nullptr;
-		TheUnicodeStringCriticalSection = nullptr;
 		TheDmaCriticalSection = nullptr;
 		TheMemoryPoolCriticalSection = nullptr;
 	}
 
 private:
-	CriticalSection m_asciiString;
-	CriticalSection m_unicodeString;
 	CriticalSection m_dma;
 	CriticalSection m_memoryPool;
 };

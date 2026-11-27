@@ -44,7 +44,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include "Common/CriticalSection.h"
 #include "WWLib/utf8.h"
 
 
@@ -121,7 +120,6 @@ static StringCaseInfo getStringCaseInfo(const char *str)
 // -----------------------------------------------------
 AsciiString::AsciiString(const AsciiString& stringSrc) : m_data(stringSrc.m_data)
 {
-	ScopedCriticalSection scopedCriticalSection(TheAsciiStringCriticalSection);
 	if (m_data)
 		++m_data->m_refCount;
 	validate();
@@ -184,7 +182,8 @@ void AsciiString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData
 	DEBUG_ASSERTCRASH(numCharsNeeded <= MAX_LEN, ("AsciiString::ensureUniqueBufferOfSize exceeds max string length %d with requested length %d", MAX_LEN, numCharsNeeded));
 	int minBytes = sizeof(AsciiStringData) + numCharsNeeded*sizeof(char);
 	int actualBytes = TheDynamicMemoryAllocator->getActualAllocationSize(minBytes);
-	AsciiStringData* newData = (AsciiStringData*)TheDynamicMemoryAllocator->allocateBytesDoNotZero(actualBytes, "STR_AsciiString::ensureUniqueBufferOfSize");
+	void* rawData = TheDynamicMemoryAllocator->allocateBytesDoNotZero(actualBytes, "STR_AsciiString::ensureUniqueBufferOfSize");
+	AsciiStringData* newData = new(rawData) AsciiStringData;
 	newData->m_refCount = 1;
 	newData->m_numCharsAllocated = (actualBytes - sizeof(AsciiStringData))/sizeof(char);
 
@@ -214,16 +213,17 @@ void AsciiString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData
 // -----------------------------------------------------
 void AsciiString::releaseBuffer()
 {
-	ScopedCriticalSection scopedCriticalSection(TheAsciiStringCriticalSection);
-
 	validate();
 	if (m_data)
 	{
-		if (--m_data->m_refCount == 0)
-		{
-			TheDynamicMemoryAllocator->freeBytes(m_data);
-		}
+		AsciiStringData* oldData = m_data;
 		m_data = nullptr;
+
+		if (--oldData->m_refCount == 0)
+		{
+			oldData->~AsciiStringData();
+			TheDynamicMemoryAllocator->freeBytes(oldData);
+		}
 	}
 	validate();
 }
@@ -253,15 +253,15 @@ AsciiString::AsciiString(const char* s, int len) : m_data(nullptr)
 // -----------------------------------------------------
 void AsciiString::set(const AsciiString& stringSrc)
 {
-	ScopedCriticalSection scopedCriticalSection(TheAsciiStringCriticalSection);
-
 	validate();
 	if (&stringSrc != this)
 	{
+		AsciiStringData* newData = stringSrc.m_data;
+		if (newData)
+			++newData->m_refCount;
+
 		releaseBuffer();
-		m_data = stringSrc.m_data;
-		if (m_data)
-			++m_data->m_refCount;
+		m_data = newData;
 	}
 	validate();
 }
