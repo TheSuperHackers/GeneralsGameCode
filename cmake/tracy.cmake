@@ -9,12 +9,12 @@ if(NOT Tracy_FOUND)
     FetchContent_MakeAvailable(tracy)
 endif()
 
-if(NOT TARGET TracyClient)
-    message(FATAL_ERROR "Tracy is enabled but TracyClient was not found.")
+if(NOT TARGET Tracy::TracyClient)
+    message(FATAL_ERROR "Tracy is enabled but Tracy::TracyClient was not found.")
 endif()
 
-target_compile_definitions(TracyClient INTERFACE
+add_library(core_profile_tracy INTERFACE)
+target_compile_definitions(core_profile_tracy INTERFACE
     RTS_PROFILE_TRACY
 )
-
-add_library(core_profile_tracy ALIAS TracyClient)
+target_link_libraries(core_profile_tracy INTERFACE Tracy::TracyClient)

@@ -6,6 +6,10 @@
     "stb"
   ],
   "features": {
+    "tracy": {
+      "description": "Enable Tracy profiling",
+      "dependencies": [ "tracy" ]
+    },
     "ffmpeg": {
       "description": "Use FFmpeg instead of Bink for video rendering",
       "dependencies": [ "ffmpeg" ]
