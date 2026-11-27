@@ -31,18 +31,6 @@
 #include <windows.h>
 #endif
 
-// unichar is a 16-bit UTF-16 code unit on Windows and a 32-bit UTF-32 codepoint on most other
-// platforms. ICU converts UTF-8 to and from UTF-16, so UTF-32 takes an extra step through UTF-16.
-#if defined(WCHAR_MAX) && (WCHAR_MAX <= 0xFFFF)
-#define UTF8_WCHAR_IS_UTF16 1
-#else
-#define UTF8_WCHAR_IS_UTF16 0
-#endif
-
-#if !UTF8_WCHAR_IS_UTF16 && !defined(RTS_HAS_ICU)
-#error "A 32-bit unichar requires linked ICU"
-#endif
-
 static const int UTF8_REPLACEMENT_CHAR = 0xFFFD;
 
 static bool Fits_Int(size_t length)
@@ -57,19 +45,19 @@ static bool Fits_Int(size_t length)
 
 #if defined(RTS_HAS_ICU)
 
+// unichar is ICU's UChar wherever ICU is linked, so the conversions below need no casts.
+
 // ICU still reports the needed length when the destination is too small.
 static bool Icu_Succeeded(UErrorCode error)
 {
 	return U_SUCCESS(error) || error == U_BUFFER_OVERFLOW_ERROR;
 }
 
-#if UTF8_WCHAR_IS_UTF16
-
 static size_t Wide_To_Utf8_Convert(char* dest, size_t destLen, const unichar* src, size_t srcLen)
 {
 	UErrorCode error = U_ZERO_ERROR;
 	int32_t length = 0;
-	u_strToUTF8WithSub(dest, static_cast<int32_t>(destLen), &length, reinterpret_cast<const UChar*>(src),
+	u_strToUTF8WithSub(dest, static_cast<int32_t>(destLen), &length, src,
 		static_cast<int32_t>(srcLen), UTF8_REPLACEMENT_CHAR, nullptr, &error);
 	if (!Icu_Succeeded(error))
 	{
@@ -84,70 +72,10 @@ static size_t Utf8_To_Wide_Convert(unichar* dest, size_t destLen, const char* sr
 {
 	UErrorCode error = U_ZERO_ERROR;
 	int32_t length = 0;
-	u_strFromUTF8(reinterpret_cast<UChar*>(dest), static_cast<int32_t>(destLen), &length, src,
+	u_strFromUTF8(dest, static_cast<int32_t>(destLen), &length, src,
 		static_cast<int32_t>(srcLen), &error);
 	return Icu_Succeeded(error) ? static_cast<size_t>(length) : UTF8_INVALID;
 }
-
-#else
-
-static size_t Wide_To_Utf8_Convert(char* dest, size_t destLen, const unichar* src, size_t srcLen)
-{
-	const UChar32* utf32 = reinterpret_cast<const UChar32*>(src);
-	UErrorCode error = U_ZERO_ERROR;
-	int32_t utf16Len = 0;
-	u_strFromUTF32WithSub(nullptr, 0, &utf16Len, utf32, static_cast<int32_t>(srcLen),
-		UTF8_REPLACEMENT_CHAR, nullptr, &error);
-	if (!Icu_Succeeded(error))
-	{
-		assert(false);
-		return 0;
-	}
-
-	std::vector<UChar> utf16(static_cast<size_t>(utf16Len) + 1);
-	error = U_ZERO_ERROR;
-	u_strFromUTF32WithSub(&utf16[0], utf16Len + 1, &utf16Len, utf32, static_cast<int32_t>(srcLen),
-		UTF8_REPLACEMENT_CHAR, nullptr, &error);
-	int32_t length = 0;
-	if (U_SUCCESS(error))
-	{
-		u_strToUTF8WithSub(dest, static_cast<int32_t>(destLen), &length, &utf16[0], utf16Len,
-			UTF8_REPLACEMENT_CHAR, nullptr, &error);
-	}
-
-	if (!Icu_Succeeded(error))
-	{
-		assert(false);
-		return 0;
-	}
-
-	return static_cast<size_t>(length);
-}
-
-static size_t Utf8_To_Wide_Convert(unichar* dest, size_t destLen, const char* src, size_t srcLen)
-{
-	UErrorCode error = U_ZERO_ERROR;
-	int32_t utf16Len = 0;
-	u_strFromUTF8(nullptr, 0, &utf16Len, src, static_cast<int32_t>(srcLen), &error);
-	if (!Icu_Succeeded(error))
-	{
-		return UTF8_INVALID;
-	}
-
-	std::vector<UChar> utf16(static_cast<size_t>(utf16Len) + 1);
-	error = U_ZERO_ERROR;
-	u_strFromUTF8(&utf16[0], utf16Len + 1, &utf16Len, src, static_cast<int32_t>(srcLen), &error);
-	int32_t length = 0;
-	if (U_SUCCESS(error))
-	{
-		u_strToUTF32(reinterpret_cast<UChar32*>(dest), static_cast<int32_t>(destLen), &length,
-			&utf16[0], utf16Len, &error);
-	}
-
-	return Icu_Succeeded(error) ? static_cast<size_t>(length) : UTF8_INVALID;
-}
-
-#endif
 
 #elif defined(RTS_ICU_DYNAMIC)
 
@@ -309,12 +237,10 @@ size_t Utf8_To_Wide(unichar* dest, size_t destLen, const char* src, size_t srcLe
 			std::vector<unichar> full(needed);
 			Utf8_To_Wide_Convert(&full[0], needed, src, srcLen);
 			out = destLen;
-#if UTF8_WCHAR_IS_UTF16
 			if (full[out - 1] >= 0xD800 && full[out - 1] <= 0xDBFF)
 			{
 				--out; // the low surrogate of this pair does not fit
 			}
-#endif
 			memcpy(dest, &full[0], out * sizeof(unichar));
 		}
 	}

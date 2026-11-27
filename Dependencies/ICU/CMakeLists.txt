@@ -21,7 +21,8 @@ if(WIN32 AND RTS_BUILD_OPTION_TESTS AND ICU_FOUND)
     )
 
     target_include_directories(deps_icu_linked PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-    target_compile_definitions(deps_icu_linked PRIVATE RTS_HAS_ICU)
+    # Makes ICU's UChar the same type as unichar, which is wchar_t on Windows.
+    target_compile_definitions(deps_icu_linked PRIVATE RTS_HAS_ICU UCHAR_TYPE=wchar_t)
     target_link_libraries(deps_icu_linked PRIVATE
         depsi_always # Gives force included headers. Link early.
         stlport
