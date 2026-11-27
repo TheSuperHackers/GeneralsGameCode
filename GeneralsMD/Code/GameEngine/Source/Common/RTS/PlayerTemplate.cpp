@@ -99,6 +99,7 @@
 		{ "IntrinsicSciencePurchasePoints",				INI::parseInt,												nullptr, offsetof( PlayerTemplate, m_intrinsicSPP ) },
 		{ "ScoreScreenImage",					INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_scoreScreenImage ) },
 		{ "LoadScreenImage",					INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_loadScreenImage ) },
+		{ "LoadScreenPortrait",				INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_loadScreenPortrait ) },
 		{ "LoadScreenMusic",					INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_loadScreenMusic ) },
 		{ "ScoreScreenMusic",					INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_scoreScreenMusic ) }, // Added in Zero Hour
 
@@ -202,6 +203,11 @@ PlayerTemplate::PlayerTemplate() :
 }
 
 //-----------------------------------------------------------------------------
+const Image *PlayerTemplate::getLoadScreenPortrait() const
+{
+	return TheMappedImageCollection->findImageByName(m_loadScreenPortrait);
+}
+
 const Image *PlayerTemplate::getHeadWaterMarkImage() const
 {
 	return TheMappedImageCollection->findImageByName(m_headWaterMark);

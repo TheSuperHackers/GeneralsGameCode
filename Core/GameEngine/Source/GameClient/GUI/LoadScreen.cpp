@@ -1227,6 +1227,33 @@ void ShellGameLoadScreen::update( Int percent )
 
 // MultiPlayerLoadScreen Class //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
+#if !RTS_GENERALS
+static const Image *getMultiplayerLoadScreenPortrait( const PlayerTemplate &playerTemplate,
+	const GeneralPersona *general, const char *usaLogo, const char *chinaLogo, const char *glaLogo )
+{
+	const Image *portrait = playerTemplate.getLoadScreenPortrait();
+	if (portrait)
+		return portrait;
+
+	// Keep the existing portraits for mods that define them in ChallengeMode.ini.
+	if (general && general->getBioPortraitLarge())
+		return general->getBioPortraitLarge();
+
+	const AsciiString templateName = playerTemplate.getName();
+	if (templateName == "FactionAmerica")
+		portrait = TheMappedImageCollection->findImageByName(usaLogo);
+	else if (templateName == "FactionChina")
+		portrait = TheMappedImageCollection->findImageByName(chinaLogo);
+	else if (templateName == "FactionGLA")
+		portrait = TheMappedImageCollection->findImageByName(glaLogo);
+	if (portrait)
+		return portrait;
+
+	portrait = playerTemplate.getGeneralImage();
+	return portrait ? portrait : playerTemplate.getSideIconImage();
+}
+#endif
+
 MultiPlayerLoadScreen::MultiPlayerLoadScreen()
 {
 	m_mapPreview = nullptr;
@@ -1276,29 +1303,10 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 		m_loadScreen->winSetEnabledImage(0, loadScreenImage);
 #else
 	// add portrait, features, and name for the local player's general
-	const GeneralPersona *localGeneral = TheChallengeGenerals->getGeneralByTemplateName( pt->getName() );
-	const Image *portrait = nullptr;
-	UnicodeString localName;
-	if (localGeneral)
-	{
-		portrait = localGeneral->getBioPortraitLarge();
-		localName = TheGameText->fetch( localGeneral->getBioName() );
-	}
-	else
-	{
-		// the main original factions don't have associated generals
-		AsciiString imageName;
-		if (pt->getName() == "FactionAmerica")
-			portrait = TheMappedImageCollection->findImageByName("SAFactionLogoLg_US");
-		else if (pt->getName() == "FactionGLA")
-			portrait = TheMappedImageCollection->findImageByName("SUFactionLogoLg_GLA");
-		else if (pt->getName() == "FactionChina")
-			portrait = TheMappedImageCollection->findImageByName("SNFactionLogoLg_China");
-		else
-			DEBUG_CRASH(("Unexpected player template"));
-
-		localName = pt->getDisplayName();
-	}
+	const GeneralPersona *localGeneral = TheChallengeGenerals ? TheChallengeGenerals->getGeneralByTemplateName(pt->getName()) : nullptr;
+	const Image *portrait = getMultiplayerLoadScreenPortrait(*pt, localGeneral,
+		"SAFactionLogoLg_US", "SNFactionLogoLg_China", "SUFactionLogoLg_GLA");
+	const UnicodeString localName = localGeneral ? TheGameText->fetch(localGeneral->getBioName()) : pt->getDisplayName();
 	m_portraitLocalGeneral = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( "MultiplayerLoadScreen.wnd:LocalGeneralPortrait"));
 	m_portraitLocalGeneral->winSetEnabledImage( 0, portrait);
 	m_featuresLocalGeneral = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( "MultiplayerLoadScreen.wnd:LocalGeneralFeatures"));
@@ -1541,29 +1549,10 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 		m_loadScreen->winSetEnabledImage(0, loadScreenImage);
 #else
 	// add portrait, features, and name for the local player's general
-	const GeneralPersona *localGeneral = TheChallengeGenerals->getGeneralByTemplateName( pt->getName() );
-	const Image *portrait = nullptr;
-	UnicodeString localName;
-	if (localGeneral)
-	{
-		portrait = localGeneral->getBioPortraitLarge();
-		localName = TheGameText->fetch( localGeneral->getBioName() );
-	}
-	else
-	{
-		// the main original factions don't have associated generals
-		AsciiString imageName;
-		if (pt->getName() == "FactionAmerica")
-			portrait = TheMappedImageCollection->findImageByName("SAFactionLogo144_US");
-		else if (pt->getName() == "FactionGLA")
-			portrait = TheMappedImageCollection->findImageByName("SUFactionLogo144_GLA");
-		else if (pt->getName() == "FactionChina")
-			portrait = TheMappedImageCollection->findImageByName("SNFactionLogo144_China");
-		else
-			DEBUG_CRASH(("Unexpected player template"));
-
-		localName = pt->getDisplayName();
-	}
+	const GeneralPersona *localGeneral = TheChallengeGenerals ? TheChallengeGenerals->getGeneralByTemplateName(pt->getName()) : nullptr;
+	const Image *portrait = getMultiplayerLoadScreenPortrait(*pt, localGeneral,
+		"SAFactionLogo144_US", "SNFactionLogo144_China", "SUFactionLogo144_GLA");
+	const UnicodeString localName = localGeneral ? TheGameText->fetch(localGeneral->getBioName()) : pt->getDisplayName();
 	m_portraitLocalGeneral = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( "GameSpyLoadScreen.wnd:LocalGeneralPortrait"));
 	m_portraitLocalGeneral->winSetEnabledImage( 0, portrait);
 	m_featuresLocalGeneral = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( "GameSpyLoadScreen.wnd:LocalGeneralFeatures"));

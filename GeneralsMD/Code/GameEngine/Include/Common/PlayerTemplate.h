@@ -103,6 +103,7 @@ public:
 
 	AsciiString getScoreScreen () const { return m_scoreScreenImage;	}
 	AsciiString getLoadScreen () const { return m_loadScreenImage;	}
+	const Image *getLoadScreenPortrait() const;
 	AsciiString getBeaconTemplate() const { return m_beaconTemplate; }
 
 	const Image *getHeadWaterMarkImage() const;
@@ -178,6 +179,7 @@ private:
 
 	AsciiString			m_scoreScreenImage;			///< Image that will be shown on the score screen
 	AsciiString			m_loadScreenImage;
+	AsciiString			m_loadScreenPortrait;		///< Mapped image name for the multiplayer load screen portrait
 
 	AsciiString			m_headWaterMark;				///< Image that will be the background on the observer control bar
 	AsciiString			m_flagWaterMark;				///< Imabe that will be the background on the observer control bar
