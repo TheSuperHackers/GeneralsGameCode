@@ -3,12 +3,17 @@
   "builtin-baseline": "9e593bb18ea69cc5095e012465dcd675a822ed0d",
   "dependencies": [
     "zlib",
+    { "name": "icu", "platform": "!windows" },
     "stb"
   ],
   "features": {
     "ffmpeg": {
       "description": "Use FFmpeg instead of Bink for video rendering",
       "dependencies": [ "ffmpeg" ]
+    },
+    "tests": {
+      "description": "Link ICU into the unit tests to compare it with IcuLoader",
+      "dependencies": [ "icu" ]
     }
   }
 }
