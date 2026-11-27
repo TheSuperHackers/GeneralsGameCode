@@ -3116,6 +3116,18 @@ void W3DRoadBuffer::allocateRoadBuffers()
 	m_maxRoadIndex = TheGlobalData->m_maxRoadIndex;
 	m_maxRoadTypes = TheGlobalData->m_maxRoadTypes;
 
+	// TheSuperHackers @bugfix Jaredl-Dev 27/11/2026 Ensure m_maxRoadTypes fits all roads defined in Roads.ini.
+	TerrainRoadType *road;
+	Int roadCount = 0;
+	for( road = TheTerrainRoads->firstRoad(); road; road = TheTerrainRoads->nextRoad( road ) )
+	{
+		++roadCount;
+	}
+	if( m_maxRoadTypes < roadCount )
+	{
+		m_maxRoadTypes = roadCount;
+	}
+
 #ifdef LOAD_TEST_ASSETS
 	m_maxRoadTypes+=4;
 #endif
@@ -3126,7 +3138,6 @@ void W3DRoadBuffer::allocateRoadBuffers()
 	m_roadTypes = MSGNEW("RoadBuffer") RoadType[m_maxRoadTypes];
 
 	// load roads from INI
-	TerrainRoadType *road;
 	i = 0;
 	for( road = TheTerrainRoads->firstRoad(); road; road = TheTerrainRoads->nextRoad( road ) )
 	{
