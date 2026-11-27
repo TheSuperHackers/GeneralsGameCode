@@ -120,6 +120,8 @@ static Int xpSign(const Vector2 &v1, const Vector2 &v2) {
 	return 0;
 }
 
+static Bool s_dynamic = false;
+
 //-----------------------------------------------------------------------------
 //         Private Class
 //-----------------------------------------------------------------------------
@@ -174,14 +176,16 @@ void RoadType::loadTexture(AsciiString path, Int ID)
 	WW3DAssetManager *pMgr = W3DAssetManager::Get_Instance();
 
 	m_roadTexture = pMgr->Get_Texture(path.str(), MIP_LEVELS_3);
+	//Hack to disable texture reduction
+	//m_roadTexture = pMgr->Get_Texture(path.str(), MIP_LEVELS_3, WW3D_FORMAT_UNKNOWN,true,TextureBaseClass::TEX_REGULAR, false);
 
 	m_roadTexture->Get_Filter().Set_Mip_Mapping( TextureFilterClass::FILTER_TYPE_BEST );
 
 	m_roadTexture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_REPEAT);
 	m_roadTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_REPEAT);
 
-	m_vertexRoad=NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZDUV1,TheGlobalData->m_maxRoadVertex+4,DX8VertexBufferClass::USAGE_DYNAMIC));
-	m_indexRoad=NEW_REF(DX8IndexBufferClass,(TheGlobalData->m_maxRoadIndex+4, DX8IndexBufferClass::USAGE_DYNAMIC));
+	m_vertexRoad=NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZDUV1,TheGlobalData->m_maxRoadVertex+4, (s_dynamic?DX8VertexBufferClass::USAGE_DYNAMIC:DX8VertexBufferClass::USAGE_DEFAULT)));
+	m_indexRoad=NEW_REF(DX8IndexBufferClass,(TheGlobalData->m_maxRoadIndex+4, (s_dynamic?DX8IndexBufferClass::USAGE_DYNAMIC:DX8IndexBufferClass::USAGE_DEFAULT)));
 	m_numRoadVertices=0;
 	m_numRoadIndices=0;
 
@@ -215,12 +219,19 @@ void RoadType::loadTestTexture()
 //=============================================================================
 /** Nulls index & vertex data. */
 //=============================================================================
-RoadSegment::RoadSegment()
+RoadSegment::RoadSegment() :
+m_curveRadius(0.0f),
+m_type(SEGMENT),
+m_scale(1.0f),
+m_widthInTexture(1.0f),
+m_uniqueID(0),
+m_visible(false),
+m_numVertex(0),
+m_vb(nullptr),
+m_numIndex(0),
+m_ib(nullptr),
+m_bounds(Vector3(0.0f, 0.0f, 0.0f), 1.0f)
 {
-	m_numVertex = 0;
-	m_vb = nullptr;
-	m_numIndex = 0;
-	m_ib = nullptr;
 }
 
 //=============================================================================
@@ -331,11 +342,12 @@ Int RoadSegment::GetIndices(UnsignedShort *destination_ib, Int numToCopy, Int of
 void RoadSegment::updateSegLighting()
 {
 	Int i;
+	Int borderSizeInLine=TheTerrainRenderObject->getMap()->getBorderSizeInline();
 	for (i=0; i<m_numVertex; i++) {
 		Int x = m_vb[i].x/MAP_XY_FACTOR+0.5;
 		Int y = m_vb[i].y/MAP_XY_FACTOR+0.5;
-		x += TheTerrainRenderObject->getMap()->getBorderSize();
-		y += TheTerrainRenderObject->getMap()->getBorderSize();
+		x += borderSizeInLine;
+		y += borderSizeInLine;
 		m_vb[i].diffuse = (255<<24)|TheTerrainRenderObject->getStaticDiffuse(x, y);
 	}
 }
@@ -783,25 +795,9 @@ void W3DRoadBuffer::loadLit4PtSection(RoadSegment *pRoad, UnsignedShort *ib, Ver
 	if (pRoad->m_uniqueID != m_curUniqueID) {
 		return;
 	}
-	// Throw out segs out of view.
-	if (pRoad->m_pt1.loc.X + pRoad->m_scale/2 < this->m_minX &&
-		pRoad->m_pt2.loc.X + pRoad->m_scale/2 < this->m_minX) {
+	if (!pRoad->m_visible) {
 		return;
 	}
-	if (pRoad->m_pt1.loc.X - pRoad->m_scale/2 > this->m_maxX &&
-		pRoad->m_pt2.loc.X - pRoad->m_scale/2 > this->m_maxX) {
-		return;
-	}
-	// Throw out segs out of view.
-	if (pRoad->m_pt1.loc.Y + pRoad->m_scale/2 < this->m_minY &&
-		pRoad->m_pt2.loc.Y + pRoad->m_scale/2 < this->m_minY) {
-		return;
-	}
-	if (pRoad->m_pt1.loc.Y - pRoad->m_scale/2 > this->m_maxY &&
-		pRoad->m_pt2.loc.Y - pRoad->m_scale/2 > this->m_maxY) {
-		return;
-	}
-
 	Int numLights = 0;
 	const Int maxLights = 8;
 	LightClass *lights[maxLights];
@@ -1242,8 +1238,8 @@ void W3DRoadBuffer::loadRoadsInVertexAndIndexBuffers()
 		this->m_roadTypes[m_curRoadType].setNumIndices(0);
 		return;
 	}
-	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_roadTypes[m_curRoadType].getIB());
-	DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_roadTypes[m_curRoadType].getVB());
+	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_roadTypes[m_curRoadType].getIB(), s_dynamic?D3DLOCK_DISCARD:0);
+	DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_roadTypes[m_curRoadType].getVB(), s_dynamic?D3DLOCK_DISCARD:0);
 	vb=(VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
 	ib = lockIdxBuffer.Get_Index_Array();
 	// Add to the index buffer & vertex buffer.
@@ -1261,6 +1257,49 @@ void W3DRoadBuffer::loadRoadsInVertexAndIndexBuffers()
 	}
 	this->m_roadTypes[m_curRoadType].setNumVertices(m_curNumRoadVertices);
 	this->m_roadTypes[m_curRoadType].setNumIndices(m_curNumRoadIndices);
+}
+
+//=============================================================================
+// W3DRoadBuffer::visibilityChanged
+//=============================================================================
+/** Returns true if any road segment's visibility changed. */
+//=============================================================================
+Bool W3DRoadBuffer::visibilityChanged(const IRegion2D &bounds)
+{
+	if ( !m_initialized) {
+		return false;
+	}
+	Bool visChanged = false;
+	Int curRoad;
+	// Do road segments.
+	for (curRoad=0; curRoad<m_numRoads; curRoad++) {
+		Bool curVis = m_roads[curRoad].m_visible;
+		Bool newVis = true;
+		Real halfScale = m_roads[curRoad].m_scale/2;
+		// Throw out segs out of view.
+		if (m_roads[curRoad].m_pt1.loc.X + halfScale < bounds.lo.x &&
+			m_roads[curRoad].m_pt2.loc.X + halfScale < bounds.lo.x) {
+			newVis = false;
+		}
+		if (m_roads[curRoad].m_pt1.loc.X - halfScale > bounds.hi.x &&
+			m_roads[curRoad].m_pt2.loc.X - halfScale > bounds.hi.x) {
+			newVis = false;
+		}
+		// Throw out segs out of view.
+		if (m_roads[curRoad].m_pt1.loc.Y + halfScale < bounds.lo.y &&
+			m_roads[curRoad].m_pt2.loc.Y + halfScale < bounds.lo.y) {
+			newVis = false;
+		}
+		if (m_roads[curRoad].m_pt1.loc.Y - halfScale > bounds.hi.y &&
+			m_roads[curRoad].m_pt2.loc.Y - halfScale > bounds.hi.y) {
+			newVis = false;
+		}
+		if (newVis != curVis) {
+			visChanged = true;
+		}
+		m_roads[curRoad].m_visible = newVis;
+	}
+	return visChanged;
 }
 
 //=============================================================================
@@ -1310,22 +1349,7 @@ void W3DRoadBuffer::loadRoadSegment(UnsignedShort *ib, VertexFormatXYZDUV1 *vb, 
 	if (pRoad->m_uniqueID != m_curUniqueID) {
 		return;
 	}
-	// Throw out segs out of view.
-	if (pRoad->m_pt1.loc.X + pRoad->m_scale/2 < this->m_minX &&
-		pRoad->m_pt2.loc.X + pRoad->m_scale/2 < this->m_minX) {
-		return;
-	}
-	if (pRoad->m_pt1.loc.X - pRoad->m_scale/2 > this->m_maxX &&
-		pRoad->m_pt2.loc.X - pRoad->m_scale/2 > this->m_maxX) {
-		return;
-	}
-	// Throw out segs out of view.
-	if (pRoad->m_pt1.loc.Y + pRoad->m_scale/2 < this->m_minY &&
-		pRoad->m_pt2.loc.Y + pRoad->m_scale/2 < this->m_minY) {
-		return;
-	}
-	if (pRoad->m_pt1.loc.Y - pRoad->m_scale/2 > this->m_maxY &&
-		pRoad->m_pt2.loc.Y - pRoad->m_scale/2 > this->m_maxY) {
+	if (!pRoad->m_visible) {
 		return;
 	}
 	Int curVertex = m_curNumRoadVertices;
@@ -2017,9 +2041,9 @@ Bool W3DRoadBuffer::insertY(Vector2 loc, Int index1, Real scale)
 	const Real cos30 = 0.866f;
 	const Real cos45 = 0.707f;
 
-	if (dot12 < (-cos30)) return false; // Too close to a straigh line, do a straight side tee.
-	if (dot13 < (-cos30)) return false; // Too close to a straigh line, do a straight side tee.
-	if (dot32 < (-cos30)) return false; // Too close to a straigh line, to a straight side tee.
+	if (dot12 < (-cos30)) return false; // Too close to a straight line, do a straight side tee.
+	if (dot13 < (-cos30)) return false; // Too close to a straight line, do a straight side tee.
+	if (dot32 < (-cos30)) return false; // Too close to a straight line, to a straight side tee.
 
 
 
@@ -2841,7 +2865,7 @@ void W3DRoadBuffer::miter(Int ndx1, Int ndx2)
 //=============================================================================
 // W3DRoadBuffer::insertCurveSegmentAt
 //=============================================================================
-/** Insertes curves at the corner of 2 segments. */
+/** Inserts curves at the corner of 2 segments. */
 //=============================================================================
 void W3DRoadBuffer::insertCurveSegmentAt(Int ndx1, Int ndx2)
 {
@@ -3149,6 +3173,8 @@ void W3DRoadBuffer::clearAllRoads()
 	if (m_roadTypes)
 	for (i=0; i<m_maxRoadTypes; i++) {
 		m_roadTypes[i].setStacking(0); // Reset stacking orders
+		m_roadTypes[i].setNumVertices(0);
+		m_roadTypes[i].setNumIndices(0);
 	}
 }
 //=============================================================================
@@ -3194,11 +3220,39 @@ void W3DRoadBuffer::loadRoads()
 //=============================================================================
 void W3DRoadBuffer::updateLighting()
 {
+	/*
+	CRASH FIX: Kris Morness
+	When the player alt-tabs out of the game, m_roads is freed up, but when the other player
+	places a structure in this area, the terrain gets flattened and calls this code, and BOOM!
+
+	Submitted By:   	Lee, Pei
+	Date Submitted: 	08/21/03 18:47:25
+	Found:
+	When playing a 2 player game both as USA-based armies, if one of the players uses Satellite Spy to reveal an area not yet reveal by either player then Alt-Tab's out, and then the enemy send a dozer over to build some structure in the previously revealed area, then the game will crash to desktop for the player who Alt-Tab'd.
+
+	Steps to reproduce:
+	- Play a 2 player network game with both player being USA.
+		(Not sure if this will happen if the players are of different USA-based armies)
+	- Have the victim reveal an area that is not yet reveal to either player.
+	- Wait until the area has been shrouded again. (Not sure if required)
+	- Have the victim Alt-Tab.
+	- Have the remaining player then send a dozer to build a Cold Fusion Reactor in the area
+		previously revealed by the other player's Spy Satellite.  (Not sure if it has to be Cold Fusion
+		Reactor.)
+
+	Result:
+	As soon as the fence is set up, the player who Alt-tab'd would get Zero Hour crashing to desktop with Serious Error occurred.
+	*/
+	if( !m_roads )
+	{
+		return;
+	}
 	Int curRoad;
 	// Do road segments.
 	for (curRoad=0; curRoad<m_numRoads; curRoad++) {
 		m_roads[curRoad].updateSegLighting();
 	}
+	m_updateBuffers = true;
 }
 
 //=============================================================================
@@ -3219,10 +3273,21 @@ void W3DRoadBuffer::updateCenter()
 void W3DRoadBuffer::drawRoads(CameraClass * camera, TextureClass *cloudTexture, TextureClass *noiseTexture, Bool wireframe,
 															Int minX, Int maxX, Int minY, Int maxY, RefRenderObjListIterator *pDynamicLightsIterator)
 {
-	m_minX = minX*MAP_XY_FACTOR;
-	m_maxX = maxX*MAP_XY_FACTOR;
-	m_minY = minY*MAP_XY_FACTOR;
-	m_maxY = maxY*MAP_XY_FACTOR;
+	IRegion2D bounds;
+	bounds.lo.x = minX*MAP_XY_FACTOR;
+	bounds.hi.x = maxX*MAP_XY_FACTOR;
+	bounds.lo.y = minY*MAP_XY_FACTOR;
+	bounds.hi.y = maxY*MAP_XY_FACTOR;
+
+#define NO_TEST_CULL 1
+#ifdef TEST_CULL
+	bounds.lo.x += 32*MAP_XY_FACTOR;
+	bounds.hi.x -= 32*MAP_XY_FACTOR;
+#endif
+#define noLOG_STATS
+#ifdef LOG_STATS
+	Int polys = 0;
+#endif
 
 	Int i;
 
@@ -3234,8 +3299,8 @@ void W3DRoadBuffer::drawRoads(CameraClass * camera, TextureClass *cloudTexture, 
 	}
 	Int stacking;
 	W3DShaderManager::ShaderTypes st=W3DShaderManager::ST_ROAD_BASE; //set default shader
-	if (cloudTexture)
-	{	st=W3DShaderManager::ST_ROAD_BASE_NOISE1;
+	if (cloudTexture) {
+		st=W3DShaderManager::ST_ROAD_BASE_NOISE1;
 		if (noiseTexture)
 			st=W3DShaderManager::ST_ROAD_BASE_NOISE12;
 	}
@@ -3250,6 +3315,15 @@ void W3DRoadBuffer::drawRoads(CameraClass * camera, TextureClass *cloudTexture, 
 	W3DShaderManager::setTexture(1,cloudTexture);	//cloud
 	W3DShaderManager::setTexture(2,noiseTexture);	//noise/lightmap
 
+
+	Bool loadBuffers = false;
+	if (m_updateBuffers) {
+		if (visibilityChanged(bounds)) {
+			loadBuffers = true;
+		}
+	}
+	m_updateBuffers = false;
+
 	for (stacking=0; stacking <= maxStacking; stacking++) {
 		for (i=0; i<m_maxRoadTypes; i++) {
 			if (stacking != m_roadTypes[i].getStacking()) {
@@ -3257,12 +3331,11 @@ void W3DRoadBuffer::drawRoads(CameraClass * camera, TextureClass *cloudTexture, 
 			}
 			m_curUniqueID = m_roadTypes[i].getUniqueID();
 			m_curRoadType = i;
-			loadRoadsInVertexAndIndexBuffers();
+			if (loadBuffers) loadRoadsInVertexAndIndexBuffers();
 			if (m_roadTypes[i].getNumIndices() == 0) continue;
 			if (wireframe) {
 				m_roadTypes[i].applyTexture();
 				Renderer::Set_Texture(0,nullptr);
-				Renderer::Set_Shader(detailShader); // shows clipping.
 			} else {
 				m_roadTypes[i].applyTexture();
 			}
@@ -3275,12 +3348,20 @@ void W3DRoadBuffer::drawRoads(CameraClass * camera, TextureClass *cloudTexture, 
 		 			W3DShaderManager::setShader(st, pass);
 				//Draw all this road type.
 				Renderer::Draw_Triangles(	0, m_roadTypes[i].getNumIndices()/3, 0,	m_roadTypes[i].getNumVertices());
+#ifdef LOG_STATS
+				polys += m_roadTypes[i].getNumIndices()/3;
+#endif
 			}
 
 			if (!wireframe)	//shader was applied at least once?
  				W3DShaderManager::resetShader(st);
 		}
 	}
+#ifdef LOG_STATS
+	if (loadBuffers) {
+		DEBUG_LOG(("Road poly count %d", polys));
+	}
+#endif
 
 #if 0
 	// Need to use a separate set of index & vertex buffers for this.  jba.
