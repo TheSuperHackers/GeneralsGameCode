@@ -29,9 +29,6 @@
 
 #pragma once
 
-#if defined(RTS_PROFILE_LEGACY)
-#include "profile/profile.h"
-#endif
 
 #if defined(RTS_PROFILE_TRACY)
 

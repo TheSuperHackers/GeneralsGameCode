@@ -32,9 +32,8 @@
 /**
   \page lib_var Library variants
 
-  Generally speaking there are three different library variants:
+  Generally speaking there are two different library variants:
   - %Debug: all asserts/checks/logs, no optimizations (RTS_DEBUG macro defined)
-  - Profile: all asserts/checks/logs, full optimizations, profiling active (RTS_PROFILE macro defined)
   - Release: no asserts/checks/logs, full optimizations
 
   These variants will be broken down into separate features which
@@ -45,53 +44,38 @@
     <td><b>HAS_ASSERTS</b></td>
     <td><b>HAS_LOGS</b></td>
     <td><b>HAS_OPT</b></td>
-    <td><b>HAS_PROFILE</b></td>
   </tr><tr>
     <td>Internal</td>
     <td><center>Y</center></td>
     <td><center>Y</center></td>
     <td><center>Y</center></td>
-    <td><center></center></td>
   </tr><tr>
     <td>%Debug</td>
     <td><center>Y</center></td>
     <td><center>Y</center></td>
     <td><center></center></td>
-    <td><center></center></td>
-  </tr><tr>
-    <td>Profile</td>
-    <td><center>Y</center></td>
-    <td><center>Y</center></td>
-    <td><center>Y</center></td>
-    <td><center>Y</center></td>
   </tr><tr>
     <td>Release</td>
     <td><center></center></td>
     <td><center></center></td>
     <td><center>Y</center></td>
-    <td><center></center></td>
   </tr></table>
 
   Library files have a suffix appended that depends on the
   library variant:
   - Internal: XXXInternal.lib
   - %Debug: XXXDebug.lib
-  - Profile: XXXProfile.lib
   - Release: XXX.lib
 */
 
 // Define which libraries to use.
-#if defined(RTS_DEBUG) || defined(RTS_PROFILE_LEGACY)
+#if defined(RTS_DEBUG)
 #  define HAS_ASSERTS
 #  define HAS_LOGS
 #endif
 
 #if !defined(RTS_DEBUG)
 #  define HAS_OPT
-#endif
-
-#if defined(RTS_PROFILE_LEGACY)
-#  define HAS_PROFILE
 #endif
 
 // include all our public header files (use double quotes here)
