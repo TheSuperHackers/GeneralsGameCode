@@ -26,14 +26,6 @@
             }
         },
         {
-            "name": "vc6-profile",
-            "displayName": "Windows 32bit VC6 Profile",
-            "hidden": false,
-            "inherits": "vc6",
-            "cacheVariables": {
-            }
-        },
-        {
             "name": "vc6-debug",
             "displayName": "Windows 32bit VC6 Debug",
             "hidden": false,
@@ -195,12 +187,6 @@
             "configurePreset": "vc6",
             "displayName": "Build Windows 32bit VC6 Release",
             "description": "Build Windows 32bit VC6 Release"
-        },
-        {
-            "name": "vc6-profile",
-            "configurePreset": "vc6-profile",
-            "displayName": "Build Windows 32bit VC6 Profile",
-            "description": "Build Windows 32bit VC6 Profile"
         },
         {
             "name": "vc6-debug",
@@ -374,19 +360,6 @@
                 {
                     "type": "build",
                     "name": "vc6-debug"
-                }
-            ]
-        },
-        {
-            "name": "vc6-profile",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "vc6-profile"
-                },
-                {
-                    "type": "build",
-                    "name": "vc6-profile"
                 }
             ]
         },
