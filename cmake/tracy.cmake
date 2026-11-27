@@ -1,10 +1,11 @@
 find_package(Tracy CONFIG QUIET)
 if(NOT Tracy_FOUND)
+    set(TRACY_ENABLE ON CACHE BOOL "Enable Tracy profiling" FORCE)
     FetchContent_Declare(
         tracy
         EXCLUDE_FROM_ALL # Exclude Tracy's development files from the INSTALL target.
-        GIT_REPOSITORY https://github.com/TheSuperHackers/tracy
-        GIT_TAG        05cceee0df3b8d7c6fa87e9638af311dbabc63cb # 0.13.1
+        GIT_REPOSITORY https://github.com/wolfpld/tracy
+        GIT_TAG        v0.15.0
     )
     FetchContent_MakeAvailable(tracy)
 endif()
