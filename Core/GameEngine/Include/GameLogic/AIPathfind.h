@@ -391,9 +391,11 @@ private:
 	Int						m_queuePRTail;
 	Int						m_cumulativeCellsAllocated;
 
-#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_PATHFINDING
 public:
 	Bool					m_classifyFenceZeroInit;
+	UnsignedByte	m_tightenPathInitMode;
+	Coord3D				m_tightenPathCoords;
 #endif
 };
 
