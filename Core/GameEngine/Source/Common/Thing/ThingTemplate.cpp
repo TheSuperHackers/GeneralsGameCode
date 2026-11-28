@@ -1332,13 +1332,16 @@ void ThingTemplate::resolveNames()
 		{
 			m_selectedPortraitImage = TheMappedImageCollection->findImageByName( m_selectedPortraitImageName );
 			DEBUG_ASSERTCRASH( m_selectedPortraitImage, ("%s is looking for Portrait %s but can't find it. Skipping...", getName().str(), m_buttonImageName.str() ) );
-			m_selectedPortraitImageName.clear();	// we're done with this, so nuke it
+			// TheSuperHackers @bugfix DrGoldFish 14/10/2026 Retains unresolved object images for a later cache pass.
+			if( m_selectedPortraitImage )
+				m_selectedPortraitImageName.clear();	// we're done with this, so nuke it
 		}
 		if( m_buttonImageName.isNotEmpty() )
 		{
 			m_buttonImage = TheMappedImageCollection->findImageByName( m_buttonImageName );
 			DEBUG_ASSERTCRASH( m_buttonImage, ("%s is looking for ButtonImage %s but can't find it. Skipping...", getName().str(), m_buttonImageName.str() ) );
-			m_buttonImageName.clear();	// we're done with this, so nuke it
+			if( m_buttonImage )
+				m_buttonImageName.clear();	// we're done with this, so nuke it
 		}
 	}
 

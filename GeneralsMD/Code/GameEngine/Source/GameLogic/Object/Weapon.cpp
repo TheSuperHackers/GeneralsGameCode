@@ -108,6 +108,23 @@ static void parseAllVetLevelsAsciiString( INI* ini, void* /*instance*/, void * s
 }
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @bugfix DrGoldFish 17/10/2026 Allow map and solo weapon overrides to clear FireSound with None or NoSound.
+static void parseWeaponFireSound( INI* ini, void* /*instance*/, void * store, const void* /*userData*/ )
+{
+	const char* token = ini->getNextToken();
+	AudioEventRTS* sound = (AudioEventRTS*)store;
+
+#if !RETAIL_COMPATIBLE_SCRIPTING
+	if (stricmp(token, "None") == 0 || stricmp(token, "NoSound") == 0)
+		sound->setEventName(AsciiString());
+	else
+#endif
+		sound->setEventName(AsciiString(token));
+
+	TheAudio->getInfoForAudioEvent(sound);
+}
+
+//-------------------------------------------------------------------------------------------------
 static void parsePerVetLevelFXList( INI* ini, void* /*instance*/, void * store, const void* /*userData*/ )
 {
 	typedef const FXList* ConstFXListPtr;
@@ -188,7 +205,7 @@ const FieldParse WeaponTemplate::TheWeaponTemplateFieldParseTable[] =
 	{ "MaxTargetPitch",						INI::parseAngleReal,										nullptr,							offsetof(WeaponTemplate, m_maxTargetPitch) },
 	{ "RadiusDamageAngle",				INI::parseAngleReal,										nullptr,							offsetof(WeaponTemplate, m_radiusDamageAngle) },
 	{ "ProjectileObject",					INI::parseAsciiString,									nullptr,							offsetof(WeaponTemplate, m_projectileName) },
-	{ "FireSound",								INI::parseAudioEventRTS,								nullptr,							offsetof(WeaponTemplate, m_fireSound) },
+	{ "FireSound",								parseWeaponFireSound,										nullptr,							offsetof(WeaponTemplate, m_fireSound) },
 	{ "FireSoundLoopTime",				INI::parseDurationUnsignedInt,					nullptr,							offsetof(WeaponTemplate, m_fireSoundLoopTime) },
 	{ "FireFX",											parseAllVetLevelsFXList,							nullptr,							offsetof(WeaponTemplate, m_fireFXs) },
 	{ "ProjectileDetonationFX",			parseAllVetLevelsFXList,							nullptr,							offsetof(WeaponTemplate, m_projectileDetonateFXs) },
@@ -248,7 +265,11 @@ const FieldParse WeaponTemplate::TheWeaponTemplateFieldParseTable[] =
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
+#if RETAIL_COMPATIBLE_SCRIPTING
 WeaponTemplate::WeaponTemplate() : m_nextTemplate(nullptr)
+#else
+WeaponTemplate::WeaponTemplate()
+#endif
 {
 
 	m_name													= "NoNameWeapon";
@@ -330,7 +351,9 @@ WeaponTemplate::WeaponTemplate() : m_nextTemplate(nullptr)
 //-------------------------------------------------------------------------------------------------
 WeaponTemplate::~WeaponTemplate()
 {
+#if RETAIL_COMPATIBLE_SCRIPTING
 	deleteInstance(m_nextTemplate);
+#endif
 
 	// delete any extra-bonus that's present
 	deleteInstance(m_extraBonus);
@@ -347,10 +370,30 @@ void WeaponTemplate::reset()
 {
 	WeaponTemplate* self = (WeaponTemplate*)instance;
 
+#if RETAIL_COMPATIBLE_SCRIPTING
 	if (!self->m_extraBonus)
 		self->m_extraBonus = newInstance(WeaponBonusSet);
 
 	self->m_extraBonus->parseWeaponBonusSet(ini);
+#else
+	// TheSuperHackers @bugfix DrGoldFish 17/10/2026 Replace inherited weapon bonuses when an override specifies new bonuses.
+	if (self->m_extraBonus)
+	{
+		deleteInstance(self->m_extraBonus);
+		self->m_extraBonus = nullptr;
+	}
+
+	const char* condition = ini->getNextToken();
+
+	if (stricmp(condition, "None") == 0)
+		return;
+
+	if (!self->m_extraBonus)
+		self->m_extraBonus = newInstance(WeaponBonusSet);
+
+	self->m_extraBonus->parseWeaponBonusSet(ini, condition);
+#endif
+
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -412,6 +455,18 @@ void WeaponTemplate::postProcessLoad()
 		return;
 	}
 
+#if !RETAIL_COMPATIBLE_SCRIPTING
+	// TheSuperHackers @bugfix DrGoldFish 17/10/2026 Allow map and solo weapon overrides to remove stream and laser references with None.
+	if (m_projectileStreamName.isNone())
+		m_projectileStreamName.clear();
+#if !RTS_GENERALS
+	if (m_laserName.isNone())
+		m_laserName.clear();
+	if (m_laserBoneName.isNone())
+		m_laserBoneName.clear();
+#endif
+#endif
+
 	if (m_projectileName.isEmpty())
 	{
 		m_projectileTmpl = nullptr;
@@ -434,6 +489,7 @@ void WeaponTemplate::postProcessLoad()
 	for (Int i = LEVEL_FIRST; i <= LEVEL_LAST; ++i)
 	{
 		// And the OCL if there is one
+#if RETAIL_COMPATIBLE_SCRIPTING
 		if (m_fireOCLNames[i].isEmpty())
 		{
 			m_fireOCLs[i] = nullptr;
@@ -455,6 +511,30 @@ void WeaponTemplate::postProcessLoad()
 			m_projectileDetonationOCLs[i] = TheObjectCreationListStore->findObjectCreationList(m_projectileDetonationOCLNames[i].str() );
 			DEBUG_ASSERTCRASH(m_projectileDetonationOCLs[i], ("OCL %s not found in a weapon!",m_projectileDetonationOCLNames[i].str()));
 		}
+#else
+		// TheSuperHackers @bugfix DrGoldFish 17/10/2026 Preserve inherited OCLs unless an override replaces or removes them.
+		if (m_fireOCLNames[i].isNone())
+		{
+			m_fireOCLs[i] = nullptr;
+		}
+		else if (!m_fireOCLNames[i].isEmpty())
+		{
+			m_fireOCLs[i] = TheObjectCreationListStore->findObjectCreationList(m_fireOCLNames[i].str());
+			DEBUG_ASSERTCRASH(m_fireOCLs[i], ("OCL %s not found in a weapon!", m_fireOCLNames[i].str()));
+		}
+		m_fireOCLNames[i].clear();
+
+		// And the other OCL if there is one
+		if (m_projectileDetonationOCLNames[i].isNone())
+		{
+			m_projectileDetonationOCLs[i] = nullptr;
+		}
+		else if (!m_projectileDetonationOCLNames[i].isEmpty())
+		{
+			m_projectileDetonationOCLs[i] = TheObjectCreationListStore->findObjectCreationList(m_projectileDetonationOCLNames[i].str());
+			DEBUG_ASSERTCRASH(m_projectileDetonationOCLs[i], ("OCL %s not found in a weapon!", m_projectileDetonationOCLNames[i].str()));
+		}
+#endif
 		m_projectileDetonationOCLNames[i].clear();
 	}
 
@@ -1663,8 +1743,11 @@ WeaponTemplate *WeaponStore::findWeaponTemplatePrivate( NameKeyType key ) const
 	// search weapon list for name
 	WeaponTemplateMap::const_iterator it = m_weaponTemplateHashMap.find(key);
 	if(it != m_weaponTemplateHashMap.end())
+#if RETAIL_COMPATIBLE_SCRIPTING
 		return it->second;
-
+#else
+		return (WeaponTemplate*)(it->second->getFinalOverride());
+#endif
 	return nullptr;
 
 }
@@ -1693,10 +1776,24 @@ WeaponTemplate *WeaponStore::newOverride(WeaponTemplate *weaponTemplate)
 	if (!weaponTemplate)
 		return nullptr;
 
+#if RETAIL_COMPATIBLE_SCRIPTING
 	// allocate a new weapon
 	WeaponTemplate *wt = newInstance(WeaponTemplate);
 	(*wt) = (*weaponTemplate);
 	(wt)->friend_setNextTemplate(weaponTemplate);
+#else
+	// TheSuperHackers @bugfix DrGoldFish 10/10/2026 Keep existing weapon template references valid when applying map overrides.
+	// Create a new override rather than replacing the base template.
+	WeaponTemplate *wt = newInstance(WeaponTemplate);
+	(*wt) = (*weaponTemplate);
+	if (weaponTemplate->m_extraBonus)
+	{
+		wt->m_extraBonus = newInstance(WeaponBonusSet);
+		(*wt->m_extraBonus) = (*weaponTemplate->m_extraBonus);
+	}
+	weaponTemplate->setNextOverride(wt);
+	wt->markAsOverride();
+#endif
 
 	return wt;
 }
@@ -1742,6 +1839,7 @@ void WeaponStore::resetWeaponTemplates()
 //-------------------------------------------------------------------------------------------------
 void WeaponStore::reset()
 {
+#if RETAIL_COMPATIBLE_SCRIPTING
 	// clean up any overrides.
 	for (size_t i = 0; i < m_weaponTemplateVector.size(); ++i)
 	{
@@ -1753,6 +1851,23 @@ void WeaponStore::reset()
 			deleteInstance(overrideData);
 		}
 	}
+#else
+	// Clean up map and solo INI overrides.
+	for (std::vector<WeaponTemplate*>::iterator it = m_weaponTemplateVector.begin(); it != m_weaponTemplateVector.end(); )
+	{
+		WeaponTemplate *wt = *it;
+		NameKeyType nameKey = wt->getNameKey();
+		if (!wt->deleteOverrides())
+		{
+			m_weaponTemplateHashMap.erase(nameKey);
+			it = m_weaponTemplateVector.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+#endif
 
 	deleteAllDelayedDamage();
 	resetWeaponTemplates();
@@ -1822,6 +1937,13 @@ void WeaponStore::postProcessLoad()
 
 	if (weapon->m_projectileName.isNone())
 		weapon->m_projectileName.clear();
+
+#if !RETAIL_COMPATIBLE_SCRIPTING
+	if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
+	{
+		weapon->postProcessLoad();
+	}
+#endif
 
 #if defined(RTS_DEBUG)
 	if (!weapon->getFireSound().getEventName().isEmpty() && weapon->getFireSound().getEventName().compareNoCase("NoSound") != 0)
@@ -3608,6 +3730,13 @@ void WeaponBonusSet::parseWeaponBonusSet(INI* ini)
 	m_bonus[wb].setField(wf, INI::scanPercentToReal(ini->getNextToken()));
 }
 
+//-------------------------------------------------------------------------------------------------
+void WeaponBonusSet::parseWeaponBonusSet(INI* ini, const char* condition)
+{
+	WeaponBonusConditionType wb = (WeaponBonusConditionType)INI::scanIndexList(condition, TheWeaponBonusNames);
+	WeaponBonus::Field wf = (WeaponBonus::Field)INI::scanIndexList(ini->getNextToken(), TheWeaponBonusFieldNames);
+	m_bonus[wb].setField(wf, INI::scanPercentToReal(ini->getNextToken()));
+}
 //-------------------------------------------------------------------------------------------------
 void WeaponBonusSet::appendBonuses(WeaponBonusConditionFlags flags, WeaponBonus& bonus) const
 {
