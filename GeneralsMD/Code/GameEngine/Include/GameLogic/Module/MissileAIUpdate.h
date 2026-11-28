@@ -137,7 +137,9 @@ private:
 	void doKillSelfState();
 	void doDeadState();
 
+#if RETAIL_COMPATIBLE_CRC
 	void airborneTargetGone();											///< My airborne target has died, so I have to do something cool to make up for that
+#endif
 
 	void tossExhaust();
 	void switchToState(MissileStateType s);
