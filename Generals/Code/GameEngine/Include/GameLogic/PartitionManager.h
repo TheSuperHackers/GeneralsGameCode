@@ -356,7 +356,7 @@ public:
 	#endif
 
 	// intended only for CellAndObjectIntersection.
-	void friend_addToCellList(CellAndObjectIntersection *coi);
+	void friend_addToCellList(CellAndObjectIntersection *coi, Int moduleSlot);
 
 	// intended only for CellAndObjectIntersection.
 	void friend_removeFromCellList(CellAndObjectIntersection *coi);
@@ -392,6 +392,7 @@ private:
 	Int													m_coiInUseCount;					///< number of COIs that are actually in use
 	CellAndObjectIntersection		*m_coiArray;							///< The array of COIs
 	Int													m_doneFlag;
+	Int													m_slot;										///< index into the partition manager's slot tables, -1 if none
 	DirtyStatus									m_dirtyStatus;
 	ObjectShroudStatus					m_shroudedness[MAX_PLAYER_COUNT];
 	ObjectShroudStatus					m_shroudednessPrevious[MAX_PLAYER_COUNT];	///<previous frames value of m_shroudedness
@@ -555,6 +556,7 @@ public:
 	// (note, if we ever use other bits in this, smarten this up...)
 	Int friend_getDoneFlag() { return m_doneFlag; }
 	void friend_setDoneFlag(Int i) { m_doneFlag = i; }
+	Int friend_getSlot();	///< allocated on first use.
 
 	Bool isInListDirtyModules(PartitionData* const* pListHead) const
 	{
@@ -1200,9 +1202,29 @@ class PartitionManager : public SubsystemInterface, public Snapshot
 private:
 
 #ifdef FASTER_GCO
-	typedef std::vector<ICoord2D>		OffsetVec;
-	typedef std::vector<OffsetVec>	RadiusVec;
+	// A row of cell offsets, x0..x1 inclusive.
+	struct CellSpan
+	{
+		Int y;
+		Int x0;
+		Int x1;
+	};
+	typedef std::vector<CellSpan>		SpanVec;
+	typedef std::vector<SpanVec>		RadiusVec;
 #endif
+
+	// Contiguous copy of a cell's COI list, oldest first. The COI list itself is newest first.
+	struct CellEntry
+	{
+		Int moduleSlot;										///< index into m_slotModule and m_slotDoneFlag
+		CellAndObjectIntersection* coi;		///< the COI this entry mirrors
+	};
+	struct CellEntryList
+	{
+		CellEntry* entries;
+		UnsignedShort count;
+		UnsignedShort capacity;
+	};
 
 	PartitionData		*m_moduleList;		///< master partition module list
 
@@ -1213,6 +1235,10 @@ private:
 	Int							m_cellCountY;			///< number of cells, y
 	Int							m_totalCellCount;	///< x * y
 	PartitionCell*	m_cells;					///< array of cells
+	std::vector<CellEntryList>	m_cellEntries;	///< per-cell entry lists, parallel to m_cells
+	std::vector<PartitionData*>	m_slotModule;		///< module owning each slot, null if free
+	std::vector<Int>						m_slotDoneFlag;	///< per-slot visited marker for getClosestObjects
+	std::vector<Int>						m_freeSlots;
 	PartitionData*	m_dirtyModules;
 	Bool						m_updatedSinceLastReset;	///< Used to force a return of OBJECTSHROUD_INVALID before update has been called.
 
@@ -1309,6 +1335,14 @@ public:
 	/// return the PartitionCell located at cell coordinates (x,y).
 	PartitionCell *getCellAt(Int x, Int y);
 	const PartitionCell *getCellAt(Int x, Int y) const;
+
+	/// to be used only by PartitionCell when a COI is added to or removed from its list.
+	void friend_addCellEntry(Int x, Int y, Int moduleSlot, CellAndObjectIntersection* coi);
+	void friend_removeCellEntry(Int x, Int y, CellAndObjectIntersection* coi);
+
+	/// to be used only by PartitionData.
+	Int friend_allocModuleSlot(PartitionData* module);
+	void friend_releaseModuleSlot(Int slot);
 
 	/// A convenience function to reveal shroud at some location
 	// Queuing does not give you control of the timestamp to enforce the queue.  I own the delay, you don't.
