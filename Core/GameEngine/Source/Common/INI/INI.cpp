@@ -372,6 +372,28 @@ static INIFieldParseProc findFieldParse(const FieldParse* parseTable, const char
 }
 
 //-------------------------------------------------------------------------------------------------
+/** Discard lines up to and including the next end token. */
+//-------------------------------------------------------------------------------------------------
+// TheSuperHackers @feature triatomic 08/10/2026 Unknown blocks and fields are logged and skipped
+// instead of crashing or throwing, so an INI written for a newer build still loads.
+void INI::skipToEndToken( void )
+{
+	while( !m_endOfFile )
+	{
+		readLine();
+		const char *token = strtok( m_buffer, getSeps() );
+		if( token && stricmp( token, getEndToken() ) == 0 )
+		{
+			return;
+		}
+	}
+
+	DEBUG_CRASH( ("Error parsing block in INI file '%s'.  Missing '%s' token",
+										 getFilename().str(), getEndToken()) );
+	throw INI_MISSING_END_TOKEN;
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Load and parse an INI file */
 //-------------------------------------------------------------------------------------------------
 UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
@@ -419,11 +441,17 @@ UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 						strcpy(m_curBlockStart, "NO_BLOCK");
 					#endif
 				}
+				else if( stricmp( token, getEndToken() ) == 0 )
+				{
+					// The skip stopped at a child block's End, so this End closes the skipped block.
+					DEBUG_LOG( ("[LINE: %d - FILE: '%s'] Stray '%s' after a skipped block, ignored",
+														 getLineNum(), getFilename().str(), token ) );
+				}
 				else
 				{
-					DEBUG_CRASH( ("[LINE: %d - FILE: '%s'] Unknown block '%s'",
-														 getLineNum(), getFilename().str(), token ) );
-					throw INI_UNKNOWN_TOKEN;
+					DEBUG_LOG( ("[LINE: %d - FILE: '%s'] Unknown block '%s', skipped to its '%s'",
+														 getLineNum(), getFilename().str(), token, getEndToken() ) );
+					skipToEndToken();
 				}
 
 			}
@@ -1563,8 +1591,8 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 
 				if (!found)
 				{
-					DEBUG_CRASH( ("[LINE: %d - FILE: '%s'] Unknown field '%s' in block '%s'",
-														 INI::getLineNum(), INI::getFilename().str(), field, m_curBlockStart) );
+					DEBUG_LOG( ("[LINE: %d - FILE: '%s'] Unknown field '%s', skipped",
+														 INI::getLineNum(), INI::getFilename().str(), field) );
 				}
 
 			}
