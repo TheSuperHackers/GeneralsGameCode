@@ -402,6 +402,15 @@ void RailedTransportAIUpdate::xfer( Xfer *xfer )
 		xfer->xferUnsignedInt(&m_path[i].endWaypointID);
 	}
 	xfer->xferInt(&m_currentPath);
+	// TheSuperHackers @bugfix CryoTheRenegade 05/11/2026 Reject saved paths outside the transit path array.
+	// A transport in transit indexes m_path with the current path, so it must have one.
+	if( m_currentPath < INVALID_PATH || m_currentPath >= MAX_WAYPOINT_PATHS ||
+			(m_inTransit && m_currentPath == INVALID_PATH) )
+	{
+		DEBUG_LOG(( "RailedTransportAIUpdate::xfer - Invalid current path %d", m_currentPath ));
+		throw SC_INVALID_DATA;
+	}
+
 	xfer->xferBool(&m_waypointDataLoaded);
 
 }
