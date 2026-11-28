@@ -966,6 +966,7 @@ protected:
 
 	//cameo flash
 	Bool m_flash;                                       ///< tells update whether or not to check for flash
+	Real m_commandFlashTimeAccumulator;
 
 	Bool m_sideSelectAnimateDown;
 	ICoord2D m_animateDownWin1Size;
