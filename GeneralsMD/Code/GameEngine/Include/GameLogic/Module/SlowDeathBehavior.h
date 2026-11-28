@@ -117,6 +117,7 @@ public:
 	virtual void beginSlowDeath( const DamageInfo *damageInfo ) = 0;
 	virtual Int getProbabilityModifier( const DamageInfo *damageInfo ) const = 0;
 	virtual Bool isDieApplicable(const DamageInfo *damageInfo) const = 0;
+	virtual Bool isRealDeath() const = 0;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -151,13 +152,17 @@ public:
 	// SlowDeathBehaviorInterface
 	virtual void beginSlowDeath( const DamageInfo *damageInfo ) override;
 	virtual Int getProbabilityModifier( const DamageInfo *damageInfo ) const override;
-	virtual Bool isDieApplicable(const DamageInfo *damageInfo) const override { return getSlowDeathBehaviorModuleData()->m_dieMuxData.isDieApplicable(getObject(), damageInfo); }
+	virtual Bool isDieApplicable(const DamageInfo *damageInfo) const override;
+	virtual Bool isRealDeath() const override { return true; }
+
+	static Int computeTotalSlowDeathProbability(const Object *obj, const DamageInfo *damageInfo);
 
 protected:
 
 	void doPhaseStuff(SlowDeathPhaseType sdphase);
 	Bool isSlowDeathActivated() const { return (m_flags & (1<<SLOW_DEATH_ACTIVATED)) != 0; }
 	UnsignedInt getDestructionFrame() const { return m_destructionFrame; }
+	Bool canEnterSecondLife() const { return !isRealDeath(); }
 
 private:
 
