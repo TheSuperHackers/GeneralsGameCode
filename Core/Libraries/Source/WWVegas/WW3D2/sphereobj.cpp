@@ -44,7 +44,7 @@
 #include "WWLib/chunkio.h"
 #include "rinfo.h"
 #include "coltest.h"
-#include "WWLib/bound.h"
+#include <Utility/clamp_adapter.h>
 #include "inttest.h"
 #include "predlod.h"
 #include "WWMath/matrix3.h"
@@ -553,7 +553,7 @@ float SphereRenderObjClass::Get_Post_Increment_Value() const
 
 void SphereRenderObjClass::Set_LOD_Level(int lod)
 {
-	CurrentLOD = Bound(lod, 0, SPHERE_NUM_LOD);	// SPHERE_NUM_LOD doesn't include the null LOD
+	CurrentLOD = std::clamp(lod, 0, SPHERE_NUM_LOD);	// SPHERE_NUM_LOD doesn't include the null LOD
 }
 
 int SphereRenderObjClass::Get_LOD_Level() const

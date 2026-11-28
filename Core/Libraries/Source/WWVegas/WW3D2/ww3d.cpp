@@ -62,7 +62,7 @@
 #include "dx8renderer.h"
 #include "Renderer.h"
 #include "render2d.h"
-#include "WWLib/bound.h"
+#include <Utility/clamp_adapter.h>
 #include "rddesc.h"
 #include "WWMath/Vector3i.h"
 #include "dx8wrapper.h"
@@ -830,8 +830,8 @@ int WW3D::Get_Collision_Box_Display_Mask()
 void WW3D::Normalize_Coordinates(int x, int y, float &fx, float &fy)
 {
 	// clip the coordinates back into the resolution of the screen
-	x = Bound(x, 0, Renderer::Get_Device_Resolution_Width());
-	y = Bound(y, 0, Renderer::Get_Device_Resolution_Height());
+	x = std::clamp(x, 0, Renderer::Get_Device_Resolution_Width());
+	y = std::clamp(y, 0, Renderer::Get_Device_Resolution_Height());
 
 	// now that the coordinates are clipped convert them to their normalized values.
 	fx = (float)x / Renderer::Get_Device_Resolution_Width();

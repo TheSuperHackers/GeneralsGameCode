@@ -39,7 +39,7 @@
 #include "dx8wrapper.h"
 #include "WWMath/vector2i.h"
 #include "colorspace.h"
-#include "WWLib/bound.h"
+#include <Utility/clamp_adapter.h>
 #include <d3dx8.h>
 
 void Convert_Pixel(Vector3 &rgb, const SurfaceClass::SurfaceDescription &sd, const unsigned char * pixel)
@@ -686,9 +686,9 @@ void SurfaceClass::Hue_Shift(const Vector3 &hsv_shift)
 		{
 			Convert_Pixel(rgb,sd,&bits[x*size]);
 			Recolor(rgb,hsv_shift);
-			rgb.X=Bound(rgb.X,0.0f,1.0f);
-			rgb.Y=Bound(rgb.Y,0.0f,1.0f);
-			rgb.Z=Bound(rgb.Z,0.0f,1.0f);
+			rgb.X=std::clamp(rgb.X,0.0f,1.0f);
+			rgb.Y=std::clamp(rgb.Y,0.0f,1.0f);
+			rgb.Z=std::clamp(rgb.Z,0.0f,1.0f);
 			Convert_Pixel(&bits[x*size],sd,rgb);
 		}
 		bits+=pitch;

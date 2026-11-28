@@ -40,7 +40,7 @@
 #include "camera.h"
 #include "predlod.h"
 #include <Utility/bit_adapter.h>
-#include "WWLib/bound.h"
+#include <Utility/clamp_adapter.h>
 #include "WWLib/simplevec.h"
 #include "WWMath/sphere.h"
 #include "WWDebug/wwprofile.h"
@@ -1057,7 +1057,7 @@ float ParticleBufferClass::Get_Post_Increment_Value() const
 
 void ParticleBufferClass::Set_LOD_Level(int lod)
 {
-	lod = Bound(lod, 0, (int)LodCount);
+	lod = std::clamp(lod, 0, (int)LodCount);
 	DecimationThreshold = (LodCount - 1) - lod;
 }
 

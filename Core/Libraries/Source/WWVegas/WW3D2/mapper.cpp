@@ -48,7 +48,6 @@
 #include "rendobj.h"
 #include "mesh.h"
 #include <WWLib/RANDOM.h>
-#include <WWLib/bound.h>
 
 Random4Class rand4;
 
