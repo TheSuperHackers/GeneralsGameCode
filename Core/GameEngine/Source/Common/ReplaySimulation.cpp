@@ -135,6 +135,24 @@ int ReplaySimulation::simulateReplaysInWorkerProcesses(const std::vector<AsciiSt
 	WideChar exePath[1024];
 	GetModuleFileNameW(nullptr, exePath, ARRAY_SIZE(exePath));
 
+	// Pass the -dataDir folders, so that the workers load the same archives.
+	UnicodeString dataDirArgs;
+	const std::vector<AsciiString>& dataDirs = TheGlobalData->m_dataDirs;
+	for (std::vector<AsciiString>::const_iterator it = dataDirs.begin(); it != dataDirs.end(); ++it)
+	{
+		UnicodeString dataDir;
+		dataDir.translate(*it);
+		dataDirArgs.concat(L" -dataDir \"");
+		dataDirArgs.concat(dataDir);
+		// The folder ends with a separator. Backslashes before the closing quote must be doubled, or they escape it.
+		for (int i = dataDir.getLength() - 1; i >= 0 && dataDir.getCharAt(i) == L'\\'; --i)
+		{
+			dataDirArgs.concat(L'\\');
+		}
+
+		dataDirArgs.concat(L'"');
+	}
+
 	std::vector<WorkerProcess> processes;
 	int filenamePositionStarted = 0;
 	int filenamePositionDone = 0;
@@ -177,6 +195,7 @@ int ReplaySimulation::simulateReplaysInWorkerProcesses(const std::vector<AsciiSt
 				TheGlobalData->m_headless ? L" -headless" : L"",
 				TheDebugIgnoreReplaySyncErrors ? L" -ignoreReplaySyncErrors" : L"",
 				filenameWide.str());
+			command.concat(dataDirArgs);
 
 			processes.push_back(WorkerProcess());
 			processes.back().startProcess(command);

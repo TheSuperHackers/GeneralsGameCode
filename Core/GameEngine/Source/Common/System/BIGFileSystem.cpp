@@ -43,6 +43,8 @@
 
 #include "Utility/endian_compat.h"
 
+#include <vector>
+
 
 static const char BIGFileIdentifier[] = { 'B', 'I', 'G', 'F' };
 
@@ -88,12 +90,24 @@ void BIGFileSystem::init() {
 
 	loadArchiveFilesFromDirectory("", "*.big");
 
+	// TheSuperHackers @feature CryoTheRenegade 17/10/2026 Load the -dataDir folders in the listed order.
+	// Files already in the tree are kept, so earlier folders take priority.
+	if (TheGlobalData != nullptr)
+	{
+		const std::vector<AsciiString>& dataDirs = TheGlobalData->m_dataDirs;
+		for (std::vector<AsciiString>::const_iterator it = dataDirs.begin(); it != dataDirs.end(); ++it)
+		{
+			if (!loadArchiveFilesFromDirectory(*it, "*.big"))
+			{
+				DEBUG_LOG(("Data dir '%s' has no .big files. Skipping it.", it->str()));
+			}
+		}
+	}
+
 #if RTS_ZEROHOUR
     // load original Generals assets
     AsciiString installPath;
     GetStringFromGeneralsRegistry("", "InstallPath", installPath );
-    //@todo this will need to be ramped up to a crash for release
-    DEBUG_ASSERTCRASH(!installPath.isEmpty(), ("Be 1337! Go install Generals!"));
     if (!installPath.isEmpty())
       loadArchiveFilesFromDirectory(installPath, "*.big");
 #endif
@@ -246,6 +260,18 @@ Bool BIGFileSystem::loadArchiveFilesFromDirectory(AsciiString dir, AsciiString f
 			continue;
 		}
 #endif
+
+		// An archive that is already loaded is not opened again, which would replace and leak the loaded one.
+		// An overwrite still puts its files ahead of the files of the other archives.
+		ArchiveFileMap::iterator loaded = m_archiveFileMap.find(*it);
+		if (loaded != m_archiveFileMap.end()) {
+			if (overwrite) {
+				loadIntoDirectoryTree(loaded->second, TRUE);
+				actuallyAdded = TRUE;
+			}
+			it++;
+			continue;
+		}
 
 		ArchiveFile *archiveFile = openArchiveFile((*it).str());
 

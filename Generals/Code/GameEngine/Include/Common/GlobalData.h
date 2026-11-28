@@ -568,6 +568,7 @@ public:
 
 	AsciiString m_modDir;
 	AsciiString m_modBIG;
+	std::vector<AsciiString> m_dataDirs;	///< Folders with lower priority .big files, one per -dataDir.
 
 	// the trailing '\' is included!
 	AsciiString getPath_UserData() const;

@@ -476,6 +476,25 @@ Int parseSetCwd(char *args[], int num)
 	return 1;
 }
 
+Int parseDataDir(char* args[], int num)
+{
+	if (num > 1)
+	{
+		// An empty folder would load the game folder a second time.
+		AsciiString dataDir = args[1];
+		if (dataDir.isNotEmpty())
+		{
+			// The archive loader appends the file mask straight to the folder, so it needs the separator.
+			FileSystem::ensureTrailingPathSeparatorInPath(dataDir);
+			TheWritableGlobalData->m_dataDirs.push_back(dataDir);
+		}
+
+		return 2;
+	}
+
+	return 1;
+}
+
 Int parseXRes(char *args[], int num)
 {
 	if (num > 1)
@@ -1195,6 +1214,11 @@ static CommandLineParam paramsForStartup[] =
 	// The last successful selection wins; otherwise use the executable directory.
 	{ "-setCwd", parseSetCwd },
 	{ "-useCwd", parseUseCwd },
+
+	// TheSuperHackers @feature CryoTheRenegade 17/10/2026
+	// Load .big files from this folder after the game folder. Repeat it for more folders. Earlier folders take priority.
+	// In Zero Hour, the Generals InstallPath registry folder loads after them. Relative paths are resolved from the working directory.
+	{ "-dataDir", parseDataDir },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded
