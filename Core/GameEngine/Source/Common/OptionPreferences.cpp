@@ -789,6 +789,19 @@ Real OptionPreferences::getMoneyTransactionVolume() const
 	return volume;
 }
 
+Bool OptionPreferences::getPlayAudioInBackground() const
+{
+	OptionPreferences::const_iterator it = find("PlayAudioInBackground");
+	if (it == end())
+		return TheAudio->getAudioSettings()->m_playAudioInBackground;
+
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
+		return TRUE;
+	}
+	return FALSE;
+}
+
 Int OptionPreferences::getNetworkLatencyFontSize()
 {
 	OptionPreferences::const_iterator it = find("NetworkLatencyFontSize");

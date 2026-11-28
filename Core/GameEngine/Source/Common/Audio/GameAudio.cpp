@@ -1128,6 +1128,7 @@ void INI::parseAudioSettingsDefinition( INI *ini )
 	TheAudio->friend_getAudioSettings()->m_preferredSpeechVolume	= prefs.getSpeechVolume() / 100.0f;
 	TheAudio->friend_getAudioSettings()->m_preferredMusicVolume		= prefs.getMusicVolume() / 100.0f;
 	TheAudio->friend_getAudioSettings()->m_preferredMoneyTransactionVolume = prefs.getMoneyTransactionVolume() / 100.0f;
+	TheAudio->friend_getAudioSettings()->m_playAudioInBackground = prefs.getPlayAudioInBackground();
 }
 
 //-------------------------------------------------------------------------------------------------

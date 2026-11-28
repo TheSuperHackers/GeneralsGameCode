@@ -684,6 +684,16 @@ static void saveOptions()
 		TheAudio->friend_getAudioSettings()->m_preferredMoneyTransactionVolume = val / 100.0f;
 	}
 
+	//-------------------------------------------------------------------------------------------------
+	// Play audio in background
+	{
+		Bool enabled = pref->getPlayAudioInBackground();
+		AsciiString prefString;
+		prefString = enabled ? "yes" : "no";
+		(*pref)["PlayAudioInBackground"] = prefString;
+		TheAudio->friend_getAudioSettings()->m_playAudioInBackground = enabled;
+	}
+
  	//-------------------------------------------------------------------------------------------------
  	// slider Gamma
  	val = GadgetSliderGetPosition(sliderGamma);
