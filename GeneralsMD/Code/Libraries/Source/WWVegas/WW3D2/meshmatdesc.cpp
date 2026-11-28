@@ -39,6 +39,7 @@
 #include "vertmaterial.h"
 #include "WWLib/realcrc.h"
 #include	"dx8wrapper.h"
+#include	"Renderer.h"
 #include "dx8caps.h"
 #include "meshmdl.h"
 
@@ -838,13 +839,13 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 		// HY: Earth and beyond uses a different fallback from Renegade with regards to bump environment maps
 		// we keep the pass but change it to an unbumped environment
 		if ( (Shader[pass].Get_Primary_Gradient() == ShaderClass::GRADIENT_BUMPENVMAP) &&
-			  (!DX8Wrapper::Is_Initted() || DX8Wrapper::Get_Current_Caps()->Support_Bump_Envmap() == false) )
+			  (!DX8Wrapper::Is_Initted() || Renderer::Supports_Bump_Envmap() == false) )
 		{
 			kill_pass = true;
 		}
 
 		if ( (Shader[pass].Get_Primary_Gradient() == ShaderClass::GRADIENT_BUMPENVMAPLUMINANCE) &&
-			  (!DX8Wrapper::Is_Initted() || DX8Wrapper::Get_Current_Caps()->Support_Bump_Envmap_Luminance() == false) )
+			  (!DX8Wrapper::Is_Initted() || Renderer::Supports_Bump_Envmap_Luminance() == false) )
 		{
 			kill_pass = true;
 		}
@@ -940,7 +941,7 @@ void MeshMatDescClass::Configure_Material(VertexMaterialClass * mtl,int pass,boo
 
 bool MeshMatDescClass::Do_Mappers_Need_Normals()
 {
-	if (DX8Wrapper::Is_Initted() && DX8Wrapper::Get_Current_Caps()->Support_NPatches() && WW3D::Get_NPatches_Level()>1) return true;
+	if (DX8Wrapper::Is_Initted() && Renderer::Supports_NPatches() && WW3D::Get_NPatches_Level()>1) return true;
 
 	for (int pass=0; pass<PassCount; pass++) {
 		/*

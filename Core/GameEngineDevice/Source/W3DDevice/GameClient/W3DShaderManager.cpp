@@ -561,7 +561,7 @@ Bool ScreenBWFilterDOT3::postRender(FilterModes mode, Coord2D &scrollDelta,Bool 
 	pDev->SetVertexShader(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 
 	//Draw B&W version first
-	if (DX8Wrapper::Get_Current_Caps()->Support_Dot3())
+	if (Renderer::Supports_Dot3())
 	{
 		//Override W3D states with customizations for grayscale
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_TEXTUREFACTOR, 0x80A5CA8E);
@@ -2893,7 +2893,7 @@ void W3DShaderManager::startRenderToTexture()
 		{
 			//these filters rely on the previous frame being visible so we must be careful about clearing
 			//frame buffer.  Only clear the alpha channel
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_ALPHA);	//only clear alpha
+			Renderer::Set_Color_Write_Mask(RenderColorWrite_Alpha);	//only clear alpha
 			ShaderClass shader=ShaderClass::_PresetOpaqueSolidShader;
 			shader.Set_Depth_Compare(ShaderClass::PASS_ALWAYS);
 			shader.Set_Depth_Mask(ShaderClass::DEPTH_WRITE_DISABLE);
@@ -2904,7 +2904,7 @@ void W3DShaderManager::startRenderToTexture()
 			REF_PTR_RELEASE(vmat);	//no need to keep a reference since it's a preset.
 
 			drawViewport(0x00ffffff | (((Int)(TheWaterTransparency->m_minWaterOpacity*255.0f)) <<24));
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_RED|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_BLUE);	//disable writes to alpha
+			Renderer::Set_Color_Write_Mask(RenderColorWrite_RGB);	//disable writes to alpha
 		}
 		else	//normal clear that overwrites everything.
 			Renderer::Clear(true, false, Vector3( 0.0f, 0.0f, 0.0f ), TheWaterTransparency->m_minWaterOpacity);

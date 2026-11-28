@@ -992,7 +992,7 @@ void RTS3DScene::Render(RenderInfoClass & rinfo)
 			//a projected alpha texture which will later be used to determine where
 			//wireframe should be visible.
 			///@todo: Clearing to black may not be needed if the scene already did the clear.
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_ALPHA);
+			Renderer::Set_Color_Write_Mask(RenderColorWrite_Alpha);
 			DX8Wrapper::Set_DX8_Render_State (D3DRS_ZBIAS, 0);
 			//Since all objects will be rendered with same material, disable resetting until all are done.
 			m_maskMaterialPass->setAllowUninstall(FALSE);
@@ -1002,7 +1002,7 @@ void RTS3DScene::Render(RenderInfoClass & rinfo)
 			m_maskMaterialPass->setAllowUninstall(TRUE);
 			m_maskMaterialPass->UnInstall_Materials();
 
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_BLUE|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_RED);
+			Renderer::Set_Color_Write_Mask(RenderColorWrite_RGB);
 
 			ShaderClass::Invalidate();
 		}
@@ -1017,7 +1017,7 @@ void RTS3DScene::Render(RenderInfoClass & rinfo)
 			//wireframe should be visible.
 			///@todo: Clearing to black may not be needed if the scene already did the clear.
 			Renderer::Clear(true, false, Vector3(0.0f,0.0f,0.0f),1.0f);	// Clear color but not z
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_ALPHA);
+			Renderer::Set_Color_Write_Mask(RenderColorWrite_Alpha);
 			DX8Wrapper::Set_DX8_Render_State (D3DRS_ZBIAS, 0);
 
 			//We're only filling the z-buffer so ignore normal textures and state changes to speed things up.
@@ -1030,10 +1030,10 @@ void RTS3DScene::Render(RenderInfoClass & rinfo)
 			m_maskMaterialPass->setAllowUninstall(TRUE);
 			m_maskMaterialPass->UnInstall_Materials();
 
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_BLUE|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_RED);
+			Renderer::Set_Color_Write_Mask(RenderColorWrite_RGB);
 			WW3D::Enable_Coloring(0xff008000);
 			WW3D::Enable_Texturing(false);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
+			Renderer::Set_Fill_Mode(RenderFillMode_Wireframe);
 
 			//Move maximum z-buffer value in a little to shift all z-values closer
 			//and thus forcing line to appear on top of previous pass.
@@ -1045,7 +1045,7 @@ void RTS3DScene::Render(RenderInfoClass & rinfo)
 //			DX8Wrapper::Set_DX8_Render_State (D3DRS_ZBIAS, 4);
 			Customized_Render(rinfo);	//render wireframe where z-test passes
 			Flush(rinfo);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_SOLID);
+			Renderer::Set_Fill_Mode(RenderFillMode_Solid);
 
 			rinfo.Camera.Set_Zbuffer_Range(nearZ, farZ);
 			rinfo.Camera.Apply();
@@ -1061,17 +1061,17 @@ void RTS3DScene::Render(RenderInfoClass & rinfo)
 			//old W3D custom rendering code.
 
 			//Disable writes to color buffer to save memory bandwidth - we only need Z.
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,0);
+			Renderer::Set_Color_Write_Mask(RenderColorWrite_None);
 			DX8Wrapper::Set_DX8_Render_State (D3DRS_ZBIAS, 0);
 			Customized_Render(rinfo);
 			Flush(rinfo);
 			//Re-enable writes to color buffer.
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_BLUE|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_RED);
+			Renderer::Set_Color_Write_Mask(RenderColorWrite_RGB);
 
 			switch (Get_Extra_Pass_Polygon_Mode()) {
 			case EXTRA_PASS_LINE:
 				WW3D::Enable_Texturing(false);
-				DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
+				Renderer::Set_Fill_Mode(RenderFillMode_Wireframe);
 				DX8Wrapper::Set_DX8_Render_State (D3DRS_ZBIAS, 7);
 				Customized_Render(rinfo);
 				break;
@@ -1079,13 +1079,13 @@ void RTS3DScene::Render(RenderInfoClass & rinfo)
 				Renderer::Clear(true, false, Vector3(0.0f,0.0f,0.0f), 0.0f);	// Clear color but not z
 				WW3D::Enable_Texturing(false);
 				WW3D::Enable_Coloring(0xff008000);
-				DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
+				Renderer::Set_Fill_Mode(RenderFillMode_Wireframe);
 				DX8Wrapper::Set_DX8_Render_State (D3DRS_ZBIAS, 7);
 				Customized_Render(rinfo);
 				break;
 			}
 			Flush(rinfo);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_SOLID);
+			Renderer::Set_Fill_Mode(RenderFillMode_Solid);
 			DX8Wrapper::Set_DX8_Render_State (D3DRS_ZBIAS, 0);
 			WW3D::Enable_Texturing(old_enable);
 			WW3D::Enable_Coloring(0);
