@@ -2287,7 +2287,7 @@ struct ExamineCellsStruct
 /*static*/ Int Pathfinder::examineCellsCallback(Pathfinder* pathfinder, PathfindCell* from, PathfindCell* to, Int to_x, Int to_y, void* userData)
 {
 	ExamineCellsStruct* d = (ExamineCellsStruct*)userData;
-	if (d->thePathfinder->m_isTunneling) return 1; // abort.
+	DEBUG_ASSERTCRASH(!d->thePathfinder->m_isTunneling, ("Line-of-sight expansion must not run while tunneling."));
 	if (from && to) {
 			if (!d->thePathfinder->validMovementPosition( d->isCrusher, d->theLoco->getValidSurfaces(), to, from )) {
 				return 1;
@@ -2326,7 +2326,6 @@ struct ExamineCellsStruct
 				return 1; //abort.
 			}
 
-			UnsignedInt newCostSoFar = from->getCostSoFar() + 0.5f*COST_ORTHOGONAL;
 			if (to->getType() == PathfindCell::CELL_CLIFF ) {
 				return 1;
 			}
@@ -2340,9 +2339,8 @@ struct ExamineCellsStruct
  				return 1;
 			}
 			to->setBlockedByAlly(false);
-			Int costRemaining = 0;
-			costRemaining = to->costToGoal( d->goalCell );
 
+			UnsignedInt newCostSoFar = from->getCostSoFar() + 0.5f*COST_ORTHOGONAL;
 			// check if this neighbor cell is already on the open (waiting to be tried)
 			// or closed (already tried) lists
 			if ( to->hasInfo() && (to->getOpen() || to->getClosed()) )
@@ -2356,6 +2354,7 @@ struct ExamineCellsStruct
 			to->setCostSoFar(newCostSoFar);
 			// keep track of path we're building - point back to cell we moved here from
 			to->setParentCell(from) ;
+			const UnsignedInt costRemaining = to->costToGoal(d->goalCell);
 			to->setTotalCost(to->getCostSoFar() + costRemaining) ;
 
 			// if to was on closed list, remove it from the list
@@ -2426,11 +2425,21 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 		Coord3D fromPos;
 		fromPos.x = parentCell->getXIndex() * PATHFIND_CELL_SIZE_F ;
 		fromPos.y = parentCell->getYIndex() * PATHFIND_CELL_SIZE_F ;
-		fromPos.z = TheTerrainLogic->getGroundHeight(fromPos.x , fromPos.y);
+		// TheSuperHackers @performance Mauller 21/11/2026 Sample the parent height only when needed for downhill or cliff checks, and reuse it.
+		Bool fromHeightValid = false;
 
 		for( int i=0; i<numNeighbors; i++ )
 		{
 			neighborFlags[i] = false;
+
+			// TheSuperHackers @performance Mauller/Caball009 21/11/2026 Reject blocked diagonal steps before looking up the neighboring cell.
+			if (i>=firstDiagonal) {
+				// make sure one of the adjacent sides is open.
+				if (!neighborFlags[adjacent[i-4]] && !neighborFlags[adjacent[i-3]]) {
+					continue;
+				}
+			}
+
 			// determine neighbor cell to try
 			newCellCoord.x = parentCell->getXIndex() + delta[i].x;
 			newCellCoord.y = parentCell->getYIndex() + delta[i].y;
@@ -2442,11 +2451,6 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 			if (!newCell)
 				continue;
 
-			Bool notZonePassable = false;
-			if ((newCell->getLayer()==LAYER_GROUND) && !m_zoneManager.isPassable(newCellCoord.x, newCellCoord.y)) {
-				notZonePassable = true;
-			}
-
 			// check if new cell is in logical map.	(computer can move off logical map)
 			if (isHuman && checkCellOutsideExtents(newCellCoord))
 				continue;
@@ -2456,16 +2460,13 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 			if ( newCell->hasInfo() && (newCell->getOpen() || newCell->getClosed()) )
 				continue;
 
-			if (i>=firstDiagonal) {
-				// make sure one of the adjacent sides is open.
-				if (!neighborFlags[adjacent[i-4]] && !neighborFlags[adjacent[i-3]]) {
-					continue;
-				}
-			}
-
 			// do the gravity check here
 			if ( locomotorSet.isDownhillOnly() )
 			{
+				if (!fromHeightValid) {
+					fromPos.z = TheTerrainLogic->getGroundHeight(fromPos.x, fromPos.y);
+					fromHeightValid = true;
+				}
 				Coord3D toPos;
 				toPos.x = newCellCoord.x * PATHFIND_CELL_SIZE_F ;
 				toPos.y = newCellCoord.y * PATHFIND_CELL_SIZE_F ;
@@ -2531,6 +2532,10 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 			}
 
 			if (newCell->getType() == PathfindCell::CELL_CLIFF && !newCell->getPinched() ) {
+				if (!fromHeightValid) {
+					fromPos.z = TheTerrainLogic->getGroundHeight(fromPos.x, fromPos.y);
+					fromHeightValid = true;
+				}
 				Coord3D toPos;
 				toPos.x = newCellCoord.x * PATHFIND_CELL_SIZE_F ;
 				toPos.y = newCellCoord.y * PATHFIND_CELL_SIZE_F ;
@@ -2576,7 +2581,8 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 				}
 			}
 
-			if (notZonePassable) {
+			// TheSuperHackers @performance Mauller 21/11/2026 Defer the corridor lookup until the neighbor reaches path-cost calculation.
+			if (newCell->getLayer() == LAYER_GROUND && !m_zoneManager.isPassable(newCellCoord.x, newCellCoord.y)) {
 				newCostSoFar += 100*COST_ORTHOGONAL;
 			}
 
