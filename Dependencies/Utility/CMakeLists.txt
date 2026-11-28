@@ -16,6 +16,7 @@ set(UTILITY_SRC
     Utility/iostream_adapter.h
     Utility/lazy_static.h
     Utility/mem_compat.h
+    Utility/numeric_adapter.h
     Utility/premultiply_alpha.h
     Utility/premultiply_alpha.inl
     Utility/premultiply_alpha_sse2.inl

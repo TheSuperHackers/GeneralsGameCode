@@ -45,7 +45,7 @@
 #include "texture.h"
 #include "WWDebug/wwprofile.h"
 #include <limits.h>
-#include <WWLib/gcd_lcm.h>
+#include <Utility/numeric_adapter.h>
 
 
 // Global variable which is only used to communicate the worldspace emitter
@@ -559,7 +559,7 @@ void ParticleEmitterClass::Create_New_Particles(const Quaternion & curr_quat, co
 	if (frametime > 100 * EmitRate) {
 		// If the loop will run over 100 times
 		unsigned int buf_size = Buffer->Get_Buffer_Size();
-		unsigned int gcd = Greatest_Common_Divisor(buf_size, BurstSize);
+		unsigned int gcd = std::gcd(buf_size, BurstSize);
 		unsigned int bursts = buf_size / gcd;
 		unsigned int cycle_time = EmitRate * bursts;
 		if (cycle_time > 1) {

@@ -38,8 +38,6 @@ set(WWLIB_SRC
     FastAllocator.h
     ffactory.cpp
     ffactory.h
-    gcd_lcm.cpp
-    gcd_lcm.h
     #global.h
     hash.cpp
     hash.h
