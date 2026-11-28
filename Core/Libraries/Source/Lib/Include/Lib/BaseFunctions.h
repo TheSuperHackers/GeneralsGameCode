@@ -20,6 +20,7 @@
 
 #include <Utility/bit_adapter.h>
 #include "BaseDefines.h"
+#include "Debug.h"
 
 #if USE_DETERMINISTIC_MATH
 #include <gmath.h>
@@ -137,4 +138,15 @@ template <typename EnumType>
 constexpr inline Bool equalsEnumBitFlagsCount(size_t expectedSize, EnumType bitFlagsEnd)
 {
 	return 1 << (expectedSize - 1) == static_cast<size_t>(bitFlagsEnd) - 1;
+}
+
+//-------------------------------------------------------------------------------------------------
+// Casts a value to a narrower or different type and asserts that the value survives the cast.
+//
+template <typename T, typename U>
+inline T check_cast(U value)
+{
+	const T result = static_cast<T>(value);
+	DEBUG_ASSERTCRASH(static_cast<U>(result) == value, ("check_cast changed the value"));
+	return result;
 }
