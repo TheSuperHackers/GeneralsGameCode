@@ -63,6 +63,8 @@
 #include "GameClient/KeyDefs.h"
 #include "GameClient/GameWindowManager.h"
 
+#include "GameLogic/GameLogic.h"
+
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -70,6 +72,7 @@ static NameKeyType parentMainMenuID = NAMEKEY_INVALID;
 
 // window pointers --------------------------------------------------------------------------------
 static GameWindow *parentMainMenu = nullptr;
+static Bool creditsActivationPending = FALSE;
 
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -81,29 +84,8 @@ void CreditsMenuInit( WindowLayout *layout, void *userData )
 {
 	TheShell->showShellMap(FALSE);
 
-	delete TheCredits;
-	TheCredits = new CreditsManager;
-	TheCredits->load();
-	TheCredits->init();
-
-	parentMainMenuID = TheNameKeyGenerator->nameToKey( "CreditsMenu.wnd:ParentCreditsWindow" );
-	parentMainMenu = TheWindowManager->winGetWindowFromId( nullptr, parentMainMenuID );
-
-
-	// show menu
-	layout->hide( FALSE );
-
-	// set keyboard focus to main parent
-	TheWindowManager->winSetFocus( parentMainMenu );
-
-
-
-	TheAudio->removeAudioEvent( AHSV_StopTheMusicFade );
-	AudioEventRTS event( "Credits" );
-	event.setShouldFade( TRUE );
-	TheAudio->addAudioEvent( &event );
-
-
+	creditsActivationPending = TRUE;
+	layout->hide( TRUE );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -111,9 +93,13 @@ void CreditsMenuInit( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 void CreditsMenuShutdown( WindowLayout *layout, void *userData )
 {
-	TheCredits->reset();
-	delete TheCredits;
-	TheCredits = nullptr;
+	creditsActivationPending = FALSE;
+	if (TheCredits)
+	{
+		TheCredits->reset();
+		delete TheCredits;
+		TheCredits = nullptr;
+	}
 	TheShell->showShellMap(TRUE);
 
 	// hide menu
@@ -131,6 +117,25 @@ void CreditsMenuShutdown( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 void CreditsMenuUpdate( WindowLayout *layout, void *userData )
 {
+	if (creditsActivationPending && !TheGameLogic->isInGame())
+	{
+		// TheSuperHackers @bugfix DrGoldFish1 11/10/2026 Defers Credits initialization until shell game teardown completes.
+		TheCredits = new CreditsManager;
+		TheCredits->load();
+		TheCredits->init();
+
+		parentMainMenuID = TheNameKeyGenerator->nameToKey( "CreditsMenu.wnd:ParentCreditsWindow" );
+		parentMainMenu = TheWindowManager->winGetWindowFromId( nullptr, parentMainMenuID );
+
+		layout->hide( FALSE );
+		TheWindowManager->winSetFocus( parentMainMenu );
+
+		TheAudio->removeAudioEvent( AHSV_StopTheMusicFade );
+		AudioEventRTS event( "Credits" );
+		event.setShouldFade( TRUE );
+		TheAudio->addAudioEvent( &event );
+		creditsActivationPending = FALSE;
+	}
 
 	if(TheCredits)
 	{
@@ -139,7 +144,7 @@ void CreditsMenuUpdate( WindowLayout *layout, void *userData )
 		if(TheCredits->isFinished())
 			TheShell->pop();
 	}
-	else
+	else if (!creditsActivationPending)
 		TheShell->pop();
 
 }
