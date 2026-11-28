@@ -1,6 +1,6 @@
 set(GAMEENGINE_SRC
     Include/Common/AcademyStats.h
-#    Include/Common/ActionManager.h
+    Include/Common/ActionManager.h
     Include/Common/AddonCompat.h
     Include/Common/ArchiveFile.h
     Include/Common/ArchiveFileSystem.h
@@ -37,7 +37,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/DrawModule.h
     Include/Common/DynamicAudioEventInfo.h
 #    Include/Common/encrypt.h
-#    Include/Common/Energy.h
+    Include/Common/Energy.h
     Include/Common/Errors.h
     Include/Common/file.h
     Include/Common/FileSystem.h
@@ -60,7 +60,7 @@ set(GAMEENGINE_SRC
     Include/Common/GameUtility.h
 #    Include/Common/Geometry.h
 #    Include/Common/GlobalData.h
-#    Include/Common/Handicap.h
+    Include/Common/Handicap.h
 #    Include/Common/IgnorePreferences.h
     Include/Common/INI.h
 #    Include/Common/INIException.h
@@ -76,11 +76,11 @@ set(GAMEENGINE_SRC
     Include/Common/MessageStream.h
     Include/Common/MiniLog.h
     Include/Common/MiscAudio.h
-#    Include/Common/MissionStats.h
+    Include/Common/MissionStats.h
 #    Include/Common/ModelState.h
 #    Include/Common/Module.h
 #    Include/Common/ModuleFactory.h
-#    Include/Common/Money.h
+    Include/Common/Money.h
 #    Include/Common/MultiplayerSettings.h
 #    Include/Common/NameKeyGenerator.h
     Include/Common/ObjectStatusTypes.h
@@ -91,10 +91,10 @@ set(GAMEENGINE_SRC
 #    Include/Common/PartitionSolver.h
 #    Include/Common/PerfMetrics.h
     Include/Common/PerfTimer.h
-#    Include/Common/Player.h
-#    Include/Common/PlayerList.h
-#    Include/Common/PlayerTemplate.h
-#    Include/Common/ProductionPrerequisite.h
+    Include/Common/Player.h
+    Include/Common/PlayerList.h
+    Include/Common/PlayerTemplate.h
+    Include/Common/ProductionPrerequisite.h
 #    Include/Common/QuickmatchPreferences.h
 #    Include/Common/QuotedPrintable.h
     Include/Common/Radar.h
@@ -103,32 +103,32 @@ set(GAMEENGINE_SRC
 #    Include/Common/Recorder.h
 #    Include/Common/Registry.h
     Include/Common/ReplaySimulation.h
-#    Include/Common/ResourceGatheringManager.h
-#    Include/Common/Science.h
+    Include/Common/ResourceGatheringManager.h
+    Include/Common/Science.h
 #    Include/Common/ScopedMutex.h
-#    Include/Common/ScoreKeeper.h
+    Include/Common/ScoreKeeper.h
     #Include/Common/simpleplayer.h # unused
 #    Include/Common/SkirmishBattleHonors.h
 #    Include/Common/SkirmishPreferences.h
     Include/Common/Snapshot.h
 #    Include/Common/SparseMatchFinder.h
-#    Include/Common/SpecialPower.h
-#    Include/Common/SpecialPowerMaskType.h
-#    Include/Common/SpecialPowerType.h
+    Include/Common/SpecialPower.h
+    Include/Common/SpecialPowerMaskType.h
+    Include/Common/SpecialPowerType.h
 #    Include/Common/StackDump.h
 #    Include/Common/StateMachine.h
 #    Include/Common/StatsCollector.h
     Include/Common/STLTypedefs.h
     Include/Common/StreamingArchiveFile.h
     Include/Common/SubsystemInterface.h
-#    Include/Common/Team.h
+    Include/Common/Team.h
 #    Include/Common/Terrain.h
     Include/Common/TerrainTypes.h
 #    Include/Common/Thing.h
 #    Include/Common/ThingFactory.h
 #    Include/Common/ThingSort.h
     Include/Common/ThingTemplate.h
-#    Include/Common/TunnelTracker.h
+    Include/Common/TunnelTracker.h
     Include/Common/UnicodeString.h
 #    Include/Common/UnitTimings.h
 #    Include/Common/Upgrade.h
@@ -633,21 +633,21 @@ set(GAMEENGINE_SRC
 #    Source/Common/Recorder.cpp
     Source/Common/ReplaySimulation.cpp
     Source/Common/RTS/AcademyStats.cpp
-#    Source/Common/RTS/ActionManager.cpp
-#    Source/Common/RTS/Energy.cpp
-#    Source/Common/RTS/Handicap.cpp
-#    Source/Common/RTS/MissionStats.cpp
-#    Source/Common/RTS/Money.cpp
-#    Source/Common/RTS/Player.cpp
-#    Source/Common/RTS/PlayerList.cpp
-#    Source/Common/RTS/PlayerTemplate.cpp
-#    Source/Common/RTS/ProductionPrerequisite.cpp
-#    Source/Common/RTS/ResourceGatheringManager.cpp
-#    Source/Common/RTS/Science.cpp
-#    Source/Common/RTS/ScoreKeeper.cpp
-#    Source/Common/RTS/SpecialPower.cpp
-#    Source/Common/RTS/Team.cpp
-#    Source/Common/RTS/TunnelTracker.cpp
+    Source/Common/RTS/ActionManager.cpp
+    Source/Common/RTS/Energy.cpp
+    Source/Common/RTS/Handicap.cpp
+    Source/Common/RTS/MissionStats.cpp
+    Source/Common/RTS/Money.cpp
+    Source/Common/RTS/Player.cpp
+    Source/Common/RTS/PlayerList.cpp
+    Source/Common/RTS/PlayerTemplate.cpp
+    Source/Common/RTS/ProductionPrerequisite.cpp
+    Source/Common/RTS/ResourceGatheringManager.cpp
+    Source/Common/RTS/Science.cpp
+    Source/Common/RTS/ScoreKeeper.cpp
+    Source/Common/RTS/SpecialPower.cpp
+    Source/Common/RTS/Team.cpp
+    Source/Common/RTS/TunnelTracker.cpp
 #    Source/Common/SkirmishBattleHonors.cpp
 #    Source/Common/StateMachine.cpp
 #    Source/Common/StatsCollector.cpp
