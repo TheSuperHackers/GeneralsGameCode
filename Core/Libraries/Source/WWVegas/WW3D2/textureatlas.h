@@ -21,7 +21,7 @@
 #include "WW3D2/texture.h"
 #include "WWLib/ref_ptr.h"
 #include "WWLib/wwstring.h"
-#include "WWMath/vector4.h"
+#include "WWMath/rect.h"
 #include <map>
 #include <vector>
 
@@ -61,13 +61,13 @@ public:
 	struct TextureLocation
 	{
 		TextureClass* page;    // nullptr if the texture could not be packed.
-		Vector4 uvRect;
+		RectClass uvRect;
 
 		static TextureLocation Create_Invalid()
 		{
 			TextureLocation location;
 			location.page = nullptr;
-			location.uvRect.Set(0.0f, 0.0f, 1.0f, 1.0f);
+			location.uvRect = RectClass(0.0f, 0.0f, 1.0f, 1.0f);
 			return location;
 		}
 	};

@@ -355,6 +355,37 @@ void SortingRendererClass::Insert_To_Sorting_Pool(SortingNodeStruct* state)
 // ----------------------------------------------------------------------------
 //static unsigned prevLight = 0xffffffff;
 
+static bool Same_Render_State(const RenderStateStruct& a, const RenderStateStruct& b)
+{
+	if (a.shader.Get_Bits() != b.shader.Get_Bits() || a.material != b.material)
+	{
+		return false;
+	}
+
+	for (int i = 0; i < DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass(); ++i)
+	{
+		if (a.Textures[i] != b.Textures[i])
+		{
+			return false;
+		}
+	}
+
+	if (memcmp(&a.world, &b.world, sizeof(a.world)) != 0 ||
+	    memcmp(&a.view, &b.view, sizeof(a.view)) != 0)
+	{
+		return false;
+	}
+
+	if (a.material->Get_Lighting() &&
+	    (memcmp(a.LightEnable, b.LightEnable, sizeof(a.LightEnable)) != 0 ||
+	     memcmp(a.Lights, b.Lights, sizeof(a.Lights)) != 0))
+	{
+		return false;
+	}
+
+	return true;
+}
+
 static void Apply_Render_State(RenderStateStruct& render_state)
 {
 	Renderer::Set_Shader(render_state.shader);
@@ -500,8 +531,6 @@ void SortingRendererClass::Flush_Sorting_Pool()
 				}
 			}
 
-			state->min_vertex_index=vertex_array_offset;
-
 			polygon_array_offset+=state->polygon_count;
 			vertex_array_offset+=state->vertex_count;
 		}
@@ -538,37 +567,25 @@ void SortingRendererClass::Flush_Sorting_Pool()
 
 		Renderer::Apply_Render_State_Changes();
 
-		unsigned count_to_render=1;
-		unsigned start_index=0;
-		unsigned node_id=tis[chunkOffset].idx;
-		for (unsigned i=chunkOffset + 1;i<chunkEnd;++i) {
-			if (node_id!=tis[i].idx) {
-				SortingNodeStruct* state=overlapping_nodes[node_id];
-				Apply_Render_State(state->sorting_state);
+		// TheSuperHackers @performance stephanmeesters 21/11/2026 Batch consecutive triangles of different nodes when they share the same render state.
+		unsigned start = chunkOffset;
+		while (start < chunkEnd)
+		{
+			SortingNodeStruct* start_node = overlapping_nodes[tis[start].idx];
 
-				Renderer::Draw_Triangles(
-					start_index*3,
-					count_to_render,
-					state->min_vertex_index,
-					state->vertex_count);
-
-				count_to_render=0;
-				start_index=i - chunkOffset;
-				node_id=tis[i].idx;
+			unsigned end;
+			for (end = start + 1; end < chunkEnd; ++end)
+			{
+				SortingNodeStruct* node = overlapping_nodes[tis[end].idx];
+				if (node != start_node && !Same_Render_State(start_node->sorting_state, node->sorting_state))
+				{
+					break;
+				}
 			}
-			count_to_render++;	//keep track of number of polygons of same kind
-		}
 
-		// Render any remaining polygons...
-		if (count_to_render) {
-			SortingNodeStruct* state=overlapping_nodes[node_id];
-			Apply_Render_State(state->sorting_state);
-
-			Renderer::Draw_Triangles(
-				start_index*3,
-				count_to_render,
-				state->min_vertex_index,
-				state->vertex_count);
+			Apply_Render_State(start_node->sorting_state);
+			Renderer::Draw_Triangles((start - chunkOffset) * 3, end - start, 0, overlapping_vertex_count);
+			start = end;
 		}
 
 		chunkOffset += chunkCount;

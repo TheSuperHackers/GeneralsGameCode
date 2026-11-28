@@ -104,6 +104,7 @@ PointGroupClass::PointGroupClass() :
 	PointOrientation(nullptr),
 	PointFrame(nullptr),
 	PointCount(0),
+	TextureUVRects(nullptr),
 	FrameRowColumnCountLog2(0),
 	Texture(nullptr),
 	Flags(0),
@@ -207,6 +208,11 @@ void PointGroupClass::Set_Arrays(
 	VPYMin = vpymin;
 	VPXMax = vpxmax;
 	VPYMax = vpymax;
+}
+
+void PointGroupClass::Set_Texture_UV_Rects(const RectClass* rects)
+{
+	TextureUVRects = rects;
 }
 
 // WARNING: This size is ignored if a size array is present.
@@ -514,6 +520,24 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 
 	Update_Arrays(current_loc, current_diffuse, current_size, current_orient, current_frame,
 		PointCount, PointLoc->Get_Count(), vnum, pnum);
+
+	// TheSuperHackers @performance stephanmeesters 21/11/2026 Add support for texture atlas rendering.
+	// Each point's UV rect marks where its texture sits in the atlas.
+	if (TextureUVRects)
+	{
+		// Texture UV rects are incompatible with APT.
+		WWASSERT(APT == nullptr);
+		const int verts_per_point = (PointMode == QUADS) ? 4 : 3;
+		for (int point = 0, vert = 0; point < PointCount; ++point)
+		{
+			const RectClass& rect = TextureUVRects[point];
+			for (const int end = vert + verts_per_point; vert < end; ++vert)
+			{
+				VertexUV[vert].Set(rect.Left + VertexUV[vert].X * rect.Width(),
+				                   rect.Top + VertexUV[vert].Y * rect.Height());
+			}
+		}
+	}
 
 	// the locations are now in view space
 	// so set world and view matrices to identity and render
