@@ -109,7 +109,7 @@ public:
     static void Set_Index_Buffer(const DynamicIBAccessClass & iba, unsigned int index_base_offset);
     static void Set_Index_Buffer_Index_Offset(unsigned offset);
 
-    static void Draw_Triangles(unsigned buffer_type, unsigned int start_index, unsigned int polygon_count,
+    static void Draw_Triangles(unsigned int buffer_type, unsigned int start_index, unsigned int polygon_count,
                                unsigned int min_vertex_index, unsigned int vertex_count);
     static void Draw_Triangles(unsigned int start_index, unsigned int polygon_count,
                                unsigned int min_vertex_index, unsigned int vertex_count);

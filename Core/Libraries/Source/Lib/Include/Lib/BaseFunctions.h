@@ -147,6 +147,6 @@ template <typename T, typename U>
 inline T check_cast(U value)
 {
 	const T result = static_cast<T>(value);
-	DEBUG_ASSERTCRASH(static_cast<U>(result) == value, ("check_cast changed the value"));
+	DEBUG_ASSERTCRASH(static_cast<U>(result) == value && (result < T()) == (value < U()), ("check_cast changed the value"));
 	return result;
 }

@@ -240,7 +240,7 @@ void Renderer::Set_Index_Buffer_Index_Offset(unsigned offset)
     DX8Wrapper::Set_Index_Buffer_Index_Offset(offset);
 }
 
-void Renderer::Draw_Triangles(unsigned buffer_type, unsigned int start_index, unsigned int polygon_count,
+void Renderer::Draw_Triangles(unsigned int buffer_type, unsigned int start_index, unsigned int polygon_count,
                               unsigned int min_vertex_index, unsigned int vertex_count)
 {
     DX8Wrapper::Draw_Triangles(buffer_type, check_cast<unsigned short>(start_index), check_cast<unsigned short>(polygon_count),
