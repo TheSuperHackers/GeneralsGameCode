@@ -56,7 +56,7 @@ set(GAMEENGINEDEVICE_SRC
     Include/W3DDevice/GameClient/W3DPoly.h
     Include/W3DDevice/GameClient/W3DProjectedShadow.h
 #    Include/W3DDevice/GameClient/W3DPropBuffer.h
-    Include/W3DDevice/GameClient/W3DRoadBuffer.h
+#    Include/W3DDevice/GameClient/W3DRoadBuffer.h
     Include/W3DDevice/GameClient/W3DScene.h
 #    Include/W3DDevice/GameClient/W3DShaderManager.h
     Include/W3DDevice/GameClient/W3DShadow.h
@@ -152,7 +152,7 @@ set(GAMEENGINEDEVICE_SRC
 #    Source/W3DDevice/GameClient/W3DParticleSys.cpp
     Source/W3DDevice/GameClient/W3DPoly.cpp
 #    Source/W3DDevice/GameClient/W3DPropBuffer.cpp
-    Source/W3DDevice/GameClient/W3DRoadBuffer.cpp
+#    Source/W3DDevice/GameClient/W3DRoadBuffer.cpp
     Source/W3DDevice/GameClient/W3DScene.cpp
 #    Source/W3DDevice/GameClient/W3DShaderManager.cpp
     Source/W3DDevice/GameClient/W3DShroud.cpp
