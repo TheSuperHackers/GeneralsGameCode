@@ -152,6 +152,10 @@ enum { K_SCRIPT_LIST_DATA_VERSION_1 = 1,
 			K_SCRIPT_CONDITION_VERSION_2 = 2,
 			K_SCRIPT_CONDITION_VERSION_3 = 3,
 			K_SCRIPTS_DATA_VERSION_1,
+
+			// Added in Zero Hour
+			K_SCRIPT_ACTION_VERSION_2 = 2,
+			K_SCRIPT_CONDITION_VERSION_4 = 4,
 			end_of_the_enumeration
 };
 
@@ -1658,7 +1662,18 @@ Bool Condition::ParseConditionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 	Condition	*pCondition = newInstance(Condition);
 	OrCondition *pOr = (OrCondition *)userData;
 	pCondition->m_conditionType = (enum ConditionType)file.readInt();
-	pCondition->m_numParms =file.readInt();
+	// TheSuperHackers @bugfix Skip the name key that Zero Hour writes after the type. See readActionType.
+	if (info->version >= K_SCRIPT_CONDITION_VERSION_4) {
+		file.readNameKey();
+	}
+	const Bool unknownType = pCondition->m_conditionType < 0 || pCondition->m_conditionType >= NUM_ITEMS;
+	if (unknownType) {
+		// The parameters of an unknown type are not read. Closing the chunk skips them.
+		DEBUG_LOG(("Unknown script condition %d. Making it false.", pCondition->m_conditionType));
+		pCondition->m_conditionType = CONDITION_FALSE;
+	} else {
+		pCondition->m_numParms =file.readInt();
+	}
 	Int i;
 	for (i=0; i<pCondition->m_numParms; i++)
 	{
@@ -1695,7 +1710,7 @@ Bool Condition::ParseConditionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 	} else {
 		pOr->setFirstAndCondition(pCondition);
 	}
-	DEBUG_ASSERTCRASH(file.atEndOfChunk(), ("Unexpected data left over."));
+	DEBUG_ASSERTCRASH(unknownType || file.atEndOfChunk(), ("Unexpected data left over."));
 	return true;
 }
 
@@ -2341,6 +2356,24 @@ void ScriptAction::WriteActionDataChunk(DataChunkOutput &chunkWriter, ScriptActi
 	}
 }
 
+// TheSuperHackers @bugfix Read the name key that Zero Hour writes after the script action type.
+// The Generals types are the first entries of the Zero Hour lists, so the type number alone identifies them.
+// Types past the end of the Generals list only exist in Zero Hour and become a no-op.
+// The parameters of an unknown type are not read. Closing the chunk skips them.
+static ScriptAction::ScriptActionType readActionType(DataChunkInput &file, DataChunkInfo *info, Script *pScript, Bool &unknownType)
+{
+	Int type = file.readInt();
+	if (info->version >= K_SCRIPT_ACTION_VERSION_2) {
+		file.readNameKey();
+	}
+	unknownType = type < 0 || type >= ScriptAction::NUM_ITEMS;
+	if (unknownType) {
+		DEBUG_LOG(("Unknown script action %d in script '%s'. Making it a no-op.", type, pScript->getName().str()));
+		return ScriptAction::NO_OP;
+	}
+	return (ScriptAction::ScriptActionType)type;
+}
+
 /**
 * ScriptAction::ParseActionDataChunk - read an action chunk in a script list.
 * Format is the newer CHUNKY format.
@@ -2354,7 +2387,8 @@ Bool ScriptAction::ParseActionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 
 	ScriptAction	*pScriptAction = newInstance(ScriptAction);
 
-	pScriptAction->m_actionType = (enum ScriptActionType)file.readInt();
+	Bool unknownType;
+	pScriptAction->m_actionType = readActionType(file, info, pScript, unknownType);
 
 #if defined(RTS_DEBUG)
 	const ActionTemplate* at = TheScriptEngine->getActionTemplate(pScriptAction->m_actionType);
@@ -2363,7 +2397,9 @@ Bool ScriptAction::ParseActionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 	}
 #endif
 
-	pScriptAction->m_numParms =file.readInt();
+	if (!unknownType) {
+		pScriptAction->m_numParms =file.readInt();
+	}
 	Int i;
 	for (i=0; i<pScriptAction->m_numParms; i++)
 	{
@@ -2449,7 +2485,7 @@ Bool ScriptAction::ParseActionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 	{
 		pScript->setAction(pScriptAction);
 	}
-	DEBUG_ASSERTCRASH(file.atEndOfChunk(), ("Unexpected data left over."));
+	DEBUG_ASSERTCRASH(unknownType || file.atEndOfChunk(), ("Unexpected data left over."));
 	return true;
 }
 
@@ -2489,8 +2525,11 @@ Bool ScriptAction::ParseActionFalseDataChunk(DataChunkInput &file, DataChunkInfo
 
 	ScriptAction	*pScriptAction = newInstance(ScriptAction);
 
-	pScriptAction->m_actionType = (enum ScriptActionType)file.readInt();
-	pScriptAction->m_numParms =file.readInt();
+	Bool unknownType;
+	pScriptAction->m_actionType = readActionType(file, info, pScript, unknownType);
+	if (!unknownType) {
+		pScriptAction->m_numParms =file.readInt();
+	}
 	Int i;
 	for (i=0; i<pScriptAction->m_numParms; i++) {
 		pScriptAction->m_parms[i] = Parameter::ReadParameter(file);
@@ -2505,7 +2544,7 @@ Bool ScriptAction::ParseActionFalseDataChunk(DataChunkInput &file, DataChunkInfo
 	} else {
 		pScript->setFalseAction(pScriptAction);
 	}
-	DEBUG_ASSERTCRASH(file.atEndOfChunk(), ("Unexpected data left over."));
+	DEBUG_ASSERTCRASH(unknownType || file.atEndOfChunk(), ("Unexpected data left over."));
 	return true;
 }
 
