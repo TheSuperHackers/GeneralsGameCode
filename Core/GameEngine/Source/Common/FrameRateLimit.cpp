@@ -28,6 +28,8 @@ FrameRateLimit::FrameRateLimit()
 	QueryPerformanceCounter(&start);
 	m_freq = freq.QuadPart;
 	m_start = start.QuadPart;
+	m_lastActual = m_start;
+	m_previousFps = 0;
 }
 
 Real FrameRateLimit::wait(UnsignedInt maxFps)
@@ -35,6 +37,11 @@ Real FrameRateLimit::wait(UnsignedInt maxFps)
 	PROFILER_SECTION;
 	LARGE_INTEGER tick;
 	QueryPerformanceCounter(&tick);
+	if (m_previousFps != maxFps)
+	{
+		m_start = m_lastActual;
+	}
+	m_previousFps = maxFps;
 	double elapsedSeconds = static_cast<double>(tick.QuadPart - m_start) / m_freq;
 	const double targetSeconds = 1.0 / maxFps;
 	const double sleepSeconds = targetSeconds - elapsedSeconds - 0.002; // leave ~2ms for spin wait
@@ -54,8 +61,16 @@ Real FrameRateLimit::wait(UnsignedInt maxFps)
 	}
 	while (elapsedSeconds < targetSeconds);
 
-	m_start = tick.QuadPart;
-	return (Real)elapsedSeconds;
+	const Int64 period = static_cast<Int64>(static_cast<double>(m_freq) / maxFps + 0.5);
+	const Int64 deadline = m_start + period;
+	const double actualSeconds = static_cast<double>(tick.QuadPart - m_lastActual) / m_freq;
+	m_lastActual = tick.QuadPart;
+	// TheSuperHackers @bugfix arcticdolphin 24/10/2026 Preserve small overshoot so the frame rate cap is met, but discard long pauses instead of banking catch-up.
+	if (tick.QuadPart - deadline < period)
+		m_start = deadline;
+	else
+		m_start = tick.QuadPart;
+	return static_cast<Real>(actualSeconds);
 }
 
 void FrameRateLimit::reset()
@@ -63,6 +78,8 @@ void FrameRateLimit::reset()
 	LARGE_INTEGER tick;
 	QueryPerformanceCounter(&tick);
 	m_start = tick.QuadPart;
+	m_lastActual = m_start;
+	m_previousFps = 0;
 }
 
 
