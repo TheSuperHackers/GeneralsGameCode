@@ -215,8 +215,13 @@ private:
 	// Following waypoint paths as a team.
 	const Waypoint *m_currentWaypoint;
 
+#if RETAIL_COMPATIBLE_SCRIPTING
 	// Should check/Execute generic script
 	Bool					m_shouldAttemptGenericScript[MAX_GENERIC_SCRIPTS];
+#else
+	// TheSuperHackers @feature Mauller/TanSo 1/04/2026 Implement generic scripts on each team instance
+	Script* m_genericScriptsToRun[MAX_GENERIC_SCRIPTS];
+#endif
 
 	// Recruitablity.
 	Bool				m_isRecruitablitySet;	///< If false, recruitability is team proto value.  If true, m_isRecruitable.
@@ -244,6 +249,10 @@ public:
 
 	/// return the prototype used to create this team
 	const TeamPrototype *getPrototype() { return m_proto; }
+
+#if !RETAIL_COMPATIBLE_SCRIPTING
+	Script* getGenericScript(Int scriptToRetrieve) { return m_genericScriptsToRun[scriptToRetrieve]; }
+#endif
 
 	void setID( TeamID id ) { m_id = id; }
 	TeamID getID() const { return m_id; }
