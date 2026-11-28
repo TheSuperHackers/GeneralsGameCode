@@ -83,6 +83,16 @@ public:
     static bool Has_Stencil();
     static WW3DFormat Get_Back_Buffer_Format();
 
+    static bool Supports_Texture_Format(WW3DFormat format);
+    static bool Supports_DXTC();
+    static bool Supports_Dot3();
+    static bool Supports_Point_Sprites();
+    static bool Supports_NPatches();
+    static bool Supports_Bump_Envmap();
+    static bool Supports_Bump_Envmap_Luminance();
+    static bool Supports_ZBias();
+    static int Get_Max_Textures_Per_Pass();
+
     static void Set_Gamma(float gamma, float bright, float contrast, bool calibrate = true, bool uselimit = true);
 
     static void Begin_Scene();
@@ -105,16 +115,16 @@ public:
 
     static void Set_Vertex_Buffer(const VertexBufferClass * vb, unsigned stream = 0);
     static void Set_Vertex_Buffer(const DynamicVBAccessClass & vba);
-    static void Set_Index_Buffer(const IndexBufferClass * ib, unsigned short index_base_offset);
-    static void Set_Index_Buffer(const DynamicIBAccessClass & iba, unsigned short index_base_offset);
+    static void Set_Index_Buffer(const IndexBufferClass * ib, unsigned int index_base_offset);
+    static void Set_Index_Buffer(const DynamicIBAccessClass & iba, unsigned int index_base_offset);
     static void Set_Index_Buffer_Index_Offset(unsigned offset);
 
-    static void Draw_Triangles(unsigned buffer_type, unsigned short start_index, unsigned short polygon_count,
-                               unsigned short min_vertex_index, unsigned short vertex_count);
-    static void Draw_Triangles(unsigned short start_index, unsigned short polygon_count,
-                               unsigned short min_vertex_index, unsigned short vertex_count);
-    static void Draw_Strip(unsigned short start_index, unsigned short polygon_count,
-                           unsigned short min_vertex_index, unsigned short vertex_count);
+    static void Draw_Triangles(unsigned buffer_type, unsigned int start_index, unsigned int polygon_count,
+                               unsigned int min_vertex_index, unsigned int vertex_count);
+    static void Draw_Triangles(unsigned int start_index, unsigned int polygon_count,
+                               unsigned int min_vertex_index, unsigned int vertex_count);
+    static void Draw_Strip(unsigned int start_index, unsigned int polygon_count,
+                           unsigned int min_vertex_index, unsigned int vertex_count);
 
     static void Set_Transform(RenderTransform transform, const Matrix4x4 & m);
     static void Set_Transform(RenderTransform transform, const Matrix3D & m);

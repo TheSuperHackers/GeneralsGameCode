@@ -39,6 +39,7 @@
 #include "vertmaterial.h"
 #include "WWLib/realcrc.h"
 #include	"dx8wrapper.h"
+#include	"Renderer.h"
 #include "dx8caps.h"
 
 
@@ -905,7 +906,7 @@ void MeshMatDescClass::Configure_Material(VertexMaterialClass * mtl,int pass,boo
 
 bool MeshMatDescClass::Do_Mappers_Need_Normals()
 {
-	if (DX8Wrapper::Get_Current_Caps()->Support_NPatches() && WW3D::Get_NPatches_Level()>1) return true;
+	if (Renderer::Supports_NPatches() && WW3D::Get_NPatches_Level()>1) return true;
 
 	for (int pass=0; pass<PassCount; pass++) {
 		/*
