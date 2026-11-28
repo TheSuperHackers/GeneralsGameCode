@@ -84,6 +84,7 @@ public:
 	virtual UnsignedInt getContainCount() const override;
 	virtual Int getContainMax() const override;
 	virtual const ContainedItemsList* getContainedItemsList() const override;
+	virtual Bool isContained( const Object *obj ) const override;
 
 	// Friend for our Draw module only.
 	virtual const Object *friend_getRider() const override; ///< Damn.  The draw order dependency bug for riders means that our draw module needs to cheat to get around it.

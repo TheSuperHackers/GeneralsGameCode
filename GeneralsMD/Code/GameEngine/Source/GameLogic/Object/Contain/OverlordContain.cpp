@@ -486,6 +486,15 @@ const ContainedItemsList* OverlordContain::getContainedItemsList() const
 }
 
 //-------------------------------------------------------------------------------------------------
+Bool OverlordContain::isContained( const Object *obj ) const
+{
+	if( getRedirectedContain() == nullptr )
+		return TransportContain::isContained( obj );
+
+	return getRedirectedContain()->isContained( obj );
+}
+
+//-------------------------------------------------------------------------------------------------
 Bool OverlordContain::isEnclosingContainerFor( const Object *obj ) const
 {
 	// All of this redirection stuff makes it so that while I am normally a transport
