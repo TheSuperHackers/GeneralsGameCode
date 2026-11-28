@@ -45,9 +45,7 @@
 #if defined(DEBUG_STACKTRACE) || defined(IG_DEBUG_STACKTRACE)
 	#include "Common/StackDump.h"
 #endif
-#ifdef RTS_ENABLE_CRASHDUMP
-#include "MiniDumper/MiniDumper.h"
-#endif
+#include "Common/CrashReporting.h"
 
 
 // Horrible reference, but we really, really need to know if we are windowed.
@@ -191,21 +189,6 @@ static const char *getCurrentTimeString()
 }
 
 
-static void TriggerMiniDump()
-{
-#ifdef RTS_ENABLE_CRASHDUMP
-	if (TheMiniDumper && TheMiniDumper->IsInitialized())
-	{
-		// Create both minimal and full memory dumps
-		TheMiniDumper->TriggerMiniDump(DumpType_Minimal);
-		TheMiniDumper->TriggerMiniDump(DumpType_Full);
-	}
-
-	MiniDumper::shutdownMiniDumper();
-#endif
-}
-
-
 void ReleaseCrash(const char *reason)
 {
 	const DebugCrashHandler crashHandler = DebugGetCrashHandler();
@@ -222,7 +205,7 @@ void ReleaseCrash(const char *reason)
 		}
 	}
 
-	TriggerMiniDump();
+	CrashReporting::captureFatal();
 
 	char prevbuf[ _MAX_PATH ];
 	char curbuf[ _MAX_PATH ];
@@ -312,7 +295,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		crashHandler(m.str());
 	}
 
-	TriggerMiniDump();
+	CrashReporting::captureFatal();
 
 	UnicodeString prompt = TheGameText->fetch(p);
 	UnicodeString mesg = TheGameText->fetch(m);

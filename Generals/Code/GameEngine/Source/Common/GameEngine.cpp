@@ -32,6 +32,7 @@
 #include "Common/AudioAffect.h"
 #include "Common/BuildAssistant.h"
 #include "Common/CRCDebug.h"
+#include "Common/CrashReporting.h"
 #include "Common/FramePacer.h"
 #include "Common/Radar.h"
 #include "Common/PlayerTemplate.h"
@@ -391,6 +392,9 @@ void GameEngine::init()
 
 		// special-case: parse command-line parameters after loading global data
 		CommandLine::parseCommandLineForEngineInit();
+
+		// Generals obtains its user-data path from the GameData INI files above.
+		CrashReporting::userDirectoryReady(TheGlobalData->getPath_UserData());
 
 		TheArchiveFileSystem->loadMods();
 
