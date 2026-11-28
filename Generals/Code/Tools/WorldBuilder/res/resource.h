@@ -517,6 +517,7 @@
 #define IDC_SCRIPT_PREFIX15             1313
 #define IDC_SCRIPT_PREFIX16             1314
 #define IDC_TeamGeneric_Script1         1315
+#define IDC_SIDES                       1329
 #define ID_BRUSH_TOOL                   32771
 #define IDM_ShowGrid                    32772
 #define ID_FEATHERTOOL                  32791
@@ -697,7 +698,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        232
 #define _APS_NEXT_COMMAND_VALUE         33344
-#define _APS_NEXT_CONTROL_VALUE         1326
+#define _APS_NEXT_CONTROL_VALUE         1330
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
