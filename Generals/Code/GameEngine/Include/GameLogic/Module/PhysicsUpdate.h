@@ -95,6 +95,7 @@ public:
 	virtual Bool isHijackedVehicleCrateCollide() const override { return false; }
 	virtual Bool isRailroad() const override { return false;}
 	virtual Bool isSalvageCrateCollide() const override { return false; }
+	virtual Bool isSabotageBuildingCrateCollide() const override { return FALSE; }
 
 	// UpdateModuleInterface
 	virtual UpdateSleepTime update() override;

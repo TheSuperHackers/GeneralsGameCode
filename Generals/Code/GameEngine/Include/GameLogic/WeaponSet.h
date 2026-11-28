@@ -216,6 +216,7 @@ public:
 	Weapon* findWaypointFollowingCapableWeapon();
 	const Weapon* findAmmoPipShowingWeapon() const;
 	UnsignedInt getMostPercentReadyToFireAnyWeapon() const;
+	inline UnsignedInt getNthCommandSourceMask( WeaponSlotType n ) const { return m_curWeaponTemplateSet ? m_curWeaponTemplateSet->getNthCommandSourceMask( n ) : 0; }
 
 	Bool setWeaponLock( WeaponSlotType weaponSlot, WeaponLockType lockType );
 	void releaseWeaponLock(WeaponLockType lockType);
@@ -231,11 +232,11 @@ public:
 		account, but immutable weapon properties, such as "can you
 		target airborne victims".
 	*/
-	CanAttackResult getAbleToAttackSpecificObject( AbleToAttackType t, const Object* obj, const Object* victim, CommandSourceType commandSource ) const;
+	CanAttackResult getAbleToAttackSpecificObject( AbleToAttackType t, const Object* obj, const Object* victim, CommandSourceType commandSource, WeaponSlotType specificSlot = (WeaponSlotType)-1 ) const;
 
 	//When calling this function, all conditions must be validated to the point where we have decided that we wish to attack the object (faction checks, etc).
 	//Now, we are determining if the attack itself is able to be performed!
-	CanAttackResult getAbleToUseWeaponAgainstTarget( AbleToAttackType attackType, const Object *source, const Object *victim, const Coord3D *pos, CommandSourceType commandSource ) const;
+	CanAttackResult getAbleToUseWeaponAgainstTarget( AbleToAttackType attackType, const Object *source, const Object *victim, const Coord3D *pos, CommandSourceType commandSource, WeaponSlotType specificSlot = (WeaponSlotType)-1 ) const;
 
 	/**
 		Selects the best weapon for the given target, and sets it as the current weapon.

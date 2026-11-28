@@ -108,6 +108,7 @@ public:
 	virtual Bool isHijackedVehicleCrateCollide() const override { return false; }
 	virtual Bool isRailroad() const override { return false;}
 	virtual Bool isSalvageCrateCollide() const override { return false; }
+	virtual Bool isSabotageBuildingCrateCollide() const override { return FALSE; }
 
 	// UpdateModule
 	virtual UpdateSleepTime update() override;				///< called once per frame
@@ -191,6 +192,7 @@ public:
 	virtual Bool isGarrisonable() const override { return false; }		///< can this unit be Garrisoned? (ick)
 	virtual Bool isHealContain() const override { return false; } ///< true when container only contains units while healing (not a transport!)
 	virtual Bool isTunnelContain() const override { return FALSE; }
+	virtual Bool isRiderChangeContain() const override { return FALSE; }
 	virtual Bool isSpecialZeroSlotContainer() const override { return false; }
 	virtual Bool isImmuneToClearBuildingAttacks() const override { return true; }
 

@@ -68,6 +68,9 @@ public:
 	virtual const AudioEventRTS& getInitiateSound() const = 0;
 	virtual Bool startsReady() const = 0;
 	virtual Bool isScriptOnly() const = 0;
+
+	//If the special power launches a construction site, we need to know the final product for placement purposes.
+	virtual const ThingTemplate* getReferenceThingTemplate() const = 0;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -155,6 +158,9 @@ public:
 
 	virtual Bool startsReady() const override;
 	virtual Bool isScriptOnly() const override;
+
+	//If the special power launches a construction site, we need to know the final product for placement purposes.
+	virtual const ThingTemplate* getReferenceThingTemplate() const override { return nullptr; }
 
 protected:
 

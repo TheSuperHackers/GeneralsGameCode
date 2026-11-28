@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -319,7 +319,9 @@ Player::Player( Int playerIndex )
 	m_searchAndDestroyBattlePlans = 0;
 	m_tunnelSystem = nullptr;
 	m_playerTemplate = nullptr;
+#if RTS_GENERALS
 	m_visionSpiedMask = PLAYERMASK_NONE;
+#endif
 	m_battlePlanBonuses = nullptr;
 	m_skillPointsModifier = 1.0f;
 	m_canBuildUnits = TRUE;
@@ -330,6 +332,7 @@ Player::Player( Int playerIndex )
 	m_rankLevel = 0;
 	m_sciencePurchasePoints = 0;
 	m_side = nullptr;
+	m_baseSide = nullptr;
 	m_skillPoints = 0;
 	Int i;
 	m_upgradeList = nullptr;
@@ -340,7 +343,9 @@ Player::Player( Int playerIndex )
 	for (i = 0; i < MAX_PLAYER_COUNT; ++i)
 	{
 		m_attackedBy[i] = false;
+#if RTS_GENERALS
 		m_visionSpiedBy[i] = 0;
+#endif
 	}
 	m_attackedFrame = 0;
 
@@ -418,6 +423,7 @@ void Player::init(const PlayerTemplate* pt)
 	if (pt)
 	{
 		m_side = pt->getSide();
+		m_baseSide = pt->getBaseSide();
 		m_productionCostChanges = pt->getProductionCostChanges();
 		m_productionTimeChanges = pt->getProductionTimeChanges();
 		m_productionVeterancyLevels = pt->getProductionVeterancyLevels();
@@ -455,6 +461,7 @@ void Player::init(const PlayerTemplate* pt)
 	{
 		// no player template? must be the neutral player!
 		m_side = "";
+		m_baseSide = "";
 		m_productionCostChanges.clear();
 		m_productionTimeChanges.clear();
 		m_productionVeterancyLevels.clear();
@@ -489,6 +496,8 @@ void Player::init(const PlayerTemplate* pt)
 		it = m_kindOfPercentProductionChangeList.erase( it );
 		deleteInstance(tof);
 	}
+
+	getAcademyStats()->init( this );
 
 	//Always off at the beginning of a game! Only GameLogic::update has
 	//the power to turn it on. Don't want to cause desyncs!
@@ -669,17 +678,51 @@ void Player::update()
 		m_ai->update();
 
 	// Allow the teams this player owns to update themselves.
-
-	for (PlayerTeamList::iterator it = m_playerTeamPrototypes.begin(); it != m_playerTeamPrototypes.end(); ++it) {
-		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
+	for( PlayerTeamList::iterator it = m_playerTeamPrototypes.begin(); it != m_playerTeamPrototypes.end(); ++it )
+	{
+		for( DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance() )
+		{
 			Team *team = iter.cur();
-			if (!team) {
+			if( !team )
+			{
 				continue;
 			}
-
 			team->updateGenericScripts();
 		}
 	}
+
+	if( m_energy.getPowerSabotagedTillFrame() != 0 && TheGameLogic->getFrame() > m_energy.getPowerSabotagedTillFrame() )
+	{
+		m_energy.setPowerSabotagedTillFrame( 0 ); //Tells us we're no longer sabotaged for above check.
+		onPowerBrownOutChange( !m_energy.hasSufficientPower() );
+	}
+
+	//Update the academy stats (this only checks applicable things that require a polling method)
+	getAcademyStats()->update();
+
+#if !(RTS_GENERALS && (RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_NETWORKING))
+	//Kris: August 25, 2003 (DAY OF CODE LOCK -- NO NEW FEATURES, REALLY!)
+	if( ThePlayerList->getLocalPlayer() == this )
+	{
+		UnsignedInt now = TheGameLogic->getFrame();
+		//Only check and post the message once every second so we don't spam the message stream to account for lag.
+		if( now % LOGICFRAMES_PER_SECOND == 0 )
+		{
+			if( TheGlobalData->m_clientRetaliationModeEnabled != isLogicalRetaliationModeEnabled() )
+			{
+				//Post a logical message that will switch the retaliation mode on or off.
+				GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_ENABLE_RETALIATION_MODE );
+				if( msg )
+				{
+#if RETAIL_COMPATIBLE_CRC
+					msg->appendIntegerArgument( getPlayerIndex() );
+#endif
+					msg->appendBooleanArgument( TheGlobalData->m_clientRetaliationModeEnabled );
+				}
+			}
+		}
+	}
+#endif
 
 #if !(RETAIL_COMPATIBLE_CRC || PRESERVE_TUNNEL_HEAL_STACKING)
 	// TheSuperHackers @bugfix Stubbjax 26/09/2025 The Tunnel System now heals
@@ -846,14 +889,17 @@ void Player::initFromDict(const Dict* d)
 		}
 		Int diffInt  = d->getInt(TheKey_skirmishDifficulty, &exists);
 		GameDifficulty difficulty = TheScriptEngine->getGlobalDifficulty();
-		if (exists) {
+		if (exists)
+		{
 			difficulty = (GameDifficulty) diffInt;
 		}
-		if (m_ai) {
+		if (m_ai)
+		{
 			m_ai->setAIDifficulty(difficulty);
 		}
 
-		if (!found) {
+		if (!found)
+		{
 			DEBUG_CRASH(("Could not find skirmish player for side %s", mySide.str()));
 		} else {
 			m_playerName = qualTemplatePlayerName;
@@ -948,9 +994,13 @@ void Player::initFromDict(const Dict* d)
 	for ( i = 0; i < MAX_PLAYER_COUNT; ++i ) // For now, it has been decided to just fix this one.  Dear god me must reset.
 	{
 		m_attackedBy[i] = false;
+#if RTS_GENERALS
 		m_visionSpiedBy[i] = 0;
+#endif
 	}
+#if RTS_GENERALS
 	m_visionSpiedMask = PLAYERMASK_NONE;
+#endif
 
 	Int c = d->getInt(TheKey_playerColor, &exists);
 	if (exists)
@@ -1064,7 +1114,9 @@ void Player::becomingLocalPlayer(Bool yes)
 					Drawable *draw = object->getDrawable();
 					if( draw )
 					{
-						StealthUpdate *update = object->getStealth();
+
+            StealthUpdate *update = object->getStealth();
+
 						if( update && update->isDisguised() )
 						{
 							Player *disguisedPlayer = ThePlayerList->getNthPlayer( update->getDisguisedPlayerIndex() );
@@ -1097,6 +1149,9 @@ void Player::becomingLocalPlayer(Bool yes)
 			}
 			deleteInstance(iter);
 		}
+
+		if( TheControlBar )
+			TheControlBar->markUIDirty();
 	}
 	else
 	{
@@ -1117,11 +1172,13 @@ Bool Player::isSkirmishAIPlayer()
 /**
  * Find a good spot to fire a superweapon.
  */
-void Player::computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *retPos, Int playerNdx, Real weaponRadius)
+Bool Player::computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *retPos, Int playerNdx, Real weaponRadius)
 {
 	if (m_ai) {
-		m_ai->computeSuperweaponTarget(power, retPos, playerNdx, weaponRadius);
+		return m_ai->computeSuperweaponTarget(power, retPos, playerNdx, weaponRadius);
 	}
+
+  return FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1615,6 +1672,7 @@ void Player::onStructureConstructionComplete( Object *builder, Object *structure
 
 	// This object may require us to play some EVA sounds.
 	Player *localPlayer = ThePlayerList->getLocalPlayer();
+#if RTS_GENERALS
 	if (localPlayer == structure->getControllingPlayer() || localPlayer->getRelationship(structure->getTeam()) != ENEMIES)
 		return;
 
@@ -1627,7 +1685,63 @@ void Player::onStructureConstructionComplete( Object *builder, Object *structure
 
 	if (structure->hasSpecialPower(SPECIAL_SCUD_STORM))
 		TheEva->setShouldPlay(EVA_SuperweaponDetected_ScudStorm);
+#else
 
+	if( structure->hasSpecialPower( SPECIAL_PARTICLE_UPLINK_CANNON ) ||
+			structure->hasSpecialPower( SUPW_SPECIAL_PARTICLE_UPLINK_CANNON ) ||
+			structure->hasSpecialPower( LAZR_SPECIAL_PARTICLE_UPLINK_CANNON ) )
+  {
+    if ( localPlayer == structure->getControllingPlayer() )
+    {
+		  TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_ParticleCannon);
+    }
+    else if ( localPlayer->getRelationship(structure->getTeam()) != ENEMIES )
+    {
+      // Note: treating NEUTRAL as ally. Is this correct?
+      TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_ParticleCannon);
+    }
+    else
+    {
+      TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_ParticleCannon);
+    }
+  }
+
+	if( structure->hasSpecialPower( SPECIAL_NEUTRON_MISSILE ) ||
+			structure->hasSpecialPower( NUKE_SPECIAL_NEUTRON_MISSILE ) ||
+			structure->hasSpecialPower( SUPW_SPECIAL_NEUTRON_MISSILE ) )
+  {
+    if ( localPlayer == structure->getControllingPlayer() )
+    {
+      TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_Nuke);
+    }
+    else if ( localPlayer->getRelationship(structure->getTeam()) != ENEMIES )
+    {
+      // Note: treating NEUTRAL as ally. Is this correct?
+      TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_Nuke);
+    }
+    else
+    {
+      TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_Nuke);
+    }
+  }
+
+	if (structure->hasSpecialPower(SPECIAL_SCUD_STORM))
+  {
+    if ( localPlayer == structure->getControllingPlayer() )
+    {
+      TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_ScudStorm);
+    }
+    else if ( localPlayer->getRelationship(structure->getTeam()) != ENEMIES )
+    {
+      // Note: treating NEUTRAL as ally. Is this correct?
+      TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_ScudStorm);
+    }
+    else
+    {
+      TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_ScudStorm);
+    }
+  }
+#endif
 }
 
 //=============================================================================
@@ -2248,9 +2362,21 @@ void Player::setUnitsShouldIdleOrResume(Bool idle)
 	}
 }
 
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
+//-------------------------------------------------------------------------------
+void sellBuildings( Object *obj, void *userData )
+{
+  if( obj->isFactionStructure() || obj->isKindOf( KINDOF_COMMANDCENTER ) || obj->isKindOf( KINDOF_FS_POWER ) )
+  {
+    TheBuildAssistant->sellObject( obj );
+  }
+}
+#endif
+
 //=============================================================================
 void Player::sellEverythingUnderTheSun()
 {
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
 	for (PlayerTeamList::iterator it = m_playerTeamPrototypes.begin();
 			 it != m_playerTeamPrototypes.end(); ++it) {
 		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
@@ -2270,6 +2396,9 @@ void Player::sellEverythingUnderTheSun()
 			}
 		}
 	}
+#else
+  iterateObjects( sellBuildings, nullptr );
+#endif
 }
 
 
@@ -2337,6 +2466,15 @@ void Player::buildBySupplies(Int minimumCash, const AsciiString &thingName)
 }
 
 //=============================================================================
+void Player::buildSpecificBuildingNearestTeam( const AsciiString &thingName, const Team *team )
+{
+	if( m_ai )
+	{
+		m_ai->buildSpecificBuildingNearestTeam( thingName, team );
+	}
+}
+
+//=============================================================================
 void Player::buildUpgrade( const AsciiString &upgrade)
 {
 	if (m_ai)
@@ -2353,6 +2491,20 @@ void Player::recruitSpecificTeam( TeamPrototype *teamProto, Real recruitRadius)
 		// Do a priority build.
 		m_ai->recruitSpecificAITeam(teamProto, recruitRadius);
 	}
+}
+
+
+//=============================================================================
+// Calculates the closest construction zone location based on a template. Gets plassed to aiPlayer
+//=============================================================================
+Bool Player::calcClosestConstructionZoneLocation( const ThingTemplate *constructTemplate, Coord3D *location )
+{
+	if( m_ai )
+	{
+		return m_ai->calcClosestConstructionZoneLocation( constructTemplate, location );
+	}
+
+  return FALSE;
 }
 
 //=============================================================================
@@ -2541,6 +2693,14 @@ Bool Player::attemptToPurchaseScience(ScienceType science)
 	Int cost = TheScienceStore->getSciencePurchaseCost(science);
 	addSciencePurchasePoints(-cost);
 	addScience(science);
+
+	getAcademyStats()->recordGeneralsPointsSpent( cost );
+
+	if( ThePlayerList->getLocalPlayer() == this )
+	{
+		TheControlBar->markUIDirty();
+	}
+
 	return true;
 }
 
@@ -2872,6 +3032,12 @@ Bool Player::canBuild(const ThingTemplate *tmplate) const
 
 	}
 
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
+  if ( !canBuildMoreOfType( tmplate ) )
+    return false;
+#endif
+
+
 	return true;
 }
 
@@ -2990,6 +3156,11 @@ Upgrade *Player::addUpgrade( const UpgradeTemplate *upgradeTemplate, UpgradeStat
 		onUpgradeCompleted( upgradeTemplate );
 	}
 
+	if( ThePlayerList->getLocalPlayer() == this )
+	{
+		TheControlBar->markUIDirty();
+	}
+
 	return u;
 
 }
@@ -3052,6 +3223,11 @@ void Player::removeUpgrade( const UpgradeTemplate *upgradeTemplate )
 			onUpgradeRemoved();
 
 		deleteInstance(upgrade);
+
+		if( ThePlayerList->getLocalPlayer() == this )
+		{
+			TheControlBar->markUIDirty();
+		}
 	}
 }
 
@@ -3617,9 +3793,16 @@ void Player::processSelectTeamGameMessage(Int hotkeyNum) {
 	const VecObjectPtr& objectList = m_squads[hotkeyNum]->getLiveObjects();
 	Int numObjs = objectList.size();
 
-	for (Int i = 0; i < numObjs; ++i) {
+	for (Int i = 0; i < numObjs; ++i)
+	{
 		m_currentSelection->addObject(objectList[i]);
 	}
+
+	if( numObjs > 0 )
+	{
+		getAcademyStats()->recordControlGroupsUsed();
+	}
+
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3820,6 +4003,7 @@ Bool Player::getAttackedBy( Int playerNdx ) const
 	return m_attackedBy[playerNdx];
 }
 
+#if RTS_GENERALS
 // ------------------------------------------------------------------------------------------------
 static void callHandleShroud( Object *obj, void * )
 {
@@ -3870,6 +4054,37 @@ PlayerMaskType Player::getVisionSpiedMask() const
 {
 	return m_visionSpiedMask;
 }
+#else
+// ------------------------------------------------------------------------------------------------
+// Little wrapper function so I can use it in iterateObjects, which is cool.
+struct VisionSpiedStruct
+{
+	Bool setting;
+	KindOfMaskType whichUnits;
+	PlayerIndex byWhom;
+};
+
+static void iterator_setUnitsVisionSpied( Object *obj, void * voidData)
+{
+	VisionSpiedStruct *data = (VisionSpiedStruct *)voidData;
+
+	// I feel I have to disapprove of the naming of this gathering of cell functions.  It is called by death,
+	// alliance change, containment, spy change, and dynamic view range as well as partition cell change.
+	if( obj && obj->isAnyKindOf(data->whichUnits) )
+		obj->setVisionSpied(data->setting, data->byWhom);
+}
+
+// ------------------------------------------------------------------------------------------------
+void Player::setUnitsVisionSpied( Bool setting, KindOfMaskType whichUnits, PlayerIndex byWhom )
+{
+	VisionSpiedStruct data;
+	data.setting = setting;
+	data.whichUnits = whichUnits;
+	data.byWhom = byWhom;
+	// Being spied is now a property of the unit, not us, since we can spy only a portion of the enemy.
+	iterateObjects( iterator_setUnitsVisionSpied, &data );
+}
+#endif
 
 // ------------------------------------------------------------------------------------------------
 Bool Player::isPlayerObserver() const
@@ -3918,9 +4133,6 @@ void Player::crc( Xfer *xfer )
 		m_battlePlanBonuses->m_invalidKindOf.xfer(xfer);
 	}
 
-	// People have reported memory hacking their points.  That would work since
-	// buttons are authoritative, and these points just unhided buttons.
-	// Same cheat principle as pulling NeedScience off your Generals buttons.
 	xfer->xferInt( &m_skillPoints );
 	xfer->xferInt( &m_sciencePurchasePoints );
 
@@ -4285,22 +4497,19 @@ void Player::xfer( Xfer *xfer )
 	// attacked by
 	xfer->xferUser( m_attackedBy, sizeof( Bool ) * MAX_PLAYER_COUNT );
 
+#if RTS_GENERALS
 	// vision spied by
 	xfer->xferUser( m_visionSpiedBy, sizeof( Int ) * MAX_PLAYER_COUNT );
 
 	// vision spied by mask
 	xfer->xferUser( &m_visionSpiedMask, sizeof( PlayerMaskType ) );
+#endif
 
 	// cash bounty percent
 	xfer->xferReal( &m_cashBountyPercent );
 
 	// score keeper
 	xfer->xferSnapshot( &m_scoreKeeper );
-
-
-
-
-
 
 	// size of and data for kindof percent production change list
 	UnsignedShort percentProductionChangeCount = m_kindOfPercentProductionChangeList.size();

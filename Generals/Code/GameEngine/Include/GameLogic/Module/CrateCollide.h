@@ -81,6 +81,7 @@ public:
 	virtual Bool isRailroad() const override { return FALSE;};
  	virtual Bool isCarBombCrateCollide() const override { return FALSE; }
 	virtual Bool isHijackedVehicleCrateCollide() const override { return FALSE; }
+	virtual Bool isSabotageBuildingCrateCollide() const override { return FALSE; }
 
 protected:
 

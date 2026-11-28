@@ -458,6 +458,7 @@ public:
 	UnsignedInt getMostPercentReadyToFireAnyWeapon() const;
 
 	Weapon* getWeaponInWeaponSlot(WeaponSlotType wslot) const { return m_weaponSet.getWeaponInWeaponSlot(wslot); }
+	UnsignedInt getWeaponInWeaponSlotCommandSourceMask( WeaponSlotType wSlot ) const { return m_weaponSet.getNthCommandSourceMask( wSlot ); }
 
 	// see if this current weapon set's weapons has shared reload times
 	Bool isReloadTimeShared() const { return m_weaponSet.isSharedReloadTime(); }
@@ -486,10 +487,10 @@ public:
 		where we already know that isAbleToAttack() == true. so you should always
 		call isAbleToAttack prior to calling this! (srj)
 	*/
-	CanAttackResult getAbleToAttackSpecificObject( AbleToAttackType t, const Object* target, CommandSourceType commandSource ) const;
+	CanAttackResult getAbleToAttackSpecificObject( AbleToAttackType t, const Object* target, CommandSourceType commandSource, WeaponSlotType specificSlot = (WeaponSlotType)-1 ) const;
 
 	//Used for base defenses and otherwise stationary units to see if you can attack a position potentially out of range.
-	CanAttackResult getAbleToUseWeaponAgainstTarget( AbleToAttackType attackType, const Object *victim, const Coord3D *pos, CommandSourceType commandSource ) const;
+	CanAttackResult getAbleToUseWeaponAgainstTarget( AbleToAttackType attackType, const Object *victim, const Coord3D *pos, CommandSourceType commandSource, WeaponSlotType specificSlot = (WeaponSlotType)-1 ) const;
 
 	/**
 		Selects the best weapon for the given target, and sets it as the current weapon.

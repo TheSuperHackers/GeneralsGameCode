@@ -1521,9 +1521,14 @@ Object *Team::getTeamTargetObject()
 	Object *target = TheGameLogic->findObjectByID(m_commonAttackTarget);
 	if (target) {
 		//If the enemy unit is stealthed and not detected, then we can't attack it!
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+	if( target->testStatus( OBJECT_STATUS_STEALTHED ) &&
+			!target->testStatus( OBJECT_STATUS_DETECTED ) )
+#else
 	if( target->testStatus( OBJECT_STATUS_STEALTHED ) &&
 			!target->testStatus( OBJECT_STATUS_DETECTED ) &&
 			!target->testStatus( OBJECT_STATUS_DISGUISED ) )
+#endif
 		{
 			target = nullptr;
 		}
@@ -1534,11 +1539,13 @@ Object *Team::getTeamTargetObject()
 	if (target && target->getContainedBy()) {
 		target = nullptr; // target entered a building or vehicle, so stop targeting.
 	}
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
 	if (target && target->isKindOf(KINDOF_AIRCRAFT)) {
 		// It is just generally bad to have an aircraft as the team target.
 		// Let team members acquire aircraft individually.  jba. [8/27/2003]
 		target = nullptr;
 	}
+#endif
 	if (target == nullptr) {
 		m_commonAttackTarget = INVALID_ID;
 	}

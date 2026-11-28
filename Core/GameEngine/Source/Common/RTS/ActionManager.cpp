@@ -156,9 +156,11 @@ Bool ActionManager::canGetRepairedAt( const Object *obj, const Object *repairDes
 	if( obj->isEffectivelyDead() )
 		return FALSE;
 
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
 	// If I can't move, I can't get repaired
 	if( !obj->isMobile() )
 		return FALSE;
+#endif
 
 	// nothing can be done with things that are under construction
 	if( obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ||
@@ -745,6 +747,7 @@ CanAttackResult ActionManager::getCanAttackObject( const Object *obj, const Obje
 	CanAttackResult result = obj->getAbleToAttackSpecificObject( attackType, objectToAttack, commandSource );
 	if( result != ATTACKRESULT_NOT_POSSIBLE  )
 	{
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
 		//Kris: August 5, 2003
 		//Fix a case where the Demo_GLAInfantryWorker is able to attack using his passive bomb upgrade. We don't
 		//want him to allow a visible attack cursor for the player. This code never checked for AutoChoosesSources
@@ -767,6 +770,7 @@ CanAttackResult ActionManager::getCanAttackObject( const Object *obj, const Obje
 				return ATTACKRESULT_NOT_POSSIBLE;
 			}
 		}
+#endif
 
 		if( result == ATTACKRESULT_INVALID_SHOT && obj->isKindOf( KINDOF_DOZER ) )
 		{
@@ -1075,9 +1079,14 @@ Bool ActionManager::canCaptureBuilding( const Object *obj, const Object *objectT
 		return false;
 
 	//If the enemy unit is stealthed and not detected, then we can't capture it!
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+	if( objectToCapture->testStatus( OBJECT_STATUS_STEALTHED ) &&
+			!objectToCapture->testStatus( OBJECT_STATUS_DETECTED ) )
+#else
 	if( objectToCapture->testStatus( OBJECT_STATUS_STEALTHED ) &&
 			!objectToCapture->testStatus( OBJECT_STATUS_DETECTED ) &&
 			!objectToCapture->testStatus( OBJECT_STATUS_DISGUISED ) )
+#endif
 	{
 		return FALSE;
 	}
@@ -1165,9 +1174,14 @@ Bool ActionManager::canDisableVehicleViaHacking( const Object *obj, const Object
 		}
 
 		//If the enemy unit is stealthed and not detected, then we can't attack it!
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+	if( objectToHack->testStatus( OBJECT_STATUS_STEALTHED ) &&
+			!objectToHack->testStatus( OBJECT_STATUS_DETECTED ) )
+#else
 	if( objectToHack->testStatus( OBJECT_STATUS_STEALTHED ) &&
 			!objectToHack->testStatus( OBJECT_STATUS_DETECTED ) &&
 			!objectToHack->testStatus( OBJECT_STATUS_DISGUISED ) )
+#endif
 		{
 			return FALSE;
 		}
@@ -1295,9 +1309,14 @@ Bool ActionManager::canStealCashViaHacking( const Object *obj, const Object *obj
 		}
 
 		//If the enemy unit is stealthed and not detected, then we can't attack it!
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+	if( objectToHack->testStatus( OBJECT_STATUS_STEALTHED ) &&
+			!objectToHack->testStatus( OBJECT_STATUS_DETECTED ) )
+#else
 	if( objectToHack->testStatus( OBJECT_STATUS_STEALTHED ) &&
 			!objectToHack->testStatus( OBJECT_STATUS_DETECTED ) &&
 			!objectToHack->testStatus( OBJECT_STATUS_DISGUISED ) )
+#endif
 		{
 			return FALSE;
 		}
@@ -1368,9 +1387,14 @@ Bool ActionManager::canDisableBuildingViaHacking( const Object *obj, const Objec
 
 
 	//If the enemy unit is stealthed and not detected, then we can't attack it!
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+	if( objectToHack->testStatus( OBJECT_STATUS_STEALTHED ) &&
+			!objectToHack->testStatus( OBJECT_STATUS_DETECTED ) )
+#else
 	if( objectToHack->testStatus( OBJECT_STATUS_STEALTHED ) &&
 			!objectToHack->testStatus( OBJECT_STATUS_DETECTED ) &&
 			!objectToHack->testStatus( OBJECT_STATUS_DISGUISED ) )
+#endif
 	{
 		return FALSE;
 	}
@@ -1459,6 +1483,7 @@ Bool ActionManager::canSnipeVehicle( const Object *obj, const Object *objectToSn
 
 
 
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
 //-------------------------------------------------------------------------------------------------
 inline Bool isPointOnMap( const Coord3D  *testPos )
 {
@@ -1467,6 +1492,7 @@ inline Bool isPointOnMap( const Coord3D  *testPos )
 	return mapRegion.containsWithin( testPos->asCoord2D() );
 
 }
+#endif
 
 
 // ------------------------------------------------------------------------------------------------
@@ -1561,9 +1587,13 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 			case SPECIAL_RADAR_VAN_SCAN:
 			case SPECIAL_SPY_DRONE:
 			case SPECIAL_HELIX_NAPALM_BOMB:
-
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+				//These specials can be used anywhere!
+				return TRUE;
+#else
         //These specials can be used anywhere!
         return isPointOnMap( loc );
+#endif
       case SPECIAL_LAUNCH_BAIKONUR_ROCKET:
 			  return TRUE;
 
