@@ -235,7 +235,8 @@ File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize
 				if (it != m_fileExist.end())
 				{
 					++it->second.instanceExists;
-					if (it->second.instanceDoesNotExist != ~FileInstance(0))
+					// TheSuperHackers @bugfix arcticdolphin 11/10/2026 Cast the complement back, it is promoted to int.
+					if (it->second.instanceDoesNotExist != FileInstance(~FileInstance(0)))
 						++it->second.instanceDoesNotExist;
 				}
 				else
