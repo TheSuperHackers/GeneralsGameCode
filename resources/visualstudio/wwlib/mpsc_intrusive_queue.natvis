@@ -3,11 +3,14 @@
     <!-- Push prepends, and the chain is only reversed inside Flush, so the entries below
          are listed newest first, which is the reverse of the order a consumer will see. -->
     <Type Name="MPSCIntrusiveQueue&lt;*&gt;">
-        <DisplayString Condition="m_head == 0">{{ empty }}</DisplayString>
+        <!-- The head is inside std::atomic, whose layout differs between the MSVC STL and the VC6 atomic_adapter.h. -->
+        <Intrinsic Name="head" Optional="true" Expression="m_head._Storage._Value"/>
+        <Intrinsic Name="head" Optional="true" Expression="m_head.m_stored"/>
+        <DisplayString Condition="head() == 0">{{ empty }}</DisplayString>
         <DisplayString>{{ MPSCIntrusiveQueue }}</DisplayString>
         <Expand>
             <CustomListItems>
-                <Variable Name="node" InitialValue="m_head"/>
+                <Variable Name="node" InitialValue="head()"/>
                 <Loop>
                     <Break Condition="node == 0"/>
                     <Item>node</Item>
