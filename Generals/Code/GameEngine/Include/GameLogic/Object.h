@@ -419,6 +419,7 @@ public:
 	// contained-by
 	inline Object *getContainedBy() { return m_containedBy; }
 	inline const Object *getContainedBy() const { return m_containedBy; }
+	inline ObjectID getContainedByID() const { return m_containedByID; }
 	inline UnsignedInt getContainedByFrame() const { return m_containedByFrame; }
 	inline Bool isContained() const { return m_containedBy != nullptr; }
 	void onContainedBy( Object *containedBy );
@@ -721,6 +722,7 @@ private:
 
 	Object*												m_containedBy;					/**< an object can only be contained by at most one
 																	other object, this is that object (if present) */
+	ObjectID											m_containedByID;			///< ID of m_containedBy, safe to use while it is destroyed
 	ObjectID											m_xferContainedByID;	///< xfer uses IDs to store pointers and looks them up after
 	UnsignedInt										m_containedByFrame;	///< frame we were contained by m_containedBy
 
