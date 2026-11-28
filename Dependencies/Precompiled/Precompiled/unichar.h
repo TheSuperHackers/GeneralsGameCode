@@ -19,6 +19,10 @@
 
 #include <stddef.h>
 
-// Shared project wide-character type, currently using the native representation.
-// Changing it also requires adapting wide literals, character traits, and CRT/platform APIs.
+// Shared project wide-character type, a UTF-16 code unit on every platform. It matches ICU's UChar.
+// Windows keeps wchar_t, which is 16-bit there, so wide literals and Win32 APIs work unchanged.
+#ifdef _WIN32
 typedef wchar_t unichar;
+#else
+typedef char16_t unichar;
+#endif

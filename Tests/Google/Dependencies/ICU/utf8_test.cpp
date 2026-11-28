@@ -22,13 +22,6 @@
 
 #include "ICU/utf8.h"
 
-// unichar holds UTF-16 code units on Windows and UTF-32 codepoints on most other platforms.
-#if defined(WCHAR_MAX) && (WCHAR_MAX <= 0xFFFF)
-#define UTF8_TEST_WIDE_IS_UTF16 1
-#else
-#define UTF8_TEST_WIDE_IS_UTF16 0
-#endif
-
 #define UTF8_TEST_COUNT(a) (sizeof(a) / sizeof(a[0]))
 
 namespace
@@ -100,12 +93,13 @@ void ExpectInvalidUtf8(const char* utf8, size_t utf8Len)
 
 TEST(Utf8, EmptyInputIsEmpty)
 {
+	const unichar empty[] = { 0 };
 	EXPECT_EQ(Utf8_To_Wide_Len("", 0), 0u);
-	EXPECT_EQ(Wide_To_Utf8_Len(L"", 0), 0u);
+	EXPECT_EQ(Wide_To_Utf8_Len(empty, 0), 0u);
 
 	char narrow[4];
 	FillNarrow(narrow, sizeof(narrow));
-	EXPECT_EQ(Wide_To_Utf8(narrow, sizeof(narrow), L"", 0), 0u);
+	EXPECT_EQ(Wide_To_Utf8(narrow, sizeof(narrow), empty, 0), 0u);
 	EXPECT_EQ(narrow[0], '\0');
 
 	unichar wide[4];
@@ -162,15 +156,9 @@ TEST(Utf8, RoundTripsEncodingLengthBoundaries)
 
 TEST(Utf8, RoundTripsSupplementaryCodepoints)
 {
-#if UTF8_TEST_WIDE_IS_UTF16
 	const unichar first[] = { 0xD800, 0xDC00 };
 	const unichar emoji[] = { 0xD83D, 0xDE00 };
 	const unichar last[] = { 0xDBFF, 0xDFFF };
-#else
-	const unichar first[] = { 0x10000 };
-	const unichar emoji[] = { 0x1F600 };
-	const unichar last[] = { 0x10FFFF };
-#endif
 	{
 		SCOPED_TRACE("U+10000");
 		ExpectRoundTrip("\xF0\x90\x80\x80", 4, first, UTF8_TEST_COUNT(first));
@@ -188,11 +176,7 @@ TEST(Utf8, RoundTripsSupplementaryCodepoints)
 TEST(Utf8, RoundTripsMixedText)
 {
 	const char utf8[] = "a\xC3\xBC\xE2\x82\xAC\xF0\x9F\x98\x80z"; // a U+00FC U+20AC U+1F600 z
-#if UTF8_TEST_WIDE_IS_UTF16
 	const unichar wide[] = { 'a', 0x00FC, 0x20AC, 0xD83D, 0xDE00, 'z' };
-#else
-	const unichar wide[] = { 'a', 0x00FC, 0x20AC, 0x1F600, 'z' };
-#endif
 	ExpectRoundTrip(utf8, sizeof(utf8) - 1, wide, UTF8_TEST_COUNT(wide));
 }
 
@@ -204,9 +188,9 @@ TEST(Utf8, ConvertsEmbeddedNull)
 
 TEST(Utf8, ConvertsOnlySourceLength)
 {
-	const unichar wide[] = { 'a', 'b' };
-	ExpectUtf8ToWide("abc", 2, wide, UTF8_TEST_COUNT(wide));
-	ExpectWideToUtf8(L"abc", 2, "ab", 2);
+	const unichar wide[] = { 'a', 'b', 'c' };
+	ExpectUtf8ToWide("abc", 2, wide, 2);
+	ExpectWideToUtf8(wide, 2, "ab", 2);
 }
 
 TEST(Utf8, ReplacesLoneSurrogates)
@@ -237,14 +221,6 @@ TEST(Utf8, ReplacesLoneSurrogates)
 		ExpectWideToUtf8(wide, 2, "a\xEF\xBF\xBD", 4);
 	}
 }
-
-#if !UTF8_TEST_WIDE_IS_UTF16
-TEST(Utf8, ReplacesWideValuesBeyondUnicode)
-{
-	const unichar wide[] = { 'a', static_cast<unichar>(0x110000), 'b' };
-	ExpectWideToUtf8(wide, UTF8_TEST_COUNT(wide), "a\xEF\xBF\xBD" "b", 5);
-}
-#endif
 
 TEST(Utf8, RejectsMalformedInput)
 {
@@ -353,18 +329,11 @@ TEST(Utf8, Utf8ToWideTruncatesOnCodepointBoundary)
 
 	unichar dest[8];
 	FillWide(dest, UTF8_TEST_COUNT(dest));
-#if UTF8_TEST_WIDE_IS_UTF16
 	// The surrogate pair does not fit, so neither half is written.
 	EXPECT_EQ(Utf8_To_Wide(dest, 3, utf8, utf8Len), 5u);
 	EXPECT_EQ(dest[0], L'a');
 	EXPECT_EQ(dest[1], L'b');
 	EXPECT_EQ(dest[2], L'\0');
-#else
-	EXPECT_EQ(Utf8_To_Wide(dest, 3, utf8, utf8Len), 4u);
-	EXPECT_EQ(dest[0], L'a');
-	EXPECT_EQ(dest[1], L'b');
-	EXPECT_EQ(dest[2], static_cast<unichar>(0x1F600));
-#endif
 	EXPECT_EQ(dest[3], WideSentinel);
 
 	FillWide(dest, UTF8_TEST_COUNT(dest));

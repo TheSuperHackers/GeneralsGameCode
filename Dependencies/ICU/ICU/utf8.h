@@ -24,9 +24,7 @@
 // UTF-8 <-> wide-character transcoding backed by ICU4C. Non-Windows builds link ICU. Windows builds,
 // including VC6, use IcuLoader to load the OS icu.dll on first use, and fall back to Win32 CP_UTF8
 // when the DLL or its exports are unavailable.
-// The wide side is unichar, whose width is platform-dependent: on Windows it is a 16-bit UTF-16
-// code unit (astral codepoints use surrogate pairs); on most other platforms it is a 32-bit
-// UTF-32 codepoint. Both are handled transparently based on the width of unichar.
+// The wide side is unichar, a UTF-16 code unit on every platform. Astral codepoints use surrogate pairs.
 
 // Returned by the decoding functions when the source is not well-formed UTF-8. A return of 0 means
 // an empty result, which is a success and must not be confused with a decoding failure.
