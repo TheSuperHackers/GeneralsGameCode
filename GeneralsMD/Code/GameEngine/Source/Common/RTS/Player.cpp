@@ -3280,13 +3280,10 @@ Bool Player::hasRadar() const
 //------------------------------------------------------------------------------------------------
 static void doPowerDisable( Object *obj, void *userData )
 {
-	Bool disabling = *((Bool*)userData);
-	if( obj && obj->isKindOf(KINDOF_POWERED) )
+	if (obj)
 	{
-		if( disabling )
-			obj->setDisabled( DISABLED_UNDERPOWERED ); //set disabled has a pauseAllSpecialPowers that prevents double pausing
-		else
-			obj->clearDisabled( DISABLED_UNDERPOWERED );
+		const Bool disabling = *reinterpret_cast<Bool*>(userData);
+		obj->doPowerDisable(disabling);
 	}
 }
 

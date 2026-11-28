@@ -306,7 +306,7 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 
 	// allocate the publicModule arrays
 // pool[]ify
-	m_behaviors = MSGNEW("ModulePtrs") BehaviorModule*[totalModules + 1];
+	m_behaviors = MSGNEW("ModulePtrs") BehaviorModule*[totalModules + 1]();
 	BehaviorModule** curB = m_behaviors;
 	const ModuleInfo& mi = tt->getBehaviorModuleInfo();
 
@@ -3170,6 +3170,17 @@ Bool Object::hasSpecialPower( SpecialPowerType type ) const
 Bool Object::hasAnySpecialPower() const
 {
   return SPECIALPOWERMASK_ANY_SET( m_specialPowerBits );
+}
+
+void Object::doPowerDisable(bool disabling)
+{
+	if( isKindOf(KINDOF_POWERED) )
+	{
+		if( disabling )
+			setDisabled( DISABLED_UNDERPOWERED ); //set disabled has a pauseAllSpecialPowers that prevents double pausing
+		else
+			clearDisabled( DISABLED_UNDERPOWERED );
+	}
 }
 
 //-------------------------------------------------------------------------------------------------

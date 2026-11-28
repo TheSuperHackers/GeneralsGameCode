@@ -560,6 +560,7 @@ public:
 	// @todo: inline
 	Bool hasSpecialPower( SpecialPowerType type ) const;
 	Bool hasAnySpecialPower() const;
+	void doPowerDisable(bool disabling);
 
 	void setWeaponBonusCondition(WeaponBonusConditionType wst);
 	void clearWeaponBonusCondition(WeaponBonusConditionType wst);
