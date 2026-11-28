@@ -279,7 +279,7 @@ private:
 	Bool m_sawCompleteGameList;
 
 #ifdef USE_BROADCAST_KEYS
-	enum { NumKeys = 6, ValBufSize = 20 };
+	enum { NumKeys = 5, ValBufSize = 20 };
 	static const char *s_keys[NumKeys];
 	static char s_valueBuffers[NumKeys][ValBufSize];
 	static const char *s_values[NumKeys];
@@ -328,22 +328,20 @@ private:
 };
 
 #ifdef USE_BROADCAST_KEYS
-const char* PeerThreadClass::s_keys[6] = {
+const char* PeerThreadClass::s_keys[NumKeys] = {
 	"b_locale",
 	"b_wins",
 	"b_losses",
 	"b_points",
-	"b_side",
-	"b_pre"
+	"b_side"
 };
-char PeerThreadClass::s_valueBuffers[6][20] = { "", "", "", "", "", "" };
-const char* PeerThreadClass::s_values[6] = {
+char PeerThreadClass::s_valueBuffers[NumKeys][ValBufSize] = { "", "", "", "", "" };
+const char* PeerThreadClass::s_values[NumKeys] = {
 	s_valueBuffers[0],
 	s_valueBuffers[1],
 	s_valueBuffers[2],
 	s_valueBuffers[3],
-	s_valueBuffers[4],
-	s_valueBuffers[5]
+	s_valueBuffers[4]
 };
 
 void PeerThreadClass::trackStatsForPlayer(RoomType roomType, const char *nick, const char *key, const char *val)
@@ -401,15 +399,14 @@ void PeerThreadClass::clearPlayerStats(RoomType roomType)
 
 void PeerThreadClass::pushStatsToRoom(PEER peer)
 {
-	DEBUG_LOG(("PeerThreadClass::pushStatsToRoom(): stats are %s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s",
+	DEBUG_LOG(("PeerThreadClass::pushStatsToRoom(): stats are %s=%s,%s=%s,%s=%s,%s=%s,%s=%s",
 		s_keys[0], s_values[0],
 		s_keys[1], s_values[1],
 		s_keys[2], s_values[2],
 		s_keys[3], s_values[3],
-		s_keys[4], s_values[4],
-		s_keys[5], s_values[5]));
-	peerSetRoomKeys(peer, GroupRoom, m_loginName.c_str(), 6, s_keys, s_values);
-	peerSetRoomKeys(peer, StagingRoom, m_loginName.c_str(), 6, s_keys, s_values);
+		s_keys[4], s_values[4]));
+	peerSetRoomKeys(peer, GroupRoom, m_loginName.c_str(), NumKeys, s_keys, s_values);
+	peerSetRoomKeys(peer, StagingRoom, m_loginName.c_str(), NumKeys, s_keys, s_values);
 }
 
 void getRoomKeysCallback(PEER peer, PEERBool success, RoomType roomType, const char *nick, int num, char **keys, char **values, void *param);
@@ -1122,14 +1119,6 @@ static SerialAuthResult doCDKeyAuthentication( PEER peer )
 #endif // SERVER_DEBUGGING
 	}
 
-	if (retval == SERIAL_OK)
-	{
-		PSRequest req;
-		req.requestType = PSRequest::PSREQUEST_READCDKEYSTATS;
-		req.cdkey = s.str();
-		TheGameSpyPSMessageQueue->addRequest(req);
-	}
-
 	return retval;
 }
 
@@ -1502,47 +1491,43 @@ void PeerThreadClass::Thread_Function()
 
 			case PeerRequest::PEERREQUEST_PUSHSTATS:
 				{
-					DEBUG_LOG(("PEERREQUEST_PUSHSTATS: stats are %d,%d,%d,%d,%d,%d",
-						incomingRequest.statsToPush.locale, incomingRequest.statsToPush.wins, incomingRequest.statsToPush.losses, incomingRequest.statsToPush.rankPoints, incomingRequest.statsToPush.side, incomingRequest.statsToPush.preorder));
+					DEBUG_LOG(("PEERREQUEST_PUSHSTATS: stats are %d,%d,%d,%d,%d",
+						incomingRequest.statsToPush.locale, incomingRequest.statsToPush.wins, incomingRequest.statsToPush.losses, incomingRequest.statsToPush.rankPoints, incomingRequest.statsToPush.side));
 
 					// Testing alternate way to push stats
 #ifdef USE_BROADCAST_KEYS
-					snprintf(s_valueBuffers[0], 20, "%d", incomingRequest.statsToPush.locale);
-					snprintf(s_valueBuffers[1], 20, "%d", incomingRequest.statsToPush.wins);
-					snprintf(s_valueBuffers[2], 20, "%d", incomingRequest.statsToPush.losses);
-					snprintf(s_valueBuffers[3], 20, "%d", incomingRequest.statsToPush.rankPoints);
-					snprintf(s_valueBuffers[4], 20, "%d", incomingRequest.statsToPush.side);
-					snprintf(s_valueBuffers[5], 20, "%d", incomingRequest.statsToPush.preorder);
+					snprintf(s_valueBuffers[0], ValBufSize, "%d", incomingRequest.statsToPush.locale);
+					snprintf(s_valueBuffers[1], ValBufSize, "%d", incomingRequest.statsToPush.wins);
+					snprintf(s_valueBuffers[2], ValBufSize, "%d", incomingRequest.statsToPush.losses);
+					snprintf(s_valueBuffers[3], ValBufSize, "%d", incomingRequest.statsToPush.rankPoints);
+					snprintf(s_valueBuffers[4], ValBufSize, "%d", incomingRequest.statsToPush.side);
 					pushStatsToRoom(peer);
 #else
-					const char *keys[6] = {
+					const char *keys[] = {
 						"locale",
 						"wins",
 						"losses",
 						"points",
-						"side",
-						"pre"
+						"side"
 					};
-					char valueStrings[6][20];
-					char *values[6] = {
+					char valueStrings[ARRAY_SIZE(keys)][20];
+					char *values[ARRAY_SIZE(keys)] = {
 						valueStrings[0],
 						valueStrings[1],
 						valueStrings[2],
 						valueStrings[3],
-						valueStrings[4],
-						valueStrings[5]
+						valueStrings[4]
 					};
 					snprintf(values[0], 20, "%d", incomingRequest.statsToPush.locale);
 					snprintf(values[1], 20, "%d", incomingRequest.statsToPush.wins);
 					snprintf(values[2], 20, "%d", incomingRequest.statsToPush.losses);
 					snprintf(values[3], 20, "%d", incomingRequest.statsToPush.rankPoints);
 					snprintf(values[4], 20, "%d", incomingRequest.statsToPush.side);
-					snprintf(values[5], 20, "%d", incomingRequest.statsToPush.preorder);
-					peerSetGlobalKeys(peer, 6, (const char **)keys, (const char **)values);
+					peerSetGlobalKeys(peer, ARRAY_SIZE(keys), (const char **)keys, (const char **)values);
 					peerSetGlobalWatchKeys(peer, GroupRoom,   0, nullptr, PEERFalse);
 					peerSetGlobalWatchKeys(peer, StagingRoom, 0, nullptr, PEERFalse);
-					peerSetGlobalWatchKeys(peer, GroupRoom,   6, keys, PEERTrue);
-					peerSetGlobalWatchKeys(peer, StagingRoom, 6, keys, PEERTrue);
+					peerSetGlobalWatchKeys(peer, GroupRoom,   ARRAY_SIZE(keys), keys, PEERTrue);
+					peerSetGlobalWatchKeys(peer, StagingRoom, ARRAY_SIZE(keys), keys, PEERTrue);
 #endif
 				}
 				break;
@@ -2565,7 +2550,7 @@ void playerUTMCallback(PEER peer, const char * nick, const char * command, const
 }
 
 static void getPlayerInfo(PeerThreadClass *t, PEER peer, const char *nick, Int& id, UnsignedInt& IP,
-													std::string& locale, Int& wins, Int& losses, Int& rankPoints, Int& side, Int& preorder,
+													std::string& locale, Int& wins, Int& losses, Int& rankPoints, Int& side,
 													RoomType roomType, Int& flags)
 {
 	if (!t || !nick)
@@ -2582,7 +2567,6 @@ static void getPlayerInfo(PeerThreadClass *t, PEER peer, const char *nick, Int& 
 	losses = t->lookupStatForPlayer(roomType, nick, "b_losses");
 	rankPoints = t->lookupStatForPlayer(roomType, nick, "b_points");
 	side = t->lookupStatForPlayer(roomType, nick, "b_side");
-	preorder = t->lookupStatForPlayer(roomType, nick, "b_pre");
 #else // USE_BROADCAST_KEYS
 	const char *s;
 	s = peerGetGlobalWatchKey(peer, nick, "locale");
@@ -2595,13 +2579,11 @@ static void getPlayerInfo(PeerThreadClass *t, PEER peer, const char *nick, Int& 
 	rankPoints = atoi((s)?s:"");
 	s = peerGetGlobalWatchKey(peer, nick, "side");
 	side = atoi((s)?s:"");
-	s = peerGetGlobalWatchKey(peer, nick, "pre");
-	preorder = atoi((s)?s:"");
 #endif // USE_BROADCAST_KEYS
 	flags = 0;
 	peerGetPlayerFlags(peer, nick, roomType, &flags);
-	DEBUG_LOG(("getPlayerInfo(%d) - %s has locale %s, wins:%d, losses:%d, rankPoints:%d, side:%d, preorder:%d",
-		id, nick, locale.c_str(), wins, losses, rankPoints, side, preorder));
+	DEBUG_LOG(("getPlayerInfo(%d) - %s has locale %s, wins:%d, losses:%d, rankPoints:%d, side:%d",
+		id, nick, locale.c_str(), wins, losses, rankPoints, side));
 }
 
 static void roomKeyChangedCallback(PEER peer, RoomType roomType, const char *nick, const char *key, const char *val, void *param)
@@ -2631,7 +2613,7 @@ static void roomKeyChangedCallback(PEER peer, RoomType roomType, const char *nic
 
 	getPlayerInfo(t, peer, nick, resp.player.profileID, resp.player.IP,
 		resp.locale, resp.player.wins, resp.player.losses,
-		resp.player.rankPoints, resp.player.side, resp.player.preorder,
+		resp.player.rankPoints, resp.player.side,
 		resp.player.roomType, resp.player.flags);
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 #endif // USE_BROADCAST_KEYS
@@ -2660,7 +2642,7 @@ void getRoomKeysCallback(PEER peer, PEERBool success, RoomType roomType, const c
 
 	getPlayerInfo(t, peer, nick, resp.player.profileID, resp.player.IP,
 		resp.locale, resp.player.wins, resp.player.losses,
-		resp.player.rankPoints, resp.player.side, resp.player.preorder,
+		resp.player.rankPoints, resp.player.side,
 		resp.player.roomType, resp.player.flags);
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 }
@@ -2683,7 +2665,7 @@ static void globalKeyChangedCallback(PEER peer, const char *nick, const char *ke
 
 	getPlayerInfo(t, peer, nick, resp.player.profileID, resp.player.IP,
 		resp.locale, resp.player.wins, resp.player.losses,
-		resp.player.rankPoints, resp.player.side, resp.player.preorder,
+		resp.player.rankPoints, resp.player.side,
 		resp.player.roomType, resp.player.flags);
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 }
@@ -2705,7 +2687,7 @@ void playerJoinedCallback(PEER peer, RoomType roomType, const char * nick, void 
 
 	getPlayerInfo(t, peer, nick, resp.player.profileID, resp.player.IP,
 		resp.locale, resp.player.wins, resp.player.losses,
-		resp.player.rankPoints, resp.player.side, resp.player.preorder,
+		resp.player.rankPoints, resp.player.side,
 		roomType, resp.player.flags);
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 }
@@ -2725,7 +2707,7 @@ void playerLeftCallback(PEER peer, RoomType roomType, const char * nick, const c
 
 	getPlayerInfo(t, peer, nick, resp.player.profileID, resp.player.IP,
 		resp.locale, resp.player.wins, resp.player.losses,
-		resp.player.rankPoints, resp.player.side, resp.player.preorder,
+		resp.player.rankPoints, resp.player.side,
 		roomType, resp.player.flags);
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 
@@ -2761,7 +2743,7 @@ void playerChangedNickCallback(PEER peer, RoomType roomType, const char * oldNic
 
 	getPlayerInfo(t, peer, newNick, resp.player.profileID, resp.player.IP,
 		resp.locale, resp.player.wins, resp.player.losses,
-		resp.player.rankPoints, resp.player.side, resp.player.preorder,
+		resp.player.rankPoints, resp.player.side,
 		roomType, resp.player.flags);
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 }
@@ -2782,7 +2764,7 @@ static void playerInfoCallback(PEER peer, RoomType roomType, const char * nick, 
 
 	getPlayerInfo(t, peer, nick, resp.player.profileID, resp.player.IP,
 		resp.locale, resp.player.wins, resp.player.losses,
-		resp.player.rankPoints, resp.player.side, resp.player.preorder,
+		resp.player.rankPoints, resp.player.side,
 		roomType, resp.player.flags);
 DEBUG_LOG(("**GS playerInfoCallback name=%s, local=%s", nick, resp.locale.c_str() ));
 	TheGameSpyPeerMessageQueue->addResponse(resp);
@@ -2804,7 +2786,7 @@ static void playerFlagsChangedCallback(PEER peer, RoomType roomType, const char 
 
 	getPlayerInfo(t, peer, nick, resp.player.profileID, resp.player.IP,
 		resp.locale, resp.player.wins, resp.player.losses,
-		resp.player.rankPoints, resp.player.side, resp.player.preorder,
+		resp.player.rankPoints, resp.player.side,
 		roomType, resp.player.flags);
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 }

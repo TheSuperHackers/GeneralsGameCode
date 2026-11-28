@@ -423,8 +423,6 @@ void BattleHonorTooltip(GameWindow *window,
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorFairPlay"), -1, nullptr, tooltipWidth );
 		else if(BitIsSet(battleHonor, BATTLE_HONOR_APOCALYPSE))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorApocalypse"), -1, nullptr, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_OFFICERSCLUB))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorOfficersClub"), -1, nullptr, tooltipWidth );
 		/*
 		else if(BitIsSet(battleHonor, BATTLE_HONOR_SOLO_USA_B))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorSoloUSAB"), -1, nullptr, tooltipWidth );
@@ -647,12 +645,6 @@ static void populateBattleHonors(const PSPlayerStats& stats, Int battleHonors, I
 			BATTLE_HONOR_CHALLENGE, row, column);
 	}
 	*/
-
-	if (TheGameSpyInfo->didPlayerPreorder(stats.id))
-	{
-		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("OfficersClub"), TRUE,
-			BATTLE_HONOR_OFFICERSCLUB, row, column);
-	}
 }
 
 Int GetFavoriteSide( const PSPlayerStats& stats )
@@ -1028,21 +1020,6 @@ void HandlePersistentStorageResponses()
 					GameSpyCloseOverlay(GSOVERLAY_PLAYERINFO);
 				}
 				break;
-			case PSResponse::PSRESPONSE_PREORDER:
-				{
-					if (resp.preorder)
-					{
-						SetUnsignedIntInRegistry("", "Preorder", 1);
-						TheGameSpyInfo->markPlayerAsPreorder( TheGameSpyInfo->getLocalProfileID() );
-
-						// force an update of our shtuff
-						PSResponse newResp;
-						newResp.responseType = PSResponse::PSRESPONSE_PLAYERSTATS;
-						newResp.player = TheGameSpyPSMessageQueue->findPlayerStatsByID(TheGameSpyInfo->getLocalProfileID());
-						TheGameSpyPSMessageQueue->addResponse(newResp);
-					}
-				}
-				break;
 			case PSResponse::PSRESPONSE_PLAYERSTATS:
 				{
 					DEBUG_LOG(("LocalProfileID %d, resp.player.id %d, resp.player.locale %d", TheGameSpyInfo->getLocalProfileID(), resp.player.id, resp.player.locale));
@@ -1091,11 +1068,8 @@ void HandlePersistentStorageResponses()
 						else
 							req.statsToPush.side = favorite;
 
-						Bool isPreorder = TheGameSpyInfo->didPlayerPreorder( TheGameSpyInfo->getLocalProfileID() );
-						req.statsToPush.preorder = isPreorder;
-
-						DEBUG_LOG(("PEERREQUEST_PUSHSTATS: stats will be %d,%d,%d,%d,%d,%d",
-							req.statsToPush.locale, req.statsToPush.wins, req.statsToPush.losses, req.statsToPush.rankPoints, req.statsToPush.side, req.statsToPush.preorder));
+						DEBUG_LOG(("PEERREQUEST_PUSHSTATS: stats will be %d,%d,%d,%d,%d",
+							req.statsToPush.locale, req.statsToPush.wins, req.statsToPush.losses, req.statsToPush.rankPoints, req.statsToPush.side));
 						TheGameSpyPeerMessageQueue->addRequest(req);
 					}
 					TheGameSpyPSMessageQueue->trackPlayerStats(resp.player);
@@ -1155,7 +1129,6 @@ void HandlePersistentStorageResponses()
 							r.locale = info->m_locale.str();
 							r.player.rankPoints = info->m_rankPoints;
 							r.player.side = info->m_side;
-							r.player.preorder = info->m_preorder;
 							TheGameSpyPeerMessageQueue->addResponse(r);
 							break;
 						}

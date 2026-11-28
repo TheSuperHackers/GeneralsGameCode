@@ -99,20 +99,8 @@ void GameSpyInfo::reset()
 	m_rawMotd.clear();
 	m_internalIP = m_externalIP = 0;
 	m_savedIgnoreMap.clear();
-	m_preorderPlayers.clear();
 	m_cachedLocalPlayerStats.reset();
 	m_additionalDisconnects = -1;
-}
-
-Bool GameSpyInfo::didPlayerPreorder( Int profileID ) const
-{
-	std::set<Int>::const_iterator it = m_preorderPlayers.find(profileID);
-	return (it != m_preorderPlayers.end());
-}
-
-void GameSpyInfo::markPlayerAsPreorder( Int profileID )
-{
-	m_preorderPlayers.insert(profileID);
 }
 
 void GameSpyInfo::setLocalIPs(UnsignedInt internalIP, UnsignedInt externalIP)
@@ -423,9 +411,6 @@ void GameSpyInfo::updatePlayerInfo( PlayerInfo pi, AsciiString oldNick )
 		playerLeftGroupRoom(oldNick);
 
 	m_playerInfoMap[pi.m_name] = pi;
-
-	if (pi.m_preorder != 0)
-		markPlayerAsPreorder(pi.m_profileID);
 }
 
 void GameSpyInfo::playerLeftGroupRoom( AsciiString nick )

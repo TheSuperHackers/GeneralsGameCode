@@ -297,7 +297,6 @@ void PlayerRelationMap::loadPostProcess()
 //=============================================================================
 Player::Player( Int playerIndex )
 {
-	m_isPreorder = FALSE;
 	m_isPlayerDead = FALSE;
 
 	m_playerIndex = playerIndex;
@@ -357,7 +356,6 @@ void Player::init(const PlayerTemplate* pt)
 	m_skillPointsModifier = 1.0f;
 	m_attackedFrame = 0;
 
-	m_isPreorder = FALSE;
 	m_isPlayerDead = FALSE;
 
 	m_radarCount = 0;
@@ -787,10 +785,6 @@ void Player::initFromDict(const Dict* d)
 	if (d->getBool(TheKey_playerIsHuman) || forceHuman)
 	{
 		setPlayerType(PLAYER_HUMAN, false);
-		if (d->getBool(TheKey_playerIsPreorder, &exists))
-		{
-			m_isPreorder = TRUE;
-		}
 		if (TheSidesList->getNumSkirmishSides()>0) {
 			// Human player gets scripts from CIVILIAN player.
 			AsciiString  mySide = "Civilian";
@@ -3937,13 +3931,18 @@ void Player::crc( Xfer *xfer )
 	* 6: Store m_unitsShouldHunt, set to true after the script "Tell player to hunt" is called.
 	* 7: added Preorder flag
 	* 8: Save m_disabledSciences & m_hiddenSciences. jba.
+	* 9: TheSuperHackers @tweak Removed the preorder flag
 	*/
 // ------------------------------------------------------------------------------------------------
 void Player::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	const XferVersion currentVersion = 8;
+#else
+	const XferVersion currentVersion = 9;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -3957,10 +3956,11 @@ void Player::xfer( Xfer *xfer )
 		upgradeCount++;
 	xfer->xferUnsignedShort( &upgradeCount );
 
-	if (version >= 7)
+	if (version >= 7 && version <= 8)
 	{
 		// preorder info
-		xfer->xferBool( & m_isPreorder );
+		Bool isPreorder = FALSE;
+		xfer->xferBool( &isPreorder );
 	}
 
 	if (version >= 8)

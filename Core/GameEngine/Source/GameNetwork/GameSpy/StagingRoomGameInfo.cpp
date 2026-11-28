@@ -765,16 +765,6 @@ void GameSpyStagingRoom::launchGame()
 {
 	setGameInProgress(TRUE);
 
-	for (Int i=0; i<MAX_SLOTS; ++i)
-	{
-		const GameSpyGameSlot *slot = getGameSpySlot(i);
-		if (slot->isHuman())
-		{
-			if (TheGameSpyInfo->didPlayerPreorder(slot->getProfileID()))
-				markPlayerAsPreorder(i);
-		}
-	}
-
 	// Set up the game network
 	AsciiString user;
 	AsciiString userList;

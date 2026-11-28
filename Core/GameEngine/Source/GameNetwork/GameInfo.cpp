@@ -332,21 +332,6 @@ void GameInfo::reset()
 		if (m_slot[i])
 			m_slot[i]->reset();
 	}
-
-	m_preorderMask = 0;
-}
-
-Bool GameInfo::isPlayerPreorder(Int index)
-{
-	if (index >= 0 && index < MAX_SLOTS)
-		return ((m_preorderMask & (1 << index)) != 0);
-	return FALSE;
-}
-
-void GameInfo::markPlayerAsPreorder(Int index)
-{
-	if (index >= 0 && index < MAX_SLOTS)
-		m_preorderMask |= 1 << index;
 }
 
 
@@ -1649,7 +1634,9 @@ void SkirmishGameInfo::xfer( Xfer *xfer )
 	xfer->xferVersion( &version, currentVersion );
 
 
-	xfer->xferInt(&m_preorderMask);
+	// TheSuperHackers @info The preorder mask is no longer used, but remains in the save data for compatibility.
+	Int obsoletePreorderMask = 0;
+	xfer->xferInt(&obsoletePreorderMask);
 	xfer->xferInt(&m_crcInterval);
 	xfer->xferBool(&m_inGame);
 	xfer->xferBool(&m_inProgress);

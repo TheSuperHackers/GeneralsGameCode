@@ -1668,14 +1668,10 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 		DEBUG_LOG(("LoadScreen - populating info for %ls(%d) - stats returned id %d",
 			slot->getName().str(), slot->getProfileID(), stats.id));
 
-		Bool isPreorder = TheGameSpyInfo->didPlayerPreorder(stats.id);
 		Int rankPoints = CalculateRank(stats);
 		Int favSide = GetFavoriteSide(stats);
-		const Image *preorderImg = TheMappedImageCollection->findImageByName("OfficersClubsmall");
-		if (!isPreorder)
-			preorderImg = nullptr;
 		const Image *rankImg = LookupSmallRankImage(favSide, rankPoints);
-		m_playerOfficerMedal[i]->winSetEnabledImage(0, preorderImg);
+		m_playerOfficerMedal[i]->winSetEnabledImage(0, nullptr);
 		m_playerRank[i]->winSetEnabledImage(0, rankImg);
 
 		UnicodeString formatString;

@@ -104,7 +104,7 @@ typedef std::map<Int, GameSpyStagingRoom *> StagingRoomMap;
 class PlayerInfo
 {
 public:
-	PlayerInfo() { m_name = m_locale = AsciiString::TheEmptyString; m_wins = m_losses = m_rankPoints = m_side = m_preorder = m_profileID = m_flags = 0; }
+	PlayerInfo() { m_name = m_locale = AsciiString::TheEmptyString; m_wins = m_losses = m_rankPoints = m_side = m_profileID = m_flags = 0; }
 	AsciiString m_name;
 	AsciiString m_locale;
 	Int m_wins;
@@ -113,7 +113,6 @@ public:
 	Int m_flags;
 	Int m_rankPoints;
 	Int m_side;
-	Int m_preorder;
 	Bool isIgnored();
 };
 struct AsciiComparator
@@ -265,9 +264,6 @@ public:
 
 	virtual Bool isDisconnectedAfterGameStart(Int *reason) const = 0;
 	virtual void markAsDisconnectedAfterGameStart(Int reason) = 0;
-
-	virtual Bool didPlayerPreorder( Int profileID ) const = 0;
-	virtual void markPlayerAsPreorder( Int profileID ) = 0;
 
 	virtual void setMaxMessagesPerUpdate( Int num ) = 0;
 	virtual Int getMaxMessagesPerUpdate() = 0;

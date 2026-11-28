@@ -1240,11 +1240,6 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 				d.setAsciiString(TheKey_playerFaction, KEYNAME(pt->getNameKey()));
 			}
 
-			if (TheGameInfo->isPlayerPreorder(i))
-			{
-				d.setBool(TheKey_playerIsPreorder, TRUE);
-			}
-
 			AsciiString enemiesString, alliesString;
 			Int team = slot->getTeamNumber();
 			DEBUG_LOG(("Looking for allies of player %d, team %d", i, team));
