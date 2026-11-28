@@ -8,9 +8,6 @@ set(WWLIB_SRC
     b64straw.h
     base64.cpp
     base64.h
-    #bfiofile.cpp
-    #bfiofile.h
-    binheap.h
     bittype.h
     bound.h
     BSEARCH.h
@@ -23,13 +20,8 @@ set(WWLIB_SRC
     chunkio.h
     cpudetect.cpp
     cpudetect.h
-    #crandom.h
     crc.cpp
     CRC.h
-    #crcpipe.cpp
-    #crcpipe.h
-    #crcstraw.cpp
-    #crcstraw.h
     cstraw.cpp
     cstraw.h
     Except.cpp
@@ -40,14 +32,11 @@ set(WWLIB_SRC
     ffactory.h
     gcd_lcm.cpp
     gcd_lcm.h
-    #global.h
     hash.cpp
     hash.h
     hashcalc.h
     HASHLIST.h
-    #hashtab.h
     hashtemplate.h
-    #incdec.h
     INDEX.h
     ini.cpp
     INI.h
@@ -55,19 +44,6 @@ set(WWLIB_SRC
     iostruct.h
     jshell.cpp
     LISTNODE.h
-    #lzo.cpp
-    #lzo.h
-    #lzo1x.h
-    #lzo1x_c.cpp
-    #lzo1x_d.cpp
-    #lzoconf.h
-    #lzopipe.cpp
-    #lzopipe.h
-    #lzostraw.cpp
-    #lzostraw.h
-    #lzo_conf.h
-    #md5.cpp
-    #md5.h
     mempool.h
     mmsys.h
     mpsc_intrusive_queue.h
@@ -75,7 +51,6 @@ set(WWLIB_SRC
     multilist.h
     mutex.cpp
     mutex.h
-    #noinit.h
     notifier.h
     nstrdup.cpp
     nstrdup.h
@@ -96,9 +71,6 @@ set(WWLIB_SRC
     ref_ptr.h
     refcount.cpp
     refcount.h
-    #regexpr.cpp
-    #regexpr.h
-    #search.h
     sharebuf.h
     Signaler.h
     simplevec.h
@@ -111,7 +83,6 @@ set(WWLIB_SRC
     STRAW.h
     strtok_r.cpp
     strtok_r.h
-    #swap.h
     systimer.cpp
     systimer.h
     TARGA.cpp
