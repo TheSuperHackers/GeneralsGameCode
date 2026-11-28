@@ -16,8 +16,9 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// This file provides std::bit_cast and std::bit_ceil. VC6 has no <bit> header and gets fallback functions: bit_cast
-// copies the bytes with memcpy, and bit_ceil doubles 1 until it reaches the value.
+// This file provides std::bit_cast, std::bit_ceil and std::has_single_bit. VC6 has no <bit> header and gets fallback
+// functions: bit_cast copies the bytes with memcpy, bit_ceil doubles 1 until it reaches the value, and has_single_bit
+// checks that clearing the lowest set bit leaves zero.
 //
 // Use std::bit_cast to reinterpret the bits of a float as an integer or the other way around, instead of reading
 // the value through a pointer of the other type, which violates the strict aliasing rule.
@@ -26,7 +27,7 @@
 // - They are not constexpr.
 // - bit_cast does not check that the types are trivially copyable.
 // - bit_cast requires the destination type to be default constructible.
-// - bit_ceil does not check that the type is an unsigned integer.
+// - bit_ceil and has_single_bit do not check that the type is an unsigned integer.
 
 #pragma once
 
@@ -53,6 +54,12 @@ inline T bit_ceil(T x)
 		result <<= 1;
 
 	return result;
+}
+
+template <class T>
+inline bool has_single_bit(T x)
+{
+	return x != 0 && (x & (x - 1)) == 0;
 }
 }
 

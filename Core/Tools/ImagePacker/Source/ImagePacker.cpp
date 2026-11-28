@@ -44,6 +44,7 @@
 #include <io.h>
 #include <assert.h>
 #include <WWLib/WWCommon.h>
+#include <Utility/bit_adapter.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Debug.h"
@@ -943,19 +944,15 @@ Bool ImagePacker::getSettingsFromDialog( HWND dialog )
 	// if we are using a user target image size, it must be a power of 2
 	if( IsDlgButtonChecked( dialog, RADIO_TARGET_OTHER ) )
 	{
-		UnsignedInt size, val;
-		Int bitCount = 0;
+		UnsignedInt size;
 
 		size = GetDlgItemInt( dialog, EDIT_WIDTH, nullptr, FALSE );
-		for( val = size; val; val >>= 1 )
-			if( BitIsSet( val, 0x1 ) )
-				bitCount++;
 
 		//
-		// if bit count was not 1, this is not a power of 2 ... it also
+		// if the size does not have exactly one bit set, this is not a power of 2 ... it also
 		// guards us from entering a size of zero :)
 		//
-		if( bitCount != 1 )
+		if( !std::has_single_bit( size ) )
 		{
 
 			MessageBox( nullptr, "The target image size must be a power of 2.",
