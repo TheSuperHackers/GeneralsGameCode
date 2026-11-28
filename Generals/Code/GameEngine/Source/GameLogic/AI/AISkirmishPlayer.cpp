@@ -1121,7 +1121,7 @@ Object * AISkirmishPlayer::findDozer( const Coord3D *pos )
 /**
  * Find a good spot to fire a superweapon.
  */
-void AISkirmishPlayer::computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *retPos, Int playerNdx, Real weaponRadius)
+Bool AISkirmishPlayer::computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *retPos, Int playerNdx, Real weaponRadius)
 {
 
 	Region2D bounds;
@@ -1159,9 +1159,9 @@ void AISkirmishPlayer::computeSuperweaponTarget(const SpecialPowerTemplate *powe
 		retPos->x += offset.x;
 		retPos->y += offset.y;
 		retPos->z = TheTerrainLogic->getGroundHeight(retPos->x, retPos->y);
-		return;
+		return TRUE;
 	}
-	AIPlayer::computeSuperweaponTarget(power, retPos, playerNdx, weaponRadius);
+	return AIPlayer::computeSuperweaponTarget(power, retPos, playerNdx, weaponRadius);
 
 }
 

@@ -103,6 +103,7 @@ public:
 	virtual Bool isCarBombCrateCollide() const override { return false; }
 	virtual Bool isRailroad() const override { return false;}
 	virtual Bool isSalvageCrateCollide() const override { return false; }
+	virtual Bool isSabotageBuildingCrateCollide() const override { return FALSE; }
 
 	// Minefield specific methods
 	virtual void setScootParms(const Coord3D& start, const Coord3D& end) override;

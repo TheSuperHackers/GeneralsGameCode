@@ -225,6 +225,7 @@ public:
 	NameKeyType getPlayerNameKey() const { return m_playerNameKey; }
 
 	AsciiString getSide() const { return m_side; }
+	AsciiString getBaseSide() const { return m_baseSide; }
 
 	const PlayerTemplate* getPlayerTemplate() const { return m_playerTemplate;	}
 	/// return the Player's Handicap sub-object
@@ -235,7 +236,7 @@ public:
 	Money *getMoney() { return &m_money; }
 	const Money *getMoney() const { return &m_money; }
 
-	UnsignedInt getSupplyBoxValue();///< Many things can affect the alue of a crate, but at heart it is a GlobalData ratio.
+	UnsignedInt getSupplyBoxValue();///< Many things can affect the value of a crate, but at heart it is a GlobalData ratio.
 
 	Energy *getEnergy() { return &m_energy; }
 	const Energy *getEnergy() const { return &m_energy; }
@@ -441,7 +442,7 @@ public:
 	/// Have the team guard a supply center.
 	void guardSupplyCenter( Team *team, Int minSupplies );
 
-	virtual void computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *pos, Int playerNdx, Real weaponRadius); ///< Calculates best pos for weapon given radius.
+	virtual Bool computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *pos, Int playerNdx, Real weaponRadius); ///< Calculates best pos for weapon given radius.
 
 	/// Get the enemy an ai player is currently focused on.  NOTE - Can be nullptr.
 	Player  *getCurrentEnemy();
@@ -561,10 +562,14 @@ public:
 	Bool getUnitsShouldHunt() const { return m_unitsShouldHunt; }
 
 	/// All of our units are new spied upon; they sight for the given enemy
+#if RTS_GENERALS
 	void setUnitsVisionSpied( Bool setting, PlayerIndex byWhom );
 
 	/// This will be asked by units when they look to get extra people to sight for
 	PlayerMaskType getVisionSpiedMask() const;
+#else
+	void setUnitsVisionSpied( Bool setting, KindOfMaskType whichUnits, PlayerIndex byWhom );
+#endif
 
 	/// Destroy all of the teams for this player, causing him to DIE.
 	void killPlayer();
@@ -581,6 +586,9 @@ public:
 	/// Build a building near a supply dump with at least cash.  Gets passed to aiPlayer.
 	void buildBySupplies(Int minimumCash, const AsciiString &thingName);
 
+	/// Build an instance of a specific building nearest specified team.  Gets passed to aiPlayer.
+	void buildSpecificBuildingNearestTeam( const AsciiString &thingName, const Team *team );
+
 	/// Build an upgrade.  Gets passed to aiPlayer.
 	void buildUpgrade(const AsciiString &upgrade);
 
@@ -592,6 +600,9 @@ public:
 
 	/// Recruits an instance of a specific team.  Gets passed to aiPlayer.
 	void recruitSpecificTeam(TeamPrototype *teamProto, Real recruitRadius);
+
+	/// Calculates the closest construction zone location based on a template. Gets plassed to aiPlayer
+	Bool calcClosestConstructionZoneLocation( const ThingTemplate *constructTemplate, Coord3D *location );
 
 	/// Enable/Disable the construction of units
 	Bool getCanBuildUnits() { return m_canBuildUnits; }
@@ -742,6 +753,7 @@ private:
 	NameKeyType									m_playerNameKey;							///< This player's internal name (for matching map objects)
 	PlayerIndex									m_playerIndex;								///< player unique index.
 	AsciiString									m_side;												///< the "side" this player is on
+	AsciiString									m_baseSide;											///< the base side, GLA, USA, or China
 	PlayerType									m_playerType;									///< human/computer control
 	Money												m_money;											///< Player's current wealth
 	Upgrade*										m_upgradeList;								///< list of all upgrades this player has
@@ -768,15 +780,15 @@ private:
 	TunnelTracker*							m_tunnelSystem;								///< All TunnelContain buildings use this part of me for actual containment
 	Team*												m_defaultTeam;								///< our "default" team.
 
-	ScienceVec					m_sciences;					///< (SAVE) sciences that we know (either intrinsically or via later purchases)
-	ScienceVec					m_sciencesDisabled;	///< (SAVE) sciences that we are not permitted to purchase "yet". Controlled by mission scripts.
-	ScienceVec					m_sciencesHidden;		///< (SAVE) sciences that aren't shown. Controlled by mission scripts.
+	ScienceVec						m_sciences;					///< (SAVE) sciences that we know (either intrinsically or via later purchases)
+	ScienceVec						m_sciencesDisabled;	///< (SAVE) sciences that we are not permitted to purchase "yet". Controlled by mission scripts.
+	ScienceVec						m_sciencesHidden;		///< (SAVE) sciences that aren't shown. Controlled by mission scripts.
 
-	Int									m_rankLevel;			///< (SAVE) our RankLevel, 1...n
-	Int									m_skillPoints;		///< (SAVE) our cumulative SkillPoint total
-	Int									m_sciencePurchasePoints;		///< (SAVE) our unspent SciencePurchasePoint total
-	Int									m_levelUp, m_levelDown;			///< (NO-SAVE) skill points to go up/down a level (runtime only)
-	UnicodeString				m_generalName;		///< (SAVE) This is the name of the general the player is allowed to change.
+	Int										m_rankLevel;			///< (SAVE) our RankLevel, 1...n
+	Int										m_skillPoints;		///< (SAVE) our cumulative SkillPoint total
+	Int										m_sciencePurchasePoints;		///< (SAVE) our unspent SciencePurchasePoint total
+	Int										m_levelUp, m_levelDown;			///< (NO-SAVE) skill points to go up/down a level (runtime only)
+	UnicodeString					m_generalName;		///< (SAVE) This is the name of the general the player is allowed to change.
 
 	PlayerTeamList				m_playerTeamPrototypes;				///< ALL the teams we control, via prototype
 	PlayerRelationMap			*m_playerRelations;						///< allies & enemies
@@ -795,8 +807,10 @@ private:
 
 	Bool									m_attackedBy[MAX_PLAYER_COUNT];	///< For each player, have they attacked me?
 	UnsignedInt						m_attackedFrame;	///< Last frame attacked.
+#if RTS_GENERALS
 	Int										m_visionSpiedBy[MAX_PLAYER_COUNT];  ///< Reference count of having units spied on by players.
 	PlayerMaskType				m_visionSpiedMask;	///< For quick lookup and edge triggered maintenance
+#endif
 
 	Real									m_cashBountyPercent;
 

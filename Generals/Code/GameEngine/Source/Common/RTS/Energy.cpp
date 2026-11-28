@@ -49,6 +49,8 @@
 #include "Common/PlayerList.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
+
+#include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 
 
@@ -58,11 +60,17 @@ Energy::Energy()
 	m_energyProduction = 0;
 	m_energyConsumption = 0;
 	m_owner = nullptr;
+	m_powerSabotagedTillFrame = 0;
 }
 
 //-----------------------------------------------------------------------------
 Int Energy::getProduction() const
 {
+	if( TheGameLogic->getFrame() < m_powerSabotagedTillFrame )
+	{
+		//Power sabotaged, therefore no power.
+		return 0;
+	}
 	return m_energyProduction;
 }
 
@@ -70,6 +78,12 @@ Int Energy::getProduction() const
 Real Energy::getEnergySupplyRatio() const
 {
 	DEBUG_ASSERTCRASH(m_energyProduction >= 0 && m_energyConsumption >= 0, ("neg Energy numbers"));
+
+	if( TheGameLogic->getFrame() < m_powerSabotagedTillFrame )
+	{
+		//Power sabotaged, therefore no power, no ratio.
+		return 0.0f;
+	}
 
 	if (m_energyConsumption == 0)
 		return (Real)m_energyProduction;
@@ -80,6 +94,11 @@ Real Energy::getEnergySupplyRatio() const
 //-------------------------------------------------------------------------------------------------
 Bool Energy::hasSufficientPower() const
 {
+	if( TheGameLogic->getFrame() < m_powerSabotagedTillFrame )
+	{
+		//Power sabotaged, therefore no power.
+		return FALSE;
+	}
 	return m_energyProduction >= m_energyConsumption;
 }
 
@@ -243,13 +262,19 @@ void Energy::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: Stop saving production and consumption
+	* 3: Added m_powerSabotagedTillFrame (Added in Zero Hour) */
 // ------------------------------------------------------------------------------------------------
 void Energy::xfer( Xfer *xfer )
 {
 
 	// version
+#if RTS_GENERALS && RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 2;
+#else
+	XferVersion currentVersion = 3;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -270,6 +295,12 @@ void Energy::xfer( Xfer *xfer )
 		owningPlayerIndex = m_owner->getPlayerIndex();
 	xfer->xferInt( &owningPlayerIndex );
 	m_owner = ThePlayerList->getNthPlayer( owningPlayerIndex );
+
+	//Sabotage
+	if( version >= 3 )
+	{
+		xfer->xferUnsignedInt( &m_powerSabotagedTillFrame );
+	}
 
 }
 

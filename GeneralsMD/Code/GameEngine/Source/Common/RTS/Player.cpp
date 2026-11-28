@@ -319,6 +319,9 @@ Player::Player( Int playerIndex )
 	m_searchAndDestroyBattlePlans = 0;
 	m_tunnelSystem = nullptr;
 	m_playerTemplate = nullptr;
+#if RTS_GENERALS
+	m_visionSpiedMask = PLAYERMASK_NONE;
+#endif
 	m_battlePlanBonuses = nullptr;
 	m_skillPointsModifier = 1.0f;
 	m_canBuildUnits = TRUE;
@@ -340,6 +343,9 @@ Player::Player( Int playerIndex )
 	for (i = 0; i < MAX_PLAYER_COUNT; ++i)
 	{
 		m_attackedBy[i] = false;
+#if RTS_GENERALS
+		m_visionSpiedBy[i] = 0;
+#endif
 	}
 	m_attackedFrame = 0;
 
@@ -694,6 +700,7 @@ void Player::update()
 	//Update the academy stats (this only checks applicable things that require a polling method)
 	getAcademyStats()->update();
 
+#if !(RTS_GENERALS && (RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_NETWORKING))
 	//Kris: August 25, 2003 (DAY OF CODE LOCK -- NO NEW FEATURES, REALLY!)
 	if( ThePlayerList->getLocalPlayer() == this )
 	{
@@ -715,6 +722,7 @@ void Player::update()
 			}
 		}
 	}
+#endif
 
 #if !(RETAIL_COMPATIBLE_CRC || PRESERVE_TUNNEL_HEAL_STACKING)
 	// TheSuperHackers @bugfix Stubbjax 26/09/2025 The Tunnel System now heals
@@ -986,7 +994,13 @@ void Player::initFromDict(const Dict* d)
 	for ( i = 0; i < MAX_PLAYER_COUNT; ++i ) // For now, it has been decided to just fix this one.  Dear god me must reset.
 	{
 		m_attackedBy[i] = false;
+#if RTS_GENERALS
+		m_visionSpiedBy[i] = 0;
+#endif
 	}
+#if RTS_GENERALS
+	m_visionSpiedMask = PLAYERMASK_NONE;
+#endif
 
 	Int c = d->getInt(TheKey_playerColor, &exists);
 	if (exists)
@@ -1658,6 +1672,20 @@ void Player::onStructureConstructionComplete( Object *builder, Object *structure
 
 	// This object may require us to play some EVA sounds.
 	Player *localPlayer = ThePlayerList->getLocalPlayer();
+#if RTS_GENERALS
+	if (localPlayer == structure->getControllingPlayer() || localPlayer->getRelationship(structure->getTeam()) != ENEMIES)
+		return;
+
+	// We need to play some EVA sounds.
+	if (structure->hasSpecialPower(SPECIAL_PARTICLE_UPLINK_CANNON))
+		TheEva->setShouldPlay(EVA_SuperweaponDetected_ParticleCannon);
+
+	if (structure->hasSpecialPower(SPECIAL_NEUTRON_MISSILE))
+		TheEva->setShouldPlay(EVA_SuperweaponDetected_Nuke);
+
+	if (structure->hasSpecialPower(SPECIAL_SCUD_STORM))
+		TheEva->setShouldPlay(EVA_SuperweaponDetected_ScudStorm);
+#else
 
 	if( structure->hasSpecialPower( SPECIAL_PARTICLE_UPLINK_CANNON ) ||
 			structure->hasSpecialPower( SUPW_SPECIAL_PARTICLE_UPLINK_CANNON ) ||
@@ -1713,6 +1741,7 @@ void Player::onStructureConstructionComplete( Object *builder, Object *structure
       TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_ScudStorm);
     }
   }
+#endif
 }
 
 //=============================================================================
@@ -2333,6 +2362,7 @@ void Player::setUnitsShouldIdleOrResume(Bool idle)
 	}
 }
 
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
 //-------------------------------------------------------------------------------
 void sellBuildings( Object *obj, void *userData )
 {
@@ -2341,11 +2371,34 @@ void sellBuildings( Object *obj, void *userData )
     TheBuildAssistant->sellObject( obj );
   }
 }
+#endif
 
 //=============================================================================
 void Player::sellEverythingUnderTheSun()
 {
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+	for (PlayerTeamList::iterator it = m_playerTeamPrototypes.begin();
+			 it != m_playerTeamPrototypes.end(); ++it) {
+		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
+			Team *team = iter.cur();
+			if (!team) {
+				continue;
+			}
+
+			for (DLINK_ITERATOR<Object> iterObj = team->iterate_TeamMemberList(); !iterObj.done(); iterObj.advance()) {
+				Object *obj = iterObj.cur();
+				if (!obj) {
+					continue;
+				}
+
+				// sell the object
+				TheBuildAssistant->sellObject( obj );
+			}
+		}
+	}
+#else
   iterateObjects( sellBuildings, nullptr );
+#endif
 }
 
 
@@ -2979,8 +3032,10 @@ Bool Player::canBuild(const ThingTemplate *tmplate) const
 
 	}
 
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
   if ( !canBuildMoreOfType( tmplate ) )
     return false;
+#endif
 
 
 	return true;
@@ -3948,6 +4003,58 @@ Bool Player::getAttackedBy( Int playerNdx ) const
 	return m_attackedBy[playerNdx];
 }
 
+#if RTS_GENERALS
+// ------------------------------------------------------------------------------------------------
+static void callHandleShroud( Object *obj, void * )
+{
+	// I feel I have to disapprove of the naming of this gathering of cell functions.  It is called by death,
+	// alliance change, containment, spy change, and dynamic view range as well as partition cell change.
+	if( obj )
+		obj->handlePartitionCellMaintenance();
+}
+
+// ------------------------------------------------------------------------------------------------
+void Player::setUnitsVisionSpied( Bool setting, PlayerIndex byWhom )
+{
+	Bool needRefresh = FALSE; // If this setting is an edge trigger on the reference count, I need
+	// to tell all of my guys to handleShroud so they will start/stop looking for the new team.
+
+	if( setting )
+	{
+		m_visionSpiedBy[ byWhom ] = m_visionSpiedBy[ byWhom ] + 1;
+		if( m_visionSpiedBy[ byWhom ] == 1 )
+			needRefresh = TRUE;
+	}
+	else
+	{
+		m_visionSpiedBy[ byWhom ] = m_visionSpiedBy[ byWhom ] - 1;
+		if( m_visionSpiedBy[ byWhom ] == 0 )
+			needRefresh = TRUE;
+	}
+
+	if( needRefresh )
+	{
+		PlayerMaskType workingMask = 0;
+		for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
+		{
+			if( m_visionSpiedBy[i] > 0 )
+				BitSet( workingMask, ( 1 << i ) );
+			else
+				BitClear( workingMask, ( 1 << i ) );
+		}
+
+		m_visionSpiedMask = workingMask;
+
+		iterateObjects( callHandleShroud, nullptr );
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+PlayerMaskType Player::getVisionSpiedMask() const
+{
+	return m_visionSpiedMask;
+}
+#else
 // ------------------------------------------------------------------------------------------------
 // Little wrapper function so I can use it in iterateObjects, which is cool.
 struct VisionSpiedStruct
@@ -3977,6 +4084,7 @@ void Player::setUnitsVisionSpied( Bool setting, KindOfMaskType whichUnits, Playe
 	// Being spied is now a property of the unit, not us, since we can spy only a portion of the enemy.
 	iterateObjects( iterator_setUnitsVisionSpied, &data );
 }
+#endif
 
 // ------------------------------------------------------------------------------------------------
 Bool Player::isPlayerObserver() const
@@ -4388,6 +4496,14 @@ void Player::xfer( Xfer *xfer )
 	}
 	// attacked by
 	xfer->xferUser( m_attackedBy, sizeof( Bool ) * MAX_PLAYER_COUNT );
+
+#if RTS_GENERALS
+	// vision spied by
+	xfer->xferUser( m_visionSpiedBy, sizeof( Int ) * MAX_PLAYER_COUNT );
+
+	// vision spied by mask
+	xfer->xferUser( &m_visionSpiedMask, sizeof( PlayerMaskType ) );
+#endif
 
 	// cash bounty percent
 	xfer->xferReal( &m_cashBountyPercent );

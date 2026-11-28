@@ -102,6 +102,7 @@ public:
 	virtual Bool isCarBombCrateCollide() const override { return false; }
 	virtual Bool isRailroad() const override { return false; }
 	virtual Bool isSalvageCrateCollide() const override { return false; }
+	virtual Bool isSabotageBuildingCrateCollide() const override { return FALSE; }
 
 protected:
 

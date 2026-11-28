@@ -1318,6 +1318,7 @@ Team::Team(TeamPrototype *proto, TeamID id ) :
 {
 	m_created = FALSE;
 	m_commonAttackTarget = INVALID_ID;
+
 	// allocate new relation map pools
 	m_playerRelations = newInstance(PlayerRelationMap);
 	m_teamRelations = newInstance(TeamRelationMap);
@@ -1520,8 +1521,14 @@ Object *Team::getTeamTargetObject()
 	Object *target = TheGameLogic->findObjectByID(m_commonAttackTarget);
 	if (target) {
 		//If the enemy unit is stealthed and not detected, then we can't attack it!
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
 	if( target->testStatus( OBJECT_STATUS_STEALTHED ) &&
 			!target->testStatus( OBJECT_STATUS_DETECTED ) )
+#else
+	if( target->testStatus( OBJECT_STATUS_STEALTHED ) &&
+			!target->testStatus( OBJECT_STATUS_DETECTED ) &&
+			!target->testStatus( OBJECT_STATUS_DISGUISED ) )
+#endif
 		{
 			target = nullptr;
 		}
@@ -1532,6 +1539,13 @@ Object *Team::getTeamTargetObject()
 	if (target && target->getContainedBy()) {
 		target = nullptr; // target entered a building or vehicle, so stop targeting.
 	}
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
+	if (target && target->isKindOf(KINDOF_AIRCRAFT)) {
+		// It is just generally bad to have an aircraft as the team target.
+		// Let team members acquire aircraft individually.  jba. [8/27/2003]
+		target = nullptr;
+	}
+#endif
 	if (target == nullptr) {
 		m_commonAttackTarget = INVALID_ID;
 	}
@@ -2218,7 +2232,7 @@ Bool Team::someInsideSomeOutside(PolygonTrigger *pTrigger, UnsignedInt whichToCo
 	return anyConsidered && anyInside && anyOutside;
 }
 
-const Coord3D* Team::getEstimateTeamPosition()
+const Coord3D* Team::getEstimateTeamPosition() const
 {
 	// this doesn't actually calculate the team position, but rather estimates it by
 	// returning the position of the first member of the team

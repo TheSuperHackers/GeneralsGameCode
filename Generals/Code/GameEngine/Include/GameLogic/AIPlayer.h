@@ -153,7 +153,7 @@ public:
 
 	AIPlayer( Player *p );							///< constructor
 
-	virtual void computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *pos, Int playerNdx, Real weaponRadius); ///< Calculates best pos for weapon given radius.
+	virtual Bool computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *pos, Int playerNdx, Real weaponRadius); ///< Calculates best pos for weapon given radius.
 
 public: // AIPlayer interface, may be overridden by AISkirmishPlayer.  jba.
 
@@ -191,6 +191,7 @@ public:
 	GameDifficulty getAIDifficulty() const;
 	void setAIDifficulty(GameDifficulty difficulty) {m_difficulty = difficulty;}
 	void buildBySupplies(Int minimumCash, const AsciiString &thingName ); ///< Builds a building by supplies.
+	void buildSpecificBuildingNearestTeam( const AsciiString &thingName, const Team *team );
 	void buildUpgrade(const AsciiString &upgrade ); ///< Builds an upgrade.
 	/// A team is about to be destroyed.
 	void aiPreTeamDestroy( const Team *team );
@@ -205,6 +206,9 @@ public:
 	void guardSupplyCenter( Team *team, Int minSupplies );
 
 	void setTeamDelaySeconds(Int delay) {m_teamSeconds = delay;}
+
+	/// Calculates the closest construction zone location based on a template.
+	Bool calcClosestConstructionZoneLocation( const ThingTemplate *constructTemplate, Coord3D *location );
 
 protected:
 

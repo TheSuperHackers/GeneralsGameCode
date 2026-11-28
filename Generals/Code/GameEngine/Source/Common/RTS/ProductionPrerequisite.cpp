@@ -83,14 +83,17 @@ void ProductionPrerequisite::resolveNames()
 		// sub-templates), which is what we want ... we conceptually only have one
 		// template for any given thing, it's only the *data* that is overridden
 		//
-		m_prereqUnits[i].unit = TheThingFactory->findTemplate(m_prereqUnits[i].name);	// might be null
+		if( m_prereqUnits[ i ].name.isNotEmpty() )
+		{
+			m_prereqUnits[i].unit = TheThingFactory->findTemplate(m_prereqUnits[i].name);	// might be null
 
- 		/** @todo for now removing this assert until we can completely remove
- 		the GDF stuff, the problem is that some INI files refer to GDF names, and they
- 		aren't yet loaded in the world builder but will all go away later anyway etc */
-		DEBUG_ASSERTCRASH(m_prereqUnits[i].unit,("could not find prereq %s",m_prereqUnits[i].name.str()));
+ 			/** @todo for now removing this assert until we can completely remove
+ 			the GDF stuff, the problem is that some INI files refer to GDF names, and they
+ 			aren't yet loaded in the world builder but will all go away later anyway etc */
+			DEBUG_ASSERTCRASH(m_prereqUnits[i].unit,("could not find prereq %s",m_prereqUnits[i].name.str()));
 
-		m_prereqUnits[i].name.clear(); // we're done with it
+			m_prereqUnits[i].name.clear(); // we're done with it
+		}
 
 	}
 

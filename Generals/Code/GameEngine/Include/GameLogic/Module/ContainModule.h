@@ -84,6 +84,7 @@ public:
 	virtual Bool isSpecialZeroSlotContainer() const = 0;
 	virtual Bool isHealContain() const = 0;
 	virtual Bool isTunnelContain() const = 0;
+	virtual Bool isRiderChangeContain() const = 0;
 	virtual Bool isImmuneToClearBuildingAttacks() const = 0;
 
 

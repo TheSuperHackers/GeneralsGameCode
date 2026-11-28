@@ -562,7 +562,14 @@ public:
 	Bool getUnitsShouldHunt() const { return m_unitsShouldHunt; }
 
 	/// All of our units are new spied upon; they sight for the given enemy
+#if RTS_GENERALS
+	void setUnitsVisionSpied( Bool setting, PlayerIndex byWhom );
+
+	/// This will be asked by units when they look to get extra people to sight for
+	PlayerMaskType getVisionSpiedMask() const;
+#else
 	void setUnitsVisionSpied( Bool setting, KindOfMaskType whichUnits, PlayerIndex byWhom );
+#endif
 
 	/// Destroy all of the teams for this player, causing him to DIE.
 	void killPlayer();
@@ -800,6 +807,10 @@ private:
 
 	Bool									m_attackedBy[MAX_PLAYER_COUNT];	///< For each player, have they attacked me?
 	UnsignedInt						m_attackedFrame;	///< Last frame attacked.
+#if RTS_GENERALS
+	Int										m_visionSpiedBy[MAX_PLAYER_COUNT];  ///< Reference count of having units spied on by players.
+	PlayerMaskType				m_visionSpiedMask;	///< For quick lookup and edge triggered maintenance
+#endif
 
 	Real									m_cashBountyPercent;
 
