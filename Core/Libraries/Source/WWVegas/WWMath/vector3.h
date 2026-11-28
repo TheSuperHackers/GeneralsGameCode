@@ -320,7 +320,8 @@ WWINLINE float Vector3::Quick_Length() const
 
 	if (max < mid) { tmp = max; max = mid; mid = tmp; }
 	if (max < min) { tmp = max; max = min; min = tmp; }
-	if (mid < min) { tmp = mid; mid = min; min = mid; }
+	// TheSuperHackers @bugfix CryoTheRenegade 24/11/2026 Store the old mid value in min to complete the swap.
+	if (mid < min) { tmp = mid; mid = min; min = tmp; }
 
 	return max + (11.0f / 32.0f)*mid + (1.0f / 4.0f)*min;
 }
