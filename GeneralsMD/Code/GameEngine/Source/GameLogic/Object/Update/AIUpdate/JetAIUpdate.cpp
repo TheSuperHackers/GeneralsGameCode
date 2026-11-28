@@ -46,6 +46,7 @@
 #include "GameLogic/AIPathfind.h"
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Weapon.h"
+#include <Utility/erase_adapter.h>
 
 const Real BIGNUM = 99999.0f;
 
@@ -2270,22 +2271,18 @@ Bool JetAIUpdate::getSneakyTargetingOffset(Coord3D* offset) const
 }
 
 //----------------------------------------------------------------------------------------
+struct ObjectIDIsGone
+{
+	Bool operator()(ObjectID id) const
+	{
+		return TheGameLogic->findObjectByID(id) == nullptr;
+	}
+};
+
+//----------------------------------------------------------------------------------------
 void JetAIUpdate::pruneDeadTargeters()
 {
-	if (!m_targetedBy.empty())
-	{
-		for (std::list<ObjectID>::iterator it = m_targetedBy.begin(); it != m_targetedBy.end(); /* empty */ )
-		{
-			if (TheGameLogic->findObjectByID(*it) == nullptr)
-			{
-				it = m_targetedBy.erase(it);
-			}
-			else
-			{
-				++it;
-			}
-		}
-	}
+	std::erase_if(m_targetedBy, ObjectIDIsGone());
 }
 
 //----------------------------------------------------------------------------------------
