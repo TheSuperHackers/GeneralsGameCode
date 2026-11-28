@@ -60,6 +60,26 @@ enum RenderTransform
     RenderTransform_Projection
 };
 
+enum RenderTexcoordSource
+{
+    RenderTexcoordSource_MeshUV,
+    RenderTexcoordSource_CameraSpaceNormal,
+    RenderTexcoordSource_CameraSpacePosition,
+    RenderTexcoordSource_CameraSpaceReflection
+};
+
+enum RenderCompare
+{
+    RenderCompare_Never,
+    RenderCompare_Less,
+    RenderCompare_Equal,
+    RenderCompare_LessEqual,
+    RenderCompare_Greater,
+    RenderCompare_NotEqual,
+    RenderCompare_GreaterEqual,
+    RenderCompare_Always
+};
+
 // The interface holds only the methods that callers route through. The rest of
 // the DX8Wrapper API is called directly.
 
@@ -83,6 +103,16 @@ public:
     static bool Has_Stencil();
     static WW3DFormat Get_Back_Buffer_Format();
 
+    static bool Supports_Texture_Format(WW3DFormat format);
+    static bool Supports_DXTC();
+    static bool Supports_Dot3();
+    static bool Supports_Point_Sprites();
+    static bool Supports_NPatches();
+    static bool Supports_Bump_Envmap();
+    static bool Supports_Bump_Envmap_Luminance();
+    static bool Supports_ZBias();
+    static int Get_Max_Textures_Per_Pass();
+
     static void Set_Gamma(float gamma, float bright, float contrast, bool calibrate = true, bool uselimit = true);
 
     static void Begin_Scene();
@@ -102,23 +132,30 @@ public:
     static void Set_Material(const VertexMaterialClass * material);
     static void Set_Texture(unsigned stage, TextureBaseClass * texture);
     static void Apply_Render_State_Changes();
+    // Overrides the depth test of the applied shader. The shader state cache does not
+    // track the override, so the caller restores the previous depth test.
+    static void Set_Depth_Compare(RenderCompare compare);
 
     static void Set_Vertex_Buffer(const VertexBufferClass * vb, unsigned stream = 0);
     static void Set_Vertex_Buffer(const DynamicVBAccessClass & vba);
-    static void Set_Index_Buffer(const IndexBufferClass * ib, unsigned short index_base_offset);
-    static void Set_Index_Buffer(const DynamicIBAccessClass & iba, unsigned short index_base_offset);
+    static void Set_Index_Buffer(const IndexBufferClass * ib, unsigned int index_base_offset);
+    static void Set_Index_Buffer(const DynamicIBAccessClass & iba, unsigned int index_base_offset);
     static void Set_Index_Buffer_Index_Offset(unsigned offset);
 
-    static void Draw_Triangles(unsigned buffer_type, unsigned short start_index, unsigned short polygon_count,
-                               unsigned short min_vertex_index, unsigned short vertex_count);
-    static void Draw_Triangles(unsigned short start_index, unsigned short polygon_count,
-                               unsigned short min_vertex_index, unsigned short vertex_count);
-    static void Draw_Strip(unsigned short start_index, unsigned short polygon_count,
-                           unsigned short min_vertex_index, unsigned short vertex_count);
+    static void Draw_Triangles(unsigned buffer_type, unsigned int start_index, unsigned int polygon_count,
+                               unsigned int min_vertex_index, unsigned int vertex_count);
+    static void Draw_Triangles(unsigned int start_index, unsigned int polygon_count,
+                               unsigned int min_vertex_index, unsigned int vertex_count);
+    static void Draw_Strip(unsigned int start_index, unsigned int polygon_count,
+                           unsigned int min_vertex_index, unsigned int vertex_count);
 
     static void Set_Transform(RenderTransform transform, const Matrix4x4 & m);
     static void Set_Transform(RenderTransform transform, const Matrix3D & m);
     static void Get_Transform(RenderTransform transform, Matrix4x4 & m);
+    static void Set_Texture_Transform(unsigned stage, const Matrix4x4 & m);
+    static void Set_Texture_Coord_Source(unsigned stage, RenderTexcoordSource source, unsigned uv_array_index = 0);
+    // A coord_count of 0 disables the texture transform of the stage.
+    static void Set_Texture_Transform_Count(unsigned stage, unsigned coord_count);
     static void Set_World_Identity();
     static void Set_View_Identity();
     static void Set_Projection_Transform_With_Z_Bias(const Matrix4x4 & matrix, float znear, float zfar);

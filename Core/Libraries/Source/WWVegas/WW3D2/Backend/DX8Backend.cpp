@@ -27,6 +27,49 @@
 #include "WWMath/vector3.h"
 #include "WW3D2/lightenvironment.h"
 #include "WWDebug/wwdebug.h"
+#include "Lib/BaseType.h"
+
+static unsigned To_D3D_Texcoord_Index(RenderTexcoordSource source)
+{
+    switch (source)
+    {
+    case RenderTexcoordSource_MeshUV:
+        return D3DTSS_TCI_PASSTHRU;
+    case RenderTexcoordSource_CameraSpaceNormal:
+        return D3DTSS_TCI_CAMERASPACENORMAL;
+    case RenderTexcoordSource_CameraSpacePosition:
+        return D3DTSS_TCI_CAMERASPACEPOSITION;
+    case RenderTexcoordSource_CameraSpaceReflection:
+        return D3DTSS_TCI_CAMERASPACEREFLECTIONVECTOR;
+    }
+    WWASSERT(0);
+    return D3DTSS_TCI_PASSTHRU;
+}
+
+static D3DCMPFUNC To_D3D_Compare(RenderCompare compare)
+{
+    switch (compare)
+    {
+    case RenderCompare_Never:
+        return D3DCMP_NEVER;
+    case RenderCompare_Less:
+        return D3DCMP_LESS;
+    case RenderCompare_Equal:
+        return D3DCMP_EQUAL;
+    case RenderCompare_LessEqual:
+        return D3DCMP_LESSEQUAL;
+    case RenderCompare_Greater:
+        return D3DCMP_GREATER;
+    case RenderCompare_NotEqual:
+        return D3DCMP_NOTEQUAL;
+    case RenderCompare_GreaterEqual:
+        return D3DCMP_GREATEREQUAL;
+    case RenderCompare_Always:
+        return D3DCMP_ALWAYS;
+    }
+    WWASSERT(0);
+    return D3DCMP_LESSEQUAL;
+}
 
 static D3DTRANSFORMSTATETYPE To_D3D_Transform(RenderTransform transform)
 {
@@ -135,6 +178,51 @@ WW3DFormat Renderer::Get_Back_Buffer_Format()
     return DX8Wrapper::getBackBufferFormat();
 }
 
+bool Renderer::Supports_Texture_Format(WW3DFormat format)
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(format);
+}
+
+bool Renderer::Supports_DXTC()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_DXTC();
+}
+
+bool Renderer::Supports_Dot3()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_Dot3();
+}
+
+bool Renderer::Supports_Point_Sprites()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_PointSprites();
+}
+
+bool Renderer::Supports_NPatches()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_NPatches();
+}
+
+bool Renderer::Supports_Bump_Envmap()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_Bump_Envmap();
+}
+
+bool Renderer::Supports_Bump_Envmap_Luminance()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_Bump_Envmap_Luminance();
+}
+
+bool Renderer::Supports_ZBias()
+{
+    return DX8Wrapper::Get_Current_Caps()->Support_ZBias();
+}
+
+int Renderer::Get_Max_Textures_Per_Pass()
+{
+    return DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();
+}
+
 void Renderer::Set_Gamma(float gamma, float bright, float contrast, bool calibrate, bool uselimit)
 {
     DX8Wrapper::Set_Gamma(gamma, bright, contrast, calibrate, uselimit);
@@ -214,6 +302,11 @@ void Renderer::Apply_Render_State_Changes()
     DX8Wrapper::Apply_Render_State_Changes();
 }
 
+void Renderer::Set_Depth_Compare(RenderCompare compare)
+{
+    DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC, To_D3D_Compare(compare));
+}
+
 void Renderer::Set_Vertex_Buffer(const VertexBufferClass * vb, unsigned stream)
 {
     DX8Wrapper::Set_Vertex_Buffer(vb, stream);
@@ -224,14 +317,14 @@ void Renderer::Set_Vertex_Buffer(const DynamicVBAccessClass & vba)
     DX8Wrapper::Set_Vertex_Buffer(vba);
 }
 
-void Renderer::Set_Index_Buffer(const IndexBufferClass * ib, unsigned short index_base_offset)
+void Renderer::Set_Index_Buffer(const IndexBufferClass * ib, unsigned int index_base_offset)
 {
-    DX8Wrapper::Set_Index_Buffer(ib, index_base_offset);
+    DX8Wrapper::Set_Index_Buffer(ib, check_cast<unsigned short>(index_base_offset));
 }
 
-void Renderer::Set_Index_Buffer(const DynamicIBAccessClass & iba, unsigned short index_base_offset)
+void Renderer::Set_Index_Buffer(const DynamicIBAccessClass & iba, unsigned int index_base_offset)
 {
-    DX8Wrapper::Set_Index_Buffer(iba, index_base_offset);
+    DX8Wrapper::Set_Index_Buffer(iba, check_cast<unsigned short>(index_base_offset));
 }
 
 void Renderer::Set_Index_Buffer_Index_Offset(unsigned offset)
@@ -239,22 +332,25 @@ void Renderer::Set_Index_Buffer_Index_Offset(unsigned offset)
     DX8Wrapper::Set_Index_Buffer_Index_Offset(offset);
 }
 
-void Renderer::Draw_Triangles(unsigned buffer_type, unsigned short start_index, unsigned short polygon_count,
-                              unsigned short min_vertex_index, unsigned short vertex_count)
+void Renderer::Draw_Triangles(unsigned buffer_type, unsigned int start_index, unsigned int polygon_count,
+                              unsigned int min_vertex_index, unsigned int vertex_count)
 {
-    DX8Wrapper::Draw_Triangles(buffer_type, start_index, polygon_count, min_vertex_index, vertex_count);
+    DX8Wrapper::Draw_Triangles(buffer_type, check_cast<unsigned short>(start_index), check_cast<unsigned short>(polygon_count),
+                               check_cast<unsigned short>(min_vertex_index), check_cast<unsigned short>(vertex_count));
 }
 
-void Renderer::Draw_Triangles(unsigned short start_index, unsigned short polygon_count,
-                              unsigned short min_vertex_index, unsigned short vertex_count)
+void Renderer::Draw_Triangles(unsigned int start_index, unsigned int polygon_count,
+                              unsigned int min_vertex_index, unsigned int vertex_count)
 {
-    DX8Wrapper::Draw_Triangles(start_index, polygon_count, min_vertex_index, vertex_count);
+    DX8Wrapper::Draw_Triangles(check_cast<unsigned short>(start_index), check_cast<unsigned short>(polygon_count),
+                               check_cast<unsigned short>(min_vertex_index), check_cast<unsigned short>(vertex_count));
 }
 
-void Renderer::Draw_Strip(unsigned short start_index, unsigned short polygon_count,
-                          unsigned short min_vertex_index, unsigned short vertex_count)
+void Renderer::Draw_Strip(unsigned int start_index, unsigned int polygon_count,
+                          unsigned int min_vertex_index, unsigned int vertex_count)
 {
-    DX8Wrapper::Draw_Strip(start_index, polygon_count, min_vertex_index, vertex_count);
+    DX8Wrapper::Draw_Strip(check_cast<unsigned short>(start_index), check_cast<unsigned short>(polygon_count),
+                           check_cast<unsigned short>(min_vertex_index), check_cast<unsigned short>(vertex_count));
 }
 
 void Renderer::Set_Transform(RenderTransform transform, const Matrix4x4 & m)
@@ -265,6 +361,22 @@ void Renderer::Set_Transform(RenderTransform transform, const Matrix4x4 & m)
 void Renderer::Set_Transform(RenderTransform transform, const Matrix3D & m)
 {
     DX8Wrapper::Set_Transform(To_D3D_Transform(transform), m);
+}
+
+void Renderer::Set_Texture_Transform(unsigned stage, const Matrix4x4 & m)
+{
+    DX8Wrapper::Set_Transform(static_cast<D3DTRANSFORMSTATETYPE>(D3DTS_TEXTURE0 + stage), m);
+}
+
+void Renderer::Set_Texture_Coord_Source(unsigned stage, RenderTexcoordSource source, unsigned uv_array_index)
+{
+    DX8Wrapper::Set_DX8_Texture_Stage_State(stage, D3DTSS_TEXCOORDINDEX, To_D3D_Texcoord_Index(source) | uv_array_index);
+}
+
+void Renderer::Set_Texture_Transform_Count(unsigned stage, unsigned coord_count)
+{
+    const unsigned flags = coord_count == 0 ? D3DTTFF_DISABLE : coord_count;
+    DX8Wrapper::Set_DX8_Texture_Stage_State(stage, D3DTSS_TEXTURETRANSFORMFLAGS, flags);
 }
 
 void Renderer::Get_Transform(RenderTransform transform, Matrix4x4 & m)
