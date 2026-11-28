@@ -78,11 +78,20 @@ protected:
 	void recalculatePacketRouterIndex(ConnectionManager *conMgr);
 	Bool allOnSameFrame(ConnectionManager *conMgr); ///< returns true if all players are stuck on the same frame.
 	Bool isLocalPlayerNextPacketRouter(ConnectionManager *conMgr); ///< returns true if the local player is next in line to be the packet router with all the players that have timed out being taken out of the picture.
+#if !RETAIL_COMPATIBLE_NETWORKING
+	Int getActingPacketRouterSlot(ConnectionManager *conMgr, Int removedSlot);
+	Bool hasPlayerLeft(Int slot);
+	Bool isLeftPlayerConnected(ConnectionManager *conMgr);
+	void processHeldRemovals(ConnectionManager *conMgr); ///< removes the players whose held removal now comes from the acting packet router.
+#endif
 	Bool hasPlayerTimedOut(Int slot); ///< returns true if this player has timed out.
 	void sendPlayerDestruct(Int slot, ConnectionManager *conMgr); ///< send a destruct player network message.
+#if RETAIL_COMPATIBLE_NETWORKING
+	void sendPendingRelays(ConnectionManager *conMgr); ///< passes a leave on to the players that are stalled on its frame.
+#endif
 	Bool isPlayerVotedOut(Int slot, ConnectionManager *conMgr);	///< returns true if this player has been voted out.
 	Bool isPlayerInGame(Int slot, ConnectionManager *conMgr); ///< returns true if the player has neither timed out or been voted out.
-	UnsignedInt getMaxDisconnectFrame();	///< returns the highest frame that people have got to.
+	UnsignedInt getMaxDisconnectFrame(ConnectionManager *conMgr);	///< returns the highest frame that people have got to.
 	Int countVotesForPlayer(Int slot); ///< return the number of disconnect votes a player has.
 	void resetPlayersVotes(Int playerID, UnsignedInt frame, ConnectionManager *conMgr); ///< reset the votes for this player.
 
@@ -107,7 +116,16 @@ protected:
 
 	time_t m_lastKeepAliveSendTime;
 
+	Bool m_destroySent[MAX_SLOTS];
+
 	time_t m_playerTimeouts[MAX_SLOTS - 1];
+#if !RETAIL_COMPATIBLE_NETWORKING
+	Bool m_playerLeft[MAX_SLOTS - 1];	///< The player of the translated slot has left and waits for its removal.
+	Bool m_ownLeaveReceived[MAX_SLOTS - 1];	///< The leave came from the player itself, not from a notice of another player.
+	Bool m_leftPlayerHold;
+	Int m_heldRemovalFrom[MAX_SLOTS];	///< The sender of a removal of the slot that came before it was the acting packet router here, or -1.
+	UnsignedInt m_heldRemovalFrame[MAX_SLOTS];	///< The frame of that removal.
+#endif
 	time_t m_packetRouterTimeout;
 
 	DisconnectVoteStruct m_playerVotes[MAX_SLOTS][MAX_SLOTS];
@@ -116,6 +134,10 @@ protected:
 	UnsignedInt m_disconnectFrames[MAX_SLOTS];
 	Bool m_disconnectFramesReceived[MAX_SLOTS];
 	Bool m_haveNotifiedOtherPlayersOfCurrentFrame;
+#if RETAIL_COMPATIBLE_NETWORKING
+	UnsignedInt m_relayFrame[MAX_SLOTS];	///< The frame of the leave of the slot that is passed on.
+	UnsignedByte m_relayTo[MAX_SLOTS];	///< The players the leave of the slot still has to be passed on to.
+#endif
 
 	time_t m_timeOfDisconnectScreenOn;
 	Int m_pingsSent;
