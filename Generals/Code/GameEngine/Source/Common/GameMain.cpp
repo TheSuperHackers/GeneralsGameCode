@@ -54,6 +54,7 @@ Int GameMain()
 	{
 		// run it
 		TheGameEngine->execute();
+		exitcode = TheGameEngine->getExitCode();
 	}
 
 	// since execute() returned, we are exiting the game
