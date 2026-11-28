@@ -761,6 +761,9 @@ def main():
     #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/vertmaterial.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/vertmaterial.cpp")
     #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/vertmaterial.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/vertmaterial.h")
 
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DRoadBuffer.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DRoadBuffer.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DRoadBuffer.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DRoadBuffer.h")
+
     return
 
 
