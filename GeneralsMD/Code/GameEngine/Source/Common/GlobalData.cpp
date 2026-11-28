@@ -94,6 +94,7 @@ GlobalData* GlobalData::m_theOriginal = nullptr;
 	{ "Use3WayTerrainBlends",			INI::parseInt,				nullptr,			offsetof( GlobalData, m_use3WayTerrainBlends ) },
 	{ "StretchTerrain",						INI::parseBool,				nullptr,			offsetof( GlobalData, m_stretchTerrain ) },
 	{ "UseHalfHeightMap",					INI::parseBool,				nullptr,			offsetof( GlobalData, m_useHalfHeightMap ) },
+	{ "UserDataLeafName",					INI::parseQuotedAsciiString,	nullptr,			offsetof( GlobalData, m_userDataLeafName ) },
 
 
 	{ "DrawEntireTerrain",					INI::parseBool,				nullptr,			offsetof( GlobalData, m_drawEntireTerrain ) },
@@ -1046,9 +1047,8 @@ GlobalData::GlobalData()
 
 	m_keyboardCameraRotateSpeed = 0.1f;
 
-	// Set user data directory based on registry settings instead of INI parameters.
-	// This allows us to localize the leaf name.
-	m_userDataDir = BuildUserDataPathFromRegistry();
+	// The INI is not loaded yet, so this resolves from the registry. The base GameData rebuilds it.
+	m_userDataDir = BuildUserDataPath();
 	CreateDirectory(m_userDataDir.str(), nullptr);
 
 	//-allAdvice feature
@@ -1199,6 +1199,12 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	// parse the ini weapon definition
 	ini->initFromINI( TheWritableGlobalData, s_GlobalDataFieldParseTable );
 
+	if( ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES )
+	{
+		TheWritableGlobalData->m_userDataDir.clear();
+		TheWritableGlobalData->m_userDataDir = TheWritableGlobalData->BuildUserDataPath();
+		CreateDirectory(TheWritableGlobalData->m_userDataDir.str(), nullptr);
+	}
 
 	// override INI values with user preferences
 	OptionPreferences optionPref;
@@ -1337,7 +1343,30 @@ UnsignedInt GlobalData::generateExeCRC()
 	return exeCRC.get();
 }
 
-AsciiString GlobalData::BuildUserDataPathFromRegistry()
+static Bool isValidUserDataLeafName(const AsciiString& name)
+{
+	if (name.isEmpty() || strcmp(name.str(), ".") == 0 || strstr(name.str(), "..") != nullptr)
+	{
+		return FALSE;
+	}
+
+	// skip the trail byte of a double byte character, it can be 0x5C
+	for (const unsigned char* c = (const unsigned char*)name.str(); *c != '\0'; ++c)
+	{
+		if (IsDBCSLeadByte(*c) && c[1] != '\0')
+		{
+			++c;
+		}
+		else if (*c == '\\' || *c == '/' || *c == ':')
+		{
+			return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
+AsciiString GlobalData::BuildUserDataPath()
 {
 #if defined(_MSC_VER) && (_MSC_VER < 1300)
 	// VC6 lacks FOLDERID_Documents and KF_FLAG_DEFAULT
@@ -1379,12 +1408,16 @@ AsciiString GlobalData::BuildUserDataPathFromRegistry()
 		if (!myDocumentsDirectory.endsWith("\\"))
 			myDocumentsDirectory.concat('\\');
 
-		AsciiString leafName;
-		if (!GetStringFromRegistry("", "UserDataLeafName", leafName))
+		// INI first, then registry, then the default
+		AsciiString leafName = m_userDataLeafName;
+		if (!isValidUserDataLeafName(leafName))
 		{
-			// Use something, anything
-			// [MH] had to remove this, otherwise mapcache build step won't run... DEBUG_CRASH( ( "Could not find registry key UserDataLeafName; defaulting to \"Command and Conquer Generals Zero Hour Data\" " ) );
-			leafName = "Command and Conquer Generals Zero Hour Data";
+			if (!GetStringFromRegistry("", "UserDataLeafName", leafName) || !isValidUserDataLeafName(leafName))
+			{
+				// Use something, anything
+				// [MH] had to remove this, otherwise mapcache build step won't run... DEBUG_CRASH( ( "Could not find registry key UserDataLeafName; defaulting to \"Command and Conquer Generals Zero Hour Data\" " ) );
+				leafName = "Command and Conquer Generals Zero Hour Data";
+			}
 		}
 
 		myDocumentsDirectory.concat(leafName);
