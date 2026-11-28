@@ -37,20 +37,6 @@
 #include <windows.h>
 
 
-/******************************************************************************
-**	Swaps two objects.
-*/
-template<class T>
-void swap( T & left, T & right )
-{
-	T temp;
-
-	temp  = left;
-	left  = right;
-	right = temp;
-}
-
-
 void		Fix_Single_Ampersands  			( LPSTR pszString, bool upper_case );
 void		Fix_Single_Ampersands  			( unichar *pszString, bool upper_case );
 //UnicodeString Fix_Single_Ampersands ( UnicodeString string, bool upper_case);

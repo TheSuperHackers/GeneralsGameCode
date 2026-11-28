@@ -89,6 +89,7 @@ enum
 #include "WW3D2/mesh.h"
 #include "WW3D2/meshmdl.h"
 #include "d3dx8tex.h"
+#include <algorithm>
 
 
 // If TEST_AND_BLEND is defined, it will do an alpha test and blend.  Otherwise just alpha test. jba. [5/30/2003]
@@ -398,9 +399,7 @@ void W3DTreeBuffer::sort(Int numIterations)
 		for (i=cur+1; i<m_numTrees-iter; i++) {
 			if (m_trees[i].visible) {
 				if (m_trees[cur].sortKey > m_trees[i].sortKey) {
-					TTree tmp = m_trees[cur];
-					m_trees[cur] = m_trees[i];
-					m_trees[i] = tmp;
+					std::swap(m_trees[cur], m_trees[i]);
 					swap = true;
 				}
 				cur = i;

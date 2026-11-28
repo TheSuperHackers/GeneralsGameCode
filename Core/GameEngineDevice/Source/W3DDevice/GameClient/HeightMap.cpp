@@ -89,6 +89,7 @@
 #include "W3DDevice/GameClient/W3DCustomScene.h"
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
+#include <algorithm>
 
 
 #define no_OPTIMIZED_HEIGHTMAP_LIGHTING	01
@@ -1459,9 +1460,7 @@ void HeightMapRenderObjClass::On_Frame_Update()
 				}
 			} else {
 				// wrap occurred, so we are outside of this range.
-				int tmp=yCoordMin;
-				yCoordMin = yCoordMax;
-				yCoordMax = tmp;
+				std::swap(yCoordMin, yCoordMax);
 				for (k=0; k<numDynaLights; k++) {
 					if (enabledLights[k]->m_minY <=  yCoordMin ||
 						enabledLights[k]->m_maxY >= yCoordMax) {
@@ -1505,9 +1504,7 @@ void HeightMapRenderObjClass::On_Frame_Update()
 					}
 				} else {
 					// wrap occurred, so we are outside of this range.
-					int tmp=xCoordMin;
-					xCoordMin = xCoordMax;
-					xCoordMax = tmp;
+					std::swap(xCoordMin, xCoordMax);
 					for (k=0; k<numDynaLights; k++) {
 						if (enabledLights[k]->m_minX <=  xCoordMin ||
 							enabledLights[k]->m_maxX >= xCoordMax) {

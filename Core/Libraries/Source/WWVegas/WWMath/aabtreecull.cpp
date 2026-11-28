@@ -37,6 +37,7 @@
 #include "sphere.h"
 #include "colmath.h"
 #include "colmathinlines.h"
+#include <algorithm>
 
 
 
@@ -232,9 +233,7 @@ void AABTreeCullSystemClass::Add_Object_Recursive(AABTreeNodeClass * node,Cullab
 	AABTreeNodeClass * small_child = node->Back;
 
 	if (big_child && small_child && (big_child->Compute_Volume() < small_child->Compute_Volume())) {
-		AABTreeNodeClass * tmp = big_child;
-		big_child = small_child;
-		small_child = tmp;
+		std::swap(big_child, small_child);
 	}
 
 	// Can we fit in the smaller child?

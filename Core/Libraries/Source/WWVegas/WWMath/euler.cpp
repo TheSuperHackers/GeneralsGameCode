@@ -36,6 +36,7 @@
 
 #include "euler.h"
 #include <float.h>
+#include <algorithm>
 
 
 /*********************************************************************
@@ -172,7 +173,7 @@ void EulerAnglesClass::From_Matrix(const Matrix3D & M, int order)
 	}
 
 	if (n==EULER_PARITY_ODD) { Angle[0] = -Angle[0]; Angle[1] = -Angle[1]; Angle[2] = -Angle[2]; }
-	if (f==EULER_FRAME_ROTATING) { double t = Angle[0]; Angle[0] = Angle[2]; Angle[2] = t; }
+	if (f==EULER_FRAME_ROTATING) { std::swap(Angle[0], Angle[2]); }
 
 	// Trying to "clean" up the eulers, special cased for XYZr
 	if (order == EulerOrderXYZr) {
@@ -222,7 +223,7 @@ void EulerAnglesClass::To_Matrix(Matrix3D & M)
 
 	_euler_unpack_order(Order,i,j,k,h,n,s,f);
 	if (f == EULER_FRAME_ROTATING) {
-		double t = a0; a0 = a2; a2 = t;
+		std::swap(a0, a2);
 	}
 
 	if (n == EULER_PARITY_ODD) {

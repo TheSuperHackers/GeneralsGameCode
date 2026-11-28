@@ -36,6 +36,7 @@
 #include "WWLib/uarray.h"
 #include <stdlib.h>
 #include <assert.h>
+#include <algorithm>
 
 
 const float EPSILON = 0.0001f;
@@ -1103,7 +1104,7 @@ void MeshBuilderClass::Strip_Optimize_Mesh()
 			v1 = Faces[i].VertIdx[v1];
 
 			// order the vertices before hashing (hash depends on vert order)
-			if (v0 > v1) { int tmp = v0; v0 = v1; v1 = tmp; }
+			if (v0 > v1) { std::swap(v0, v1); }
 
 			// hash value for the edge
 			hash = (v0 + v1*119)&511;
@@ -1329,9 +1330,7 @@ void MeshBuilderClass::Strip_Optimize_Mesh()
 
 			// if we are on an even triangle, swap the vertex ordering
 			if (!(scnt&1)) {
-				int tmp = newpolys[polysinserted].VertIdx[0];
-				newpolys[polysinserted].VertIdx[0] = newpolys[polysinserted].VertIdx[1];
-				newpolys[polysinserted].VertIdx[1] = tmp;
+				std::swap(newpolys[polysinserted].VertIdx[0], newpolys[polysinserted].VertIdx[1]);
 			}
 
 			// push the new vertex into the fifo

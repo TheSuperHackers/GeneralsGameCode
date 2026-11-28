@@ -32,6 +32,7 @@
 #include "Common/TerrainTypes.h"
 #include "W3DDevice/GameClient/TerrainTex.h"
 #include "W3DDevice/GameClient/HeightMap.h"
+#include <algorithm>
 
 TerrainMaterial *TerrainMaterial::m_staticThis = nullptr;
 
@@ -384,9 +385,7 @@ void TerrainMaterial::updateTextures(WorldHeightMapEdit *pMap)
 void TerrainMaterial::OnSwapTextures()
 {
 
-	Int tmp = m_currentFgTexture;
-	m_currentFgTexture = m_currentBgTexture;
-	m_currentBgTexture = tmp;
+	std::swap(m_currentFgTexture, m_currentBgTexture);
 	m_terrainSwatches.Invalidate();
 	updateTextureSelection();
 }
