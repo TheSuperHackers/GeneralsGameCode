@@ -19,7 +19,13 @@
 #include "PreRTS.h"
 #include "GameLogic/Pathfinder/PathfindCellInfo.h"
 
+#if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
 constexpr const UnsignedInt CELL_INFOS_TO_ALLOCATE = 30000;
+#else
+// TheSuperHackers @tweak Mauller 21/11/2026 Increase pathfinding resources by a factor of 10.
+// Until we embed search info into the maps pathfindCells, this will help pathfinding succeed across large maps.
+constexpr const UnsignedInt CELL_INFOS_TO_ALLOCATE = 300000;
+#endif
 
 PathfindCellInfo *PathfindCellInfo::s_infoArray = nullptr;
 PathfindCellInfo *PathfindCellInfo::s_firstFree = nullptr;
